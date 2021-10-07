@@ -1,5 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { CertificateType } from '../models';
 
 @Injectable()
 export class CustomerinfobygroupService {
@@ -22,6 +24,15 @@ export class CustomerinfobygroupService {
     public getByGroupAndFbo(groupId, fboId) {
         return this.http.get(
             this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCustomersWithContactsByGroup(groupId) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}/customers-with-contacts`,
             {
                 headers: this.headers,
             }
@@ -53,7 +64,11 @@ export class CustomerinfobygroupService {
 
     public getCustomerNamesByGroupAndFBO(groupId, fboId) {
         return this.http.get(
-            this.accessPointUrl + '/customers/group/' + groupId + '/fbo/' + fboId,
+            this.accessPointUrl +
+                '/customers/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
             {
                 headers: this.headers,
             }
@@ -86,9 +101,12 @@ export class CustomerinfobygroupService {
     }
 
     public getCertificateTypes() {
-        return this.http.get(this.accessPointUrl + '/CertificateTypes', {
-            headers: this.headers,
-        });
+        return this.http.get<CertificateType[]>(
+            this.accessPointUrl + '/CertificateTypes',
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public getCustomerSources() {
@@ -151,7 +169,11 @@ export class CustomerinfobygroupService {
         );
     }
 
-    public acceptmerge(customerId: number, flcustomerId: number, groupId: number) {
+    public acceptmerge(
+        customerId: number,
+        flcustomerId: number,
+        groupId: number
+    ) {
         return this.http.post(
             `${this.accessPointUrl}/mergecustomers/customerId/${customerId}/flcustomerid/${flcustomerId}/groupId/${groupId}`,
             {
@@ -160,22 +182,38 @@ export class CustomerinfobygroupService {
         );
     }
 
-    getCustomersByGroup(groupId: number) {
-        return this.http.get(
-            `${this.accessPointUrl}/group/${groupId}`,
+    getGroupAnalytics(groupId: number, customerId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
+            customerId,
             {
                 headers: this.headers,
             }
         );
     }
 
-    getGroupAnalytics(groupId: number, customerIds: number[]) {
+    getGroupAnalyticsAndEmail(groupId: number, customerId: number) {
         return this.http.post(
-            `${this.accessPointUrl}/group-analytics/group/${groupId}`,
-            customerIds,
+            `${this.accessPointUrl}/group-analytics/email/group/${groupId}`,
+            customerId,
             {
                 headers: this.headers,
             }
         );
+    }
+
+    getCustomersListByGroupAndFbo(groupId: number, fboId: number) {
+        return this.http.get(
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/list`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    getFuelVendors() {
+        return this.http.get(`${this.accessPointUrl}/fuelvendors`, {
+            headers: this.headers,
+        });
     }
 }

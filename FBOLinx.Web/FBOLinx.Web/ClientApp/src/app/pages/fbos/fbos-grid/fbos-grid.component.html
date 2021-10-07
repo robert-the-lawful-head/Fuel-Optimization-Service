@@ -4,7 +4,7 @@
             (keyup)="applyFilter($event.target.value)"
             matInput
             placeholder="Search by ICAO or FBO Name"
-            value="{{searchValue}}"
+            value="{{ searchValue }}"
         />
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
@@ -14,38 +14,85 @@
         class="col-md-12"
         mat-table
         matSort
-        matSortActive="{{tableSortFbos}}"
-        matSortDirection="{{tableSortOrderFbos}}"
+        matSortActive="{{ tableSortFbos }}"
+        matSortDirection="{{ tableSortOrderFbos }}"
     >
         <ng-container matColumnDef="icao">
-            <th (click)="saveHeader('icao')" *matHeaderCellDef mat-header-cell mat-sort-header>ICAO</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>ICAO</th>
             <td *matCellDef="let fbo" mat-cell>{{ fbo.icao }}</td>
         </ng-container>
 
         <ng-container matColumnDef="fbo">
-            <th (click)="saveHeader('fbo')" *matHeaderCellDef mat-header-cell mat-sort-header>FBO</th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>FBO</th>
             <td *matCellDef="let fbo" mat-cell>{{ fbo.fbo }}</td>
         </ng-container>
 
-        <ng-container matColumnDef="active">
-            <th (click)="saveHeader('active')" *matHeaderCellDef mat-header-cell mat-sort-header>Status</th>
+        <ng-container matColumnDef="price">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Retail / Cost
+            </th>
             <td *matCellDef="let fbo" mat-cell>
-                {{ fbo.active ? "Active" : "Inactive" }}
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.retailPrice,
+                        'price-live': fbo.retailPrice,
+                        'font-weight-bold': true
+                    }"
+                    >{{
+                        fbo.retailPrice
+                            ? "$" + (fbo.retailPrice | number: "1.4-4")
+                            : "Expired"
+                    }}</span
+                >
+                /
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.costPrice,
+                        'price-live': fbo.costPrice,
+                        'font-weight-bold': true
+                    }"
+                    >{{
+                        fbo.costPrice
+                            ? "$" + (fbo.costPrice | number: "1.4-4")
+                            : "Expired"
+                    }}</span
+                >
             </td>
         </ng-container>
 
-        <ng-container *ngIf="canManageFbo" matColumnDef="manage">
+        <ng-container matColumnDef="active">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Pricing Status
+            </th>
+            <td *matCellDef="let fbo" mat-cell>
+                <span
+                    [ngClass]="{
+                        'price-expired': !fbo.retailPrice && !fbo.costPrice,
+                        'price-live': fbo.retailPrice || fbo.costPrice,
+                        'font-weight-bold': true
+                    }"
+                >
+                    {{
+                        !fbo.retailPrice && !fbo.costPrice
+                            ? "Expired"
+                            : "Pricing Live"
+                    }}
+                </span>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="edit">
             <th *matHeaderCellDef mat-header-cell></th>
             <td *matCellDef="let fbo" mat-cell>
                 <div class="pull-right">
                     <button
-                        (click)="manageFBO(fbo); $event.stopPropagation()"
+                        (click)="editRecord(fbo); $event.stopPropagation()"
                         [view]="'warning'"
-                        beforeIcon="fa fa-briefcase"
+                        beforeIcon="fa fa-pencil"
                         ni-button
                         size="small"
                     >
-                        Manage
+                        Edit
                     </button>
                 </div>
             </td>
@@ -82,7 +129,7 @@
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
         <tr
-            (click)="editRecord(row, $event)"
+            (click)="manageFBO(row, $event)"
             *matRowDef="let row; columns: displayedColumns"
             mat-row
         ></tr>
@@ -90,8 +137,10 @@
 </div>
 
 <div>
-    <mat-paginator (page)="(pageIndexFbos); onPageChanged($event)"
-                   [length]="resultsLength"
-                   [pageSizeOptions]="[10, 25, 50, 100]"
-                   [pageSize]="pageSizeFbos"></mat-paginator>
+    <mat-paginator
+        (page)="(pageIndexFbos)"
+        [length]="resultsLength"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageSize]="pageSizeFbos"
+    ></mat-paginator>
 </div>

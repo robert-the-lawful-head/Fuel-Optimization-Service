@@ -1,13 +1,12 @@
-import { throwError as observableThrowError } from 'rxjs';
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { throwError as observableThrowError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
 })
 export class MenuService {
-    constructor(private http: HttpClient) {
-    }
+    constructor(private http: HttpClient) {}
 
     public getData() {
         const URL = '../../../../assets/data/main-menu.json';

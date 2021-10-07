@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-analytics-orders-over-time',
-    templateUrl: './analytics-orders-over-time-chart.component.html',
     styleUrls: ['./analytics-orders-over-time-chart.component.scss'],
+    templateUrl: './analytics-orders-over-time-chart.component.html',
 })
 export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     public filterStartDate: Date;
@@ -36,7 +37,9 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -47,12 +50,19 @@ export class AnalyticsOrdersOverTimeChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getOrders(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
-            .subscribe((data: any) => {
-                this.totalOrdersData = data;
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getOrders(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = data;
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }

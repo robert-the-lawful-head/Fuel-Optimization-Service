@@ -20,10 +20,13 @@ Name | Type | Description | Notes
 **DispatchedVolume** | [**Weight**](Weight.md) |  | [optional] 
 **DispatchedPricePerGallon** | **double?** |  | [optional] 
 **MarketUpdatedPricePerGallon** | **double?** |  | [optional] 
+**PricePerGallon** | **double?** |  | [optional] 
 **CreationDate** | **DateTime?** |  | [optional] 
 **TimeStandard** | **int?** |  | [optional] 
 **InvoicedPricePerGallon** | **double?** |  | [optional] 
 **InvoicedVolume** | [**Weight**](Weight.md) |  | [optional] 
+**InvoicedVolumeAdjustedForCredit** | [**Weight**](Weight.md) |  | [optional] 
+**FuelVolume** | [**Weight**](Weight.md) |  | [optional] 
 **BasePricePerGallon** | **double?** |  | [optional] 
 **PostedRetail** | **double?** |  | [optional] 
 **ForcedReconcile** | **bool?** |  | [optional] 
@@ -61,6 +64,8 @@ Name | Type | Description | Notes
 **ScheduledTripID** | **string** |  | [optional] 
 **LegNumber** | **int?** |  | [optional] 
 **NonFuelServicesTotal** | **double?** |  | [optional] 
+**InvoicedFuelTotal** | **double?** |  | [optional] 
+**FuelTotal** | **double?** |  | [optional] 
 **NonFuelServiceNames** | **string** |  | [optional] 
 **FlightTypeMapping** | [**FlightTypeMappingDTO**](FlightTypeMappingDTO.md) |  | [optional] 
 **TransactionNotes** | [**List&lt;TransactionNoteDTO&gt;**](TransactionNoteDTO.md) |  | [optional] 
@@ -78,6 +83,10 @@ Name | Type | Description | Notes
 **FboNotes** | [**List&lt;FboByCompanyNotesDTO&gt;**](FboByCompanyNotesDTO.md) |  | [optional] 
 **RampFeeNotes** | [**List&lt;RampFeeByCompanyNoteDTO&gt;**](RampFeeByCompanyNoteDTO.md) |  | [optional] 
 **PreUpliftPriceSync** | [**PriceSyncTransactionDTO**](PriceSyncTransactionDTO.md) |  | [optional] 
+**ChangedTripNotification** | [**TransactionForChangedTripDTO**](TransactionForChangedTripDTO.md) |  | [optional] 
+**TransactionAccountingData** | [**TransactionAccountingDataDTO**](TransactionAccountingDataDTO.md) |  | [optional] 
+**TransactionAccountingTransfer** | [**TransactionAccountingTransferDTO**](TransactionAccountingTransferDTO.md) |  | [optional] 
+**User** | [**CustomerDataDTO**](CustomerDataDTO.md) |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

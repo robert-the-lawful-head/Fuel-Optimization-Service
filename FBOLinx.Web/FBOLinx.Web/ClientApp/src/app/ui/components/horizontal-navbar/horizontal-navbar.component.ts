@@ -1,50 +1,66 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
+import {
+    customerUpdatedEvent,
+    fboChangedEvent,
+} from '../../../models/sharedEvents';
+import { AuthenticationService } from '../../../services/authentication.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { FbosService } from '../../../services/fbos.service';
+import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 // Services
 import { UserService } from '../../../services/user.service';
-import { AuthenticationService } from '../../../services/authentication.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { FbopricesService } from '../../../services/fboprices.service';
-import { FboairportsService } from '../../../services/fboairports.service';
-import { FbosService } from '../../../services/fbos.service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-import { customerUpdatedEvent, fboChangedEvent } from '../../../models/sharedEvents';
-
 // Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
+import * as moment from 'moment';
+
 @Component({
-    selector: 'app-horizontal-navbar',
-    templateUrl: 'horizontal-navbar.component.html',
-    styleUrls: [ 'horizontal-navbar.component.scss' ],
     host: {
         '[class.app-navbar]': 'true',
         '[class.show-overlay]': 'showOverlay',
     },
-    providers: [ WindowRef ],
+    providers: [WindowRef],
+    selector: 'app-horizontal-navbar',
+    styleUrls: ['horizontal-navbar.component.scss'],
+    templateUrl: 'horizontal-navbar.component.html',
 })
-export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() openedSidebar: boolean;
     @Output() sidebarState = new EventEmitter();
     showOverlay: boolean;
     isOpened: boolean;
-    isLocationsLoaded: boolean;
+    isLocationsLoading: boolean;
 
     window: any;
 
+    fuelOrdersSubscription: Subscription;
     userFullName: string;
     accountProfileMenu: any = {
-        isOpened: false
+        isOpened: false,
     };
     needsAttentionMenu: any = {
+        isOpened: false,
+    };
+    fuelOrderNotificationsMenu: any = {
         isOpened: false
     };
     currrentJetACostPricing: any;
@@ -58,6 +74,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     currentUser: any;
     needsAttentionCustomersData: any[];
     subscription: any;
+    fuelOrders: any[];
+    flightWatchData: any[];
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -70,7 +88,9 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
         private fbosService: FbosService,
-        private winRef: WindowRef
+        private fuelReqsService: FuelreqsService,
+        private winRef: WindowRef,
+        private airportWatchService: AirportWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -91,32 +111,48 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     get notificationVisible() {
-        return this.sharedService.currentUser.fboId > 0 && this.sharedService.currentUser.role !== 5;
+        return (
+            this.sharedService.currentUser.fboId > 0 &&
+            this.sharedService.currentUser.role !== 5
+        );
     }
 
     ngOnInit() {
-        this.loadCurrentPrices();
-        this.loadLocations();
-        this.loadFboInfo();
-        this.loadNeedsAttentionCustomers();
-    }
+        if (this.canUserSeePricing()) {
+            this.loadCurrentPrices();
+            this.loadLocations();
+            this.loadFboInfo();
+            this.loadNeedsAttentionCustomers();
+        }
 
-    ngAfterViewInit() {
-        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent) {
-                this.loadLocations();
-                this.loadFboInfo();
-                this.loadNeedsAttentionCustomers();
+        this.subscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (!this.canUserSeePricing()) {
+                    return;
+                }
+                if (message === fboChangedEvent) {
+                    this.loadLocations();
+                    this.loadFboInfo();
+                    this.loadNeedsAttentionCustomers();
+                    this.loadUpcomingOrders();
+                }
+                if (message === customerUpdatedEvent) {
+                    this.loadNeedsAttentionCustomers();
+                }
             }
-            if (message === customerUpdatedEvent) {
-                this.loadNeedsAttentionCustomers();
-            }
-        });
+        );
+
+        this.fuelOrdersSubscription = timer(0, 60000).subscribe(() =>
+            this.loadUpcomingOrders()
+        );
     }
 
     ngOnDestroy() {
         if (this.subscription) {
             this.subscription.unsubscribe();
+        }
+        if (this.fuelOrdersSubscription) {
+            this.fuelOrdersSubscription.unsubscribe();
         }
     }
 
@@ -146,9 +182,14 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
+    openFuelOrdersUpdate() {
+        this.fuelOrderNotificationsMenu.isOpened = !this.fuelOrderNotificationsMenu.isOpened;
+    }
+
     close() {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
+        this.fuelOrderNotificationsMenu.isOpened = false;
         this.isOpened = false;
     }
 
@@ -164,16 +205,17 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         localStorage.removeItem('groupId');
         localStorage.removeItem('conductorFbo');
         this.authenticationService.logout();
-        this.router.navigate([ '/landing-site-layout' ]);
+        this.router.navigate(['/landing-site-layout']);
     }
 
     accountProfileClicked() {
         this.userService.getCurrentUser().subscribe((response: any) => {
             const dialogRef = this.accountProfileDialog.open(
-                AccountProfileComponent, {
-                    height: '550px',
-                    width: '850px',
+                AccountProfileComponent,
+                {
                     data: response,
+                    height: '550px',
+                    width: '1000px',
                 }
             );
             dialogRef.afterClosed().subscribe((result) => {
@@ -183,8 +225,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                 this.userService.update(result).subscribe(() => {
                     this.userService
                         .updatePassword({
-                            user: result,
                             newPassword: result.newPassword,
+                            user: result,
                         })
                         .subscribe((newPass: any) => {
                             result.password = newPass;
@@ -201,9 +243,16 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         localStorage.removeItem('impersonatedrole');
         this.sharedService.currentUser.fboId = 0;
         this.sharedService.currentUser.impersonatedRole = null;
-        if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
-            localStorage.setItem('groupId', this.sharedService.currentUser.managerGroupId.toString());
-            this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
+        if (
+            this.sharedService.currentUser.managerGroupId &&
+            this.sharedService.currentUser.managerGroupId > 0
+        ) {
+            localStorage.setItem(
+                'groupId',
+                this.sharedService.currentUser.managerGroupId.toString()
+            );
+            this.sharedService.currentUser.groupId =
+                this.sharedService.currentUser.managerGroupId;
         } else {
             localStorage.removeItem('groupId');
         }
@@ -214,13 +263,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (this.sharedService.currentUser.conductorFbo) {
             localStorage.removeItem('conductorFbo');
             this.sharedService.currentUser.conductorFbo = false;
-            this.router.navigate([ '/default-layout/groups/' ]);
+            this.router.navigate(['/default-layout/groups/']);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
                 localStorage.setItem('impersonatedrole', '2');
             }
-            this.router.navigate([ '/default-layout/fbos/' ]);
+            this.router.navigate(['/default-layout/fbos/']);
         }
     }
 
@@ -231,32 +280,42 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         localStorage.removeItem('managerGroupId');
         localStorage.removeItem('groupId');
         this.sharedService.currentUser.fboId = 0;
-        if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
-            this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
+        if (
+            this.sharedService.currentUser.managerGroupId &&
+            this.sharedService.currentUser.managerGroupId > 0
+        ) {
+            this.sharedService.currentUser.groupId =
+                this.sharedService.currentUser.managerGroupId;
         }
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
         this.close();
 
-        this.router.navigate([ '/default-layout/groups/' ]);
+        this.router.navigate(['/default-layout/groups/']);
     }
 
     updatePricingClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/dashboard-fbo' ]);
+        this.router.navigate(['/default-layout/dashboard-fbo']);
         this.close();
     }
 
     gotoCustomer(customer: any) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/customers/' + customer.oid ]);
+        this.router.navigate(['/default-layout/customers/' + customer.oid]);
         this.close();
     }
 
     viewAllNotificationsClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/customers' ]);
+        this.router.navigate(['/default-layout/customers']);
+        this.close();
+    }
+
+    viewAllFuelOrdersClicked() {
+        this.fuelOrderNotificationsMenu.isOpened = false;
+        this.router.navigate(['/default-layout/fuelreqs']);
         this.close();
     }
 
@@ -290,15 +349,16 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!this.currentUser.groupId) {
             return;
         }
+        this.isLocationsLoading = true;
         this.fbosService.getForGroup(this.currentUser.groupId).subscribe(
             (data: any) => {
-                this.isLocationsLoaded = true;
                 if (data && data.length) {
                     this.locations = _.cloneDeep(data);
                 }
+                this.isLocationsLoading = false;
             },
             (error: any) => {
-                this.isLocationsLoaded = true;
+                this.isLocationsLoading = false;
                 console.log(error);
             }
         );
@@ -315,28 +375,32 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
 
         this.fboAirportsService
             .getForFbo({
-                oid: this.currentUser.fboId
+                oid: this.currentUser.fboId,
             })
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
                     this.sharedService.currentUser.icao = this.fboAirport.icao;
-                    this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
+                    this.sharedService.emitChange(
+                        SharedEvents.icaoChangedEvent
+                    );
                 },
                 (error: any) => {
                     console.log(error);
                 }
             );
-        this.fbosService.get({
-            oid: this.currentUser.fboId
-        }).subscribe(
-            (data: any) => {
-                this.fbo = _.assign({}, data);
-            },
-            (error: any) => {
-                console.log(error);
-            }
-        );
+        this.fbosService
+            .get({
+                oid: this.currentUser.fboId,
+            })
+            .subscribe(
+                (data: any) => {
+                    this.fbo = _.assign({}, data);
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
     }
 
     changeLocation(location: any) {
@@ -348,16 +412,19 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.needsAttentionMenu.isOpened = false;
         this.sharedService.currentUser.fboId = this.fboAirport.fboid;
         this.loadFboInfo();
-        localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
+        localStorage.setItem(
+            'fboId',
+            this.sharedService.currentUser.fboId.toString()
+        );
         if (this.isOnDashboard()) {
             this.sharedService.emitChange(SharedEvents.locationChangedEvent);
         } else {
-            this.router.navigate([ '/default-layout/dashboard/' ]).then();
+            this.router.navigate(['/default-layout/dashboard/']).then();
         }
     }
 
     toggleProfileMenu() {
-        if (!this.isLocationsLoaded) {
+        if (this.isLocationsLoading) {
             return;
         }
         this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;
@@ -366,7 +433,10 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     loadNeedsAttentionCustomers() {
         if (this.currentUser.fboId) {
             this.customerInfoByGroupService
-                .getNeedsAttentionByGroupAndFbo(this.currentUser.groupId, this.currentUser.fboId)
+                .getNeedsAttentionByGroupAndFbo(
+                    this.currentUser.groupId,
+                    this.currentUser.fboId
+                )
                 .subscribe((data: any) => {
                     this.needsAttentionCustomersData = data;
                 });
@@ -385,6 +455,52 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         }
     }
 
+    loadUpcomingOrders() {
+
+        this.airportWatchService
+            .getAll(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((data: any) => {
+                if (data && data != null) {
+                    var fuelOrders = this.fuelOrders = [];
+                    this.flightWatchData = data.flightWatchData;
+                    this.flightWatchData.forEach(x => {
+                        if (!x.fuelOrder)
+                            return;
+                        if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
+                        else
+                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
+                        x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
+                        fuelOrders.push(x.fuelOrder);
+                    });
+                }
+            }, (error: any) => {
+                
+            });
+
+        //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.
+        //this.fuelReqsService
+        //    .getForGroupFboAndDateRange(
+        //        this.sharedService.currentUser.groupId,
+        //        this.sharedService.currentUser.fboId,
+        //        moment().toDate(),
+        //        moment().add(2, 'h').toDate()
+        //    )
+        //    .subscribe((data: any) => {
+        //        this.fuelOrders = data;
+        //        this.fuelOrders.forEach(x => {
+        //            try {
+        //                x.minutesUntilArrival = moment.duration(x.eta.diff(moment())).asMinutes();
+        //            } catch (e) {
+
+        //            }
+        //        });
+        //    });
+    }
+
     // Private Methods
     private isOnDashboard(): boolean {
         if (!this.route || !this.route.url) {
@@ -394,10 +510,19 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!urlInfo.value) {
             return false;
         }
-        const dashboardResults = urlInfo.value.filter(value => value && value.toLowerCase().indexOf('dashboard') > -1);
+        const dashboardResults = urlInfo.value.filter(
+            (value) => value && value.toLowerCase().indexOf('dashboard') > -1
+        );
         if (!dashboardResults || dashboardResults.length === 0) {
             return false;
         }
         return true;
+    }
+
+    private canUserSeePricing(): boolean {
+        return (
+            [1, 4].includes(this.sharedService.currentUser.role) ||
+            [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
+        );
     }
 }

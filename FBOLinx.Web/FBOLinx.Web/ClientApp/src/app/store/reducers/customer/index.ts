@@ -1,4 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
+
 import { customerGridClear, customerGridSet } from '../../actions';
 
 export const customerFeatureKey = 'customer';
@@ -13,10 +14,10 @@ export interface CustomerGridState {
 
 const initialState: CustomerGridState = {
     filter: null,
-    page: null,
+    filterType: null,
     order: null,
     orderBy: null,
-    filterType: null,
+    page: null,
 };
 
 export const customerReducer = createReducer(
@@ -24,12 +25,12 @@ export const customerReducer = createReducer(
     on(customerGridSet, (state, action) => ({
         ...state,
         filter: action.filter,
-        page: action.page,
+        filterType: action.filterType,
         order: action.order,
         orderBy: action.orderBy,
-        filterType: action.filterType,
+        page: action.page,
     })),
-    on(customerGridClear, state => ({
+    on(customerGridClear, (state) => ({
         ...state,
         ...initialState,
     }))

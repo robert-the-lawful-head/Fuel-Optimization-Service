@@ -1,0 +1,22 @@
+<mat-form-field>
+    <mat-label>{{ label }}</mat-label>
+    <input
+        [disabled]="disabled"
+        type="text"
+        [placeholder]="label"
+        matInput
+        (input)="onFilterChanged()"
+        [(ngModel)]="filter"
+        [matAutocomplete]="auto"
+    />
+    <mat-autocomplete
+        #auto="matAutocomplete"
+        autoActiveFirstOption
+        (optionSelected)="optionSelected($event)"
+        [displayWith]="displayFn"
+    >
+        <mat-option *ngFor="let option of filteredOptions" [value]="option">
+            {{ renderOption(option) }}
+        </mat-option>
+    </mat-autocomplete>
+</mat-form-field>

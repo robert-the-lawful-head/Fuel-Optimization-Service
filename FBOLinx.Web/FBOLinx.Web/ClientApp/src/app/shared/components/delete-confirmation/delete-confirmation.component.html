@@ -1,14 +1,30 @@
-<h1 mat-dialog-title>{{data.description === 'margin template' ? 'Delete Margin Template?' : 'Delete Record?'}}</h1>
-<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px;">
+<h1 mat-dialog-title>
+    {{
+        data.description === "margin template"
+            ? "Delete Margin Template?"
+            : "Delete Record?"
+    }}
+</h1>
+<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px">
     <span *ngIf="data.fullDescription; then fullBlock; else simpleBlock">
         {{ data.fullDescription }}
     </span>
     <ng-template #fullBlock>{{ data.fullDescription }}</ng-template>
-    <ng-template #simpleBlock>You are about to remove this {{ data.description }}. Are you sure?</ng-template>
+    <ng-template #simpleBlock
+        >You are about to remove this {{ data.description }}. Are you
+        sure?</ng-template
+    >
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button [mat-dialog-close]="data" class="mr-1" color="warn" mat-flat-button>Confirm</button>
+        <button
+            [mat-dialog-close]="data"
+            class="mr-1"
+            color="warn"
+            mat-flat-button
+        >
+            Confirm
+        </button>
         <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
     </div>
 </div>

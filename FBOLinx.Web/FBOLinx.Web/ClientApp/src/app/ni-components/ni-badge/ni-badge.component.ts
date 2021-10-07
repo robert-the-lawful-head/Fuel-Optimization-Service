@@ -1,9 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
     selector: 'ni-badge',
-    templateUrl: './ni-badge.component.html',
     styleUrls: ['./ni-badge.component.scss'],
+    templateUrl: './ni-badge.component.html',
 })
 export class NiBadgeComponent implements OnInit {
     @Input() color = '';
@@ -28,20 +28,20 @@ export class NiBadgeComponent implements OnInit {
 
     getClasses() {
         return {
-            'success-badge': this.color === 'success',
-            'info-badge': this.color === 'info',
-            'warning-badge': this.color === 'warning',
-            'danger-badge': this.color === 'danger',
-            'custom-badge': this.customColor,
-            'outline-badge': this.outline,
-            'border-radius-badge': this.borderRadius,
-            'arrow-right-badge': this.arrow === 'right',
             'arrow-left-badge': this.arrow === 'left',
-            'large-badge': this.size === 'large',
-            'medium-badge': this.size === 'medium',
-            'top-left': this.position === 'top-left',
+            'arrow-right-badge': this.arrow === 'right',
+            'border-radius-badge': this.borderRadius,
             'bottom-left': this.position === 'bottom-left',
             'bottom-right': this.position === 'bottom-right',
+            'custom-badge': this.customColor,
+            'danger-badge': this.color === 'danger',
+            'info-badge': this.color === 'info',
+            'large-badge': this.size === 'large',
+            'medium-badge': this.size === 'medium',
+            'outline-badge': this.outline,
+            'success-badge': this.color === 'success',
+            'top-left': this.position === 'top-left',
+            'warning-badge': this.color === 'warning',
         };
     }
     getStyles() {
@@ -53,10 +53,10 @@ export class NiBadgeComponent implements OnInit {
     }
     getArrowClasses() {
         return {
-            'arrow-top': this.arrow === 'top',
-            'arrow-right': this.arrow === 'right',
             'arrow-bottom': this.arrow === 'bottom',
             'arrow-left': this.arrow === 'left',
+            'arrow-right': this.arrow === 'right',
+            'arrow-top': this.arrow === 'top',
         };
     }
 }

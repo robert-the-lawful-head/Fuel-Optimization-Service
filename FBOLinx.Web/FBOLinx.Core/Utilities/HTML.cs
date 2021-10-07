@@ -7,7 +7,7 @@ namespace FBOLinx.Core.Utilities
         public static byte[] CreateImageFromHTML(string html)
         {
             var htmlToImageConv = new HtmlConverter();
-            return htmlToImageConv.FromHtmlString(html, 512, ImageFormat.Jpg);
+            return htmlToImageConv.FromHtmlString(html, 512, ImageFormat.Png);
         }
     }
 }

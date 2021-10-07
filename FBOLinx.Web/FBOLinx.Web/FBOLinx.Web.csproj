@@ -10,6 +10,7 @@
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 	<PackageReference Include="Sendgrid" Version="9.22.0" />
+	<PackageReference Include="StackifyMiddleware" Version="3.0.5.2" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
@@ -54,12 +55,17 @@
     <None Remove="ClientApp\src\app\helpers\error.interceptor.ts" />
     <None Remove="ClientApp\src\app\helpers\index.ts" />
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-dialog-new-template\email-templates-dialog-new-template.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
+    <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
@@ -72,6 +78,7 @@
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
@@ -105,12 +112,17 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\error.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-select-model-dialog\customer-aircrafts-select-model-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-dialog-new-template\email-templates-dialog-new-template.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
@@ -121,6 +133,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\fee-and-tax-breakdown\fee-and-tax-breakdown.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\price-breakdown\price-breakdown.component.ts" />
@@ -130,6 +143,24 @@
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="SQL\vdccn4\create_table_GroupImageFileData.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>create_table_GroupImageFileData.sql</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **ExcludedAirports** | **List&lt;string&gt;** |  | [optional] 
 **IncludedFuelVendors** | **List&lt;int?&gt;** |  | [optional] 
 **ExcludedFuelVendors** | **List&lt;int?&gt;** |  | [optional] 
+**ArchiveInclusionType** | **int?** |  | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

@@ -223,11 +223,18 @@ namespace IO.Swagger.Model {
     public string TripKey { get; set; }
 
     /// <summary>
-    /// Gets or Sets TransactionId
+    /// Gets or Sets DepartureTransactionId
     /// </summary>
-    [DataMember(Name="transactionId", EmitDefaultValue=false)]
-    [JsonProperty(PropertyName = "transactionId")]
-    public int? TransactionId { get; set; }
+    [DataMember(Name="departureTransactionId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "departureTransactionId")]
+    public int? DepartureTransactionId { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ArrivalTransactionId
+    /// </summary>
+    [DataMember(Name="arrivalTransactionId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "arrivalTransactionId")]
+    public int? ArrivalTransactionId { get; set; }
 
     /// <summary>
     /// Gets or Sets Company
@@ -281,7 +288,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ArrivalRemarks: ").Append(ArrivalRemarks).Append("\n");
       sb.Append("  FlightPlanId: ").Append(FlightPlanId).Append("\n");
       sb.Append("  TripKey: ").Append(TripKey).Append("\n");
-      sb.Append("  TransactionId: ").Append(TransactionId).Append("\n");
+      sb.Append("  DepartureTransactionId: ").Append(DepartureTransactionId).Append("\n");
+      sb.Append("  ArrivalTransactionId: ").Append(ArrivalTransactionId).Append("\n");
       sb.Append("  Company: ").Append(Company).Append("\n");
       sb.Append("  FlightTypeMapping: ").Append(FlightTypeMapping).Append("\n");
       sb.Append("}\n");

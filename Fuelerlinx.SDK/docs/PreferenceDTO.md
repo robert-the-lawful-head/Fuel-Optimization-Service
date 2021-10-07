@@ -7,7 +7,6 @@ Name | Type | Description | Notes
 **FuelOptionSorting** | **int?** |  | [optional] 
 **IsAllInclusivePricingPrioritized** | **bool?** |  | [optional] 
 **SortByAllInclusivePricing** | **bool?** |  | [optional] 
-**IsPostedRetailSeparated** | **bool?** |  | [optional] 
 **IsPriceMasked** | **bool?** |  | [optional] 
 **OmitFromDispatchConfirmation** | **bool?** |  | [optional] 
 **FuelOn** | **string** |  | [optional] 

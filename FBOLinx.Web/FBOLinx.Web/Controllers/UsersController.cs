@@ -18,6 +18,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using System.Web;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -33,10 +34,10 @@ namespace FBOLinx.Web.Controllers
         private readonly MailSettings _MailSettings;
         private readonly FboService _fboService;
         private IServiceProvider _Services;
-        private EncryptionService _encryptionService;
+        private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, EncryptionService encryptionService, ResetPasswordService resetPasswordService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -49,10 +50,20 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
         }
 
+        [HttpGet("prepare-token-auth")]
+        public async Task<IActionResult> PrepareTokenAuthentication()
+        {
+            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
+
+            await HandlePreLoginEvents(user);
+
+            return Ok(user);
+        }
+
         [HttpGet("current")]
         public async Task<ActionResult<User>> GetCurrentUser()
         {
-            var user = await _context.User.FindAsync(UserService.GetClaimedUserId(_httpContextAccessor));
+            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
 
             return Ok(user);
         }
@@ -64,35 +75,14 @@ namespace FBOLinx.Web.Controllers
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
 
-            var user = await _userService.Authenticate(userParam.Username, userParam.Password, false);
+            var user = await _userService.GetUserByCredentials(userParam.Username, userParam.Password, true);
 
             if (user == null)
             {
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
-            if (fbo != null)
-            {
-                fbo.LastLogin = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
-
-            try
-            {
-                var group = await _context.Group.FindAsync(user.GroupId);
-
-                if (group.IsLegacyAccount == true)
-                {
-                    await _fboService.DoLegacyGroupTransition(group.Oid);
-
-                    group.IsLegacyAccount = false;
-                    await _context.SaveChangesAsync();
-                }
-            } catch (DbUpdateConcurrencyException ex)
-            {
-                throw ex;
-            }
+            await HandlePreLoginEvents(user);
 
             return Ok(user);
         }
@@ -113,20 +103,20 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            var currentRole = UserService.GetClaimedRole(_httpContextAccessor);
+            var currentRole = JwtManager.GetClaimedRole(_httpContextAccessor);
 
             if (currentRole == DB.Models.User.UserRoles.Conductor)
                 return Ok(user);
 
-            if (UserService.GetClaimedUserId(_httpContextAccessor) == id)
+            if (JwtManager.GetClaimedUserId(_httpContextAccessor) == id)
                 return Ok(user);
 
             if (currentRole == DB.Models.User.UserRoles.GroupAdmin &&
-                UserService.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
+                JwtManager.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
                 return Ok(user);
 
             if (currentRole == DB.Models.User.UserRoles.Primary &&
-                UserService.GetClaimedFboId(_httpContextAccessor) == user.FboId)
+                JwtManager.GetClaimedFboId(_httpContextAccessor) == user.FboId)
                 return Ok(user);
 
             return Unauthorized();
@@ -145,7 +135,7 @@ namespace FBOLinx.Web.Controllers
             var group = await _context.Group.FindAsync(groupId);
 
             if (group != null)
-                _userService.CreateGroupLoginIfNeeded(group);
+                await _userService.CreateGroupLoginIfNeeded(group);
 
             var users = await _context.User.Where((x => x.GroupId == groupId && x.FboId == 0)).ToListAsync();
 
@@ -165,7 +155,7 @@ namespace FBOLinx.Web.Controllers
             var fbo = await _context.Fbos.FindAsync(fboId);
 
             if (fbo != null)
-                _userService.CreateFBOLoginIfNeeded(fbo);
+                await _userService.CreateFBOLoginIfNeeded(fbo);
 
             var users = await _context.User.Where((x => x.FboId == fboId)).ToListAsync();
 
@@ -200,7 +190,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (id != UserService.GetClaimedUserId(_httpContextAccessor) && UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (id != JwtManager.GetClaimedUserId(_httpContextAccessor) && JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return BadRequest(ModelState);
             }
@@ -236,7 +226,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -269,7 +259,7 @@ namespace FBOLinx.Web.Controllers
                 user.ResetPasswordTokenExpiration = DateTime.UtcNow.AddDays(7);
                 await _context.SaveChangesAsync();
 
-                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, token);
+                await _ResetPasswordService.SendResetPasswordEmailAsync(user.FirstName + " " + user.LastName, user.Username, HttpUtility.UrlEncode(token));
             }
 
             return Ok();
@@ -326,7 +316,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
             {
                 return Unauthorized();
             }
@@ -364,7 +354,7 @@ namespace FBOLinx.Web.Controllers
             try
             {
 
-                int fboId = UserService.GetClaimedFboId(_httpContextAccessor);
+                int fboId = JwtManager.GetClaimedFboId(_httpContextAccessor);
 
                 PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
 
@@ -393,7 +383,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (UserService.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && UserService.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -423,6 +413,34 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
+        private async Task HandlePreLoginEvents(User user)
+        {
+            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+
+            if (fbo != null)
+            {
+                fbo.fboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
+                fbo.LastLogin = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+
+            try
+            {
+                var group = await _context.Group.FindAsync(user.GroupId);
+
+                if (group.IsLegacyAccount == true)
+                {
+                    await _fboService.DoLegacyGroupTransition(group.Oid);
+
+                    group.IsLegacyAccount = false;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
+        }
         
     }
 }

@@ -5,90 +5,90 @@
 
 //Main palette
 $palette: (
-  50 : #e5e6e9,
-  100 : #bec0c8,
-  200 : #9296a3,
-  300 : #666c7e,
-  400 : #464d63,
-  500 : #252d47,
-  600 : #212840,
-  700 : #1b2237,
-  800 : #161c2f,
-  900 : #0d1120,
-  A100 : #6177ff,
-  A200 : #2e4cff,
-  A400 : #0024fa,
-  A700 : #0020e0,
-  contrast: (
-    50 : #000000,
-    100 : #000000,
-    200 : #000000,
-    300 : #ffffff,
-    400 : #ffffff,
-    500 : #ffffff,
-    600 : #ffffff,
-    700 : #ffffff,
-    800 : #ffffff,
-    900 : #ffffff,
-    A100 : #ffffff,
-    A200 : #ffffff,
-    A400 : #ffffff,
-    A700 : #ffffff,
-  )
+    50: #e5e6e9,
+    100: #bec0c8,
+    200: #9296a3,
+    300: #666c7e,
+    400: #464d63,
+    500: #252d47,
+    600: #212840,
+    700: #1b2237,
+    800: #161c2f,
+    900: #0d1120,
+    A100: #6177ff,
+    A200: #2e4cff,
+    A400: #0024fa,
+    A700: #0020e0,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #ffffff,
+        400: #ffffff,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #ffffff,
+        A200: #ffffff,
+        A400: #ffffff,
+        A700: #ffffff,
+    ),
 );
 @function main-color($key: $palette) {
-  @return map-get($palette, $key);
+    @return map-get($palette, $key);
 }
 @function main-contrast($key: $palette) {
-  @return map-get(map-get($palette, contrast), $key);
+    @return map-get(map-get($palette, contrast), $key);
 }
 
 //Accent palette
 $accent-palette: (
-  50 : #e4f2fe,
-  100 : #bce0fb,
-  200 : #90cbf9,
-  300 : #64b6f7,
-  400 : #42a6f5,
-  500 : #2196f3,
-  600 : #1d8ef1,
-  700 : #1883ef,
-  800 : #1479ed,
-  900 : #0b68ea,
-  A100 : #ffffff,
-  A200 : #e1ecff,
-  A400 : #aeccff,
-  A700 : #95bcff,
-  contrast: (
-    50 : #000000,
-    100 : #000000,
-    200 : #000000,
-    300 : #000000,
-    400 : #000000,
-    500 : #ffffff,
-    600 : #ffffff,
-    700 : #ffffff,
-    800 : #ffffff,
-    900 : #ffffff,
-    A100 : #000000,
-    A200 : #000000,
-    A400 : #000000,
-    A700 : #000000,
-  )
+    50: #e4f2fe,
+    100: #bce0fb,
+    200: #90cbf9,
+    300: #64b6f7,
+    400: #42a6f5,
+    500: #2196f3,
+    600: #1d8ef1,
+    700: #1883ef,
+    800: #1479ed,
+    900: #0b68ea,
+    A100: #ffffff,
+    A200: #e1ecff,
+    A400: #aeccff,
+    A700: #95bcff,
+    contrast: (
+        50: #000000,
+        100: #000000,
+        200: #000000,
+        300: #000000,
+        400: #000000,
+        500: #ffffff,
+        600: #ffffff,
+        700: #ffffff,
+        800: #ffffff,
+        900: #ffffff,
+        A100: #000000,
+        A200: #000000,
+        A400: #000000,
+        A700: #000000,
+    ),
 );
 @function accent-color($key: $accent-palette) {
-  @return map-get($accent-palette, $key);
+    @return map-get($accent-palette, $key);
 }
 @function accent-contrast($key: $accent-palette) {
-  @return map-get(map-get($accent-palette, contrast), $key);
+    @return map-get(map-get($accent-palette, contrast), $key);
 }
 
-$success-color: #81C784;
+$success-color: #81c784;
 $success-contrast: #000;
-$info-color: #64B5F6;
-$gray-color: #E5E6E9;
+$info-color: #64b5f6;
+$gray-color: #e5e6e9;
 $info-contrast: #000;
-$warning-color: #FFB74D;
+$warning-color: #ffb74d;
 $warning-contrast: #000;
 $error-color: #e24d4d;
 $accent-color: #e57373;
@@ -99,7 +99,7 @@ $blank-color: #fff;
 $main-bg: #f8f8f8;
 $main-text-color: #000;
 $main-fs: 16px;
-$main-ff: 'Lato', sans-serif;
+$main-ff: "Lato", sans-serif;
 $main-fw: 400;
 $module: 11px;
 $main-lh: ($module * 2 / $main-fs);
@@ -107,7 +107,7 @@ $module-rem: ($module / $main-fs) * 1rem;
 $shape: 3px;
 
 //Second
-$second-ff: 'Ubuntu', serif;
+$second-ff: "Ubuntu", serif;
 
 //Animationng serve
 $animation: ease-in-out;
@@ -136,34 +136,29 @@ $vertical-navbar-compress-width: $module-rem * 6;
 
 //Menu
 $menu: (
-  accent-color: accent-color(500),
-
-  //item
-  item-color: main-color(500),
-  item-hover-color: accent-color(500),
-  item-active-color: accent-color(500),
-  item-group-color: main-color(300),
-  item-bg: transparent,
-  item-hover-bg: transparent,
-  item-active-bg: transparent,
-  item-group-bg-compress: main-color(200),
-
-  //separator
-  separator: main-color(300),
-
-  //icon
-  icon-color: inherit,
-  icon-hover-color: inherit,
-  icon-active-color: accent-color(500),
-  icon-br: 50%,
-
-  //badge
-  badge-color: rgba(accent-color(500),.2),
-  badge-bg: accent-color(500),
-
-  //sub
-  sub-bg: transparent,
-  sub-separator: main-color(300)
+    accent-color: accent-color(500),
+    //item
+    item-color: main-color(500),
+    item-hover-color: accent-color(500),
+    item-active-color: accent-color(500),
+    item-group-color: main-color(300),
+    item-bg: transparent,
+    item-hover-bg: transparent,
+    item-active-bg: transparent,
+    item-group-bg-compress: main-color(200),
+    //separator
+    separator: main-color(300),
+    //icon
+    icon-color: inherit,
+    icon-hover-color: inherit,
+    icon-active-color: accent-color(500),
+    icon-br: 50%,
+    //badge
+    badge-color: rgba(accent-color(500), 0.2),
+    badge-bg: accent-color(500),
+    //sub
+    sub-bg: transparent,
+    sub-separator: main-color(300),
 );
 
 //Footer
@@ -177,9 +172,9 @@ $card-header-color: main-contrast(50);
 //Preloader
 $loader-overlay-bg: #fff;
 $loader-colors: (
-  1: main-color(300),
-  2: accent-color(500),
-  3: main-color(900),
-  4: main-color(900),
-  5: main-color(900)
+    1: main-color(300),
+    2: accent-color(500),
+    3: main-color(900),
+    4: main-color(900),
+    5: main-color(900),
 );

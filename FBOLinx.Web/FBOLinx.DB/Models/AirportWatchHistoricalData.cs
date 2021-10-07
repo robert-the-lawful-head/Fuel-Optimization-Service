@@ -41,6 +41,7 @@ namespace FBOLinx.DB.Models
         public int? GpsAltitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
         public AircraftStatusType AircraftStatus { get; set; }
+        public string AirportICAO { get; set; }
 
         public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)
         {
@@ -83,6 +84,7 @@ namespace FBOLinx.DB.Models
             oldRecord.GpsAltitude = newRecord.GpsAltitude;
             oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
             oldRecord.AircraftStatus = newRecord.AircraftStatus;
+            oldRecord.AirportICAO = newRecord.AirportICAO;
         }
     }
 }

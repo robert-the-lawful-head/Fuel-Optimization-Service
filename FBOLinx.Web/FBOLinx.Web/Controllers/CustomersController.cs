@@ -57,6 +57,25 @@ namespace FBOLinx.Web.Controllers
             return Ok(customers);
         }
 
+        // GET: api/Customers/getbyfuelerlinxid/5
+        [HttpGet("getbyfuelerlinxid/{fuelerlinxid}")]
+        public async Task<IActionResult> GetCustomerByFuelerlinxId([FromRoute] int fuelerlinxid)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customer = await _context.Customers.Where(x => x.FuelerlinxId == fuelerlinxid).FirstOrDefaultAsync();
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customer);
+        }
+
         // PUT: api/Customers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomers([FromRoute] int id, [FromBody] Customers customers)

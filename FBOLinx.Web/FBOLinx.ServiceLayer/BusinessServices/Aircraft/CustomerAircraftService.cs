@@ -60,7 +60,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             result.ForEach(x =>
             {
-                var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.CustomerAircraftId == x.Oid);
+                var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
                 x.PricingTemplateId = pricingTemplate?.Oid;
                 x.PricingTemplateName = pricingTemplate?.Name;
 
@@ -70,6 +70,27 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 if (x.Size == AirCrafts.AircraftSizes.NotSet && aircraft?.Size.GetValueOrDefault() != AirCrafts.AircraftSizes.NotSet)
                     x.Size = aircraft?.Size;
             });
+
+            return result;
+        }
+
+        public async Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId)
+        {
+            var allAircraft = await _AircraftService.GetAllAircrafts();
+
+            List<CustomerAircraftsViewModel> result = await (
+               from ca in _Context.CustomerAircrafts
+               join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+               join c in _Context.Customers on cg.CustomerId equals c.Oid
+               join cct in _Context.CustomCustomerTypes on new { fboId, CustomerId = c.Oid } equals new { fboId = cct.Fboid, cct.CustomerId }
+               where ca.GroupId == groupId && cct.Fboid == fboId && !string.IsNullOrEmpty(ca.TailNumber)
+               select new CustomerAircraftsViewModel
+               {
+                   TailNumber = ca.TailNumber,
+               })
+               .Distinct()
+               .OrderBy(x => x.TailNumber)
+               .ToListAsync();
 
             return result;
         }

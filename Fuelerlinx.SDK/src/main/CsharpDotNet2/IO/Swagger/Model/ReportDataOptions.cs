@@ -36,6 +36,13 @@ namespace IO.Swagger.Model {
     public List<ReportColumnDTO> Columns { get; set; }
 
     /// <summary>
+    /// Gets or Sets SummaryColumns
+    /// </summary>
+    [DataMember(Name="summaryColumns", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "summaryColumns")]
+    public List<ReportColumnDTO> SummaryColumns { get; set; }
+
+    /// <summary>
     /// Gets or Sets Currency
     /// </summary>
     [DataMember(Name="currency", EmitDefaultValue=false)]
@@ -53,6 +60,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ReportType: ").Append(ReportType).Append("\n");
       sb.Append("  DefaultViewType: ").Append(DefaultViewType).Append("\n");
       sb.Append("  Columns: ").Append(Columns).Append("\n");
+      sb.Append("  SummaryColumns: ").Append(SummaryColumns).Append("\n");
       sb.Append("  Currency: ").Append(Currency).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

@@ -4,13 +4,16 @@ All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
+[**ChangeCredentials**](UserApi.md#changecredentials) | **POST** /api/User/change-credentials | Internal use only - Change the username/password for an account if it meets security requirements.
 [**DeleteCompanyUserProfiles**](UserApi.md#deletecompanyuserprofiles) | **DELETE** /api/User/company-user-profiles/{id} | Deletes company user profile based on Id
 [**DeleteCredentials**](UserApi.md#deletecredentials) | **DELETE** /api/User/credentials/{id} | Deletes user credentials based on Id
 [**DeleteUserFromIFlightPlanner**](UserApi.md#deleteuserfromiflightplanner) | **DELETE** /api/User/iflightplanner/user | Internal use only - Delete a user from iFlightPlanner to stop the flight planning integration.
 [**ExchangeRefreshToken**](UserApi.md#exchangerefreshtoken) | **POST** /api/User/refreshtoken | Exchanges a valid [RefreshToken] and expired [AccessToken] for a new [RefreshToken] and [AccessToken].
+[**GetAuthenticatedUser**](UserApi.md#getauthenticateduser) | **GET** /api/User | Fetch the currently authenticated user.
 [**GetCompanyUserProfiles**](UserApi.md#getcompanyuserprofiles) | **GET** /api/User/company-user-profiles/by-company/list | Fetches all user profiles by companyId
 [**GetCredentials**](UserApi.md#getcredentials) | **GET** /api/User/credentials/{id} | Fetches user credentials by Id
 [**GetCredentialsList**](UserApi.md#getcredentialslist) | **GET** /api/User/credentials/list | Fetches all user credentials
+[**GetImpersonatedAuthTokenForUser**](UserApi.md#getimpersonatedauthtokenforuser) | **GET** /api/User/impersonation/token-for-user/{id} | Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
 [**GetUser**](UserApi.md#getuser) | **GET** /api/User/{id} | Fetch a user by their [id].
 [**GetUserByCredentials**](UserApi.md#getuserbycredentials) | **GET** /api/User/by-credentials/{username}/{password} | 
 [**PostCompanyUserProfiles**](UserApi.md#postcompanyuserprofiles) | **POST** /api/User/company-user-profiles | 
@@ -23,6 +26,75 @@ Method | HTTP request | Description
 [**UserAuthTokenFromAccessToken**](UserApi.md#userauthtokenfromaccesstoken) | **POST** /api/User/accesstoken | Authenticates a user from an existing [AccessToken].
 [**UserAuthTokenFromIFlightPlannerGUID**](UserApi.md#userauthtokenfromiflightplannerguid) | **GET** /api/User/iflightplanner/user/{guid} | Authenticate a user via the iFlightPlanner integration
 
+
+<a name="changecredentials"></a>
+# **ChangeCredentials**
+> PostChangeCredentialsResponse ChangeCredentials (PostChangeCredentialsRequest body)
+
+Internal use only - Change the username/password for an account if it meets security requirements.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class ChangeCredentialsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var body = new PostChangeCredentialsRequest(); // PostChangeCredentialsRequest |  (optional) 
+
+            try
+            {
+                // Internal use only - Change the username/password for an account if it meets security requirements.
+                PostChangeCredentialsResponse result = apiInstance.ChangeCredentials(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.ChangeCredentials: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**PostChangeCredentialsRequest**](PostChangeCredentialsRequest.md)|  | [optional] 
+
+### Return type
+
+[**PostChangeCredentialsResponse**](PostChangeCredentialsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 <a name="deletecompanyuserprofiles"></a>
 # **DeleteCompanyUserProfiles**
@@ -298,6 +370,73 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getauthenticateduser"></a>
+# **GetAuthenticatedUser**
+> CustomerDataDTO GetAuthenticatedUser ()
+
+Fetch the currently authenticated user.
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetAuthenticatedUserExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+
+            try
+            {
+                // Fetch the currently authenticated user.
+                CustomerDataDTO result = apiInstance.GetAuthenticatedUser();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.GetAuthenticatedUser: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**CustomerDataDTO**](CustomerDataDTO.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getcompanyuserprofiles"></a>
 # **GetCompanyUserProfiles**
 > CompanyUserProfileListResponse GetCompanyUserProfiles ()
@@ -497,9 +636,78 @@ This endpoint does not need any parameter.
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getimpersonatedauthtokenforuser"></a>
+# **GetImpersonatedAuthTokenForUser**
+> UserAuthTokenResponse GetImpersonatedAuthTokenForUser (int? id)
+
+Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetImpersonatedAuthTokenForUserExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new UserApi();
+            var id = 56;  // int? | 
+
+            try
+            {
+                // Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management.
+                UserAuthTokenResponse result = apiInstance.GetImpersonatedAuthTokenForUser(id);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling UserApi.GetImpersonatedAuthTokenForUser: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | **int?**|  | 
+
+### Return type
+
+[**UserAuthTokenResponse**](UserAuthTokenResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getuser"></a>
 # **GetUser**
-> UserDTO GetUser (int? id)
+> CustomerDataDTO GetUser (int? id)
 
 Fetch a user by their [id].
 
@@ -535,7 +743,7 @@ namespace Example
             try
             {
                 // Fetch a user by their [id].
-                UserDTO result = apiInstance.GetUser(id);
+                CustomerDataDTO result = apiInstance.GetUser(id);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -555,7 +763,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**UserDTO**](UserDTO.md)
+[**CustomerDataDTO**](CustomerDataDTO.md)
 
 ### Authorization
 

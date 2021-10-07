@@ -35,6 +35,7 @@ namespace FBOLinx.DB.Models
         public bool? CopyAlerts { get; set; }
         [StringLength(50)]
         public string Extension { get; set; }
+        public bool? CopyOrders { get; set; }
 
         [InverseProperty("Contact")]
         public Fbocontacts FboContact { get; set; }

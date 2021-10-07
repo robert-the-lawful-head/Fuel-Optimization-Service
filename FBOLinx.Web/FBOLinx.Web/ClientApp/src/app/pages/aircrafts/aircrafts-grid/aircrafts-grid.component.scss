@@ -1,1 +1,16 @@
-﻿
+.table-container {
+    height: calc(100vh - 357px);
+    min-height: 300px;
+}
+
+.mat-tab-body.mat-tab-body-active {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 1;
+    flex-grow: 1;
+}
+
+.customer-aircraft-table div.container-fluid div.col-11 {
+padding-top: 10px;
+}

@@ -1,0 +1,60 @@
+<h1 mat-dialog-title>Send Email</h1>
+<div mat-dialog-content>
+    <mat-tab-group>
+        <mat-tab label="Email Template">
+            <mat-form-field style="max-width: 600px">
+                <input
+                    aria-label="Subject"
+                    [(ngModel)]="data.emailTemplate.subject"
+                    matInput
+                    placeholder="Subject"
+                />
+            </mat-form-field>
+
+            <mat-form-field style="max-width: 200px">
+                <input
+                    aria-label="From email"
+                    [(ngModel)]="data.emailTemplate.fromAddress"
+                    matInput
+                    placeholder="From email"
+                />
+            </mat-form-field>
+            @FBOLinx.com
+
+            <mat-form-field style="max-width: 600px">
+                <input
+                    aria-label="Reply To"
+                    [(ngModel)]="data.emailTemplate.replyTo"
+                    matInput
+                    placeholder="Reply To"
+                />
+            </mat-form-field>
+
+            <ejs-richtexteditor
+                [(ngModel)]="data.emailTemplate.emailContentHtml"
+                placeholder="Enter email body here..."
+            ></ejs-richtexteditor>
+        </mat-tab>
+        <mat-tab label="Customer Emails">
+            <ejs-grid #grid height="300px" [dataSource]="gridData">
+                <e-columns>
+                    <e-column field="company" headerText="Company"></e-column>
+                    <e-column
+                        field="firstName"
+                        headerText="First Name"
+                    ></e-column>
+                    <e-column
+                        field="lastName"
+                        headerText="Last Name"
+                    ></e-column>
+                    <e-column field="email" headerText="Email"></e-column>
+                </e-columns>
+            </ejs-grid>
+        </mat-tab>
+    </mat-tab-group>
+</div>
+<div mat-dialog-actions>
+    <button [mat-dialog-close]="data" color="accent" mat-raised-button>
+        Send Email
+    </button>
+</div>

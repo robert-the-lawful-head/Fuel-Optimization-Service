@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Job.AirportWatch
 {
@@ -15,15 +16,17 @@ namespace FBOLinx.Job.AirportWatch
         private string _lastWatchedFile = "";
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
-        private readonly ApiClient _apiClient;
+        private bool _isPostingData = false;
+        private DateTime? _LastPostDateTimeUTC;
+        private List<string> _apiClientUrls;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
-            _apiClient = new ApiClient(config["FBOLinxApiUrl"]);
+            _apiClientUrls = config["FBOLinxApiUrls"].ToString().Split(";").ToList();
         }
 
-        public void Run()
+        public async Task Run()
         {
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {
@@ -49,6 +52,10 @@ namespace FBOLinx.Job.AirportWatch
 
         private void OnChanged(object source, FileSystemEventArgs e)
         {
+            //Don't push more often than every 9 seconds to prevent consistent spikes
+            if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(9))
+                return;
+            
             using var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(_config["AirportWatchJobLog"])
@@ -56,21 +63,35 @@ namespace FBOLinx.Job.AirportWatch
 
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
+            if (_isPostingData)
+            {
+                logger.Information("Fbolinx api call delayed - previous POST still in progress.");
+                return;
+            }
+
+            _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
 
             if (airportWatchData.Count > 0)
             {
-                try
+                foreach (var apiClientUrl in _apiClientUrls)
                 {
-                    _apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
-                    logger.Information("Fbolinx api call succeed!");
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, $"Failed to call Fbolinx api!");
+                    try
+                    {
+                        var apiClient = new ApiClient(apiClientUrl.Trim());
+                        apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
+                        logger.Information("Fbolinx api call succeed!");
+                        _LastPostDateTimeUTC = DateTime.UtcNow;
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, $"Failed to call Fbolinx api!");
+                    }
                 }
             }
+
+            _isPostingData = false;
         }
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)

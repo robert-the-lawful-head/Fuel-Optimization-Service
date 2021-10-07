@@ -29,9 +29,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly GroupFboService _groupFboService;
+        private readonly GroupService _groupService;
         private readonly CustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService, GroupService groupService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -39,14 +40,15 @@ namespace FBOLinx.Web.Controllers
             _HttpContextAccessor = httpContextAccessor;
             _serviceScopeFactory = serviceScopeFactory;
             _customerService = customerService;
+            _groupService = groupService;
         }
 
         // GET: api/Groups
         [HttpGet]
         public async Task<IEnumerable<Group>> GetGroup()
         {
-            int groupId = UserService.GetClaimedGroupId(_HttpContextAccessor);
-            var role = UserService.GetClaimedRole(_HttpContextAccessor);
+            int groupId = JwtManager.GetClaimedGroupId(_HttpContextAccessor);
+            var role = JwtManager.GetClaimedRole(_HttpContextAccessor);
 
             return await _context.Group
                         .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == DB.Models.User.UserRoles.Conductor))
@@ -58,7 +60,30 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group-fbo")]
         public async Task<IActionResult> GetGroupsAndFbos()
         {
+            await DisableExpiredAccounts();
+
             var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+
+            var companyPricingLogs = await (from cpl in _context.CompanyPricingLog
+                                            join fa in _context.Fboairports on cpl.ICAO equals fa.Icao
+                                            join f in _context.Fbos on fa.Fboid equals f.Oid
+                                            where cpl.CreatedDate >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                            select new
+                                            {
+                                                cpl.Oid,
+                                                FboId = f.Oid,
+                                                f.GroupId
+                                            }).ToListAsync();
+
+            var fuelReqs = await (from fr in _context.FuelReq
+                                  join f in _context.Fbos on fr.Fboid equals f.Oid
+                                  where fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                  select new
+                                  {
+                                      fr.Oid,
+                                      fr.Fboid,
+                                      f.GroupId
+                                  }).ToListAsync();
 
             var groups = await _context.Group
                             .Where(x => !string.IsNullOrEmpty(x.GroupName))
@@ -85,6 +110,8 @@ namespace FBOLinx.Web.Controllers
             {
                 var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
                 group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+                group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Oid);
+                group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
             }
 
             var fboPrices = from f in _context.Fboprices
@@ -109,7 +136,8 @@ namespace FBOLinx.Web.Controllers
                                   Oid = f.Oid,
                                   GroupId = f.GroupId ?? 0,
                                   PricingExpired = fprices.fboId == null,
-                                  LastLogin = f.LastLogin
+                                  LastLogin = f.LastLogin,
+                                  AccountExpired = f.Active != true
                               }).ToListAsync();
 
             var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
@@ -117,6 +145,16 @@ namespace FBOLinx.Web.Controllers
             {
                 f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
                 f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
+                f.Quotes30Days = companyPricingLogs.Count(cpl => cpl.FboId == f.Oid);
+                f.Orders30Days = fuelReqs.Count(fr => fr.Fboid == f.Oid);
+            });
+
+            groups.ForEach(g =>
+            {
+                var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
+                g.FboCount = groupFbos.Count();
+                g.ExpiredFboPricingCount = groupFbos.Count(f => f.PricingExpired == true);
+                g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
             });
 
             return Ok(new GroupFboViewModel
@@ -138,7 +176,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -169,7 +207,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != UserService.GetClaimedGroupId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
@@ -427,6 +465,79 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(@group);
+        }
+
+
+        [HttpGet("group/{groupId}/logo")]
+        public async Task<IActionResult> GetFboLogo([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var logoUrl = await _groupService.GetLogo(groupId);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
+        [HttpPost("upload-logo")]
+        public async Task<IActionResult> PostFboLogo([FromBody] GroupLogoRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (request.FileData.Contains(","))
+                {
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                }
+
+                var logoUrl = await _groupService.UploadLogo(request);
+
+                return Ok(new { Message = logoUrl });
+            }
+            catch (Exception)
+            {
+                return Ok(new { Message = "" });
+            }
+        }
+
+        private async Task DisableExpiredAccounts()
+        {
+            var expiredFbos = await _context.Fbos
+                .Where(f => f.Active == true && f.ExpirationDate != null && f.ExpirationDate < DateTime.UtcNow)
+                .ToListAsync();
+
+            expiredFbos.ForEach(fbo =>
+            {
+                fbo.Active = false;
+            });
+
+            await _context.SaveChangesAsync();
+        }
+
+        [HttpDelete("group/{groupId}/logo")]
+        public async Task<IActionResult> DeleteLogo([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _groupService.DeleteLogo(groupId);
+
+            return Ok();
         }
     }
 }

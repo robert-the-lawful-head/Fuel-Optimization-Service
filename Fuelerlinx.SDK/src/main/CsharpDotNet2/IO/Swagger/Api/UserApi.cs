@@ -12,6 +12,12 @@ namespace IO.Swagger.Api
     public interface IUserApi
     {
         /// <summary>
+        /// Internal use only - Change the username/password for an account if it meets security requirements. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostChangeCredentialsResponse</returns>
+        PostChangeCredentialsResponse ChangeCredentials (PostChangeCredentialsRequest body);
+        /// <summary>
         /// Deletes company user profile based on Id 
         /// </summary>
         /// <param name="id"></param>
@@ -35,6 +41,11 @@ namespace IO.Swagger.Api
         /// <returns>ExchangeRefreshTokenResponse</returns>
         ExchangeRefreshTokenResponse ExchangeRefreshToken (ExchangeRefreshTokenRequest body);
         /// <summary>
+        /// Fetch the currently authenticated user. 
+        /// </summary>
+        /// <returns>CustomerDataDTO</returns>
+        CustomerDataDTO GetAuthenticatedUser ();
+        /// <summary>
         /// Fetches all user profiles by companyId 
         /// </summary>
         /// <returns>CompanyUserProfileListResponse</returns>
@@ -51,11 +62,17 @@ namespace IO.Swagger.Api
         /// <returns>CredentialsListResponse</returns>
         CredentialsListResponse GetCredentialsList ();
         /// <summary>
+        /// Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>UserAuthTokenResponse</returns>
+        UserAuthTokenResponse GetImpersonatedAuthTokenForUser (int? id);
+        /// <summary>
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns>UserDTO</returns>
-        UserDTO GetUser (int? id);
+        /// <returns>CustomerDataDTO</returns>
+        CustomerDataDTO GetUser (int? id);
         /// <summary>
         ///  
         /// </summary>
@@ -171,6 +188,40 @@ namespace IO.Swagger.Api
         /// </summary>
         /// <value>An instance of the ApiClient</value>
         public ApiClient ApiClient {get; set;}
+    
+        /// <summary>
+        /// Internal use only - Change the username/password for an account if it meets security requirements. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostChangeCredentialsResponse</returns>            
+        public PostChangeCredentialsResponse ChangeCredentials (PostChangeCredentialsRequest body)
+        {
+            
+    
+            var path = "/api/User/change-credentials";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling ChangeCredentials: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling ChangeCredentials: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostChangeCredentialsResponse) ApiClient.Deserialize(response.Content, typeof(PostChangeCredentialsResponse), response.Headers);
+        }
     
         /// <summary>
         /// Deletes company user profile based on Id 
@@ -313,6 +364,38 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Fetch the currently authenticated user. 
+        /// </summary>
+        /// <returns>CustomerDataDTO</returns>            
+        public CustomerDataDTO GetAuthenticatedUser ()
+        {
+            
+    
+            var path = "/api/User";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAuthenticatedUser: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetAuthenticatedUser: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CustomerDataDTO) ApiClient.Deserialize(response.Content, typeof(CustomerDataDTO), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetches all user profiles by companyId 
         /// </summary>
         /// <returns>CompanyUserProfileListResponse</returns>            
@@ -414,11 +497,48 @@ namespace IO.Swagger.Api
         }
     
         /// <summary>
+        /// Internal/Conductor use only - Fetch an auth token to impersonate a user for conductor user management. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>UserAuthTokenResponse</returns>            
+        public UserAuthTokenResponse GetImpersonatedAuthTokenForUser (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling GetImpersonatedAuthTokenForUser");
+            
+    
+            var path = "/api/User/impersonation/token-for-user/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetImpersonatedAuthTokenForUser: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetImpersonatedAuthTokenForUser: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UserAuthTokenResponse) ApiClient.Deserialize(response.Content, typeof(UserAuthTokenResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Fetch a user by their [id]. The authenticated user must have access to view this user&#39;s record.
         /// </summary>
         /// <param name="id"></param> 
-        /// <returns>UserDTO</returns>            
-        public UserDTO GetUser (int? id)
+        /// <returns>CustomerDataDTO</returns>            
+        public CustomerDataDTO GetUser (int? id)
         {
             
             // verify the required parameter 'id' is set
@@ -447,7 +567,7 @@ namespace IO.Swagger.Api
             else if (((int)response.StatusCode) == 0)
                 throw new ApiException ((int)response.StatusCode, "Error calling GetUser: " + response.ErrorMessage, response.ErrorMessage);
     
-            return (UserDTO) ApiClient.Deserialize(response.Content, typeof(UserDTO), response.Headers);
+            return (CustomerDataDTO) ApiClient.Deserialize(response.Content, typeof(CustomerDataDTO), response.Headers);
         }
     
         /// <summary>

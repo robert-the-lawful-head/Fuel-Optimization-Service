@@ -1,5 +1,5 @@
 <a #nodeInput (click)="openNavbar($event)" class="open-navbar" href="#">
-    <i class="icon fa fa-envelope" style="transform: scale(1.5,1.2);"></i>
+    <i class="icon fa fa-envelope" style="transform: scale(1.5, 1.2)"></i>
 </a>
 
 <div *ngIf="pricingTemplatesData.length == 0">
@@ -9,50 +9,106 @@
 <div *ngIf="pricingTemplatesData.length > 0" class="navbar-wrap">
     <div class="navbar-header">
         {{ title }}
-        <mat-slide-toggle (change)="selectAllTemplates()" [checked]="selectAll" [labelPosition]="labelPosition"
-                          color="accent" style="margin-left:217px;">All
-        </mat-slide-toggle>
+        <mat-slide-toggle
+            (change)="selectAllTemplates()"
+            [checked]="selectAll"
+            [labelPosition]="labelPosition"
+            (ngModel)="(selectAll)"
+            color="accent"
+            style="margin-left: 217px"
+            >All</mat-slide-toggle
+        >
     </div>
 
     <div class="navbar-content">
         <div>
-            <table #marginTable [dataSource]="marginTemplateDataSource" mat-table matSort>
+            <table
+                #marginTable
+                [dataSource]="marginTemplateDataSource"
+                mat-table
+                matSort
+            >
                 <!--<h5 class="mt-0">Frameworks</h5>-->
                 <ng-container matColumnDef="template">
-                    <td *matCellDef="let pricingTemplate" class="mb-1 col-10" mat-cell>
+                    <td
+                        *matCellDef="let pricingTemplate"
+                        class="mb-1 col-10"
+                        mat-cell
+                    >
                         <div class="row">
                             <div class="col-6">
-                                {{pricingTemplate.name}}
+                                {{ pricingTemplate.name }}
                             </div>
-                            <div class="col-4" style="padding-left:0px !important">
-                                <button (click)="openMarginInfo(pricingTemplate.oid)"
-                                        *ngIf="pricingTemplate.changeText && !pricingTemplate.sent"
-                                        [view]="'accent'" ni-button
-                                        size="small">Preview
+                            <div class="col-6">
+                                <span
+                                    class="font-italic"
+                                    *ngIf="
+                                        !pricingTemplate.customerEmails
+                                            .length &&
+                                        !(
+                                            pricingTemplate.changeText &&
+                                            !pricingTemplate.sent
+                                        )
+                                    "
+                                    >No emails on template</span
+                                >
+                                <button
+                                    (click)="
+                                        openMarginInfo(pricingTemplate.oid)
+                                    "
+                                    *ngIf="
+                                        pricingTemplate.changeText &&
+                                        !pricingTemplate.sent
+                                    "
+                                    [view]="'accent'"
+                                    ni-button
+                                    size="small"
+                                >
+                                    Preview
                                 </button>
                                 <p *ngIf="pricingTemplate.sent">Sent!</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div *ngIf="pricingTemplate.text"
-                                 class="col-8"
-                                 style="font-size:9px;margin-left:0px !important;vertical-align: baseline;line-height:18px;">
-                                {{pricingTemplate.text}}
+                            <div
+                                *ngIf="pricingTemplate.text"
+                                class="col-8"
+                                style="
+                                    font-size: 9px;
+                                    margin-left: 0px !important;
+                                    vertical-align: baseline;
+                                    line-height: 18px;
+                                "
+                            >
+                                {{ pricingTemplate.text }}
                             </div>
-
                         </div>
                         <!--*ngIf="!pricingTemplate.changeText && !pricingTemplate.sent"-->
                         <div class="row col-12">
-                            <mat-progress-bar [(value)]="pricingTemplate.val" color="#2196F3"
-                                              mode="determinate"></mat-progress-bar>
+                            <mat-progress-bar
+                                [(value)]="pricingTemplate.val"
+                                color="#2196F3"
+                                mode="determinate"
+                            ></mat-progress-bar>
                         </div>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="toggle">
-                    <td *matCellDef="let pricingTemplate" class="mb-1 col-2" mat-cell>
-                        <mat-slide-toggle #selectAll (change)="changeSentOption(pricingTemplate)"
-                                          (ngModel)="pricingTemplate.toSend"
-                                          [checked]="pricingTemplate.toSend"></mat-slide-toggle>
+                    <td
+                        *matCellDef="let pricingTemplate"
+                        class="mb-1 col-2"
+                        mat-cell
+                    >
+                        <mat-slide-toggle
+                            #selectAll
+                            (change)="changeSentOption(pricingTemplate)"
+                            (ngModel)="(pricingTemplate.toSend)"
+                            [checked]="
+                                pricingTemplate.customerEmails.length > 0 &&
+                                pricingTemplate.toSend
+                            "
+                            [disabled]="!pricingTemplate.customerEmails.length"
+                        ></mat-slide-toggle>
                     </td>
                 </ng-container>
                 <!--<mat-progress-bar mode="determinate" color="accent" [value]="98"></mat-progress-bar>
@@ -63,19 +119,30 @@
                 <p class="mb-1">Backbone.js</p>
                 <mat-progress-bar mode="determinate" color="accent" [value]="38"></mat-progress-bar>-->
                 <tr mat-header-row></tr>
-                <tr (mouseenter)="row.changeText=true" (mouseleave)="row.changeText=false"
-                    *matRowDef="let row; columns: displayedColumns;"
-                    mat-row></tr>
+                <tr
+                    (mouseenter)="row.changeText = true"
+                    (mouseleave)="row.changeText = false"
+                    *matRowDef="let row; columns: displayedColumns"
+                    mat-row
+                ></tr>
             </table>
         </div>
         <div>
-            <mat-paginator [length]="resultsLength" [pageSize]="10"></mat-paginator>
+            <mat-paginator
+                [length]="resultsLength"
+                [pageSize]="10"
+            ></mat-paginator>
         </div>
-        <div style="margin-top:20px; margin-right:10px;">
-            <button (click)="confirmSendEmails()" [view]="'success'" class="float-right"
-                    ni-button>{{buttontext}}</button>
+        <div style="margin-top: 20px; margin-right: 10px">
+            <button
+                (click)="confirmSendEmails()"
+                [view]="'success'"
+                class="float-right"
+                ni-button
+            >
+                {{ buttontext }}
+            </button>
         </div>
     </div>
-    <div class="navbar-footer m-md-3">
-    </div>
+    <div class="navbar-footer m-md-3"></div>
 </div>

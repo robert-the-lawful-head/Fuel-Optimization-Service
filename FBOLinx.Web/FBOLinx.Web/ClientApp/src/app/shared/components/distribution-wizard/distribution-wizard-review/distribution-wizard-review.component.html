@@ -1,24 +1,31 @@
 <h1 mat-dialog-title>Send Preview Email</h1>
 <div mat-dialog-content>
-    <div class="mb-3">
-        Please provide your email address below.
-    </div>
+    <div class="mb-3">Please provide your email address below.</div>
     <div>
         <mat-form-field>
-            <input #email="ngModel" [(ngModel)]="previewEmail" [email]="true" aria-label="Email" matInput
-                   placeholder="Email" type="email">
+            <input
+                #email="ngModel"
+                [(ngModel)]="previewEmail"
+                [email]="true"
+                aria-label="Email"
+                matInput
+                placeholder="Email"
+                type="email"
+            />
         </mat-form-field>
-        <div *ngIf="email.errors?.email" style="color: red;">
+        <div *ngIf="email.errors?.email" style="color: red">
             Please enter a valid email address.
         </div>
     </div>
 </div>
 <div class="mt-2 text-center">
-    <button [disabled]="!previewEmail || !previewEmail.length"
-            [mat-dialog-close]="previewEmail"
-            class="mr-1"
-            color="accent"
-            mat-flat-button>
+    <button
+        [disabled]="!previewEmail || !previewEmail.length"
+        [mat-dialog-close]="previewEmail"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
         Send Preview Email
     </button>
     <button (click)="closeDialog()" mat-stroked-button>Cancel</button>

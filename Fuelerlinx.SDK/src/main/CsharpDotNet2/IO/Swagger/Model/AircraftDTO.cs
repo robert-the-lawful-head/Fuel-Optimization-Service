@@ -13,6 +13,13 @@ namespace IO.Swagger.Model {
   [DataContract]
   public class AircraftDTO {
     /// <summary>
+    /// Gets or Sets Id
+    /// </summary>
+    [DataMember(Name="id", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "id")]
+    public int? Id { get; set; }
+
+    /// <summary>
     /// Gets or Sets AircraftId
     /// </summary>
     [DataMember(Name="aircraftId", EmitDefaultValue=false)]
@@ -189,6 +196,7 @@ namespace IO.Swagger.Model {
     public override string ToString()  {
       var sb = new StringBuilder();
       sb.Append("class AircraftDTO {\n");
+      sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  AircraftId: ").Append(AircraftId).Append("\n");
       sb.Append("  Make: ").Append(Make).Append("\n");
       sb.Append("  Model: ").Append(Model).Append("\n");

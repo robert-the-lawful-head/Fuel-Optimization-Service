@@ -56,6 +56,13 @@ namespace IO.Swagger.Model {
     public int? SchedulingIntegrationType { get; set; }
 
     /// <summary>
+    /// Gets or Sets SchedulingIntegrationTypeDescription
+    /// </summary>
+    [DataMember(Name="schedulingIntegrationTypeDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "schedulingIntegrationTypeDescription")]
+    public string SchedulingIntegrationTypeDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets SchedulingUserName
     /// </summary>
     [DataMember(Name="schedulingUserName", EmitDefaultValue=false)]
@@ -146,6 +153,20 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "keepManualPriceVendorWhenInvoiced")]
     public bool? KeepManualPriceVendorWhenInvoiced { get; set; }
 
+    /// <summary>
+    /// Gets or Sets MatchInvoicedTransactionsToScheduling
+    /// </summary>
+    [DataMember(Name="matchInvoicedTransactionsToScheduling", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "matchInvoicedTransactionsToScheduling")]
+    public bool? MatchInvoicedTransactionsToScheduling { get; set; }
+
+    /// <summary>
+    /// Gets or Sets ForceReconcileDiscrepancyInFavor
+    /// </summary>
+    [DataMember(Name="forceReconcileDiscrepancyInFavor", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "forceReconcileDiscrepancyInFavor")]
+    public bool? ForceReconcileDiscrepancyInFavor { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -160,6 +181,7 @@ namespace IO.Swagger.Model {
       sb.Append("  HomeBase: ").Append(HomeBase).Append("\n");
       sb.Append("  PriceSync: ").Append(PriceSync).Append("\n");
       sb.Append("  SchedulingIntegrationType: ").Append(SchedulingIntegrationType).Append("\n");
+      sb.Append("  SchedulingIntegrationTypeDescription: ").Append(SchedulingIntegrationTypeDescription).Append("\n");
       sb.Append("  SchedulingUserName: ").Append(SchedulingUserName).Append("\n");
       sb.Append("  SchedulingPassword: ").Append(SchedulingPassword).Append("\n");
       sb.Append("  SchedulingDataPath: ").Append(SchedulingDataPath).Append("\n");
@@ -173,6 +195,8 @@ namespace IO.Swagger.Model {
       sb.Append("  DisableCrowdSourcedRampFees: ").Append(DisableCrowdSourcedRampFees).Append("\n");
       sb.Append("  ReconcileMatchingInvoicedTransactions: ").Append(ReconcileMatchingInvoicedTransactions).Append("\n");
       sb.Append("  KeepManualPriceVendorWhenInvoiced: ").Append(KeepManualPriceVendorWhenInvoiced).Append("\n");
+      sb.Append("  MatchInvoicedTransactionsToScheduling: ").Append(MatchInvoicedTransactionsToScheduling).Append("\n");
+      sb.Append("  ForceReconcileDiscrepancyInFavor: ").Append(ForceReconcileDiscrepancyInFavor).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -7,7 +7,7 @@ import {
     OnInit,
     Output,
     SimpleChanges,
-    ViewChild
+    ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -17,10 +17,12 @@ import { isEqual } from 'lodash';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
 // Shared components
 import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
-import { ColumnType, TableSettingsComponent } from '../../../shared/components/table-settings/table-settings.component';
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from '../../../shared/components/table-settings/table-settings.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -72,28 +74,31 @@ const initialColumns: ColumnType[] = [
         id: 'sourceId',
         name: 'Fuelerlinx ID',
     },
+    {
+        id: 'cancelled',
+        name: 'Transaction Status',
+    },
 ];
 
 @Component({
-    selector: 'app-fuelreqs-grid',
-    templateUrl: './fuelreqs-grid.component.html',
-    styleUrls: [ './fuelreqs-grid.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-fuelreqs-grid',
+    styleUrls: ['./fuelreqs-grid.component.scss'],
+    templateUrl: './fuelreqs-grid.component.html',
 })
 export class FuelreqsGridComponent implements OnInit, OnChanges {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
-    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
     pageIndex = 0;
     pageSize = 100;
-
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
@@ -104,23 +109,33 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     constructor(
         private sharedService: SharedService,
         private exportDialog: MatDialog,
-        private tableSettingsDialog: MatDialog,
+        private tableSettingsDialog: MatDialog
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.fuelreqsData && !isEqual(changes.fuelreqsData.currentValue, changes.fuelreqsData.previousValue)) {
+        if (
+            changes.fuelreqsData &&
+            !isEqual(
+                changes.fuelreqsData.currentValue,
+                changes.fuelreqsData.previousValue
+            )
+        ) {
             this.refreshTable();
         }
     }
 
     ngOnInit() {
         this.sort.sortChange.subscribe(() => {
-            this.columns = this.columns.map(column =>
+            this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
             );
 
             this.saveSettings();
@@ -128,19 +143,33 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         });
 
         if (localStorage.getItem('pageIndexFuelReqs')) {
-            this.paginator.pageIndex = localStorage.getItem('pageIndexFuelReqs') as any;
+            this.paginator.pageIndex = localStorage.getItem(
+                'pageIndexFuelReqs'
+            ) as any;
         } else {
             this.paginator.pageIndex = 0;
         }
 
         if (sessionStorage.getItem('pageSizeValueFuelReqs')) {
-            this.pageSize = sessionStorage.getItem('pageSizeValueFuelReqs') as any;
+            this.pageSize = sessionStorage.getItem(
+                'pageSizeValueFuelReqs'
+            ) as any;
         } else {
             this.pageSize = 100;
         }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
+
+            if (this.columns.length === 12) {
+                const cancelledColumn = {
+                    id: 'cancelled',
+                    name: 'Transction Status',
+                };
+                this.columns.push(cancelledColumn);
+            }
         } else {
             this.columns = initialColumns;
         }
@@ -148,7 +177,9 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     getTableColumns() {
-        return this.columns.filter(column => !column.hidden).map(column => column.id);
+        return this.columns
+            .filter((column) => !column.hidden)
+            .map((column) => column.id);
     }
 
     refreshTable() {
@@ -166,10 +197,22 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     refreshSort() {
-        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
 
     applyFilter(filterValue: string) {
@@ -178,21 +221,18 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
 
     applyDateFilterChange() {
         this.dateFilterChanged.emit({
-            filterStartDate: this.filterStartDate,
             filterEndDate: this.filterEndDate,
+            filterStartDate: this.filterStartDate,
         });
     }
 
     export() {
-        const dialogRef = this.exportDialog.open(
-            FuelReqsExportModalComponent,
-            {
-                data: {
-                    filterStartDate: this.filterStartDate,
-                    filterEndDate: this.filterEndDate,
-                },
-            }
-        );
+        const dialogRef = this.exportDialog.open(FuelReqsExportModalComponent, {
+            data: {
+                filterEndDate: this.filterEndDate,
+                filterStartDate: this.filterStartDate,
+            },
+        });
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
@@ -210,15 +250,18 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: this.columns,
+            }
+        );
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
             }
 
-            this.columns = [ ...result ];
+            this.columns = [...result];
 
             this.refreshSort();
             this.saveSettings();
@@ -226,6 +269,9 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
     }
 }

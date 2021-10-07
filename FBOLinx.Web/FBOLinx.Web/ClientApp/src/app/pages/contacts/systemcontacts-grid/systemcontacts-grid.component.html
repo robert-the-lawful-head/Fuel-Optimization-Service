@@ -1,102 +1,146 @@
 <div class="">
     <table
         [dataSource]="contactsDataSource"
-        class="mat-elevation-z8 col-md-12"
+        class="mat-elevation-z8 col-12"
         mat-table
         matSort
-        style="box-shadow: none !important;"
+        style="box-shadow: none !important"
     >
         <ng-container matColumnDef="firstName">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                First Name
+                <div style="min-width: 70px">First Name</div>
             </th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
-                {{ contact.firstName }}
+            <td *matCellDef="let contact" mat-cell>
+                <div>{{ contact.firstName }}</div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="lastName">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Last Name</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
-                {{ contact.lastName }}
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <div style="min-width: 70px">Last Name</div>
+            </th>
+            <td *matCellDef="let contact" mat-cell>
+                <div>{{ contact.lastName }}</div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="title">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Title</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
-                {{ contact.title }}
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <div>Title</div>
+            </th>
+            <td *matCellDef="let contact" mat-cell>
+                <div>{{ contact.title }}</div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="email">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
-                {{ contact.email }}
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <div>Email</div>
+            </th>
+            <td *matCellDef="let contact" mat-cell>
+                <div>{{ contact.email }}</div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="phone">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Phone</th>
-            <td
-                *matCellDef="let contact"
-                mat-cell
-            >
-                {{ contact.phone }}
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <div>Phone</div>
+            </th>
+            <td *matCellDef="let contact" mat-cell>
+                <div>{{ contact.phone }}</div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="copyAlerts">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                <span style="margin-right: 15px;">Copy All</span>
-                <mat-slide-toggle
-                    (change)="updateAllCopyAlertsValues()"
-                    [checked]="copyAll"
-                    color="accent"
-                ></mat-slide-toggle>
+                <div style="max-width: 70px">Copy All Distribution</div>
+                <div>
+                    <mat-slide-toggle
+                        (change)="updateAllCopyAlertsValues()"
+                        [checked]="copyAllAlerts"
+                        color="accent"
+                    ></mat-slide-toggle>
+                </div>
             </th>
             <td *matCellDef="let contact" clickStopPropagation mat-cell>
-                <mat-slide-toggle
-                    (change)="updateCopyAlertsValue(contact)"
-                    [(ngModel)]="contact.copyAlerts"
-                    [checked]="contact.copyAlerts"
-                    color="accent"
-                ></mat-slide-toggle>
+                <div class="text-center" style="margin-right: 45px">
+                    <mat-slide-toggle
+                        (change)="updateCopyAlertsValue(contact)"
+                        [(ngModel)]="contact.copyAlerts"
+                        [checked]="contact.copyAlerts"
+                        color="accent"
+                    ></mat-slide-toggle>
+                </div>
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="copyOrders">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                <div style="max-width: 50px">Copy All Orders</div>
+                <div>
+                    <mat-slide-toggle
+                        (change)="updateAllCopyOrdersValues()"
+                        [checked]="copyAllOrders"
+                        color="accent"
+                    ></mat-slide-toggle>
+                </div>
+            </th>
+            <td *matCellDef="let contact" clickStopPropagation mat-cell>
+                <div class="text-center" style="margin-right: 45px">
+                    <mat-slide-toggle
+                        (change)="updateCopyOrdersValue(contact)"
+                        [(ngModel)]="contact.copyOrders"
+                        [checked]="contact.copyOrders"
+                        color="accent"
+                    ></mat-slide-toggle>
+                </div>
             </td>
         </ng-container>
 
         <ng-container matColumnDef="delete">
-            <th *matHeaderCellDef mat-header-cell>
+            <th *matHeaderCellDef mat-header-cell clickStopPropagation>
                 <!--<div class="actions-menu pull-right">-->
-                <div class="pull-right">
-                    <button (click)="newRecord($event)" [view]="'accent'" beforeIcon="fa fa-plus" class="mr-3"
-                            ni-button>
-                        Add New
-                    </button>
-                    <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                        <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
-                    </button>
-                    <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
-                        <button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>Import
+                <div>
+                    <div style="display: none">
+                        <button
+                            (click)="newRecord($event)"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            class="mr-3"
+                            ni-button
+                        >
+                            Add New
                         </button>
-                    </mat-menu>
+                    </div>
+                    <!--<div class="text-right">
+                        <button
+                            [matMenuTriggerFor]="gridActions"
+                            mat-icon-button
+                        >
+                            <mat-icon
+                                aria-hidden="true"
+                                class="mat-icon material-icons"
+                                role="img"
+                                >more_vert</mat-icon
+                            >
+                        </button>
+                        <mat-menu
+                            #gridActions="matMenu"
+                            class="switch-nested-menu-left-arrows"
+                            xPosition="before"
+                        >
+                            <button
+                                (click)="launchImporter()"
+                                [ngClass]="{ disabled: !LICENSE_KEY }"
+                                mat-menu-item
+                            >
+                                Import
+                            </button>
+                        </mat-menu>
+                    </div>-->
                 </div>
             </th>
-            <td *matCellDef="let contact" mat-cell>
-                &nbsp;
-            </td>
+            <td *matCellDef="let contact" mat-cell>&nbsp;</td>
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>

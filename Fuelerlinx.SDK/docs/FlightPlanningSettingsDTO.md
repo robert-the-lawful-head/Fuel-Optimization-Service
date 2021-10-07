@@ -13,7 +13,7 @@ Name | Type | Description | Notes
 **FlightPlanningProvider** | **int?** |  | [optional] 
 **FlightPlanningProviderUsername** | **string** |  | [optional] 
 **FlightPlanningProviderPassword** | **string** |  | [optional] 
-**DefaultRoutingType** | **int?** | Routing Types:             0 &#x3D; Optimal             1 &#x3D; Direct             2 &#x3D; Custom    * &#x60;Optimal&#x60; - Optimal  * &#x60;Direct&#x60; - Direct  * &#x60;Custom&#x60; - Customer   | [optional] 
+**DefaultRoutingType** | **int?** | Routing Types:             0 &#x3D; Optimal             1 &#x3D; Direct             2 &#x3D; Custom    * &#x60;Optimal&#x60; - Optimal  * &#x60;Direct&#x60; - Direct  * &#x60;Custom&#x60; - Customer  * &#x60;RecentATC&#x60; - Recent ATC   | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

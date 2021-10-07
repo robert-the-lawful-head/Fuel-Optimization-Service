@@ -17,8 +17,11 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using static FBOLinx.DB.Models.PricingTemplate;
 using System.Globalization;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Web.Models.Requests;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -30,15 +33,22 @@ namespace FBOLinx.Web.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly FboLinxContext _context;
 
-        private readonly PriceFetchingService _priceFetchingService;
+        private readonly IPriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
-
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, PriceFetchingService priceFetchingService)
+        private readonly FboService _fboService;
+        private readonly AirportWatchService _airportWatchService;
+        private readonly IPriceDistributionService _priceDistributionService;
+        private readonly FuelerLinxService _fuelerLinxService;
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
             _priceFetchingService = priceFetchingService;
             _customerService = customerService;
+            _fboService = fboService;
+            _airportWatchService = airportWatchService;
+            _priceDistributionService = priceDistributionService;
+            _fuelerLinxService = fuelerLinxService;
         }
 
         // GET: api/CustomerInfoByGroup
@@ -65,30 +75,80 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerInfoByGroup);
         }
 
+        [HttpGet("group/{groupId}/customers-with-contacts")]
+        public async Task<IActionResult> GetCustomersWithContactsByGroup([FromRoute] int groupId)
+        {
+            var contacts = await (
+                            from c in _context.Customers
+                            join cc in _context.CustomerContacts on c.Oid equals cc.CustomerId
+                            join t in _context.Contacts on cc.ContactId equals t.Oid
+                            join cibg in _context.ContactInfoByGroup on t.Oid equals cibg.ContactId
+                            where cibg.GroupId == groupId
+                            select new GroupCustomerContact
+                            {
+                                FirstName = cibg.FirstName,
+                                LastName = cibg.LastName,
+                                Email = cibg.Email,
+                                CustomerId = c.Oid,
+                            })
+                            .Distinct()
+                            .ToListAsync();
+
+            var result = await (
+                            from cg in _context.CustomerInfoByGroup
+                            join c in _context.Customers on cg.CustomerId equals c.Oid
+                            where cg.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
+                            group cg by new
+                            {
+                                cg.CustomerId,
+                                cg.Company
+                            } into groupedResult
+                            select new GroupCustomerWithContactsResponse
+                            {
+                                CustomerId = groupedResult.Key.CustomerId,
+                                Company = groupedResult.Key.Company,
+                            })
+                            .Distinct()
+                            .ToListAsync();
+
+            result.ForEach(row =>
+            {
+                row.Contacts = contacts.Where(c => c.CustomerId == row.CustomerId).ToList();
+            });
+
+            return Ok(result);
+        }
+
+
         [HttpGet("group/{groupId}")]
         public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
         {
-            var test = (from cg in _context.CustomerInfoByGroup
-                        select cg);
-            
-            var result = await (from cg in _context.CustomerInfoByGroup
-                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                          where cg.GroupId == groupId
-                          && (!c.Suspended.HasValue || !c.Suspended.Value)
-                          group cg by new
-                          {
-                              cg.CustomerId,
-                              cg.Company
-                          } into groupedResult
-                          select new
-                          {
-                              groupedResult.Key.CustomerId,
-                              groupedResult.Key.Company,
-                          })
-                          .Distinct()
-                          .ToListAsync();
+            List < CustomersGridViewModel > customerGridVM = await (
+                    from cg in _context.CustomerInfoByGroup
+                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                    join cct in _context.CustomCustomerTypes on c.Oid equals cct.CustomerId
+                    where cg.GroupId == groupId && c.Suspended != true
+                    group cg by new
+                    {
+                        cg.CustomerId,
+                        CustomerInfoByGroupId = cg.Oid,
+                        cg.Company,
+                        FuelerLinxId = c.FuelerlinxId,
+                        CertificateType = cg.CertificateType,
+                        Active = cg.Active,
+                    }
+                    into resultsGroup
+                    select new CustomersGridViewModel()
+                    {
+                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
+                        Active = resultsGroup.Key.Active,
+                        CertificateType = resultsGroup.Key.CertificateType,
+                        CustomerId = resultsGroup.Key.CustomerId,
+                        Company = resultsGroup.Key.Company,
+                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
+                    }).ToListAsync();
 
-            return Ok(result);
+            return Ok(customerGridVM);
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6
@@ -236,6 +296,20 @@ namespace FBOLinx.Web.Controllers
                                  }).Count();
 
             return Ok(customerCount);
+        }
+
+        [HttpGet("group/{groupId}/fbo/{fboId}/list")]
+        public async Task<IActionResult> GetCustomersListAsync([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //View model for customers dropdown list
+            var list = await _customerService.GetCustomersListByGroupAndFbo(groupId, fboId);
+
+            return Ok(list);
         }
 
         // GET: api/CustomerInfoByGroup/CertificateTypes
@@ -461,6 +535,20 @@ namespace FBOLinx.Web.Controllers
             return null;
         }
 
+        [HttpGet("fuelvendors")]
+        public async Task<IActionResult> GetFuelVendors()
+        {
+            var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
+            var fuelVendors = customerFuelVendors
+                .Select(cf => cf.FuelVendors.Split(";"))
+                .SelectMany(i => i)
+                .Distinct()
+                .Select(i => i.Trim())
+                .OrderBy(i => i)
+                .ToList();
+            return Ok(fuelVendors);
+        }
+
         [HttpPost("rejectmergeforcustomer/customerId/{customerId}/groupId/{groupId}")]
         public async Task<IActionResult> RejectMergeForCustomer(int customerId, int groupId)
         {
@@ -585,101 +673,34 @@ namespace FBOLinx.Web.Controllers
         }
     
         [HttpPost("group-analytics/group/{groupId}")]
-        public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] List<int> customerIds)
+        public async Task<IActionResult> GetGroupAnalytics([FromRoute]int groupId, [FromBody] int customerId)
         {
-            var customerFbos = (await (from cig in _context.CustomerInfoByGroup.Where(cig => customerIds.Contains(cig.CustomerId))
-                                       join fbo in _context.Fbos on cig.GroupId equals fbo.GroupId
-                                       join fa in _context.Fboairports on fbo.Oid equals fa.Fboid
-                                       join cct in _context.CustomCustomerTypes on new { cig.CustomerId, Fboid = fbo.Oid } equals new { cct.CustomerId, cct.Fboid }
-                                       into leftJoinCCT
-                                       from cct in leftJoinCCT.DefaultIfEmpty()
-                                       join pt in _context.PricingTemplate on cct == null ? 0 : cct.CustomerType equals pt.Oid
-                                       into leftJoinPT
-                                       from pt in leftJoinPT.DefaultIfEmpty()
-                                       where cig.GroupId == groupId
-                                       select new
-                                       {
-                                           CustomerInfoByGroupId = cig.Oid,
-                                           cig.Company,
-                                           FboId = fbo.Oid,
-                                           fa.Icao,
-                                           PricingTemplateId = pt == null ? 0 : pt.Oid
-                                       })
-                                       .ToListAsync())
-                                       .GroupBy(cf => cf.Company)
-                                       .ToList();
-
-            var result = new List<GroupCustomerAnalyticsResponse>();
-
-            foreach (var customerfbo in customerFbos)
-            {
-                var record = new GroupCustomerAnalyticsResponse
-                {
-                    Company = customerfbo.Key,
-                    GroupCustomerFbos = new List<GroupedFboPrices>()
-                };
-                var customerfbosData = customerfbo.ToList();
-                foreach(var customerFbo in customerfbosData)
-                {
-                    var groupFboPrices = new GroupedFboPrices
-                    {
-                        Icao = customerFbo.Icao,
-                        Prices = new List<Prices>(),
-                    };
-                    var commercialInternationalPricingResults = await _priceFetchingService
-                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId}, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-                    var privateInternationalPricingResults = await _priceFetchingService
-                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
-                    var commercialDomesticPricingResults = await _priceFetchingService
-                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-                    var privateDomesticPricingResults = await _priceFetchingService
-                        .GetCustomerPricingAsync(customerFbo.FboId, groupId, customerFbo.CustomerInfoByGroupId, new List<int> { customerFbo.PricingTemplateId }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-                    privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
-
-                    int loopIndex = 0;
-                    foreach (CustomerWithPricing model in privateDomesticPricingResults)
-                    {
-                        string volumeTier;
-                        if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
-                        {
-                            string minGallon, maxGallon;
-                            minGallon = model.MinGallons.GetValueOrDefault().ToString();
-                            var next = commercialInternationalPricingResults[loopIndex + 1];
-                            double maxValue = Convert.ToDouble(next.MinGallons) - 1;
-
-                            if (maxValue > 999)
-                            {
-                                string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                                maxGallon = output;
-                            }
-                            else
-                            {
-                                maxGallon = maxValue.ToString();
-                            }
-                            volumeTier = minGallon + " - " + maxGallon;
-                        }
-                        else
-                        {
-                            string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
-
-                            volumeTier = output + "+";
-                        }
-                        groupFboPrices.Prices.Add(new Prices
-                        {
-                            VolumeTier = volumeTier,
-                            IntComm = (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
-                            IntPrivate = (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
-                            DomComm = (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
-                            DomPrivate = (privateDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault(),
-                        });
-                    }
-
-                    record.GroupCustomerFbos.Add(groupFboPrices);
-                }
-                result.Add(record);
-            }
+            var result = await GetCustomerPricingAnalytics(groupId, customerId);
 
             return Ok(result);
+        }
+
+        [HttpPost("group-analytics/email/group/{groupId}")]
+        public async Task<IActionResult> EmailGroupAnalytics([FromRoute] int groupId, [FromBody] int customerId)
+        {
+            var contacts = await (
+                                from c in _context.Customers
+                                join cc in _context.CustomerContacts on c.Oid equals cc.CustomerId
+                                join t in _context.Contacts on cc.ContactId equals t.Oid
+                                join cibg in _context.ContactInfoByGroup on t.Oid equals cibg.ContactId
+                                where cibg.GroupId == groupId && c.Oid == customerId
+                                select cibg.Email)
+                            .Distinct()
+                            .ToListAsync();
+
+            var result = await GetCustomerPricingAnalytics(groupId, customerId);
+
+            if (contacts.Count > 0)
+            {
+                await _priceDistributionService.SendCustomerPriceEmail(groupId, result, contacts);
+            }
+
+            return Ok(true);
         }
 
         private bool CustomerInfoByGroupExists(int id)
@@ -693,6 +714,8 @@ namespace FBOLinx.Web.Controllers
             {
                 List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
 
+                var fboIcao = await _fboService.GetFBOIcao(fboId);
+
                 PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && (x.Default ?? false)).FirstOrDefaultAsync();
 
@@ -700,21 +723,22 @@ namespace FBOLinx.Web.Controllers
 
                 await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
                 
-                var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.GroupId == groupId).ToListAsync();
+                var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
 
-                
-                var customerAircraft = 
+                var customerAircraft =
                     (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())
-                    where aircraftByCustomer.GroupId == groupId
-                    group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                    into results
+                     where aircraftByCustomer.GroupId == groupId
+                     group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                     into results
                      select new
-                    {
-                        results.Key.CustomerId,
-                        Tails = string.Join(",", results.Select(x => x.TailNumber)),
-                        Count = results.Count()
-                                                    }
-                    ).ToList();
+                     {
+                         results.Key.CustomerId,
+                         Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                         Count = results.Count()
+                     }
+                     ).ToList();
+
+                var customerTags = await _context.CustomerTag.Where(x => x.GroupId == groupId).ToListAsync();
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
@@ -722,19 +746,13 @@ namespace FBOLinx.Web.Controllers
                 var contactInfoByGroupForAlerts =
                     await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
 
+                //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
+
+                var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
+
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
-                        join ccot in companyTypes on new
-                            {
-                                CustomerCompanyType = (cg.CustomerCompanyType ?? 0),
-                                cg.GroupId
-                            }
-                            equals new
-                            {
-                                CustomerCompanyType = ccot.Oid,
-                                GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId
-                            }
-                            into leftJoinCCOT
+                        join ccot in companyTypes on cg.CustomerCompanyType equals ccot.Oid into leftJoinCCOT
                         from ccot in leftJoinCCOT.DefaultIfEmpty()
                         join ai in pricingTemplates on new
                             {
@@ -744,9 +762,13 @@ namespace FBOLinx.Web.Controllers
                             } equals new { TemplateId = ai.Oid}
                             into leftJoinAi
                         from ai in leftJoinAi.DefaultIfEmpty()
+                        //join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
+                        //from hd in leftJoinHd.DefaultIfEmpty()
+                        join cv in customerFuelVendors on cg.Customer.FuelerlinxId equals cv.FuelerLinxId into leftJoinCv
+                        from cv in leftJoinCv.DefaultIfEmpty()
                         where cg.GroupId == groupId && !(cg.Suspended ?? false)
 
-                        group cg by new
+                        group new { cg } by new //, hd 
                         {
                             cg.CustomerId,
                             CustomerInfoByGroupId = cg.Oid,
@@ -762,7 +784,9 @@ namespace FBOLinx.Web.Controllers
                             Tails = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Tails,
                             FleetSize = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Count,
                             AllInPrice = ai == null ? 0 : ai.IntoPlanePrice,
-                            PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid
+                            PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
+                            FuelVendors = cv == null ? "" : cv.FuelVendors,
+                            Tags = customerTags.Where(x=>x.CustomerId == cg.CustomerId)
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -782,6 +806,13 @@ namespace FBOLinx.Web.Controllers
                             PricingTemplateName = resultsGroup.Key.PricingTemplateName,
                             SelectAll = false,
                             TailNumbers = resultsGroup.Key.Tails,
+                            //AircraftsVisits = resultsGroup.Count(a => a.hd != null && a.hd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing),
+                            FuelVendors = resultsGroup.Key.FuelVendors
+                                .Split(";")
+                                .Where(a => !string.IsNullOrEmpty(a))
+                                .OrderBy(a => a)
+                                .ToList(),
+                            Tags = resultsGroup.Key.Tags.ToList()
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())
@@ -806,6 +837,83 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-    }
+        private async Task<GroupCustomerAnalyticsResponse> GetCustomerPricingAnalytics(int groupId, int customerId)
+        {
+            var airports = await _context.Fbos
+                .Where(x => x.GroupId == groupId && x.Active == true)
+                .Include(x => x.fboAirport)
+                .ToListAsync();
 
+            List<string> icaos = new List<string>();
+            icaos.AddRange(airports.Select(x => x.fboAirport?.Icao).Where(x => !string.IsNullOrEmpty(x)));
+
+            Dictionary<FlightTypeClassifications, List<CustomerWithPricing>> priceResults =
+                new Dictionary<FlightTypeClassifications, List<CustomerWithPricing>>();
+            priceResults.Add(FlightTypeClassifications.Commercial, new List<CustomerWithPricing>());
+            priceResults.Add(FlightTypeClassifications.Private, new List<CustomerWithPricing>());
+
+
+            List<CustomerWithPricing> commercialValidPricing =
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial);
+            if (commercialValidPricing != null)
+            {
+                commercialValidPricing.RemoveAll(x => x.GroupId != groupId);
+                priceResults[FlightTypeClassifications.Commercial].AddRange(commercialValidPricing);
+            }
+
+            List<CustomerWithPricing> privateValidPricing =
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private);
+            if (privateValidPricing != null)
+            {
+                privateValidPricing.RemoveAll(x => x.GroupId != groupId);
+                priceResults[FlightTypeClassifications.Private].AddRange(privateValidPricing);
+            }
+
+            var result = priceResults[FlightTypeClassifications.Commercial]
+                .GroupBy(x => new { x.Company, x.TailNumbers, x.CustomerId })
+                .Select(x => new GroupCustomerAnalyticsResponse {
+                    CustomerId = x.Key.CustomerId,
+                    Company = x.Key.Company,
+                    TailNumbers = x.Key.TailNumbers,
+                    GroupCustomerFbos = new List<GroupedFboPrices>()
+                })
+                .FirstOrDefault();
+
+            if (result != null)
+            {
+                result.AddGroupedFboPrices(
+                    FlightTypeClassifications.Commercial,
+                    priceResults[FlightTypeClassifications.Commercial]
+                        .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers)
+                        .ToList()
+                );
+                result.AddGroupedFboPrices(
+                    FlightTypeClassifications.Private,
+                    priceResults[FlightTypeClassifications.Private]
+                        .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers)
+                        .ToList()
+                );
+
+                var maxPriceType = result.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType));
+                if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                    maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+
+                result.GroupCustomerFbos?.ForEach(g =>
+                {
+                    g.Prices?.ForEach(p => p.PriceBreakdownDisplayType = maxPriceType);
+                });
+            } else
+            {
+                result = new GroupCustomerAnalyticsResponse
+                {
+                    Company = null,
+                    TailNumbers = null,
+                    GroupCustomerFbos = new List<GroupedFboPrices>()
+                };
+            }
+
+            return result;
+        }
+    
+    }
 }

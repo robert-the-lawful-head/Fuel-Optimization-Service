@@ -1,41 +1,96 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div class="after-breadcrumb">
-    <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
-
-    <div class="flight-watch-container" *ngIf="flightWatchData">
-        <app-flight-watch-aircraft-info
-            [flightWatch]="selectedFlightWatch"
-            (closed)="onAircraftInfoClose()"
-        ></app-flight-watch-aircraft-info>
-
-        <app-flight-watch-map
-            [isStable]="flightWatchData.length > 0"
-            [data]="filteredFlightWatchData"
-            [center]="center"
-            (markerClicked)="onFlightWatchClick($event)"
-            [style.width]="mapWidth"
-        ></app-flight-watch-map>
-
-        <div
-            class="flight-watch-settings"
-            [ngStyle]="style"
-            mwlResizable
-            [enableGhostResize]="true"
-            (resizeEnd)="onResizeEnd($event)"
-            [validateResize]="validate"
-        >
-            <div
-                class="resize-handle-left"
-                mwlResizeHandle
-                [resizeEdges]="{ left: true }"
-            ></div>
-            <app-flight-watch-settings
-                [filteredTypes]="filteredTypes"
-                [tableData]="flightWatchDataObservable$"
-                (filterChanged)="onFilterChanged($event)"
-                (typesFilterChanged)="onTypesFilterChanged($event)"
-            ></app-flight-watch-settings>
+<div class="custom-key-tab">
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane_FUELERLINX.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>FuelerLinx Client</span>
+        </div>
+    </div>
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane-FUEL_RELEASE.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>Active Fuel Release</span>
+        </div>
+    </div>
+    <div class="custom-key-content">
+        <div class="d-inline-block">
+            <img src="/assets/img/airplane_ACTIVE.png" style="width: 75%; height: 75%;">
+        </div>
+        <div class="d-inline-block">
+            <span>Out of Network</span>
         </div>
     </div>
 </div>
+
+<div class="after-breadcrumb flight-watch-tabs">
+    <mat-tab-group>
+        <mat-tab label="Flight Watch">
+            <mat-drawer-container>
+
+                <mat-drawer-content>
+                    <div>
+                        <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+                        <div style="position: absolute; top: 100px; right: 0px; z-index: 10000;">
+                            <button class="mat-dark-blue" mat-flat-button (click)="mapfilters.toggle()">
+                                <mat-icon *ngIf="!mapfilters.opened">chevron_left</mat-icon>
+                                <mat-icon *ngIf="mapfilters.opened">chevron_right</mat-icon>
+                            </button>
+                        </div>
+                        <div class="flight-watch-container" *ngIf="flightWatchData">
+                            <app-flight-watch-aircraft-info [flightWatch]="selectedFlightWatch"
+                                                            (closed)="onAircraftInfoClose()"></app-flight-watch-aircraft-info>
+
+                            <app-flight-watch-map #map
+                                                  [isStable]="flightWatchData.length > 0"
+                                                  [data]="filteredFlightWatchData"
+                                                  [center]="center"
+                                                  (markerClicked)="onFlightWatchClick($event)"
+                                                  style="width: 100%;"></app-flight-watch-map>
+
+                            <!--<div class="flight-watch-settings"
+                             [ngStyle]="style"
+                             mwlResizable
+                             [enableGhostResize]="true"
+                             (resizeEnd)="onResizeEnd($event)"
+                             [validateResize]="validate">
+                            <div class="resize-handle-left"
+                                 mwlResizeHandle
+                                 [resizeEdges]="{ left: true }"></div>
+
+                        </div>-->
+                        </div>
+                    </div>
+                </mat-drawer-content>
+
+
+                <mat-drawer mode="side" #mapfilters position='end'>
+                    <div *ngIf="flightWatchData">
+                        <app-flight-watch-settings [filteredTypes]="filteredTypes"
+                                                   [tableData]="flightWatchDataObservable$"
+                                                   (filterChanged)="onFilterChanged($event)"
+                                                   (typesFilterChanged)="onTypesFilterChanged($event)"></app-flight-watch-settings>
+                    </div>
+                </mat-drawer>
+
+            </mat-drawer-container>
+        </mat-tab>
+        <mat-tab label="Takeoff/Landing Cycles">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <app-analytics-airport-arrivals-depatures></app-analytics-airport-arrivals-depatures>
+                </div>
+            </div>
+        </mat-tab>
+        
+    </mat-tab-group>
+
+
+</div>
+
+
+

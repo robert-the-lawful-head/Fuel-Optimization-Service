@@ -3,8 +3,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: '[notification]',
+    styleUrls: ['./notification.component.scss'],
     templateUrl: './notification.component.html',
-    styleUrls: [ './notification.component.scss' ],
 })
 export class NotificationComponent {
     @Input() block = false;
@@ -24,8 +24,7 @@ export class NotificationComponent {
     constructor(
         public dialogRef: MatDialogRef<NotificationComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
-    ) {
-    }
+    ) {}
 
     onCancelClick() {
         this.dialogRef.close();

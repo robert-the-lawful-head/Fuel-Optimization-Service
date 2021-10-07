@@ -25,10 +25,15 @@ namespace FBOLinx.Web
 
         [NotMapped]
         public bool IsOmitted { get;set; }
+        [NotMapped]
+        public string OmittedFor { get; set; }
 
         #region Relationships
         [InverseProperty("FboFeeAndTax")]
         public List<FboFeeAndTaxOmitsByCustomer> OmitsByCustomer { get; set; }
+
+        [InverseProperty("FboFeeAndTax")]
+        public List<FboFeeAndTaxOmitsByPricingTemplate> OmitsByPricingTemplate { get; set; }
         #endregion
 
         public double GetCalculatedValue(double basePrice, double allInPrice)

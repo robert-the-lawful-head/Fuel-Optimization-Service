@@ -31,7 +31,7 @@ namespace IO.Swagger.Model {
     /// </summary>
     [DataMember(Name="Transactions", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "Transactions")]
-    public TransactionsDTO Transactions { get; set; }
+    public MenuFeatureDTO Transactions { get; set; }
 
     /// <summary>
     /// Gets or Sets Analysis

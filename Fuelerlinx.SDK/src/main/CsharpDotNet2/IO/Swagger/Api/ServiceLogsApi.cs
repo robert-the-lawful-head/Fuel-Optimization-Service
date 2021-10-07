@@ -18,6 +18,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteCompanyAircraftChangeLogResponse</returns>
         DeleteCompanyAircraftChangeLogResponse DeleteCompanyAircraftChangeLog (int? id);
         /// <summary>
+        /// Delete a company fbo change log record by the record id. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteCompanyFboChangeLogResponse</returns>
+        DeleteCompanyFboChangeLogResponse DeleteCompanyFboChangeLog (int? id);
+        /// <summary>
         /// Delete a company fueler change log record by the record id. 
         /// </summary>
         /// <param name="id"></param>
@@ -77,6 +83,19 @@ namespace IO.Swagger.Api
         /// <param name="userId"></param>
         /// <returns>CompanyAircraftChangeLogResponse</returns>
         CompanyAircraftChangeLogResponse GetCompanyAircraftChangeLogByUserId (int? userId);
+        /// <summary>
+        /// Fetch company fueler change log by company Id 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns>CompanyFboChangeLogResponse</returns>
+        CompanyFboChangeLogResponse GetCompanyFboChangeLogByCompanyId (int? companyId);
+        /// <summary>
+        /// Fetch company fueler change log by ICAO 
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <param name="icao"></param>
+        /// <returns>CompanyFboChangeLogResponse</returns>
+        CompanyFboChangeLogResponse GetCompanyFboChangeLogByIcao (int? companyId, string icao);
         /// <summary>
         /// Fetch company fueler change log by companyId. 
         /// </summary>
@@ -180,6 +199,12 @@ namespace IO.Swagger.Api
         /// <returns>PostCompanyAircraftChangeLogResponse</returns>
         PostCompanyAircraftChangeLogResponse PostCompanyAircraftChangeLogAsync (PostCompanyAircraftChangeLogRequest body);
         /// <summary>
+        /// Post company fbo change log 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostCompanyFboChangeLogResponse</returns>
+        PostCompanyFboChangeLogResponse PostCompanyFboChangeLogAsync (PostCompanyFboChangeLogRequest body);
+        /// <summary>
         /// Post company fueler change log. 
         /// </summary>
         /// <param name="body"></param>
@@ -233,6 +258,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateCompanyAircraftChangeLogResponse</returns>
         UpdateCompanyAircraftChangeLogResponse UpdateCompanyAircraftChangeLog (UpdateCompanyAircraftChangeLogRequest body);
+        /// <summary>
+        /// Update the company fbo change log. 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateCompanyFboChangeLogResponse</returns>
+        UpdateCompanyFboChangeLogResponse UpdateCompanyFboChangeLog (UpdateCompanyFboChangeLogRequest body);
         /// <summary>
         /// Update the company fueler change log. 
         /// </summary>
@@ -371,6 +402,43 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyAircraftChangeLog: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteCompanyAircraftChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyAircraftChangeLogResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete a company fbo change log record by the record id. 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteCompanyFboChangeLogResponse</returns>            
+        public DeleteCompanyFboChangeLogResponse DeleteCompanyFboChangeLog (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteCompanyFboChangeLog");
+            
+    
+            var path = "/api/ServiceLogs/company-fbo-change-log/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFboChangeLog: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteCompanyFboChangeLog: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteCompanyFboChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(DeleteCompanyFboChangeLogResponse), response.Headers);
         }
     
         /// <summary>
@@ -741,6 +809,85 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyAircraftChangeLogByUserId: " + response.ErrorMessage, response.ErrorMessage);
     
             return (CompanyAircraftChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(CompanyAircraftChangeLogResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch company fueler change log by company Id 
+        /// </summary>
+        /// <param name="companyId"></param> 
+        /// <returns>CompanyFboChangeLogResponse</returns>            
+        public CompanyFboChangeLogResponse GetCompanyFboChangeLogByCompanyId (int? companyId)
+        {
+            
+            // verify the required parameter 'companyId' is set
+            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetCompanyFboChangeLogByCompanyId");
+            
+    
+            var path = "/api/ServiceLogs/company-fbo-change-log/by-companyId/{companyId}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFboChangeLogByCompanyId: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFboChangeLogByCompanyId: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyFboChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(CompanyFboChangeLogResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Fetch company fueler change log by ICAO 
+        /// </summary>
+        /// <param name="companyId"></param> 
+        /// <param name="icao"></param> 
+        /// <returns>CompanyFboChangeLogResponse</returns>            
+        public CompanyFboChangeLogResponse GetCompanyFboChangeLogByIcao (int? companyId, string icao)
+        {
+            
+            // verify the required parameter 'companyId' is set
+            if (companyId == null) throw new ApiException(400, "Missing required parameter 'companyId' when calling GetCompanyFboChangeLogByIcao");
+            
+            // verify the required parameter 'icao' is set
+            if (icao == null) throw new ApiException(400, "Missing required parameter 'icao' when calling GetCompanyFboChangeLogByIcao");
+            
+    
+            var path = "/api/ServiceLogs/company-fbo-change-log/by-icao/{companyId}/{icao}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "companyId" + "}", ApiClient.ParameterToString(companyId));
+path = path.Replace("{" + "icao" + "}", ApiClient.ParameterToString(icao));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFboChangeLogByIcao: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCompanyFboChangeLogByIcao: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (CompanyFboChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(CompanyFboChangeLogResponse), response.Headers);
         }
     
         /// <summary>
@@ -1347,6 +1494,40 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
         }
     
         /// <summary>
+        /// Post company fbo change log 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostCompanyFboChangeLogResponse</returns>            
+        public PostCompanyFboChangeLogResponse PostCompanyFboChangeLogAsync (PostCompanyFboChangeLogRequest body)
+        {
+            
+    
+            var path = "/api/ServiceLogs/company-fbo-change-log";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFboChangeLogAsync: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostCompanyFboChangeLogAsync: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostCompanyFboChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(PostCompanyFboChangeLogResponse), response.Headers);
+        }
+    
+        /// <summary>
         /// Post company fueler change log. 
         /// </summary>
         /// <param name="body"></param> 
@@ -1650,6 +1831,40 @@ path = path.Replace("{" + "endDateTime" + "}", ApiClient.ParameterToString(endDa
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyAircraftChangeLog: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateCompanyAircraftChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyAircraftChangeLogResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update the company fbo change log. 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateCompanyFboChangeLogResponse</returns>            
+        public UpdateCompanyFboChangeLogResponse UpdateCompanyFboChangeLog (UpdateCompanyFboChangeLogRequest body)
+        {
+            
+    
+            var path = "/api/ServiceLogs/company-fbo-change-log";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyFboChangeLog: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateCompanyFboChangeLog: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateCompanyFboChangeLogResponse) ApiClient.Deserialize(response.Content, typeof(UpdateCompanyFboChangeLogResponse), response.Headers);
         }
     
         /// <summary>

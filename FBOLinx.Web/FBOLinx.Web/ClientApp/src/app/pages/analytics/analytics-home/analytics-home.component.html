@@ -1,6 +1,6 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div class="after-breadcrumb">
+<div class="after-breadcrumb statistics-tab">
     <mat-tab-group>
         <mat-tab label="Statistics">
             <div class="row mt-3">
@@ -10,21 +10,21 @@
                         [startDate]="filterStartDate"
                     ></app-statistics-total-orders>
                 </div>
-        
+
                 <div class="col-md-6 col-xl-3">
                     <app-statistics-total-customers
                         [endDate]="filterEndDate"
                         [startDate]="filterStartDate"
                     ></app-statistics-total-customers>
                 </div>
-        
+
                 <div class="col-md-6 col-xl-3">
                     <app-statistics-total-aircraft
                         [endDate]="filterEndDate"
                         [startDate]="filterStartDate"
                     ></app-statistics-total-aircraft>
                 </div>
-        
+
                 <div class="col-md-6 col-xl-3">
                     <app-statistics-orders-by-location
                         [endDate]="filterEndDate"
@@ -57,10 +57,14 @@
                 </div>
             </div>
         </mat-tab>
-        <mat-tab label="Flight Watch">
+        <mat-tab label="Takeoff/Landing Cycles">
             <div class="row mt-3">
                 <div class="col-12">
-                    <app-analytics-airport-watch-table></app-analytics-airport-watch-table>
+                    <app-analytics-airport-arrivals-depatures
+                        [customers]="customers"
+                        [tailNumbers]="tailNumbers"
+                        (refreshCustomers)="getCustomersList()"
+                    ></app-analytics-airport-arrivals-depatures>
                 </div>
             </div>
         </mat-tab>

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
 import * as moment from 'moment';
+import { BehaviorSubject, Subject } from 'rxjs';
 
-import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../models/User';
+import { AuthenticationService } from '../services/authentication.service';
 
 export interface ActiveUser {
     fboId: number;
@@ -20,9 +20,7 @@ export class DashboardSettings {
 export class SharedService {
     dashboardSettings: DashboardSettings = new DashboardSettings();
 
-    priceTemplateMessageSource = new BehaviorSubject(
-        'Update Pricing Template'
-    );
+    priceTemplateMessageSource = new BehaviorSubject('Update Pricing Template');
     currentMessage = this.priceTemplateMessageSource.asObservable();
 
     priceUpdateMessage = new BehaviorSubject('Enable button');
@@ -42,9 +40,8 @@ export class SharedService {
         this.authenticationService.currentUser.subscribe(
             (x) => (this.currentUser = x)
         );
-        const storedDashboardSettings = localStorage.getItem(
-            'dashboardSetings'
-        );
+        const storedDashboardSettings =
+            localStorage.getItem('dashboardSetings');
         if (!storedDashboardSettings) {
             this.dashboardSettings.filterStartDate = new Date(
                 moment().add(-6, 'M').format('MM/DD/YYYY')
@@ -65,21 +62,40 @@ export class SharedService {
         if (!this._currentUser.fboId && localStorage.getItem('fboId')) {
             this._currentUser.fboId = Number(localStorage.getItem('fboId'));
         }
-        if (!this._currentUser.managerGroupId && localStorage.getItem('managerGroupId')) {
-            this._currentUser.managerGroupId = Number(localStorage.getItem('managerGroupId'));
+        if (
+            !this._currentUser.managerGroupId &&
+            localStorage.getItem('managerGroupId')
+        ) {
+            this._currentUser.managerGroupId = Number(
+                localStorage.getItem('managerGroupId')
+            );
         }
-        if (!this._currentUser.impersonatedRole && localStorage.getItem('impersonatedrole')) {
-            this._currentUser.impersonatedRole = Number(localStorage.getItem('impersonatedrole'));
+        if (
+            !this._currentUser.impersonatedRole &&
+            localStorage.getItem('impersonatedrole')
+        ) {
+            this._currentUser.impersonatedRole = Number(
+                localStorage.getItem('impersonatedrole')
+            );
         }
         const sessionGroupId = localStorage.getItem('groupId');
-        if (sessionGroupId && (!this._currentUser.groupId || this._currentUser.groupId !== Number(sessionGroupId))) {
+        if (
+            sessionGroupId &&
+            (!this._currentUser.groupId ||
+                this._currentUser.groupId !== Number(sessionGroupId))
+        ) {
             this._currentUser.groupId = Number(sessionGroupId);
         }
         if (!this._currentUser.groupId && localStorage.getItem('groupId')) {
             this._currentUser.groupId = Number(localStorage.getItem('groupId'));
         }
-        if (!this._currentUser.conductorFbo && localStorage.getItem('conductorFbo')) {
-            this._currentUser.conductorFbo = Boolean(localStorage.getItem('conductorFbo'));
+        if (
+            !this._currentUser.conductorFbo &&
+            localStorage.getItem('conductorFbo')
+        ) {
+            this._currentUser.conductorFbo = Boolean(
+                localStorage.getItem('conductorFbo')
+            );
         }
         return this._currentUser;
     }

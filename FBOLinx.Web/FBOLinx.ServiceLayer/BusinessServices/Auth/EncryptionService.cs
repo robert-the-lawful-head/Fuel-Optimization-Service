@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 {
-    public class EncryptionService
+    public class EncryptionService: IEncryptionService
     {
         public string HashPassword(string password)
         {

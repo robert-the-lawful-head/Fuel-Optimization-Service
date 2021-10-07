@@ -3,6 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Id** | **int?** |  | [optional] 
 **AirportId** | **int?** |  | [optional] 
 **Icao** | **string** |  | [optional] 
 **Iata** | **string** |  | [optional] 

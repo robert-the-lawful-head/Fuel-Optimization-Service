@@ -1,0 +1,166 @@
+<div #customerTableContainer class="customers-grid">
+    <div class="container-fluid">
+        <div class="row">
+            <div *ngIf="customersDataSource" class="col-6">
+                <app-table-global-search
+                    [matDataSource]="customersDataSource"
+                    placeholder="Search by Company, Tail, etc."
+                ></app-table-global-search>
+            </div>
+
+            <div *ngIf="anySelected()" class="col-6 bulk-action-btn">
+                <div>
+                    <button
+                        (click)="exportCustomersToExcel()"
+                        [view]="'accent'"
+                        ni-button
+                    >
+                        Export Selected
+                    </button>
+                </div>
+            </div>
+            <div class="export-import-menu">
+                <div class="actions-menu">
+                    <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                        <mat-icon
+                            aria-hidden="true"
+                            class="mat-icon material-icons"
+                            role="img"
+                            >more_vert</mat-icon
+                        >
+                    </button>
+                    <mat-menu
+                        #gridActions="matMenu"
+                        class="switch-nested-menu-left-arrows"
+                        xPosition="before"
+                    >
+                        <button
+                            (click)="exportCustomersToExcel()"
+                            mat-menu-item
+                        >
+                            Export
+                        </button>
+                        <button (click)="openSettings()" mat-menu-item>
+                            Settings
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-100 table-container" style="overflow-x: auto">
+        <table
+            #customerTable
+            [dataSource]="customersDataSource"
+            class="col-md-12 mb-0"
+            mat-table
+            matSort
+        >
+            <ng-container matColumnDef="selectAll">
+                <th *matHeaderCellDef mat-header-cell>
+                    <input
+                        (change)="selectAction()"
+                        [(ngModel)]="selectAll"
+                        class="checkboxHeight"
+                        id="a"
+                        style="position: absolute; margin-top: 8px"
+                        type="checkbox"
+                    />
+                    <div for="a" style="margin-left: 25px; margin-top: 0px">
+                        <div>Select</div>
+                        <div>All</div>
+                    </div>
+                </th>
+                <td *matCellDef="let customer" clickStopPropagation mat-cell>
+                    <input
+                        (change)="selectUnique()"
+                        [(ngModel)]="customer.selectAll"
+                        class="checkboxHeight"
+                        type="checkbox"
+                        value="{{ customer.selectAll }}"
+                    />
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="company">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    <span>Company</span>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                        ></app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.company }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="isFuelerLinxCustomer">
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
+                    mat-header-cell
+                    mat-sort-header
+                >
+                    <div>
+                        <div>FuelerLinx</div>
+                        <div>Network</div>
+                    </div>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [columnFormat]="8"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="isFuelerLinxCustomer"
+                            propertyName="isFuelerLinxCustomer"
+                        ></app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.isFuelerLinxCustomer ? "YES" : "NO" }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="certificateTypeDescription">
+                <th
+                    *matHeaderCellDef
+                    class="overflow-label"
+                    mat-header-cell
+                    mat-sort-header
+                >
+                    <div>
+                        <div>Certificate</div>
+                        <div>Type</div>
+                    </div>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="certificateTypeDescription"
+                            propertyName="certificateTypeDescription"
+                        ></app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let customer" mat-cell>
+                    {{ customer.certificateTypeDescription }}
+                </td>
+            </ng-container>
+
+            <tr
+                *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row
+            ></tr>
+            <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+        </table>
+        <mat-paginator
+            (page)="(pageIndex); onPageChanged($event)"
+            [length]="customersData.length"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSize"
+        ></mat-paginator>
+    </div>
+</div>

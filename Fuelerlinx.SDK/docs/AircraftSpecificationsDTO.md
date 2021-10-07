@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Oid** | **int?** |  | [optional] 
+**Id** | **int?** |  | [optional] 
 **AircraftId** | **int?** |  | [optional] 
 **ModelName** | **string** |  | [optional] 
 **FuselageDimensionsLengthFt** | **double?** |  | [optional] 

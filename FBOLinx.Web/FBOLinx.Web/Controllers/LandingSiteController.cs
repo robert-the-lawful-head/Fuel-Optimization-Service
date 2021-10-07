@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models.Requests;
@@ -21,13 +22,13 @@ namespace FBOLinx.Web.Controllers
     [ApiController]
     public class LandingSiteController : ControllerBase
     {
-        private readonly FBOLinx.Web.Configurations.MailSettings _MailSettings;
+        private readonly IMailService _MailService;
         private readonly FboLinxContext _Context;
 
-        public LandingSiteController(FboLinxContext context, IOptions<FBOLinx.Web.Configurations.MailSettings> mailSettings)
+        public LandingSiteController(FboLinxContext context, IMailService mailService)
         {
             _Context = context;
-            _MailSettings = mailSettings.Value;
+            _MailService = mailService;
         }
 
         // POST: api/ContactUs
@@ -39,7 +40,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            MailService mailService = new MailService(_MailSettings);
             string headr = @"<!DOCTYPE HTML PUBLIC ""-//W3C//DTD HTML 4.0 Transitional//EN"">";
             headr += @"<html>";
             headr += @"<body>";
@@ -49,17 +49,16 @@ namespace FBOLinx.Web.Controllers
             bdy += @"<br/>Message: " + request.Message;
             bdy += @"</body></html>";
 
-            MailMessage mm = new MailMessage();
-            mm.From = new MailAddress("donotreply@fbolinx.com");
-            mm.To.Add(new MailAddress("info@fbolinx.com"));
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            mailMessage.To.Add(new MailAddress("info@fbolinx.com"));
 
-            mm.Subject = "Sent From FBOlinx Contact Form";
-            mm.Body = headr + bdy;
+            mailMessage.Subject = "Sent From FBOlinx Contact Form";
+            mailMessage.Body = headr + bdy;
 
-            mm.IsBodyHtml = true;
-            mm.Priority = MailPriority.Normal;
-            var sendGridMessage = mm.GetSendGridMessage();
-            await mailService.SendAsync(sendGridMessage);
+            mailMessage.IsBodyHtml = true;
+            mailMessage.Priority = MailPriority.Normal;
+            await _MailService.SendAsync(mailMessage);
 
             return Ok();
         }

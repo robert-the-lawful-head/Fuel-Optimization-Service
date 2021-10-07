@@ -1,7 +1,6 @@
 <ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
 
-<div [ngClass]="{'after-breadcrumb': breadcrumb}">
-
+<div [ngClass]="{ 'after-breadcrumb': breadcrumb }">
     <div *ngIf="!fboInfo || !fboAirportInfo">
         <mat-spinner></mat-spinner>
     </div>
@@ -23,58 +22,74 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.fbo"
-                                           matInput
-                                           placeholder="FBO Name" />
+                                    <input
+                                        [(ngModel)]="fboInfo.fbo"
+                                        matInput
+                                        placeholder="FBO Name"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.address"
-                                           matInput
-                                           placeholder="Address" />
+                                    <input
+                                        [(ngModel)]="fboInfo.address"
+                                        matInput
+                                        placeholder="Address"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboAirportInfo.icao"
-                                           matInput
-                                           placeholder="ICAO" />
+                                    <input
+                                        [(ngModel)]="fboAirportInfo.icao"
+                                        matInput
+                                        placeholder="ICAO"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.city"
-                                           matInput
-                                           placeholder="City" />
+                                    <input
+                                        [(ngModel)]="fboInfo.city"
+                                        matInput
+                                        placeholder="City"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.state"
-                                           matInput
-                                           placeholder="State" />
+                                    <input
+                                        [(ngModel)]="fboInfo.state"
+                                        matInput
+                                        placeholder="State"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.country"
-                                           matInput
-                                           placeholder="Country" />
+                                    <input
+                                        [(ngModel)]="fboInfo.country"
+                                        matInput
+                                        placeholder="Country"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.zipCode"
-                                           matInput
-                                           placeholder="Zip Code" />
+                                    <input
+                                        [(ngModel)]="fboInfo.zipCode"
+                                        matInput
+                                        placeholder="Zip Code"
+                                    />
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.website"
-                                           matInput
-                                           placeholder="Website" />
+                                    <input
+                                        [(ngModel)]="fboInfo.website"
+                                        matInput
+                                        placeholder="Website"
+                                    />
                                 </mat-form-field>
                             </div>
                         </div>
@@ -84,10 +99,14 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <mat-select [(ngModel)]="fboInfo.groupId"
-                                                placeholder="Group">
-                                        <mat-option *ngFor="let group of groups"
-                                                    [value]="group.oid">
+                                    <mat-select
+                                        [(ngModel)]="fboInfo.groupId"
+                                        placeholder="Group"
+                                    >
+                                        <mat-option
+                                            *ngFor="let group of groups"
+                                            [value]="group.oid"
+                                        >
                                             {{ group.groupName }}
                                         </mat-option>
                                     </mat-select>
@@ -95,54 +114,100 @@
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.fuelDeskEmail"
-                                           matInput
-                                           placeholder="Fuel Desk Email" />
+                                    <input
+                                        [(ngModel)]="fboInfo.fuelDeskEmail"
+                                        matInput
+                                        placeholder="Fuel Desk Email"
+                                    />
                                 </mat-form-field>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6">
-                                <mat-form-field style="max-width: 240px;">
-                                    <input [(ngModel)]="fboInfo.senderAddress"
-                                           matInput
-                                           placeholder="Sender Address"
-                                           matTooltip="Your distribution emails will come from this address"
-                                           matTooltipPosition="after" />
-                                </mat-form-field> @FBOLinx.com
+                                <mat-form-field style="max-width: 240px">
+                                    <input
+                                        [(ngModel)]="fboInfo.senderAddress"
+                                        matInput
+                                        placeholder="Sender Address"
+                                        matTooltip="Your distribution emails will come from this address"
+                                        matTooltipPosition="after"
+                                    />
+                                </mat-form-field>
+                                @FBOLinx.com
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.replyTo"
-                                           matInput
-                                           placeholder="ReplyTo"
-                                           matTooltip="For distribution emails, customer replies will default to this address"
-                                           matTooltipPosition="after" />
+                                    <input
+                                        [(ngModel)]="fboInfo.replyTo"
+                                        matInput
+                                        placeholder="ReplyTo"
+                                        matTooltip="For distribution emails, customer replies will default to this address"
+                                        matTooltipPosition="after"
+                                    />
                                 </mat-form-field>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-4">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.active"
-                                                  color="accent">
+                        <div class="row" *ngIf="canChangeActive">
+                            <div class="col-3">
+                                <mat-slide-toggle
+                                    [(ngModel)]="fboInfo.active"
+                                    color="accent"
+                                    (change)="onActiveToggle($event)"
+                                >
                                     Active
                                 </mat-slide-toggle>
                             </div>
-                            <div class="col-md-4">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.suspended"
-                                                  color="warn">
+
+                            <div class="col-3">
+                                <mat-slide-toggle
+                                    [(ngModel)]="fboInfo.suspended"
+                                    color="warn"
+                                >
                                     Suspended
                                 </mat-slide-toggle>
+                            </div>
+                            <div *ngIf="isConductor" class="col-6">
+                                <div class="expiration-date">
+                                    <mat-form-field>
+                                        <input
+                                            [(ngModel)]="fboInfo.expirationDate"
+                                            [matDatepicker]="
+                                                expirationDatePicker
+                                            "
+                                            matInput
+                                            placeholder="Account Expires"
+                                        />
+                                        <mat-datepicker-toggle
+                                            [for]="expirationDatePicker"
+                                            matSuffix
+                                        ></mat-datepicker-toggle>
+                                        <mat-datepicker-toggle
+                                            matSuffix
+                                            (click)="
+                                                fboInfo.expirationDate = null
+                                            "
+                                        >
+                                            <mat-icon matDatepickerToggleIcon
+                                                >clear</mat-icon
+                                            >
+                                        </mat-datepicker-toggle>
+                                        <mat-datepicker
+                                            #expirationDatePicker
+                                        ></mat-datepicker>
+                                    </mat-form-field>
+                                </div>
                             </div>
                         </div>
 
                         <div class="row mt-2">
-                            <button (click)="saveEdit()"
-                                    class="mr-1"
-                                    color="green"
-                                    mat-stroked-button>
+                            <button
+                                (click)="saveEdit()"
+                                class="mr-1"
+                                color="green"
+                                mat-stroked-button
+                            >
                                 <mat-icon>save</mat-icon>
                                 Save Changes
                             </button>

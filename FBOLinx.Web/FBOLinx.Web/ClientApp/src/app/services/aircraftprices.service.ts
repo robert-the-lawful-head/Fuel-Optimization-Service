@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class AircraftpricesService {
@@ -45,9 +45,13 @@ export class AircraftpricesService {
     }
 
     public removeMultiple(payload) {
-        return this.http.post(this.accessPointUrl + '/delete-multiple', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/delete-multiple',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public update(payload) {

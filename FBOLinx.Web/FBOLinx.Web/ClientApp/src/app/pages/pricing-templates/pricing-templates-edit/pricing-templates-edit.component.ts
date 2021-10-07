@@ -1,68 +1,75 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-
-import { combineLatest } from 'rxjs';
-import { differenceBy, forOwn } from 'lodash';
-
+import { ActivatedRoute, Router } from '@angular/router';
 import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { differenceBy, forOwn } from 'lodash';
+import { combineLatest } from 'rxjs';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomermarginsService } from '../../../services/customermargins.service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
+import { FbofeeandtaxomitsbypricingtemplateService } from '../../../services/fbofeeandtaxomitsbypricingtemplate.service';
+import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'ITP Margin Templates',
         link: '/default-layout/pricing-templates',
+        title: 'ITP Margin Templates',
     },
     {
-        title: 'Edit Margin Template',
         link: '',
+        title: 'Edit Margin Template',
     },
 ];
 
 @Component({
     selector: 'app-pricing-templates-edit',
+    styleUrls: ['./pricing-templates-edit.component.scss'],
     templateUrl: './pricing-templates-edit.component.html',
-    styleUrls: [ './pricing-templates-edit.component.scss' ],
 })
 export class PricingTemplatesEditComponent implements OnInit {
+    @ViewChild('priceBreakdownPreview')
+    private priceBreakdownPreview: PriceBreakdownComponent;
+    @ViewChild('feeAndTaxGeneralBreakdown')
+    private feeAndTaxGeneralBreakdown: PriceBreakdownComponent;
+    @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+
     // Input/Output Bindings
-    @Output()
-    savePricingTemplateClicked = new EventEmitter<any>();
-    @Input()
+    @Output() savePricingTemplateClicked = new EventEmitter<any>();
+
     pricingTemplate: any;
-    @ViewChild('typeRTE')
-    rteObj: RichTextEditorComponent;
-    @ViewChild('typeEmail')
-    rteEmail: RichTextEditorComponent;
-    pricingTemplateForm: FormGroup;
-    // Members
-    pageTitle = 'Edit Margin Template';
     breadcrumb: any[] = BREADCRUMBS;
+    pricingTemplateForm: FormGroup;
+    pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
     ];
+    emailTemplatesDataSource: Array<any>;
     canSave: boolean;
     jetACost: number;
     jetARetail: number;
-    public isSaving = false;
-    public hasSaved = false;
-    public isSaveQueued = false;
-    @ViewChild('priceBreakdownPreview')
-    private priceBreakdownPreview: PriceBreakdownComponent;
+    isSaving = false;
+    hasSaved = false;
+    isSaveQueued = false;
+
+    feesAndTaxes: Array<any>;
 
     constructor(
         private route: ActivatedRoute,
@@ -72,7 +79,10 @@ export class PricingTemplatesEditComponent implements OnInit {
         private priceTiersService: PricetiersService,
         private pricingTemplatesService: PricingtemplatesService,
         private fboPricesService: FbopricesService,
-        private sharedService: SharedService
+        private fboFeesAndTaxesService: FbofeesandtaxesService,
+        private fboFeeAndTaxOmitsbyPricingTemplateService: FbofeeandtaxomitsbypricingtemplateService,
+        private sharedService: SharedService,
+        private emailContentService: EmailcontentService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -81,17 +91,27 @@ export class PricingTemplatesEditComponent implements OnInit {
         return this.pricingTemplateForm.controls.customerMargins as FormArray;
     }
 
-    public ngOnInit(): void {
+    async ngOnInit() {
         // Check for passed in id
         const id = this.route.snapshot.paramMap.get('id');
+        this.pricingTemplate = await this.pricingTemplatesService
+            .get({ oid: id })
+            .toPromise();
 
         combineLatest([
-            this.pricingTemplatesService.get({ oid: id }),
-            this.customerMarginsService.getCustomerMarginsByPricingTemplateId(id),
-            this.fboPricesService.getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId),
-        ]).subscribe(([ pricingTemplateData, customerMarginsData, fboPricesData ]) => {
-            const jetACostRecords = (fboPricesData as any).filter(item => item.product === 'JetA Cost');
-            const jetARetailRecords = (fboPricesData as any).filter(item => item.product === 'JetA Retail');
+            this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
+                id
+            ),
+            this.fboPricesService.getFbopricesByFboIdCurrent(
+                this.sharedService.currentUser.fboId
+            ),
+        ]).subscribe(([customerMarginsData, fboPricesData]) => {
+            const jetACostRecords = (fboPricesData as any).filter(
+                (item) => item.product === 'JetA Cost'
+            );
+            const jetARetailRecords = (fboPricesData as any).filter(
+                (item) => item.product === 'JetA Retail'
+            );
             if (jetACostRecords && jetACostRecords.length > 0) {
                 this.jetACost = jetACostRecords[0].price;
             }
@@ -99,35 +119,44 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.jetARetail = jetARetailRecords[0].price;
             }
 
-            this.pricingTemplate = pricingTemplateData;
-            this.pricingTemplate.customerMargins =
-                this.updateMargins(customerMarginsData, this.pricingTemplate.marginType);
+            this.pricingTemplate.customerMargins = this.updateMargins(
+                customerMarginsData,
+                this.pricingTemplate.marginType
+            );
             let customerMargins: FormArray = this.formBuilder.array([]);
             if (this.pricingTemplate.customerMargins) {
-                customerMargins = this.formBuilder.array(this.pricingTemplate.customerMargins.map(customerMargin => {
-                        if (customerMargin.amount !== undefined && customerMargin.amount !== null) {
-                            customerMargin.amount = Number(customerMargin.amount).toFixed(4);
-                        }
-                        const group = {
-                            itp: undefined,
-                        };
-                        forOwn(customerMargin,
-                            (value, key) => {
-                                group[key] = [ value ];
+                customerMargins = this.formBuilder.array(
+                    this.pricingTemplate.customerMargins.map(
+                        (customerMargin) => {
+                            if (
+                                customerMargin.amount !== undefined &&
+                                customerMargin.amount !== null
+                            ) {
+                                customerMargin.amount = Number(
+                                    customerMargin.amount
+                                ).toFixed(4);
+                            }
+                            const group = {
+                                itp: undefined,
+                            };
+                            forOwn(customerMargin, (value, key) => {
+                                group[key] = [value];
                             });
-                        return this.formBuilder.group(group, { updateOn: 'blur' });
-                    })
+                            return this.formBuilder.group(group, {
+                                updateOn: 'blur',
+                            });
+                        }
+                    )
                 );
             }
 
             this.pricingTemplateForm = this.formBuilder.group({
-                name: [ this.pricingTemplate.name ],
-                default: [ this.pricingTemplate.default ],
-                marginType: [ this.pricingTemplate.marginType ],
                 customerMargins,
-                notes: [ this.pricingTemplate.notes ],
-                subject: [ this.pricingTemplate.subject ],
-                email: [ this.pricingTemplate.email ]
+                default: [this.pricingTemplate.default],
+                emailContentId: [this.pricingTemplate.emailContentId],
+                marginType: [this.pricingTemplate.marginType],
+                name: [this.pricingTemplate.name],
+                notes: [this.pricingTemplate.notes],
             });
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
@@ -136,27 +165,43 @@ export class PricingTemplatesEditComponent implements OnInit {
             });
 
             // Margin type change event
-            this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(type => {
-                const updatedMargins =
-                    this.updateMargins(this.pricingTemplateForm.value.customerMargins, type);
-                this.pricingTemplateForm.controls.customerMargins.setValue(updatedMargins,
-                    {
-                        emitEvent: false,
-                    });
-                this.savePricingTemplate();
-            });
-            this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(margins => {
-                const updatedMargins = this.updateMargins(margins, this.pricingTemplateForm.value.marginType);
-                this.pricingTemplateForm.controls.customerMargins.setValue(updatedMargins,
-                    {
-                        emitEvent: false,
-                    });
-                this.savePricingTemplate();
-            });
+            this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
+                (type) => {
+                    const updatedMargins = this.updateMargins(
+                        this.pricingTemplateForm.value.customerMargins,
+                        type
+                    );
+                    this.pricingTemplateForm.controls.customerMargins.setValue(
+                        updatedMargins,
+                        {
+                            emitEvent: false,
+                        }
+                    );
+                    this.savePricingTemplate();
+                }
+            );
+            this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
+                (margins) => {
+                    const updatedMargins = this.updateMargins(
+                        margins,
+                        this.pricingTemplateForm.value.marginType
+                    );
+                    this.pricingTemplateForm.controls.customerMargins.setValue(
+                        updatedMargins,
+                        {
+                            emitEvent: false,
+                        }
+                    );
+                    this.savePricingTemplate();
+                }
+            );
         });
+
+        this.loadPricingTemplateFeesAndTaxes();
+        this.loadEmailContentTemplate();
     }
 
-    public savePricingTemplate(): void {
+    savePricingTemplate(): void {
         const self = this;
         if (this.isSaving) {
             // Save already in queue - no need to double-up the queue
@@ -173,75 +218,165 @@ export class PricingTemplatesEditComponent implements OnInit {
         this.isSaveQueued = false;
         this.isSaving = true;
         this.hasSaved = false;
-        const removedCustomerMargins =
-            differenceBy(this.pricingTemplate.customerMargins, this.pricingTemplateForm.value.customerMargins, 'oid');
+        const removedCustomerMargins = differenceBy(
+            this.pricingTemplate.customerMargins,
+            this.pricingTemplateForm.value.customerMargins,
+            'oid'
+        );
 
         combineLatest([
             this.customerMarginsService.bulkRemove(removedCustomerMargins),
-            this.priceTiersService.updateFromCustomerMarginsViewModel(this.pricingTemplateForm.value.customerMargins),
+            this.priceTiersService.updateFromCustomerMarginsViewModel(
+                this.pricingTemplateForm.value.customerMargins
+            ),
             this.pricingTemplatesService.update({
                 ...this.pricingTemplate,
                 ...this.pricingTemplateForm.value,
             }),
-        ]).subscribe(([ bulkRemoveResponse, customerMarginsUpdateResponse, priceTemplatesResponse ]) => {
-            // this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
-            this.pricingTemplate.customerMargins = customerMarginsUpdateResponse;
-            for (let i = 0; i < this.pricingTemplateForm.value.customerMargins.length; i++) {
-                this.pricingTemplateForm.value.customerMargins[i].oid = this.pricingTemplate.customerMargins[i].oid;
-            }
-            this.isSaving = false;
-            this.hasSaved = true;
-            this.priceBreakdownPreview.performRecalculation();
+        ]).subscribe(
+            ([
+                bulkRemoveResponse,
+                customerMarginsUpdateResponse,
+                priceTemplatesResponse,
+            ]) => {
+                // this.router.navigate(['/default-layout/pricing-templates/']).then(() => {});
+                this.pricingTemplate.customerMargins =
+                    customerMarginsUpdateResponse;
+                for (
+                    let i = 0;
+                    i < this.pricingTemplateForm.value.customerMargins.length;
+                    i++
+                ) {
+                    this.pricingTemplateForm.value.customerMargins[i].oid =
+                        this.pricingTemplate.customerMargins[i].oid;
+                }
+                this.isSaving = false;
+                this.hasSaved = true;
+                this.priceBreakdownPreview.performRecalculation();
+                this.feeAndTaxGeneralBreakdown.performRecalculation();
 
-            this.sharedService.NotifyPricingTemplateComponent('updateComponent');
-        });
+                this.sharedService.NotifyPricingTemplateComponent(
+                    'updateComponent'
+                );
+            }
+        );
     }
 
     cancelPricingTemplateEdit() {
-        this.router.navigate([ '/default-layout/pricing-templates/' ]).then(() => {
-        });
+        this.router
+            .navigate(['/default-layout/pricing-templates/'])
+            .then(() => {});
     }
 
     deleteCustomerMargin(index: number) {
         this.customerMarginsFormArray.removeAt(index);
         if (this.customerMarginsFormArray.length) {
-            this.customerMarginsFormArray.at(this.customerMarginsFormArray.length - 1).patchValue({
-                max: 99999,
-            });
+            this.customerMarginsFormArray
+                .at(this.customerMarginsFormArray.length - 1)
+                .patchValue({
+                    max: 99999,
+                });
         }
     }
 
     addCustomerMargin() {
         const customerMargin = {
-            oid: 0,
-            templateId: this.pricingTemplate.oid,
-            priceTierId: 0,
-            min: 1,
-            max: 99999,
+            allin: 0,
             amount: Number(0).toFixed(4),
             itp: 0,
-            allin: 0,
+            max: 99999,
+            min: 1,
+            oid: 0,
+            priceTierId: 0,
+            templateId: this.pricingTemplate.oid,
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
-            customerMargin.min = Math.abs(this.customerMarginsFormArray.at(lastIndex).value.min) + 250;
-            this.customerMarginsFormArray.at(lastIndex).patchValue({
+            customerMargin.min =
+                Math.abs(
+                    this.customerMarginsFormArray.at(lastIndex).value.min
+                ) + 250;
+            this.customerMarginsFormArray.at(lastIndex).patchValue(
+                {
                     max: Math.abs(customerMargin.min) - 1,
                 },
                 {
                     emitEvent: false,
-                });
+                }
+            );
         }
         const group = {};
-        forOwn(customerMargin,
-            (value, key) => {
-                group[key] = [ value ];
+        forOwn(customerMargin, (value, key) => {
+            group[key] = [value];
+        });
+        this.customerMarginsFormArray.push(
+            this.formBuilder.group(group, { updateOn: 'blur' })
+        );
+    }
+
+    omitFeeAndTaxCheckChanged(feeAndTax: any): void {
+        if (!feeAndTax.omitsByPricingTemplate) {
+            feeAndTax.omitsByPricingTemplate = [];
+        }
+        let omitRecord: any = {
+            fboFeeAndTaxId: feeAndTax.oid,
+            oid: 0,
+            pricingTemplateId: this.pricingTemplate.oid,
+        };
+        if (feeAndTax.omitsByPricingTemplate.length > 0) {
+            omitRecord = feeAndTax.omitsByPricingTemplate[0];
+        } else {
+            feeAndTax.omitsByPricingTemplate.push(omitRecord);
+        }
+        omitRecord.fboFeeAndTaxId = feeAndTax.oid;
+        if (feeAndTax.isOmitted) {
+            omitRecord.oid = 0;
+            this.fboFeeAndTaxOmitsbyPricingTemplateService 
+                .add(omitRecord)
+                .subscribe((response: any) => {
+                    omitRecord.oid = response.oid;
+                    this.recalculatePriceBreakdown();
+                });
+        } else {
+            this.fboFeeAndTaxOmitsbyPricingTemplateService
+                .remove(omitRecord)
+                .subscribe(() => {
+                    feeAndTax.omitsByPricingTemplate = [];
+                    this.recalculatePriceBreakdown();
+                });
+        }
+    }
+
+    private loadPricingTemplateFeesAndTaxes(): void {
+        this.fboFeesAndTaxesService
+            .getByFboAndPricingTemplate(
+                this.sharedService.currentUser.fboId,
+                this.pricingTemplate.oid
+            )
+            .subscribe((response: any[]) => {
+                this.feesAndTaxes = response;
             });
-        this.customerMarginsFormArray.push(this.formBuilder.group(group, { updateOn: 'blur' }));
+    }
+
+    private loadEmailContentTemplate(): void {
+        this.emailContentService
+            .getForFbo(this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
+                this.emailTemplatesDataSource = response;
+            });
+    }
+
+    private recalculatePriceBreakdown(): void {
+        // Set a timeout so the child component is aware of model changes
+        const self = this;
+        setTimeout(() => {
+            self.priceBreakdownPreview.performRecalculation();
+            self.feeAndTaxGeneralBreakdown.performRecalculation();
+        });
     }
 
     private updateMargins(oldMargins, marginType) {
-        const margins = [ ...oldMargins ];
+        const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
@@ -249,11 +384,13 @@ export class PricingTemplatesEditComponent implements OnInit {
 
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin = this.jetACost + Number(margins[i].amount);
+                    margins[i].allin =
+                        this.jetACost + Number(margins[i].amount);
                 }
             } else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
-                    margins[i].allin = this.jetARetail - Number(margins[i].amount);
+                    margins[i].allin =
+                        this.jetARetail - Number(margins[i].amount);
                     margins[i].itp = this.jetARetail;
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;

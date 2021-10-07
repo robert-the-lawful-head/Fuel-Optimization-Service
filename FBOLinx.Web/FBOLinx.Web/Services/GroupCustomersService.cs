@@ -6,8 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using IO.Swagger.Model;
-using IO.Swagger.Api;
+using Fuelerlinx.SDK;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
@@ -35,7 +34,7 @@ namespace FBOLinx.Web.Services
             try
             {
                 var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToList();
-                var aircrafts = _fuelerLinxService.GetAircraftsFromFuelerinx();
+                var aircrafts = await _fuelerLinxService.GetAircraftsFromFuelerinx();
 
                 System.Collections.ArrayList customerExistsList = new System.Collections.ArrayList();
                 foreach (var cust in listWithCustomers)

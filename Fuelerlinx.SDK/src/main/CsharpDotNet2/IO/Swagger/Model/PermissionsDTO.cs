@@ -26,6 +26,13 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "Menu")]
     public MenuDTO Menu { get; set; }
 
+    /// <summary>
+    /// Gets or Sets MobileMenu
+    /// </summary>
+    [DataMember(Name="MobileMenu", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "MobileMenu")]
+    public MobileMenuDTO MobileMenu { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -36,6 +43,7 @@ namespace IO.Swagger.Model {
       sb.Append("class PermissionsDTO {\n");
       sb.Append("  TripPlanning: ").Append(TripPlanning).Append("\n");
       sb.Append("  Menu: ").Append(Menu).Append("\n");
+      sb.Append("  MobileMenu: ").Append(MobileMenu).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

@@ -1,21 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
+/*import FlatfileImporter from 'flatfile-csv-importer';*/
 import * as _ from 'lodash';
-import FlatfileImporter from 'flatfile-csv-importer';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 // Services
 import { CustomercontactsService } from '../../../services/customercontacts.service';
-import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
-import { SharedService } from '../../../layouts/shared-service';
 import { ContactsDialogNewContactComponent } from '../contacts-edit-modal/contacts-edit-modal.component';
 
 @Component({
     selector: 'app-contacts-grid',
+    styleUrls: ['./contacts-grid.component.scss'],
     templateUrl: './contacts-grid.component.html',
-    styleUrls: [ './contacts-grid.component.scss' ],
 })
 export class ContactsGridComponent implements OnInit {
     @Output() contactDeleted = new EventEmitter<any>();
@@ -37,11 +44,11 @@ export class ContactsGridComponent implements OnInit {
     ];
     public copyAll = false;
 
-    LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
+    /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
 
-    private importer: FlatfileImporter;
+    /*private importer: FlatfileImporter;*/
 
     constructor(
         public deleteUserDialog: MatDialog,
@@ -50,22 +57,23 @@ export class ContactsGridComponent implements OnInit {
         private customerContactsService: CustomercontactsService,
         public newContactDialog: MatDialog,
         private route: ActivatedRoute
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         if (!this.contactsData) {
             return;
         }
 
-        const foundedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        const foundedIndex = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
         this.copyAll = foundedIndex >= 0 ? false : true;
-        this.sort.sortChange.subscribe(() => {
-        });
+        this.sort.sortChange.subscribe(() => {});
         this.contactsDataSource = new MatTableDataSource(this.contactsData);
         this.contactsDataSource.sort = this.sort;
 
-        this.initializeImporter();
+        /*this.initializeImporter();*/
     }
 
     // Public Methods
@@ -127,9 +135,10 @@ export class ContactsGridComponent implements OnInit {
                                             record.customerContactId
                                     ); // find index in your array
                                     this.contactsData.splice(index, 1); // remove element from array
-                                    this.contactsDataSource = new MatTableDataSource(
-                                        this.contactsData
-                                    );
+                                    this.contactsDataSource =
+                                        new MatTableDataSource(
+                                            this.contactsData
+                                        );
                                     this.contactsDataSource.sort = this.sort;
                                 });
                         });
@@ -160,8 +169,7 @@ export class ContactsGridComponent implements OnInit {
                                             .update(
                                                 this.currentContactInfoByGroup
                                             )
-                                            .subscribe(() => {
-                                            });
+                                            .subscribe(() => {});
                                     }
                                 }
                             });
@@ -181,15 +189,17 @@ export class ContactsGridComponent implements OnInit {
         } else {
             value.copyAlerts = true;
         }
-        const unselectedIndex = _.findIndex(this.contactsData, (contact) => !contact.copyAlerts);
+        const unselectedIndex = _.findIndex(
+            this.contactsData,
+            (contact) => !contact.copyAlerts
+        );
         this.copyAll = unselectedIndex >= 0 ? false : true;
 
         value.groupId = this.sharedService.currentUser.groupId;
 
         this.contactInfoByGroupsService
             .update(value)
-            .subscribe((data: any) => {
-            });
+            .subscribe((data: any) => {});
     }
 
     public UpdateAllCopyAlertsValues() {
@@ -199,157 +209,161 @@ export class ContactsGridComponent implements OnInit {
             contact.GroupId = this.sharedService.currentUser.groupId;
             this.contactInfoByGroupsService
                 .update(contact)
-                .subscribe((data: any) => {
-                });
+                .subscribe((data: any) => {});
         });
     }
 
-    async launchImporter() {
-        if (!this.LICENSE_KEY) {
-            return alert('Set LICENSE_KEY on Line 13 before continuing.');
-        }
-        try {
-            const results = await this.importer.requestDataFromUser();
-            this.importer.displayLoader();
-            const customerId = this.route.snapshot.paramMap.get('id');
-            if (results) {
-                results.data.forEach((result) => {
-                    result.groupid = this.sharedService.currentUser.groupId;
-                    result.customerId = customerId;
-                });
-                this.contactInfoByGroupsService
-                    .import(results.data)
-                    .subscribe((data: any) => {
-                        if (data) {
-                            data.forEach((result) => {
-                                this.contactsData.push(result);
-                            });
+    //[#hz0jtd] FlatFile importer was requested to be removed
+    //async launchImporter() {
+    //    if (!this.LICENSE_KEY) {
+    //        return alert('Set LICENSE_KEY on Line 13 before continuing.');
+    //    }
+    //    try {
+    //        const results = await this.importer.requestDataFromUser();
+    //        this.importer.displayLoader();
+    //        const customerId = this.route.snapshot.paramMap.get('id');
+    //        if (results) {
+    //            results.data.forEach((result) => {
+    //                result.groupid = this.sharedService.currentUser.groupId;
+    //                result.customerId = customerId;
+    //            });
+    //            this.contactInfoByGroupsService
+    //                .import(results.data)
+    //                .subscribe((data: any) => {
+    //                    if (data) {
+    //                        data.forEach((result) => {
+    //                            this.contactsData.push(result);
+    //                        });
 
-                            this.contactsDataSource = new MatTableDataSource(
-                                this.contactsData
-                            );
-                            this.contactsDataSource.sort = this.sort;
+    //                        this.contactsDataSource = new MatTableDataSource(
+    //                            this.contactsData
+    //                        );
+    //                        this.contactsDataSource.sort = this.sort;
 
-                            this.importer.displaySuccess(
-                                'Data successfully imported!'
-                            );
-                        }
-                    });
-            }
-        } catch (e) {
-        }
-    }
+    //                        this.importer.displaySuccess(
+    //                            'Data successfully imported!'
+    //                        );
+    //                    }
+    //                });
+    //        }
+    //    } catch (e) {}
+    //}
 
-    initializeImporter() {
-        FlatfileImporter.setVersion(2);
-        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
-            fields: [
-                {
-                    label: 'First Name',
-                    alternates: [ 'first name' ],
-                    key: 'FirstName',
-                    description: 'Contact First Name',
-                    validators: [
-                        {
-                            validate: 'required',
-                            error: 'this field is required',
-                        },
-                    ],
-                },
-                {
-                    label: 'Last Name',
-                    alternates: [ 'last name' ],
-                    key: 'LastName',
-                    description: 'Contact Last Name',
-                    validators: [
-                        {
-                            validate: 'required',
-                            error: 'this field is required',
-                        },
-                    ],
-                },
-                {
-                    label: 'Title',
-                    alternates: [ 'title' ],
-                    key: 'Title',
-                    description: 'Contact Title',
-                },
-                {
-                    label: 'Email',
-                    alternates: [ 'email', 'email address' ],
-                    key: 'Email',
-                    description: 'Email Address',
-                },
-                {
-                    label: 'Phone Number',
-                    alternates: [ 'phone', 'phone number' ],
-                    key: 'PhoneNumber',
-                    description: 'Phone Number',
-                },
-                {
-                    label: 'Extension',
-                    alternates: [ 'extension' ],
-                    key: 'Extension',
-                    description: 'Phone Extension',
-                },
-                {
-                    label: 'Mobile',
-                    alternates: [ 'mobile', 'cell', 'mobile phone', 'cell phone' ],
-                    key: 'MobilePhone',
-                    description: 'Mobile Phone',
-                },
-                {
-                    label: 'Fax',
-                    alternates: [ 'fax' ],
-                    key: 'Fax',
-                    description: 'Fax',
-                },
-                {
-                    label: 'Address',
-                    alternates: [ 'address', 'street address' ],
-                    key: 'Address',
-                    description: 'Street Address',
-                },
-                {
-                    label: 'City',
-                    alternates: [ 'city', 'town' ],
-                    key: 'City',
-                    description: 'City',
-                },
-                {
-                    label: 'State',
-                    alternates: [ 'state' ],
-                    key: 'State',
-                    description: 'State',
-                },
-                {
-                    label: 'Country',
-                    alternates: [ 'country' ],
-                    key: 'Country',
-                    description: 'Country',
-                },
-                {
-                    label: 'Primary',
-                    alternates: [ 'primary' ],
-                    key: 'PrimaryContact',
-                    description: 'Primary',
-                },
-                {
-                    label: 'Copy on Distribution',
-                    alternates: [ 'copy on distribution' ],
-                    key: 'CopyAlertsContact',
-                    description: 'Copy Contact on Distribution',
-                },
-            ],
-            type: 'Contacts',
-            allowInvalidSubmit: true,
-            managed: true,
-            allowCustom: true,
-            disableManualInput: false,
-        });
-        this.importer.setCustomer({
-            userId: '1',
-            name: 'WebsiteImport',
-        });
-    }
+    //initializeImporter() {
+    //    FlatfileImporter.setVersion(2);
+    //    this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+    //        allowCustom: true,
+    //        allowInvalidSubmit: true,
+    //        disableManualInput: false,
+    //        fields: [
+    //            {
+    //                alternates: ['first name'],
+    //                description: 'Contact First Name',
+    //                key: 'FirstName',
+    //                label: 'First Name',
+    //                validators: [
+    //                    {
+    //                        error: 'this field is required',
+    //                        validate: 'required',
+    //                    },
+    //                ],
+    //            },
+    //            {
+    //                alternates: ['last name'],
+    //                description: 'Contact Last Name',
+    //                key: 'LastName',
+    //                label: 'Last Name',
+    //                validators: [
+    //                    {
+    //                        error: 'this field is required',
+    //                        validate: 'required',
+    //                    },
+    //                ],
+    //            },
+    //            {
+    //                alternates: ['title'],
+    //                description: 'Contact Title',
+    //                key: 'Title',
+    //                label: 'Title',
+    //            },
+    //            {
+    //                alternates: ['email', 'email address'],
+    //                description: 'Email Address',
+    //                key: 'Email',
+    //                label: 'Email',
+    //            },
+    //            {
+    //                alternates: ['phone', 'phone number'],
+    //                description: 'Phone Number',
+    //                key: 'PhoneNumber',
+    //                label: 'Phone Number',
+    //            },
+    //            {
+    //                alternates: ['extension'],
+    //                description: 'Phone Extension',
+    //                key: 'Extension',
+    //                label: 'Extension',
+    //            },
+    //            {
+    //                alternates: [
+    //                    'mobile',
+    //                    'cell',
+    //                    'mobile phone',
+    //                    'cell phone',
+    //                ],
+    //                description: 'Mobile Phone',
+    //                key: 'MobilePhone',
+    //                label: 'Mobile',
+    //            },
+    //            {
+    //                alternates: ['fax'],
+    //                description: 'Fax',
+    //                key: 'Fax',
+    //                label: 'Fax',
+    //            },
+    //            {
+    //                alternates: ['address', 'street address'],
+    //                description: 'Street Address',
+    //                key: 'Address',
+    //                label: 'Address',
+    //            },
+    //            {
+    //                alternates: ['city', 'town'],
+    //                description: 'City',
+    //                key: 'City',
+    //                label: 'City',
+    //            },
+    //            {
+    //                alternates: ['state'],
+    //                description: 'State',
+    //                key: 'State',
+    //                label: 'State',
+    //            },
+    //            {
+    //                alternates: ['country'],
+    //                description: 'Country',
+    //                key: 'Country',
+    //                label: 'Country',
+    //            },
+    //            {
+    //                alternates: ['primary'],
+    //                description: 'Primary',
+    //                key: 'PrimaryContact',
+    //                label: 'Primary',
+    //            },
+    //            {
+    //                alternates: ['copy on distribution'],
+    //                description: 'Copy Contact on Distribution',
+    //                key: 'CopyAlertsContact',
+    //                label: 'Copy on Distribution',
+    //            },
+    //        ],
+    //        managed: true,
+    //        type: 'Contacts',
+    //    });
+    //    this.importer.setCustomer({
+    //        name: 'WebsiteImport',
+    //        userId: '1',
+    //    });
+    //}
 }

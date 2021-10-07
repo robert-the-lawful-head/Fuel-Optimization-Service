@@ -1,56 +1,77 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { groupGridSet } from 'src/app/store/actions';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
+import { State } from '../../../store/reducers';
+import { GroupGridState } from '../../../store/reducers/group';
+import { getGroupGridState } from '../../../store/selectors';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Groups',
         link: '',
+        title: 'Groups',
     },
 ];
 
 @Component({
     selector: 'app-groups-home',
+    styleUrls: ['./groups-home.component.scss'],
     templateUrl: './groups-home.component.html',
-    styleUrls: [ './groups-home.component.scss' ],
 })
 export class GroupsHomeComponent implements OnInit {
     // Members
     breadcrumb = BREADCRUMBS;
     groupsFbosData: any;
     currentGroup: any;
+    groupGridState: GroupGridState;
 
     constructor(
         private router: Router,
         private groupsService: GroupsService,
-        private sharedService: SharedService
-    ) {
-    }
+        private sharedService: SharedService,
+        private store: Store<State>
+    ) {}
 
     ngOnInit(): void {
         this.loadGroupsFbos();
+        this.store.select(getGroupGridState).subscribe((state) => {
+            this.groupGridState = state;
+        });
     }
 
-    editGroupClicked(record) {
+    editGroupClicked(event) {
+        const { group, searchValue } = event;
+        this.store.dispatch(
+            groupGridSet({
+                filter: searchValue,
+            })
+        );
+
         if (this.sharedService.currentUser.role === 3) {
-            this.sharedService.currentUser.groupId = record.oid;
+            this.sharedService.currentUser.groupId = group.oid;
         }
-        this.router.navigate([ '/default-layout/groups/' + record.oid ]);
+        this.router.navigate(['/default-layout/groups/' + group.oid]);
     }
 
-    editFboClicked(record) {
-        this.router.navigate([ '/default-layout/fbos/' + record.oid ]);
+    editFboClicked(event) {
+        const { fbo, searchValue } = event;
+        this.store.dispatch(
+            groupGridSet({
+                filter: searchValue,
+            })
+        );
+        this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
     }
 
-    deleteFboClicked() {
-    }
+    deleteFboClicked() {}
 
     saveGroupEditClicked() {
         if (this.sharedService.currentUser.role === 3) {

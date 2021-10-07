@@ -29,9 +29,8 @@
                     [matTooltip]="
                         'The pricing used by this template has been hidden/disabled in the FBO Prices section.'
                     "
-                >Invalid
-                </ni-badge
-                >
+                    >Invalid
+                </ni-badge>
             </td>
         </ng-container>
 
@@ -41,8 +40,8 @@
                 {{ pricingTemplate.name }}
                 <sup
                     *ngIf="pricingTemplate.default"
-                    style="color: green; font-weight: bold;"
-                >Default</sup
+                    style="color: green; font-weight: bold"
+                    >Default</sup
                 >
             </td>
         </ng-container>
@@ -66,9 +65,7 @@
         </ng-container>
 
         <ng-container matColumnDef="copy">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                &nbsp;
-            </th>
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 <div class="pull-right">
                     <button
@@ -80,10 +77,7 @@
                         beforeIcon="fa fa-copy"
                         ni-button
                         size="small"
-                        style="
-                            border: 1px solid black;
-                            width: 70px !important;
-                        "
+                        style="border: 1px solid black; width: 70px !important"
                     >
                         Copy
                     </button>
@@ -131,9 +125,11 @@
     </table>
 
     <div>
-        <mat-paginator (page)="(pageIndexTemplate); onPageChanged($event)"
-                       [length]="pricingTemplatesData.length"
-                       [pageSizeOptions]="[10, 25, 50, 100]"
-                       [pageSize]="pageSizeTemplate"></mat-paginator>
+        <mat-paginator
+            (page)="(pageIndexTemplate); onPageChanged($event)"
+            [length]="pricingTemplatesData.length"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSizeTemplate"
+        ></mat-paginator>
     </div>
 </div>

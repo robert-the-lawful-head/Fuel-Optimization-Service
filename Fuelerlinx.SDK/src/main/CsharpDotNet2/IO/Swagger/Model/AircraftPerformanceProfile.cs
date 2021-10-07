@@ -34,9 +34,9 @@ namespace IO.Swagger.Model {
     public string Name { get; set; }
 
     /// <summary>
-    /// 
+    /// Aircraft Performance Profile Types:             0 = None             1 = By Segment             2 = By Hour             4 = By Altitude             8 = SkyPlan    * `None` -   * `BySegment` -   * `ByHour` -   * `ByAltitude` -   * `SkyPlan` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Aircraft Performance Profile Types:             0 = None             1 = By Segment             2 = By Hour             4 = By Altitude             8 = SkyPlan    * `None` -   * `BySegment` -   * `ByHour` -   * `ByAltitude` -   * `SkyPlan` -   </value>
     [DataMember(Name="profileType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "profileType")]
     public int? ProfileType { get; set; }
@@ -49,9 +49,9 @@ namespace IO.Swagger.Model {
     public string ClimbAirspeed { get; set; }
 
     /// <summary>
-    /// 
+    /// Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   </value>
     [DataMember(Name="climbAirspeedType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "climbAirspeedType")]
     public int? ClimbAirspeedType { get; set; }
@@ -85,9 +85,9 @@ namespace IO.Swagger.Model {
     public string CruiseAirspeed { get; set; }
 
     /// <summary>
-    /// 
+    /// Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   </value>
     [DataMember(Name="descentAirspeedType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "descentAirspeedType")]
     public int? DescentAirspeedType { get; set; }
@@ -142,17 +142,17 @@ namespace IO.Swagger.Model {
     public string FuelBurnByHour { get; set; }
 
     /// <summary>
-    /// 
+    /// Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Airspeed Types:             0 = None             1 = IAS             2 = TAS    * `None` -   * `IAS` -   * `TAS` -   </value>
     [DataMember(Name="airspeedType", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "airspeedType")]
     public int? AirspeedType { get; set; }
 
     /// <summary>
-    /// 
+    /// Flight phase:             0 = Unspecified             1 = Climb             2 = Cruise             4 = Descent    * `Unspecified` -   * `Climb` -   * `Cruise` -   * `Descent` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Flight phase:             0 = Unspecified             1 = Climb             2 = Cruise             4 = Descent    * `Unspecified` -   * `Climb` -   * `Cruise` -   * `Descent` -   </value>
     [DataMember(Name="flightPhase", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "flightPhase")]
     public int? FlightPhase { get; set; }

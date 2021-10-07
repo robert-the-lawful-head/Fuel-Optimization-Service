@@ -3,7 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**Result** | [**RouteDetailsCaclulationWithNavLog**](RouteDetailsCaclulationWithNavLog.md) |  | [optional] 
+**Result** | [**RouteDetailsCalculationWithNavLog**](RouteDetailsCalculationWithNavLog.md) |  | [optional] 
 **Success** | **bool?** |  | [optional] 
 **Message** | **string** |  | [optional] 
 

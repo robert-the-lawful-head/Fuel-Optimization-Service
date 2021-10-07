@@ -1,21 +1,29 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { NavigationStart, Router, RouterEvent } from '@angular/router';
+import { Store } from '@ngrx/store';
 import * as moment from 'moment';
+import { filter } from 'rxjs/operators';
 
+import {
+    fboChangedEvent,
+    fboPricesUpdatedEvent,
+    locationChangedEvent,
+} from '../../models/sharedEvents';
 // Services
 import { FbopricesService } from '../../services/fboprices.service';
 import { PricingtemplatesService } from '../../services/pricingtemplates.service';
-import { SharedService } from '../shared-service';
-
 // Components
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
-import { fboChangedEvent, fboPricesUpdatedEvent, locationChangedEvent } from '../../models/sharedEvents';
+import { customerGridClear } from '../../store/actions';
+import { State } from '../../store/reducers';
+import { SharedService } from '../shared-service';
 
 @Component({
-    selector: 'default-layout',
-    templateUrl: 'default.component.html',
-    styleUrls: ['../layouts.scss'],
     providers: [SharedService],
+    selector: 'default-layout',
+    styleUrls: ['../layouts.scss'],
+    templateUrl: 'default.component.html',
 })
 export class DefaultLayoutComponent implements OnInit {
     @Input() openedSidebar: boolean;
@@ -35,7 +43,9 @@ export class DefaultLayoutComponent implements OnInit {
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private pricingTemplatesService: PricingtemplatesService,
-        private expiredPricingDialog: MatDialog
+        private expiredPricingDialog: MatDialog,
+        private router: Router,
+        private store: Store<State>
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -44,12 +54,23 @@ export class DefaultLayoutComponent implements OnInit {
 
         if (this.sharedService.currentUser.fboId) {
             this.pricingTemplatesService
-                .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
+                .getByFbo(
+                    this.sharedService.currentUser.fboId,
+                    this.sharedService.currentUser.groupId
+                )
                 .subscribe((data: any) => (this.pricingTemplatesData = data));
             sharedService.titleChanged$.subscribe((title) => {
-                setTimeout(() => this.pageTitle = title, 100);
+                setTimeout(() => (this.pageTitle = title), 100);
             });
         }
+
+        this.router.events
+            .pipe(filter((event) => event instanceof NavigationStart))
+            .subscribe((event: RouterEvent) => {
+                if (!event.url.startsWith('/default-layout/customers')) {
+                    this.store.dispatch(customerGridClear());
+                }
+            });
     }
 
     get isCsr() {
@@ -57,23 +78,41 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadFboPrices();
-        this.checkCurrentPrices();
-        this.layoutClasses = this.getClasses();
+        if (this.canUserSeePricing()) {
+            this.loadFboPrices();
+            this.checkCurrentPrices();
+        }
 
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if ((message === fboChangedEvent || message === locationChangedEvent) && this.sharedService.currentUser.fboId) {
+            if (!this.canUserSeePricing()) {
+                return;
+            }
+            if (
+                (message === fboChangedEvent ||
+                    message === locationChangedEvent) &&
+                this.sharedService.currentUser.fboId
+            ) {
                 this.pricingTemplatesService
-                    .getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId)
-                    .subscribe((data: any) => (this.pricingTemplatesData = data));
+                    .getByFbo(
+                        this.sharedService.currentUser.fboId,
+                        this.sharedService.currentUser.groupId
+                    )
+                    .subscribe(
+                        (data: any) => (this.pricingTemplatesData = data)
+                    );
             }
         });
         this.sharedService.valueChanged$.subscribe((value: any) => {
+            if (!this.canUserSeePricing()) {
+                return;
+            }
             if (value.message === fboPricesUpdatedEvent) {
                 this.cost = value.JetACost;
                 this.retail = value.JetARetail;
             }
         });
+
+        this.layoutClasses = this.getClasses();
     }
 
     isPricePanelVisible() {
@@ -82,7 +121,11 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/fbos',
             '/default-layout/group-analytics',
         ];
-        if (blacklist.findIndex(v => window.location.pathname.startsWith(v)) >= 0) {
+        if (
+            blacklist.findIndex((v) =>
+                window.location.pathname.startsWith(v)
+            ) >= 0
+        ) {
             return false;
         }
         return !this.isCsr;
@@ -118,8 +161,10 @@ export class DefaultLayoutComponent implements OnInit {
             return;
         }
 
-        if (remindMeLaterFlag &&
-            moment(new Date(moment().format('L'))) !== moment(new Date(remindMeLaterFlag))
+        if (
+            remindMeLaterFlag &&
+            moment(new Date(moment().format('L'))) !==
+                moment(new Date(remindMeLaterFlag))
         ) {
             return;
         }
@@ -129,9 +174,10 @@ export class DefaultLayoutComponent implements OnInit {
             .subscribe((data: any) => {
                 if (!data) {
                     const dialogRef = this.expiredPricingDialog.open(
-                        PricingExpiredNotificationComponent, {
-                            data: {},
+                        PricingExpiredNotificationComponent,
+                        {
                             autoFocus: false,
+                            data: {},
                         }
                     );
                     dialogRef.afterClosed().subscribe();
@@ -140,7 +186,10 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     isSidebarInvisible() {
-        return this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole;
+        return (
+            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.impersonatedRole
+        );
     }
 
     private loadFboPrices() {
@@ -156,5 +205,12 @@ export class DefaultLayoutComponent implements OnInit {
                     }
                 }
             });
+    }
+
+    private canUserSeePricing(): boolean {
+        return (
+            [1, 4].includes(this.sharedService.currentUser.role) ||
+            [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
+        );
     }
 }

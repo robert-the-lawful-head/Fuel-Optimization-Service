@@ -140,6 +140,51 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetContactInfoByGroup", new { id = contactInfoByGroup.Oid }, contactInfoByGroup);
         }
 
+        [HttpPost("group/{groupId}/customer/{customerId}/multiple")]
+        public async Task<IActionResult> PostMultipleCustomerContacts([FromRoute] int groupId, [FromRoute] int customerId, [FromBody] List<Contacts> contacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Contacts.AddRange(contacts);
+            await _context.SaveChangesAsync();
+
+            var contactInfoByGroups = contacts.Select(contact => new ContactInfoByGroup
+            {
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                Email = contact.Email,
+                Address= contact.Address,
+                City = contact.City,
+                State = contact.State,
+                Phone = contact.Phone,
+                Mobile = contact.Mobile,
+                Title = contact.Title,
+                CopyAlerts = contact.CopyAlerts,
+                Primary = contact.Primary,
+                Extension = contact.Extension,
+                Fax = contact.Fax,
+                Country = contact.Country,
+                GroupId = groupId,
+                ContactId = contact.Oid,
+            }).ToList();
+
+            _context.ContactInfoByGroup.AddRange(contactInfoByGroups);
+            await _context.SaveChangesAsync();
+
+            var customerContacts = contactInfoByGroups.Select(cig => new CustomerContacts
+            {
+                CustomerId = customerId,
+                ContactId = cig.ContactId,
+            });
+            _context.CustomerContacts.AddRange(customerContacts);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         // DELETE: api/ContactInfoByGroups/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContactInfoByGroup([FromRoute] int id)

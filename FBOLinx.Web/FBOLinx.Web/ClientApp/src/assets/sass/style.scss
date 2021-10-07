@@ -1,13 +1,13 @@
-@import './variable';
+@import "./variable";
 
-@import './fonts';
+@import "./fonts";
 
-@import './structure';
-@import './typography';
-@import './helpers';
-@import './popover';
-@import './components/material-components';
-@import './components/bootstrap';
+@import "./structure";
+@import "./typography";
+@import "./helpers";
+@import "./popover";
+@import "./components/material-components";
+@import "./components/bootstrap";
 
 .actions-menu {
     position: absolute;
@@ -26,7 +26,7 @@
 }
 
 .divider {
-    border-left: 1px solid rgba(#000,.2);
+    border-left: 1px solid rgba(#000, 0.2);
     display: inline-block;
     height: 18px;
     margin: 0 10px;
@@ -34,7 +34,7 @@
 }
 
 .mat-green {
-    background-color: #81C784;
+    background-color: #81c784;
     color: #000000 !important;
 
     &:disabled {
@@ -43,7 +43,7 @@
 }
 
 .mat-orange {
-    background-color: #FFB74D;
+    background-color: #ffb74d;
     color: #000000 !important;
 
     &:disabled {
@@ -75,7 +75,7 @@ button.mat-icon-button {
     background-size: cover;
     border: 1px solid $card-header-bg;
     border-radius: 3px;
-    box-shadow: 1px 1px 5px 0px rgba(main-color(500),.25);
+    box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
     position: relative;
 
     &:not(.outline-card) {
@@ -159,7 +159,6 @@ button.mat-icon-button {
             line-height: normal;
         }
     }
-
 
     .card-content {
         border-radius: 3px;
@@ -265,7 +264,7 @@ button.mat-icon-button {
         &:before {
             background-color: inherit;
             border-radius: 3px;
-            content: '';
+            content: "";
             display: block;
             height: 100%;
             left: 0;
@@ -286,30 +285,27 @@ button.mat-icon-button {
     }
 }
 
-
-
 .mat-sort-header-container {
-  padding-right: 25px;
-  position: relative;
+    padding-right: 25px;
+    position: relative;
 }
 
 .mat-sort-header-content {
-  text-align: left !important;
-  display: flex ;
-  align-items: inherit !important;
+    text-align: left !important;
+    display: flex;
+    align-items: inherit !important;
 }
 
-
 .overflow-label .table-column-filter {
-  top: 0px !important;
+    top: 0px !important;
 }
 
 .customers-grid .mat-icon-button .mat-button-wrapper > * {
-  vertical-align: sub !important;
+    vertical-align: sub !important;
 }
 
 .export-import-menu .mat-button-wrapper .mat-icon {
-  font-size: 25px !important;
+    font-size: 25px !important;
 }
 
 .after-breadcrumb {
@@ -327,7 +323,13 @@ button.mat-icon-button {
 
 /*Tax and Fee Breakdown*/
 
-   /*Price Lookup*/
+/*Price Lookup*/
+.faded-text {
+    background: -webkit-linear-gradient(#eee, #333);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: gray;
+}
+
 .price-lookup-breakdown .d-inline-block.text-nowrap {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -349,7 +351,6 @@ button.mat-icon-button {
     vertical-align: middle;
 }
 
-
 .price-lookup-breakdown .col > div.d-inline-block.text-nowrap {
     width: 150px !important;
     text-overflow: ellipsis;
@@ -361,13 +362,11 @@ button.mat-icon-button {
     padding-right: 0px;
 }
 
-
 .price-lookup-breakdown hr {
-   width: 270px;
+    width: 270px;
 }
 
 /*END Price Lookup*/
-
 
 /*Live Pricing*/
 
@@ -385,7 +384,6 @@ button.mat-icon-button {
     overflow: hidden;
 }
 
-
 .live-pricing-container .col > div.d-inline-block.text-nowrap {
     width: 100px !important;
     text-overflow: ellipsis;
@@ -396,7 +394,6 @@ button.mat-icon-button {
     padding-right: 0px;
 }
 
-
 .live-pricing-container hr {
     border: 1px solid;
     margin: -1px -8px -1px -1px;
@@ -406,3 +403,464 @@ button.mat-icon-button {
 
 /*END Tax and Fee Breakdown*/
 
+/*Customers Grid Bulk Update*/
+.bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
+    color: #2196f3;
+    -webkit-text-fill-color: #2196f3;
+    transition: none;
+    display: block;
+}
+
+.bulk-update .mat-form-field-appearance-legacy .mat-form-field-underline {
+    background-color: #2196f3;
+}
+
+.bulk-update .mat-select-arrow {
+    color: #2196f3;
+}
+
+.bulk-update .mat-form-field-appearance-legacy .mat-form-field-label {
+    color: transparent;
+}
+
+.bulk-update .mat-form-field.mat-focused .mat-form-field-label {
+    color: #0c7cd5;
+}
+
+.bulk-update .mat-form-field.mat-focused .mat-form-field-ripple {
+    background-color: #0a6ebd;
+}
+
+.bulk-update .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    color: #0a6ebd;
+}
+
+/*End Customers Grid Bulk Update*/
+
+/*Dashboard Price Lookup*/
+
+.price-checker.prices-board-item .card-wrap.collapsible .card-content {
+    overflow: initial !important;
+}
+/*End Dashboard Price Lookup*/
+
+.aircraft-assign-modal {
+    .mat-dialog-container {
+        overflow: visible;
+    }
+}
+
+
+/* Start Customer Manager Tables */
+
+div.mat-tab-labels .mat-tab-label.mat-tab-label-active {
+    background: #ffffff !important;
+    color: #252d47 !important;
+    font-weight: 600 !important;
+    opacity: .9;
+    border-top: 3px solid #252d47;
+}
+
+.mat-tab-label {
+    background: #f8f8f8;
+    border-top: 1px solid #dadada;
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.mat-tab-label .mat-tab-label-content {
+    opacity: .4 !important;
+}
+
+.mat-tab-label.mat-tab-label-active .mat-tab-label-content {
+    opacity: .9 !important;
+}
+
+.mat-tab-group.mat-primary .mat-ink-bar {
+    background-color: transparent !important;
+}
+
+.mat-tab-header  {
+  border: none;
+}
+
+.table-container.customers-grid-container {
+    padding-top: 5px !important;
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.table-container.aircrafts-grid {
+    padding-top: 0px !important;
+}
+
+
+body .mat-tab-body-content {
+    overflow: hidden !important;
+}
+
+div.customer-aircraft-table {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+}
+
+/*End Customer Manager Tables*/
+
+
+
+.price-checker {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+}
+
+
+.price-checker .mat-tab-body {
+    padding-left: 15px !important;
+}
+
+.pricing-template-edit .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+}
+
+.pricing-template-edit .mat-tab-body {
+   padding-left: 15px;
+}
+
+
+.pricing-template-edit .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+.email-template .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+    padding-left: 15px;
+    padding-bottom: 15px;
+}
+
+.email-template .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+.statistics-tab .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+    padding-bottom: 15px;
+}
+
+.edit-customer-content .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+
+}
+
+.edit-customer-content .mat-tab-body-content {
+    overflow: auto !important;
+}
+
+.flight-watch-tabs .mat-tab-body {
+    border-left: 1px solid #dadada;
+    border-right: 1px solid #dadada;
+    border-bottom: 1px solid #dadada;
+}
+
+
+/*Flight Watch map controls*/
+
+.map-controls-button button {
+
+}
+
+.map-controls-button .mat-button-wrapper .mat-icon {
+    font-size: 30px;
+}
+
+.mat-flat-button.mat-black {
+    background-color: black;
+    color: white;
+}
+
+.mat-flat-button.mat-black {
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    text-align: center;
+    margin: 0;
+    min-width: auto;
+    padding: 0 0px;
+    border-radius: 0px;
+    overflow: visible;
+}
+
+
+.mat-flat-button.mat-black .mat-icon {
+    display: inline-block;
+    fill: currentColor;
+    height: 33px;
+    width: 38px;
+}
+
+.mat-dark-blue .mat-button-wrapper .mat-icon {
+    font-size: 30px;
+}
+
+.mat-flat-button.mat-dark-blue {
+    background-color: #1d497f;
+    color: white;
+}
+
+.mat-flat-button.mat-dark-blue {
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    text-align: center;
+    margin: 0;
+    min-width: auto;
+    padding: 0 0px;
+    border-radius: 0px;
+    overflow: visible;
+}
+
+
+.mat-flat-button.mat-dark-blue .mat-icon {
+    display: inline-block;
+    fill: currentColor;
+    height: 33px;
+    width: 38px;
+}
+
+
+.map-controls-container mat-card mat-card-title{
+    background-color: #3887be;
+    color: #ffffff;
+    font-size: 14px;
+   text-align: center;
+   padding: 16px;
+}
+
+.map-controls-container mat-card {
+    padding: 0px;
+}
+
+.map-controls-container .mat-card-content {
+    margin-bottom: 0px;
+}
+
+.map-controls-container .mat-card > :first-child {
+    margin-top: 0px;
+}
+
+body .map-controls-container .mat-card-title {
+    margin-bottom: 0px;
+}
+
+.map-control-content {
+
+    color: #686868;
+    padding: 16px;
+    font-size: 12px;
+}
+
+
+.map-controls-container .map-control-content > :first-child {
+    padding-bottom: 0px;
+}
+
+
+.map-controls-container .map-control-content > :last-child {
+    padding-bottom: 0px;
+}
+
+.map-controls-container .map-control-content div {
+    padding-bottom: 5px;
+}
+
+
+.map-controls-container .mat-slide-toggle-bar {
+    background-color: #676767;
+}
+
+.map-control-content .slide-toggle-label {
+    display: inline-block;
+    width: 200px;
+}
+
+.map-control-content .slide-toggle {
+    display: inline-block;
+}
+
+
+.map-control-content .mat-slide-toggle-thumb-container {
+    width: 20px;
+    height: 20px;
+    top: 1px;
+    left: 1px;
+}
+
+.map-control-content .mat-slide-toggle-thumb-container {
+    width: 20px;
+    height: 20px;
+    top: 1px;
+    left: 1px;
+}
+
+.map-control-content .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb-container {
+    top: 1px;
+    left: 7px;
+}
+
+.map-control-content .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+background-color: white;
+}
+
+
+.map-control-content .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+    background-color: #3887be;
+}
+
+.map-control-content .mat-slide-toggle-thumb {
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+}
+
+.map-controls-container .map-control-actions {
+    background-color: #f7f9fa;
+}
+
+.map-control-actions {
+    text-align: center;
+}
+
+.map-control-actions {
+    padding: 12px;
+}
+
+.mat-flat-button.mat-blue {
+    background-color: #3887be;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.map-control-actions .mat-flat-button.mat-blue {
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    text-align: center;
+    margin: 0;
+    min-width: auto;
+    line-height: 20px;
+    padding: 0 10px;
+    border-radius: 0px;
+    overflow: visible;
+    border-radius: 2px;
+    line-height: 29px;
+}
+
+.mat-flat-button.mat-cancel {
+    background-color: #f7f9fa;
+    font-weight: 600;
+    color: #686868;
+    font-size: 12px;
+    border: 1px solid #686868;
+}
+
+.map-control-actions .mat-flat-button.mat-cancel {
+    display: inline-block;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: baseline;
+    text-align: center;
+    margin: 0;
+    min-width: auto;
+    line-height: 20px;
+    padding: 0 10px;
+    border-radius: 0px;
+    overflow: visible;
+    border-radius: 2px;
+    line-height: 27px;
+}
+
+.map-control-content .slide-toggle-label-on {
+    display: inline-block;
+    width: 200px;
+    color: #3887be;
+    font-weight: bold;
+}
+
+
+.map-control-content .mat-slide-toggle-content {
+    vertical-align: top;
+    display: inline-block;
+    line-height: 24px;
+    font-size: 7px;
+    color: white;
+    position: absolute;
+    z-index: 1000;
+}
+
+/*End Flight Watch map controls*/
+/*Flight watch settings container*/
+.flight-watch-settings-container {
+    color: #676767 !important;
+    font-weight: 500 !important;
+}
+
+.flight-watch-settings-container .mat-card-header-text {
+    margin: 0 0px !important;
+}
+
+body .mat-card.flight-watch-settings-container .mat-card-header {
+    margin-bottom: 0px;
+}
+
+.flight-list-settings-button {
+    position: absolute;
+    right: 0px;
+    top: 10px;
+}
+
+
+.flight-list-settings-button .mat-button-wrapper .mat-icon {
+    font-size: 25px;
+}
+/*End Flight watch settings container*/
+/*Map Plane Key*/
+div.custom-key-tab {
+    position: absolute;
+    z-index: 100000;
+    position: absolute;
+    top: 170px;
+    left: 700px;
+    font-size: 12px;
+    color: #686868;
+    background-color: #f1f9fd;
+    font-weight: 600;
+}
+
+div.custom-key-content {
+    display: inline-block;
+    padding-right:25px;
+}
+
+/*Map Plane Key*/
+
+
+    /*div.table-container.aircrafts-grid {
+    height: calc(100vh - 357px);
+    min-height: 300px;
+}
+**/
+    /** {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}*/

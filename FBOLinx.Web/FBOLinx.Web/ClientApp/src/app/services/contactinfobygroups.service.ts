@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class ContactinfobygroupsService {
@@ -36,6 +36,16 @@ export class ContactinfobygroupsService {
         return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,
         });
+    }
+
+    public addMultiple(groupId, customerId, payload) {
+        return this.http.post(
+            `${this.accessPointUrl}/group/${groupId}/customer/${customerId}/multiple`,
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public remove(payload) {
