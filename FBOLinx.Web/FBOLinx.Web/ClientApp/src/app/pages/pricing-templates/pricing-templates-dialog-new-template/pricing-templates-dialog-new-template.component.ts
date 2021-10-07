@@ -15,6 +15,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 
 export interface NewPricingTemplateMargin {
     min?: number;
@@ -63,7 +64,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private pricingTemplatesService: PricingtemplatesService,
         private fboPricesService: FbopricesService,
         private sharedService: SharedService,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        public newTemplateDialog: MatDialog
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -253,11 +255,43 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.stepper.reset();
     }
 
+    public onEmailConentTemplateChanged(event): void {
+        if (this.form.value.thirdStep.emailContentId > -1)
+            return;
+
+        const dialogRef = this.newTemplateDialog.open(
+            EmailTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.emailContentService
+                .add(result)
+                .subscribe((response: any) => {
+                    this.form.get(['thirdStep', 'emailContentId']).setValue(response.oid);
+                    this.loadEmailContentTemplate();
+                });
+        });
+    }
+
     private loadEmailContentTemplate(): void {
         this.emailContentService
             .getForFbo(this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
                 this.emailTemplatesDataSource = response;
+                this.emailTemplatesDataSource.push({
+                    oid: -1,
+                    name: '--Add New Email Template--',
+                    subject: ''
+                });
             });
     }
 
