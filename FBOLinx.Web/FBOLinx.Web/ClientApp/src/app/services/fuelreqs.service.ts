@@ -253,7 +253,7 @@ export class FuelreqsService {
     //Get Customer Analytics Id
     public getCompanyQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date , customerId: number) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/customer-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId+'/CustomerId/'+customerId,
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId ,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,

@@ -1087,7 +1087,7 @@ namespace FBOLinx.Web.Controllers
 
         
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
-        public async Task<IActionResult> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId ,[FromRoute] int? CustomerId,  [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        public async Task<IActionResult> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId ,  [FromBody] FuelReqsCompanyStatisticsRequest request = null)
         {
             if (!ModelState.IsValid)
             {
@@ -1129,7 +1129,7 @@ namespace FBOLinx.Web.Controllers
                     customeridval = request.customerId;
                 }
 
-                var customersQuarable =  _context.CustomerInfoByGroup
+                var customers = await _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
                                         .Include(x => x.Customer)
                                         .Where(x => (x.Customer != null && x.Customer.Suspended != true)&&(x.CustomerId== customeridval
