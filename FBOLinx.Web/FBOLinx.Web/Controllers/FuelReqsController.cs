@@ -1255,7 +1255,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
                         Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
-                    customers.Add(new { CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                    customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
                 }
 
                 List<object> tableData = new List<object>();
