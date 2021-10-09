@@ -72,7 +72,7 @@
                                         />
                                     </mat-form-field>
                                 </div>
-                                <div style="width: 300px">
+                                <div class="pr-3" style="width: 300px">
                                     <mat-form-field>
                                         <mat-select
                                             formControlName="marginType"
@@ -80,8 +80,7 @@
                                         >
                                             <mat-option
                                                 *ngFor="
-                                                    let marginType of marginTypeDataSource
-                                                "
+                                                    let marginType of marginTypeDataSource                                                "
                                                 [value]="marginType.value"
                                             >
                                                 {{ marginType.text }}
@@ -89,7 +88,27 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
-                            </div>
+                                <div class="pr-3" style="width: 300px">
+                                    <mat-form-field >
+                                        <mat-select
+                                        *ngIf="pricingTemplateForm.value
+                                        .marginType == 1"
+                                            formControlName="discountType"
+                                            placeholder="Type"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let discountType of discountTypeDataSource
+                                                "
+                                                [value]="discountType.value"
+                                            >
+                                                {{ discountType.text }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                          </div>
+
 
                             <h5 class="mt-4">Volume Tiers</h5>
                             <table
@@ -110,8 +129,7 @@
                                         <th
                                             *ngIf="
                                                 pricingTemplateForm.value
-                                                    .marginType == 1
-                                            "
+                                                    .marginType == 1"
                                         >
                                             <div class="">Discount</div>
                                         </th>
@@ -190,9 +208,21 @@
                                                         type="number"
                                                     />
                                                     <span
+                                                    *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 0 "
                                                         class="prefixDollar"
                                                         matPrefix
                                                         >$</span
+                                                    >
+
+                                                    <span
+                                                    *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1 "
+                                                        class="prefixDollar"
+                                                        matPrefix
+                                                        >%</span
                                                     >
                                                 </mat-form-field>
                                             </div>

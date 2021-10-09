@@ -33,6 +33,8 @@ namespace FBOLinx.DB.Models
         public string Email { get; set; }
         public string Subject { get; set; }
         public short? Type { get; set; }
+       
+       //  public int discountType { get; set; }
         public MarginTypes? MarginType { get; set; }
         public int? EmailContentId { get; set; }
         [NotMapped]

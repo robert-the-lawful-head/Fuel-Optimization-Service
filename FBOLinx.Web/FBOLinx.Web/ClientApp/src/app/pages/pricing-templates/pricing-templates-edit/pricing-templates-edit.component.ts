@@ -60,7 +60,14 @@ export class PricingTemplatesEditComponent implements OnInit {
     marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
-    ];
+     ];
+
+
+     discountTypeDataSource: Array<any> = [
+        { text: 'Flat per Gallon', value: 0 },
+        { text: 'Precentage', value: 1 },
+     ];
+
     emailTemplatesDataSource: Array<any>;
     canSave: boolean;
     jetACost: number;
@@ -121,8 +128,11 @@ export class PricingTemplatesEditComponent implements OnInit {
 
             this.pricingTemplate.customerMargins = this.updateMargins(
                 customerMarginsData,
-                this.pricingTemplate.marginType
+                this.pricingTemplate.marginType ,
+                this.pricingTemplate.discountType
+
             );
+
             let customerMargins: FormArray = this.formBuilder.array([]);
             if (this.pricingTemplate.customerMargins) {
                 customerMargins = this.formBuilder.array(
@@ -135,6 +145,8 @@ export class PricingTemplatesEditComponent implements OnInit {
                                 customerMargin.amount = Number(
                                     customerMargin.amount
                                 ).toFixed(4);
+
+
                             }
                             const group = {
                                 itp: undefined,
@@ -155,6 +167,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 default: [this.pricingTemplate.default],
                 emailContentId: [this.pricingTemplate.emailContentId],
                 marginType: [this.pricingTemplate.marginType],
+                discountType:[this.pricingTemplate.discountType],
                 name: [this.pricingTemplate.name],
                 notes: [this.pricingTemplate.notes],
             });
@@ -169,7 +182,8 @@ export class PricingTemplatesEditComponent implements OnInit {
                 (type) => {
                     const updatedMargins = this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
-                        type
+                        type ,
+                        this.pricingTemplateForm.value.discountType,
                     );
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
@@ -180,11 +194,13 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.savePricingTemplate();
                 }
             );
+
             this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
                     const updatedMargins = this.updateMargins(
                         margins,
-                        this.pricingTemplateForm.value.marginType
+                        this.pricingTemplateForm.value.marginType ,
+                        this.pricingTemplateForm.value.discountType
                     );
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
@@ -288,6 +304,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             min: 1,
             oid: 0,
             priceTierId: 0,
+            discountType: 0,
             templateId: this.pricingTemplate.oid,
         };
         if (this.customerMarginsFormArray.length > 0) {
@@ -331,7 +348,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         omitRecord.fboFeeAndTaxId = feeAndTax.oid;
         if (feeAndTax.isOmitted) {
             omitRecord.oid = 0;
-            this.fboFeeAndTaxOmitsbyPricingTemplateService 
+            this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
@@ -375,9 +392,12 @@ export class PricingTemplatesEditComponent implements OnInit {
         });
     }
 
-    private updateMargins(oldMargins, marginType) {
+    private updateMargins(oldMargins, marginType , discountType ) {
+
         const margins = [...oldMargins];
-        for (let i = 0; i < margins?.length; i++) {
+
+       for (let i = 0; i < margins?.length; i++) {
+
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
@@ -389,16 +409,35 @@ export class PricingTemplatesEditComponent implements OnInit {
                 }
             } else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
-                    margins[i].allin =
+
+                      if(discountType == 0)
+                      {
+                        margins[i].allin = 15;
+                        this.jetARetail = 15;
+                        margins[i].itp =15;
+                        margins[i].allin =
                         this.jetARetail - Number(margins[i].amount);
+
+                      }
+                    else{
+                        margins[i].allin = 10 ;
+                        this.jetARetail = 10;
+                        margins[i].itp =10;
+                        margins[i].allin =
+                        this.jetARetail - (this.jetARetail * Number(margins[i].amount));
+
+                    }
+
                     margins[i].itp = this.jetARetail;
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;
                     }
+
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
                 margins[i].amount = Number(margins[i].amount).toFixed(4);
+                this.pricingTemplate.discountType = discountType;
             }
         }
         return margins;
