@@ -74,6 +74,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
             this.aircraftTypes = data;
             this.isLoadingAircraftTypes = false;
         });
+
+
+
     }
 
     ngOnInit() {
@@ -329,7 +332,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 }
             });
     }
-    
+
     //[#hz0jtd] FlatFile importer was requested to be removed
     //async launchImporter() {
     //    if (!this.LICENSE_KEY) {

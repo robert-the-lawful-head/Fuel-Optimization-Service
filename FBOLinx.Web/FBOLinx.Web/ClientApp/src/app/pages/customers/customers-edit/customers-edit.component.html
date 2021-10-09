@@ -27,7 +27,7 @@
             <div class="card-content edit-customer-content">
                 <mat-tab-group>
                     <mat-tab label="Customer Details">
-                        <div class="container-fluid">
+                        <div class="container-fluid" >
                             <h5>General Information</h5>
 
                             <div class="row mb-2">
@@ -134,7 +134,7 @@
                         </div>
                     </mat-tab>
 
-                    <mat-tab label="Aircraft">
+                    <mat-tab label="Aircraft" >
                         <!--Customer Aircraft Grid-->
                         <div *ngIf="customerAircraftsData && customerInfoByGroup">
                             <app-customer-aircrafts-grid (updateCustomerPricingTemplate)="
@@ -144,7 +144,7 @@
                         </div>
                     </mat-tab>
 
-                    <mat-tab label="Pricing">
+                    <mat-tab label="Pricing" >
                         <div class="container-fluid">
                             <h5>Price & Margin Information</h5>
                             <table>
