@@ -61,6 +61,28 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
+<<<<<<< Updated upstream
+=======
+
+                    <div class="col-5" *ngIf="marginType === 1">
+                        <mat-form-field class="col-8">
+                            <mat-select
+
+                                formControlName="discountType"
+                                placeholder="Discount Type"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let discountType of discountTypeDataSource
+                                    "
+                                    [value]="discountType.value"
+                                >
+                                    {{ discountType.text }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+>>>>>>> Stashed changes
                 </div>
                 <div
                     class="row mt-2"

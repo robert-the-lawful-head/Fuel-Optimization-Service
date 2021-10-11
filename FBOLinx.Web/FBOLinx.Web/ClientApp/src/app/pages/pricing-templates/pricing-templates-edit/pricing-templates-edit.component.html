@@ -12,10 +12,21 @@
             <h3 class="card-header h5">
                 <div class="row">
                     <div class="col-12">
+<<<<<<< Updated upstream
                         <span class="card-header-title">{{ pricingTemplateForm.value.name }}</span>
                         <button (click)="cancelPricingTemplateEdit()"
                                 class="float-right close-btn"
                                 mat-icon-button>
+=======
+                        <span class="card-header-title">
+                        {{pricingTemplateForm.value.name}}
+                    </span>
+                        <button
+                            (click)="cancelPricingTemplateEdit()"
+                            class="float-right close-btn"
+                            mat-icon-button
+                        >
+>>>>>>> Stashed changes
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
@@ -26,6 +37,7 @@
                     <div class="row">
                         <div class="col">
                             <h5>General Information</h5>
+<<<<<<< Updated upstream
                         </div>
                     </div>
                     <div class="row">
@@ -130,6 +142,82 @@
                                                 <span class="prefixDollar" matPrefix>$</span>
                                             </mat-form-field>
                                         </div>
+=======
+                            <div class="d-inline-block" style="width: 300px">
+                                <mat-slide-toggle
+                                    color="accent"
+                                    formControlName="default"
+                                    >Default</mat-slide-toggle
+                                >
+                            </div>
+                            <div class="d-inline-block">
+                                <div style="width: 300px">
+                                    <mat-form-field>
+                                        <mat-select
+                                            formControlName="emailContentId"
+                                            placeholder="Select Email Template"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let emailContentTemplate of emailTemplatesDataSource
+                                                "
+                                                [value]="
+                                                    emailContentTemplate.oid
+                                                "
+                                            >
+                                                {{ emailContentTemplate.name }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="mt-2 d-flex">
+                                <div class="pr-3" style="width: 300px">
+                                    <mat-form-field>
+                                        <input
+                                            formControlName="name"
+                                            matInput
+                                            placeholder="Name"
+                                        />
+                                    </mat-form-field>
+                                </div>
+                                <div class="pr-3" style="width: 300px">
+                                    <mat-form-field>
+                                        <mat-select
+                                            formControlName="marginType"
+                                            placeholder="Type"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let marginType of marginTypeDataSource                                                "
+                                                [value]="marginType.value"
+                                            >
+                                                {{ marginType.text }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="pr-3" style="width: 300px"   *ngIf="pricingTemplateForm.value
+                                .marginType == 1">
+                                    <mat-form-field >
+                                        <mat-select
+
+                                            formControlName="discountType"
+                                            placeholder="Type"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let discountType of discountTypeDataSource
+                                                "
+                                                [value]="discountType.value"
+                                            >
+                                                {{ discountType.text }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                          </div>
+>>>>>>> Stashed changes
 
                                     </div>
                                 </td>
@@ -155,11 +243,103 @@
                         </div>
                     </div>
 
+<<<<<<< Updated upstream
                     <div class="row">
                         <div class="col sub-widget">
                             <price-breakdown #priceBreakdownPreview
                                              [hideFeeAndTaxGeneralBreakdown]="true"
                                              [priceTemplateId]="pricingTemplate.oid">
+=======
+                                                    <span
+                                                    *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1 "
+                                                        class="prefixDollar"
+                                                        matPrefix
+                                                        >%</span
+                                                    >
+                                                </mat-form-field>
+                                            </div>
+                                        </td>
+                                        <td
+                                            [formGroupName]="i"
+                                            class="font-weight-bold font-italic"
+                                        >
+                                            <div>
+                                                <div
+                                                    *ngIf="
+                                                        pricingTemplateForm
+                                                            .value.marginType ==                                                        1
+                                                    "
+                                                >
+                                                    ${{
+                                                        customerMargin.value.itp
+                                                            | number: "1.4-4"
+                                                    }}
+                                                </div>
+                                                <div class="volume-tiers-width">
+                                                    <mat-form-field
+                                                        *ngIf="
+                                                            pricingTemplateForm
+                                                                .value
+                                                                .marginType == 0
+                                                        "
+                                                    >
+                                                        <input
+                                                            (click)="
+                                                                $event.target.select()
+                                                            "
+                                                            formControlName="amount"
+                                                            matInput
+                                                            step="0.01"
+                                                            type="number"
+                                                        />
+                                                        <span
+                                                            class="prefixDollar"
+                                                            matPrefix
+                                                            >$</span
+                                                        >
+                                                    </mat-form-field>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="">
+                                            <div class="ml-4">
+                                                <button
+                                                    (click)="
+                                                        deleteCustomerMargin(i)
+                                                    "
+                                                    [view]="'error'"
+                                                    beforeIcon="fa fa-trash"
+                                                    ni-button
+                                                    size="small"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <h5 class="mt-2">Tax/Fee Exclusions</h5>
+                            <div
+                                class="tax-fee-exclusions"
+                                *ngIf="feesAndTaxes"
+                            >
+                                <price-breakdown
+                                    #feeAndTaxGeneralBreakdown
+                                    (omitCheckChanged)="
+                                        omitFeeAndTaxCheckChanged($event)
+                                    "
+                                    [feeAndTaxDisplayMode]="1"
+                                    [feesAndTaxes]="feesAndTaxes"
+                                    [priceTemplateId]="pricingTemplate.oid"
+                                    priceBreakdownLoader="ITP-tax-fees-exclusion-loader"
+                                    tooltipPlacement="left"
+                                    [hidePriceTierBreakdown]="true"
+                                ></price-breakdown>
+                            </div>
+>>>>>>> Stashed changes
 
                             </price-breakdown>
                         </div>
