@@ -220,7 +220,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     addTemplateClicked() {
-     
+
 
         this.isSaving = true;
 
@@ -315,46 +315,58 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             });
     }
 
-    private updateMargins(oldMargins, marginType , discountType ) {
-
+    private updateMargins(oldMargins, marginType , discountType) {
         const margins = [...oldMargins];
-
-       for (let i = 0; i < margins?.length; i++) {
-
+        for (let i = 0; i < margins?.length; i++) {
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
 
-            if (marginType !== 1) {
+            if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin =
+                       if(discountType == 0)
+                       {
+
+                        margins[i].allin =
                         this.jetACost + Number(margins[i].amount);
+                        console.log( margins[i].allin)
+                       }
+                       else
+                       {
+
+                        margins[i].allin =
+                        this.jetACost * (1 + (Number(margins[i].amount)/100));
+                       }
+
+                       margins[i].itp = this.jetACost;
+                       if (margins[i].allin !== null) {
+                           margins[i].itp = margins[i].allin ;
+                       }
+
                 }
             } else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
 
-                      if(discountType == 0)
-                      {
+                    if(discountType == 0)
+                    {
                         margins[i].allin =
                         this.jetARetail - Number(margins[i].amount);
-
-                      }
-                    else{
-                         margins[i].allin =
-                        this.jetARetail - (this.jetARetail * Number(margins[i].amount));
-
                     }
+                    else
+                    {
+                        margins[i].allin =
+                        this.jetARetail * (1 - (Number(margins[i].amount) /100));
+                    }
+
 
                     margins[i].itp = this.jetARetail;
-                    if (margins[i].allin) {
-                        margins[i].itp = margins[i].allin - this.jetACost;
+                    if (margins[i].allin !== null) {
+                        margins[i].itp = margins[i].allin ;
                     }
-
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
                 margins[i].amount = Number(margins[i].amount).toFixed(4);
-
             }
         }
         return margins;

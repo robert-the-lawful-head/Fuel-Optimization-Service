@@ -116,12 +116,6 @@
                                         Max. (gal)
                                     </th>
                                     <th
-                                        *ngIf="marginType === 1"
-                                        class="
-                                            text-center
-                                            mat-header-cell
-                                            text-lg-center
-                                        "
                                     >
                                         Discount
                                     </th>
@@ -180,7 +174,7 @@
                                         </mat-form-field>
                                     </td>
                                     <td
-                                        *ngIf="marginType === 1"
+
                                         [formGroupName]="i"
                                         class="mat-cell text-center"
                                     >
@@ -212,37 +206,6 @@
                                         </div>
                                     </td>
                                     <td
-                                        *ngIf="marginType === 0"
-                                        [formGroupName]="i"
-                                        class="
-                                            mat-cell
-                                            text-center
-                                            font-weight-bold font-italic
-                                            text-right
-                                        "
-                                    >
-                                        <div>
-                                            <mat-form-field class="col-6">
-                                                <input
-                                                    (click)="
-                                                        $event.target.select()
-                                                    "
-                                                    formControlName="amount"
-                                                    matInput
-                                                    step="0.01"
-                                                    type="number"
-                                                />
-                                                <span
-                                                    class="prefixDollar"
-                                                    matPrefix
-                                                    >$</span
-                                                >
-
-                                            </mat-form-field>
-                                        </div>
-                                    </td>
-                                    <td
-                                        *ngIf="marginType === 1"
                                         class="
                                             mat-cell
                                             text-center
