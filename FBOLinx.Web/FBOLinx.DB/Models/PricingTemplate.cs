@@ -19,6 +19,7 @@ namespace FBOLinx.DB.Models
             Inactive = 3
         }
 
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
@@ -34,7 +35,8 @@ namespace FBOLinx.DB.Models
         public string Subject { get; set; }
         public short? Type { get; set; }
        
-       //  public int discountType { get; set; }
+        public short? discountType { get; set; }
+        
         public MarginTypes? MarginType { get; set; }
         public int? EmailContentId { get; set; }
         [NotMapped]
@@ -53,6 +55,8 @@ namespace FBOLinx.DB.Models
                 return "";
             }
         }
+
+      
 
         [InverseProperty("PricingTemplate")]
         public ICollection<CustomerMargins> CustomerMargins { get; set; }

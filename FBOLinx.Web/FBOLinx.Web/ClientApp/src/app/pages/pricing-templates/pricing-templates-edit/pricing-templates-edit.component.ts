@@ -54,6 +54,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
 
     pricingTemplate: any;
+    id             :any;
     breadcrumb: any[] = BREADCRUMBS;
     pricingTemplateForm: FormGroup;
     pageTitle = 'Edit Margin Template';
@@ -92,6 +93,8 @@ export class PricingTemplatesEditComponent implements OnInit {
         private emailContentService: EmailcontentService
     ) {
         this.sharedService.titleChange(this.pageTitle);
+
+
     }
 
     get customerMarginsFormArray() {
@@ -100,14 +103,14 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     async ngOnInit() {
         // Check for passed in id
-        const id = this.route.snapshot.paramMap.get('id');
+        this.id = this.route.snapshot.paramMap.get('id');
         this.pricingTemplate = await this.pricingTemplatesService
-            .get({ oid: id })
+            .get({ oid: this.id })
             .toPromise();
 
         combineLatest([
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
-                id
+                this.id
             ),
             this.fboPricesService.getFbopricesByFboIdCurrent(
                 this.sharedService.currentUser.fboId
@@ -412,18 +415,12 @@ export class PricingTemplatesEditComponent implements OnInit {
 
                       if(discountType == 0)
                       {
-                        margins[i].allin = 15;
-                        this.jetARetail = 15;
-                        margins[i].itp =15;
                         margins[i].allin =
                         this.jetARetail - Number(margins[i].amount);
 
                       }
                     else{
-                        margins[i].allin = 10 ;
-                        this.jetARetail = 10;
-                        margins[i].itp =10;
-                        margins[i].allin =
+                         margins[i].allin =
                         this.jetARetail - (this.jetARetail * Number(margins[i].amount));
 
                     }
