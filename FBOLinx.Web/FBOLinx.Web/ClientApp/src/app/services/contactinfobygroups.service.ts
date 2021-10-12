@@ -13,13 +13,15 @@ export class ContactinfobygroupsService {
         this.accessPointUrl = baseUrl + 'api/contactinfobygroups';
     }
 
-    public getCustomerContactInfoByGroup(groupId, customerId) {
+    public getCustomerContactInfoByGroup(groupId, fboId, customerId) {
         return this.http.get(
             this.accessPointUrl +
-                '/group/' +
-                groupId +
-                '/customer/' +
-                customerId,
+            '/group/' +
+            groupId +
+            '/fbo/' +
+            fboId +
+            '/customer/' +
+            customerId,
             {
                 headers: this.headers,
             }

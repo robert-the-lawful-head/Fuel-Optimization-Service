@@ -127,7 +127,7 @@
                             <div *ngIf="
                                     contactsData && !currentContactInfoByGroup
                                 ">
-                                <app-contacts-grid (contactDeleted)="contactDeleted($event)"
+                                <app-contacts-grid
                                     (newContactClicked)="newContactClicked()" [contactsData]="contactsData">
                                 </app-contacts-grid>
                             </div>

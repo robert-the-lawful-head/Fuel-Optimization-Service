@@ -80,25 +80,25 @@ export class ContactsGridComponent implements OnInit {
     }
 
     // Public Methods
-    public deleteRecord(record) {
-        this.customerContactsService
-            .remove(record.customerContactId)
-            .subscribe(() => {
-                this.customerContactsService
-                    .remove(record.customerContactId)
-                    .subscribe(() => {
-                        const index = this.contactsData.findIndex(
-                            (d) =>
-                                d.customerContactId === record.customerContactId
-                        ); // find index in your array
-                        this.contactsData.splice(index, 1); // remove element from array
-                        this.contactsDataSource = new MatTableDataSource(
-                            this.contactsData
-                        );
-                        this.contactsDataSource.sort = this.sort;
-                    });
-            });
-    }
+    //public deleteRecord(record) {
+    //    this.customerContactsService
+    //        .remove(record.customerContactId)
+    //        .subscribe(() => {
+    //            this.contactInfoByFboService
+    //                .remove(record.customerContactId)
+    //                .subscribe(() => {
+    //                    const index = this.contactsData.findIndex(
+    //                        (d) =>
+    //                            d.customerContactId === record.customerContactId
+    //                    ); // find index in your array
+    //                    this.contactsData.splice(index, 1); // remove element from array
+    //                    this.contactsDataSource = new MatTableDataSource(
+    //                        this.contactsData
+    //                    );
+    //                    this.contactsDataSource.sort = this.sort;
+    //                });
+    //        });
+    //}
 
     public editRecord(record, $event) {
         if ($event.target) {
@@ -124,7 +124,7 @@ export class ContactsGridComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            if (result !== 'cancel') {
+            if (result != undefined && result !== 'cancel') {
                 if (result.toDelete) {
                     this.customerContactsService
                         .remove(record.customerContactId)
@@ -132,17 +132,21 @@ export class ContactsGridComponent implements OnInit {
                             this.contactInfoByGroupsService
                                 .remove(record.contactInfoByGroupId)
                                 .subscribe(() => {
-                                    const index = this.contactsData.findIndex(
-                                        (d) =>
-                                            d.customerContactId ===
-                                            record.customerContactId
-                                    ); // find index in your array
-                                    this.contactsData.splice(index, 1); // remove element from array
-                                    this.contactsDataSource =
-                                        new MatTableDataSource(
-                                            this.contactsData
-                                        );
-                                    this.contactsDataSource.sort = this.sort;
+                                    this.contactInfoByFboService
+                                        .remove(record.contactId)
+                                        .subscribe(() => {
+                                            const index = this.contactsData.findIndex(
+                                                (d) =>
+                                                    d.customerContactId ===
+                                                    record.customerContactId
+                                            ); // find index in your array
+                                            this.contactsData.splice(index, 1); // remove element from array
+                                            this.contactsDataSource =
+                                                new MatTableDataSource(
+                                                    this.contactsData
+                                                );
+                                            this.contactsDataSource.sort = this.sort;
+                                        });
                                 });
                         });
                 } else {
@@ -166,13 +170,14 @@ export class ContactsGridComponent implements OnInit {
                                         data.state = record.state;
                                         data.country = record.country;
                                         data.primary = record.primary;
-                                        data.copyAlerts = record.copyAlerts;
 
                                         this.contactInfoByGroupsService
                                             .update(
                                                 this.currentContactInfoByGroup
                                             )
-                                            .subscribe(() => {});
+                                            .subscribe(() => {
+                                                this.UpdateCopyAlerts(record);
+                                            });
                                     }
                                 }
                             });
@@ -200,19 +205,7 @@ export class ContactsGridComponent implements OnInit {
 
         value.groupId = this.sharedService.currentUser.groupId;
 
-        this.contactInfoByFboService.getCustomerContactInfoByFbo(this.sharedService.currentUser.fboId, value.contactid)
-            .subscribe((data: any) => {
-                if (data) {
-                    this.contactInfoByFboService
-                        .update(value)
-                        .subscribe((data: any) => { });
-                }
-                else {
-                    this.contactInfoByGroupsService
-                        .update(value)
-                        .subscribe((data: any) => { });
-                }
-            });
+        this.UpdateCopyAlerts(value);
     }
 
     public UpdateAllCopyAlertsValues() {
@@ -220,10 +213,36 @@ export class ContactsGridComponent implements OnInit {
         _.forEach(this.contactsData, (contact) => {
             contact.copyAlerts = this.copyAll;
             contact.GroupId = this.sharedService.currentUser.groupId;
-            this.contactInfoByGroupsService
-                .update(contact)
-                .subscribe((data: any) => {});
+            this.UpdateCopyAlerts(contact);
         });
+    }
+
+    private UpdateCopyAlerts(contact) {
+        this.contactInfoByFboService.getCustomerContactInfoByFbo(this.sharedService.currentUser.fboId, contact.contactId)
+            .subscribe((data: any) => {
+                if (data) {
+                    data.copyAlerts = contact.copyAlerts;
+                    this.contactInfoByFboService
+                        .update(data)
+                        .subscribe((data: any) => { });
+                }
+                else {
+                    this.addCustomerInfoByFbo(contact);
+                }
+            });
+    }
+
+    private addCustomerInfoByFbo(contact) {
+        var contactInfoByFbo = {
+            ContactId: contact.contactId,
+            FboId: this.sharedService.currentUser.fboId,
+            CopyAlerts: contact.copyAlerts
+        };
+
+        this.contactInfoByFboService
+            .add(contactInfoByFbo)
+            .subscribe((data: any) => {
+            });
     }
 
     //[#hz0jtd] FlatFile importer was requested to be removed

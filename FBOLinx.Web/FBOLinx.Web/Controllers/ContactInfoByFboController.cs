@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,6 +10,10 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
+    [Authorize]
+    [Route("api/[controller]")]
+    [ApiController]
+
     public class ContactInfoByFboController : ControllerBase
     {
         private readonly FboLinxContext _context;
@@ -16,6 +21,13 @@ namespace FBOLinx.Web.Controllers
         public ContactInfoByFboController(FboLinxContext context)
         {
             _context = context;
+        }
+
+        // GET: api/ContactInfoByFbo
+        [HttpGet]
+        public IEnumerable<ContactInfoByFbo> GetContactInfoByFbo()
+        {
+            return _context.ContactInfoByFbo;
         }
 
         // GET: api/ContactInfoByFbo//contact/5/fbo/6
@@ -31,60 +43,53 @@ namespace FBOLinx.Web.Controllers
 
             if (contactInfoByFbo == null)
             {
-                return NotFound();
+                return NoContent();
             }
 
             return Ok(contactInfoByFbo);
         }
 
-        //// PUT: api/ContactInfoByFbo/5
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutContactInfoByFbo([FromRoute] int id, [FromBody] ContactInfoByFbo contactInfoByFbo)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-
-        //    if (id != contactInfoByFbo.Oid)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    _context.Entry(contactInfoByFbo).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ContactInfoByFboExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        // POST: api/ContactInfoByGroups
-        [HttpPost]
-        public async Task<IActionResult> PostContactInfoByGroup([FromBody] ContactInfoByGroup contactInfoByGroup)
+        // PUT: api/ContactInfoByFbo/5
+        [HttpPut("contact/{oid}")]
+        public async Task<IActionResult> PutContactInfoByFbo([FromRoute] int oid, [FromBody] ContactInfoByFbo contactInfoByFbo)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.ContactInfoByGroup.Add(contactInfoByGroup);
+            if (oid != contactInfoByFbo.Oid)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(contactInfoByFbo).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                    throw;
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/ContactInfoByFbo
+        [HttpPost]
+        public async Task<IActionResult> PostContactInfoByFbo([FromBody] ContactInfoByFbo contactInfoByFbo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.ContactInfoByFbo.Add(contactInfoByFbo);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetContactInfoByGroup", new { id = contactInfoByGroup.Oid }, contactInfoByGroup);
+            return CreatedAtAction("GetContactInfoByFbo", new { id = contactInfoByFbo.Oid }, contactInfoByFbo);
         }
 
         // DELETE: api/ContactInfoByGroups/5
@@ -96,22 +101,17 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var contactInfoByFbo = await _context.ContactInfoByFbo.FindAsync(id);
-            if (contactInfoByFbo == null)
+            var contactsInfoByFbo = await _context.ContactInfoByFbo.Where(c => c.ContactId == id).ToListAsync();
+            if (contactsInfoByFbo == null || contactsInfoByFbo.Count == 0)
             {
-                return NotFound();
+                return NoContent();
             }
 
-            _context.ContactInfoByFbo.Remove(contactInfoByFbo);
+            _context.ContactInfoByFbo.RemoveRange(contactsInfoByFbo);
             await _context.SaveChangesAsync();
 
-            return Ok(contactInfoByFbo);
+            return Ok(contactsInfoByFbo);
         }
-
-        //private bool ContactInfoByFboExists(int id)
-        //{
-        //    return _context.ContactInfoByFbo.Any(e => e.Oid == id);
-        //}
     }
 }
 

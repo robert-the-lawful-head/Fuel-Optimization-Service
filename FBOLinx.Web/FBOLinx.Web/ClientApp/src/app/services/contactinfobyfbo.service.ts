@@ -10,7 +10,7 @@ export class ContactinfobyfboService {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + 'api/contactinfobygroups';
+        this.accessPointUrl = baseUrl + 'api/contactinfobyfbo';
     }
 
     public getCustomerContactInfoByFbo(fboId, contactId) {
@@ -45,10 +45,9 @@ export class ContactinfobyfboService {
     }
 
     public update(payload) {
-        if (payload.contactInfoByFboId) {
-            //payload.Oid = payload.contactInfoByFboId;
+        if (payload.oid) {
             return this.http.put(
-                this.accessPointUrl + '/' + payload.Oid,
+                this.accessPointUrl + '/contact/' + payload.oid,
                 payload,
                 {
                     headers: this.headers,

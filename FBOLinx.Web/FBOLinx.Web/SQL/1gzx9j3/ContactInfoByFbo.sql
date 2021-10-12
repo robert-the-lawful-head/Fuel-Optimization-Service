@@ -6,7 +6,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[ContactInfoByFbo](
-	[Oid] [int] IDENTITY(1,1) NOT NULL,
+	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[ContactId] [int] NULL,
 	[FboId] [int] NULL,
 	[CopyAlerts] [bit] NULL,
