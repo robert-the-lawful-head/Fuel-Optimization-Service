@@ -24,16 +24,16 @@
                             class="float-right close-btn"
                             mat-icon-button
                         >
+                    </span>
+                        <button
+                            (click)="cancelPricingTemplateEdit()"
+                            class="float-right close-btn"
+                            mat-icon-button
+                        >
+>>>>>>> Stashed changes
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
-                </div>
-            </h3>
-            <div class="card-content">
-                <div class="container-fluid">
-                    <mat-tab-group>
-                        <mat-tab label="General Information">
-                            <h5>General Information</h5>
                             <div class="d-inline-block" style="width: 300px">
                                 <mat-slide-toggle
                                     color="accent"
@@ -203,7 +203,7 @@
                                                         matPrefix
                                                         >$</span
                                                     >
-
+                    </div>
                                                     <span
                                                     *ngIf="
                                                     pricingTemplateForm.value
@@ -264,6 +264,13 @@
                                     [hidePriceTierBreakdown]="true"
                                 ></price-breakdown>
                             </div>
+                                ></price-breakdown>
+                            </div>
+>>>>>>> Stashed changes
+
+                            </price-breakdown>
+                        </div>
+                    </div>
 
                             <h5 class="mt-2">Fuel Uplift Notes</h5>
                             <ejs-richtexteditor
