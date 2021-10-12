@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
-export class ContactinfobygroupsService {
+export class ContactinfobyfboService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
@@ -10,18 +10,16 @@ export class ContactinfobygroupsService {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
         });
-        this.accessPointUrl = baseUrl + 'api/contactinfobygroups';
+        this.accessPointUrl = baseUrl + 'api/contactinfobyfbo';
     }
 
-    public getCustomerContactInfoByGroup(groupId, fboId, customerId) {
+    public getCustomerContactInfoByFbo(fboId, contactId) {
         return this.http.get(
             this.accessPointUrl +
-            '/group/' +
-            groupId +
+            '/contact/' +
+            contactId +
             '/fbo/' +
-            fboId +
-            '/customer/' +
-            customerId,
+            fboId,
             {
                 headers: this.headers,
             }
@@ -40,16 +38,6 @@ export class ContactinfobygroupsService {
         });
     }
 
-    public addMultiple(groupId, customerId, payload) {
-        return this.http.post(
-            `${this.accessPointUrl}/group/${groupId}/customer/${customerId}/multiple`,
-            payload,
-            {
-                headers: this.headers,
-            }
-        );
-    }
-
     public remove(payload) {
         return this.http.delete(this.accessPointUrl + '/' + payload, {
             headers: this.headers,
@@ -59,16 +47,7 @@ export class ContactinfobygroupsService {
     public update(payload) {
         if (payload.oid) {
             return this.http.put(
-                this.accessPointUrl + '/' + payload.oid,
-                payload,
-                {
-                    headers: this.headers,
-                }
-            );
-        } else if (payload.contactInfoByGroupId) {
-            payload.Oid = payload.contactInfoByGroupId;
-            return this.http.put(
-                this.accessPointUrl + '/' + payload.Oid,
+                this.accessPointUrl + '/contact/' + payload.oid,
                 payload,
                 {
                     headers: this.headers,
@@ -76,10 +55,5 @@ export class ContactinfobygroupsService {
             );
         }
     }
-
-    public import(payload) {
-        return this.http.post(this.accessPointUrl + '/import', payload, {
-            headers: this.headers,
-        });
-    }
 }
+

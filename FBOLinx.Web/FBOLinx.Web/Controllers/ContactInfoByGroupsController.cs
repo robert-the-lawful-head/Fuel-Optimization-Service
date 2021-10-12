@@ -53,8 +53,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // GET: api/ContactInfoByGroups/5
-        [HttpGet("group/{groupId}/customer/{customerId}")]
-        public async Task<IActionResult> GetCustomerContactInfoByGroup([FromRoute] int groupId, [FromRoute] int customerId)
+        [HttpGet("group/{groupId}/fbo/{fboId}/customer/{customerId}")]
+        public async Task<IActionResult> GetCustomerContactInfoByGroup([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId)
         {
             if (!ModelState.IsValid)
             {
@@ -64,6 +64,8 @@ namespace FBOLinx.Web.Controllers
             var customerContactInfoByGroupVM = await (from cc in _context.CustomerContacts
                                                 join c in _context.Contacts on cc.ContactId equals c.Oid
                                                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
+                                                join cibf in _context.ContactInfoByFbo on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                                 where cibg.GroupId == groupId
                                                 && cc.CustomerId == customerId
                                                 select new CustomerContactsByGroupGridViewModel()
@@ -84,7 +86,7 @@ namespace FBOLinx.Web.Controllers
                                                     State = cibg.State,
                                                     Country = cibg.Country,
                                                     Primary = cibg.Primary,
-                                                    CopyAlerts = cibg.CopyAlerts
+                                                    CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts
                                                 }).ToListAsync();
 
             return Ok(customerContactInfoByGroupVM);
