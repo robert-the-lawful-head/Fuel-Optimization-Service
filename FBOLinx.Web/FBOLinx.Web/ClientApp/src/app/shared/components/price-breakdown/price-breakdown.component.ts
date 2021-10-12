@@ -249,7 +249,6 @@ export class PriceBreakdownComponent implements OnInit {
             this.domesticPrivatePricing = responseList[3];
             const customerInfoByGroup = responseList[4];
 
-            console.log(this.domesticPrivatePricing.pricingList[0]);
 
             //If no result was returned for the customer then this wasn't a customer-level price check so mark it as active.
             //Otherwise check the actual active flag of the customer.

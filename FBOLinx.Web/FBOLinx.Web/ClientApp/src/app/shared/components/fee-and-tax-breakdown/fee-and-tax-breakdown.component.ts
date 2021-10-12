@@ -13,47 +13,59 @@ export enum FeeAndTaxBreakdownDisplayModes {
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
-    feesAndTaxes: Array<any>;
+      feesAndTaxes: Array<any>;
     @Input()
-    marginType: number;
+      marginType: number;
     @Input()
-    customerMargin: number;
+      customerMargin: number;
     @Input()
     showLineSeparator = false;
     @Input()
     displayMode: FeeAndTaxBreakdownDisplayModes =
         FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input()
-    fboPrice: number;
+       fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [0, 1, 2, 3];
+       validDepartureTypes: Array<number> = [0, 1, 2, 3];
     @Input()
-    validFlightTypes: Array<number> = [0, 1, 2, 3];
+       validFlightTypes: Array<number> = [0, 1, 2, 3];
+    @Input()
+       discountType : number;
     @Output()
-    omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
+       omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
     public aboveTheLineTaxes: Array<any> = [];
     public belowTheLineTaxes: Array<any> = [];
     public preMarginSubTotal = 0;
     public subTotalWithMargin = 0;
     public total = 0;
+    public marginITP : number = 0;
 
-    constructor() {}
+    constructor() {
+
+
+    }
 
     ngOnInit(): void {
         this.performRecalculation();
+        this.calcItpMargin()
+
     }
 
     public omitChanged(fee: any): void {
         this.omitCheckChanged.emit(fee);
+
     }
 
     public performRecalculation(): void {
+      ;
         this.prepareTaxes();
         this.calculatePrices();
     }
 
     // Private Methods
+
+
     private prepareTaxes() {
         if (!this.feesAndTaxes) {
             return;
@@ -67,11 +79,25 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     }
 
     private calculatePrices(): void {
+
         this.calculatePreMarginSubTotal();
+        this.calcItpMargin();
         this.calculateSubTotalWithMargin();
         this.calculateTotal();
     }
 
+    private calcItpMargin ()
+    {
+        //Cost+ Mode
+       if(this.discountType == 1)
+       {
+           this.marginITP = this.fboPrice *this.customerMargin /100;
+        }
+       else
+       {
+        this.marginITP = this.fboPrice - this.customerMargin ;
+       }
+   }
     private calculatePreMarginSubTotal(): void {
         let result = this.fboPrice;
         const basePrice = this.fboPrice;

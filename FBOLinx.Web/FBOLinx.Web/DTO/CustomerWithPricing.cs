@@ -23,7 +23,7 @@ namespace FBOLinx.Web.DTO
         public int FboId { get; set; }
         public PricingTemplate.MarginTypes? MarginType { get; set; }
 
-        public short? discountType { get; set; }
+        public PricingTemplate.DiscountType? discountType { get; set; }
 
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }

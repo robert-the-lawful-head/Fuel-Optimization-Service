@@ -20,24 +20,43 @@ namespace FBOLinx.DB.Models
         }
 
 
+        public enum DiscountType : short
+        {
+            [Description("Flat Per Gallon")]
+             discountType1 = 0,
+            [Description("Percentage")]
+            discountType2 = 0          
+        }
+
+
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
         [StringLength(500)]
+
         public string Name { get; set; }
+
         [Column("FBOID")]
         public int Fboid { get; set; }
+
         [Column("CustomerID")]
         public int? CustomerId { get; set; }
+
         public bool? Default { get; set; }
+
         public string Notes { get; set; }
+
         public string Email { get; set; }
+
         public string Subject { get; set; }
+
         public short? Type { get; set; }
        
-        public short? discountType { get; set; }
+        public DiscountType? discountType { get; set; }
         
         public MarginTypes? MarginType { get; set; }
+
         public int? EmailContentId { get; set; }
         [NotMapped]
         public List<string> TailNumbers { get; set; }

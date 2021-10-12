@@ -24,16 +24,16 @@
                             class="float-right close-btn"
                             mat-icon-button
                         >
-                    </span>
-                        <button
-                            (click)="cancelPricingTemplateEdit()"
-                            class="float-right close-btn"
-                            mat-icon-button
-                        >
->>>>>>> Stashed changes
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
+                </div>
+            </h3>
+            <div class="card-content">
+                <div class="container-fluid">
+                    <mat-tab-group>
+                        <mat-tab label="General Information">
+                            <h5>General Information</h5>
                             <div class="d-inline-block" style="width: 300px">
                                 <mat-slide-toggle
                                     color="accent"
@@ -72,7 +72,7 @@
                                         />
                                     </mat-form-field>
                                 </div>
-                                <div class="pr-3" style="width: 300px">
+                                <div style="width: 300px" class="pr-3">
                                     <mat-form-field>
                                         <mat-select
                                             formControlName="marginType"
@@ -80,7 +80,8 @@
                                         >
                                             <mat-option
                                                 *ngFor="
-                                                    let marginType of marginTypeDataSource                                                "
+                                                    let marginType of marginTypeDataSource
+                                                "
                                                 [value]="marginType.value"
                                             >
                                                 {{ marginType.text }}
@@ -105,8 +106,8 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
-                          </div>
 
+                            </div>
 
                             <h5 class="mt-4">Volume Tiers</h5>
                             <table
@@ -183,7 +184,8 @@
                                                 </mat-form-field>
                                             </div>
                                         </td>
-                                        <td [formGroupName]="i">
+                                        <td
+                                           [formGroupName]="i">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field>
                                                     <input
@@ -203,8 +205,7 @@
                                                         matPrefix
                                                         >$</span
                                                     >
-                    </div>
-                                                    <span
+                                                   <span
                                                     *ngIf="
                                                     pricingTemplateForm.value
                                                         .discountType == 1 "
@@ -212,6 +213,7 @@
                                                         matPrefix
                                                         >%</span
                                                     >
+
                                                 </mat-form-field>
                                             </div>
                                         </td>
@@ -220,13 +222,14 @@
                                             class="font-weight-bold font-italic"
                                         >
                                             <div>
-                                                <div>
-                                                    ${{
-                                                        customerMargin.value.itp
-                                                            | number: "1.4-4"
-                                                    }}
+                                               <div class="volume-tiers-width">
+                                                    <div>
+                                                        ${{
+                                                            customerMargin.value.itp
+                                                                | number: "1.4-4"
+                                                        }}
+                                                    </div>
                                                 </div>
-
                                             </div>
                                         </td>
                                         <td class="">
@@ -255,7 +258,8 @@
                                 <price-breakdown
                                     #feeAndTaxGeneralBreakdown
                                     (omitCheckChanged)="
-                                        omitFeeAndTaxCheckChanged($event)                                    "
+                                        omitFeeAndTaxCheckChanged($event)
+                                    "
                                     [feeAndTaxDisplayMode]="1"
                                     [feesAndTaxes]="feesAndTaxes"
                                     [priceTemplateId]="pricingTemplate.oid"
@@ -264,13 +268,6 @@
                                     [hidePriceTierBreakdown]="true"
                                 ></price-breakdown>
                             </div>
-                                ></price-breakdown>
-                            </div>
->>>>>>> Stashed changes
-
-                            </price-breakdown>
-                        </div>
-                    </div>
 
                             <h5 class="mt-2">Fuel Uplift Notes</h5>
                             <ejs-richtexteditor
@@ -287,7 +284,7 @@
                                 <price-breakdown
                                     #priceBreakdownPreview
                                     [hideFeeAndTaxGeneralBreakdown]="true"
-                                    [priceTemplateId]="id"
+                                    [priceTemplateId]="pricingTemplate.oid"
                                     [feesAndTaxes]="feesAndTaxes"
                                     tooltipPlacement="bottom"
                                     priceBreakdownLoader="ITP-scenario-pricing-loader"
