@@ -302,10 +302,13 @@ namespace FBOLinx.ServiceLayer.Test.Services
             Mock<DbSet<DistributionQueue>> distributionQueueDbSetMock = (new List<DistributionQueue>()).AsQueryable().BuildMockDbSet();
             dbContextMock.Setup(x => x.Set<DistributionQueue>()).Returns(distributionQueueDbSetMock.Object);
 
-            var priceFetchingServiceMock = new Mock<IPriceFetchingService>();
-            priceFetchingServiceMock.Setup(x => x.GetAllPricingTemplatesForCustomerAsync(
+            var pricingTemplateServiceMock = new Mock<IPricingTemplateService>();
+            pricingTemplateServiceMock.Setup(x => x.GetAllPricingTemplatesForCustomerAsync(
                 It.IsAny<CustomerInfoByGroup>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
                 .Returns(Task.FromResult(new List<PricingTemplate>() { new PricingTemplate() }));
+            services.AddSingleton(pricingTemplateServiceMock.Object);
+
+            var priceFetchingServiceMock = new Mock<IPriceFetchingService>();
             priceFetchingServiceMock.Setup(x => x.GetCustomerPricingAsync(
                 It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<List<int>>(),
                 It.IsAny<FlightTypeClassifications>(),

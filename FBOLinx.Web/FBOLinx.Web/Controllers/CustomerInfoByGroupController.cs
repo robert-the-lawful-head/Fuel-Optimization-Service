@@ -39,7 +39,8 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxService _fuelerLinxService;
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
+        private readonly IPricingTemplateService _pricingTemplateService;
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService, PricingTemplateService pricingTemplateService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -49,6 +50,7 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _priceDistributionService = priceDistributionService;
             _fuelerLinxService = fuelerLinxService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         // GET: api/CustomerInfoByGroup
@@ -712,7 +714,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+                List<PricingTemplatesGridViewModel> pricingTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
 
