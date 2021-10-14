@@ -1,3 +1,4 @@
+import { ActivatedRoute } from '@angular/router';
 import {
     Component,
     EventEmitter,
@@ -38,7 +39,7 @@ export class PriceBreakdownComponent implements OnInit {
     @ViewChild('dynamicFeeAndTaxBreakdown')
     private dynamicFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
 
-    @Input() priceTemplateId = 0;
+    @Input() priceTemplateId;
     @Input() tailNumber = '';
     @Input() customerInfoByGroupId = 0;
     @Input() feesAndTaxes: Array<any>;
@@ -79,10 +80,15 @@ export class PriceBreakdownComponent implements OnInit {
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private NgxUiLoader: NgxUiLoaderService,
-        private customerInfoByGroupService: CustomerinfobygroupService
-    ) {}
+        private customerInfoByGroupService: CustomerinfobygroupService ,
+        private route :ActivatedRoute
+    ) {
+
+         this.priceTemplateId = this.route.snapshot.paramMap.get('id');
+      }
 
     ngOnInit(): void {
+
         this.prepareDefaultSettings();
         this.performCalculations();
     }
@@ -150,10 +156,12 @@ export class PriceBreakdownComponent implements OnInit {
         this.feesAndTaxesService
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
+
                 this.feesAndTaxes = response;
                 this.groupFeesAndTaxes();
                 this.determineDisplayType();
                 this.loadCalculations();
+
             });
     }
 
@@ -241,6 +249,7 @@ export class PriceBreakdownComponent implements OnInit {
             this.domesticPrivatePricing = responseList[3];
             const customerInfoByGroup = responseList[4];
 
+
             //If no result was returned for the customer then this wasn't a customer-level price check so mark it as active.
             //Otherwise check the actual active flag of the customer.
             this.isCustomerActive =
@@ -289,7 +298,7 @@ export class PriceBreakdownComponent implements OnInit {
             flightTypeClassification: FlightTypeClassifications.Private,
             groupId: this.sharedService.currentUser.groupId,
             icao: this.sharedService.currentUser.icao,
-            pricingTemplateId: this.priceTemplateId,
+            pricingTemplateId:this.priceTemplateId,
             replacementFeesAndTaxes: this.feesAndTaxes,
             tailNumber: this.tailNumber,
         });

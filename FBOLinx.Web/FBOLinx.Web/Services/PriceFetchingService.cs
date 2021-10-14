@@ -219,6 +219,7 @@ namespace FBOLinx.Web.Services
                         PricingTemplateId = (pt == null ? 0 : pt.Oid),
                         DefaultCustomerType = cg.CustomerType,
                         MarginType = (pt == null ? 0 : pt.MarginType),
+                        discountType = (pt == null ? 0 : pt.discountType) ,
                         FboPrice = (fp == null ? 0 : fp.Price),
                         CustomerMarginAmount = (pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
                                                 (tmp.MarginJet.HasValue)

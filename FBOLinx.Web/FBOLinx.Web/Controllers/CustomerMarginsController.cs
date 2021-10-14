@@ -69,6 +69,8 @@ namespace FBOLinx.Web.Controllers
                 PriceTierId = c.PriceTierId,
                 TemplateId = c.TemplateId,
                 Amount = c.Amount,
+                discountType =   0 ,                                              
+                //c.PricingTemplate.discountType ,
                 Oid = c.Oid,
                 Min = c.PriceTier.Min,
                 Max = c.PriceTier.Max,

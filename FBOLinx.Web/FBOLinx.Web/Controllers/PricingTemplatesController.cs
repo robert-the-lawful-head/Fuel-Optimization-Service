@@ -77,7 +77,7 @@ namespace FBOLinx.Web.Controllers
 
         [HttpGet("group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetPricingTemplateByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
-        {
+        { 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

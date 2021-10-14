@@ -59,6 +59,8 @@ namespace FBOLinx.Web.Services
         public async Task<Coordinate> GetFBOLocaiton(int fboid)
         {
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboid).FirstOrDefaultAsync();
+            if (fboAirport == null)
+                return new Coordinate(0, 0);
             var airport = await _degaContext.AcukwikAirports.Where(a => a.Icao == fboAirport.Icao).FirstOrDefaultAsync();
 
             var latDirection = airport.Latitude.Substring(0, 1);
