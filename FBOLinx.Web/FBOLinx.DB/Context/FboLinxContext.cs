@@ -77,6 +77,10 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
+        public virtual DbSet<CustomerInfoByGroupLog> CustomerInfoByGroupLog { get; set; }
+        public virtual DbSet<CustomerInfoByGroupLogData> CustomerInfoByGroupLogData { get; set; }
+        public virtual DbSet<AircraftLogData> AircraftLogData { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

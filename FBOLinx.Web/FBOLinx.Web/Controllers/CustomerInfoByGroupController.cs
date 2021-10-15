@@ -328,7 +328,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/CustomerInfoByGroup/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup )
         {
             if (!ModelState.IsValid)
             {
@@ -340,6 +340,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
+            AddEditCustomerToLogger(customerInfoByGroup);
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
@@ -701,6 +702,84 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(true);
+        }
+
+
+        private  void AddEditCustomerToLogger ( CustomerInfoByGroup customer , int userId = 0 ,int Role =0)
+        {
+            var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));
+            if (oldCustomerInfoByGroup != null)
+            {
+                //Add the old info into DataLog
+                _context.CustomerInfoByGroupLogData.Add(new CustomerInfoByGroupLogData
+                {
+                    Active = oldCustomerInfoByGroup.Active,
+                    Address = oldCustomerInfoByGroup.Address,
+                    //CertificateType = oldCustomerInfoByGroup.CertificateType , 
+                    City = oldCustomerInfoByGroup.City,
+                    Company = oldCustomerInfoByGroup.Company,
+                    Country = oldCustomerInfoByGroup.Country,
+                    CustomerCompanyType = oldCustomerInfoByGroup.CustomerCompanyType,
+                    CustomerId = oldCustomerInfoByGroup.CustomerId,
+                    CustomerType = oldCustomerInfoByGroup.CustomerType,
+                    DefaultTemplate = oldCustomerInfoByGroup.DefaultTemplate,
+                    Distribute = oldCustomerInfoByGroup.Distribute,
+                    EmailSubscription = oldCustomerInfoByGroup.EmailSubscription,
+                    GroupId = oldCustomerInfoByGroup.GroupId,
+                    Joined = oldCustomerInfoByGroup.Joined,
+                    MainPhone = oldCustomerInfoByGroup.MainPhone,
+                    MergeRejected = oldCustomerInfoByGroup.MergeRejected,
+                    Network = oldCustomerInfoByGroup.Network,
+                    Password = oldCustomerInfoByGroup.Password,
+                    Sfid = oldCustomerInfoByGroup.Sfid,
+                    Show100Ll = oldCustomerInfoByGroup.Show100Ll,
+                    ShowJetA = oldCustomerInfoByGroup.ShowJetA,
+                    State = oldCustomerInfoByGroup.State,
+                    Suspended = oldCustomerInfoByGroup.Suspended,
+                    Username = oldCustomerInfoByGroup.Username,
+                    Website = oldCustomerInfoByGroup.Website,
+                    ZipCode = oldCustomerInfoByGroup.ZipCode,
+                    PricingTemplateRemoved = oldCustomerInfoByGroup.PricingTemplateRemoved,
+
+                });
+
+                try
+                {
+                    _context.SaveChanges();
+                    int OldcustomerId = _context.CustomerInfoByGroupLogData.Where(c => (c.GroupId.Equals(customer.GroupId)) && (c.CustomerId.Equals(customer.CustomerId)))
+                        .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
+
+                    _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
+                    {
+                        Action = CustomerInfoByGroupLog.Actions.Edited,
+                        newcustomerId = customer.Oid,
+                        Time = DateTime.Now,
+                        userId = userId,
+                        Role = Role,
+                        Location = CustomerInfoByGroupLog.Locations.EditCustomer,
+                        oldcustomerId = OldcustomerId
+                    }); ;
+
+                    try
+                    {
+                        _context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+            }
+
+            
+           
         }
 
         private bool CustomerInfoByGroupExists(int id)
