@@ -322,13 +322,12 @@ export class CustomersEditComponent implements OnInit {
         this.tagsSelected = this.tagsSelected.filter(obj => obj.oid !== tag.oid);
         this.tagsService.remove(tag).subscribe(response => {
             this.loading = false;
-
             this.tagSubsctiption.unsubscribe();
             this.loadCustomerTags();
         })
     }
 
-    newCustomTag() {        
+    newCustomTag() {
         const data = {
             customerId: this.customerInfoByGroup.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -406,7 +405,7 @@ export class CustomersEditComponent implements OnInit {
         if (!calculationResults || !calculationResults.length) {
             return;
         }
-        
+
         try {
             calculationResults[0].pricingList[0].feesAndTaxes.forEach(calculatedTax => {
                 var matchingTaxes = this.feesAndTaxes.filter(feeAndTax => feeAndTax.oid == calculatedTax.oid);
@@ -458,7 +457,7 @@ export class CustomersEditComponent implements OnInit {
                 this.customerForm.controls.customerTag.setValue(this.tagsSelected.map(x => x.oid));
 
                 this.tagSubsctiption = this.customerForm.controls.customerTag.valueChanges.subscribe(
-                    (selectedValue) => {         
+                    (selectedValue) => {
                         if (selectedValue.includes(-1)) {
                             this.newCustomTag();
                             this.customerForm.controls.customerTag
