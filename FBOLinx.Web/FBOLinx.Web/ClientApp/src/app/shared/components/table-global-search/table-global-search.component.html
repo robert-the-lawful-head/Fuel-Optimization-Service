@@ -2,16 +2,23 @@
     <div class="row">
         <div class="col-8">
             <mat-form-field>
-                <input (keyup)="applyFilter($event.target.value)"
-                       [(ngModel)]="globalFilter.filterValue"
-                       [placeholder]="placeholder"
-                       matInput/>
+                <input
+                    (keyup)="applyFilter($event.target.value)"
+                    [(ngModel)]="globalFilter.filterValue"
+                    [placeholder]="placeholder"
+                    matInput
+                />
                 <span matPrefix><i class="fa fa-search"></i></span>
             </mat-form-field>
         </div>
-        <div class="col-4" style="margin-top: 15px;">
-            <button (click)="clearAllFilters();$event.stopPropagation();" [view]="'error'" ni-button size="small">Clear
-                All Filters
+        <div class="col-4" style="margin-top: 15px">
+            <button
+                (click)="clearAllFilters(); $event.stopPropagation()"
+                [view]="'error'"
+                ni-button
+                size="small"
+            >
+                Clear All Filters
             </button>
         </div>
     </div>

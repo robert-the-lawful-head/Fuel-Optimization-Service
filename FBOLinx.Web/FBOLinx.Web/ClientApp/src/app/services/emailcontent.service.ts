@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class EmailcontentService {
@@ -21,6 +21,12 @@ export class EmailcontentService {
 
     public getForFbo(fboId) {
         return this.http.get(this.accessPointUrl + '/fbo/' + fboId, {
+            headers: this.headers,
+        });
+    }
+
+    public getForGroup(groupId: number) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
             headers: this.headers,
         });
     }

@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using System.Security.Claims;
 
 namespace FBOLinx.Web.Services
 {
@@ -24,14 +25,14 @@ namespace FBOLinx.Web.Services
             _jwtManager = jwtManager;
         }
 
-        public async Task<AccessTokens> GenerateAccessToken(User user)
+        public async Task<AccessTokens> GenerateAccessToken(User user, int expireMinutes = 60)
         {
             var accessToken = new AccessTokens
             {
                 Oid = 0,
                 AccessToken = GetNewToken(),
                 CreatedAt = DateTime.UtcNow,
-                Expired = DateTime.UtcNow.AddHours(1),
+                Expired = DateTime.UtcNow.AddMinutes(expireMinutes),
                 UserId = user.Oid
             };
             _context.AccessTokens.Add(accessToken);
@@ -52,8 +53,7 @@ namespace FBOLinx.Web.Services
             }
             var user = token.User;
 
-
-            var authToken =  _jwtManager.GenerateToken(user.Oid, string.Format("{0} {1}", user.FirstName, user.LastName), user.Username, user.FboId);
+            var authToken =  _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
             var refreshToken = await GenerateRefreshToken(user, token);
 
@@ -69,7 +69,7 @@ namespace FBOLinx.Web.Services
                 return new ExchangeRefreshTokenResponse(false, "Invalid refresh token.  Please re-authenticate the user.");
             }
 
-            var claimedId = Convert.ToInt32(claimsPrincipal.Claims.First((c => c.Type == "UserID")).Value);
+            var claimedId = Convert.ToInt32(claimsPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
             var user = await _context.User.FindAsync(claimedId);
             var oldRefreshToken = await _context.RefreshTokens
                                                         .Where(r => r.UserId.Equals(user.Oid) && r.Token.Equals(request.RefreshToken))
@@ -82,9 +82,9 @@ namespace FBOLinx.Web.Services
 
             AccessTokens oldToken = await _context.AccessTokens.FindAsync(oldRefreshToken.AccessTokenId);
 
-            AccessTokens accessToken = await GenerateAccessToken(user);
+            AccessTokens accessToken = await GenerateAccessToken(user, 10080);
 
-            string authToken = _jwtManager.GenerateToken(user.Oid, string.Format("{0} {1}", user.FirstName, user.LastName), user.Username, user.FboId);
+            string authToken = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
             RefreshTokens refreshToken = await GenerateRefreshToken(user, accessToken);
 

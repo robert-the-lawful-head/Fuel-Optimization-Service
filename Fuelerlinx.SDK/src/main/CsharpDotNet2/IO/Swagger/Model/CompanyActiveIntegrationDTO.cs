@@ -35,11 +35,25 @@ namespace IO.Swagger.Model {
     public int? IntegrationType { get; set; }
 
     /// <summary>
+    /// Gets or Sets IntegrationTypeDescription
+    /// </summary>
+    [DataMember(Name="integrationTypeDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "integrationTypeDescription")]
+    public string IntegrationTypeDescription { get; set; }
+
+    /// <summary>
     /// Gets or Sets Affiliation
     /// </summary>
     [DataMember(Name="affiliation", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "affiliation")]
     public int? Affiliation { get; set; }
+
+    /// <summary>
+    /// Gets or Sets AffiliationDescription
+    /// </summary>
+    [DataMember(Name="affiliationDescription", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "affiliationDescription")]
+    public string AffiliationDescription { get; set; }
 
     /// <summary>
     /// Gets or Sets ActivationDateUtc
@@ -59,7 +73,9 @@ namespace IO.Swagger.Model {
       sb.Append("  Id: ").Append(Id).Append("\n");
       sb.Append("  CompanyId: ").Append(CompanyId).Append("\n");
       sb.Append("  IntegrationType: ").Append(IntegrationType).Append("\n");
+      sb.Append("  IntegrationTypeDescription: ").Append(IntegrationTypeDescription).Append("\n");
       sb.Append("  Affiliation: ").Append(Affiliation).Append("\n");
+      sb.Append("  AffiliationDescription: ").Append(AffiliationDescription).Append("\n");
       sb.Append("  ActivationDateUtc: ").Append(ActivationDateUtc).Append("\n");
       sb.Append("}\n");
       return sb.ToString();

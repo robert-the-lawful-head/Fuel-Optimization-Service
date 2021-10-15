@@ -1,6 +1,10 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FlightWatchHistorical } from '../models/flight-watch-historical';
+import { Inject, Injectable } from '@angular/core';
+
+import {
+    AirportWatchHistoricalDataRequest,
+    FlightWatchHistorical,
+} from '../models/flight-watch-historical';
 
 @Injectable()
 export class AirportWatchService {
@@ -14,18 +18,50 @@ export class AirportWatchService {
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
 
-    public getAll(fboId: number) {
-        return this.http.get<any>(this.accessPointUrl + '/list/fbo/' + fboId, { headers: this.headers });
+    public getAll(groupId: number, fboId: number) {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/list/group/${groupId}/fbo/${fboId}`,
+            { headers: this.headers }
+        );
     }
 
-    public getHistoricalData(groupId: number, startDate: Date, endDate: Date) {
+    public getArrivalsDepartures(
+        groupId: number,
+        fboId: number,
+        body: AirportWatchHistoricalDataRequest
+    ) {
         return this.http.post<FlightWatchHistorical[]>(
-            this.accessPointUrl + '/group/' + groupId + '/historical-data',
-            {
-                startDateTime: startDate,
-                endDateTime: endDate,
-            },
-            { headers: this.headers },
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/arrivals-depatures',
+            body,
+            { headers: this.headers }
         );
+    }
+
+    public getVisits(
+        groupId: number,
+        fboId: number,
+        body: AirportWatchHistoricalDataRequest
+    ) {
+        return this.http.post<FlightWatchHistorical[]>(
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/visits',
+            body,
+            { headers: this.headers }
+        );
+    }
+
+    public getStartDate() {
+        return this.http.get<any>(this.accessPointUrl + '/start-date', {
+            headers: this.headers,
+        });
     }
 }

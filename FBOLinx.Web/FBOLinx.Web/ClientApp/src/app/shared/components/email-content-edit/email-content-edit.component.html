@@ -1,22 +1,39 @@
 <h1 *ngIf="emailContent.oid > 0" mat-dialog-title>Edit Email Content</h1>
-<h1 *ngIf="!emailContent.oid || emailContent.oid == 0" mat-dialog-title>New Email Content</h1>
+<h1 *ngIf="!emailContent.oid || emailContent.oid == 0" mat-dialog-title>
+    New Email Content
+</h1>
 <div mat-dialog-content>
     <div>
         <mat-form-field>
-            <input [(ngModel)]="emailContent.name" aria-label="Name" cdkFocusInitial matInput placeholder="Name">
+            <input
+                [(ngModel)]="emailContent.name"
+                aria-label="Name"
+                cdkFocusInitial
+                matInput
+                placeholder="Name"
+            />
         </mat-form-field>
     </div>
     <div>
         <mat-form-field>
-            <mat-select [(ngModel)]="emailContent.emailContentType" placeholder="Type">
-                <mat-option *ngFor="let contentType of emailContentTypes" [value]="contentType.value">
-                    {{contentType.description}}
+            <mat-select
+                [(ngModel)]="emailContent.emailContentType"
+                placeholder="Type"
+            >
+                <mat-option
+                    *ngFor="let contentType of emailContentTypes"
+                    [value]="contentType.value"
+                >
+                    {{ contentType.description }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
     </div>
     <div>
-        <ejs-richtexteditor [(value)]='emailContent.emailContentHTML' id='rteContent'></ejs-richtexteditor>
+        <ejs-richtexteditor
+            [(value)]="emailContent.emailContentHTML"
+            id="rteContent"
+        ></ejs-richtexteditor>
     </div>
 </div>
 <div mat-dialog-actions>
@@ -27,7 +44,7 @@
         mat-stroked-button
     >
         <mat-icon>save</mat-icon>
-        {{emailContent.oid > 0 ? 'Save Changes' : 'Add New'}}
+        {{ emailContent.oid > 0 ? "Save Changes" : "Add New" }}
     </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

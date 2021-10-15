@@ -39,7 +39,8 @@
     }
 
     .add-on-margin-input {
-        input.mat-input-element, .bigPrefix {
+        input.mat-input-element,
+        .bigPrefix {
             font-size: 24px;
             font-weight: bold;
         }
@@ -56,12 +57,14 @@
         font-weight: normal;
     }
 
-    h5, .h5 {
+    h5,
+    .h5 {
         font-size: 1.2rem;
         font-weight: normal;
     }
 
-    h6, .h6 {
+    h6,
+    .h6 {
         font-size: 0.8rem;
         font-weight: normal;
     }
@@ -70,7 +73,8 @@
         line-height: 30px;
 
         ::ng-deep {
-            .mat-progress-spinner circle, .mat-spinner circle {
+            .mat-progress-spinner circle,
+            .mat-spinner circle {
                 stroke: white;
             }
         }

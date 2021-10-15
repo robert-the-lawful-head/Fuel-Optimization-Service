@@ -43,6 +43,7 @@ namespace FBOLinx.Web.ViewModels
         public bool? PricingTemplateRemoved { get; set; }
 
         public bool? Active { get; set; }
+        public int AircraftsVisits { get; set; }
 
         public string CertificateTypeDescription
         {
@@ -51,5 +52,8 @@ namespace FBOLinx.Web.ViewModels
                 return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet);
             }
         }
+
+        public List<string> FuelVendors { get; set; }
+        public ICollection<CustomerTag> Tags { get; set; }
     }
 }

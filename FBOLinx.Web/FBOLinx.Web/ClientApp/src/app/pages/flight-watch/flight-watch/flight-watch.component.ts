@@ -1,29 +1,34 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
-import { AirportWatchService } from '../../../services/airportwatch.service';
+import { LngLatLike } from 'mapbox-gl';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
+
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
-import { ResizeEvent } from 'angular-resizable-element';
+import { AirportWatchService } from '../../../services/airportwatch.service';
+import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Flight Watch',
         link: '/default-layout/flight-watch',
+        title: 'Flight Watch',
     },
 ];
 
 @Component({
     selector: 'app-flight-watch',
+    styleUrls: ['./flight-watch.component.scss'],
     templateUrl: './flight-watch.component.html',
-    styleUrls: [ './flight-watch.component.scss' ],
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
+    @ViewChild('map') map: FlightWatchMapComponent;
+
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
 
@@ -36,7 +41,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     };
     filter: string;
     filteredTypes: string[] = [];
-    center: google.maps.LatLngLiteral;
+    center: LngLatLike;
     selectedFlightWatch: FlightWatch;
     flightWatchDataSource: MatTableDataSource<FlightWatch>;
 
@@ -53,7 +58,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 3000).subscribe(() => this.loadAirportWatchData());
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>
+            this.loadAirportWatchData()
+        );
     }
 
     ngOnDestroy() {
@@ -69,24 +76,34 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
-            this.airportWatchFetchSubscription =
-                this.airportWatchService.getAll(this.sharedService.currentUser.fboId)
-                    .subscribe((data: any) => {
-                        if (!this.center) {
-                            this.center = { lat: data.fboLocation.latitude, lng: data.fboLocation.longitude };
-                        }
+            this.airportWatchFetchSubscription = this.airportWatchService
+                .getAll(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId
+                )
+                .subscribe((data: any) => {
+                    if (!this.center) {
+                        this.center = {
+                            lat: data.fboLocation.latitude,
+                            lng: data.fboLocation.longitude,
+                        };
+                    }
+                    if (data && data != null) {
                         this.flightWatchData = data.flightWatchData;
                         this.setFilteredFlightWatchData();
-                        this.loading = false;
-                    });
+                    }
+                    this.loading = false;
+                }, (error: any) => {
+                    this.loading = false;
+                });
         }
     }
 
     onFlightWatchClick(flightWatch: FlightWatch) {
-        if (this.selectedFlightWatch?.oid === flightWatch.oid) {
-            this.selectedFlightWatch = undefined;
-        } else {
+        if (this.selectedFlightWatch?.oid !== flightWatch.oid) {
             this.selectedFlightWatch = flightWatch;
+        } else if (!flightWatch.oid) {
+            this.selectedFlightWatch = undefined;
         }
     }
 
@@ -105,31 +122,39 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             originalData = this.flightWatchData;
         } else {
             const loweredFilter = this.filter.toLowerCase();
-            originalData = this.flightWatchData.filter(fw =>
-                fw.aircraftHexCode.toLowerCase().includes(loweredFilter) ||
-                fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
+            originalData = this.flightWatchData.filter(
+                (fw) =>
+                    fw.aircraftHexCode.toLowerCase().includes(loweredFilter) ||
+                    fw.atcFlightNumber.toLowerCase().includes(loweredFilter)
             );
         }
 
         if (this.filteredTypes.length) {
-            originalData = originalData.filter(fw => this.filteredTypes.includes(fw.aircraftTypeCode));
+            originalData = originalData.filter((fw) =>
+                this.filteredTypes.includes(fw.aircraftTypeCode)
+            );
         }
 
-        this.filteredFlightWatchData = keyBy(originalData, fw => fw.oid);
+        this.filteredFlightWatchData = keyBy(originalData, (fw) => fw.oid);
 
         this.flightWatchDataSubject.next(originalData);
         this.flightWatchDataSubject.asObservable();
+
+        if (this.selectedFlightWatch) {
+            this.selectedFlightWatch =
+                this.filteredFlightWatchData[this.selectedFlightWatch.oid];
+        }
     }
 
     validate(event: ResizeEvent): boolean {
         const MAX_DIMENSIONS_PX = 800;
         const MIN_DIMENSIONS_PX = 0;
         if (
-          event.rectangle.width &&
-          (event.rectangle.width > MAX_DIMENSIONS_PX ||
-            event.rectangle.width < MIN_DIMENSIONS_PX)
+            event.rectangle.width &&
+            (event.rectangle.width > MAX_DIMENSIONS_PX ||
+                event.rectangle.width < MIN_DIMENSIONS_PX)
         ) {
-          return false;
+            return false;
         }
         return true;
     }
@@ -138,6 +163,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.style = {
             width: `${event.rectangle.width}px`,
         };
+
+        setTimeout(() => {
+            this.map.mapResize();
+        });
     }
 
     get mapWidth() {

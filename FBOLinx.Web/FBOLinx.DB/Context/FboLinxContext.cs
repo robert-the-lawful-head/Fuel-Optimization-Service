@@ -24,7 +24,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<Fboairports> Fboairports { get; set; }
         public virtual DbSet<Fbos> Fbos { get; set; }
         public virtual DbSet<Group> Group { get; set; }
-        public DbSet<Fbocontacts> Fbocontacts { get; set; }
+        public virtual DbSet<Fbocontacts> Fbocontacts { get; set; }
         public virtual DbSet<CustomCustomerTypes> CustomCustomerTypes { get; set; }
         public virtual DbSet<CustomerMargins> CustomerMargins { get; set; }
         public virtual DbSet<CustomersViewedByFbo> CustomersViewedByFbo { get; set; }
@@ -71,10 +71,12 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<RefreshTokens> RefreshTokens { get; set; }
         public virtual DbSet<FboFeesAndTaxes> FbofeesAndTaxes { get; set; }
         public virtual DbSet<FboFeeAndTaxOmitsByCustomer> FboFeeAndTaxOmitsByCustomer { get; set; }
+        public virtual DbSet<FboFeeAndTaxOmitsByPricingTemplate> FboFeeAndTaxOmitsByPricingTemplate { get; set; }
         public virtual DbSet<AirportWatchHistoricalData> AirportWatchHistoricalData { get; set; }
         public virtual DbSet<AirportWatchAircraftTailNumber> AirportWatchAircraftTailNumber { get; set; }
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
-        
+        public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
+        public virtual DbSet<CustomerTag> CustomerTag { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -884,6 +886,8 @@ namespace FBOLinx.DB.Context
 
             modelBuilder.Entity<FboFeeAndTaxOmitsByCustomer>(entity => { entity.HasKey(e => e.Oid); });
 
+            modelBuilder.Entity<FboFeeAndTaxOmitsByPricingTemplate>(entity => { entity.HasKey(e => e.Oid); });
+
             modelBuilder.Entity<AirportWatchHistoricalData>(entity =>
             {
                 entity.Property(e => e.AircraftHexCode).IsUnicode(false);
@@ -911,6 +915,27 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.AtcFlightNumber).IsUnicode(false);
 
                 entity.Property(e => e.BoxName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<AirportWatchChangeTracker>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.DateTimeAppliedUtc).HasColumnName("DateTimeAppliedUTC");
+            });
+
+            modelBuilder.Entity<CustomerTag>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.Name).IsUnicode(false);
+
             });
         }
     }

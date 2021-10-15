@@ -4,19 +4,14 @@
         <div class="col-xs-12 col-md-12">
             <p>
                 Are you sure you want to delete {{ data.firstName }}&nbsp;{{
-                data.lastName
+                    data.lastName
                 }}?
             </p>
         </div>
     </div>
 </div>
 <div mat-dialog-actions>
-    <button
-        [mat-dialog-close]="data"
-        class="mr-1"
-        color="warn"
-        mat-flat-button
-    >
+    <button [mat-dialog-close]="data" class="mr-1" color="warn" mat-flat-button>
         <mat-icon>delete_forever</mat-icon>
         Delete
     </button>

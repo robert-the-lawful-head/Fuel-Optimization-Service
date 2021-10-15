@@ -1,12 +1,15 @@
+import {
+    animate,
+    state,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import * as moment from 'moment';
 
 @Component({
-    selector: 'app-table-column-filter',
-    templateUrl: 'table-column-filter.component.html',
-    styleUrls: [ 'table-column-filter.component.scss' ],
     animations: [
         trigger('openClose', [
             // ...
@@ -14,60 +17,68 @@ import * as moment from 'moment';
                 'open',
                 style({
                     height: '*',
-                    opacity: 1
+                    opacity: 1,
                 })
             ),
             state(
                 'closed',
                 style({
                     height: '0',
-                    opacity: 0
+                    opacity: 0,
                 })
             ),
-            transition('open => closed', [ animate('.3s') ]),
-            transition('closed => open', [ animate('0.3s') ])
-        ])
-    ]
+            transition('open => closed', [animate('.3s')]),
+            transition('closed => open', [animate('0.3s')]),
+        ]),
+    ],
+    selector: 'app-table-column-filter',
+    styleUrls: ['table-column-filter.component.scss'],
+    templateUrl: 'table-column-filter.component.html',
 })
 export class TableColumnFilterComponent implements OnInit {
     @Input() columnId: string;
     @Input() column: any;
-    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8
+    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8, EmptyNotEmpty = 9, Multiselect = 10, Many-to-Many Multiselect = 11,
     @Input() propertyName: string;
     @Input() matDataSource: any = null;
     @Input() matSort: MatSort;
     @Input() tableFilter: any;
     @Input() allowEditHeading = false;
+    @Input() options: any[] = [];
+    @Input() optionLabel: string;
+    @Input() optionValue: string;
     @Output() columnChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
     public filter: any = {
         dateFilter: {
+            endDate: null,
             startDate: null,
-            endDate: null
         },
-        stringFilter: '',
+        isFiltered: false,
         numberRangeFilter: {
+            end: null,
             start: null,
-            end: null
         },
-        isFiltered: false
+        optionsFilter: [],
+        stringFilter: '',
     };
     public isHeadingOpen = false;
     public isFilterOpen = false;
 
-    constructor() {
-    }
+    constructor() {}
 
     ngOnInit(): void {
         if (!this.column) {
             this.column = {
-                propertyName: this.propertyName
+                propertyName: this.propertyName,
             };
         }
         if (!this.column.propertyName) {
             if (!this.propertyName) {
-                throw new Error('A propertyName must be provided for the column value in the data collection.');
+                throw new Error(
+                    'A propertyName must be provided for the column value in the data collection.'
+                );
             } else {
                 this.column.propertyName = this.propertyName;
             }
@@ -90,8 +101,8 @@ export class TableColumnFilterComponent implements OnInit {
         const matSort = this.matDataSource.sort;
         const disableClear = false;
 
-        matSort.sort({ id: null, start, disableClear });
-        matSort.sort({ id, start, disableClear });
+        matSort.sort({ disableClear, id: null, start });
+        matSort.sort({ disableClear, id, start });
 
         this.matDataSource.sort = this.matSort;
     }
@@ -102,7 +113,7 @@ export class TableColumnFilterComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any, menuTrigger: any) {
-        this.filter.isFiltered = (filterValue != null);
+        this.filter.isFiltered = filterValue != null;
 
         this.column.filter = filterValue;
 
@@ -112,7 +123,9 @@ export class TableColumnFilterComponent implements OnInit {
             this.tableFilter = [];
         }
 
-        const existingFilter = this.tableFilter.filter(column => column.propertyName === this.column.propertyName);
+        const existingFilter = this.tableFilter.filter(
+            (column) => column.propertyName === this.column.propertyName
+        );
         if (existingFilter.length === 0) {
             this.tableFilter.push(this.column);
             existingFilter.push(this.column);
@@ -132,16 +145,16 @@ export class TableColumnFilterComponent implements OnInit {
     }
 
     public clearFilter(): void {
-
         this.filter.dateFilter = {
+            endDate: null,
             startDate: null,
-            endDate: null
         };
         this.filter.stringFilter = '';
         this.filter.numberRangeFilter = {
+            end: null,
             start: null,
-            end: null
         };
+        this.filter.optionsFilter = [];
 
         this.applyFilter(null, null);
     }
@@ -161,8 +174,11 @@ export class TableColumnFilterComponent implements OnInit {
                         if (!data) {
                             return true;
                         } else {
-                            const serializedData = JSON.stringify(data).toLowerCase();
-                            return (serializedData.indexOf(element.filterValue) > -1);
+                            const serializedData =
+                                JSON.stringify(data).toLowerCase();
+                            return (
+                                serializedData.indexOf(element.filterValue) > -1
+                            );
                         }
                     }
                     for (const column of element.columns) {
@@ -204,6 +220,31 @@ export class TableColumnFilterComponent implements OnInit {
 
                     let columnValue = data[element.propertyName];
 
+                    if ([9].indexOf(element.columnFormat) > -1) {
+                        return (
+                            (element.filter.stringFilter === 'true' &&
+                                !columnValue) ||
+                            (element.filter.stringFilter === 'false' &&
+                                !!columnValue)
+                        );
+                    }
+
+                    if ([10].indexOf(element.columnFormat) > -1) {
+                        return (
+                            !element.filter.optionsFilter.length ||
+                            element.filter.optionsFilter.includes(columnValue)
+                        );
+                    }
+
+                    if ([11].indexOf(element.columnFormat) > -1) {
+                        return (
+                            !element.filter.optionsFilter.length ||
+                            element.filter.optionsFilter.some((v) =>
+                                columnValue.find((c) => c.value === v)
+                            )
+                        );
+                    }
+
                     if (columnValue === null || columnValue === '') {
                         return false;
                     }
@@ -213,7 +254,7 @@ export class TableColumnFilterComponent implements OnInit {
                     }
                     columnValue = columnValue.toString();
 
-                    if ([ 2, 3, 4 ].indexOf(element.columnFormat) > -1) {
+                    if ([2, 3, 4].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.dateFilter.startDate ||
                                 element.filter.dateFilter.startDate === '' ||
@@ -222,23 +263,29 @@ export class TableColumnFilterComponent implements OnInit {
                                 )) &&
                             (!element.filter.dateFilter.endDate ||
                                 element.filter.dateFilter.endDate === '' ||
-                                moment(columnValue).isBefore(element.filter.dateFilter.endDate))
+                                moment(columnValue).isBefore(
+                                    element.filter.dateFilter.endDate
+                                ))
                         );
                     }
-                    if ([ 1, 5, 6 ].indexOf(element.columnFormat) > -1) {
+                    if ([1, 5, 6].indexOf(element.columnFormat) > -1) {
                         return (
                             (!element.filter.numberRangeFilter.start ||
                                 element.filter.numberRangeFilter.start <=
-                                parseFloat(columnValue)) &&
+                                    parseFloat(columnValue)) &&
                             (!element.filter.numberRangeFilter.end ||
-                                element.filter.numberRangeFilter.end >= parseFloat(columnValue))
+                                element.filter.numberRangeFilter.end >=
+                                    parseFloat(columnValue))
                         );
                     }
                     return (
                         columnValue
                             .toLowerCase()
-                            .indexOf(element.filter.stringFilter.toString().toLowerCase()) >
-                        -1
+                            .indexOf(
+                                element.filter.stringFilter
+                                    .toString()
+                                    .toLowerCase()
+                            ) > -1
                     );
                 }
             };

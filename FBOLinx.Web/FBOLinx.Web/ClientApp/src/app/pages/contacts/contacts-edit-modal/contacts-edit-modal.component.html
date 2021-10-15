@@ -1,85 +1,142 @@
-<h1 mat-dialog-title>Contact Information&nbsp;&nbsp;<a (click)="ConfirmDelete(data)" *ngIf="data.firstName"
-                                                       class="btn btn-danger btn-sm"
-                                                       style="color:white; cursor:pointer;">Delete Contact</a></h1>
+<h1 mat-dialog-title>
+    Contact Information&nbsp;&nbsp;<a
+        (click)="ConfirmDelete(data)"
+        *ngIf="data.firstName"
+        class="btn btn-danger btn-sm"
+        style="color: white; cursor: pointer"
+        >Delete Contact</a
+    >
+</h1>
 <div *ngIf="data" mat-dialog-content>
     <div class="row">
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.firstName" matInput placeholder="First Name"/>
+                <input
+                    [(ngModel)]="data.firstName"
+                    matInput
+                    placeholder="First Name"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.lastName" matInput placeholder="Last Name"/>
+                <input
+                    [(ngModel)]="data.lastName"
+                    matInput
+                    placeholder="Last Name"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.title" matInput placeholder="Title"/>
+                <input [(ngModel)]="data.title" matInput placeholder="Title" />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.email" matInput placeholder="Email"/>
+                <input
+                    #contactEmail="ngModel"
+                    [(ngModel)]="data.email"
+                    matInput
+                    placeholder="Email (Required)"
+                    type="email"
+                    [email]="true"
+                    required
+                />
+            </mat-form-field>
+            <div *ngIf="contactEmail.errors?.email" style="color: red">
+                Please enter a valid email address.
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <mat-form-field>
+                <input
+                    [(ngModel)]="data.phone"
+                    [textMask]="{ mask: phoneMask }"
+                    matInput
+                    placeholder="Phone"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.phone" [textMask]="{mask: phoneMask}" matInput placeholder="Phone"/>
+                <input
+                    [(ngModel)]="data.extension"
+                    matInput
+                    placeholder="Extension"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.extension" matInput placeholder="Extension"/>
+                <input
+                    [(ngModel)]="data.mobile"
+                    [textMask]="{ mask: phoneMask }"
+                    matInput
+                    placeholder="Mobile"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.mobile" [textMask]="{mask: phoneMask}" matInput placeholder="Mobile"/>
+                <input
+                    [(ngModel)]="data.fax"
+                    [textMask]="{ mask: phoneMask }"
+                    matInput
+                    placeholder="Fax"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.fax" [textMask]="{mask: phoneMask}" matInput placeholder="Fax"/>
+                <input
+                    [(ngModel)]="data.address"
+                    matInput
+                    placeholder="Address"
+                />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.address" matInput placeholder="Address"/>
+                <input [(ngModel)]="data.city" matInput placeholder="City" />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.city" matInput placeholder="City"/>
+                <input [(ngModel)]="data.state" matInput placeholder="State" />
             </mat-form-field>
         </div>
         <div class="col-xs-12 col-md-6">
             <mat-form-field>
-                <input [(ngModel)]="data.state" matInput placeholder="State"/>
-            </mat-form-field>
-        </div>
-        <div class="col-xs-12 col-md-6">
-            <mat-form-field>
-                <input [(ngModel)]="data.country" matInput placeholder="Country"/>
+                <input
+                    [(ngModel)]="data.country"
+                    matInput
+                    placeholder="Country"
+                />
             </mat-form-field>
         </div>
         <div class="col-md-4">
-            <mat-slide-toggle [(ngModel)]="data.primary" color="accent">Primary</mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="data.primary" color="accent"
+                >Primary</mat-slide-toggle
+            >
         </div>
         <div class="col-md-4">
-            <mat-slide-toggle [(ngModel)]="data.copyAlerts" color="accent">Copy on Distribution</mat-slide-toggle>
+            <mat-slide-toggle [(ngModel)]="data.copyAlerts" color="accent"
+                >Copy on Distribution</mat-slide-toggle
+            >
         </div>
     </div>
-</div>
-<div mat-dialog-actions>
-    <button
-        [mat-dialog-close]="data"
-        class="mr-1"
-        color="green"
-        mat-stroked-button
-    >
-        <mat-icon>save</mat-icon>
-        Save Contact
-    </button>
-    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+    <div mat-dialog-actions>
+        <button
+            [disabled]="data.email == '' || contactEmail.errors?.email"
+            [mat-dialog-close]="data"
+            class="mr-1"
+            color="green"
+            mat-stroked-button
+        >
+            <mat-icon>save</mat-icon>
+            Save Contact
+        </button>
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+    </div>
 </div>

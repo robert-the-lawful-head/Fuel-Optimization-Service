@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class ContactsService {
@@ -21,6 +21,12 @@ export class ContactsService {
 
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, {
+            headers: this.headers,
+        });
+    }
+
+    public addMultiple(contacts) {
+        return this.http.post(`${this.accessPointUrl}/multiple`, contacts, {
             headers: this.headers,
         });
     }

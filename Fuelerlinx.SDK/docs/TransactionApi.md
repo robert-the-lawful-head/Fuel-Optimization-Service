@@ -11,6 +11,9 @@ Method | HTTP request | Description
 [**DeleteTransactionAttachment**](TransactionApi.md#deletetransactionattachment) | **DELETE** /api/Transaction/attachment/{id} | Delete an attachment record from a transaction by the attachment&#39;s {id}.
 [**DeleteTransactionNote**](TransactionApi.md#deletetransactionnote) | **DELETE** /api/Transaction/note/{id} | Delete an existing note from a transaction by it&#39;s {id}.  The note will be changed to a \&quot;deleted\&quot; state but will not be removed from the database.
 [**GetAutoReconciledFile**](TransactionApi.md#getautoreconciledfile) | **GET** /api/Transaction/invoice-import/file-capture/process/{processId} | Internal use only - Fetch all files captured during an invoice import by the process ID.
+[**GetDistinctAirportsForAllTransactions**](TransactionApi.md#getdistinctairportsforalltransactions) | **GET** /api/Transaction/airport/distinct-identifiers | Fetch all distinct airports ever used for transactions for the authenticated company.
+[**GetDistinctFuelVendorsForAllTransactions**](TransactionApi.md#getdistinctfuelvendorsforalltransactions) | **GET** /api/Transaction/fuelvendor/distinct | Fetch all distinct fuel vendors ever used for transactions for the authenticated company.
+[**GetDistinctTailsForAllTransactions**](TransactionApi.md#getdistincttailsforalltransactions) | **GET** /api/Transaction/aircraft/distinct-tails | Fetch all distinct tails ever used for transactions for the authenticated company.
 [**GetInvoiceImportByProcessId**](TransactionApi.md#getinvoiceimportbyprocessid) | **GET** /api/Transaction/invoice-import/process/{processId} | Internal use only - Fetch an invoice import by the process ID.
 [**GetInvoiceImportsByDateRange**](TransactionApi.md#getinvoiceimportsbydaterange) | **GET** /api/Transaction/invoice-import/by-date-range/list | Internal use only - Fetch all invoice imports across a date range.
 [**GetPendingInvoiceImportsByCompany**](TransactionApi.md#getpendinginvoiceimportsbycompany) | **GET** /api/Transaction/invoice-import/pending | Internal use only - Fetch all pending invoice imports for a company.
@@ -24,8 +27,10 @@ Method | HTTP request | Description
 [**GetTransactionNote**](TransactionApi.md#gettransactionnote) | **GET** /api/Transaction/note/{id} | Fetch a transaction note by the provided {id}
 [**GetTransactionsByAirportAndTailNumber**](TransactionApi.md#gettransactionsbyairportandtailnumber) | **GET** /api/Transaction/by-airport/{airportIdentifier}/tailNumber/{tailNumber} | Get all transactions for the specified airport, tail, and date range.  This can include both fuel orders and service-only transactions.
 [**GetTransactionsByDateRange**](TransactionApi.md#gettransactionsbydaterange) | **GET** /api/Transaction/by-date-range | Get all transactions for the specified date range.  This can include both fuel orders and service-only transactions.
+[**GetTransactionsByIdList**](TransactionApi.md#gettransactionsbyidlist) | **GET** /api/Transaction/by-id-list/{commaDelimitedIds} | Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \&quot;333,444,555\&quot;.
 [**GetTransactionsByInvoiceNumber**](TransactionApi.md#gettransactionsbyinvoicenumber) | **GET** /api/Transaction/by-invoice-number/{invoiceNumber}/fueler/{fuelerId} | Get all transactions for the specified invoice number.  This can include both fuel orders and service-only transactions.
 [**GetTransactionsFromInvoiceImport**](TransactionApi.md#gettransactionsfrominvoiceimport) | **GET** /api/Transaction/invoice-import/transaction-list/{processId} | 
+[**GetUpcomingTransactionsScheduleChangeReview**](TransactionApi.md#getupcomingtransactionsschedulechangereview) | **GET** /api/Transaction/upcoming/schedule-change-review | 
 [**PostAutoReconciledFile**](TransactionApi.md#postautoreconciledfile) | **POST** /api/Transaction/invoice-import/file-capture | Internal use only - Add a file captured by an invoice import.
 [**PostInvoiceImport**](TransactionApi.md#postinvoiceimport) | **POST** /api/Transaction/invoice-import | Internal use only - Add an invoice import record.
 [**PostTransactionAccountTransferStatus**](TransactionApi.md#posttransactionaccounttransferstatus) | **POST** /api/Transaction/accounting-transfer | Internal use only - Post a new accounting transfer status for a particular transaction.
@@ -512,6 +517,201 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**AutoReconciledFileResponse**](AutoReconciledFileResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getdistinctairportsforalltransactions"></a>
+# **GetDistinctAirportsForAllTransactions**
+> TransactionDistinctAirportIdentifiersResponse GetDistinctAirportsForAllTransactions ()
+
+Fetch all distinct airports ever used for transactions for the authenticated company.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetDistinctAirportsForAllTransactionsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+
+            try
+            {
+                // Fetch all distinct airports ever used for transactions for the authenticated company.
+                TransactionDistinctAirportIdentifiersResponse result = apiInstance.GetDistinctAirportsForAllTransactions();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetDistinctAirportsForAllTransactions: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**TransactionDistinctAirportIdentifiersResponse**](TransactionDistinctAirportIdentifiersResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getdistinctfuelvendorsforalltransactions"></a>
+# **GetDistinctFuelVendorsForAllTransactions**
+> TransactionDistinctFuelVendorsResponse GetDistinctFuelVendorsForAllTransactions ()
+
+Fetch all distinct fuel vendors ever used for transactions for the authenticated company.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetDistinctFuelVendorsForAllTransactionsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+
+            try
+            {
+                // Fetch all distinct fuel vendors ever used for transactions for the authenticated company.
+                TransactionDistinctFuelVendorsResponse result = apiInstance.GetDistinctFuelVendorsForAllTransactions();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetDistinctFuelVendorsForAllTransactions: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**TransactionDistinctFuelVendorsResponse**](TransactionDistinctFuelVendorsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getdistincttailsforalltransactions"></a>
+# **GetDistinctTailsForAllTransactions**
+> TransactionDistinctTailsResponse GetDistinctTailsForAllTransactions ()
+
+Fetch all distinct tails ever used for transactions for the authenticated company.
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetDistinctTailsForAllTransactionsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+
+            try
+            {
+                // Fetch all distinct tails ever used for transactions for the authenticated company.
+                TransactionDistinctTailsResponse result = apiInstance.GetDistinctTailsForAllTransactions();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetDistinctTailsForAllTransactions: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**TransactionDistinctTailsResponse**](TransactionDistinctTailsResponse.md)
 
 ### Authorization
 
@@ -1437,6 +1637,75 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="gettransactionsbyidlist"></a>
+# **GetTransactionsByIdList**
+> TransactionsResponse GetTransactionsByIdList (string commaDelimitedIds)
+
+Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \"333,444,555\".
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetTransactionsByIdListExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+            var commaDelimitedIds = commaDelimitedIds_example;  // string | 
+
+            try
+            {
+                // Fetch a list of transactions by their Ids.  Format of [commaDelimitedIds] parameter should be \"333,444,555\".
+                TransactionsResponse result = apiInstance.GetTransactionsByIdList(commaDelimitedIds);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetTransactionsByIdList: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **commaDelimitedIds** | **string**|  | 
+
+### Return type
+
+[**TransactionsResponse**](TransactionsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="gettransactionsbyinvoicenumber"></a>
 # **GetTransactionsByInvoiceNumber**
 > TransactionsResponse GetTransactionsByInvoiceNumber (string invoiceNumber, int? fuelerId)
@@ -1566,6 +1835,70 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**TransactionsResponse**](TransactionsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getupcomingtransactionsschedulechangereview"></a>
+# **GetUpcomingTransactionsScheduleChangeReview**
+> UpcomingTransactionsScheduleChangeReviewResponse GetUpcomingTransactionsScheduleChangeReview ()
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetUpcomingTransactionsScheduleChangeReviewExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new TransactionApi();
+
+            try
+            {
+                UpcomingTransactionsScheduleChangeReviewResponse result = apiInstance.GetUpcomingTransactionsScheduleChangeReview();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling TransactionApi.GetUpcomingTransactionsScheduleChangeReview: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**UpcomingTransactionsScheduleChangeReviewResponse**](UpcomingTransactionsScheduleChangeReviewResponse.md)
 
 ### Authorization
 

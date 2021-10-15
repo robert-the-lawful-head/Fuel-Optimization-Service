@@ -1,36 +1,39 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+/*import FlatfileImporter from 'flatfile-csv-importer';*/
 
-import FlatfileImporter from 'flatfile-csv-importer';
-
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
+import { AircraftsService } from '../../../services/aircrafts.service';
+import { Parametri } from '../../../services/paremeters.service';
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
-import { AircraftsService } from '../../../services/aircrafts.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { Parametri } from '../../../services/paremeters.service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-
+import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 // Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
 import { RampFeesImportInformationComponent } from '../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
-import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Ramp Fees',
         link: '/default-layout/ramp-fees',
+        title: 'Ramp Fees',
     },
 ];
 
 @Component({
     selector: 'app-ramp-fees-home',
+    styleUrls: ['./ramp-fees-home.component.scss'],
     templateUrl: './ramp-fees-home.component.html',
-    styleUrls: [ './ramp-fees-home.component.scss' ],
 })
 export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('customRampFeeCat')
@@ -44,11 +47,11 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
 
-    LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';
+    /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
 
-    private importer: FlatfileImporter;
+    /*private importer: FlatfileImporter;*/
 
     constructor(
         private rampFeesService: RampfeesService,
@@ -69,14 +72,13 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.rampFees = null;
                     this.initRampfees();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -101,16 +103,14 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe(
                         (mymessage: any) => (this.expirationDate = mymessage)
                     );
-
-
             });
 
-        FlatfileImporter.setVersion(2);
-        this.initializeImporter();
-        this.importer.setCustomer({
-            userId: '1',
-            name: 'WebsiteImport',
-        });
+        //FlatfileImporter.setVersion(2);
+        //this.initializeImporter();
+        //this.importer.setCustomer({
+        //    name: 'WebsiteImport',
+        //    userId: '1',
+        //});
     }
 
     public addNewRampFeeClicked() {
@@ -158,130 +158,129 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.requiresUpdate = false;
     }
 
-    public informForRampFees() {
-        const dialogRef = this.importFeesInfoDialog.open(
-            RampFeesImportInformationComponent,
-            {}
-        );
+    //public informForRampFees() {
+    //    const dialogRef = this.importFeesInfoDialog.open(
+    //        RampFeesImportInformationComponent,
+    //        {}
+    //    );
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            } else {
-                this.launchImporter();
-            }
+    //    dialogRef.afterClosed().subscribe((result) => {
+    //        if (!result) {
+    //            return;
+    //        } else {
+    //            this.launchImporter();
+    //        }
+    //    });
+    //}
 
-        });
-    }
 
-    async launchImporter() {
-        if (!this.LICENSE_KEY) {
-            return alert('Set LICENSE_KEY on Line 13 before continuing.');
-        }
-        try {
-            const results = await this.importer.requestDataFromUser();
-            this.importer.displayLoader();
+    //[#hz0jtd] FlatFile importer was requested to be removed
+    //async launchImporter() {
+    //    if (!this.LICENSE_KEY) {
+    //        return alert('Set LICENSE_KEY on Line 13 before continuing.');
+    //    }
+    //    try {
+    //        const results = await this.importer.requestDataFromUser();
+    //        this.importer.displayLoader();
 
-            if (results) {
-                results.data.forEach((result) => {
-                    result.fboid = this.sharedService.currentUser.fboId;
-                });
-                console.log(results.data);
+    //        if (results) {
+    //            results.data.forEach((result) => {
+    //                result.fboid = this.sharedService.currentUser.fboId;
+    //            });
 
-                this.rampFeesService
-                    .importrampfees(results.data)
-                    .subscribe((data: any) => {
-                        if (data) {
-                            this.importer.displaySuccess(
-                                'Data successfully imported!'
-                            );
-                            setTimeout(() => {
-                                this.loadRampFees();
-                            }, 1500);
-                        }
-                    });
-            }
-        } catch (e) {
-        }
-    }
+    //            this.rampFeesService
+    //                .importrampfees(results.data)
+    //                .subscribe((data: any) => {
+    //                    if (data) {
+    //                        this.importer.displaySuccess(
+    //                            'Data successfully imported!'
+    //                        );
+    //                        setTimeout(() => {
+    //                            this.loadRampFees();
+    //                        }, 1500);
+    //                    }
+    //                });
+    //        }
+    //    } catch (e) {}
+    //}
 
-    initializeImporter() {
-        this.importer = new FlatfileImporter(this.LICENSE_KEY, {
-            fields: [
-                {
-                    label: 'ICAO',
-                    alternates: [ 'Icao' ],
-                    key: 'icao',
-                    description: 'Icao',
-                },
-                {
-                    label: 'FBO',
-                    alternates: [ 'fbo' ],
-                    key: 'fbo',
-                    description: 'FBO',
-                },
-                {
-                    label: 'Make',
-                    alternates: [ 'make' ],
-                    key: 'Make',
-                    description: 'Aircraft Make',
-                },
-                {
-                    label: 'Model',
-                    alternates: [ 'model' ],
-                    key: 'Model',
-                    description: 'Tail',
-                },
-                {
-                    label: 'Ramp Fee ($)',
-                    alternates: [ 'Ramp Fee', 'ramp fee' ],
-                    key: 'RampFee',
-                    description: 'Ramp Fee',
-                },
-                {
-                    label: 'Waived At (gal)',
-                    alternates: [ 'Waived At', 'waived at' ],
-                    key: 'WaivedAt',
-                    description: 'Waived Fees',
-                },
-                {
-                    label: 'Landing',
-                    alternates: [ 'landing' ],
-                    key: 'Landing',
-                    description: 'Landing Fees',
-                },
-                {
-                    label: 'Overnight',
-                    alternates: [ 'overnight', 'overnight fees' ],
-                    key: 'Overnight',
-                    description: 'Overnight Fees',
-                },
-                {
-                    label: 'Tail Number',
-                    alternates: [ 'tail number', 'tail-number' ],
-                    key: 'TailNumber',
-                    description: 'Tail Number',
-                },
-                {
-                    label: 'Aircraft Size',
-                    alternates: [ 'aircreft size' ],
-                    key: 'aircraftsize',
-                    description: 'Aircraft Size',
-                },
-                {
-                    label: 'Avoidance',
-                    alternates: [ 'avoidance' ],
-                    key: 'avoidance',
-                    description: 'Avoidance',
-                },
-            ],
-            type: 'RampFees',
-            allowInvalidSubmit: true,
-            managed: true,
-            allowCustom: true,
-            disableManualInput: false,
-        });
-    }
+    //initializeImporter() {
+    //    this.importer = new FlatfileImporter(this.LICENSE_KEY, {
+    //        allowCustom: true,
+    //        allowInvalidSubmit: true,
+    //        disableManualInput: false,
+    //        fields: [
+    //            {
+    //                alternates: ['Icao'],
+    //                description: 'Icao',
+    //                key: 'icao',
+    //                label: 'ICAO',
+    //            },
+    //            {
+    //                alternates: ['fbo'],
+    //                description: 'FBO',
+    //                key: 'fbo',
+    //                label: 'FBO',
+    //            },
+    //            {
+    //                alternates: ['make'],
+    //                description: 'Aircraft Make',
+    //                key: 'Make',
+    //                label: 'Make',
+    //            },
+    //            {
+    //                alternates: ['model'],
+    //                description: 'Tail',
+    //                key: 'Model',
+    //                label: 'Model',
+    //            },
+    //            {
+    //                alternates: ['Ramp Fee', 'ramp fee'],
+    //                description: 'Ramp Fee',
+    //                key: 'RampFee',
+    //                label: 'Ramp Fee ($)',
+    //            },
+    //            {
+    //                alternates: ['Waived At', 'waived at'],
+    //                description: 'Waived Fees',
+    //                key: 'WaivedAt',
+    //                label: 'Waived At (gal)',
+    //            },
+    //            {
+    //                alternates: ['landing'],
+    //                description: 'Landing Fees',
+    //                key: 'Landing',
+    //                label: 'Landing',
+    //            },
+    //            {
+    //                alternates: ['overnight', 'overnight fees'],
+    //                description: 'Overnight Fees',
+    //                key: 'Overnight',
+    //                label: 'Overnight',
+    //            },
+    //            {
+    //                alternates: ['tail number', 'tail-number'],
+    //                description: 'Tail Number',
+    //                key: 'TailNumber',
+    //                label: 'Tail Number',
+    //            },
+    //            {
+    //                alternates: ['aircreft size'],
+    //                description: 'Aircraft Size',
+    //                key: 'aircraftsize',
+    //                label: 'Aircraft Size',
+    //            },
+    //            {
+    //                alternates: ['avoidance'],
+    //                description: 'Avoidance',
+    //                key: 'avoidance',
+    //                label: 'Avoidance',
+    //            },
+    //        ],
+    //        managed: true,
+    //        type: 'RampFees',
+    //    });
+    //}
 
     // Private Methods
     private updateRampFee(fee) {
@@ -289,8 +288,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
             fee.fboid = this.sharedService.currentUser.fboId;
         }
         if (fee.oid && fee.oid > 0) {
-            this.rampFeesService.update(fee).subscribe((data: any) => {
-            });
+            this.rampFeesService.update(fee).subscribe((data: any) => {});
         } else {
             this.rampFeesService.add(fee).subscribe((data: any) => {
                 fee.oid = data.oid;

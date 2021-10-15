@@ -1,29 +1,28 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { interval, Subscription } from 'rxjs';
 import * as XLSX from 'xlsx';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { interval, Subscription } from 'rxjs';
 
 const BREADCRUMBS: any[] = [
     {
-        title: 'Main',
         link: '/default-layout',
+        title: 'Main',
     },
     {
-        title: 'Fuel Orders',
         link: '/default-layout/fuelreqs',
+        title: 'Fuel Orders',
     },
 ];
 
 @Component({
     selector: 'app-fuelreqs-home',
+    styleUrls: ['./fuelreqs-home.component.scss'],
     templateUrl: './fuelreqs-home.component.html',
-    styleUrls: [ './fuelreqs-home.component.scss' ],
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
@@ -77,6 +76,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
+        this.loadFuelReqs();
     }
 
     public export(event) {
@@ -89,18 +89,19 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
             )
             .subscribe((data: any) => {
                 const exportData = _.map(data, (item) => ({
-                    'Flight Dept.': item.customerName,
-                    'ITP Margin Template': item.pricingTemplateName,
                     ETA: item.eta,
                     ETD: item.etd,
-                    'Volume (gal.)': item.quotedVolume,
+                    Email: item.email,
+                    'Flight Dept.': item.customerName,
+                    'Fuelerlinx ID': item.sourceId,
+                    ID: item.oid,
+                    'ITP Margin Template': item.pricingTemplateName,
                     PPG: item.quotedPpg,
-                    'Tail #': item.tailNumber,
                     Phone: item.phoneNumber,
                     Source: item.source,
-                    Email: item.email,
-                    ID: item.oid,
-                    'Fuelerlinx ID': item.sourceId,
+                    'Tail #': item.tailNumber,
+                    'Transaction Status': item.cancelled ? 'Cancelled' : 'Live',
+                    'Volume (gal.)': item.quotedVolume,
                 }));
                 const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
                 const wb: XLSX.WorkBook = XLSX.utils.book_new();

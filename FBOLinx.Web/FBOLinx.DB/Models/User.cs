@@ -21,7 +21,9 @@ namespace FBOLinx.DB.Models
             [Description("Member")]
             Member = 4,
             [Description("CSR")]
-            CSR = 5
+            CSR = 5,
+            [Description("Non-Rev")]
+            NonRev= 6
         }
 
         [Key]
@@ -37,13 +39,14 @@ namespace FBOLinx.DB.Models
         public long? LoginCount { get;set; }
         public int? AddOnMarginTries { get; set; }
         public bool? GoOverTutorial { get; set; }
-        public bool? Active { get; set; }
+        public bool? Active { get; set; } = true;
         public string ResetPasswordToken { get; set; }
         public DateTime? ResetPasswordTokenExpiration { get; set; }
         public UserRoles Role { get; set; }
 
         [Column("FBOID")]
         public int FboId { get; set; }
+        public bool? CopyOrders { get; set; }
 
         [ForeignKey("FboId")]
         [InverseProperty("Users")]

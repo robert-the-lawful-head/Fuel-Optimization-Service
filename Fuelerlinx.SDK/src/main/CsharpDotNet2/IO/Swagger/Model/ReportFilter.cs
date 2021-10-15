@@ -97,6 +97,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "excludedFuelVendors")]
     public List<int?> ExcludedFuelVendors { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="archiveInclusionType", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "archiveInclusionType")]
+    public int? ArchiveInclusionType { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -117,6 +125,7 @@ namespace IO.Swagger.Model {
       sb.Append("  ExcludedAirports: ").Append(ExcludedAirports).Append("\n");
       sb.Append("  IncludedFuelVendors: ").Append(IncludedFuelVendors).Append("\n");
       sb.Append("  ExcludedFuelVendors: ").Append(ExcludedFuelVendors).Append("\n");
+      sb.Append("  ArchiveInclusionType: ").Append(ArchiveInclusionType).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

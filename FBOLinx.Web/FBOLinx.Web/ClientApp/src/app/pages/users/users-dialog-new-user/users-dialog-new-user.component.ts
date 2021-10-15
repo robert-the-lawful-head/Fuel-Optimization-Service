@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 // Services
 import { UserService } from '../../../services/user.service';
@@ -19,8 +19,8 @@ export interface NewUserDialogData {
 
 @Component({
     selector: 'app-users-dialog-new-user',
+    styleUrls: ['./users-dialog-new-user.component.scss'],
     templateUrl: './users-dialog-new-user.component.html',
-    styleUrls: [ './users-dialog-new-user.component.scss' ],
 })
 export class UsersDialogNewUserComponent {
     // Public Members
@@ -44,7 +44,6 @@ export class UsersDialogNewUserComponent {
         this.emailExists = false;
         this.userService.checkemailexists(this.data.username).subscribe(
             (data: any) => {
-                console.log(data);
                 this.dialogRef.close(this.data);
             },
             (err: any) => {
@@ -59,12 +58,12 @@ export class UsersDialogNewUserComponent {
     // Private Methods
     private loadAvailableRoles() {
         this.userService.getRoles().subscribe((data: any) => {
-            let supportedRoleValues = [ 4 ];
+            let supportedRoleValues = [4];
             this.availableroles = [];
             if (this.data.fboId > 0) {
-                supportedRoleValues = [ 1, 4, 5 ];
+                supportedRoleValues = [1, 4, 5];
             } else if (this.data.groupId > 0) {
-                supportedRoleValues = [ 2 ];
+                supportedRoleValues = [2];
             }
             for (const role of data) {
                 if (supportedRoleValues.indexOf(role.value) > -1) {

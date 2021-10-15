@@ -2,39 +2,47 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using static FBOLinx.DB.Models.PricingTemplate;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
 
 namespace FBOLinx.Web.Services
 {
-    public class PriceFetchingService
+    public class PriceFetchingService: IPriceFetchingService
     {
         private FboLinxContext _context;
         private int _FboId;
         private int _GroupId;
         private CustomerService _CustomerService;
         private FboService _FboService;
+        private IMailService _MailService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxService fuelerLinxService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
             _context = context;
+            _MailService = mailService;
         }
 
         #region Public Methods
 
-        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(string icao, int customerId, Core.Enums.FlightTypeClassifications flightTypeClassifications, Core.Enums.ApplicableTaxFlights departureType = Core.Enums.ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
@@ -71,15 +79,25 @@ namespace FBOLinx.Web.Services
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
-                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyAlerts.HasValue && x.Contact.CopyAlerts.Value).Select(x => x.Contact.Email).ToListAsync();
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).ToListAsync();
 
-                foreach(var price in pricing)
+                List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyAlerts.HasValue && x.CopyOrders.Value).Select(x => x.Username).ToListAsync();
+
+                foreach (var price in pricing)
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
                         price.TailNumbers = string.Join(",", template.TailNumbers);
                     if (alertEmailAddresses != null)
                         price.CopyEmails = string.Join(";", alertEmailAddresses);
+                    if(alertEmailAddressesUsers!=null)
+                    {
+                        foreach(var email in alertEmailAddressesUsers)
+                        {
+                            if (email.Contains('@'))
+                                price.CopyEmails += ";" + email;
+                        }
+                    }
                     price.FuelDeskEmail = fbo.FuelDeskEmail;
                 }
 
@@ -99,27 +117,28 @@ namespace FBOLinx.Web.Services
             _GroupId = groupId;
 
             try
-            {
-                var defaultPricingTemplate = await _context.PricingTemplate
-                    .Where(x => x.Fboid == fboId && x.Default.HasValue && x.Default.Value).FirstOrDefaultAsync();
+            {                                                                                
+                //Prepare default values
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||
                     flightTypeClassifications == FlightTypeClassifications.All)
                     flightTypeClassifications = FlightTypeClassifications.Private;
                 if (departureType == ApplicableTaxFlights.Never)
                     departureType = ApplicableTaxFlights.All;
-                int defaultPricingTemplateId = 0;
-                if (defaultPricingTemplate != null)
-                    defaultPricingTemplateId = defaultPricingTemplate.Oid;
 
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
-                var customerInfoByGroup =
-                    await _CustomerService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                var customerInfoByGroup = await _CustomerService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
+                if (!pricingTemplateIds.Any(x => x > 0))
+                {
+                    List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
+                    pricingTemplateIds = templates.Select(x => x.Oid).ToList();
+                }
                 var fboPrices = await _context.Fboprices.Where(x =>
                     (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
                     (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
                     x.Expired != true && x.Fboid == fboId).ToListAsync();
-                var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Any(pt => pt == x.Oid))
+                var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Contains(x.Oid))
                     .Include(x => x.CustomerMargins).ToListAsync();
                 var customerMargins = await _context.CustomerMargins.Include(x => x.PricingTemplate)
                     .Where(x => x.PricingTemplate != null && x.PricingTemplate.Fboid == fboId).Include(x => x.PriceTier)
@@ -132,22 +151,18 @@ namespace FBOLinx.Web.Services
                 var customerCompanyTypes = await _context.CustomerCompanyTypes
                     .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
                 var fbo = await _FboService.GetFbo(fboId);
-
+                var priceBreakdownDisplayType = await GetPriceBreakdownDisplayType(fboId);
 
                 //Prepare fees/taxes based on the provided departure type and flight type
                 if (feesAndTaxes == null)
                 {
-                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Where(x =>
+                    feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Include(x => x.OmitsByPricingTemplate).Where(x =>
                         x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All ||
                                              x.FlightTypeClassification == flightTypeClassifications ||
                                              flightTypeClassifications == FlightTypeClassifications.All)).ToListAsync();
                     if (departureType != ApplicableTaxFlights.All)
                         feesAndTaxes = feesAndTaxes.Where(x =>
                             x.DepartureType == departureType || x.DepartureType == ApplicableTaxFlights.All).ToList();
-                    feesAndTaxes.ForEach(x =>
-                    {
-                        x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId));
-                    });
                 }
                 else
                 {
@@ -163,7 +178,7 @@ namespace FBOLinx.Web.Services
                 var customerPricingResults = (from cg in customerInfoByGroup
                     join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
                     from pt in leftJoinPT.DefaultIfEmpty()
-                    join ppt in customerMargins on pt.Oid equals ppt.TemplateId
+                    join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
                         into leftJoinPPT
                     from ppt in leftJoinPPT.DefaultIfEmpty()
                     join fp in fboPrices on new
@@ -226,12 +241,14 @@ namespace FBOLinx.Web.Services
                         Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
                         Notes = (pt == null ? "" : pt.Notes),
                         Fbo = (fbo == null ? "" : fbo.Fbo),
-                        Group = (fbo.Group == null ? "" : fbo.Group.GroupName)
+                        Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
+                        PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                        Product = "Jet A"
                     }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
 
                 if (feesAndTaxes.Count == 0)
                     return customerPricingResults;
-
+                
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
                 if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.DomesticOnly) &&
@@ -240,10 +257,11 @@ namespace FBOLinx.Web.Services
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x =>
                     {
-                        x.Product = "JetA (Domestic Departure)";
+                        x.Product = "Jet A (Domestic Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
-                            fee.DepartureType == ApplicableTaxFlights.All).ToList();
+                            fee.DepartureType == ApplicableTaxFlights.All)                                                                                                            
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -256,10 +274,16 @@ namespace FBOLinx.Web.Services
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x =>
                     {
-                        x.Product = "JetA (International Departure)";
+                        x.Product = "Jet A (International Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
-                            fee.DepartureType == ApplicableTaxFlights.All).ToList();
+                            fee.DepartureType == ApplicableTaxFlights.All)
+                            .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
+                            .ToList();
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee =>
+                                fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
+                                fee.DepartureType == ApplicableTaxFlights.All)                                                                                                        
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -272,14 +296,15 @@ namespace FBOLinx.Web.Services
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x =>
                     {
-                        var productName = "JetA";
+                        var productName = "Jet A";
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
                             productName += " (Domestic Departure)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
                             productName += " (International Departure)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
-                            .ToList();
+                            .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
 
@@ -287,6 +312,29 @@ namespace FBOLinx.Web.Services
                 resultsWithFees.AddRange(domesticOptions);
                 resultsWithFees.AddRange(internationalOptions);
                 resultsWithFees.AddRange(allDepartureOptions);
+                
+                //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
+                //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                resultsWithFees.ForEach(x =>
+                {
+                    x.FeesAndTaxes.ForEach(fee =>
+                    {
+                        if (fee.OmitsByPricingTemplate != null &&
+                            fee.OmitsByPricingTemplate.Any(o =>
+                                o.PricingTemplateId == x.PricingTemplateId))
+                        {
+                            fee.IsOmitted = true;
+                            fee.OmittedFor = "P";
+                        }
+
+                        if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
+                            o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                        {
+                            fee.IsOmitted = true;
+                            fee.OmittedFor = "C";
+                        }
+                    });
+                });
                 return resultsWithFees;
             }
             catch (System.Exception exception)
@@ -317,7 +365,8 @@ namespace FBOLinx.Web.Services
                                       where ap.PriceTemplateId == aircraftPricingTemplate.Oid
                                             && ca.CustomerId == customer.CustomerId
                                             && ca.GroupId == _GroupId
-                                      select ca.TailNumber).ToList();
+                                            && !string.IsNullOrEmpty(ca.TailNumber)
+                                      select ca.TailNumber.Trim()).ToList();
                 if (tailNumberList == null || tailNumberList.Count == 0)
                     continue;
                 aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
@@ -328,7 +377,7 @@ namespace FBOLinx.Web.Services
             //Set the applicable tail numbers for the standard/default templates
             var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
 
-            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber).ToList());
+            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
 
             return result;
         }
@@ -391,8 +440,13 @@ namespace FBOLinx.Web.Services
         public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
         {
             //Load customer assignments by template ID
-            var customerAssignments = await _context.CustomCustomerTypes.Where(x => x.Fboid == fboId).ToListAsync();
-            
+            var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
+                                             join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
+                                             join c in _context.Customers on cibg.CustomerId equals c.Oid
+                                             where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
+                                             select new
+                                             { CustomerType = cct.CustomerType }).ToListAsync();
+
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
                                                 .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
@@ -407,35 +461,36 @@ namespace FBOLinx.Web.Services
                                                  MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
                                              }).ToListAsync();
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
-            
+
             //Join the inner queries on the pricing templates
             var pricingTemplates = (from p in tempPricingTemplates
-                join cm in tempMarginTiers on p.Oid equals cm.TemplateId
-                    into leftJoinCmTiers
-                from cm in leftJoinCmTiers.DefaultIfEmpty()
-                join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
-                    into leftJoinFp
-                from fp in leftJoinFp.DefaultIfEmpty()
-                where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
-                              select new
-                              {
-                                  p.CustomerId,
-                                  p.Default,
-                                  p.Fboid,
-                                  Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
-                                  p.MarginType,
-                                  p.Name,
-                                  p.Notes,
-                                  p.Oid,
-                                  p.Type,
-                                  p.Subject,
-                                  p.Email,
-                                  IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                  IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
-                                      p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
-                                      (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
-                                  TemplateId = cm == null ? 0 : cm.TemplateId
-                              }).ToList();
+                                    join cm in tempMarginTiers on p.Oid equals cm.TemplateId
+                                        into leftJoinCmTiers
+                                    from cm in leftJoinCmTiers.DefaultIfEmpty()
+                                    join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
+                                        into leftJoinFp
+                                    from fp in leftJoinFp.DefaultIfEmpty()
+                                    where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
+                                    select new
+                                    {
+                                        p.CustomerId,
+                                        p.Default,
+                                        p.Fboid,
+                                        Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
+                                        p.MarginType,
+                                        p.Name,
+                                        p.Notes,
+                                        p.Oid,
+                                        p.Type,
+                                        p.Subject,
+                                        p.Email,
+                                        IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
+                                        IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
+                                            p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
+                                            (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
+                                        TemplateId = cm == null ? 0 : cm.TemplateId,
+                                        p.EmailContentId
+                                    }).ToList();
 
 
             //Group the final result
@@ -456,6 +511,7 @@ namespace FBOLinx.Web.Services
                         pt.IsPricingExpired,
                         pt.IntoPlanePrice,
                         pt.TemplateId,
+                        pt.EmailContentId,
                     }
                     into groupedPt
                     select new PricingTemplatesGridViewModel
@@ -474,12 +530,107 @@ namespace FBOLinx.Web.Services
                         Email = groupedPt.Key.Email,
                         IsPricingExpired = groupedPt.Key.IsPricingExpired,
                         IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0)
+                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0),
+                        EmailContentId = groupedPt.Key.EmailContentId
                     })
                 .OrderBy(pt => pt.Name)
                 .ToList();
 
             return result;
+        }
+
+        public async Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)
+        {
+            bool hasDepartureTypeRule = false;
+            bool hasFlightTypeRule = false;
+            var priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+
+            var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
+            foreach (FboFeesAndTaxes fee in taxesAndFees)
+            {
+                if (fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly || fee.DepartureType == FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly)
+                {
+                    hasDepartureTypeRule = true;
+                }
+                if (fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Private || fee.FlightTypeClassification == FBOLinx.Core.Enums.FlightTypeClassifications.Commercial)
+                {
+                    hasFlightTypeRule = true;
+                }
+            }
+
+            if (!hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+            }
+            else if (!hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
+            }
+            else if (hasDepartureTypeRule && !hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
+            }
+            else if (hasDepartureTypeRule && hasFlightTypeRule)
+            {
+                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+            }
+
+            return priceBreakdownDisplayType;
+        }
+
+        public async Task<double> GetCurrentPostedRetail(int fboId)
+        {
+            var postedRetail = await _context.Fboprices
+                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product == "JetA Retail").ToListAsync();
+            return postedRetail.FirstOrDefault().Price.GetValueOrDefault();
+        }
+
+        public async Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing()
+        {
+            var fboIdsWithExpiredPrice = new List<int>();
+            var fbos = await _context.Fbos.Where(f => f.Active == true).Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
+
+            foreach (var fbo in fbos)
+            {
+                var retailPricing = await _context.Fboprices.Where(s => s.Product == "JetA Retail" && s.Fboid == fbo.Oid).OrderByDescending(t => t.Oid).FirstOrDefaultAsync();
+
+                if (retailPricing != null && retailPricing.Expired.GetValueOrDefault())
+                    fboIdsWithExpiredPrice.Add(fbo.Oid);
+            }
+
+            var fbosWithExpiredPricing = fbos.Where(t => fboIdsWithExpiredPrice.Contains(t.Oid)).Select(f => new FbosGridViewModel
+            {
+                Active = f.Active,
+                Fbo = f.Fbo,
+                Icao = f.fboAirport?.Icao,
+                Oid = f.Oid,
+                GroupId = f.GroupId ?? 0,
+                Users = f.Users
+            }).ToList();
+
+            return fbosWithExpiredPricing;
+        }
+
+        public async Task NotifyFboExpiredPrices(List<string> toEmails, string fbo)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in toEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridEngagementTemplateData
+            {
+                fboName = fbo,
+                subject = "FBOLinx reminder - expired pricing!"
+            };
+
+            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+
+            //Send email
+            var result = await _MailService.SendAsync(mailMessage);
         }
         #endregion
 
@@ -490,12 +641,9 @@ namespace FBOLinx.Web.Services
             var oldPrices = await _context.Fboprices.Where(f =>
                     f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && f.Price != null && f.Expired != true)
                 .ToListAsync();
-            foreach (var p in oldPrices)
-            {
-                p.Expired = true;
-                _context.Fboprices.Update(p);
-            }
-            await _context.SaveChangesAsync();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkUpdateAsync(oldPrices);
+            await transaction.CommitAsync();
         }
         #endregion
     }

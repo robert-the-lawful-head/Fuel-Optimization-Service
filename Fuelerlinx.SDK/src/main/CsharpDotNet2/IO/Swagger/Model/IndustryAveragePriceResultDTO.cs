@@ -34,9 +34,9 @@ namespace IO.Swagger.Model {
     public int? Year { get; set; }
 
     /// <summary>
-    /// 
+    /// Subscription levels:             0 = Bronze (1-3 Aircraft)             1 = Silver (4-6 Aircraft)             2 = Gold (7-9 Aircraft)             3 = Platinum (10-25 Aircraft)             4 = Enterprise (26+ Aircraft)    * `Bronze` -   * `Silver` -   * `Gold` -   * `Platinum` -   * `Enterprise` -   
     /// </summary>
-    /// <value></value>
+    /// <value>Subscription levels:             0 = Bronze (1-3 Aircraft)             1 = Silver (4-6 Aircraft)             2 = Gold (7-9 Aircraft)             3 = Platinum (10-25 Aircraft)             4 = Enterprise (26+ Aircraft)    * `Bronze` -   * `Silver` -   * `Gold` -   * `Platinum` -   * `Enterprise` -   </value>
     [DataMember(Name="subscriptionLevel", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "subscriptionLevel")]
     public int? SubscriptionLevel { get; set; }

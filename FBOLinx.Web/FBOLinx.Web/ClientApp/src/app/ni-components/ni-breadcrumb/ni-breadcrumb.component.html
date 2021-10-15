@@ -2,13 +2,19 @@
     <div class="col-md-6">
         <ul class="breadcrumb custom-1">
             <li *ngFor="let item of menu; let last = last">
-                <a routerLink="{{item.link}}" *ngIf="item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</a>
+                <a routerLink="{{ item.link }}" *ngIf="item.link"
+                    ><span class="icon {{ item.icon }}" *ngIf="item.icon"></span
+                    >{{ item.title }}</a
+                >
                 <!--
                 -->
-                <span class="static" *ngIf="!item.link"><span class="icon {{item.icon}}" *ngIf="item.icon"></span>{{item.title}}</span>
+                <span class="static" *ngIf="!item.link"
+                    ><span class="icon {{ item.icon }}" *ngIf="item.icon"></span
+                    >{{ item.title }}</span
+                >
                 <!--
                 -->
-                <span class="separator" *ngIf="!last">{{separator}}</span>
+                <span class="separator" *ngIf="!last">{{ separator }}</span>
             </li>
         </ul>
     </div>

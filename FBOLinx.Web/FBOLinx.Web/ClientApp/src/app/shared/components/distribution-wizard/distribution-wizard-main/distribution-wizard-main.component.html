@@ -2,17 +2,38 @@
 <div class="wizard-content" mat-dialog-content>
     <div *ngIf="!isDistributionComplete">
         <div
-            *ngIf="!availablePricingTemplates || !customerCompanyTypes || !availableCustomers || !emailContentGreetings || !emailContentSignatures"
-            class="mb-3 mt-3">
+            *ngIf="
+                !availablePricingTemplates ||
+                !customerCompanyTypes ||
+                !availableCustomers ||
+                !emailContentGreetings ||
+                !emailContentSignatures
+            "
+            class="mb-3 mt-3"
+        >
             <mat-spinner></mat-spinner>
         </div>
         <div
-            *ngIf="availablePricingTemplates && customerCompanyTypes && availableCustomers && emailContentGreetings && emailContentSignatures">
-            <div *ngIf="validityMessage.length > 0" class="text-center font-weight-bold">
-                {{validityMessage}}
+            *ngIf="
+                availablePricingTemplates &&
+                customerCompanyTypes &&
+                availableCustomers &&
+                emailContentGreetings &&
+                emailContentSignatures
+            "
+        >
+            <div
+                *ngIf="validityMessage.length > 0"
+                class="text-center font-weight-bold"
+            >
+                {{ validityMessage }}
             </div>
 
-            <mat-horizontal-stepper #stepper *ngIf="validityMessage.length == 0" [linear]="true">
+            <mat-horizontal-stepper
+                #stepper
+                *ngIf="validityMessage.length == 0"
+                [linear]="true"
+            >
                 <mat-step [stepControl]="firstFormGroup">
                     <form [formGroup]="firstFormGroup">
                         <ng-template matStepLabel>Initial Setup</ng-template>
@@ -20,11 +41,17 @@
                             <div *ngIf="!isForSingleCustomer" class="row">
                                 <div class="col">
                                     <mat-form-field>
-                                        <mat-select formControlName="pricingTemplate"
-                                                    placeholder="Choose a Margin Template">
-                                            <mat-option *ngFor="let pricingTemplate of availablePricingTemplates"
-                                                        [value]="pricingTemplate">
-                                                {{pricingTemplate.name}}
+                                        <mat-select
+                                            formControlName="pricingTemplate"
+                                            placeholder="Choose a Margin Template"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let pricingTemplate of availablePricingTemplates
+                                                "
+                                                [value]="pricingTemplate"
+                                            >
+                                                {{ pricingTemplate.name }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -44,24 +71,45 @@
                             <div class="row">
                                 <div class="col">
                                     <mat-form-field>
-                                        <mat-select formControlName="customer" placeholder="Choose a Customer">
-                                            <mat-option *ngFor="let customer of availableCustomers" [value]="customer">
-                                                {{customer.company}}
+                                        <mat-select
+                                            formControlName="customer"
+                                            placeholder="Choose a Customer"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let customer of availableCustomers
+                                                "
+                                                [value]="customer"
+                                            >
+                                                {{ customer.company }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                             </div>
-                            <div *ngIf="data.pricingTemplate && data.pricingTemplate.oid > 0" class="row">
+                            <div
+                                *ngIf="
+                                    data.pricingTemplate &&
+                                    data.pricingTemplate.oid > 0
+                                "
+                                class="row"
+                            >
                                 <div class="col">
-                                    <ni-badge [arrow]="'right'" [borderRadius]="false" [color]="'warning'">Note
+                                    <ni-badge
+                                        [arrow]="'right'"
+                                        [borderRadius]="false"
+                                        [color]="'warning'"
+                                        >Note
                                     </ni-badge>
-                                    Only customers assigned the selected margin template will receive an email
+                                    Only customers assigned the selected margin
+                                    template will receive an email
                                 </div>
                             </div>
                         </div>
                         <div class="text-right mt-2">
-                            <button [mat-dialog-close]="data" mat-button>Cancel</button>
+                            <button [mat-dialog-close]="data" mat-button>
+                                Cancel
+                            </button>
                             <button mat-button matStepperNext>Next</button>
                         </div>
                     </form>
@@ -73,46 +121,81 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <mat-select (change)="emailContentGreetingChange()"
-                                                    [(ngModel)]="data.emailContentGreeting"
-                                                    formControlName="emailContentGreeting"
-                                                    placeholder="Choose a Greeting">
-                                            <mat-option *ngFor="let emailContent of emailContentGreetings"
-                                                        [value]="emailContent">
-                                                {{emailContent.name}}
+                                        <mat-select
+                                            (change)="
+                                                emailContentGreetingChange()
+                                            "
+                                            [(ngModel)]="
+                                                data.emailContentGreeting
+                                            "
+                                            formControlName="emailContentGreeting"
+                                            placeholder="Choose a Greeting"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let emailContent of emailContentGreetings
+                                                "
+                                                [value]="emailContent"
+                                            >
+                                                {{ emailContent.name }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                             </div>
-                            <div *ngIf="data && data.emailContentGreeting" class="row">
+                            <div
+                                *ngIf="data && data.emailContentGreeting"
+                                class="row"
+                            >
                                 <div class="col">
                                     <mat-form-field>
-                                        <input [(ngModel)]="data.emailContentGreeting.name" aria-label="Greeting Name"
-                                               formControlName="emailContentGreetingName" matInput
-                                               placeholder="Greeting Name">
+                                        <input
+                                            [(ngModel)]="
+                                                data.emailContentGreeting.name
+                                            "
+                                            aria-label="Greeting Name"
+                                            formControlName="emailContentGreetingName"
+                                            matInput
+                                            placeholder="Greeting Name"
+                                        />
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col">
                                     <mat-form-field>
-                                        <input [(ngModel)]="data.emailContentGreeting.subject" aria-label="Subject"
-                                               formControlName="emailContentSubject"
-                                               matInput placeholder="Subject">
+                                        <input
+                                            [(ngModel)]="
+                                                data.emailContentGreeting
+                                                    .subject
+                                            "
+                                            aria-label="Subject"
+                                            formControlName="emailContentSubject"
+                                            matInput
+                                            placeholder="Subject"
+                                        />
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div *ngIf="data.emailContentGreeting" class="row">
                                 <div class="col">
-                                    <ejs-richtexteditor [(value)]='data.emailContentGreeting.emailContentHtml'
-                                                        id='rteGreetingContent'></ejs-richtexteditor>
+                                    <ejs-richtexteditor
+                                        [(value)]="
+                                            data.emailContentGreeting
+                                                .emailContentHtml
+                                        "
+                                        id="rteGreetingContent"
+                                    ></ejs-richtexteditor>
                                 </div>
                             </div>
                         </div>
                         <div class="text-right mt-2">
-                            <button [mat-dialog-close]="data" mat-button>Cancel</button>
-                            <button (click)="stepper.reset()" mat-button>Reset</button>
+                            <button [mat-dialog-close]="data" mat-button>
+                                Cancel
+                            </button>
+                            <button (click)="stepper.reset()" mat-button>
+                                Reset
+                            </button>
                             <button mat-button matStepperPrevious>Back</button>
                             <button mat-button matStepperNext>Next</button>
                         </div>
@@ -125,84 +208,146 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <mat-form-field>
-                                        <mat-select (change)="emailContentSignatureChange()"
-                                                    [(ngModel)]="data.emailContentSignature"
-                                                    formControlName="emailContentSignature"
-                                                    placeholder="Greeting">
-                                            <mat-option *ngFor="let emailContent of emailContentSignatures"
-                                                        [value]="emailContent">
-                                                {{emailContent.name}}
+                                        <mat-select
+                                            (change)="
+                                                emailContentSignatureChange()
+                                            "
+                                            [(ngModel)]="
+                                                data.emailContentSignature
+                                            "
+                                            formControlName="emailContentSignature"
+                                            placeholder="Greeting"
+                                        >
+                                            <mat-option
+                                                *ngFor="
+                                                    let emailContent of emailContentSignatures
+                                                "
+                                                [value]="emailContent"
+                                            >
+                                                {{ emailContent.name }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                             </div>
-                            <div *ngIf="data && data.emailContentSignature" class="row">
+                            <div
+                                *ngIf="data && data.emailContentSignature"
+                                class="row"
+                            >
                                 <div class="col">
                                     <mat-form-field>
-                                        <input [(ngModel)]="data.emailContentSignature.name" aria-label="Signature Name"
-                                               formControlName="emailContentSignatureName" matInput
-                                               placeholder="Signature Name">
+                                        <input
+                                            [(ngModel)]="
+                                                data.emailContentSignature.name
+                                            "
+                                            aria-label="Signature Name"
+                                            formControlName="emailContentSignatureName"
+                                            matInput
+                                            placeholder="Signature Name"
+                                        />
                                     </mat-form-field>
                                 </div>
                             </div>
                             <div *ngIf="data.emailContentSignature" class="row">
                                 <div class="col">
-                                    <ejs-richtexteditor [(value)]='data.emailContentSignature.emailContentHtml'
-                                                        id='rteSignatureContent'></ejs-richtexteditor>
+                                    <ejs-richtexteditor
+                                        [(value)]="
+                                            data.emailContentSignature
+                                                .emailContentHtml
+                                        "
+                                        id="rteSignatureContent"
+                                    ></ejs-richtexteditor>
                                 </div>
                             </div>
                         </div>
                         <div class="text-right mt-2">
-                            <button [mat-dialog-close]="data" mat-button>Cancel</button>
-                            <button (click)="stepper.reset()" mat-button>Reset</button>
+                            <button [mat-dialog-close]="data" mat-button>
+                                Cancel
+                            </button>
+                            <button (click)="stepper.reset()" mat-button>
+                                Reset
+                            </button>
                             <button mat-button matStepperPrevious>Back</button>
-                            <button (click)="generatePreview()" mat-button matStepperNext>Next</button>
+                            <button
+                                (click)="generatePreview()"
+                                mat-button
+                                matStepperNext
+                            >
+                                Next
+                            </button>
                         </div>
                     </form>
                 </mat-step>
                 <mat-step [stepControl]="fourthFormGroup">
                     <form [formGroup]="fourthFormGroup">
                         <ng-template matStepLabel>Preview</ng-template>
-                        <div *ngIf="isLoadingPreview" class="container-fluid inner-content">
+                        <div
+                            *ngIf="isLoadingPreview"
+                            class="container-fluid inner-content"
+                        >
                             <mat-spinner></mat-spinner>
                         </div>
-                        <div *ngIf="!isLoadingPreview" class="container-fluid inner-content">
+                        <div
+                            *ngIf="!isLoadingPreview"
+                            class="container-fluid inner-content"
+                        >
                             <ni-card class="mb-1 mt-1" title="Preview">
                                 <div>
-                                    <div [innerHTML]="distributionPreview | safeHtml"></div>
+                                    <div
+                                        [innerHTML]="
+                                            distributionPreview | safeHtml
+                                        "
+                                    ></div>
                                 </div>
                             </ni-card>
                         </div>
                         <div class="text-right mt-2">
-                            <button [mat-dialog-close]="data" mat-button>Cancel</button>
+                            <button [mat-dialog-close]="data" mat-button>
+                                Cancel
+                            </button>
                             <button mat-button matStepperPrevious>Back</button>
-                            <button (click)="distributePricingClicked()" mat-button>Distribute Pricing</button>
+                            <button
+                                (click)="distributePricingClicked()"
+                                mat-button
+                            >
+                                Distribute Pricing
+                            </button>
                         </div>
                     </form>
                 </mat-step>
                 <mat-step [stepControl]="fifthFormGroup">
                     <form [formGroup]="fifthFormGroup">
                         <ng-template matStepLabel>Distribute</ng-template>
-                        You are now ready to distribute pricing. Click "Distribute Pricing" below to start.
+                        You are now ready to distribute pricing. Click
+                        "Distribute Pricing" below to start.
                         <div class="text-right mt-2">
-                            <button [mat-dialog-close]="data" mat-button>Cancel</button>
+                            <button [mat-dialog-close]="data" mat-button>
+                                Cancel
+                            </button>
                             <button mat-button matStepperPrevious>Back</button>
-                            <button (click)="distributePricingClicked()" mat-button>Distribute Pricing</button>
+                            <button
+                                (click)="distributePricingClicked()"
+                                mat-button
+                            >
+                                Distribute Pricing
+                            </button>
                         </div>
                     </form>
                 </mat-step>
             </mat-horizontal-stepper>
         </div>
-
     </div>
     <div *ngIf="isDistributionComplete">
         Price distribution has been started. You can now close this window.
     </div>
 </div>
-<div *ngIf="isDistributionComplete || (validityMessage && validityMessage.length > 0)" mat-dialog-actions
-     style="flex-direction: column">
+<div
+    *ngIf="
+        isDistributionComplete ||
+        (validityMessage && validityMessage.length > 0)
+    "
+    mat-dialog-actions
+    style="flex-direction: column"
+>
     <button [mat-dialog-close]="data" ni-button>Close</button>
 </div>
-
-

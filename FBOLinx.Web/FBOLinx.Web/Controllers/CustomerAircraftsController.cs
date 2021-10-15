@@ -111,7 +111,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (groupId != UserService.GetClaimedGroupId(_HttpContextAccessor))
+            if (groupId != JwtManager.GetClaimedGroupId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
             var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);
@@ -124,6 +124,14 @@ namespace FBOLinx.Web.Controllers
         {
             var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId);
             
+            return Ok(result);
+        }
+
+        [HttpGet("group/{groupId}/fbo/{fboId}/list")]
+        public async Task<IActionResult> GetCustomerAircraftsListByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            var result = await _CustomerAircraftService.GetAircraftsList(groupId, fboId);
+
             return Ok(result);
         }
 
@@ -251,7 +259,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostCustomerAircrafts([FromBody] CustomerAircrafts customerAircrafts)
+        public async Task<IActionResult> PostCustomerAircraft([FromBody] CustomerAircrafts customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -263,6 +271,106 @@ namespace FBOLinx.Web.Controllers
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
+
+        [HttpPost("group/{groupId}/fbo/{fboId}/customer/{customerId}/multiple")]
+        public async Task<IActionResult> PostCustomerAircraftsWithTemplates([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId, [FromBody] List<CustomerAircraftsWithTemplateRequest> request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerAircrafts = request.Select(r => new CustomerAircrafts
+            {
+                GroupId = groupId,
+                CustomerId = customerId,
+                AircraftId = r.AircraftId,
+                Size = r.Size,
+                TailNumber = r.TailNumber,
+            }).ToList();
+
+            _context.CustomerAircrafts.AddRange(customerAircrafts);
+            await _context.SaveChangesAsync();
+
+            for(int i = 0; i< customerAircrafts.Count; i++)
+            {
+                if (request[i].PricingTemplateId > 0)
+                {
+                    AircraftPrices newAircraftPrice = new AircraftPrices
+                    {
+                        CustomerAircraftId = customerAircrafts[i].Oid,
+                        PriceTemplateId = request[i].PricingTemplateId
+                    };
+                    _context.AircraftPrices.Add(newAircraftPrice);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("create-with-customer")]
+        public async Task<IActionResult> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            using var transaction = _context.Database.BeginTransaction();
+
+            try
+            {
+                var customer = new Customers
+                {
+                    Company = request.Customer
+                };
+
+                _context.Customers.Add(customer);
+                _context.SaveChanges();
+
+                var customerViewedByFbo = new CustomersViewedByFbo
+                {
+                    Fboid = request.FboId,
+                    CustomerId = customer.Oid,
+                    ViewDate = DateTime.Now,
+                };
+                _context.CustomersViewedByFbo.Add(customerViewedByFbo);
+
+                var customerInfoByGroup = new CustomerInfoByGroup
+                {
+                    GroupId = request.GroupId,
+                    Company = request.Customer,
+                    CustomerId = customer.Oid,
+                    Active = true,
+                };
+                _context.CustomerInfoByGroup.Add(customerInfoByGroup);
+
+
+                var customerAircraft = new CustomerAircrafts
+                {
+                    GroupId = request.GroupId,
+                    AircraftId = request.AircraftId,
+                    TailNumber = request.TailNumber,
+                    Size = request.Size,
+                    CustomerId = customer.Oid,
+                };
+                _context.CustomerAircrafts.Add(customerAircraft);
+
+                _context.SaveChanges();
+
+                await transaction.CommitAsync();
+
+                return Ok(customerInfoByGroup);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                return BadRequest(ex);
+            }
+        }
+
 
         [HttpPost("import")]
         public async Task<IActionResult> ImportCustomerAircrafts([FromBody] List<AircraftImportVM> customerAircrafts)

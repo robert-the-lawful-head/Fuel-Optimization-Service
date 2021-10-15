@@ -52,6 +52,20 @@
             </td>
         </ng-container>
 
+        <ng-container matColumnDef="copyOrders">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Copy On Orders?
+            </th>
+            <td *matCellDef="let user" mat-cell>
+                <mat-slide-toggle
+                    (click)="UpdateCopyOrdersValue(user)"
+                    [(ngModel)]="user.copyOrders"
+                    [checked]="user.copyOrders"
+                    color="accent"
+                ></mat-slide-toggle>
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="delete">
             <th *matHeaderCellDef mat-header-cell>
                 <div class="pull-right">
@@ -67,9 +81,13 @@
             </th>
             <td *matCellDef="let user" mat-cell>
                 <div class="pull-right">
-                    <button (click)="deleteRecord(user); $event.stopPropagation()" [view]="'error'"
-                            beforeIcon="fa fa-trash" ni-button
-                            size="small">
+                    <button
+                        (click)="deleteRecord(user); $event.stopPropagation()"
+                        [view]="'error'"
+                        beforeIcon="fa fa-trash"
+                        ni-button
+                        size="small"
+                    >
                         Delete
                     </button>
                 </div>

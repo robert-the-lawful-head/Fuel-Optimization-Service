@@ -3,58 +3,85 @@
         <div class="row">
             <div class="col col-md-4">
                 <mat-form-field>
-                    <input (keyup)="applyFilter($event.target.value)"
-                           matInput
-                           placeholder="Search by Customer, TailNumber, FBO, etc."/>
+                    <input
+                        (keyup)="applyFilter($event.target.value)"
+                        matInput
+                        placeholder="Search by Customer, TailNumber, FBO, etc."
+                    />
                     <span matPrefix><i class="fa fa-search"></i></span>
                 </mat-form-field>
             </div>
             <div class="col-6 col-md-3">
                 <mat-form-field>
-                    <input (dateChange)="applyDateFilterChange()"
-                           (focus)="dashboardSettingsStartDateFilter.open()"
-                           [(ngModel)]="filterStartDate"
-                           [matDatepicker]="dashboardSettingsStartDateFilter"
-                           [max]="filterEndDate"
-                           matInput
-                           placeholder="Start Date"/>
-                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsStartDateFilter
-                                    disabled="false"></mat-datepicker>
+                    <input
+                        (dateChange)="applyDateFilterChange()"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        [(ngModel)]="filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        [max]="filterEndDate"
+                        matInput
+                        placeholder="Start Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsStartDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="col-6 col-md-3">
                 <mat-form-field>
-                    <input (dateChange)="applyDateFilterChange()"
-                           (focus)="dashboardSettingsEndDateFilter.open()"
-                           [(ngModel)]="filterEndDate"
-                           [matDatepicker]="dashboardSettingsEndDateFilter"
-                           [min]="filterStartDate"
-                           matInput
-                           placeholder="End Date"/>
-                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsEndDateFilter
-                                    disabled="false"></mat-datepicker>
+                    <input
+                        (dateChange)="applyDateFilterChange()"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        [(ngModel)]="filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        [min]="filterStartDate"
+                        matInput
+                        placeholder="End Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsEndDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="actions col-6 col-md-2">
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
+                    <mat-icon
+                        aria-hidden="true"
+                        class="mat-icon material-icons"
+                        role="img"
+                        >more_vert</mat-icon
+                    >
                 </button>
-                <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
+                <mat-menu
+                    #gridActions="matMenu"
+                    class="switch-nested-menu-left-arrows"
+                    xPosition="before"
+                >
                     <button (click)="export()" mat-menu-item>Export</button>
-                    <button (click)="openSettings()" mat-menu-item>Settings</button>
+                    <button (click)="openSettings()" mat-menu-item>
+                        Settings
+                    </button>
                 </mat-menu>
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x:auto">
-        <table [dataSource]="fuelreqsDataSource"
-               class="col-12 mb-0"
-               mat-table
-               matSort>
+    <div class="w-100 table-container" style="overflow-x: auto">
+        <table
+            [dataSource]="fuelreqsDataSource"
+            class="col-12 mb-0"
+            mat-table
+            matSort
+        >
             <ng-container matColumnDef="customer">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Flight Dept.
@@ -88,34 +115,58 @@
             </ng-container>
 
             <ng-container matColumnDef="quotedVolume">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Volume (gal.)</th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.quotedVolume }}</td>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Volume (gal.)
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.quotedVolume }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="quotedPpg">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
-                <td *matCellDef="let fuelreq"
-                    mat-cell>{{ fuelreq.oid == 0 ? "CONFIDENTIAL" : fuelreq.quotedPpg | currency:'USD':'symbol':'1.4-4' }}</td>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{
+                        fuelreq.oid == 0
+                            ? "CONFIDENTIAL"
+                            : (fuelreq.quotedPpg
+                              | currency: "USD":"symbol":"1.4-4")
+                    }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="tailNumber">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Tail #</th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.tailNumber }}</td>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Tail #
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.tailNumber }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="phoneNumber">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Phone</th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.phoneNumber }}</td>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.phoneNumber }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="source">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Source</th>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Source
+                </th>
                 <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.source }}</td>
             </ng-container>
 
             <ng-container matColumnDef="email">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-                <td *matCellDef="let fuelreq" [matTooltip]="fuelreq.email" mat-cell>{{ fuelreq.email }}</td>
+                <td
+                    *matCellDef="let fuelreq"
+                    [matTooltip]="fuelreq.email"
+                    mat-cell
+                >
+                    {{ fuelreq.email }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="oid">
@@ -124,8 +175,21 @@
             </ng-container>
 
             <ng-container matColumnDef="sourceId">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>FuelerLinx ID</th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.sourceId }}</td>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    FuelerLinx ID
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.sourceId }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="cancelled">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Transaction Status
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.cancelled ? "Cancelled" : "Live" }}
+                </td>
             </ng-container>
 
             <ng-container matColumnDef="delete">
@@ -141,12 +205,17 @@
                 </td>
             </ng-container>
 
-            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+            <tr
+                *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row
+            ></tr>
             <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
-        <mat-paginator (page)="(pageIndex); onPageChanged($event)"
-                       [length]="resultsLength"
-                       [pageSizeOptions]="[10, 25, 50, 100]"
-                       [pageSize]="pageSize"></mat-paginator>
+        <mat-paginator
+            (page)="(pageIndex); onPageChanged($event)"
+            [length]="resultsLength"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSize"
+        ></mat-paginator>
     </div>
 </div>

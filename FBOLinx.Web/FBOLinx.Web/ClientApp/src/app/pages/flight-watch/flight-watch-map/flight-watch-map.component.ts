@@ -1,64 +1,362 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { isEqual, keys } from 'lodash';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    EventEmitter,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    Output,
+    SimpleChanges,
+} from '@angular/core';
+import { difference, isEqual, keys } from 'lodash';
+import * as mapboxgl from 'mapbox-gl';
+
+import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
-import { AircraftIcons } from './aircraft-icons';
+import { AIRCRAFT_IMAGES } from './aircraft-images';
+
+type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
 @Component({
-    selector: 'app-flight-watch-map',
-    templateUrl: './flight-watch-map.component.html',
-    styleUrls: [ './flight-watch-map.component.scss' ],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-flight-watch-map',
+    styleUrls: ['./flight-watch-map.component.scss'],
+    templateUrl: './flight-watch-map.component.html',
 })
-export class FlightWatchMapComponent implements OnChanges {
-    @ViewChild('map') map: google.maps.Map;
-    @Input() center: google.maps.LatLngLiteral;
+export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
+    @Input() center: mapboxgl.LngLatLike;
     @Input() data: {
-        [oid: number]: FlightWatch;
+        [oid: string]: FlightWatch;
     };
     @Input() isStable: boolean;
     @Output() markerClicked = new EventEmitter<FlightWatch>();
 
     // Map Options
-    zoom = 8;
-    markerIcons = AircraftIcons;
+    map: mapboxgl.Map;
+    zoom = 13;
     keys: string[] = [];
+    styleLoaded = false;
+    isCommercialVisible = true;
+    isShowAirportCodesEnabled = true;
+    isShowTaxiwaysEnabled = true;
+    previousMarkerId: number = 0;
+    focusedMarkerId: number = 0;
+    showLayers: boolean = false;
 
-    bounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(85, -180),
-        new google.maps.LatLng(-85, 180)
-    );
+    constructor() {}
 
-    constructor() {
+    ngOnInit(): void {
+        this.map = new mapboxgl.Map({
+            accessToken:
+                'pk.eyJ1IjoiZnVlbGVybGlueCIsImEiOiJja3NzODNqcG4wdHVrMm9rdHU3OGRpb2dmIn0.LvSvlGG0ej3PEDJOBpOoMQ',
+            center: this.center,
+            container: 'flight-watch-map',
+            style: 'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd',
+            zoom: this.zoom,
+        });
+        const eventHandler = () => this.refreshMap();
+        this.map.on('zoom', eventHandler);
+        this.map.on('dragend', eventHandler);
+        this.map.on('rotate', eventHandler);
+        this.map.on('resize', eventHandler);
+        this.map.on('load', () => eventHandler());
+        this.map.on('styledata', () => this.mapStyleLoaded());
+
+        AIRCRAFT_IMAGES.forEach((image) => {
+            const img = new Image(image.size, image.size);
+            img.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}`, img);
+            };
+            img.src = image.url;
+
+            const reversedImg = new Image(image.size, image.size);
+            reversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed`,
+                    reversedImg
+                );
+            };
+            reversedImg.src = image.reverseUrl;
+
+            const releaseImg = new Image(image.size, image.size);
+            releaseImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_release`, releaseImg);
+            };
+            releaseImg.src = image.blueUrl;
+
+            const releaseReversedImg = new Image(image.size, image.size);
+            releaseReversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed_release`,
+                    releaseReversedImg
+                );
+            };
+            releaseReversedImg.src = image.blueReverseUrl;
+
+            const fuelerlinxImg = new Image(image.size, image.size);
+            fuelerlinxImg.onload = () => {
+                this.map.addImage(`aircraft_image_${image.id}_fuelerlinx`, fuelerlinxImg);
+            };
+            fuelerlinxImg.src = image.fuelerlinxUrl;
+
+            const fuelerlinxReversedImg = new Image(image.size, image.size);
+            fuelerlinxReversedImg.onload = () => {
+                this.map.addImage(
+                    `aircraft_image_${image.id}_reversed_fuelerlinx`,
+                    fuelerlinxReversedImg
+                );
+            };
+            fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
+        });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         const currentData = changes.data.currentValue;
         const oldData = changes.data.previousValue;
         if (!isEqual(currentData, oldData)) {
-            this.updateKeys(currentData);
+            this.refreshMap();
         }
     }
 
-    onFlightWatchClick(flightWatch: FlightWatch) {
-        this.markerClicked.emit(flightWatch);
+    ngOnDestroy(): void {
+        this.map.remove();
     }
 
-    boundsChanged() {
-        this.updateKeys(this.data);
-    }
-
-    updateKeys(data: { [oid: number]: FlightWatch }) {
-        let newKeys = keys(data);
-
+    refreshMap() {
         if (this.map) {
             const bound = this.map.getBounds();
-            newKeys = newKeys.filter(id => {
-                const flightWatch = data[Number(id)];
-                const flightWatchPosition = new google.maps.LatLng(flightWatch.latitude, flightWatch.longitude);
-                return bound.contains(flightWatchPosition);
+
+            const newKeys = keys(this.data).filter((id) => {
+                const flightWatch = this.data[Number(id)];
+                const flightWatchPosition: mapboxgl.LngLatLike = {
+                    lat: flightWatch.latitude,
+                    lng: flightWatch.longitude,
+                };
+                return (
+                    bound.contains(flightWatchPosition) &&
+                    (this.isCommercialVisible ||
+                        !isCommercialAircraft(
+                            flightWatch.aircraftTypeCode,
+                            flightWatch.atcFlightNumber
+                        ))
+                );
+            });
+
+            const removals = difference(this.keys, newKeys);
+            removals.forEach((key) => {
+                const id = `aircraft_${key}`;
+                this.map.removeLayer(id);
+                this.map.removeSource(id);
+                this.map.off('click', id, (e) => this.clickHandler(e, this));
+                this.map.off('mouseenter', id, () =>
+                    this.cursorPointer('pointer', this)
+                );
+                this.map.off('mouseleave', id, () =>
+                    this.cursorPointer('', this)
+                );
+            });
+
+            this.keys = [...newKeys];
+
+            newKeys.forEach((key) => {
+                const row = this.data[key];
+                const id = `aircraft_${row.oid}`;
+                let atype = row.aircraftTypeCode;
+                if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
+                    atype = 'default';
+                }
+
+                const previousSource = this.map.getSource(
+                    id
+                ) as mapboxgl.GeoJSONSource;
+
+                if (previousSource) {
+                    previousSource.setData({
+                        geometry: {
+                            coordinates: [row.longitude, row.latitude],
+                            type: 'Point',
+                        },
+                        properties: {
+                            id: row.oid,
+                        },
+                        type: 'Feature',
+                    });
+                } else {
+                    this.map.addSource(id, {
+                        data: {
+                            geometry: {
+                                coordinates: [row.longitude, row.latitude],
+                                type: 'Point',
+                            },
+                            properties: {
+                                id: row.oid,
+                            },
+                            type: 'Feature',
+                        },
+                        type: 'geojson',
+                    });
+
+                    this.map.on('click', id, (e) => this.clickHandler(e, this));
+
+                    this.map.on('mouseenter', id, () =>
+                        this.cursorPointer('pointer', this)
+                    );
+
+                    // Change it back to a pointer when it leaves.
+                    this.map.on('mouseleave', id, () =>
+                        this.cursorPointer('', this)
+                    );
+                }
+
+                if (!previousSource) {
+                    this.map.addLayer({
+                        id,
+                        layout: {
+                            'icon-allow-overlap': true,
+                            'icon-image': `aircraft_image_${atype}${
+                                id === this.focusedMarkerId.toString()
+                                    ? '_reversed'
+                                    : ''
+                                }${row.fuelOrder != null ? '_release' : (row.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`,
+                            'icon-rotate': row.trackingDegree ?? 0,
+                            'icon-size': 0.5,
+                        },
+                        source: id,
+                        type: 'symbol',
+                    });
+                }
             });
         }
+    }
 
-        this.keys = newKeys.splice(0, 200);
+    getAircraftTypeCode(row: FlightWatch) {
+        let atype = row.aircraftTypeCode;
+        if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
+            atype = 'default';
+        }
+        return atype;
+    }
+
+    clickHandler(
+        e: mapboxgl.MapMouseEvent & {
+            features?: mapboxgl.MapboxGeoJSONFeature[];
+        } & mapboxgl.EventData,
+        self: FlightWatchMapComponent
+    ) {
+        const id = e.features[0].properties.id;
+        if (self.focusedMarkerId !== Number(id)) {
+            self.focusedMarkerId = id;
+        }
+        if (self.previousMarkerId && self.data[self.previousMarkerId] != null) {
+            var previousMarker = self.data[self.previousMarkerId];
+            self.setFlightWatchMarkerLayout(previousMarker);
+
+            //this.map.setLayoutProperty(
+            //    `aircraft_${previousMarker.oid}`,
+            //    'icon-image',
+            //    `aircraft_image_${self.getAircraftTypeCode(
+            //        previousMarker
+            //    )}${previousMarker.fuelOrder != null ? '_release' : (previousMarker.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            //);
+        }
+
+        var focusedMarker = self.data[id];
+        self.markerClicked.emit(self.data[id]);
+
+        if (self.focusedMarkerId > 0) {
+            self.previousMarkerId = self.focusedMarkerId;
+        } else {
+            self.previousMarkerId = 0;
+        }
+
+        self.setFlightWatchMarkerLayout(focusedMarker);
+
+        //this.map.setLayoutProperty(
+        //    `aircraft_${id}`,
+        //    'icon-image',
+        //    `aircraft_image_${self.getAircraftTypeCode(self.data[id])}${
+        //    self.focusedMarkerId > 0 ? '_reversed' : ''
+        //    }${focusedMarker?.fuelOrder != null ? '_release' : (focusedMarker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+        //);
+    }
+
+    setFlightWatchMarkerLayout(marker: FlightWatch) {
+        try {
+            this.map.setLayoutProperty(
+                `aircraft_${marker.oid}`,
+                'icon-image',
+                `aircraft_image_${this.getAircraftTypeCode(marker)}${this.focusedMarkerId == marker.oid ? '_reversed' : ''
+                }${marker?.fuelOrder != null ? '_release' : (marker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
+            );
+        } catch (e) {
+            //Do nothing
+        }
+    }
+
+    cursorPointer(cursor: string, self: any) {
+        self.map.getCanvas().style.cursor = cursor;
+    }
+
+    mapStyleLoaded() {
+        this.styleLoaded = true;
+    }
+
+    getLayersFromType(type: LayerType) {
+        const airwayLayers = ['airways-lines', 'airways-labels'];
+        const taxwayLayers = ['taxiways-lines', 'taxiways-labels'];
+        const styleLayers = this.map
+            .getStyle()
+            .layers.filter(
+                (layer) =>
+                    !layer.id.startsWith('aircraft_') &&
+                    !airwayLayers.includes(layer.id)
+            )
+            .map((layer) => layer.id);
+        const icaoLayers = ['airports-names'];
+
+        if (type === 'airway') {
+            return airwayLayers;
+        }
+        if (type === 'taxiway') {
+            return taxwayLayers;
+        }
+        if (type === 'streetview') {
+            return styleLayers;
+        }
+        if (type === 'icao') {
+            return icaoLayers;
+        }
+        return [];
+    }
+
+    toggleLayer(type: LayerType, event: MouseEvent) {
+        const layers = this.getLayersFromType(type);
+
+        const visibility = this.map.getLayoutProperty(layers[0], 'visibility');
+
+        // Toggle layer visibility by changing the layout object's visibility property.
+        if (visibility === 'visible' || visibility === undefined) {
+            layers.forEach((layer) => {
+                this.map.setLayoutProperty(layer, 'visibility', 'none');
+            });
+        } else {
+            layers.forEach((layer) => {
+                this.map.setLayoutProperty(layer, 'visibility', 'visible');
+            });
+        }
+        if (type == "icao")
+            this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
+        else if (type == "taxiway")
+            this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
+    }
+
+    toggleCommercial(event: MouseEvent) {
+        this.isCommercialVisible = !this.isCommercialVisible;
+        this.refreshMap();
+    }
+
+    mapResize() {
+        this.map.resize();
     }
 }

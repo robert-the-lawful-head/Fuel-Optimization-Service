@@ -1,9 +1,9 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <mat-tab-group>
+    <mat-tab-group style="background: white;">
         <mat-tab label="Customers">
-            <div class="table-container">
+            <div class="table-container customers-grid-container">
                 <div *ngIf="customersData && pricingTemplatesData">
                     <app-customers-grid
                         (customerDeleted)="customerDeleted()"
@@ -12,6 +12,7 @@
                         [customerGridState]="customerGridState"
                         [customersData]="customersData"
                         [pricingTemplatesData]="pricingTemplatesData"
+                        [fuelVendors]="fuelVendors"
                     ></app-customers-grid>
                 </div>
                 <div *ngIf="!customersData || !pricingTemplatesData">
@@ -20,7 +21,7 @@
             </div>
         </mat-tab>
         <mat-tab label="Aircraft">
-            <div class="table-container">
+            <div class="table-container aircrafts-grid">
                 <div *ngIf="pricingTemplatesData && aircraftData">
                     <app-aircrafts-grid
                         [aircraftsData]="aircraftData"

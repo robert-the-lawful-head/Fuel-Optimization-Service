@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { AppService } from '../../../services/app.service';
 import * as moment from 'moment';
 
+import { AppService } from '../../../services/app.service';
+
 @Component({
-    selector: 'app-footer',
-    templateUrl: './footer.component.html',
-    styleUrls: [ './footer.component.scss' ],
     host: { class: 'app-footer' },
+    selector: 'app-footer',
+    styleUrls: ['./footer.component.scss'],
+    templateUrl: './footer.component.html',
 })
 export class FooterComponent implements OnInit {
     public version: string;

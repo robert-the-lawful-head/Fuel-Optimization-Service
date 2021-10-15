@@ -1,4 +1,4 @@
-@import '../../../assets/sass/variable';
+@import "../../../assets/sass/variable";
 
 $btn-border-width: 2px;
 $btn-border-style: solid;
@@ -18,46 +18,46 @@ $btn-small-fs: ($btn-fs * 0.8);
 
 //btn colors
 $types: (
-  default: (
-    bg: main-color(500),
-    color: main-contrast(500),
-    hover-bg: main-color(400),
-    hover-color: main-contrast(400)
-  ),
-  accent: (
-    bg: accent-color(500),
-    color: accent-contrast(500),
-    hover-bg: accent-color(700),
-    hover-color: accent-contrast(700)
-  ),
-  success: (
-    bg: $success-color,
-    color: $success-contrast,
-    hover-bg: darken($success-color, 10%),
-    hover-color: darken($success-contrast, 10%)
-  ),
-  info: (
-    bg: $info-color,
-    color: $info-contrast,
-    hover-bg: darken($info-color, 10%),
-    hover-color: darken($info-contrast, 10%)
-  ),
-  warning: (
-    bg: $warning-color,
-    color: $warning-contrast,
-    hover-bg: darken($warning-color, 10%),
-    hover-color: darken($warning-contrast, 10%)
-  ),
-  error: (
-    bg: $error-color,
-    color: $error-contrast,
-    hover-bg: darken($error-color, 10%),
-    hover-color: darken($error-contrast, 10%)
-  ),
-  blank: (
-    bg: $blank-color,
-    hover-bg: darken($blank-color, 10%)
-  )
+    default: (
+        bg: main-color(500),
+        color: main-contrast(500),
+        hover-bg: main-color(400),
+        hover-color: main-contrast(400),
+    ),
+    accent: (
+        bg: accent-color(500),
+        color: accent-contrast(500),
+        hover-bg: accent-color(700),
+        hover-color: accent-contrast(700),
+    ),
+    success: (
+        bg: $success-color,
+        color: $success-contrast,
+        hover-bg: darken($success-color, 10%),
+        hover-color: darken($success-contrast, 10%),
+    ),
+    info: (
+        bg: $info-color,
+        color: $info-contrast,
+        hover-bg: darken($info-color, 10%),
+        hover-color: darken($info-contrast, 10%),
+    ),
+    warning: (
+        bg: $warning-color,
+        color: $warning-contrast,
+        hover-bg: darken($warning-color, 10%),
+        hover-color: darken($warning-contrast, 10%),
+    ),
+    error: (
+        bg: $error-color,
+        color: $error-contrast,
+        hover-bg: darken($error-color, 10%),
+        hover-color: darken($error-contrast, 10%),
+    ),
+    blank: (
+        bg: $blank-color,
+        hover-bg: darken($blank-color, 10%),
+    ),
 );
 
 :host {
@@ -76,7 +76,8 @@ $types: (
     text-align: center;
     text-transform: $btn-tt;
     touch-action: manipulation;
-    transition: background .2s $btn-transition, border .2s $btn-transition, color .2s $btn-transition;
+    transition: background 0.2s $btn-transition, border 0.2s $btn-transition,
+        color 0.2s $btn-transition;
     user-select: none;
     vertical-align: middle;
     white-space: nowrap;
@@ -96,7 +97,7 @@ $types: (
         background: main-color(50) !important;
         color: $info-contrast !important;
         hover-bg: darken(main-color(50), 10%);
-        hover-color: darken(main-color(50), 10%)
+        hover-color: darken(main-color(50), 10%);
     }
 
     &.padding {
@@ -196,7 +197,7 @@ $types: (
 
     &.ni-btn-disabled {
         cursor: not-allowed;
-        opacity: .6;
+        opacity: 0.6;
         pointer-events: none;
     }
 
@@ -210,13 +211,13 @@ $types: (
             position: absolute;
             right: 0;
             top: 0;
-            transition: transform .2s $btn-transition;
+            transition: transform 0.2s $btn-transition;
             transform: scale(0);
             will-change: transform;
         }
 
         .btn-text {
-            transition: opacity .2s $btn-transition;
+            transition: opacity 0.2s $btn-transition;
             will-change: opacity;
         }
 

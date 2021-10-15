@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-analytics-customer-breakdown',
-    templateUrl: './analytics-customer-breakdown-chart.component.html',
     styleUrls: ['./analytics-customer-breakdown-chart.component.scss'],
+    templateUrl: './analytics-customer-breakdown-chart.component.html',
 })
 export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     public filterStartDate: Date;
@@ -41,7 +41,9 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -53,13 +55,21 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getFBOCustomersBreakdown(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate, this.chartType)
-            .subscribe((data: any) => {
-                this.totalOrdersData = this.switchDataType(data);
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getFBOCustomersBreakdown(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate,
+                this.chartType
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = this.switchDataType(data);
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 
     public changeType(event: MatButtonToggleChange) {
@@ -71,9 +81,9 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         return _.map(data, (item: any) => {
             let newItem: any;
             if (this.chartType === 'order') {
-                newItem = _.assign({}, item, {value: item.orders});
+                newItem = _.assign({}, item, { value: item.orders });
             } else {
-                newItem = _.assign({}, item, {value: item.volume});
+                newItem = _.assign({}, item, { value: item.volume });
             }
             return newItem;
         });

@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>Distribute?</h1>
+<div class="mt-1 mb-2" mat-dialog-content>
+    <span>
+        You are about to distribute the following templates to the customers
+        assigned to them. Are you sure?
+    </span>
+
+    <div class="mt-4 pr-5">
+        <div *ngFor="let cell of data" class="d-flex pt-2 pb-2 border-bottom">
+            <div class="template-name">{{ cell.name }}</div>
+            <div class="emails-list">
+                <span *ngIf="cell.customerEmails.length === 0">0 emails</span>
+                <p-listbox
+                    *ngIf="cell.customerEmails.length > 0"
+                    [options]="cell.customerEmails"
+                    [filter]="true"
+                ></p-listbox>
+            </div>
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <div class="text-center col-12">
+        <button
+            [mat-dialog-close]="data"
+            class="mr-1"
+            color="green"
+            mat-flat-button
+        >
+            Confirm
+        </button>
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+    </div>
+</div>

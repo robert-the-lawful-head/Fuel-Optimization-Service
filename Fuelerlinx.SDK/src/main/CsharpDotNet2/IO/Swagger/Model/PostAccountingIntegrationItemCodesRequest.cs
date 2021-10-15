@@ -61,6 +61,34 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "accountingDepartment")]
     public string AccountingDepartment { get; set; }
 
+    /// <summary>
+    /// Gets or Sets FuelerId
+    /// </summary>
+    [DataMember(Name="fuelerId", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fuelerId")]
+    public int? FuelerId { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TailNumber
+    /// </summary>
+    [DataMember(Name="tailNumber", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tailNumber")]
+    public string TailNumber { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Icao
+    /// </summary>
+    [DataMember(Name="icao", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "icao")]
+    public string Icao { get; set; }
+
+    /// <summary>
+    /// Gets or Sets Fbo
+    /// </summary>
+    [DataMember(Name="fbo", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fbo")]
+    public string Fbo { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -76,6 +104,10 @@ namespace IO.Swagger.Model {
       sb.Append("  AccountingItemName: ").Append(AccountingItemName).Append("\n");
       sb.Append("  AccountingItemCode: ").Append(AccountingItemCode).Append("\n");
       sb.Append("  AccountingDepartment: ").Append(AccountingDepartment).Append("\n");
+      sb.Append("  FuelerId: ").Append(FuelerId).Append("\n");
+      sb.Append("  TailNumber: ").Append(TailNumber).Append("\n");
+      sb.Append("  Icao: ").Append(Icao).Append("\n");
+      sb.Append("  Fbo: ").Append(Fbo).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

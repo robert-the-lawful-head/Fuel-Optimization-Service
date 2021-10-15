@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FuelreqsService {
@@ -27,8 +27,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -50,8 +50,8 @@ export class FuelreqsService {
                 fboId +
                 '/daterange',
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -147,9 +147,9 @@ export class FuelreqsService {
                 '/analysis/quotes-orders-over-time/fbo/' +
                 fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
                 fboId,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -161,9 +161,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/orders-won-over-time/fbo/' + fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
                 fboId,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -182,16 +182,17 @@ export class FuelreqsService {
                 '/analysis/volumes-nearby-airport/fbo/' +
                 fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
                 distanceMile: mile,
+                endDateTime: endDate,
+                icao: '',
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
             }
         );
     }
-
+    
     public getMarketShareAirport(
         fboId: number,
         startDate: Date,
@@ -218,9 +219,10 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
                 chartType,
+                endDateTime: endDate,
+                icao: '',
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -241,8 +243,29 @@ export class FuelreqsService {
                 '/fbo/' +
                 fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                startDateTime: startDate
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCompaniesQuotingDealStatisticsForGroupFbos(
+        groupId: number,
+        fboIds: number[],
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl +
+            '/analysis/company-quoting-deal-statistics/group/' +
+            groupId,
+            {
+                endDateTime: endDate,
+                fboIds,
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
@@ -253,7 +276,7 @@ export class FuelreqsService {
     //Get Customer Analytics Id
     public getCompanyQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date , customerId: number) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId ,
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
             {
                 startDateTime: startDate,
                 endDateTime: endDate,
@@ -271,15 +294,16 @@ export class FuelreqsService {
                 '/analysis/fbo-fuel-vendor-sources/fbo/' +
                 fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                icao: '',
+                startDateTime: startDate,
             },
             {
                 headers: this.headers,
             }
         );
     }
-
+    
     public getMarketShareFboAirport(
         fboId: number,
         startDate: Date,
@@ -287,11 +311,53 @@ export class FuelreqsService {
     ) {
         return this.http.post(
             this.accessPointUrl +
-                '/analysis/market-share-fbos-airport/fbo/' +
+                '/analysis/market-share-fbo-airport/fbo/' +
                 fboId,
             {
-                startDateTime: startDate,
                 endDateTime: endDate,
+                icao: '',
+                startDateTime: startDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getMarketShareFbosAirports(
+        groupId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl +
+                '/analysis/market-share-fbos-airports/group/' +
+                groupId,
+            {
+                endDateTime: endDate,
+                startDateTime: startDate,
+                icaos: [],
+                fbos: []
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFuelVendorSourcesByAirports(
+        groupId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl +
+                '/analysis/fbo-fuel-vendor-sources/group/' +
+                groupId,
+            {
+                endDateTime: endDate,
+                startDateTime: startDate,
+                icaosfbos: {}
             },
             {
                 headers: this.headers,

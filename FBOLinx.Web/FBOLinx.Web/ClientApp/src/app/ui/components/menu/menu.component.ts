@@ -1,17 +1,24 @@
-import { AfterViewInit, Component, OnInit, QueryList, ViewChildren, } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    OnInit,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
 import { Observable } from 'rxjs';
-import { IMenuItem } from './menu-item';
-import { MenuService } from './menu.service';
+
 import { SharedService } from '../../../layouts/shared-service';
-import { UserService } from '../../../services/user.service';
 import { menuTooltipShowedEvent } from '../../../models/sharedEvents';
+import { UserService } from '../../../services/user.service';
+import { MenuService } from './menu.service';
+import { IMenuItem } from './menu-item';
 
 @Component({
-    selector: 'app-menu',
-    templateUrl: './menu.component.html',
-    styleUrls: [ './menu.component.scss' ],
-    providers: [ MenuService ],
     host: { class: 'app-menu' },
+    providers: [MenuService],
+    selector: 'app-menu',
+    styleUrls: ['./menu.component.scss'],
+    templateUrl: './menu.component.html',
 })
 export class MenuComponent implements OnInit, AfterViewInit {
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
@@ -19,14 +26,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
     menuItems: IMenuItem[];
     user: any;
     tooltipIndex = 0;
-    public hasShownTutorial: boolean = false;
+    hasShownTutorial = false;
 
     constructor(
         private menuService: MenuService,
         private sharedService: SharedService,
         private userService: UserService
-    ) {
-    }
+    ) {}
 
     ngOnInit(): void {
         this.getMenuItems();
@@ -42,8 +48,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     getMenuItems(): void {
         const OBSERVER = {
-            next: (x) => (this.menuItems = x),
             error: (err) => this.menuService.handleError(err),
+            next: (x) => (this.menuItems = x),
         };
         this.menuService.getData().subscribe(OBSERVER);
     }
@@ -56,11 +62,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
         const hidden = item.roles && item.roles.indexOf(role) === -1;
         return {
-            'has-sub': item.sub,
             active: item.active || isActive,
-            'menu-item-group': item.groupTitle,
             disabled: item.disabled,
+            'has-sub': item.sub,
             hidden,
+            'menu-item-group': item.groupTitle,
         };
     }
 
@@ -124,8 +130,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         const tooltipsArr = this.priceTooltips.toArray();
         if (this.tooltipIndex === 1) {
             this.user.goOverTutorial = true;
-            this.userService.update(this.user).subscribe(() => {
-            });
+            this.userService.update(this.user).subscribe(() => {});
         }
         if (tooltipsArr.length > this.tooltipIndex) {
             setTimeout(() => {

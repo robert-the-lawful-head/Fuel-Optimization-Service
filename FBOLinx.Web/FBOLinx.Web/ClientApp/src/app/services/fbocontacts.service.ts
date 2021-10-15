@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FbocontactsService {
@@ -44,14 +44,25 @@ export class FbocontactsService {
     }
 
     public addnewcontact(payload) {
-        return this.http.post(this.accessPointUrl + '/fbo/' + payload.fboId + '/newcontact', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/fbo/' + payload.fboId + '/newcontact',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public updateFuelvendor(payload) {
-        return this.http.post(this.accessPointUrl + '/fbo/' + payload.fboId + '/update-fuel-vendor', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl +
+                '/fbo/' +
+                payload.fboId +
+                '/update-fuel-vendor',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 }

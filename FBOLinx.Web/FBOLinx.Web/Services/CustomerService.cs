@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Data;
+using FBOLinx.Web.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
@@ -147,6 +148,29 @@ namespace FBOLinx.Web.Services
                 .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
                 .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
                 .Include(x => x.Customer.CustomerContacts)
+                .ToListAsync();
+
+            customerInfoByGroup.RemoveAll(x => x.Customer == null);
+
+            return customerInfoByGroup;
+        }
+
+        public async Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId)
+        {
+            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
+            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId)
+                .Include(x => x.Customer)
+                .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
+                .Include(x => x.Customer.CustomCustomerType)
+                .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
+                .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
+                .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
+                .Select(x => new CustomerListResponse
+                {
+                    CustomerInfoByGroupID = x.Oid,
+                    CompanyId = x.CustomerId,
+                    Company = x.Company
+                })
                 .ToListAsync();
 
             return customerInfoByGroup;

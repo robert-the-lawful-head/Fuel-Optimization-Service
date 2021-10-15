@@ -9,7 +9,8 @@ mat-card {
     border-radius: 0;
     position: relative;
 
-    mat-card-title, mat-card-subtitle {
+    mat-card-title,
+    mat-card-subtitle {
         white-space: nowrap;
         overflow: hidden;
     }

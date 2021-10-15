@@ -133,6 +133,13 @@ namespace IO.Swagger.Model {
     public double? MarketUpdatedPricePerGallon { get; set; }
 
     /// <summary>
+    /// Gets or Sets PricePerGallon
+    /// </summary>
+    [DataMember(Name="pricePerGallon", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "pricePerGallon")]
+    public double? PricePerGallon { get; set; }
+
+    /// <summary>
     /// Gets or Sets CreationDate
     /// </summary>
     [DataMember(Name="creationDate", EmitDefaultValue=false)]
@@ -160,6 +167,20 @@ namespace IO.Swagger.Model {
     [DataMember(Name="invoicedVolume", EmitDefaultValue=false)]
     [JsonProperty(PropertyName = "invoicedVolume")]
     public Weight InvoicedVolume { get; set; }
+
+    /// <summary>
+    /// Gets or Sets InvoicedVolumeAdjustedForCredit
+    /// </summary>
+    [DataMember(Name="invoicedVolumeAdjustedForCredit", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "invoicedVolumeAdjustedForCredit")]
+    public Weight InvoicedVolumeAdjustedForCredit { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FuelVolume
+    /// </summary>
+    [DataMember(Name="fuelVolume", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fuelVolume")]
+    public Weight FuelVolume { get; set; }
 
     /// <summary>
     /// Gets or Sets BasePricePerGallon
@@ -422,6 +443,20 @@ namespace IO.Swagger.Model {
     public double? NonFuelServicesTotal { get; set; }
 
     /// <summary>
+    /// Gets or Sets InvoicedFuelTotal
+    /// </summary>
+    [DataMember(Name="invoicedFuelTotal", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "invoicedFuelTotal")]
+    public double? InvoicedFuelTotal { get; set; }
+
+    /// <summary>
+    /// Gets or Sets FuelTotal
+    /// </summary>
+    [DataMember(Name="fuelTotal", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "fuelTotal")]
+    public double? FuelTotal { get; set; }
+
+    /// <summary>
     /// Gets or Sets NonFuelServiceNames
     /// </summary>
     [DataMember(Name="nonFuelServiceNames", EmitDefaultValue=false)]
@@ -540,6 +575,34 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "preUpliftPriceSync")]
     public PriceSyncTransactionDTO PreUpliftPriceSync { get; set; }
 
+    /// <summary>
+    /// Gets or Sets ChangedTripNotification
+    /// </summary>
+    [DataMember(Name="changedTripNotification", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "changedTripNotification")]
+    public TransactionForChangedTripDTO ChangedTripNotification { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TransactionAccountingData
+    /// </summary>
+    [DataMember(Name="transactionAccountingData", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionAccountingData")]
+    public TransactionAccountingDataDTO TransactionAccountingData { get; set; }
+
+    /// <summary>
+    /// Gets or Sets TransactionAccountingTransfer
+    /// </summary>
+    [DataMember(Name="transactionAccountingTransfer", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "transactionAccountingTransfer")]
+    public TransactionAccountingTransferDTO TransactionAccountingTransfer { get; set; }
+
+    /// <summary>
+    /// Gets or Sets User
+    /// </summary>
+    [DataMember(Name="user", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "user")]
+    public CustomerDataDTO User { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -565,10 +628,13 @@ namespace IO.Swagger.Model {
       sb.Append("  DispatchedVolume: ").Append(DispatchedVolume).Append("\n");
       sb.Append("  DispatchedPricePerGallon: ").Append(DispatchedPricePerGallon).Append("\n");
       sb.Append("  MarketUpdatedPricePerGallon: ").Append(MarketUpdatedPricePerGallon).Append("\n");
+      sb.Append("  PricePerGallon: ").Append(PricePerGallon).Append("\n");
       sb.Append("  CreationDate: ").Append(CreationDate).Append("\n");
       sb.Append("  TimeStandard: ").Append(TimeStandard).Append("\n");
       sb.Append("  InvoicedPricePerGallon: ").Append(InvoicedPricePerGallon).Append("\n");
       sb.Append("  InvoicedVolume: ").Append(InvoicedVolume).Append("\n");
+      sb.Append("  InvoicedVolumeAdjustedForCredit: ").Append(InvoicedVolumeAdjustedForCredit).Append("\n");
+      sb.Append("  FuelVolume: ").Append(FuelVolume).Append("\n");
       sb.Append("  BasePricePerGallon: ").Append(BasePricePerGallon).Append("\n");
       sb.Append("  PostedRetail: ").Append(PostedRetail).Append("\n");
       sb.Append("  ForcedReconcile: ").Append(ForcedReconcile).Append("\n");
@@ -606,6 +672,8 @@ namespace IO.Swagger.Model {
       sb.Append("  ScheduledTripID: ").Append(ScheduledTripID).Append("\n");
       sb.Append("  LegNumber: ").Append(LegNumber).Append("\n");
       sb.Append("  NonFuelServicesTotal: ").Append(NonFuelServicesTotal).Append("\n");
+      sb.Append("  InvoicedFuelTotal: ").Append(InvoicedFuelTotal).Append("\n");
+      sb.Append("  FuelTotal: ").Append(FuelTotal).Append("\n");
       sb.Append("  NonFuelServiceNames: ").Append(NonFuelServiceNames).Append("\n");
       sb.Append("  FlightTypeMapping: ").Append(FlightTypeMapping).Append("\n");
       sb.Append("  TransactionNotes: ").Append(TransactionNotes).Append("\n");
@@ -623,6 +691,10 @@ namespace IO.Swagger.Model {
       sb.Append("  FboNotes: ").Append(FboNotes).Append("\n");
       sb.Append("  RampFeeNotes: ").Append(RampFeeNotes).Append("\n");
       sb.Append("  PreUpliftPriceSync: ").Append(PreUpliftPriceSync).Append("\n");
+      sb.Append("  ChangedTripNotification: ").Append(ChangedTripNotification).Append("\n");
+      sb.Append("  TransactionAccountingData: ").Append(TransactionAccountingData).Append("\n");
+      sb.Append("  TransactionAccountingTransfer: ").Append(TransactionAccountingTransfer).Append("\n");
+      sb.Append("  User: ").Append(User).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

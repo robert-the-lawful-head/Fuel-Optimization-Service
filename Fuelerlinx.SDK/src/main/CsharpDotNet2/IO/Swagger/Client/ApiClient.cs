@@ -116,7 +116,7 @@ namespace IO.Swagger.Client
         /// <returns>Escaped string.</returns>
         public string EscapeString(string str)
         {
-            return HttpUtility.UrlEncode(str);
+            return RestSharp.Contrib.HttpUtility.UrlEncode(str);
         }
     
         /// <summary>
@@ -263,6 +263,7 @@ namespace IO.Swagger.Client
                         break;
                     case "Bearer":
                         headerParams["Authorization"] = GetApiKeyWithPrefix("Authorization");
+                        
                         break;
                     default:
                         //TODO show warning about security definition not found

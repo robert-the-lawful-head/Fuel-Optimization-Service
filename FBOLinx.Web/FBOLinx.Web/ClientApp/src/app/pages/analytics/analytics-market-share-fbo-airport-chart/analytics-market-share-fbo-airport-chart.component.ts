@@ -1,17 +1,20 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import * as moment from 'moment';
-// Services
-import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+// Services
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 
 @Component({
     selector: 'app-analytics-market-share-fbo-airport',
-    templateUrl: './analytics-market-share-fbo-airport-chart.component.html',
     styleUrls: ['./analytics-market-share-fbo-airport-chart.component.scss'],
+    templateUrl: './analytics-market-share-fbo-airport-chart.component.html',
 })
-export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AnalyticsMarketShareFboAirportChartComponent
+    implements OnInit, AfterViewInit, OnDestroy
+{
     public filterStartDate: Date;
     public filterEndDate: Date;
 
@@ -40,7 +43,9 @@ export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, Aft
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.icao = this.sharedService.currentUser.icao;
     }
@@ -50,13 +55,12 @@ export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, Aft
     }
 
     ngAfterViewInit() {
-        this.icaoChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.icaoChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvent.icaoChangedEvent) {
                     this.icao = this.sharedService.currentUser.icao;
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -68,12 +72,19 @@ export class AnalyticsMarketShareFboAirportChartComponent implements OnInit, Aft
     public refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fuelreqsService
-            .getMarketShareFboAirport(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate)
-            .subscribe((data: any) => {
-                this.totalOrdersData = data;
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .getMarketShareFboAirport(
+                this.sharedService.currentUser.fboId,
+                this.filterStartDate,
+                this.filterEndDate
+            )
+            .subscribe(
+                (data: any) => {
+                    this.totalOrdersData = data;
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }

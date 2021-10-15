@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FbosService {
@@ -20,7 +20,7 @@ export class FbosService {
     }
 
     public getAllFbos() {
-        return this.http.get(this.accessPointUrl, {headers: this.headers});
+        return this.http.get(this.accessPointUrl, { headers: this.headers });
     }
 
     public get(payload) {
@@ -54,13 +54,44 @@ export class FbosService {
     }
 
     public manageFbo(id: number) {
-        return this.http.post(this.accessPointUrl + '/manage/' + id, {}, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/manage/' + id,
+            {},
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public getLocation(id: number) {
         return this.http.get(this.accessPointUrl + '/' + id + '/location', {
+            headers: this.headers,
+        });
+    }
+
+    public getByAcukwikHandlerId(handlerId: number) {
+        return this.http.get(
+            this.accessPointUrl + '/by-akukwik-handlerId/' + handlerId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public uploadLogo(payload) {
+        return this.http.post(this.accessPointUrl + '/uploadfbologo', payload, {
+            headers: this.headers,
+        });
+    }
+
+    public deleteLogo(id: number) {
+        return this.http.delete(this.accessPointUrl + '/fbologo/' + id, {
+            headers: this.headers,
+        });
+    }
+
+    public getLogo(fboid: number) {
+        return this.http.get(this.accessPointUrl + '/getfbologo/' + fboid, {
             headers: this.headers,
         });
     }

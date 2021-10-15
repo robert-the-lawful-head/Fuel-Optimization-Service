@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -28,6 +29,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         public IIncludableQueryable<AirCrafts, AircraftSpecifications> GetAllAircraftsAsQueryable()
         {
             return _degaContext.AirCrafts.Include(a => a.AFSAircraft).Include(a => a.AircraftSpecifications);
+        }
+
+        public IQueryable<AirCrafts> GetAllAircraftsOnlyAsQueryable()
+        {
+            return _degaContext.AirCrafts;
         }
 
         public async Task<AirCrafts> GetAircrafts(int oid)

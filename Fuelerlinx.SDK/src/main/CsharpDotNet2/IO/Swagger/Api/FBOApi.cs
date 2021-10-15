@@ -31,6 +31,12 @@ namespace IO.Swagger.Api
         /// <returns>DeleteFboDetailsByCompanyNotesResponse</returns>
         DeleteFboDetailsByCompanyNotesResponse DeleteFboDetailsByCompanyNotes (int? fboDetailsByCompanyId, int? noteId);
         /// <summary>
+        /// Delete a location specific payment method by the Id 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>DeleteLocationSpecificPaymentMethodResponse</returns>
+        DeleteLocationSpecificPaymentMethodResponse DeleteLocationSpecificPaymentMethod (int? id);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="acukwikId"></param>
@@ -67,6 +73,13 @@ namespace IO.Swagger.Api
         /// <returns>FboDetailsByCompanyNotesResponse</returns>
         FboDetailsByCompanyNotesResponse GetFboDetailsByCompanyNotes (int? fboDetailsByCompanyId);
         /// <summary>
+        /// Get a location specific payment method from icao and company Id 
+        /// </summary>
+        /// <param name="icao"></param>
+        /// <param name="fboName"></param>
+        /// <returns>LocationSpecificPaymentMethodListResponse</returns>
+        LocationSpecificPaymentMethodListResponse GetLocationSpecificPaymentMethod (string icao, string fboName);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param>
@@ -85,6 +98,12 @@ namespace IO.Swagger.Api
         /// <returns>PostFboDetailsByCompanyNotesResponse</returns>
         PostFboDetailsByCompanyNotesResponse PostFboDetailsByCompanyNotes (PostFboDetailsByCompanyNotesRequest body);
         /// <summary>
+        /// Post a location specific payment method 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>PostLocationSpecificPaymentMethodResponse</returns>
+        PostLocationSpecificPaymentMethodResponse PostLocationSpecificPaymentMethod (PostLocationSpecificPaymentMethodRequest body);
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param>
@@ -102,6 +121,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>UpdateFboDetailsByCompanyNotesResponse</returns>
         UpdateFboDetailsByCompanyNotesResponse UpdateFboDetailsByCompanyNotes (UpdateFboDetailsByCompanyNotesRequest body);
+        /// <summary>
+        /// Update a location specific payment method 
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>UpdateLocationSpecificPaymentMethodResponse</returns>
+        UpdateLocationSpecificPaymentMethodResponse UpdateLocationSpecificPaymentMethod (UpdateLocationSpecificPaymentMethodRequest body);
     }
   
     /// <summary>
@@ -271,6 +296,43 @@ path = path.Replace("{" + "noteId" + "}", ApiClient.ParameterToString(noteId));
                 throw new ApiException ((int)response.StatusCode, "Error calling DeleteFboDetailsByCompanyNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeleteFboDetailsByCompanyNotesResponse) ApiClient.Deserialize(response.Content, typeof(DeleteFboDetailsByCompanyNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Delete a location specific payment method by the Id 
+        /// </summary>
+        /// <param name="id"></param> 
+        /// <returns>DeleteLocationSpecificPaymentMethodResponse</returns>            
+        public DeleteLocationSpecificPaymentMethodResponse DeleteLocationSpecificPaymentMethod (int? id)
+        {
+            
+            // verify the required parameter 'id' is set
+            if (id == null) throw new ApiException(400, "Missing required parameter 'id' when calling DeleteLocationSpecificPaymentMethod");
+            
+    
+            var path = "/api/FBO/location-specific-payment-method/{id}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "id" + "}", ApiClient.ParameterToString(id));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.DELETE, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteLocationSpecificPaymentMethod: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling DeleteLocationSpecificPaymentMethod: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (DeleteLocationSpecificPaymentMethodResponse) ApiClient.Deserialize(response.Content, typeof(DeleteLocationSpecificPaymentMethodResponse), response.Headers);
         }
     
         /// <summary>
@@ -496,6 +558,48 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         }
     
         /// <summary>
+        /// Get a location specific payment method from icao and company Id 
+        /// </summary>
+        /// <param name="icao"></param> 
+        /// <param name="fboName"></param> 
+        /// <returns>LocationSpecificPaymentMethodListResponse</returns>            
+        public LocationSpecificPaymentMethodListResponse GetLocationSpecificPaymentMethod (string icao, string fboName)
+        {
+            
+            // verify the required parameter 'icao' is set
+            if (icao == null) throw new ApiException(400, "Missing required parameter 'icao' when calling GetLocationSpecificPaymentMethod");
+            
+            // verify the required parameter 'fboName' is set
+            if (fboName == null) throw new ApiException(400, "Missing required parameter 'fboName' when calling GetLocationSpecificPaymentMethod");
+            
+    
+            var path = "/api/FBO/location-specific-payment-method/by-location/{icao}/fbo/{fboName}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "icao" + "}", ApiClient.ParameterToString(icao));
+path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLocationSpecificPaymentMethod: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLocationSpecificPaymentMethod: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (LocationSpecificPaymentMethodListResponse) ApiClient.Deserialize(response.Content, typeof(LocationSpecificPaymentMethodListResponse), response.Headers);
+        }
+    
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param> 
@@ -598,6 +702,40 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
         }
     
         /// <summary>
+        /// Post a location specific payment method 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>PostLocationSpecificPaymentMethodResponse</returns>            
+        public PostLocationSpecificPaymentMethodResponse PostLocationSpecificPaymentMethod (PostLocationSpecificPaymentMethodRequest body)
+        {
+            
+    
+            var path = "/api/FBO/location-specific-payment-method";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostLocationSpecificPaymentMethod: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling PostLocationSpecificPaymentMethod: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (PostLocationSpecificPaymentMethodResponse) ApiClient.Deserialize(response.Content, typeof(PostLocationSpecificPaymentMethodResponse), response.Headers);
+        }
+    
+        /// <summary>
         ///  
         /// </summary>
         /// <param name="body"></param> 
@@ -697,6 +835,40 @@ path = path.Replace("{" + "fboName" + "}", ApiClient.ParameterToString(fboName))
                 throw new ApiException ((int)response.StatusCode, "Error calling UpdateFboDetailsByCompanyNotes: " + response.ErrorMessage, response.ErrorMessage);
     
             return (UpdateFboDetailsByCompanyNotesResponse) ApiClient.Deserialize(response.Content, typeof(UpdateFboDetailsByCompanyNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        /// Update a location specific payment method 
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>UpdateLocationSpecificPaymentMethodResponse</returns>            
+        public UpdateLocationSpecificPaymentMethodResponse UpdateLocationSpecificPaymentMethod (UpdateLocationSpecificPaymentMethodRequest body)
+        {
+            
+    
+            var path = "/api/FBO/location-specific-payment-method";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.PUT, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateLocationSpecificPaymentMethod: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling UpdateLocationSpecificPaymentMethod: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (UpdateLocationSpecificPaymentMethodResponse) ApiClient.Deserialize(response.Content, typeof(UpdateLocationSpecificPaymentMethodResponse), response.Headers);
         }
     
     }

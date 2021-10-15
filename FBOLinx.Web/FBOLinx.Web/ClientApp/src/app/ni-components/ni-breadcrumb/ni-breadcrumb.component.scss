@@ -1,4 +1,4 @@
-@import '../../../assets/sass/variable';
+@import "../../../assets/sass/variable";
 
 :host {
     display: block;
@@ -37,7 +37,7 @@
             }
 
             .separator {
-                color: rgba(#000,.4);
+                color: rgba(#000, 0.4);
                 margin: 0 $module-rem;
             }
         }
@@ -67,7 +67,8 @@
                     height: 36px;
                     padding: 7px ($module-rem * 2) 3px;
                     position: relative;
-                    transition: background .2s $animation, color .2s $animation;
+                    transition: background 0.2s $animation,
+                        color 0.2s $animation;
                     vertical-align: top;
 
                     @media only screen and (max-width: 767px) {
@@ -79,12 +80,12 @@
                     &:after {
                         border-style: solid;
                         border-color: transparent;
-                        content: '';
+                        content: "";
                         display: block;
                         height: 0;
                         position: absolute;
                         top: 0;
-                        transition: border-color .2s $animation;
+                        transition: border-color 0.2s $animation;
                         width: 0;
 
                         @media only screen and (max-width: 767px) {
@@ -116,7 +117,7 @@
                 }
 
                 .static {
-                    opacity: .6;
+                    opacity: 0.6;
                 }
 
                 .separator {
@@ -188,7 +189,8 @@
                     height: 36px;
                     padding: 7px ($module-rem * 2) 3px;
                     position: relative;
-                    transition: background .2s $animation, color .2s $animation;
+                    transition: background 0.2s $animation,
+                        color 0.2s $animation;
                     vertical-align: top;
 
                     @media only screen and (max-width: 767px) {
@@ -200,12 +202,12 @@
                     &:after {
                         border-style: solid;
                         border-color: transparent;
-                        content: '';
+                        content: "";
                         display: block;
                         height: 0;
                         position: absolute;
                         top: 0;
-                        transition: border-color .2s $animation;
+                        transition: border-color 0.2s $animation;
                         width: 0;
 
                         @media only screen and (max-width: 767px) {
@@ -253,7 +255,7 @@
                 }
 
                 .static {
-                    opacity: .6;
+                    opacity: 0.6;
                 }
 
                 .separator {

@@ -1,26 +1,31 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// Services
-import { FbosService } from '../../../services/fbos.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { ContactsService } from '../../../services/contacts.service';
 import { FboairportsService } from '../../../services/fboairports.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
-import { ContactsService } from '../../../services/contacts.service';
+// Services
+import { FbosService } from '../../../services/fbos.service';
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
+import {
+    CloseConfirmationComponent,
+    CloseConfirmationData,
+} from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 @Component({
     selector: 'app-fbos-edit',
+    styleUrls: ['./fbos-edit.component.scss'],
     templateUrl: './fbos-edit.component.html',
-    styleUrls: [ './fbos-edit.component.scss' ],
 })
 export class FbosEditComponent implements OnInit {
-    @Output() saveClicked = new EventEmitter<any>();
-    @Output() cancelClicked = new EventEmitter<any>();
     @Input() fboInfo: any;
     @Input() fboAirportInfo: any;
     @Input() groupInfo: any;
     @Input() embed: boolean;
+    @Output() saveClicked = new EventEmitter<any>();
+    @Output() cancelClicked = new EventEmitter<any>();
 
     // Members
     breadcrumb: any[];
@@ -39,39 +44,53 @@ export class FbosEditComponent implements OnInit {
         private fboContactsService: FbocontactsService,
         private contactsService: ContactsService,
         private groupsService: GroupsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private confirmDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
 
+    get canChangeActive() {
+        return (
+            !this.embed &&
+            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.impersonatedRole
+        );
+    }
+
     ngOnInit() {
         if (!this.embed) {
-            if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.breadcrumb = [ {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
+            if (
+                this.sharedService.currentUser.role === 3 &&
+                !this.sharedService.currentUser.impersonatedRole
+            ) {
+                this.breadcrumb = [
                     {
-                        title: 'Groups',
-                        link: '/default-layout/groups',
+                        link: '/default-layout',
+                        title: 'Main',
                     },
                     {
-                        title: 'Edit FBO',
+                        link: '/default-layout/groups',
+                        title: 'Groups',
+                    },
+                    {
                         link: '',
+                        title: 'Edit FBO',
                     },
                 ];
             } else {
-                this.breadcrumb = [ {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
+                this.breadcrumb = [
                     {
-                        title: 'FBOs',
-                        link: '/default-layout/fbos',
+                        link: '/default-layout',
+                        title: 'Main',
                     },
                     {
-                        title: 'Edit FBO',
+                        link: '/default-layout/fbos',
+                        title: 'FBOs',
+                    },
+                    {
                         link: '',
+                        title: 'Edit FBO',
                     },
                 ];
             }
@@ -81,15 +100,17 @@ export class FbosEditComponent implements OnInit {
             this.loadAdditionalFboInfo();
         } else {
             const id = this.route.snapshot.paramMap.get('id');
-            this.fboService.get({
-                oid: id
-            }).subscribe((data: any) => {
-                this.fboInfo = data;
-                this.loadAdditionalFboInfo();
-            });
+            this.fboService
+                .get({
+                    oid: id,
+                })
+                .subscribe((data: any) => {
+                    this.fboInfo = data;
+                    this.loadAdditionalFboInfo();
+                });
             this.fboAirportsService
                 .getForFbo({
-                    oid: id
+                    oid: id,
                 })
                 .subscribe((data: any) => (this.fboAirportInfo = data));
         }
@@ -105,11 +126,7 @@ export class FbosEditComponent implements OnInit {
                 .update(this.fboAirportInfo)
                 .subscribe(() => {
                     this.saveClicked.emit(this.fboInfo);
-                    if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                        this.router.navigate([ '/default-layout/groups/' ]);
-                    } else {
-                        this.router.navigate([ '/default-layout/fbos/' ]);
-                    }
+                    this.navigateToParent();
                 });
         });
     }
@@ -121,11 +138,25 @@ export class FbosEditComponent implements OnInit {
                 this.saveClicked.emit(this.fboInfo);
             });
         } else {
-            if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.router.navigate([ '/default-layout/groups/' ]);
+            this.cancelClicked.emit();
+            this.navigateToParent();
+        }
+    }
+
+    navigateToParent() {
+        if (
+            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.impersonatedRole
+        ) {
+            if (this.groupInfo) {
+                this.router.navigate([
+                    '/default-layout/groups/' + this.groupInfo.oid,
+                ]);
             } else {
-                this.router.navigate([ '/default-layout/fbos/' ]);
+                this.router.navigate(['/default-layout/groups/']);
             }
+        } else {
+            this.router.navigate(['/default-layout/fbos/']);
         }
     }
 
@@ -146,7 +177,7 @@ export class FbosEditComponent implements OnInit {
     editContactClicked(record) {
         this.contactsService
             .get({
-                oid: record.contactId
+                oid: record.contactId,
             })
             .subscribe((data: any) => (this.currentContact = data));
     }
@@ -159,6 +190,34 @@ export class FbosEditComponent implements OnInit {
 
     cancelEditContactClicked() {
         this.currentContact = null;
+    }
+
+    onActiveToggle(event) {
+        if (event.checked && this.fboInfo.expirationDate) {
+            this.confirmDialog
+                .open(CloseConfirmationComponent, {
+                    data: {
+                        cancel: 'Cancel',
+                        customText:
+                            'Account Expiry date is set. If you activate this account, it will be removed.',
+                        customTitle: 'Account Expired!',
+                        ok: 'Set Active',
+                    } as CloseConfirmationData,
+                })
+                .afterClosed()
+                .subscribe((confirmed) => {
+                    if (!confirmed) {
+                        this.fboInfo.active = false;
+                        return;
+                    }
+
+                    this.fboInfo.expirationDate = null;
+                });
+        }
+    }
+
+    get isConductor() {
+        return this.sharedService.currentUser.role === 3;
     }
 
     // Private Methods

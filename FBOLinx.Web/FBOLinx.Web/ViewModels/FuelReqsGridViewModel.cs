@@ -31,7 +31,7 @@ namespace FBOLinx.Web.ViewModels
         public string PhoneNumber { get; set; }
         public string PricingTemplateName { get; set; }
 
-        public void CastFromFuelerLinxTransaction(IO.Swagger.Model.TransactionDTO item)
+        public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item)
         {
             Oid = 0;
             ActualPpg = 0;
@@ -49,7 +49,7 @@ namespace FBOLinx.Web.ViewModels
             QuotedVolume = item.DispatchedVolume.Amount;
             Source = item.FuelVendor;
             SourceId = item.Id;
-            TimeStandard = item.TimeStandard.GetValueOrDefault().ToString();
+            TimeStandard = item.TimeStandard.GetValueOrDefault().ToString() == "0" ? "Z" : "L";
             CustomerName = item.CustomerName;
             TailNumber = item.TailNumber;
             FboName = item.Fbo;
@@ -57,7 +57,7 @@ namespace FBOLinx.Web.ViewModels
             PhoneNumber = "";
         }
 
-        public static FuelReqsGridViewModel Cast(IO.Swagger.Model.TransactionDTO item)
+        public static FuelReqsGridViewModel Cast(Fuelerlinx.SDK.TransactionDTO item)
         {
             FuelReqsGridViewModel result = new FuelReqsGridViewModel();
             result.CastFromFuelerLinxTransaction(item);

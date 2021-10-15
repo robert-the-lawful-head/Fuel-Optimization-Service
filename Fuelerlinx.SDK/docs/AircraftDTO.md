@@ -3,6 +3,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**Id** | **int?** |  | [optional] 
 **AircraftId** | **int?** |  | [optional] 
 **Make** | **string** |  | [optional] 
 **Model** | **string** |  | [optional] 

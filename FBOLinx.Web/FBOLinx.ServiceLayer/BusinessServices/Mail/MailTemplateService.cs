@@ -5,7 +5,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 {
-    public class MailTemplateService
+    public class MailTemplateService: IMailTemplateService
     {
         private IFileProvider _fileProvider;
 

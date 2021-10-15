@@ -24,11 +24,13 @@ mat-card {
             height: 28px;
         }
 
-        tr.mat-row, tr.mat-footer-row {
+        tr.mat-row,
+        tr.mat-footer-row {
             height: 28px;
         }
 
-        th, td {
+        th,
+        td {
             white-space: nowrap;
             overflow: hidden;
         }
@@ -44,7 +46,7 @@ mat-card {
     &-filter {
         display: flex;
         flex-wrap: wrap;
-        margin: -5px;    
+        margin: -5px;
         padding-bottom: 5px;
     }
 
