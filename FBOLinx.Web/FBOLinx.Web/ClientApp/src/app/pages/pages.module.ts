@@ -183,6 +183,7 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
+import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
 
 @NgModule({
     declarations: [
@@ -299,7 +300,9 @@ import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/cust
         FlightWatchSettingsComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
+        CustomersAnalyticsComponent,
         CustomerTagDialogComponent
+
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -361,7 +364,7 @@ import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/cust
         MultiSelectModule,
         ListboxModule,
         DropdownModule,
-        Ej2MultiSelectModule,
+        Ej2MultiSelectModule
     ],
     providers: [
         ColumnMenuService,

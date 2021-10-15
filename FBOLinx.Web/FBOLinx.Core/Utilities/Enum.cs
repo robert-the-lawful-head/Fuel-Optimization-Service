@@ -12,9 +12,9 @@ namespace FBOLinx.Core.Utilities
             FieldInfo fi = value.GetType().GetField(value.ToString());
             DescriptionAttribute[] attributes = (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
             if (attributes.Length > 0)
-                return attributes[0].Description;
+            return attributes[0].Description;
             else
-                return value.ToString();
+            return value.ToString();
         }
 
         public static IEnumerable<EnumDescriptionValue> GetDescriptions(Type type)
@@ -23,7 +23,7 @@ namespace FBOLinx.Core.Utilities
             var values = System.Enum.GetValues(type);
             foreach (object value in values)
             {
-                var field = type.GetField(value.ToString());
+                var field =    type.GetField(value.ToString());
                 var description = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
                 descriptions.Add(new EnumDescriptionValue() {
                     Description = ((DescriptionAttribute) description[0]).Description,

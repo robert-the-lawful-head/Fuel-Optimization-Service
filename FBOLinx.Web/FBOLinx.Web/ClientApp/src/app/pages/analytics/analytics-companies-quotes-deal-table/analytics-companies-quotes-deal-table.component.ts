@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import {
     AfterViewInit,
     Component,
@@ -62,6 +63,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
         private exportDialog: MatDialog,
+        private router: Router,
         private tableSettingsDialog: MatDialog
     ) {
         this.icao = this.sharedService.currentUser.icao;
@@ -196,7 +198,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
             (data: any) => {
                 this.dataSource = new MatTableDataSource(data);
-                this.dataSource.sortingDataAccessor = (item, property) => {
+                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
@@ -225,6 +227,12 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     applyFilter(event: Event) {
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
+    }
+    
+    CustomerAnalitycs(element: any )
+    {
+
+       this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3  , customerId : element.customerId}  });
     }
 
     onExport() {

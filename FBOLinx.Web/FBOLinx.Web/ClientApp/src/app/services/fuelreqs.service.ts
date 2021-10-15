@@ -192,6 +192,23 @@ export class FuelreqsService {
             }
         );
     }
+    
+    public getMarketShareAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
 
     public getFBOCustomersBreakdown(
         fboId: number,
@@ -243,12 +260,27 @@ export class FuelreqsService {
     ) {
         return this.http.post(
             this.accessPointUrl +
-                '/analysis/company-quoting-deal-statistics/group/' +
-                groupId,
+            '/analysis/company-quoting-deal-statistics/group/' +
+            groupId,
             {
                 endDateTime: endDate,
                 fboIds,
                 startDateTime: startDate,
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    //Get Customer Analytics Id
+    public getCompanyQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date , customerId: number) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
+            {
+                startDateTime: startDate,
+                endDateTime: endDate,
+                customerId: customerId.toString()
             },
             {
                 headers: this.headers,
@@ -271,7 +303,7 @@ export class FuelreqsService {
             }
         );
     }
-
+    
     public getMarketShareFboAirport(
         fboId: number,
         startDate: Date,

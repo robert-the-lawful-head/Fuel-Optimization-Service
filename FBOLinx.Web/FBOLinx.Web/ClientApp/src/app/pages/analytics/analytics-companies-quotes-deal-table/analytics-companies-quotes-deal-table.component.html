@@ -74,6 +74,7 @@
 
         <div class="table-container mat-elevation-z8">
             <table [dataSource]="dataSource" mat-table matSort>
+
                 <ng-container matColumnDef="company">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Company</span>
@@ -87,7 +88,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>{{ info.company }}</td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)" > {{info.company}}   </td>
+
                 </ng-container>
 
                 <ng-container matColumnDef="directOrders">
@@ -103,9 +105,7 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.directOrders }}
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)">  {{info.directOrders}} </td>
                 </ng-container>
 
                 <ng-container matColumnDef="companyQuotesTotal">
@@ -121,9 +121,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.companyQuotesTotal }}
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.companyQuotesTotal}} </td>
+
                 </ng-container>
 
                 <ng-container matColumnDef="conversionRate">
@@ -139,9 +138,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.conversionRate }}%
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.conversionRate}}%</td>
+
                 </ng-container>
 
                 <ng-container matColumnDef="totalOrders">
@@ -157,9 +155,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.totalOrders }}
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.totalOrders}} </td>
+
                 </ng-container>
 
                 <ng-container matColumnDef="airportOrders">
@@ -175,9 +172,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.airportOrders }}
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.airportOrders}} </td>
+
                 </ng-container>
 
                 <ng-container matColumnDef="lastPullDate">
@@ -193,9 +189,8 @@
                             ></app-table-column-filter>
                         </span>
                     </th>
-                    <td *matCellDef="let info" mat-cell>
-                        {{ info.lastPullDate }}
-                    </td>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.lastPullDate}} </td>
+
                 </ng-container>
                 <tr
                     *matHeaderRowDef="visibleColumns; sticky: true"
@@ -206,6 +201,7 @@
         </div>
     </div>
     <ngx-ui-loader
+
         [loaderId]="chartName"
         bgsColor="rgb(100, 181, 246)"
         bgsPosition="center-center"

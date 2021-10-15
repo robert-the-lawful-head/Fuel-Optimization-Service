@@ -99,6 +99,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        
         // POST: api/FuelReqs/fbo/5/daterange
         [HttpPost("fbo/{fboId}/daterange")]
         public async Task<IActionResult> GetFuelReqsByFbo([FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
@@ -144,6 +145,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        
         // POST: api/FuelReqs/fbo/5/daterange
         [HttpPost("group/{groupId}/fbo/{fboId}/daterange")]
         public async Task<IActionResult> GetFuelReqsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
@@ -222,6 +224,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqVM);
         }
 
+        
         [AllowAnonymous]
         [HttpPut("canceluncancel/id/{id}")]
         public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id)
@@ -377,6 +380,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqs);
         }
 
+        
         // Get: api/FuelReqs/fbo/5/count/startdate
         [HttpPost("fbo/{fboId}/count/startdate")]
         public async Task<IActionResult> GetFuelReqsByFboCount([FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
@@ -391,6 +395,7 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReqCount);
         }
 
+        
         // PUT: api/FuelReqs/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFuelReq([FromRoute] int id, [FromBody] FuelReq fuelReq)
@@ -426,6 +431,7 @@ namespace FBOLinx.Web.Controllers
             return NoContent();
         }
 
+        
         // POST: api/FuelReqs
         [HttpPost]
         public async Task<IActionResult> PostFuelReq([FromBody] FuelReq fuelReq)
@@ -441,6 +447,7 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetFuelReq", new { id = fuelReq.Oid }, fuelReq);
         }
 
+        
         // DELETE: api/FuelReqs/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFuelReq([FromRoute] int id)
@@ -464,6 +471,7 @@ namespace FBOLinx.Web.Controllers
 
         #region Analysis
 
+        
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)
         {
@@ -503,6 +511,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/total-orders-by-month/fbo/{fboId}")]
         public async Task<IActionResult> GetTotalOrdersByMonthForFbo([FromRoute] int fboId, [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
         {
@@ -622,6 +631,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/total-orders-by-aircraft-size/fbo/{fboId}")]
         public async Task<IActionResult> GetTotalOrdersByAircraftSizeForFbo([FromRoute] int fboId, [FromBody] FuelReqsTotalOrdersByMonthForFboRequest request)
         {
@@ -667,6 +677,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/fuelerlinx/orders-by-location")]
         public async Task<IActionResult> GetOrdersByLocation([FromBody] FuelerLinxUpliftsByLocationRequestContent request)
         {
@@ -701,6 +712,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/quotes-orders-over-time/fbo/{fboId}")]
         public async Task<IActionResult> GetQuotesAndOrdersWonChartData([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
@@ -814,6 +826,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/orders-won-over-time/fbo/{fboId}")]
         public async Task<IActionResult> GetOrdersWonChartDataAsync([FromRoute] int fboId, [FromBody] FuelerLinxUpliftsByLocationRequestContent request = null)
         {
@@ -867,6 +880,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/volumes-nearby-airport/fbo/{fboId}")]
         public async Task<IActionResult> GetCountOfOrderVolumesNearByAirport([FromRoute] int fboId, [FromBody] FBOLinxNearbyAirportsRequest request = null)
         {
@@ -1161,6 +1175,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
         {
@@ -1196,18 +1211,26 @@ namespace FBOLinx.Web.Controllers
                                              cibg.CustomerId,
                                              cpl.CreatedDate
                                          }).ToListAsync();
+                int? customeridval = null;
+                if (request.customerId.HasValue)
+                {
+                    customeridval = request.customerId;
+                }
 
                 var customers = await _context.CustomerInfoByGroup
                                         .Where(c => c.GroupId.Equals(groupId))
                                         .Include(x => x.Customer)
-                                        .Where(x => (x.Customer != null))
-                                        .Select(c => new
+                                        .Where(x => (x.Customer != null && x.Customer.Suspended != true)&&(x.CustomerId== customeridval
+                                        || customeridval == null)).Select(c => new
                                         {
+                                            c.Oid,
                                             c.CustomerId,
                                             Company = c.Company.Trim(),
                                             Customer = c.Customer
                                         })
-                                        .Distinct().ToListAsync();
+                                       .Distinct().ToListAsync(); 
+                
+               
 
                 FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
@@ -1232,7 +1255,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
                         Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
-                    customers.Add(new { CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                    customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
                 }
 
                 List<object> tableData = new List<object>();
@@ -1247,6 +1270,8 @@ namespace FBOLinx.Web.Controllers
 
                     tableData.Add(new
                     {
+                        customer.Oid,
+                        customer.CustomerId,
                         customer.Company,
                         CompanyQuotesTotal = companyQuotes,
                         DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
@@ -1351,6 +1376,8 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ex);
             }
+
+
         }
 
         #endregion

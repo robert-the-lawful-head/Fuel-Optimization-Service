@@ -62,10 +62,12 @@ export class CustomersEditComponent implements OnInit {
     currentContactInfoByGroup: any;
     customCustomerType: any;
     certificateTypes: any[];
+    selectedIndex: any  = 0;
     customerCompanyTypes: any[];
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
+    public customerId: number;
     tags: any[];
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
@@ -94,6 +96,17 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
+
+        if( ! this.router.getCurrentNavigation().extras)
+         {
+              this.selectedIndex = 0;
+          }
+          else
+          {
+           this.selectedIndex = this.router.getCurrentNavigation().extras.state?.tab ;
+           this.customerId = this.router.getCurrentNavigation().extras.state.customerId;
+          }
+
     }
 
     async ngOnInit() {
@@ -397,6 +410,9 @@ export class CustomersEditComponent implements OnInit {
                     this.recalculatePriceBreakdown();
                 });
         }
+
+
+
     }
 
     public priceBreakdownCalculationsCompleted(
