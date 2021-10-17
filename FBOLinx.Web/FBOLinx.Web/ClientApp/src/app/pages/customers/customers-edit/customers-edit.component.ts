@@ -325,7 +325,7 @@ export class CustomersEditComponent implements OnInit {
         })
     }
 
-    newCustomTag() {        
+    newCustomTag() {
         const data = {
             customerId: this.customerInfoByGroup.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -347,15 +347,20 @@ export class CustomersEditComponent implements OnInit {
     }
 
     toggleChange($event) {
+
         if ($event.checked) {
+            this.customerInfoByGroup.active = true;
             this.customerInfoByGroup.showJetA = true;
             this.customerInfoByGroup.show100Ll = true;
             this.customerInfoByGroup.distribute = true;
-        } else {
+        }
+         else {
+            this.customerInfoByGroup.active = false;
             this.customerInfoByGroup.showJetA = false;
             this.customerInfoByGroup.show100Ll = false;
             this.customerInfoByGroup.distribute = false;
         }
+
     }
 
     omitFeeAndTaxCheckChanged(feeAndTax: any): void {
@@ -403,7 +408,7 @@ export class CustomersEditComponent implements OnInit {
         if (!calculationResults || !calculationResults.length) {
             return;
         }
-        
+
         try {
             calculationResults[0].pricingList[0].feesAndTaxes.forEach(calculatedTax => {
                 var matchingTaxes = this.feesAndTaxes.filter(feeAndTax => feeAndTax.oid == calculatedTax.oid);
@@ -454,7 +459,7 @@ export class CustomersEditComponent implements OnInit {
                 this.customerForm.controls.customerTag.setValue(this.tagsSelected.map(x => x.oid));
 
                 this.tagSubsctiption = this.customerForm.controls.customerTag.valueChanges.subscribe(
-                    (selectedValue) => {         
+                    (selectedValue) => {
                         if (selectedValue.includes(-1)) {
                             this.newCustomTag();
                             this.customerForm.controls.customerTag

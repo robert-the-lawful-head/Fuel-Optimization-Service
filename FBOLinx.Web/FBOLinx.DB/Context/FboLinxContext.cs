@@ -83,6 +83,10 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerAircraftLog> CustomerAircraftLog { get; set; }
         public virtual DbSet<CustomerContactLog> CustomerContactLog { get; set; }
         public virtual DbSet<CustomerContactLogData> CustomerContactLogData { get; set; }
+        public virtual DbSet<CustomCustomerTypesLog> CustomCustomerTypeLog { get; set; }
+        public virtual DbSet<CustomCustomerTypesLogData> CustomCustomerTypesLogData { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -341,6 +341,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             AddEditCustomerToLogger(customerInfoByGroup);
+            
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
@@ -703,8 +704,6 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(true);
         }
-
-
         private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer, int userId = 0, int Role = 0)
         {
             var newCustomer = _context.CustomerInfoByGroup
@@ -778,16 +777,22 @@ namespace FBOLinx.Web.Controllers
                     int OldcustomerId = _context.CustomerInfoByGroupLogData.Where(c => (c.GroupId.Equals(customer.GroupId)) && (c.CustomerId.Equals(customer.CustomerId)))
                         .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
 
-                    _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
-                    {
-                        Action = CustomerInfoByGroupLog.Actions.Edited,
-                        newcustomerId = customer.Oid,
-                        Time = DateTime.Now,
-                        userId = userId,
-                        Role = Role,
-                        Location = CustomerInfoByGroupLog.Locations.EditCustomer,
-                        oldcustomerId = OldcustomerId
-                    }); ;
+                    CustomerInfoByGroupLog customerlog = new CustomerInfoByGroupLog();
+                    customerlog.newcustomerId = customer.Oid;
+                    customerlog.Time = DateTime.Now;
+                    customerlog.userId = userId;
+                    customerlog.Role = Role;
+                    customerlog.Location = CustomerInfoByGroupLog.Locations.EditCustomer;
+                    customerlog.oldcustomerId = OldcustomerId;
+
+                    if (oldCustomerInfoByGroup.Active == true && customer.Active == false)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Deactivated;
+                    else if (oldCustomerInfoByGroup.Active == false && customer.Active == true)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Activated;
+                    else
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Edited;
+
+                    _context.CustomerInfoByGroupLog.Add(customerlog); ;
 
                     try
                     {

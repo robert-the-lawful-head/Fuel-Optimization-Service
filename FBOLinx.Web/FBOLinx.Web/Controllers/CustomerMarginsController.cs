@@ -222,6 +222,7 @@ namespace FBOLinx.Web.Controllers
 
                 if(customerMargin != null)
                 {
+                    UpdateCustomerMarginLog(customerMargin, customerMargin.Oid);
                     customerMargin.CustomerType = customerMarginObject.Oid;
                 }
                 else
@@ -231,6 +232,13 @@ namespace FBOLinx.Web.Controllers
                     newType.Fboid = model.fboid;
                     newType.CustomerId = model.id;
                     _context.CustomCustomerTypes.Add(newType);
+                    await _context.SaveChangesAsync();
+
+                    var NewCustomerTypeId = _context.CustomCustomerTypes.FirstOrDefault(c=>c.CustomerType.Equals(customerMarginObject.Oid)
+                                                                         && c.CustomerId.Equals(model.id) 
+                                                                         && c.Fboid.Equals(model.fboid)).Oid;
+
+                    UpdateCustomerMarginLog(customerMargin, NewCustomerTypeId);
                 }
 
                 var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
@@ -295,5 +303,45 @@ namespace FBOLinx.Web.Controllers
 
             return Ok("");
         }
+    
+    
+       //Private Methods 
+       private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int userId =0 , int Role = 0)
+       {
+            _context.CustomCustomerTypesLogData.Add(new CustomCustomerTypesLogData { 
+              CustomerId = oldcustomerTypes.CustomerId , 
+              Fboid = oldcustomerTypes.Fboid , 
+              CustomerType = oldcustomerTypes.CustomerType});
+
+            try
+            {
+                _context.SaveChanges();
+                int oldCustomerTypeId = _context.CustomCustomerTypesLogData.FirstOrDefault(c => c.CustomerType.Equals(oldcustomerTypes.CustomerType)
+                                                                                           && c.CustomerId.Equals(oldcustomerTypes.CustomerId)
+                                                                                           && c.Fboid.Equals(oldcustomerTypes.Fboid)).Oid;
+
+
+                _context.CustomCustomerTypeLog.Add(new CustomCustomerTypesLog
+                {
+                    Action = CustomCustomerTypesLog.Actions.itetemplateassigned,
+                    Location = CustomCustomerTypesLog.Locations.Customer , 
+                    newcustomertypetId = newCustomerTypeId , 
+                    oldcustomertypeId = oldCustomerTypeId,
+                    Role =Role , 
+                    userId = userId , 
+                    Time = DateTime.Now
+                });
+
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+       }
+
     }
 }
