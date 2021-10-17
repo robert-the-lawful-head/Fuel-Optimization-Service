@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class AircraftLogData
+    public partial class CustomerAircraftLogData
     {
         [Key]
         [Column("OID")]

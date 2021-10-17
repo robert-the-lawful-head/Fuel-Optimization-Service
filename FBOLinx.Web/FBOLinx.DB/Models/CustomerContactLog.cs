@@ -6,8 +6,9 @@ using System.Text;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class CustomerInfoByGroupLog
+    public partial class CustomerContactLog
     {
+
         public enum UserRoles : short
         {
             [Description("Not set")]
@@ -41,14 +42,14 @@ namespace FBOLinx.DB.Models
             [Description("Edited")]
             Edited = 5,
             [Description("itp-template Assigned")]
-            itetemplateassigned = 6 ,
+            itetemplateassigned = 6,
             [Description("Aircraft Added")]
             AircraftAdded = 7,
             [Description("Aircraft Deleted")]
             AircraftDeleted = 8
 
         }
-        
+
         public enum Locations : short
         {
             [Description("EditCustomer")]
@@ -64,8 +65,8 @@ namespace FBOLinx.DB.Models
         public int OID { get; set; }
         public int userId { get; set; }
         public int Role { get; set; }
-        public int newcustomerId { get; set; }
-        public int oldcustomerId { get; set; }
+        public int newcustomercontactId { get; set; }
+        public int oldcustomercontactId { get; set; }
         public DateTime Time { get; set; }
         public Locations Location { get; set; }
         public Actions Action { get; set; }

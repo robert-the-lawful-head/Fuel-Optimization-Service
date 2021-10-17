@@ -79,8 +79,10 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
         public virtual DbSet<CustomerInfoByGroupLog> CustomerInfoByGroupLog { get; set; }
         public virtual DbSet<CustomerInfoByGroupLogData> CustomerInfoByGroupLogData { get; set; }
-        public virtual DbSet<AircraftLogData> AircraftLogData { get; set; }
-
+        public virtual DbSet<CustomerAircraftLogData> CustomerAircraftLogData { get; set; }
+        public virtual DbSet<CustomerAircraftLog> CustomerAircraftLog { get; set; }
+        public virtual DbSet<CustomerContactLog> CustomerContactLog { get; set; }
+        public virtual DbSet<CustomerContactLogData> CustomerContactLogData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

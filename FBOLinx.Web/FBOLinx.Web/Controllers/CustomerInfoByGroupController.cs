@@ -373,7 +373,7 @@ namespace FBOLinx.Web.Controllers
             customerInfoByGroup.Active = true;
             _context.CustomerInfoByGroup.Add(customerInfoByGroup);
             await _context.SaveChangesAsync();
-
+            AddCustomerInfoGroupLog(customerInfoByGroup);
             return CreatedAtAction("GetCustomerInfoByGroup", new { id = customerInfoByGroup.Oid }, customerInfoByGroup);
         }
 
@@ -705,6 +705,35 @@ namespace FBOLinx.Web.Controllers
         }
 
 
+        private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer, int userId = 0, int Role = 0)
+        {
+            var newCustomer = _context.CustomerInfoByGroup
+                                      .FirstOrDefault(c=>c.Company.Equals(customer.Company) 
+                                                      && c.CustomerId.Equals(customer.CustomerId)
+                                                      && c.GroupId.Equals(customer.GroupId));
+
+            if(newCustomer != null)
+            {
+                try
+                {
+                    _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
+                    {
+                        Action = CustomerInfoByGroupLog.Actions.Created , 
+                        Location =CustomerInfoByGroupLog.Locations.Customer,
+                        Role =Role , 
+                        userId  = userId, 
+                        Time = DateTime.Now , 
+                        oldcustomerId = newCustomer.Oid
+                    });
+                    _context.SaveChanges();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        }
         private  void AddEditCustomerToLogger ( CustomerInfoByGroup customer , int userId = 0 ,int Role =0)
         {
             var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));

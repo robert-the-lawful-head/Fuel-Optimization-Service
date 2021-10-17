@@ -267,10 +267,10 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+          
             _context.CustomerAircrafts.Add(customerAircrafts);
             await _context.SaveChangesAsync();
-
+            AddCustomerAirCraftLog(customerAircrafts);
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
 
@@ -357,6 +357,7 @@ namespace FBOLinx.Web.Controllers
                     Size = request.Size,
                     CustomerId = customer.Oid,
                 };
+               
                 _context.CustomerAircrafts.Add(customerAircraft);
 
                 _context.SaveChanges();
@@ -449,6 +450,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
+            DeleteCustomerAirCraftLog(customerAircrafts);
             _context.CustomerAircrafts.Remove(customerAircrafts);
             await _context.SaveChangesAsync();
 
@@ -484,9 +486,42 @@ namespace FBOLinx.Web.Controllers
         }
         #endregion
 
+        private  void AddCustomerAirCraftLog (CustomerAircrafts customer , int userId = 0 , int Role = 0)
+        {
+            var newCustomer = _context.CustomerAircrafts
+                                      .Where(c=> c.CustomerId.Equals(customer.CustomerId)
+                                             && c.GroupId.Equals(customer.GroupId)
+                                             && c.TailNumber.Equals(customer.TailNumber)
+                                             && c.AircraftId.Equals(customer.AircraftId))
+                                      .FirstOrDefault();
+
+            if(newCustomer != null)
+            {
+                try
+                {
+                    _context.CustomerAircraftLog.Add(new CustomerAircraftLog
+                    {
+                        Action = CustomerAircraftLog.Actions.AircraftAdded ,
+                        Location = CustomerAircraftLog.Locations.CustomerAircarft ,
+                        newcustomeraircraftId = newCustomer.Oid , 
+                        Role = Role , 
+                        userId = userId , 
+                        Time = DateTime.Now                         
+                    });
+
+                    _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+        }
+
         private void EditAirCraftLog(CustomerAircrafts customer , int userId= 0 , int Role = 0)
         {
-            _context.AircraftLogData.Add(new AircraftLogData
+            _context.CustomerAircraftLogData.Add(new CustomerAircraftLogData
             {
                 AddedFrom = customer.AddedFrom,
                 AircraftId = customer.AircraftId,
@@ -501,15 +536,15 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 _context.SaveChanges();
-                int oldaircraftId = _context.AircraftLogData.Where(a => a.GroupId == customer.GroupId && a.CustomerId == customer.CustomerId)
+                int oldaircraftId = _context.CustomerAircraftLogData.Where(a => a.GroupId == customer.GroupId && a.CustomerId == customer.CustomerId)
                                     .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
 
-                _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
+                _context.CustomerAircraftLog.Add(new CustomerAircraftLog
                 {
-                    Action = CustomerInfoByGroupLog.Actions.Edited,
-                    Location = CustomerInfoByGroupLog.Locations.CustomerAircarft,
-                    newcustomerId = customer.Oid,
-                    oldcustomerId = oldaircraftId,
+                    Action = CustomerAircraftLog.Actions.Edited,
+                    Location = CustomerAircraftLog.Locations.CustomerAircarft,
+                    newcustomeraircraftId = customer.Oid,
+                    oldcustomeraircraftId = oldaircraftId,
                     Role = Role,
                     Time = DateTime.Now,
                     userId = userId
@@ -532,6 +567,56 @@ namespace FBOLinx.Web.Controllers
             }
 
         }
+
+        private void DeleteCustomerAirCraftLog (CustomerAircrafts customer , int userId =0 , int Role = 0)
+        {
+            _context.CustomerAircraftLogData.Add(new CustomerAircraftLogData
+            {
+                AddedFrom = customer.AddedFrom,
+                AircraftId = customer.AircraftId,
+                BasedPaglocation = customer.BasedPaglocation,
+                CustomerId = customer.CustomerId,
+                GroupId = customer.GroupId,
+                NetworkCode = customer.NetworkCode,
+                Size = customer.Size,
+                TailNumber = customer.TailNumber
+            });
+
+            try
+            {
+                _context.SaveChanges();
+                int oldaircraftId = _context.CustomerAircraftLogData.Where(a => a.GroupId == customer.GroupId && a.CustomerId == customer.CustomerId)
+                                    .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
+
+                _context.CustomerAircraftLog.Add(new CustomerAircraftLog
+                {
+                    Action = CustomerAircraftLog.Actions.AircraftDeleted,
+                    Location = CustomerAircraftLog.Locations.CustomerAircarft,
+                    newcustomeraircraftId = customer.Oid,
+                    oldcustomeraircraftId = oldaircraftId,
+                    Role = Role,
+                    Time = DateTime.Now,
+                    userId = userId
+                });
+
+                try
+                {
+                    _context.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
+
 
         private bool CustomerAircraftsExists(int id)
         {

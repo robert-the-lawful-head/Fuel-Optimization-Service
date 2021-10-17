@@ -97,6 +97,7 @@ namespace FBOLinx.Web.Controllers
 
             _context.CustomerContacts.Add(customerContacts);
             await _context.SaveChangesAsync();
+            AddCustomerContactLog(customerContacts);
 
             return CreatedAtAction("GetCustomerContacts", new { id = customerContacts.Oid }, customerContacts);
         }
@@ -116,6 +117,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
+            DeleteCustomerContactLog(customerContacts);
             _context.CustomerContacts.Remove(customerContacts);
             await _context.SaveChangesAsync();
 
@@ -149,6 +151,62 @@ namespace FBOLinx.Web.Controllers
             return Ok(emails);
         }
 
+        private  void AddCustomerContactLog (CustomerContacts contact , int userId = 0 , int Role = 0 )
+        {
+            var newCustomerContact = _context.CustomerContacts.FirstOrDefault(c => c.CustomerId.Equals(contact.CustomerId) && c.ContactId.Equals(contact.ContactId));
+
+            if(newCustomerContact != null)
+            {
+                _context.CustomerContactLog.Add(new CustomerContactLog
+                {
+                    Action = CustomerContactLog.Actions.ContactAdded ,
+                    Location = CustomerContactLog.Locations.EditCustomer,
+                    Role = Role , 
+                    userId = userId, 
+                    Time = DateTime.Now , 
+                    newcustomercontactId = newCustomerContact.Oid
+                });
+
+                _context.SaveChanges();
+            }
+
+        }
+       
+        private void DeleteCustomerContactLog (CustomerContacts contact, int userId = 0, int Role = 0)
+        {
+            _context.CustomerContactLogData.Add(new CustomerContactLogData
+            {
+                ContactId = contact.ContactId , 
+                CustomerId = contact.CustomerId
+            });
+
+            try
+            {
+                _context.SaveChanges();
+
+                var deletedContactID = _context.CustomerContactLogData.FirstOrDefault(c => c.CustomerId.Equals(contact.CustomerId) && c.ContactId.Equals(contact.ContactId)).Oid;
+
+                if(deletedContactID.ToString() != "")
+                {
+                    _context.CustomerContactLog.Add(new CustomerContactLog
+                    {
+                        Action = CustomerContactLog.Actions.ContactDeleted , 
+                        Location = CustomerContactLog.Locations.EditCustomer , 
+                        Role = Role ,
+                        userId =userId , 
+                        Time = DateTime.Now , 
+                        oldcustomercontactId = deletedContactID
+                    });
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
         private bool CustomerContactsExists(int id)
         {
             return _context.CustomerContacts.Any(e => e.Oid == id);
