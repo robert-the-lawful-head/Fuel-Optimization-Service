@@ -24,11 +24,13 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IPriceFetchingService _priceFetchingService;
+        private readonly IPricingTemplateService _pricingTemplateService;
 
-        public PricingTemplatesController(FboLinxContext context, IPriceFetchingService priceFetchingService)
+        public PricingTemplatesController(FboLinxContext context, IPriceFetchingService priceFetchingService, IPricingTemplateService pricingTemplateService)
         {
             _context = context;
             _priceFetchingService = priceFetchingService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         // GET: api/PricingTemplates
@@ -64,11 +66,10 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            await _pricingTemplateService.FixDefaultPricingTemplate(fboId);
 
-            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-            await pricingTemplateService.FixDefaultPricingTemplate(fboId);
-
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
             return Ok(marginTemplates);
         }
@@ -81,7 +82,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
             return Ok(marginTemplates);
         }
@@ -94,7 +95,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<PricingTemplatesGridViewModel> templates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> templates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
             var templatesWithEmailContent = (
                 from t in templates
                 join ec in _context.EmailContent on t.EmailContentId equals ec.Oid

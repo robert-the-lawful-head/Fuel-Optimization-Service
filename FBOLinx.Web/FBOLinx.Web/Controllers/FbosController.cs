@@ -37,6 +37,7 @@ namespace FBOLinx.Web.Controllers
         private readonly RampFeesService _rampFeeService;
         private readonly FuelerLinxService _fuelerLinxService;
         private readonly FbopricesService _fbopricesService;
+        private readonly IPricingTemplateService _pricingTemplateService;
 
         public FbosController(
             FboLinxContext context,
@@ -48,7 +49,8 @@ namespace FBOLinx.Web.Controllers
             IPriceFetchingService priceFetchingService, 
             RampFeesService rampFeeService, 
             FuelerLinxService fuelerLinxService,
-            FbopricesService fbopricesService)
+            FbopricesService fbopricesService,
+            IPricingTemplateService pricingTemplateService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -60,6 +62,7 @@ namespace FBOLinx.Web.Controllers
             _rampFeeService = rampFeeService;
             _fuelerLinxService = fuelerLinxService;
             _fbopricesService = fbopricesService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         // GET: api/Fbos/group/5
@@ -217,9 +220,7 @@ namespace FBOLinx.Web.Controllers
 
             var fbo = await _groupFboService.CreateNewFbo(request);
 
-            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-            await pricingTemplateService.FixCustomCustomerTypes(request.GroupId ?? 0, fbo.Oid);
+            await _pricingTemplateService.FixCustomCustomerTypes(request.GroupId ?? 0, fbo.Oid);
 
             return CreatedAtAction("GetFbo", new { id = fbo.Oid }, new
             {
@@ -284,9 +285,7 @@ namespace FBOLinx.Web.Controllers
                     await _context.SaveChangesAsync();
                 }
 
-                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-                await pricingTemplateService.FixDefaultPricingTemplate(fbo.Oid);
+                await _pricingTemplateService.FixDefaultPricingTemplate(fbo.Oid);
             }
             catch (DbUpdateConcurrencyException ex)
             {
