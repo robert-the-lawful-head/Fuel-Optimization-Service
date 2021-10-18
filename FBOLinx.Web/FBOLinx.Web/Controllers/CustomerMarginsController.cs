@@ -206,8 +206,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerMargins
-        [HttpPost("updatecustomermargin")]
-        public async Task<IActionResult> UpdateCustomerMargin(CustomerPricingTemplateViewModel model)
+        [HttpPost("updatecustomermargin/{userId}/{groupId}")]
+        public async Task<IActionResult> UpdateCustomerMargin([FromRoute] int userId ,[FromRoute] int groupId, CustomerPricingTemplateViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -219,10 +219,11 @@ namespace FBOLinx.Web.Controllers
             if (customerMarginObject != null)
             {
                 var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
+                var customerGroupOid = _context.CustomerInfoByGroup.FirstOrDefault(x => x.CustomerId == model.id && x.GroupId == groupId).Oid;
 
-                if(customerMargin != null)
+                if (customerMargin != null)
                 {
-                    UpdateCustomerMarginLog(customerMargin, customerMargin.Oid);
+                    UpdateCustomerMarginLog(customerMargin, customerMargin.Oid , customerGroupOid, userId);
                     customerMargin.CustomerType = customerMarginObject.Oid;
                 }
                 else
@@ -238,7 +239,7 @@ namespace FBOLinx.Web.Controllers
                                                                          && c.CustomerId.Equals(model.id) 
                                                                          && c.Fboid.Equals(model.fboid)).Oid;
 
-                    UpdateCustomerMarginLog(customerMargin, NewCustomerTypeId);
+                    UpdateCustomerMarginLog(customerMargin, NewCustomerTypeId, customerGroupOid, userId);
                 }
 
                 var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
@@ -306,7 +307,7 @@ namespace FBOLinx.Web.Controllers
     
     
        //Private Methods 
-       private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int userId =0 , int Role = 0)
+       private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int customerId ,int userId =0 )
        {
             _context.CustomCustomerTypesLogData.Add(new CustomCustomerTypesLogData { 
               CustomerId = oldcustomerTypes.CustomerId , 
@@ -323,13 +324,14 @@ namespace FBOLinx.Web.Controllers
 
                 _context.CustomCustomerTypeLog.Add(new CustomCustomerTypesLog
                 {
-                    Action = CustomCustomerTypesLog.Actions.itetemplateassigned,
-                    Location = CustomCustomerTypesLog.Locations.Customer , 
+                    Action = CustomerInfoByGroupLog.Actions.itetemplateassigned,
+                    Location = CustomerInfoByGroupLog.Locations.Customer , 
                     newcustomertypetId = newCustomerTypeId , 
                     oldcustomertypeId = oldCustomerTypeId,
-                    Role =Role , 
+                    Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role, 
                     userId = userId , 
-                    Time = DateTime.Now
+                    Time = DateTime.Now,
+                    customerId = customerId
                 });
 
                 _context.SaveChanges();

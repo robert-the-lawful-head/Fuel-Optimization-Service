@@ -327,8 +327,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomerInfoByGroup/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup )
+        [HttpPut("{id}/{userId}/{customerId}")]
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromRoute] int customerId, [FromBody] CustomerInfoByGroup customerInfoByGroup )
         {
             if (!ModelState.IsValid)
             {
@@ -340,7 +340,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            AddEditCustomerToLogger(customerInfoByGroup);
+            EditCustomerToLogger(customerInfoByGroup, customerId , userId);
             
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
@@ -364,8 +364,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerInfoByGroup
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerInfoByGroup([FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerInfoByGroup([FromRoute] int userId , [FromBody] CustomerInfoByGroup customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -374,7 +374,7 @@ namespace FBOLinx.Web.Controllers
             customerInfoByGroup.Active = true;
             _context.CustomerInfoByGroup.Add(customerInfoByGroup);
             await _context.SaveChangesAsync();
-            AddCustomerInfoGroupLog(customerInfoByGroup);
+            AddCustomerInfoGroupLog(customerInfoByGroup , userId);
             return CreatedAtAction("GetCustomerInfoByGroup", new { id = customerInfoByGroup.Oid }, customerInfoByGroup);
         }
 
@@ -704,7 +704,92 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(true);
         }
-        private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer, int userId = 0, int Role = 0)
+       
+        [HttpPost("GetCustomerLogger/{id}")]
+        public async Task<IActionResult> GetCustomerLogger ([FromRoute] int id)
+       {
+          
+            List<CustomerByGroupLogVM> customers = new List<CustomerByGroupLogVM>();
+
+            try
+            {
+                //Get customer Info Group Log 
+                var CustomerInfoGroup =  _context.CustomerInfoByGroupLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+                
+                foreach (var item in CustomerInfoGroup)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),                       
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                    });
+                }
+
+
+
+
+                //Get customer Contact  Log 
+                var CustomerContact =   _context.CustomerContactLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerContact)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                    });
+                }
+
+
+
+                //Get customer AirCaft  Log 
+                var CustomerAircraft =  _context.CustomerAircraftLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerAircraft)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                    });
+                }
+
+
+
+
+                //Get customer ITP MArgin  Log 
+                var CustomerITPMargin =  _context.CustomCustomerTypeLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerITPMargin)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok(customers);
+        }
+
+        private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer , int userId = 0)
         {
             var newCustomer = _context.CustomerInfoByGroup
                                       .FirstOrDefault(c=>c.Company.Equals(customer.Company) 
@@ -719,10 +804,11 @@ namespace FBOLinx.Web.Controllers
                     {
                         Action = CustomerInfoByGroupLog.Actions.Created , 
                         Location =CustomerInfoByGroupLog.Locations.Customer,
-                        Role =Role , 
+                        Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role, 
                         userId  = userId, 
                         Time = DateTime.Now , 
-                        oldcustomerId = newCustomer.Oid
+                        newcustomerId = newCustomer.Oid , 
+                        customerId = newCustomer.Oid
                     });
                     _context.SaveChanges();
                 }
@@ -733,7 +819,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
         }
-        private  void AddEditCustomerToLogger ( CustomerInfoByGroup customer , int userId = 0 ,int Role =0)
+        private  void EditCustomerToLogger ( CustomerInfoByGroup customer , int customerId , int userId = 0 )
         {
             var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));
             if (oldCustomerInfoByGroup != null)
@@ -781,9 +867,10 @@ namespace FBOLinx.Web.Controllers
                     customerlog.newcustomerId = customer.Oid;
                     customerlog.Time = DateTime.Now;
                     customerlog.userId = userId;
-                    customerlog.Role = Role;
+                    customerlog.Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role;
                     customerlog.Location = CustomerInfoByGroupLog.Locations.EditCustomer;
                     customerlog.oldcustomerId = OldcustomerId;
+                    customerlog.customerId = customerId;
 
                     if (oldCustomerInfoByGroup.Active == true && customer.Active == false)
                         customerlog.Action = CustomerInfoByGroupLog.Actions.Deactivated;

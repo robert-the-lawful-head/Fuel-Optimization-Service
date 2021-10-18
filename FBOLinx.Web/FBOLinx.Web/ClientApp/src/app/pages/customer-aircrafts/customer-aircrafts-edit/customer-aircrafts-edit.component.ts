@@ -1,3 +1,5 @@
+import { SharedService } from 'src/app/layouts/shared-service';
+
 import {
     Component,
     EventEmitter,
@@ -16,6 +18,7 @@ import {
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-customer-aircrafts-edit',
@@ -37,7 +40,10 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private dialogRef: MatDialogRef<CustomerAircraftsEditComponent>,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
-        private dialogAircraftDeleteRef: MatDialog
+        private dialogAircraftDeleteRef: MatDialog ,
+        private sharedService : SharedService ,
+        private route : ActivatedRoute
+
     ) {}
 
     ngOnInit() {
@@ -56,8 +62,9 @@ export class CustomerAircraftsEditComponent implements OnInit {
     }
 
     public saveEdit() {
+        const id = this.route.snapshot.paramMap.get('id');
         this.customerAircraftsService
-            .update(this.customerAircraftInfo)
+            .update(this.customerAircraftInfo , this.sharedService.currentUser.oid , id )
             .subscribe((data: any) => {
                 this.dialogRef.close(data);
             });

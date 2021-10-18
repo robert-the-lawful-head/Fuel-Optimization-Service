@@ -164,12 +164,13 @@ export class CustomersEditComponent implements OnInit {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
                     };
+                    const id = this.route.snapshot.paramMap.get('id');
                     this.customCustomerType.customerType =
                         this.customerForm.value.customerMarginTemplate;
 
 
                     await this.customerInfoByGroupService
-                        .update(customerInfoByGroup)
+                        .update(customerInfoByGroup , this.sharedService.currentUser.oid  ,id)
                         .toPromise();
                     if (
                         !this.customCustomerType.oid ||
@@ -180,7 +181,7 @@ export class CustomersEditComponent implements OnInit {
                             .toPromise();
                     } else {
                         await this.customCustomerTypesService
-                            .update(this.customCustomerType)
+                            .update(this.customCustomerType , this.sharedService.currentUser.oid )
                             .toPromise();
                     }
                     this.customerInfoByGroup = customerInfoByGroup;
@@ -221,8 +222,9 @@ export class CustomersEditComponent implements OnInit {
     }
 
     contactDeleted(contact) {
+        const id = this.route.snapshot.paramMap.get('id');
         this.customerContactsService
-            .remove(contact.customerContactId)
+            .remove(contact.customerContactId , this.sharedService.currentUser.oid , id)
             .subscribe(() => {
                 this.contactInfoByGroupsService
                     .remove(contact.contactInfoByGroupId)
@@ -508,7 +510,7 @@ export class CustomersEditComponent implements OnInit {
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                })
+                } , this.sharedService.currentUser.oid , this.sharedService.currentUser.role)
                 .subscribe(() => {
                     this.loadCustomerContacts();
                 });

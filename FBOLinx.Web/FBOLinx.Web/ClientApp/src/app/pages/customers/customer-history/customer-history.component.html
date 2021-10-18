@@ -8,62 +8,68 @@
                 <span matPrefix><i class="fa fa-search"></i></span>
             </mat-form-field>
         </div>
-
-
-        <!-- <table
+     <table
 
             class="col-md-12"
             mat-table
             matSort
             matSortActive="tailNumber"
             matSortDirection="asc"
+            [dataSource]="customerHistoryDataSource"
         >
-            <ng-container matColumnDef="Time">
+            <ng-container matColumnDef="time">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Time (UTC)</th>
-                <td>
-
+                <td  *matCellDef="let customer">
+                   {{ customer.time}}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="Action">
+            <ng-container matColumnDef="action">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Action</th>
-                <td>
+                <td  *matCellDef="let customer">
+                    {{customer.action}}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="Changes">
+            <ng-container matColumnDef="change">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Changes</th>
-                <td>
-
+                <td *matCellDef="let customer">
+                    {{customer.change}}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="customerUser">
+            <ng-container matColumnDef="username">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     User
                 </th>
-               <td></td>>
+               <td *matCellDef="let customer">
+                {{customer.username}}
+               </td>
             </ng-container>
 
-            <ng-container matColumnDef="Role">
+            <ng-container  matColumnDef="role">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Role
                 </th>
-               <td></td>>
+               <td *matCellDef="let customer">
+                   {{customer.role}}
+               </td>
             </ng-container>
 
 
-            <ng-container matColumnDef="Location">
+            <ng-container matColumnDef="location">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Location
                 </th>
-               <td></td>>
+               <td *matCellDef="let customer">
+                   {{customer.location}}
+               </td>
             </ng-container>
 
 
             <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
             <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
-        </table> -->
+        </table>
     </div>
 
     <div>

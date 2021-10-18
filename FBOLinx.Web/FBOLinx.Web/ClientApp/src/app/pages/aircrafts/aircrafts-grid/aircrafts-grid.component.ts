@@ -11,6 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
@@ -51,7 +52,8 @@ export class AircraftsGridComponent implements OnInit {
         public editCustomerAircraftDialog: MatDialog,
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
-        private sharedService: SharedService
+        private sharedService: SharedService ,
+        private route : ActivatedRoute
     ) {
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
@@ -152,10 +154,10 @@ export class AircraftsGridComponent implements OnInit {
                 if (!result) {
                     return;
                 }
-
+                const id = this.route.snapshot.paramMap.get('id');
                 if (result.toDelete) {
                     this.customerAircraftsService
-                        .remove(result)
+                        .remove(result , this.sharedService.currentUser.oid , id)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroup(

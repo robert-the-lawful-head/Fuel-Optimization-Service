@@ -133,8 +133,8 @@ export class CustomerinfobygroupService {
         );
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId ) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
@@ -145,8 +145,8 @@ export class CustomerinfobygroupService {
         });
     }
 
-    public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+    public update(payload , userId ,  customerId) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+ customerId, payload, {
             headers: this.headers,
         });
     }
@@ -154,6 +154,15 @@ export class CustomerinfobygroupService {
     public matchcustomerinfo(customerId: number, groupId: number) {
         return this.http.get(
             `${this.accessPointUrl}/matchcustomerinfo/customerId/${customerId}/groupId/${groupId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    getCustomerByGroupLogger(customerId) {
+        return this.http.post(
+            `${this.accessPointUrl}/GetCustomerLogger/${customerId}`,
             {
                 headers: this.headers,
             }

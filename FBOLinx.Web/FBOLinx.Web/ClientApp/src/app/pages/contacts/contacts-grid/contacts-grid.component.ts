@@ -78,8 +78,9 @@ export class ContactsGridComponent implements OnInit {
 
     // Public Methods
     public deleteRecord(record) {
+        const id = this.route.snapshot.paramMap.get('id');
         this.customerContactsService
-            .remove(record.customerContactId)
+            .remove(record.customerContactId , this.sharedService.currentUser.oid , id)
             .subscribe(() => {
                 this.contactInfoByGroupsService
                     .remove(record.contactInfoByGroupId)
@@ -123,8 +124,9 @@ export class ContactsGridComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result !== 'cancel') {
                 if (result.toDelete) {
+                    const id = this.route.snapshot.paramMap.get('id');
                     this.customerContactsService
-                        .remove(record.customerContactId)
+                        .remove(record.customerContactId , this.sharedService.currentUser.oid  , id)
                         .subscribe(() => {
                             this.contactInfoByGroupsService
                                 .remove(record.contactInfoByGroupId)

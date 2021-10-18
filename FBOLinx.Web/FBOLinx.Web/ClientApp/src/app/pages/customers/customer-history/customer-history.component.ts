@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { CustomerinfobygroupService } from './../../../services/customerinfobygroup.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -7,14 +9,15 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./customer-history.component.scss']
 })
 export class CustomerHistoryComponent implements OnInit {
+
     public customerHistoryDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
-        'Time (UTC)',
-        'Action',
-        'Changes',
-        'User',
-        'Role',
-        'Location'
+        'time',
+        'action',
+        'change',
+        'username',
+        'role',
+        'location'
     ];
     public resultsLength = 0;
     public aircraftSizes: Array<any>;
@@ -23,9 +26,19 @@ export class CustomerHistoryComponent implements OnInit {
     public pageIndex = 0;
 
 
-  constructor() { }
+  constructor(private customerInfoByGroupService : CustomerinfobygroupService ,
+              private route : ActivatedRoute) { }
 
   ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    console.log(id);
+    this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
+        ( data : any)=> {
+            console.log(data)
+            this.customerHistoryDataSource = new MatTableDataSource (data) ;
+        }
+    )
+
   }
 
   public applyFilter(filterValue: string) {

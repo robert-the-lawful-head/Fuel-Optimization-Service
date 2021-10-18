@@ -16,7 +16,7 @@ namespace FBOLinx.Core.Utilities
             else
                 return value.ToString();
         }
-
+        
         public static IEnumerable<EnumDescriptionValue> GetDescriptions(Type type)
         {
             var descriptions = new List<EnumDescriptionValue>();

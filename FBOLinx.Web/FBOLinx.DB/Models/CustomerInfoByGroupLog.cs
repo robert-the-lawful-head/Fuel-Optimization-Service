@@ -8,7 +8,7 @@ namespace FBOLinx.DB.Models
 {
     public partial class CustomerInfoByGroupLog
     {
-        public enum UserRoles : short
+        public enum UserRoles : int
         {
             [Description("Not set")]
             NotSet = 0,
@@ -26,7 +26,7 @@ namespace FBOLinx.DB.Models
             NonRev = 6
         }
 
-        public enum Actions : short
+        public enum Actions : int
         {
             [Description("Deactivated")]
             Deactivated = 0,
@@ -49,7 +49,7 @@ namespace FBOLinx.DB.Models
 
         }
         
-        public enum Locations : short
+        public enum Locations : int
         {
             [Description("EditCustomer")]
             EditCustomer = 0,
@@ -63,11 +63,13 @@ namespace FBOLinx.DB.Models
         [Key]
         public int OID { get; set; }
         public int userId { get; set; }
-        public int Role { get; set; }
+        public CustomerInfoByGroupLog.UserRoles Role { get; set; }
         public int newcustomerId { get; set; }
         public int oldcustomerId { get; set; }
         public DateTime Time { get; set; }
         public Locations Location { get; set; }
         public Actions Action { get; set; }
+
+        public int customerId { get; set; }
     }
 }

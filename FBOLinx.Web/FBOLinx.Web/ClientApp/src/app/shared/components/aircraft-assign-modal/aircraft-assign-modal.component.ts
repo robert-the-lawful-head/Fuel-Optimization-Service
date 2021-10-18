@@ -73,8 +73,9 @@ export class AircraftAssignModalComponent implements OnInit {
                     } as Partial<FlightWatchHistorical>);
                 });
         } else {
+
             payload.customerId = this.selectedCompany;
-            this.customerAircraftsService.add(payload).subscribe(() => {
+            this.customerAircraftsService.add(payload , this.sharedService.currentUser.oid ,this.selectedCompany).subscribe(() => {
                 const selectedCompany = this.data.customers.find(
                     (customer) => customer.companyId === this.selectedCompany
                 );
