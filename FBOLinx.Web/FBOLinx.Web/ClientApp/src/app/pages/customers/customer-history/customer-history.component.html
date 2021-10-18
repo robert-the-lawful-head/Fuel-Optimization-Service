@@ -20,7 +20,7 @@
             <ng-container matColumnDef="time">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Time (UTC)</th>
                 <td  *matCellDef="let customer">
-                   {{ customer.time}}
+                   {{ customer.time | date :'short'}}
                 </td>
             </ng-container>
 
