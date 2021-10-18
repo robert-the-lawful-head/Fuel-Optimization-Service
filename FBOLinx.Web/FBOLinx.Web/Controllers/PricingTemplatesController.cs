@@ -66,9 +66,8 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-            await pricingTemplateService.FixDefaultPricingTemplate(fboId);
+            
+            await _pricingTemplateService.FixDefaultPricingTemplate(fboId);
 
             List<PricingTemplatesGridViewModel> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 

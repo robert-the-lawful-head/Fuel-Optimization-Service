@@ -9,10 +9,15 @@ namespace FBOLinx.Web.Services.Interfaces
 {
     public interface IPriceFetchingService
     {
+
         public Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
             string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null,
             int fboId = 0);
+
+        public Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0);
 
         public Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
             int customerInfoByGroupId, List<int> pricingTemplateIds,
