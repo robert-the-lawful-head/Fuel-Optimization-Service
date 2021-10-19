@@ -329,8 +329,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomerInfoByGroup/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPut("{id}/{userId}/{customerId}")]
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromRoute] int customerId, [FromBody] CustomerInfoByGroup customerInfoByGroup )
         {
             if (!ModelState.IsValid)
             {
@@ -342,6 +342,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
+            EditCustomerToLogger(customerInfoByGroup, customerId , userId);
+            
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
@@ -364,8 +366,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerInfoByGroup
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerInfoByGroup([FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerInfoByGroup([FromRoute] int userId , [FromBody] CustomerInfoByGroup customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -374,7 +376,7 @@ namespace FBOLinx.Web.Controllers
             customerInfoByGroup.Active = true;
             _context.CustomerInfoByGroup.Add(customerInfoByGroup);
             await _context.SaveChangesAsync();
-
+            AddCustomerInfoGroupLog(customerInfoByGroup , userId);
             return CreatedAtAction("GetCustomerInfoByGroup", new { id = customerInfoByGroup.Oid }, customerInfoByGroup);
         }
 
@@ -703,6 +705,204 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(true);
+        }
+       
+        [HttpPost("GetCustomerLogger/{id}")]
+        public async Task<IActionResult> GetCustomerLogger ([FromRoute] int id)
+       {
+          
+            List<CustomerByGroupLogVM> customers = new List<CustomerByGroupLogVM>();
+
+            try
+            {
+                //Get customer Info Group Log 
+                var CustomerInfoGroup =  _context.CustomerInfoByGroupLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+                
+                foreach (var item in CustomerInfoGroup)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),                       
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                    });
+                }
+
+
+
+
+                //Get customer Contact  Log 
+                var CustomerContact =   _context.CustomerContactLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerContact)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                    });
+                }
+
+
+
+                //Get customer AirCaft  Log 
+                var CustomerAircraft =  _context.CustomerAircraftLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerAircraft)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                    });
+                }
+
+
+
+
+                //Get customer ITP MArgin  Log 
+                var CustomerITPMargin =  _context.CustomCustomerTypeLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerITPMargin)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok(customers.OrderByDescending(d=>d.Time));
+        }
+
+        private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer , int userId = 0)
+        {
+            var newCustomer = _context.CustomerInfoByGroup
+                                      .FirstOrDefault(c=>c.Company.Equals(customer.Company) 
+                                                      && c.CustomerId.Equals(customer.CustomerId)
+                                                      && c.GroupId.Equals(customer.GroupId));
+
+            if(newCustomer != null)
+            {
+                try
+                {
+                    _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
+                    {
+                        Action = CustomerInfoByGroupLog.Actions.Created , 
+                        Location =CustomerInfoByGroupLog.Locations.Customer,
+                        Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role, 
+                        userId  = userId, 
+                        Time = DateTime.Now , 
+                        newcustomerId = newCustomer.Oid , 
+                        customerId = newCustomer.Oid
+                    });
+                    _context.SaveChanges();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        }
+        private  void EditCustomerToLogger ( CustomerInfoByGroup customer , int customerId , int userId = 0 )
+        {
+            var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));
+            if (oldCustomerInfoByGroup != null)
+            {
+                //Add the old info into DataLog
+                _context.CustomerInfoByGroupLogData.Add(new CustomerInfoByGroupLogData
+                {
+                    Active = oldCustomerInfoByGroup.Active,
+                    Address = oldCustomerInfoByGroup.Address,
+                    //CertificateType = oldCustomerInfoByGroup.CertificateType , 
+                    City = oldCustomerInfoByGroup.City,
+                    Company = oldCustomerInfoByGroup.Company,
+                    Country = oldCustomerInfoByGroup.Country,
+                    CustomerCompanyType = oldCustomerInfoByGroup.CustomerCompanyType,
+                    CustomerId = oldCustomerInfoByGroup.CustomerId,
+                    CustomerType = oldCustomerInfoByGroup.CustomerType,
+                    DefaultTemplate = oldCustomerInfoByGroup.DefaultTemplate,
+                    Distribute = oldCustomerInfoByGroup.Distribute,
+                    EmailSubscription = oldCustomerInfoByGroup.EmailSubscription,
+                    GroupId = oldCustomerInfoByGroup.GroupId,
+                    Joined = oldCustomerInfoByGroup.Joined,
+                    MainPhone = oldCustomerInfoByGroup.MainPhone,
+                    MergeRejected = oldCustomerInfoByGroup.MergeRejected,
+                    Network = oldCustomerInfoByGroup.Network,
+                    Password = oldCustomerInfoByGroup.Password,
+                    Sfid = oldCustomerInfoByGroup.Sfid,
+                    Show100Ll = oldCustomerInfoByGroup.Show100Ll,
+                    ShowJetA = oldCustomerInfoByGroup.ShowJetA,
+                    State = oldCustomerInfoByGroup.State,
+                    Suspended = oldCustomerInfoByGroup.Suspended,
+                    Username = oldCustomerInfoByGroup.Username,
+                    Website = oldCustomerInfoByGroup.Website,
+                    ZipCode = oldCustomerInfoByGroup.ZipCode,
+                    PricingTemplateRemoved = oldCustomerInfoByGroup.PricingTemplateRemoved,
+
+                });
+
+                try
+                {
+                    _context.SaveChanges();
+                    int OldcustomerId = _context.CustomerInfoByGroupLogData.Where(c => (c.GroupId.Equals(customer.GroupId)) && (c.CustomerId.Equals(customer.CustomerId)))
+                        .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
+
+                    CustomerInfoByGroupLog customerlog = new CustomerInfoByGroupLog();
+                    customerlog.newcustomerId = customer.Oid;
+                    customerlog.Time = DateTime.Now;
+                    customerlog.userId = userId;
+                    customerlog.Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role;
+                    customerlog.Location = CustomerInfoByGroupLog.Locations.EditCustomer;
+                    customerlog.oldcustomerId = OldcustomerId;
+                    customerlog.customerId = customerId;
+
+                    if (oldCustomerInfoByGroup.Active == true && customer.Active == false)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Deactivated;
+                    else if (oldCustomerInfoByGroup.Active == false && customer.Active == true)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Activated;
+                    else
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Edited;
+
+                    _context.CustomerInfoByGroupLog.Add(customerlog); 
+
+                    try
+                    {
+                        _context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+            }
+
+            
+           
         }
 
         private bool CustomerInfoByGroupExists(int id)

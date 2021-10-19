@@ -54,9 +54,9 @@ export class CustomermarginsService {
         });
     }
 
-    public updatecustomermargin(payload) {
+    public updatecustomermargin(payload , userId  , groupId) {
         return this.http.post(
-            this.accessPointUrl + '/updatecustomermargin',
+            this.accessPointUrl + '/updatecustomermargin/'+userId+'/'+groupId,
             payload,
             { headers: this.headers }
         );

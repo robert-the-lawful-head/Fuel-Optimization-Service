@@ -12,6 +12,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 /*import FlatFileImporter from 'flatfile-csv-importer';*/
 import { find, forEach, map, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
@@ -151,7 +152,8 @@ export class CustomersGridComponent implements OnInit {
         private airportWatchService: AirportWatchService,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private tagsService: TagsService,
-        private dialog: MatDialog
+        private dialog: MatDialog ,
+        private route : ActivatedRoute
     ) { }
 
     ngOnInit() {
@@ -350,7 +352,8 @@ export class CustomersGridComponent implements OnInit {
             id: customer.customerId,
             pricingTemplateId: changedPricingTemplate.oid,
         };
-        this.customerMarginsService.updatecustomermargin(vm).subscribe(() => {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerMarginsService.updatecustomermargin(vm , this.sharedService.currentUser.oid ,this.sharedService.currentUser.groupId ).subscribe(() => {
             this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
         });
     }

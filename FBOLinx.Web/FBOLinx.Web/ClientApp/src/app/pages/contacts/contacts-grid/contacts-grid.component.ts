@@ -80,25 +80,26 @@ export class ContactsGridComponent implements OnInit {
     }
 
     // Public Methods
-    //public deleteRecord(record) {
-    //    this.customerContactsService
-    //        .remove(record.customerContactId)
-    //        .subscribe(() => {
-    //            this.contactInfoByFboService
-    //                .remove(record.customerContactId)
-    //                .subscribe(() => {
-    //                    const index = this.contactsData.findIndex(
-    //                        (d) =>
-    //                            d.customerContactId === record.customerContactId
-    //                    ); // find index in your array
-    //                    this.contactsData.splice(index, 1); // remove element from array
-    //                    this.contactsDataSource = new MatTableDataSource(
-    //                        this.contactsData
-    //                    );
-    //                    this.contactsDataSource.sort = this.sort;
-    //                });
-    //        });
-    //}
+    public deleteRecord(record) {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerContactsService
+            .remove(record.customerContactId , this.sharedService.currentUser.oid , id)
+            .subscribe(() => {
+                this.contactInfoByGroupsService
+                    .remove(record.contactInfoByGroupId)
+                    .subscribe(() => {
+                        const index = this.contactsData.findIndex(
+                            (d) =>
+                                d.customerContactId === record.customerContactId
+                        ); // find index in your array
+                        this.contactsData.splice(index, 1); // remove element from array
+                        this.contactsDataSource = new MatTableDataSource(
+                            this.contactsData
+                        );
+                        this.contactsDataSource.sort = this.sort;
+                    });
+            });
+    }
 
     public editRecord(record, $event) {
         if ($event.target) {
@@ -126,8 +127,9 @@ export class ContactsGridComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result != undefined && result !== 'cancel') {
                 if (result.toDelete) {
+                    const id = this.route.snapshot.paramMap.get('id');
                     this.customerContactsService
-                        .remove(record.customerContactId)
+                        .remove(record.customerContactId , this.sharedService.currentUser.oid  , id)
                         .subscribe(() => {
                             this.contactInfoByGroupsService
                                 .remove(record.contactInfoByGroupId)

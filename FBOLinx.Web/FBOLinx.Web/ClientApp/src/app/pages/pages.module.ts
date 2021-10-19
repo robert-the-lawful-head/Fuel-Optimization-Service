@@ -1,3 +1,4 @@
+import { CustomerHistoryComponent } from './customers/customer-history/customer-history.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -300,9 +301,8 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         FlightWatchSettingsComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
-        CustomersAnalyticsComponent,
-        CustomerTagDialogComponent
-
+        CustomerTagDialogComponent,
+        CustomerHistoryComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
