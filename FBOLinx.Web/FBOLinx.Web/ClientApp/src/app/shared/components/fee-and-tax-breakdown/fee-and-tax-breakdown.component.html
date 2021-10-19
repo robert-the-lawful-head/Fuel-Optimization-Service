@@ -89,7 +89,7 @@
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col">ITP-Margin</div>
+            <div class="col">{{ marginType == 0 ? "ITP-Margin" : "Discount" }}</div>
             <div class="col"></div>
             <div class="col text-right">
                 ${{ marginITP | number: "1.4-4" }}
