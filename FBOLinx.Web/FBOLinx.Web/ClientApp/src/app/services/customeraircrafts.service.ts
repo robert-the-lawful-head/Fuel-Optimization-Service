@@ -105,9 +105,9 @@ export class CustomeraircraftsService {
         });
     }
 
-    public update(payload , userId  ,  customerId) {
+    public update(payload , userId , customerId) {
 
-        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+ customerId, payload, {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+customerId, payload, {
             headers: this.headers,
         });
     }

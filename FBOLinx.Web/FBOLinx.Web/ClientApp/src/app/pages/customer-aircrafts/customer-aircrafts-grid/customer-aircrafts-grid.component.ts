@@ -54,6 +54,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
+    public customerInfobyGroupId : any;
 
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
@@ -80,6 +81,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.customerInfobyGroupId =  this.route.snapshot.paramMap.get('id');
         if (!this.customerAircraftsData) {
             return;
         }
@@ -197,6 +199,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
+            console.log(this.route.snapshot.paramMap.get('id'));
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
@@ -205,6 +208,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             customerAircraft.isFuelerlinxNetwork &&
                             customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
+                       customerGroupId : this.route.snapshot.paramMap.get('id')
                     },
                     width: '450px',
                 }

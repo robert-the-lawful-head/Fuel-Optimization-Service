@@ -724,7 +724,7 @@ namespace FBOLinx.Web.Controllers
                         Location = item.Location.ToString(),                       
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
                     });
                 }
 
@@ -742,7 +742,7 @@ namespace FBOLinx.Web.Controllers
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
                     });
                 }
 
@@ -759,7 +759,7 @@ namespace FBOLinx.Web.Controllers
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
                     });
                 }
 
@@ -777,7 +777,7 @@ namespace FBOLinx.Web.Controllers
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).Username
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
                     });
                 }
             }
@@ -786,7 +786,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            return Ok(customers);
+            return Ok(customers.OrderByDescending(d=>d.Time));
         }
 
         private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer , int userId = 0)
@@ -879,7 +879,7 @@ namespace FBOLinx.Web.Controllers
                     else
                         customerlog.Action = CustomerInfoByGroupLog.Actions.Edited;
 
-                    _context.CustomerInfoByGroupLog.Add(customerlog); ;
+                    _context.CustomerInfoByGroupLog.Add(customerlog); 
 
                     try
                     {

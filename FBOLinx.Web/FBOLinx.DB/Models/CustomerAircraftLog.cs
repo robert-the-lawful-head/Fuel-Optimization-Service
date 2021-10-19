@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace FBOLinx.DB.Models
 {
     public partial class CustomerAircraftLog
     {
-       
-
-
         [Key]
+        [Column("OID")]
         public int OID { get; set; }
         public int userId { get; set; }
         public CustomerInfoByGroupLog.UserRoles Role { get; set; }

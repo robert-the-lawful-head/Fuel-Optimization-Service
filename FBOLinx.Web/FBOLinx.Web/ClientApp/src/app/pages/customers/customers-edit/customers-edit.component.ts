@@ -62,6 +62,7 @@ export class CustomersEditComponent implements OnInit {
     customCustomerType: any;
     certificateTypes: any[];
     customerCompanyTypes: any[];
+    customerHistory : any;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
@@ -86,6 +87,7 @@ export class CustomersEditComponent implements OnInit {
         private dialog: MatDialog,
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
+
         private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
         private snackBar: MatSnackBar,
         private tagsService: TagsService
@@ -96,6 +98,11 @@ export class CustomersEditComponent implements OnInit {
 
     async ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
+        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
+            (data:any) => this.customerHistory = data ,
+             err=> console.log(err)
+        )
+
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
             .toPromise();
@@ -505,12 +512,13 @@ export class CustomersEditComponent implements OnInit {
     }
 
     private saveCustomerContact() {
+        console.log(this.customerInfoByGroup);
         if (!this.selectedContactRecord) {
             this.customerContactsService
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                } , this.sharedService.currentUser.oid , this.sharedService.currentUser.role)
+                } , this.sharedService.currentUser.oid , this.customerInfoByGroup.oid)
                 .subscribe(() => {
                     this.loadCustomerContacts();
                 });

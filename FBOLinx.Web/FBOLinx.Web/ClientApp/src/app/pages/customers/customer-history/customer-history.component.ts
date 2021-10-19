@@ -10,6 +10,7 @@ import { MatTableDataSource } from '@angular/material/table';
 })
 export class CustomerHistoryComponent implements OnInit {
 
+    @Input() customerHistory : any;
     public customerHistoryDataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
         'time',
@@ -30,14 +31,7 @@ export class CustomerHistoryComponent implements OnInit {
               private route : ActivatedRoute) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    console.log(id);
-    this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
-        ( data : any)=> {
-            console.log(data)
-            this.customerHistoryDataSource = new MatTableDataSource (data) ;
-        }
-    )
+      this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory)
 
   }
 

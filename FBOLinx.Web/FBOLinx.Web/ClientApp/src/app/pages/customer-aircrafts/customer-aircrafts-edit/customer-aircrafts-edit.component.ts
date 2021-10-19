@@ -34,6 +34,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public pricingTemplates: Array<any>;
+    public customerInfoByGroupId : any ;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -41,15 +42,17 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private dialogAircraftDeleteRef: MatDialog ,
-        private sharedService : SharedService ,
-        private route : ActivatedRoute
+        private sharedService : SharedService
+
 
     ) {}
 
     ngOnInit() {
         if (this.data) {
             this.aircraftsService.get(this.data).subscribe((data: any) => {
+
                 this.customerAircraftInfo = data;
+
             });
         }
 
@@ -59,12 +62,13 @@ export class CustomerAircraftsEditComponent implements OnInit {
         this.aircraftsService
             .getAircraftSizes()
             .subscribe((data: any) => (this.aircraftSizes = data));
-    }
+
+        }
 
     public saveEdit() {
-        const id = this.route.snapshot.paramMap.get('id');
+        console.log(this.data.customerGroupId)
         this.customerAircraftsService
-            .update(this.customerAircraftInfo , this.sharedService.currentUser.oid , id )
+            .update(this.customerAircraftInfo , this.sharedService.currentUser.oid , this.data.customerGroupId )
             .subscribe((data: any) => {
                 this.dialogRef.close(data);
             });

@@ -19,8 +19,8 @@ export class CustomercontactsService {
         });
     }
 
-    public add(payload , userId  , Role) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId , customerId ) {
+        return this.http.post(this.accessPointUrl+'/'+userId+'/'+customerId, payload, {
             headers: this.headers,
         });
     }
