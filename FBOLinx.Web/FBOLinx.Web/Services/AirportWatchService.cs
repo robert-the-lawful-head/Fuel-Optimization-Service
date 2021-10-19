@@ -49,6 +49,7 @@ namespace FBOLinx.Web.Services
         {
             var fbo = await (from f in _context.Fbos
                             join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                             where f.Oid == fboId
                             select new { f, fa }).FirstOrDefaultAsync();
 
             var distance = 250;
