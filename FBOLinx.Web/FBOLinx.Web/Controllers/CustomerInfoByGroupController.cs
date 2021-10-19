@@ -39,7 +39,8 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxService _fuelerLinxService;
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
+        private readonly IPricingTemplateService _pricingTemplateService;
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService, IPricingTemplateService pricingTemplateService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -49,6 +50,7 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _priceDistributionService = priceDistributionService;
             _fuelerLinxService = fuelerLinxService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         // GET: api/CustomerInfoByGroup
@@ -712,16 +714,14 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+                List<PricingTemplatesGridViewModel> pricingTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
 
                 PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && (x.Default ?? false)).FirstOrDefaultAsync();
 
-                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-                await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
+                await _pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
                 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
 
@@ -854,7 +854,7 @@ namespace FBOLinx.Web.Controllers
 
 
             List<CustomerWithPricing> commercialValidPricing =
-                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial);
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial, ApplicableTaxFlights.All, null, 0, groupId);
             if (commercialValidPricing != null)
             {
                 commercialValidPricing.RemoveAll(x => x.GroupId != groupId);
@@ -862,7 +862,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             List<CustomerWithPricing> privateValidPricing =
-                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private);
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private, ApplicableTaxFlights.All, null, 0, groupId);
             if (privateValidPricing != null)
             {
                 privateValidPricing.RemoveAll(x => x.GroupId != groupId);

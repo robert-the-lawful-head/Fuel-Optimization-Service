@@ -52,12 +52,13 @@ namespace FBOLinx.Web.Services
         private IHttpContextAccessor _HttpContextAccessor;
         private IMailTemplateService _MailTemplateService;
         private IPriceFetchingService _PriceFetchingService;
+        private IPricingTemplateService _PricingTemplateService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -65,6 +66,7 @@ namespace FBOLinx.Web.Services
             _context = context;
             _fileStorageContext = fileStorageContext;
             _MailService = mailService;
+            _PricingTemplateService = pricingTemplateService;
         }
         #endregion
 
@@ -341,7 +343,7 @@ namespace FBOLinx.Web.Services
         private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
         {
 
-            var result = await _PriceFetchingService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
+            var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
                 _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
             
             return result;

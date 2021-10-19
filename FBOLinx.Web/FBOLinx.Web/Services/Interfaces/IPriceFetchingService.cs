@@ -9,33 +9,27 @@ namespace FBOLinx.Web.Services.Interfaces
 {
     public interface IPriceFetchingService
     {
-        Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+
+        public Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
             string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null,
             int fboId = 0);
 
-        Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
+        public Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0);
+
+        public Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
             int customerInfoByGroupId, List<int> pricingTemplateIds,
             FBOLinx.Core.Enums.FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null);
 
-        Task<List<PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId,
-            int groupId, int pricingTemplateId = 0);
+        public Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
 
-        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId,
-            int groupId, int pricingTemplateId = 0);
+        public Task<double> GetCurrentPostedRetail(int fboId);
 
-        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer,
-            int fboId, int groupId, int pricingTemplateId = 0);
+        public Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing();
 
-        Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId);
-
-        Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
-
-        Task<double> GetCurrentPostedRetail(int fboId);
-
-        Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing();
-
-        Task NotifyFboExpiredPrices(List<string> toEmails, string fbo);
+        public Task NotifyFboExpiredPrices(List<string> toEmails, string fbo);
     }
 }

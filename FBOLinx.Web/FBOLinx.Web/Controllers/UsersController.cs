@@ -19,6 +19,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
+using FBOLinx.Web.Services.Interfaces;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -36,8 +37,9 @@ namespace FBOLinx.Web.Controllers
         private IServiceProvider _Services;
         private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
+        private IPricingTemplateService _pricingTemplateService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -48,6 +50,7 @@ namespace FBOLinx.Web.Controllers
             _fileProvider = fileProvider;
             _Services = services;
             _fboService = fboService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         [HttpGet("prepare-token-auth")]
@@ -356,9 +359,7 @@ namespace FBOLinx.Web.Controllers
 
                 int fboId = JwtManager.GetClaimedFboId(_httpContextAccessor);
 
-                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-                await pricingTemplateService.FixDefaultPricingTemplate(fboId);
+                await _pricingTemplateService.FixDefaultPricingTemplate(fboId);
             }
             catch (Exception)
             {
