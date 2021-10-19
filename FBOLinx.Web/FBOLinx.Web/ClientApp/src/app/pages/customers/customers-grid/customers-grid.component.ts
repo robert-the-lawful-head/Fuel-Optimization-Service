@@ -191,10 +191,10 @@ export class CustomersGridComponent implements OnInit {
         }
         this.airportWatchService.getStartDate().subscribe((date) => {
             this.airportWatchStartDate = new Date(date);
-        });        
+        });
     }
 
-    
+
 
     onPageChanged(event: any) {
         localStorage.setItem('pageIndex', event.pageIndex);
@@ -231,6 +231,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     editCustomer(customer) {
+       
         this.editCustomerClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
@@ -584,7 +585,7 @@ export class CustomersGridComponent implements OnInit {
     onCustomerTagUpdate(event: any, customer: any) {
         if (event.itemValue.customerId != customer.customerId)
         {
-            this.addCustomerTag(event.itemValue, customer);                     
+            this.addCustomerTag(event.itemValue, customer);
         }
         else{
             this.removeCustomerTag(event.itemValue, customer);
@@ -605,7 +606,7 @@ export class CustomersGridComponent implements OnInit {
         tag['customerId'] = customer.customerId;
         tag['oid'] = 0;
         this.tagsService.add(tag).subscribe(response => {
-            this.loadCustomerTags(customer);   
+            this.loadCustomerTags(customer);
         });
     }
 
@@ -620,8 +621,8 @@ export class CustomersGridComponent implements OnInit {
         })
     }
 
-    newCustomTag(customer: any) {    
-        this.dialogOpen = true;    
+    newCustomTag(customer: any) {
+        this.dialogOpen = true;
         const data = {
             customerId: customer.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -631,7 +632,7 @@ export class CustomersGridComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((response) => {
-            this.dialogOpen = false;            
+            this.dialogOpen = false;
             if (!response) {
                 return;
             }
@@ -645,7 +646,7 @@ export class CustomersGridComponent implements OnInit {
 
     checkState() {
         if (this.dialogOpen)
-            this.multiInput.show();      
+            this.multiInput.show();
     }
 
     onCustomerPriceShown(customer: any) {
@@ -694,7 +695,7 @@ export class CustomersGridComponent implements OnInit {
                 return element.needsAttention;
             }
         );
-        
+
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;

@@ -1246,16 +1246,19 @@ namespace FBOLinx.Web.Controllers
                 FboLinxCustomerTransactionsCountAtAirportResponse fboTransactionsResponse = await _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest);
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = fboTransactionsResponse.Result;
                 
-                //Fill-in customers that don't exist in the group anymore
-                List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
-                    .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
-                var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
-                    !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId.GetValueOrDefault())).Select(x => x.FuelerLinxCustomerId.GetValueOrDefault()).Where(x => x > 0).Distinct();
-                foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
+                if(customeridval == null)
                 {
-                    var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
-                        Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
-                    customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                    //Fill-in customers that don't exist in the group anymore
+                    List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
+                        .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
+                    var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
+                        !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId.GetValueOrDefault())).Select(x => x.FuelerLinxCustomerId.GetValueOrDefault()).Where(x => x > 0).Distinct();
+                    foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
+                    {
+                        var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
+                            Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
+                        customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                    }
                 }
 
                 List<object> tableData = new List<object>();

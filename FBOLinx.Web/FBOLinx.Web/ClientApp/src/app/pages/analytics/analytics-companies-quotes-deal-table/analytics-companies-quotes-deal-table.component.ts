@@ -228,11 +228,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         const filterValue = (event.target as HTMLInputElement).value;
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
-    
+
     CustomerAnalitycs(element: any )
     {
-
-       this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3  , customerId : element.customerId}  });
+     this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3}  });
     }
 
     onExport() {

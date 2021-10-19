@@ -97,14 +97,14 @@ export class CustomersEditComponent implements OnInit {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
 
-        if( ! this.router.getCurrentNavigation().extras)
+        if( !this.router.getCurrentNavigation().extras )
          {
               this.selectedIndex = 0;
           }
           else
           {
-           this.selectedIndex = this.router.getCurrentNavigation().extras.state?.tab ;
-           this.customerId = this.router.getCurrentNavigation().extras.state.customerId;
+             this.selectedIndex = this.router.getCurrentNavigation().extras?.state?.tab ;
+
           }
 
     }
@@ -114,6 +114,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
             .toPromise();
+        this.customerId = this.customerInfoByGroup.customerId;
         const results = await combineLatest([
             this.customerInfoByGroupService.getCertificateTypes(),
             this.pricingTemplatesService.getByFbo(
@@ -511,7 +512,7 @@ export class CustomersEditComponent implements OnInit {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();
                 });
-        } 
+        }
     }
 
     private saveCustomerContact() {

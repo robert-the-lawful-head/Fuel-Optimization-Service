@@ -64,6 +64,7 @@ export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDe
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
+        console.log(this.customerId)
        this.fuelreqsService
             .getCompanyQuotingDealStatistics(
                 this.sharedService.currentUser.groupId,
@@ -74,7 +75,7 @@ export class CustomersAnalyticsComponent implements OnInit , AfterViewInit, OnDe
             )
             .subscribe((data: any) => {
                 this.dataSource = new MatTableDataSource(data);
-                this.dataSource.sortingDataAccessor = (item, property) => {
+                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
