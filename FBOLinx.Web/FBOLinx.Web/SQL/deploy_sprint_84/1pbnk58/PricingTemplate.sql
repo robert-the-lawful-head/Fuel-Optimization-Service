@@ -1,3 +1,3 @@
 ﻿ALTER TABLE PricingTemplate
-	ADD discountType bit default 0
+	ADD discountType smallint default 0
 GO
