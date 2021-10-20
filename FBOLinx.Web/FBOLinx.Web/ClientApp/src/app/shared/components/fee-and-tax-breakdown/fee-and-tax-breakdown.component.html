@@ -89,7 +89,8 @@
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col">ITP-Margin</div>
+            <div class="col" *ngIf="marginType == 0" >ITP-Margin</div>
+            <div class="col" *ngIf="marginType == 1" >Discount</div>
             <div class="col"></div>
             <div class="col text-right">
                 ${{ marginITP | number: "1.4-4" }}
@@ -102,7 +103,7 @@
             <div class="col font-weight-bold">Sub-total w/ Margin</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
-                ${{ marginITP | number: "1.4-4" }}
+                ${{ subTotalWithMargin | number: "1.4-4" }}
             </div>
         </div>
 

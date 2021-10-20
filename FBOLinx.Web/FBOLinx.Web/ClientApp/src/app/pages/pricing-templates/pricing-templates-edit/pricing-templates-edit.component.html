@@ -125,8 +125,9 @@
                                         <th>
                                             <div class="">Max. (gal)</div>
                                         </th>
-                                        <th>
-                                            <div class="">Discount</div>
+                                        <th *ngIf=" pricingTemplateForm.value
+                                        .marginType == 1">
+                                            <div class="" >Discount</div>
                                         </th>
                                         <th>
                                             <div class="volume-tiers-header">
@@ -184,7 +185,8 @@
                                                 </mat-form-field>
                                             </div>
                                         </td>
-                                        <td
+                                        <td *ngIf=" pricingTemplateForm.value
+                                        .marginType == 1"
                                            [formGroupName]="i">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field>
@@ -222,13 +224,46 @@
                                             class="font-weight-bold font-italic"
                                         >
                                             <div>
-                                               <div class="volume-tiers-width">
+                                               <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
+                                               .marginType == 1">
                                                     <div>
                                                         ${{
                                                             customerMargin.value.itp
                                                                 | number: "1.4-4"
                                                         }}
                                                     </div>
+                                                </div>
+
+
+                                                <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
+                                               .marginType == 0">
+                                               <mat-form-field>
+                                                <input
+                                                    (click)="
+                                                        $event.target.select()
+                                                    "
+                                                    formControlName="amount"
+                                                    matInput
+                                                    step="0.01"
+                                                    type="number"
+                                                />
+                                                <span
+                                                    *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 0 "
+                                                        class="prefixDollar"
+                                                        matPrefix
+                                                        >$</span
+                                                    >
+                                                   <span
+                                                    *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1 "
+                                                        class="prefixPercentage"
+                                                        matPrefix
+                                                        >%</span
+                                                    >
+                                                </mat-form-field>
                                                 </div>
                                             </div>
                                         </td>
