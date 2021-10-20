@@ -114,6 +114,7 @@ export class CustomersGridComponent implements OnInit {
     @Input() aircraftData: any[];
     @Input() customerGridState: CustomerGridState;
     @Input() fuelVendors: any[];
+    @Input () tags : any [];
 
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
@@ -122,14 +123,14 @@ export class CustomersGridComponent implements OnInit {
     tableLocalStorageKey = 'customer-manager-table-settings';
 
     customersDataSource: any = null;
-    customerFilterType: number = undefined;
+    customerFilterType: number = 0;
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
-    tags: any[];
+
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
     dialogOpen : boolean = false;
     results = '[]';
@@ -158,8 +159,7 @@ export class CustomersGridComponent implements OnInit {
 
     ngOnInit() {
         /*this.initializeImporter();*/
-
-        if (this.customerGridState.filterType) {
+         if (this.customerGridState.filterType) {
             this.customerFilterType = this.customerGridState.filterType;
         }
 
@@ -692,10 +692,11 @@ export class CustomersGridComponent implements OnInit {
         }
         this.customersDataSource.data = this.customersData.filter(
             (element: any) => {
-                if (this.customerFilterType !== 1) {
-                    return true;
+               if (this.customerFilterType != 1) {
+                   return true;
                 }
                 return element.needsAttention;
+
             }
         );
 
