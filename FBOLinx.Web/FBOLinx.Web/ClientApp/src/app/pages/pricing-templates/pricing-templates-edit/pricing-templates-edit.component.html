@@ -249,24 +249,48 @@
 
                                                 </mat-form-field>
                                         </td>
-                                        <!--total-->
+                                        <!--TOTAL-->
                                         <td [formGroupName]="i"
-                                            class="font-weight-bold font-italic"> <!-- TOTAL -->
+                                            class="font-weight-bold font-italic">
                                             <div>
                                                 <div>
                                                     <div *ngIf="
-                                                         pricingTemplateForm.value
-                                                         .marginType == 1">
+                                                    pricingTemplateForm.value
+                                                        .marginType == 0 &&
+                                                    pricingTemplateForm.value
+                                                        .discountType == 0">
                                                         ${{
-                                                            jetARetail - customerMargin.value.itp
+                                                            jetACost + customerMargin.value.itp
+                                                                | number: "1.4-4"
+                                                        }} 
+                                                    </div>
+                                                    <div *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .marginType == 0 &&
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1">
+                                                        ${{
+                                                            jetACost + (jetACost * customerMargin.value.amount / 100)
                                                                 | number: "1.4-4"
                                                         }}
                                                     </div>
                                                     <div *ngIf="
-                                                         pricingTemplateForm.value
-                                                         .marginType == 0">
+                                                    pricingTemplateForm.value
+                                                        .marginType == 1 &&
+                                                    pricingTemplateForm.value
+                                                        .discountType == 0">
                                                         ${{
-                                                            jetACost + customerMargin.value.itp
+                                                            jetARetail - customerMargin.value.amount
+                                                                | number: "1.4-4"
+                                                        }}
+                                                    </div>
+                                                    <div *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .marginType == 1 &&
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1">
+                                                        ${{
+                                                            jetARetail - (jetARetail * customerMargin.value.amount / 100)
                                                                 | number: "1.4-4"
                                                         }}
                                                     </div>
