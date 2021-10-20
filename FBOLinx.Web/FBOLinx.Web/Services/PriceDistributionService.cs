@@ -609,9 +609,11 @@ namespace FBOLinx.Web.Services
             var result = await (from cc in _context.Set<CustomerContacts>()
                 join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
                 join cibg in _context.Set<ContactInfoByGroup>() on c.Oid equals cibg.ContactId
+                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = _DistributePricingRequest.FboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where cibg.GroupId == _DistributePricingRequest.GroupId
                                       && cc.CustomerId == customer.CustomerId
-                                      && (cibg.CopyAlerts ?? false)
+                                      && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                       && !string.IsNullOrEmpty(cibg.Email)
                                 select cibg).ToListAsync();
             return result;
