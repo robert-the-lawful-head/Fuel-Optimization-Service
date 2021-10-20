@@ -69,6 +69,7 @@ export class TableColumnFilterComponent implements OnInit {
     constructor() {}
 
     ngOnInit(): void {
+
         if (!this.column) {
             this.column = {
                 propertyName: this.propertyName,
@@ -236,14 +237,16 @@ export class TableColumnFilterComponent implements OnInit {
                         );
                     }
 
-                    if ([11].indexOf(element.columnFormat) > -1) {
+                     if ([11].indexOf(element.columnFormat) > -1) {
                         return (
-                            !element.filter.optionsFilter.length ||
+                            !element.filter.optionsFilter.length
+                                ||
                             element.filter.optionsFilter.some((v) =>
-                                columnValue.find((c) => c.value === v)
-                            )
+                                columnValue.find((c) => c.value === v || c.name === v))
+
                         );
                     }
+
 
                     if (columnValue === null || columnValue === '') {
                         return false;

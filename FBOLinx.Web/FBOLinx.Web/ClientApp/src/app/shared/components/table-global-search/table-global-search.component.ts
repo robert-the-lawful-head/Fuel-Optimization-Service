@@ -9,6 +9,7 @@ import * as moment from 'moment';
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
+    @Input() SubmatDataSource : any = null
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
@@ -21,6 +22,8 @@ export class TableGlobalSearchComponent implements OnInit {
             this.matDataSource.filterCollection = [];
         }
         let hasGlobal = false;
+       
+
         for (const filter of this.matDataSource.filterCollection) {
             if (filter.isGlobal) {
                 hasGlobal = true;
@@ -36,22 +39,26 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
+
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];
         } else {
             existingFilters = JSON.parse(this.matDataSource.filter);
+
         }
 
         let hasGlobal = false;
 
         for (const filter of existingFilters) {
+
             if (filter.isGlobal) {
                 hasGlobal = true;
                 this.globalFilter = filter;
                 break;
             }
         }
+
         if (!hasGlobal) {
             existingFilters.push(this.globalFilter);
         }
@@ -69,6 +76,7 @@ export class TableGlobalSearchComponent implements OnInit {
         }
 
         this.matDataSource.filter = JSON.stringify(existingFilters);
+
 
         this.filterApplied.emit(filterValue);
     }

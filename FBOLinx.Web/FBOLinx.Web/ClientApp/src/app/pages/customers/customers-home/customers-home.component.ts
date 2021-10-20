@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { locationChangedEvent } from '../../../models/sharedEvents';
@@ -39,6 +40,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
     fuelVendors: any[];
+    tags : any[];
 
     constructor(
         private store: Store<State>,
@@ -46,13 +48,16 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
-        private customerAircraftService: CustomeraircraftsService
+        private customerAircraftService: CustomeraircraftsService,
+        private tagService : TagsService
+
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircraft();
         this.loadFuelVendors();
+        this.loadTags();
     }
 
     ngOnInit(): void {
@@ -123,6 +128,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.sharedService.currentUser.groupId
             )
             .subscribe((data: any) => {
+
                 this.pricingTemplatesData = data;
             });
     }
@@ -143,10 +149,28 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.customerInfoByGroupService
             .getFuelVendors()
             .subscribe((data: any) => {
+
                 this.fuelVendors = data.map((fv) => ({
                     label: fv,
                     value: fv,
                 }));
             });
     }
+
+    private loadTags ()
+    {
+        this.tagService.getGroupTags(
+            this.sharedService.currentUser.groupId
+        )
+        .subscribe((data:any) =>
+        {
+
+           this.tags = data.map((tg) => ({
+            label: tg,
+            value: tg,
+        }));
+        });
+
+    }
+
 }
