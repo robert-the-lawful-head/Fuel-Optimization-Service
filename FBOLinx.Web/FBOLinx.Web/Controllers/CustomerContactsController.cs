@@ -137,9 +137,11 @@ namespace FBOLinx.Web.Controllers
                                 join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                 join co in _context.Contacts on custc.ContactId equals co.Oid
                                 join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where (cg.Active ?? false)
                                       && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                                      && (cibg.CopyAlerts ?? false) == true
+                                      && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                       && !string.IsNullOrEmpty(cibg.Email)
                                       && cibg.GroupId == groupId
                                       && (c.Suspended ?? false) == false

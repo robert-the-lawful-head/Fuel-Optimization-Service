@@ -743,8 +743,14 @@ namespace FBOLinx.Web.Controllers
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroup = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
-                var contactInfoByGroupForAlerts =
-                    await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
+                
+                var contactInfoByFboForAlerts =
+                    await (from cibg in _context.ContactInfoByGroup
+                           join c in _context.Contacts on cibg.ContactId equals c.Oid
+                           join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                           from cibf in leftJoinCIBF.DefaultIfEmpty()
+                           where cibg.GroupId == groupId 
+                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts }).ToListAsync();
 
                 //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
@@ -776,8 +782,8 @@ namespace FBOLinx.Web.Controllers
                             FuelerLinxId = (cg.Customer?.FuelerlinxId ?? 0),
                             CustomerCompanyTypeName = ccot?.Name,
                             CertificateType = (cg.CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet),
-                            ContactExists = contactInfoByGroupForAlerts.Any(c =>
-                                (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true),
+                            ContactExists =  contactInfoByFboForAlerts.Any(c =>
+                                (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
