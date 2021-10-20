@@ -66,7 +66,7 @@ export class PricingTemplatesEditComponent implements OnInit {
 
      discountTypeDataSource: Array<any> = [
         { text: 'Flat per Gallon', value: 0 },
-        { text: 'Precentage', value: 1 },
+        { text: 'Percentage', value: 1 },
      ];
 
     emailTemplatesDataSource: Array<any>;

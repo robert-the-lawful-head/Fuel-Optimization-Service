@@ -40,6 +40,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     public subTotalWithMargin = 0;
     public total = 0;
     public marginITP : number = 0;
+    public subMargin : number = 0;
 
     constructor() {
 
@@ -89,13 +90,42 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     private calcItpMargin ()
     {
         //Cost+ Mode
-       if(this.discountType == 1)
+       if(this.marginType == 0)
        {
-           this.marginITP = this.fboPrice *this.customerMargin /100;
+        if(this.discountType == 1)
+        {
+            this.marginITP = this.fboPrice *this.customerMargin /100;
+
         }
+
+        else
+        {
+             this.marginITP = this.customerMargin ;
+
+
+        }
+
+        this.subTotalWithMargin = this.marginITP + this.preMarginSubTotal
+       }
+
+       // Retail- Mode
        else
        {
-        this.marginITP = this.fboPrice - this.customerMargin ;
+        if(this.discountType == 1)
+        {
+            this.marginITP = this.fboPrice *this.customerMargin /100;
+
+        }
+
+        else
+        {
+             this.marginITP = this.customerMargin ;
+
+
+        }
+
+             this.subTotalWithMargin =  this.preMarginSubTotal - this.marginITP
+
        }
    }
     private calculatePreMarginSubTotal(): void {
@@ -126,12 +156,42 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         }
 
         this.subTotalWithMargin = 0;
-        if (this.marginType === 0) {
-            this.subTotalWithMargin =
-                this.preMarginSubTotal + this.customerMargin;
-        } else if (this.marginType === 1) {
-            this.subTotalWithMargin =
-                this.preMarginSubTotal - this.customerMargin;
+        if(this.marginType == 0)
+        {
+         if(this.discountType == 1)
+         {
+             this.marginITP = this.fboPrice *this.customerMargin /100;
+
+         }
+
+         else
+         {
+              this.marginITP = this.customerMargin ;
+
+
+         }
+
+         this.subTotalWithMargin = this.marginITP + this.preMarginSubTotal
+        }
+
+        // Retail- Mode
+        else
+        {
+         if(this.discountType == 1)
+         {
+             this.marginITP = this.fboPrice *this.customerMargin /100;
+
+         }
+
+         else
+         {
+              this.marginITP = this.customerMargin ;
+
+
+         }
+
+              this.subTotalWithMargin =  this.preMarginSubTotal - this.marginITP
+
         }
     }
 

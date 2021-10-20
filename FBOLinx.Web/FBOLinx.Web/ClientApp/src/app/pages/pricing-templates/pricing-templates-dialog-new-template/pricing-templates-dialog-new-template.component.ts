@@ -326,16 +326,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
                        {
-
-                        margins[i].allin =
-                        this.jetACost + Number(margins[i].amount);
-                        console.log( margins[i].allin)
+                        margins[i].allin = Number(margins[i].amount);
                        }
                        else
                        {
-
                         margins[i].allin =
-                        this.jetACost * (1 + (Number(margins[i].amount)/100));
+                        this.jetACost * Number(margins[i].amount)/100;
                        }
 
                        margins[i].itp = this.jetACost;
@@ -350,7 +346,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     if(discountType == 0)
                     {
                         margins[i].allin =
-                        this.jetARetail - Number(margins[i].amount);
+                         this.jetARetail - Number(margins[i].amount);
                     }
                     else
                     {
@@ -359,9 +355,13 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     }
 
 
-                    margins[i].itp = this.jetARetail;
                     if (margins[i].allin !== null) {
-                        margins[i].itp = margins[i].allin ;
+
+                        margins[i].itp = margins[i].allin -  this.jetACost ;
+                    }
+                    else
+                    {
+                        margins[i].itp = this.jetARetail;
                     }
                 }
             }
