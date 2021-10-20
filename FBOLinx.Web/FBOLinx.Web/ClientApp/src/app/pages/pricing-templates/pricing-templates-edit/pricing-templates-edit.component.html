@@ -135,15 +135,21 @@
                                             </div>
                                         </th>
                                         <th>
+                                            <div>
+                                                Total
+                                                <a matTooltip="Please see the scenario pricing tab for out-the-door pricing that includes taxes & fees"
+                                                            matTooltipPosition="after" style="float: right">*
+                                                </a>
+                                            </div>
+                                        </th>
+                                        <th>
                                             <div class="ml-4">
-                                                <button
-                                                    (click)="
+                                                <button (click)="
                                                         addCustomerMargin()
                                                     "
-                                                    [view]="'accent'"
-                                                    beforeIcon="fa fa-plus"
-                                                    ni-button
-                                                >
+                                                        [view]="'accent'"
+                                                        beforeIcon="fa fa-plus"
+                                                        ni-button>
                                                     Add New
                                                 </button>
                                             </div>
@@ -151,37 +157,31 @@
                                     </tr>
                                 </thead>
                                 <tbody formArrayName="customerMargins">
-                                    <tr
-                                        *ngFor="
+                                    <tr *ngFor="
                                             let customerMargin of customerMarginsFormArray.controls;
                                             let i = index
                                         "
-                                        class="mat-row"
-                                    >
+                                        class="mat-row">
                                         <td [formGroupName]="i" class="">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field class="">
-                                                    <input
-                                                        formControlName="min"
-                                                        matInput
-                                                    />
+                                                    <input formControlName="min"
+                                                           matInput />
                                                 </mat-form-field>
                                             </div>
                                         </td>
                                         <td class="">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field>
-                                                    <input
-                                                        disabled="disabled"
-                                                        matInput
-                                                        value="{{
+                                                    <input disabled="disabled"
+                                                           matInput
+                                                           value="{{
                                                             customerMargin.value
                                                                 .max == 0
                                                                 ? 99999
                                                                 : customerMargin
                                                                       .value.max
-                                                        }}"
-                                                    />
+                                                        }}" />
                                                 </mat-form-field>
                                             </div>
                                         </td>
@@ -190,31 +190,23 @@
                                            [formGroupName]="i">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field>
-                                                    <input
-                                                        (click)="
+                                                    <input (click)="
                                                             $event.target.select()
                                                         "
-                                                        formControlName="amount"
-                                                        matInput
-                                                        step="0.01"
-                                                        type="number"
-                                                    />
-                                                    <span
-                                                    *ngIf="
+                                                           formControlName="amount"
+                                                           matInput
+                                                           step="0.01"
+                                                           type="number" />
+                                                    <span *ngIf="
                                                     pricingTemplateForm.value
                                                         .discountType == 0 "
-                                                        class="prefixDollar"
-                                                        matPrefix
-                                                        >$</span
-                                                    >
-                                                   <span
-                                                    *ngIf="
+                                                          class="prefixDollar"
+                                                          matPrefix>$</span>
+                                                    <span *ngIf="
                                                     pricingTemplateForm.value
                                                         .discountType == 1 "
-                                                        class="prefixPercentage"
-                                                        matPrefix
-                                                        >%</span
-                                                    >
+                                                          class="prefixPercentage"
+                                                          matPrefix>%</span>
 
                                                 </mat-form-field>
                                             </div>
@@ -229,6 +221,30 @@
                                                     <div>
                                                         ${{
                                                             customerMargin.value.itp
+                                                                | number: "1.4-4"
+                                                            
+                                                        }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td [formGroupName]="i"
+                                            class="font-weight-bold font-italic"> <!-- TOTAL -->
+                                            <div>
+                                                <div>
+                                                    <div *ngIf="
+                                                         pricingTemplateForm.value
+                                                         .marginType == 1">
+                                                        ${{
+                                                            jetARetail - customerMargin.value.itp
+                                                                | number: "1.4-4"
+                                                        }}
+                                                    </div>
+                                                    <div *ngIf="
+                                                         pricingTemplateForm.value
+                                                         .marginType == 0">
+                                                        ${{
+                                                            jetACost + customerMargin.value.itp
                                                                 | number: "1.4-4"
                                                         }}
                                                     </div>
@@ -269,15 +285,13 @@
                                         </td>
                                         <td class="">
                                             <div class="ml-4">
-                                                <button
-                                                    (click)="
+                                                <button (click)="
                                                         deleteCustomerMargin(i)
                                                     "
-                                                    [view]="'error'"
-                                                    beforeIcon="fa fa-trash"
-                                                    ni-button
-                                                    size="small"
-                                                >
+                                                        [view]="'error'"
+                                                        beforeIcon="fa fa-trash"
+                                                        ni-button
+                                                        size="small">
                                                     Delete
                                                 </button>
                                             </div>
