@@ -76,7 +76,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     isSaving = false;
     hasSaved = false;
     isSaveQueued = false;
-
+    discountType : number;
     feesAndTaxes: Array<any>;
 
     constructor(
@@ -178,6 +178,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
                 this.savePricingTemplate();
+
             });
 
             // Margin type change event
@@ -214,7 +215,35 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.savePricingTemplate();
                 }
             );
+
+
+        //When Discount Type Change event
+        this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
+            (type) => {
+                if(this.pricingTemplateForm.value.discountType == 0)
+                   this.discountType = 1
+                else
+                    this.discountType = 0
+
+                const updatedMargins = this.updateMargins(
+                    this.pricingTemplateForm.value.customerMargins,
+                    type ,
+                    this.discountType,
+                );
+                this.pricingTemplateForm.controls.customerMargins.setValue(
+                    updatedMargins,
+                    {
+                        emitEvent: false,
+                    }
+                );
+                this.savePricingTemplate();
+            }
+        );
+
+
         });
+
+
 
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();
@@ -407,6 +436,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                        if(discountType == 0)
                        {
                         margins[i].allin = Number(margins[i].amount);
+                        margins[i].itp  = Number(margins[i].amount);
                        }
                        else
                        {
