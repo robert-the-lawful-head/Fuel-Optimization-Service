@@ -1,0 +1,25 @@
+.actions
+{
+    text-align: center;
+    justify-content: center;
+}
+
+table{
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    justify-content: center;
+    text-align: center;
+  }
+  th, td {
+    padding: 5px;
+    text-align: left;
+  }
+.container
+{
+    justify-content: center !important;
+    text-align: center;
+}

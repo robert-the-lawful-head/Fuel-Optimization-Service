@@ -22,6 +22,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -39,7 +40,8 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxService _fuelerLinxService;
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
+        private readonly AircraftService _aircraftService;
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService,   AircraftService aircraftService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -49,7 +51,9 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _priceDistributionService = priceDistributionService;
             _fuelerLinxService = fuelerLinxService;
+            _aircraftService = aircraftService;
         }
+
 
         // GET: api/CustomerInfoByGroup
         [HttpGet]
@@ -340,8 +344,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-           
-            
+          
+              
+         
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
@@ -721,11 +726,14 @@ namespace FBOLinx.Web.Controllers
                 {
                     customers.Add(new CustomerByGroupLogVM
                     {
+                        Oid = item.OID,
                         Action = item.Action.ToString(),
                         Location = item.Location.ToString(),                       
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerInfo
+                         
                     });
                 }
 
@@ -739,11 +747,13 @@ namespace FBOLinx.Web.Controllers
                 {
                     customers.Add(new CustomerByGroupLogVM
                     {
+                        Oid = item.OID,
                         Action = item.Action.ToString(),
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustoemrContact
                     });
                 }
 
@@ -755,12 +765,14 @@ namespace FBOLinx.Web.Controllers
                 foreach (var item in CustomerAircraft)
                 {
                     customers.Add(new CustomerByGroupLogVM
-                    {
+                    { 
+                        Oid = item.OID ,
                         Action = item.Action.ToString(),
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerAircarft
                     });
                 }
 
@@ -774,11 +786,13 @@ namespace FBOLinx.Web.Controllers
                 {
                     customers.Add(new CustomerByGroupLogVM
                     {
+                        Oid = item.OID,
                         Action = item.Action.ToString(),
                         Location = item.Location.ToString(),
                         Role = item.Role.ToString(),
                         Time = item.Time,
-                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerItpMargin
                     });
                 }
             }
@@ -788,6 +802,132 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(customers.OrderByDescending(d=>d.Time));
+        }
+
+
+        [HttpPost("GetCustomerLoggerDetails/id/{id}/logType/{logType}")]
+        public async Task<IActionResult> GetCustomerLoggerDetails ([FromRoute] int id , [FromRoute] int logType)
+        {
+            CustomerInfoByGroupLogDataVM customerInfo = new CustomerInfoByGroupLogDataVM();
+            CustomerContactLogDataVM customerContact = new CustomerContactLogDataVM();
+            CustomerAircraftLogDataVM customerAircraft = new CustomerAircraftLogDataVM();
+            CustomerMarginLogDataVM customerMargin = new CustomerMarginLogDataVM();
+
+           try
+            {
+           
+                if(logType == ((int)CustomerByGroupLogVM.LogType.CustomerInfo))
+                {
+                    var customerInfoLog = await _context.CustomerInfoByGroupLog.FirstOrDefaultAsync(x=>x.OID == id);
+                    if(customerInfoLog != null)
+                    {
+                        customerInfo.customerInfoByGroupLogData = customerInfoLog.oldcustomerId.ToString() != "" ?
+                                     _context.CustomerInfoByGroupLogData.FirstOrDefault(c => c.Oid == customerInfoLog.oldcustomerId) :null;
+
+                        customerInfo.customerInfoByGroup = customerInfoLog.newcustomerId.ToString() != "" ?
+                                          _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == customerInfoLog.newcustomerId) : null;
+
+
+                    }
+
+                    return Ok(customerInfo);
+
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustoemrContact))
+                {
+
+                    var customerContactLog = await _context.CustomerContactLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customerContactLog != null)
+                    {
+                        customerContact.customerContactLogData = customerContactLog.oldcustomercontactId.ToString() != "" ?
+                                     _context.CustomerContactLogData.FirstOrDefault(c => c.Oid == customerContactLog.oldcustomercontactId) : null;
+
+                        customerContact.customerContact = customerContactLog.newcustomercontactId.ToString() != "" ?
+                                          _context.CustomerContacts.FirstOrDefault(c => c.Oid == customerContactLog.newcustomercontactId) : null;
+
+                        if(customerContact.customerContactLogData != null  )
+                        {
+                            customerContact.OldContact = _context.Contacts.FirstOrDefault(c => c.Oid == customerContact.customerContactLogData.ContactId);
+                           
+                        }
+
+                        if(customerContact.customerContact != null)
+                        {
+                            customerContact.NewContact = _context.Contacts.FirstOrDefault(c => c.Oid == customerContact.customerContact.ContactId);
+
+                        }
+
+                    }
+
+                    return Ok(customerContact);
+
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustomerAircarft))
+                {
+
+                    var customeraircraftLog = await _context.CustomerAircraftLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customeraircraftLog != null)
+                    {
+                        customerAircraft.customerAircraftLogData = customeraircraftLog.oldcustomeraircraftId.ToString() != "" ?
+                                     _context.CustomerAircraftLogData.FirstOrDefault(c => c.Oid == customeraircraftLog.oldcustomeraircraftId) : null;
+
+                        customerAircraft.customerAircrafts = customeraircraftLog.newcustomeraircraftId.ToString() != "" ?
+                                          _context.CustomerAircrafts.FirstOrDefault(c => c.Oid == customeraircraftLog.newcustomeraircraftId) : null;
+
+
+                        if (customerAircraft.customerAircrafts != null )
+                        {
+                            customerAircraft.NewAircraft = _aircraftService.GetAircrafts(customerAircraft.customerAircrafts.AircraftId).Result;
+                           
+
+                        }
+
+                        if(customerAircraft.customerAircraftLogData != null)
+                        {
+                            customerAircraft.oldAircraft = _aircraftService.GetAircrafts(customerAircraft.customerAircraftLogData.AircraftId).Result;
+                        }
+
+                    }
+
+                    return Ok(customerAircraft);
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustomerItpMargin))
+                {
+
+
+                    var customerMarginLog = await _context.CustomCustomerTypeLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customerMarginLog != null)
+                    {
+                        customerMargin.customerTypesLogData = customerMarginLog.oldcustomertypeId.ToString() != "" ?
+                                     _context.CustomCustomerTypesLogData.FirstOrDefault(c => c.Oid == customerMarginLog.oldcustomertypeId) : null;
+
+                        customerMargin.customerTypes = customerMarginLog.newcustomertypetId.ToString() != "" ?
+                                          _context.CustomCustomerTypes.FirstOrDefault(c => c.Oid == customerMarginLog.newcustomertypetId) : null;
+
+                        if(customerMargin.customerTypes != null && customerMargin.customerTypesLogData != null)
+                        {
+                            customerMargin.NewMarginName = _context.PricingTemplate.
+                                                          FirstOrDefault(p => p.Oid == customerMargin.customerTypes.CustomerType).Name;
+
+                            customerMargin.oldMarginName = _context.PricingTemplate.
+                                                         FirstOrDefault(p => p.Oid == customerMargin.customerTypesLogData.CustomerType).Name;
+
+                        }
+
+                    }
+
+                    return Ok(customerMargin);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
         }
 
         private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer , int userId = 0)
