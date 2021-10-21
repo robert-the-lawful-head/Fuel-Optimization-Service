@@ -65,13 +65,14 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
+    public customerHistory : any;
     tags: any[];
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
-    customerHistory : any ;
     constructor(
         private formBuilder: FormBuilder,
+        private route: ActivatedRoute,
         private router: Router,
         private customCustomerTypesService: CustomcustomertypesService,
         private contactInfoByGroupsService: ContactinfobygroupsService,
@@ -88,18 +89,16 @@ export class CustomersEditComponent implements OnInit {
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
         private snackBar: MatSnackBar,
-        private tagsService: TagsService ,
-        private route : ActivatedRoute
+        private tagsService: TagsService
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
+        this.loadCustomerHistory();
     }
 
     async ngOnInit() {
+        this.loadCustomerHistory();
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
-            (data : any) => this.customerHistory = data
-        )
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
             .toPromise();
@@ -173,7 +172,7 @@ export class CustomersEditComponent implements OnInit {
 
 
                     await this.customerInfoByGroupService
-                        .update(customerInfoByGroup , this.sharedService.currentUser.oid , this.route.snapshot.paramMap.get('id'))
+                        .update(customerInfoByGroup , this.sharedService.currentUser.oid)
                         .toPromise();
                     if (
                         !this.customCustomerType.oid ||
@@ -184,9 +183,10 @@ export class CustomersEditComponent implements OnInit {
                             .toPromise();
                     } else {
                         await this.customCustomerTypesService
-                            .update(this.customCustomerType  , this.sharedService.currentUser.oid)
+                            .update(this.customCustomerType)
                             .toPromise();
                     }
+                    this.loadCustomerHistory();
                     this.customerInfoByGroup = customerInfoByGroup;
                     this.isEditing = false;
                 }),
@@ -219,6 +219,15 @@ export class CustomersEditComponent implements OnInit {
         this.loadCustomerTags();
     }
 
+    loadCustomerHistory()
+    {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
+            (data : any)=>{
+                this.customerHistory = data
+            }
+        )
+    }
     // Methods
     cancelCustomerEdit() {
         this.router.navigate(['/default-layout/customers/']).then();
@@ -280,6 +289,7 @@ export class CustomersEditComponent implements OnInit {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
         }
+        
     }
 
     customerCompanyTypeChanged() {
@@ -506,7 +516,7 @@ export class CustomersEditComponent implements OnInit {
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                } , this.sharedService.currentUser.oid , this.route.snapshot.paramMap.get('id'))
+                }, this.sharedService.currentUser.oid ,this.route.snapshot.paramMap.get('id'))
                 .subscribe(() => {
                     this.loadCustomerContacts();
                 });

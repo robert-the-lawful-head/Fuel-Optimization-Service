@@ -145,8 +145,8 @@ export class CustomerinfobygroupService {
         });
     }
 
-    public update(payload , userId ,  customerId) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+ customerId, payload, {
+    public update(payload , userId) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
             headers: this.headers,
         });
     }
