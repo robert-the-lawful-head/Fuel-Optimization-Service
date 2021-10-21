@@ -329,8 +329,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomerInfoByGroup/5
-        [HttpPut("{id}/{userId}/{customerId}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromRoute] int customerId, [FromBody] CustomerInfoByGroup customerInfoByGroup )
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id , [FromRoute] int userId, [FromBody] CustomerInfoByGroup customerInfoByGroup )
         {
             if (!ModelState.IsValid)
             {
@@ -342,12 +342,13 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            EditCustomerToLogger(customerInfoByGroup, customerId , userId);
+           
             
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
             {
+                EditCustomerToLogger(customerInfoByGroup, customerInfoByGroup.Oid, userId);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)

@@ -40,8 +40,8 @@ export class CustomcustomertypesService {
         });
     }
 
-    public update(payload , userId ) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
+    public update(payload) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }

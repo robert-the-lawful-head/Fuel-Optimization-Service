@@ -64,7 +64,6 @@ export class CustomersEditComponent implements OnInit {
     certificateTypes: any[];
     selectedIndex: any  = 0;
     customerCompanyTypes: any[];
-    customerHistory : any;
     customerForm: FormGroup;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
@@ -90,7 +89,6 @@ export class CustomersEditComponent implements OnInit {
         private dialog: MatDialog,
         private newContactDialog: MatDialog,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
-
         private fboFeeAndTaxOmitsbyCustomerService: FbofeeandtaxomitsbycustomerService,
         private snackBar: MatSnackBar,
         private tagsService: TagsService,
@@ -98,26 +96,15 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
-
-        if( !this.router.getCurrentNavigation().extras )
-         {
-              this.selectedIndex = 0;
-          }
-          else
-          {
-             this.selectedIndex = this.router.getCurrentNavigation().extras?.state?.tab ;
+    }
 
           }
 
     }
 
     async ngOnInit() {
+        this.loadCustomerHistory();
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
-            (data:any) => this.customerHistory = data ,
-             err=> console.log(err)
-        )
-
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
             .toPromise();
@@ -188,13 +175,12 @@ export class CustomersEditComponent implements OnInit {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
                     };
-                    const id = this.route.snapshot.paramMap.get('id');
                     this.customCustomerType.customerType =
                         this.customerForm.value.customerMarginTemplate;
 
 
                     await this.customerInfoByGroupService
-                        .update(customerInfoByGroup , this.sharedService.currentUser.oid  ,id)
+                        .update(customerInfoByGroup , this.sharedService.currentUser.oid)
                         .toPromise();
                     if (
                         !this.customCustomerType.oid ||
@@ -205,9 +191,10 @@ export class CustomersEditComponent implements OnInit {
                             .toPromise();
                     } else {
                         await this.customCustomerTypesService
-                            .update(this.customCustomerType , this.sharedService.currentUser.oid )
+                            .update(this.customCustomerType)
                             .toPromise();
                     }
+                    this.loadCustomerHistory();
                     this.customerInfoByGroup = customerInfoByGroup;
                     this.isEditing = false;
                 }),
@@ -240,15 +227,23 @@ export class CustomersEditComponent implements OnInit {
         this.loadCustomerTags();
     }
 
+    loadCustomerHistory()
+    {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
+            (data : any)=>{
+                this.customerHistory = data
+            }
+        )
+    }
     // Methods
     cancelCustomerEdit() {
         this.router.navigate(['/default-layout/customers/']).then();
     }
 
     contactDeleted(contact) {
-        const id = this.route.snapshot.paramMap.get('id');
         this.customerContactsService
-            .remove(contact.customerContactId , this.sharedService.currentUser.oid , id)
+            .remove(contact.customerContactId , this.sharedService.currentUser.oid , this.route.snapshot.paramMap.get('id'))
             .subscribe(() => {
                 this.contactInfoByGroupsService
                     .remove(contact.contactInfoByGroupId)
@@ -302,6 +297,7 @@ export class CustomersEditComponent implements OnInit {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
         }
+        
     }
 
     customerCompanyTypeChanged() {
@@ -372,20 +368,15 @@ export class CustomersEditComponent implements OnInit {
     }
 
     toggleChange($event) {
-
         if ($event.checked) {
-            this.customerInfoByGroup.active = true;
             this.customerInfoByGroup.showJetA = true;
             this.customerInfoByGroup.show100Ll = true;
             this.customerInfoByGroup.distribute = true;
-        }
-         else {
-            this.customerInfoByGroup.active = false;
+        } else {
             this.customerInfoByGroup.showJetA = false;
             this.customerInfoByGroup.show100Ll = false;
             this.customerInfoByGroup.distribute = false;
         }
-
     }
 
     omitFeeAndTaxCheckChanged(feeAndTax: any): void {
@@ -530,13 +521,12 @@ export class CustomersEditComponent implements OnInit {
     }
 
     private saveCustomerContact() {
-        console.log(this.customerInfoByGroup);
         if (!this.selectedContactRecord) {
             this.customerContactsService
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                } , this.sharedService.currentUser.oid , this.customerInfoByGroup.oid)
+                }, this.sharedService.currentUser.oid ,this.route.snapshot.paramMap.get('id'))
                 .subscribe(() => {
                     this.UpdateCopyAlerts(this.currentContactInfoByGroup);
                 });

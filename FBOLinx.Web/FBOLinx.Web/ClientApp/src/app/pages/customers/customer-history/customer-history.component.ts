@@ -31,7 +31,21 @@ export class CustomerHistoryComponent implements OnInit {
               private route : ActivatedRoute) { }
 
   ngOnInit() {
-      this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory)
+      if(! this.customerHistory)
+      {
+          this.customerInfoByGroupService.getCustomerByGroupLogger(this.route.snapshot.paramMap.get('id')).subscribe(
+              data=> {
+                this.customerHistory = data
+                this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory)
+              }
+
+          );
+      }
+      else
+      {
+        this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory)
+      }
+
 
   }
 
