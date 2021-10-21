@@ -76,7 +76,6 @@ export class PricingTemplatesEditComponent implements OnInit {
     isSaving = false;
     hasSaved = false;
     isSaveQueued = false;
-    discountType : number;
     feesAndTaxes: Array<any>;
 
     constructor(
@@ -222,15 +221,11 @@ export class PricingTemplatesEditComponent implements OnInit {
         //When Discount Type Change event
         this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
             (type) => {
-                if(this.pricingTemplateForm.value.discountType == 0)
-                   this.discountType = 1
-                else
-                    this.discountType = 0
-
-                const updatedMargins = this.updateMargins(
+                 const updatedMargins = this.updateMargins(
                     this.pricingTemplateForm.value.customerMargins,
+                    this.pricingTemplateForm.value.marginType,
                     type ,
-                    this.discountType,
+
                 );
                 this.pricingTemplateForm.controls.customerMargins.setValue(
                     updatedMargins,
@@ -435,7 +430,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
-
+            //in Cost Mode
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
@@ -454,7 +449,9 @@ export class PricingTemplatesEditComponent implements OnInit {
                            margins[i].itp = margins[i].allin ;
                        }
                     }
+                }
 
+          //in Retail Mode
             else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
 
@@ -488,7 +485,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         }
         return margins;
     }
-       }
-    }
+}
+
 
 
