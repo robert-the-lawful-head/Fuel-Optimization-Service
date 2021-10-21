@@ -97,6 +97,7 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
+        this.loadCustomerHistory();
     }
 
     async ngOnInit() {
@@ -177,6 +178,7 @@ export class CustomersEditComponent implements OnInit {
                     };
                     this.customCustomerType.customerType =
                         this.customerForm.value.customerMarginTemplate;
+
 
 
                     await this.customerInfoByGroupService
@@ -288,6 +290,7 @@ export class CustomersEditComponent implements OnInit {
                         });
                 } else {
                     this.saveContactInfoByGroup();
+                    this.loadCustomerHistory();
                 }
             } else {
                 this.loadCustomerContacts();
@@ -519,6 +522,7 @@ export class CustomersEditComponent implements OnInit {
                 .subscribe((data: any) => {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();
+                    this.loadCustomerHistory();
                 });
         }
     }
@@ -537,6 +541,7 @@ export class CustomersEditComponent implements OnInit {
                 });
         } else {
             this.UpdateCopyAlerts(this.currentContactInfoByGroup);
+            this.loadCustomerHistory();
         }
     }
 

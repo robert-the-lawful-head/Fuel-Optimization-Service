@@ -304,7 +304,8 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
         CustomerHistoryComponent ,
-       CustomersAnalyticsComponent
+       CustomersAnalyticsComponent ,
+       CustomerHistoryDetailsComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

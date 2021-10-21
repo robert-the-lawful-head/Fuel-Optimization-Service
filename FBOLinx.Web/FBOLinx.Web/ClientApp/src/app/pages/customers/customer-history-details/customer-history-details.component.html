@@ -1,11 +1,11 @@
-<h1 mat-dialog-title>Log Changes Details</h1>
+<h3 mat-dialog-title>Log Changes Details</h3>
 <div mat-dialog-content>
    <div class="container">
        <!--In Customer Info By Group Mode-->
        <div *ngIf="HistoryDetails.logType == 0">
          <table  style="width:100%">
     <tr>
-        <th></th>
+        <th>Field Name</th>
         <th>Old Data</th>
         <th>New Data</th>
       </tr>
@@ -537,6 +537,6 @@
    </div>
 </div>
 <div mat-dialog-actions class="actions">
-  <button mat-raised-button color="accent" [mat-dialog-close] cdkFocusInitial>Ok</button>
+  <button mat-raised-button color="accent" mat-dialog-close cdkFocusInitial>Ok</button>
 </div>
 
