@@ -453,14 +453,13 @@ export class PricingTemplatesEditComponent implements OnInit {
                        if (margins[i].allin !== null) {
                            margins[i].itp = margins[i].allin ;
                        }
+                    }
 
             else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
 
                       if(discountType == 0)
                       {
-
-
                         margins[i].allin =
                         this.jetARetail - Number(margins[i].amount);
 
@@ -489,5 +488,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         }
         return margins;
     }
-}
+       }
+    }
+
 
