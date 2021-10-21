@@ -65,6 +65,7 @@ export class CustomersEditComponent implements OnInit {
     selectedIndex: any  = 0;
     customerCompanyTypes: any[];
     customerForm: FormGroup;
+    public customerHistory: any;
     feesAndTaxes: Array<any>;
     isEditing: boolean;
     public customerId: number;
@@ -96,10 +97,6 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
-    }
-
-          }
-
     }
 
     async ngOnInit() {
@@ -297,7 +294,7 @@ export class CustomersEditComponent implements OnInit {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
         }
-        
+
     }
 
     customerCompanyTypeChanged() {
