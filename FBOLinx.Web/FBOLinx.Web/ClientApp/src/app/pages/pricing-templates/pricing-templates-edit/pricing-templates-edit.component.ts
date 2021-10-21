@@ -76,7 +76,7 @@ export class PricingTemplatesEditComponent implements OnInit {
     isSaving = false;
     hasSaved = false;
     isSaveQueued = false;
-
+    discountType : number;
     feesAndTaxes: Array<any>;
 
     constructor(
@@ -180,6 +180,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
                 this.savePricingTemplate();
+
             });
 
             // Margin type change event
@@ -216,7 +217,35 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.savePricingTemplate();
                 }
             );
+
+
+        //When Discount Type Change event
+        this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
+            (type) => {
+                if(this.pricingTemplateForm.value.discountType == 0)
+                   this.discountType = 1
+                else
+                    this.discountType = 0
+
+                const updatedMargins = this.updateMargins(
+                    this.pricingTemplateForm.value.customerMargins,
+                    type ,
+                    this.discountType,
+                );
+                this.pricingTemplateForm.controls.customerMargins.setValue(
+                    updatedMargins,
+                    {
+                        emitEvent: false,
+                    }
+                );
+                this.savePricingTemplate();
+            }
+        );
+
+
         });
+
+
 
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();
@@ -409,10 +438,21 @@ export class PricingTemplatesEditComponent implements OnInit {
 
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin =
-                        this.jetACost + Number(margins[i].amount);
-                }
-            }
+                       if(discountType == 0)
+                       {
+                        margins[i].allin = Number(margins[i].amount);
+                        margins[i].itp  = Number(margins[i].amount);
+                       }
+                       else
+                       {
+                        margins[i].allin =
+                        this.jetACost * Number(margins[i].amount)/100;
+                       }
+
+                       margins[i].itp = this.jetACost;
+                       if (margins[i].allin !== null) {
+                           margins[i].itp = margins[i].allin ;
+                       }
 
             else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
