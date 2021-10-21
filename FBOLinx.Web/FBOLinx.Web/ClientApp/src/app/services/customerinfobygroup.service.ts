@@ -169,6 +169,14 @@ export class CustomerinfobygroupService {
         );
     }
 
+    getCustomerByGroupLoggerData(oid , logType) {
+        return this.http.post(
+            `${this.accessPointUrl}/GetCustomerLoggerDetails/id/${oid}/logType/${logType}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
     public rejectmerge(customerId: number, groupId: number) {
         return this.http.post(
             `${this.accessPointUrl}/rejectmergeforcustomer/customerId/${customerId}/groupId/${groupId}`,

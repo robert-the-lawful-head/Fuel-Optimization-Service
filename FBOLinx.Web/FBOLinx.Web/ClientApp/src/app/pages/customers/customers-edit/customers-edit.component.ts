@@ -100,7 +100,7 @@ export class CustomersEditComponent implements OnInit {
     }
 
     async ngOnInit() {
-        this.loadCustomerHistory();
+
         const id = this.route.snapshot.paramMap.get('id');
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
@@ -134,6 +134,8 @@ export class CustomersEditComponent implements OnInit {
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId,
             }),
+            this.customerInfoByGroupService.getCustomerByGroupLogger(id),
+
         ]).toPromise();
 
         this.certificateTypes = results[0] as any[];
@@ -168,6 +170,7 @@ export class CustomersEditComponent implements OnInit {
                 }),
                 debounceTime(500),
                 switchMap(async () => {
+
                     const customerInfoByGroup = {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
@@ -191,9 +194,10 @@ export class CustomersEditComponent implements OnInit {
                             .update(this.customCustomerType)
                             .toPromise();
                     }
-                    this.loadCustomerHistory();
+
                     this.customerInfoByGroup = customerInfoByGroup;
                     this.isEditing = false;
+                    this.loadCustomerHistory();
                 }),
                 catchError((err: Error) => {
                     console.error(err);
@@ -213,6 +217,7 @@ export class CustomersEditComponent implements OnInit {
                 }
             }
         );
+
         this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
             (selectedValue) => {
                 this.customCustomerType.customerType = selectedValue;
@@ -286,6 +291,7 @@ export class CustomersEditComponent implements OnInit {
                 }
             } else {
                 this.loadCustomerContacts();
+                this.loadCustomerHistory();
             }
         });
     }
@@ -525,6 +531,8 @@ export class CustomersEditComponent implements OnInit {
                     customerId: this.customerInfoByGroup.customerId,
                 }, this.sharedService.currentUser.oid ,this.route.snapshot.paramMap.get('id'))
                 .subscribe(() => {
+                    this.loadCustomerContacts();
+                    this.loadCustomerHistory();
                     this.UpdateCopyAlerts(this.currentContactInfoByGroup);
                 });
         } else {

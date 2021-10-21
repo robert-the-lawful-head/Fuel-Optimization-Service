@@ -1,7 +1,9 @@
+import { CustomerHistoryDetailsComponent } from './../customer-history-details/customer-history-details.component';
 import { ActivatedRoute } from '@angular/router';
 import { CustomerinfobygroupService } from './../../../services/customerinfobygroup.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-customer-history',
@@ -28,11 +30,13 @@ export class CustomerHistoryComponent implements OnInit {
 
 
   constructor(private customerInfoByGroupService : CustomerinfobygroupService ,
-              private route : ActivatedRoute) { }
+              private route : ActivatedRoute ,
+              public dialog: MatDialog) { }
 
   ngOnInit() {
       if(! this.customerHistory)
       {
+
           this.customerInfoByGroupService.getCustomerByGroupLogger(this.route.snapshot.paramMap.get('id')).subscribe(
               data=> {
                 this.customerHistory = data
@@ -57,5 +61,22 @@ export class CustomerHistoryComponent implements OnInit {
 
   onPageChanged(e: any) {
     sessionStorage.setItem('pageIndex', e.pageIndex);
+}
+
+openDetailsDialog(customer : any)
+{
+    this.customerInfoByGroupService.getCustomerByGroupLoggerData(customer.oid , customer.logType).subscribe(
+        data=>{
+            const dialogRef = this.dialog.open(CustomerHistoryDetailsComponent, {
+                width: '550px',
+                height: '300px',
+                data: {
+                    details :  data ,
+                    logType : customer.logType
+                }
+              });
+
+        }
+    )
 }
 }

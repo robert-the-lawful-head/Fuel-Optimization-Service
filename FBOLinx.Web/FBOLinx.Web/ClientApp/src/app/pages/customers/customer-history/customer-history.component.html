@@ -34,7 +34,10 @@
             <ng-container matColumnDef="change">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Changes</th>
                 <td *matCellDef="let customer">
-                    {{customer.change}}
+                   <a mat-raised-button (click)="openDetailsDialog(customer)">
+                        See Details
+                        <mat-icon>arrow_right</mat-icon>
+                    </a>
                 </td>
             </ng-container>
 

@@ -1,0 +1,542 @@
+<h1 mat-dialog-title>Log Changes Details</h1>
+<div mat-dialog-content>
+   <div class="container">
+       <!--In Customer Info By Group Mode-->
+       <div *ngIf="HistoryDetails.logType == 0">
+         <table  style="width:100%">
+    <tr>
+        <th></th>
+        <th>Old Data</th>
+        <th>New Data</th>
+      </tr>
+    <!--Acive-->
+    <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.active != HistoryDetails.details.customerInfoByGroup.active">
+      <th>Active</th>
+      <td>
+          <span *ngIf="HistoryDetails.details.customerInfoByGroupLogData.active == true">Activated</span>
+          <span  *ngIf="HistoryDetails.details.customerInfoByGroupLogData.active == false">Deactivated</span>
+      </td>
+      <td>
+        <span *ngIf="HistoryDetails.details.customerInfoByGroup.active == true">Activated</span>
+        <span  *ngIf="HistoryDetails.details.customerInfoByGroup.active == false">Deactivated</span>
+    </td>
+    </tr>
+
+    <!--Address-->
+     <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.address != HistoryDetails.details.customerInfoByGroup.address">
+        <th>Address</th>
+        <td>{{HistoryDetails.details.customerInfoByGroupLogData.address}}</td>
+        <td>{{HistoryDetails.details.customerInfoByGroup.address}}</td>
+      </tr>
+
+    <!--certificateType-->
+    <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.certificateType != HistoryDetails.details.customerInfoByGroup.certificateType">
+        <th>certificateType</th>
+        <td>{{HistoryDetails.details.customerInfoByGroupLogData.certificateType}}</td>
+        <td>{{HistoryDetails.details.customerInfoByGroup.certificateType}}</td>
+    </tr>
+
+
+      <!--city-->
+      <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.city != HistoryDetails.details.customerInfoByGroup.city">
+        <th>city</th>
+        <td>{{HistoryDetails.details.customerInfoByGroupLogData.city}}</td>
+        <td>{{HistoryDetails.details.customerInfoByGroup.city}}</td>
+    </tr>
+
+      <!--company-->
+      <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.company != HistoryDetails.details.customerInfoByGroup.company">
+        <th>company</th>
+        <td>{{HistoryDetails.details.customerInfoByGroupLogData.company}}</td>
+        <td>{{HistoryDetails.details.customerInfoByGroup.company}}</td>
+    </tr>
+
+
+        <!--country-->
+        <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.country != HistoryDetails.details.customerInfoByGroup.country">
+            <th>country</th>
+            <td>{{HistoryDetails.details.customerInfoByGroupLogData.country}}</td>
+            <td>{{HistoryDetails.details.customerInfoByGroup.country}}</td>
+        </tr>
+
+    <!--customer-->
+    <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.customer != HistoryDetails.details.customerInfoByGroup.customer">
+        <th>customer</th>
+        <td>{{HistoryDetails.details.customerInfoByGroupLogData.customer}}</td>
+        <td>{{HistoryDetails.details.customerInfoByGroup.customer}}</td>
+    </tr>
+
+  <!--customerCompanyType-->
+  <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.customerCompanyType != HistoryDetails.details.customerInfoByGroup.customerCompanyType">
+    <th>customerCompanyType</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.customerCompanyType}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.customerCompanyType}}</td>
+  </tr>
+
+ <!--distribute-->
+ <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.distribute != HistoryDetails.details.customerInfoByGroup.distribute">
+    <th>distribute</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.distribute}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.distribute}}</td>
+  </tr>
+
+  <!--emailSubscription-->
+ <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.emailSubscription != HistoryDetails.details.customerInfoByGroup.emailSubscription">
+    <th>emailSubscription</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.emailSubscription}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.emailSubscription}}</td>
+  </tr>
+
+  <!--joined-->
+  <tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.joined != HistoryDetails.details.customerInfoByGroup.joined">
+    <th>joined</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.joined}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.joined}}</td>
+  </tr>
+
+<!--mainPhone-->
+<tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.mainPhone != HistoryDetails.details.customerInfoByGroup.mainPhone">
+    <th>mainPhone</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.mainPhone}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.mainPhone}}</td>
+  </tr>
+
+<!--network-->
+<tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.network != HistoryDetails.details.customerInfoByGroup.network">
+    <th>network</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.network}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.network}}</td>
+  </tr>
+
+<!--username-->
+<tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.username != HistoryDetails.details.customerInfoByGroup.username">
+    <th>username</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.username}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.username}}</td>
+  </tr>
+
+
+<!--state-->
+<tr *ngIf="HistoryDetails.details.customerInfoByGroupLogData.state != HistoryDetails.details.customerInfoByGroup.state">
+    <th>state</th>
+    <td>{{HistoryDetails.details.customerInfoByGroupLogData.state}}</td>
+    <td>{{HistoryDetails.details.customerInfoByGroup.state}}</td>
+  </tr>
+
+         </table>
+       </div>
+
+       <!--In Customer Contact-->
+       <div *ngIf="HistoryDetails.logType == 1">
+            <table style="width:100%" *ngIf="HistoryDetails.details.customerContact.oldContact != null && HistoryDetails.details.customerContact.newContact != null">
+                <tr>
+                    <th></th>
+                    <th>Old Data</th>
+                    <th>New Data</th>
+                </tr>
+                <!--Email-->
+                <tr *ngIf="HistoryDetails.details.customerContact.newContact.email != HistoryDetails.details.customerContact.oldContact.email">
+                    <th>Email</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.email}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.email}}</th>
+                </tr>
+
+                 <!--firstName-->
+                 <tr *ngIf="HistoryDetails.details.customerContact.oldContact.firstName != HistoryDetails.details.customerContact.newContact.firstName">
+                    <th>First Name</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.firstName}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.firstName}}</th>
+                </tr>
+
+                 <!--LastName-->
+                 <tr *ngIf="HistoryDetails.details.customerContact.oldContact.lastName != HistoryDetails.details.customerContact.newContact.lastName">
+                    <th>Last Name</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.lastName}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.lastName}}</th>
+                </tr>
+
+
+                   <!--Phone-->
+                   <tr *ngIf="HistoryDetails.details.customerContact.oldContact.phone != HistoryDetails.details.customerContact.newContact.phone">
+                    <th>Phone</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.phone}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.phone}}</th>
+                </tr>
+
+
+                   <!--Mobile-->
+                   <tr *ngIf="HistoryDetails.details.customerContact.oldContact.mobile != HistoryDetails.details.customerContact.newContact.mobile">
+                    <th>Mobile</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.mobile}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.mobile}}</th>
+                </tr>
+
+                  <!--Address-->
+                  <tr *ngIf="HistoryDetails.details.customerContact.oldContact.address != HistoryDetails.details.customerContact.newContact.address">
+                    <th>Address</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.address}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.address}}</th>
+                </tr>
+
+                  <!--City-->
+                  <tr *ngIf="HistoryDetails.details.customerContact.oldContact.city != HistoryDetails.details.customerContact.newContact.city">
+                    <th>City</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.city}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.city}}</th>
+                </tr>
+
+                  <!--State-->
+                  <tr *ngIf="HistoryDetails.details.customerContact.oldContact.state != HistoryDetails.details.customerContact.newContact.state">
+                    <th>State</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.state}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.state}}</th>
+                </tr>
+
+
+                   <!--Country-->
+                   <tr *ngIf="HistoryDetails.details.customerContact.oldContact.country != HistoryDetails.details.customerContact.newContact.country">
+                    <th>Country</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.country}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.country}}</th>
+                </tr>
+
+                  <!--Fax-->
+                  <tr *ngIf="HistoryDetails.details.customerContact.oldContact.fax != HistoryDetails.details.customerContact.newContact.fax">
+                    <th>Fax</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.fax}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.fax}}</th>
+                </tr>
+
+                   <!--Title-->
+                   <tr *ngIf="HistoryDetails.details.customerContact.oldContact.title != HistoryDetails.details.customerContact.newContact.title">
+                    <th>Title</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.title}}</th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.title}}</th>
+                </tr>
+
+
+                    <!--Extension-->
+                    <tr *ngIf="HistoryDetails.details.customerContact.oldContact.extension != HistoryDetails.details.customerContact.newContact.extension">
+                        <th>Extension</th>
+                        <th >{{HistoryDetails.details.customerContact.oldContact.extension}}</th>
+                        <th>{{HistoryDetails.details.customerContact.newContact.extension}}</th>
+                    </tr>
+
+              <!--Primary-->
+              <tr *ngIf="HistoryDetails.details.customerContact.oldContact.primary != HistoryDetails.details.customerContact.newContact.primary">
+                <th>Is Primary?</th>
+                <th>
+                    <span *ngIf="HistoryDetails.details.customerContact.oldContact.primary == true"> Primary</span>
+                    <span *ngIf="HistoryDetails.details.customerContact.oldContact.primary != true"> Not Primary</span>
+                </th>
+                <th>
+                    <span *ngIf="HistoryDetails.details.customerContact.newContact.primary == true"> Primary</span>
+                    <span *ngIf="HistoryDetails.details.customerContact.newContact.primary != true"> Not Primary</span>
+                </th>
+
+            </tr>
+            </table>
+
+            <table style="width:100%" *ngIf="HistoryDetails.details.customerContact.oldContact == null">
+                <tr>
+                    <th></th>
+                    <th>Old Data</th>
+                    <th>New Data</th>
+                </tr>
+                <!--Email-->
+                <tr >
+                    <th>Email</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.email}}</th>
+                </tr>
+
+                 <!--firstName-->
+                 <tr>
+                    <th>First Name</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.firstName}}</th>
+                </tr>
+
+                 <!--LastName-->
+                 <tr>
+                    <th>Last Name</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.lastName}}</th>
+                </tr>
+
+
+                   <!--Phone-->
+                   <tr >
+                    <th>Phone</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.phone}}</th>
+                </tr>
+
+
+                   <!--Mobile-->
+                   <tr>
+                    <th>Mobile</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.mobile}}</th>
+                </tr>
+
+                  <!--Address-->
+                  <tr>
+                    <th>Address</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.address}}</th>
+                </tr>
+
+                  <!--City-->
+                  <tr >
+                    <th>City</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.city}}</th>
+                </tr>
+
+                  <!--State-->
+                  <tr>
+                    <th>State</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.state}}</th>
+                </tr>
+
+
+                   <!--Country-->
+                   <tr >
+                    <th>Country</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.country}}</th>
+                </tr>
+
+                  <!--Fax-->
+                  <tr >
+                    <th>Fax</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.fax}}</th>
+                </tr>
+
+                   <!--Title-->
+                   <tr>
+                    <th>Title</th>
+                    <th ></th>
+                    <th>{{HistoryDetails.details.customerContact.newContact.title}}</th>
+                </tr>
+
+
+                    <!--Extension-->
+                    <tr>
+                        <th>Extension</th>
+                        <th ></th>
+                        <th>{{HistoryDetails.details.customerContact.newContact.extension}}</th>
+                    </tr>
+
+              <!--Primary-->
+              <tr >
+                <th>Is Primary?</th>
+                <th>
+                    <span *ngIf="HistoryDetails.details.customerContact.newContact.primary == true"> Primary</span>
+                    <span *ngIf="HistoryDetails.details.customerContact.newContact.primary != true"> Not Primary</span>
+                </th>
+
+            </tr>
+            </table>
+
+            <table style="width:100%" *ngIf="HistoryDetails.details.customerContact.oldContact != null && HistoryDetails.details.customerContact.newContact == null">
+                <tr>
+                    <th></th>
+                    <th>Old Data</th>
+                    <th>New Data</th>
+                </tr>
+                <!--Email-->
+                <tr >
+                    <th>Email</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.email}}</th>
+                    <th></th>
+                </tr>
+
+                 <!--firstName-->
+                 <tr >
+                    <th>First Name</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.firstName}}</th>
+                    <th></th>
+                </tr>
+
+                 <!--LastName-->
+                 <tr >
+                    <th>Last Name</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.lastName}}</th>
+                    <th></th>
+                </tr>
+
+
+                   <!--Phone-->
+                   <tr >
+                    <th>Phone</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.phone}}</th>
+                    <th></th>
+                </tr>
+
+
+                   <!--Mobile-->
+                   <tr >
+                    <th>Mobile</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.mobile}}</th>
+                    <th></th>
+                </tr>
+
+                  <!--Address-->
+                  <tr >
+                    <th>Address</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.address}}</th>
+                    <th></th>
+                </tr>
+
+                  <!--City-->
+                  <tr >
+                    <th>City</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.city}}</th>
+                    <th></th>
+                </tr>
+
+                  <!--State-->
+                  <tr>
+                    <th>State</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.state}}</th>
+                    <th></th>
+                </tr>
+
+
+                   <!--Country-->
+                   <tr >
+                    <th>Country</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.country}}</th>
+                    <th></th>
+                </tr>
+
+                  <!--Fax-->
+                  <tr >
+                    <th>Fax</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.fax}}</th>
+                    <th></th>
+                </tr>
+
+                   <!--Title-->
+                   <tr>
+                    <th>Title</th>
+                    <th >{{HistoryDetails.details.customerContact.oldContact.title}}</th>
+                    <th></th>
+                </tr>
+
+
+                    <!--Extension-->
+                    <tr >
+                        <th>Extension</th>
+                        <th >{{HistoryDetails.details.customerContact.oldContact.extension}}</th>
+                        <th></th>
+                    </tr>
+
+              <!--Primary-->
+              <tr >
+                <th>Is Primary?</th>
+                <th>
+                    <span *ngIf="HistoryDetails.details.customerContact.oldContact.primary == true"> Primary</span>
+                    <span *ngIf="HistoryDetails.details.customerContact.oldContact.primary != true"> Not Primary</span>
+                </th>
+               </tr>
+            </table>
+      </div>
+
+      <!--In Customer Aircraft -->
+      <div *ngIf="HistoryDetails.logType == 2">
+        <table style="width:100%">
+          <div *ngIf="HistoryDetails.details.customerAircraftLogData != null && HistoryDetails.details.customerAircrafts != null  ">
+            <tr>
+                <th></th>
+                <th>Old Data</th>
+                <th>New Data</th>
+            </tr>
+            <!--Tial Number-->
+            <tr *ngIf="HistoryDetails.details.tailNumber != HistoryDetails.details.customerAircrafts.tailNumber">
+                <th>Tail Number</th>
+                <th >{{HistoryDetails.details.customerAircraftLogData.tailNumber}}</th>
+                <th>{{HistoryDetails.details.customerAircrafts.tailNumber}}</th>
+            </tr>
+
+            <!--Type-->
+               <tr *ngIf="HistoryDetails.details.newAircraft.make != HistoryDetails.details.oldAircraft.make">
+                <th>Type</th>
+                <th >{{HistoryDetails.details.oldAircraft.make }} {{HistoryDetails.details.oldAircraft.model }}</th>
+                <th>{{HistoryDetails.details.newAircraft.make }} {{HistoryDetails.details.newAircraft.model }}</th>
+            </tr>
+          </div>
+
+          <div *ngIf="HistoryDetails.details.customerAircraftLogData == null">
+            <tr>
+                <th></th>
+                <th>Old Data</th>
+                <th>New Data</th>
+            </tr>
+            <!--Tial Number-->
+            <tr>
+                <th>Tail Number</th>
+                <th ></th>
+                <th>{{HistoryDetails.details.customerAircrafts.tailNumber}}</th>
+            </tr>
+
+            <!--Type-->
+               <tr >
+                <th>Type</th>
+                <th></th>
+                <th>{{HistoryDetails.details.newAircraft.make }} {{HistoryDetails.details.newAircraft.model }}</th>
+            </tr>
+          </div>
+
+          <div *ngIf="HistoryDetails.details.customerAircraftLogData != null && HistoryDetails.details.customerAircrafts == null  ">
+            <tr>
+                <th></th>
+                <th>Old Data</th>
+                <th>New Data</th>
+            </tr>
+            <!--Tial Number-->
+            <tr >
+                <th>Tail Number</th>
+                <th >{{HistoryDetails.details.customerAircraftLogData.tailNumber}}</th>
+                <th></th>
+            </tr>
+
+            <!--Type-->
+               <tr >
+                <th>Type</th>
+                <th >{{HistoryDetails.details.oldAircraft.make }} {{HistoryDetails.details.oldAircraft.model }}</th>
+                <th></th>
+            </tr>
+          </div>
+        </table>
+     </div>
+
+  <!--In Customer Margin Itp -->
+  <div *ngIf="HistoryDetails.logType == 3">
+    <table style="width:100%">
+        <tr>
+            <th></th>
+            <th>Old Data</th>
+            <th>New Data</th>
+        </tr>
+        <!--Tial Number-->
+        <tr *ngIf="HistoryDetails.details.newMarginName != HistoryDetails.details.oldMarginName">
+            <th>Name</th>
+            <th >{{HistoryDetails.details.oldMarginName}}</th>
+            <th>{{HistoryDetails.details.newMarginName}}</th>
+        </tr>
+
+
+    </table>
+ </div>
+
+   </div>
+</div>
+<div mat-dialog-actions class="actions">
+  <button mat-raised-button color="accent" [mat-dialog-close] cdkFocusInitial>Ok</button>
+</div>
+
