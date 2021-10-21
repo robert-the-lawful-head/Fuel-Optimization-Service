@@ -6,15 +6,14 @@
     </div>
     <div *ngIf="domesticPrivatePricing && isCustomerActive" class="row">
         <!--Fee and tax breakdown-->
-        <div
+        <div class="col-12 fee-and-tax-breakdown-container mb-2"
             *ngIf="
                 !hideFeeAndTaxGeneralBreakdown &&
                 domesticPrivatePricing &&
                 domesticPrivatePricing.pricingList &&
                 domesticPrivatePricing.pricingList.length > 0 &&
                 domesticPrivatePricing.pricingList[0].fboPrice
-            "
-            class="col fee-and-tax-breakdown-container"
+            "            
         >
             <fee-and-tax-breakdown
                 #feeAndTaxBreakdown
@@ -42,11 +41,11 @@
                 domesticCommercialPricing &&
                 internationalCommercialPricing
             "
-            class="col"
+            class="col-12"
         >
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-12">
                         <!--No-rules display-->
                         <table *ngIf="priceBreakdownDisplayType == 0">
                             <thead>
