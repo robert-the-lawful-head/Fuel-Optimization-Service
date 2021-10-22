@@ -119,6 +119,13 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
+
+
+
+
+
+
+
         public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
             int customerInfoByGroupId, List<int> pricingTemplateIds,
             FBOLinx.Core.Enums.FlightTypeClassifications flightTypeClassifications,
@@ -228,12 +235,13 @@ namespace FBOLinx.Web.Services
                                                   PricingTemplateId = (pt == null ? 0 : pt.Oid),
                                                   DefaultCustomerType = cg.CustomerType,
                                                   MarginType = (pt == null ? 0 : pt.MarginType),
-                                                  discountType = (pt == null ? 0 : pt.discountType),
+                                                  DiscountType = (pt == null ? 0 : pt.DiscountType),
                                                   FboPrice = (fp == null ? 0 : fp.Price),
                                                   CustomerMarginAmount = (pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
                                                                           (tmp.MarginJet.HasValue)
                                                       ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
                                                       : (ppt == null || ppt == null ? 0 : ppt.Amount)),
+                        amount = ppt.Amount ,
                                                   Suspended = cg.Suspended,
                                                   FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
                                                   Network = cg.Network,

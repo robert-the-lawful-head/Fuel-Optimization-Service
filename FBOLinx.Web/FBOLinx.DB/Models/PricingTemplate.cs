@@ -20,12 +20,12 @@ namespace FBOLinx.DB.Models
         }
 
 
-        public enum DiscountType : short
+        public enum DiscountTypes : short
         {
             [Description("Flat Per Gallon")]
-             discountType1 = 0,
+             FlatPerGallon  = 0,
             [Description("Percentage")]
-            discountType2 = 0          
+             Percentage =  1          
         }
 
 
@@ -53,7 +53,7 @@ namespace FBOLinx.DB.Models
 
         public short? Type { get; set; }
        
-        public DiscountType? discountType { get; set; }
+        public DiscountTypes? DiscountType { get; set; }
         
         public MarginTypes? MarginType { get; set; }
 

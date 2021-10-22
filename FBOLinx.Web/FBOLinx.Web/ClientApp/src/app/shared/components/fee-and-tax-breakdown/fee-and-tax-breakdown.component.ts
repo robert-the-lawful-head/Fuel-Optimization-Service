@@ -42,10 +42,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     public marginITP : number = 0;
     public subMargin : number = 0;
 
-    constructor() {
-
-
-    }
+    constructor() { }
 
     ngOnInit(): void {
         this.performRecalculation();
@@ -58,15 +55,15 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
     }
 
+
     public performRecalculation(): void {
-      ;
+
+
         this.prepareTaxes();
         this.calculatePrices();
     }
 
     // Private Methods
-
-
     private prepareTaxes() {
         if (!this.feesAndTaxes) {
             return;
@@ -128,6 +125,7 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
 
        }
    }
+
     private calculatePreMarginSubTotal(): void {
         let result = this.fboPrice;
         const basePrice = this.fboPrice;

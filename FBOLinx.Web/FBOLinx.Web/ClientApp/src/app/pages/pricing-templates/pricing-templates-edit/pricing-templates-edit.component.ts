@@ -480,7 +480,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
                 margins[i].amount = Number(margins[i].amount).toFixed(4);
-                this.pricingTemplate.discountType = discountType;
+                   this.pricingTemplate.discountType = discountType;
             }
         }
         return margins;

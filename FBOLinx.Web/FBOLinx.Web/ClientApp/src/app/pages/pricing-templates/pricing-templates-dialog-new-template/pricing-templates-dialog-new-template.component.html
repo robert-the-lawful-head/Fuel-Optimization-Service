@@ -97,163 +97,152 @@
                         <table class="mat-table" style="max-width: 75%">
                             <thead>
                                 <tr class="mat-header-row">
-                                    <th
-                                        class="
+                                    <th class="
                                             text-center
                                             mat-header-cell
                                             text-lg-center
-                                        "
-                                    >
+                                        ">
                                         Min. (gal)
                                     </th>
-                                    <th
-                                        class="
+                                    <th class="
                                             text-center
                                             mat-header-cell
                                             text-lg-center
-                                        "
-                                    >
+                                        ">
                                         Max. (gal)
                                     </th>
-                                    <th *ngIf="form.value.secondStep.marginType === 1">
-                                      <div class="" >Discount</div>
-                                   </th>
-                                    <th
+                                    <th *ngIf="form.value.secondStep.marginType === 1"
                                         class="
                                             text-center
                                             mat-header-cell
                                             text-lg-center
-                                        "
-                                    >
+                                        ">
+                                        <span>Discount</span>
+                                    </th>
+                                    <th class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
                                         <span>Your ITP Margin</span>
                                     </th>
+                                    <th class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        <span>Total</span>
+                                    </th>
                                     <th class="text-center mat-header-cell">
-                                        <button
-                                            (click)="addCustomerMargin()"
-                                            [view]="'accent'"
-                                            beforeIcon="fa fa-plus"
-                                            ni-button
-                                            size="small"
-                                        >
+                                        <button (click)="addCustomerMargin()"
+                                                [view]="'accent'"
+                                                beforeIcon="fa fa-plus"
+                                                ni-button
+                                                size="small">
                                             Add New
                                         </button>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody formArrayName="customerMargins">
-                                <tr
-                                    *ngFor="
+                                <tr *ngFor="
                                         let customerMargin of customerMarginsFormArray.controls;
                                         let i = index
                                     "
-                                    class="mat-row mat-row-not-hover"
-                                >
-                                    <td
-                                        [formGroupName]="i"
-                                        class="mat-cell text-center"
-                                    >
+                                    class="mat-row mat-row-not-hover">
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
                                         <mat-form-field class="col-6">
-                                            <input
-                                                class="text-lg-right"
-                                                formControlName="min"
-                                                matInput
-                                            />
+                                            <input class="text-lg-right"
+                                                   formControlName="min"
+                                                   matInput />
+                                        </mat-form-field>
+                                    </td>
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
+                                        <mat-form-field class="col-6">
+                                            <input class="text-lg-right"
+                                                   formControlName="max"
+                                                   matInput />
                                         </mat-form-field>
                                     </td>
                                     <td
                                         [formGroupName]="i"
-                                        class="mat-cell text-center"
-                                    >
-                                        <mat-form-field class="col-6">
-                                            <input
-                                                class="text-lg-right"
-                                                formControlName="max"
-                                                matInput
-                                            />
-                                        </mat-form-field>
-                                    </td>
-                                    <td
-                                      *ngIf="form.value.secondStep.marginType === 1"
-                                        [formGroupName]="i"
-                                        class="mat-cell text-center"
-                                       >
+                                        class="mat-cell text-center">
                                         <div>
                                             <mat-form-field class="col-6">
-                                                <input
-                                                    (click)="
+                                                <input (click)="
                                                         $event.target.select()
                                                     "
-                                                    formControlName="amount"
-                                                    matInput
-                                                    step="0.01"
-                                                    type="number"
-                                                />
-                                                <span
-                                                *ngIf="form.value.secondStep.discountType === 0"
-                                                class="prefixDollar"
-                                                matPrefix
-                                                >$</span
-                                            >
+                                                       formControlName="amount"
+                                                       matInput
+                                                       step="0.01"
+                                                       type="number" />
+                                                <span *ngIf="form.value.secondStep.discountType === 0"
+                                                      class="prefixDollar"
+                                                      matPrefix>$</span>
 
-                                            <span
-                                                *ngIf="form.value.secondStep.discountType === 1"
-                                                class="prefixPercentage"
-                                                matPrefix
-                                                >%</span
-                                            >
+                                                <span *ngIf="form.value.secondStep.discountType === 1"
+                                                      class="prefixPercentage"
+                                                      matSuffix>%</span>
                                             </mat-form-field>
                                         </div>
                                     </td>
                                     <td
-                                        class="
+                                    *ngIf="form.value.secondStep.marginType === 1"
+                                    class="
                                             mat-cell
                                             text-center
                                             font-weight-bold font-italic
                                             text-right
-                                        "
-                                    >
-                                        <div *ngIf="form.value.secondStep.marginType === 1">
+                                        ">
+                                        <div >
                                             ${{
                                                 customerMargin.value.itp
                                                     | number: "1.4-4"
                                             }}
                                         </div>
-                                        <div *ngIf="form.value.secondStep.marginType === 0">
-                                            <mat-form-field class="col-6">
-                                                <input
-                                                    (click)="
-                                                        $event.target.select()
-                                                    "
-                                                    formControlName="amount"
-                                                    matInput
-                                                    step="0.01"
-                                                    type="number"
-                                                />
-                                                <span
-                                                *ngIf="form.value.secondStep.discountType === 0"
-                                                class="prefixDollar"
-                                                matPrefix
-                                                >$</span
-                                            >
 
-                                            <span
-                                                *ngIf="form.value.secondStep.discountType === 1"
-                                                class="prefixPercentage"
-                                                matPrefix
-                                                >%</span
-                                            >
-                                            </mat-form-field>
+                                    </td>
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
+                                        <div>
+                                            <div *ngIf="form.value.secondStep.marginType == 0 &&
+                                                form.value.secondStep.discountType == 0">
+                                                ${{
+                                                        jetACost + customerMargin.value.itp
+                                                            | number: "1.4-4"
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 0 &&
+                                                form.value.secondStep.discountType == 1">
+                                                ${{
+                                                        jetACost + (jetACost * customerMargin.value.amount / 100)
+                                                            | number: "1.4-4"
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 1 &&
+                                                form.value.secondStep.discountType == 0">
+                                                ${{
+                                                        jetARetail - customerMargin.value.amount
+                                                            | number: "1.4-4"
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 1 &&
+                                                form.value.secondStep.discountType == 1">
+                                                ${{
+                                                        jetARetail - (jetARetail * customerMargin.value.amount / 100)
+                                                            | number: "1.4-4"
+                                                }}
+                                            </div>
                                         </div>
                                     </td>
-
                                     <td class="text-right mat-cell">
-                                        <button
-                                            (click)="deleteCustomerMargin(i)"
-                                            [view]="'error'"
-                                            beforeIcon="fa fa-trash"
-                                            ni-button
-                                            size="small"
-                                        >
+                                        <button (click)="deleteCustomerMargin(i)"
+                                                [view]="'error'"
+                                                beforeIcon="fa fa-trash"
+                                                ni-button
+                                                size="small">
                                             Delete
                                         </button>
                                     </td>
