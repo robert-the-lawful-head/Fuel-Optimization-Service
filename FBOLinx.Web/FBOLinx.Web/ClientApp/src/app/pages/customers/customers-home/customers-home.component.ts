@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { locationChangedEvent } from '../../../models/sharedEvents';
@@ -12,6 +13,7 @@ import { customerGridSet } from '../../../store/actions';
 import { State } from '../../../store/reducers';
 import { CustomerGridState } from '../../../store/reducers/customer';
 import { getCustomerGridState } from '../../../store/selectors';
+import { MatTableDataSource } from '@angular/material/table';
 
 const BREADCRUMBS: any[] = [
     {
@@ -39,20 +41,31 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     locationChangedSubscription: any;
     customerGridState: CustomerGridState;
     fuelVendors: any[];
+    tags : any[];
+
+    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
+    public dataSource:       MatTableDataSource<any[]>;
+    public icao:             string;
+    public fbo:              string;
+    public id:               string;
 
     constructor(
         private store: Store<State>,
         private router: Router,
+
         private customerInfoByGroupService: CustomerinfobygroupService,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
-        private customerAircraftService: CustomeraircraftsService
+        private customerAircraftService: CustomeraircraftsService,
+        private tagService : TagsService
+
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadCustomers();
         this.loadPricingTemplates();
         this.loadCustomerAircraft();
         this.loadFuelVendors();
+        this.loadTags();
     }
 
     ngOnInit(): void {
@@ -123,6 +136,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.sharedService.currentUser.groupId
             )
             .subscribe((data: any) => {
+
                 this.pricingTemplatesData = data;
             });
     }
@@ -143,10 +157,28 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.customerInfoByGroupService
             .getFuelVendors()
             .subscribe((data: any) => {
+
                 this.fuelVendors = data.map((fv) => ({
                     label: fv,
                     value: fv,
                 }));
             });
     }
+
+    private loadTags ()
+    {
+        this.tagService.getGroupTags(
+            this.sharedService.currentUser.groupId
+        )
+        .subscribe((data:any) =>
+        {
+
+           this.tags = data.map((tg) => ({
+            label: tg,
+            value: tg,
+        }));
+        });
+
+    }
+
 }

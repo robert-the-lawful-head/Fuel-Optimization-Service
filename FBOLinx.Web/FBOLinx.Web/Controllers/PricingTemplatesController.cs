@@ -24,11 +24,13 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IPriceFetchingService _priceFetchingService;
+        private readonly IPricingTemplateService _pricingTemplateService;
 
-        public PricingTemplatesController(FboLinxContext context, IPriceFetchingService priceFetchingService)
+        public PricingTemplatesController(FboLinxContext context, IPriceFetchingService priceFetchingService, IPricingTemplateService pricingTemplateService)
         {
             _context = context;
             _priceFetchingService = priceFetchingService;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         // GET: api/PricingTemplates
@@ -64,24 +66,23 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            await _pricingTemplateService.FixDefaultPricingTemplate(fboId);
 
-            PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-            await pricingTemplateService.FixDefaultPricingTemplate(fboId);
-
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
             return Ok(marginTemplates);
         }
 
         [HttpGet("group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetPricingTemplateByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
-        {
+        { 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            List<PricingTemplatesGridViewModel> marginTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
             return Ok(marginTemplates);
         }
@@ -94,7 +95,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            List<PricingTemplatesGridViewModel> templates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+            List<PricingTemplatesGridViewModel> templates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
             var templatesWithEmailContent = (
                 from t in templates
                 join ec in _context.EmailContent on t.EmailContentId equals ec.Oid
@@ -130,9 +131,11 @@ namespace FBOLinx.Web.Controllers
                                     join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                     join co in _context.Contacts on custc.ContactId equals co.Oid
                                     join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                                    where (cg.Active ?? false)
+                                          join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = co.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                          from cibf in leftJoinCIBF.DefaultIfEmpty()
+                                          where (cg.Active ?? false)
                                           && cc.CustomerType == t.Oid
-                                          && (cibg.CopyAlerts ?? false) == true
+                                          && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                           && !string.IsNullOrEmpty(cibg.Email)
                                           && cibg.GroupId == groupId
                                           && (c.Suspended ?? false) == false

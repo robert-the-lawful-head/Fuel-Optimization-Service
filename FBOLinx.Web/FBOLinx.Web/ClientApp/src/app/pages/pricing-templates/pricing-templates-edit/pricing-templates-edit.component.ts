@@ -54,13 +54,21 @@ export class PricingTemplatesEditComponent implements OnInit {
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
 
     pricingTemplate: any;
+    id             :any;
     breadcrumb: any[] = BREADCRUMBS;
     pricingTemplateForm: FormGroup;
     pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [
         { text: 'Cost +', value: 0 },
         { text: 'Retail -', value: 1 },
-    ];
+     ];
+
+
+     discountTypeDataSource: Array<any> = [
+        { text: 'Flat per Gallon', value: 0 },
+        { text: 'Percentage', value: 1 },
+     ];
+
     emailTemplatesDataSource: Array<any>;
     canSave: boolean;
     jetACost: number;
@@ -68,7 +76,6 @@ export class PricingTemplatesEditComponent implements OnInit {
     isSaving = false;
     hasSaved = false;
     isSaveQueued = false;
-
     feesAndTaxes: Array<any>;
 
     constructor(
@@ -85,6 +92,8 @@ export class PricingTemplatesEditComponent implements OnInit {
         private emailContentService: EmailcontentService
     ) {
         this.sharedService.titleChange(this.pageTitle);
+
+
     }
 
     get customerMarginsFormArray() {
@@ -93,14 +102,14 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     async ngOnInit() {
         // Check for passed in id
-        const id = this.route.snapshot.paramMap.get('id');
+        this.id = this.route.snapshot.paramMap.get('id');
         this.pricingTemplate = await this.pricingTemplatesService
-            .get({ oid: id })
+            .get({ oid: this.id })
             .toPromise();
 
         combineLatest([
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
-                id
+                this.id
             ),
             this.fboPricesService.getFbopricesByFboIdCurrent(
                 this.sharedService.currentUser.fboId
@@ -116,13 +125,18 @@ export class PricingTemplatesEditComponent implements OnInit {
                 this.jetACost = jetACostRecords[0].price;
             }
             if (jetARetailRecords && jetARetailRecords.length > 0) {
+                console.log(jetACostRecords);
                 this.jetARetail = jetARetailRecords[0].price;
+
             }
 
             this.pricingTemplate.customerMargins = this.updateMargins(
                 customerMarginsData,
-                this.pricingTemplate.marginType
+                this.pricingTemplate.marginType ,
+                this.pricingTemplate.discountType
+
             );
+
             let customerMargins: FormArray = this.formBuilder.array([]);
             if (this.pricingTemplate.customerMargins) {
                 customerMargins = this.formBuilder.array(
@@ -135,6 +149,8 @@ export class PricingTemplatesEditComponent implements OnInit {
                                 customerMargin.amount = Number(
                                     customerMargin.amount
                                 ).toFixed(4);
+
+
                             }
                             const group = {
                                 itp: undefined,
@@ -155,6 +171,7 @@ export class PricingTemplatesEditComponent implements OnInit {
                 default: [this.pricingTemplate.default],
                 emailContentId: [this.pricingTemplate.emailContentId],
                 marginType: [this.pricingTemplate.marginType],
+                discountType:[this.pricingTemplate.discountType],
                 name: [this.pricingTemplate.name],
                 notes: [this.pricingTemplate.notes],
             });
@@ -162,6 +179,7 @@ export class PricingTemplatesEditComponent implements OnInit {
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
                 this.savePricingTemplate();
+
             });
 
             // Margin type change event
@@ -169,7 +187,8 @@ export class PricingTemplatesEditComponent implements OnInit {
                 (type) => {
                     const updatedMargins = this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
-                        type
+                        type ,
+                        this.pricingTemplateForm.value.discountType,
                     );
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
@@ -180,11 +199,13 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.savePricingTemplate();
                 }
             );
+
             this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
                     const updatedMargins = this.updateMargins(
                         margins,
-                        this.pricingTemplateForm.value.marginType
+                        this.pricingTemplateForm.value.marginType ,
+                        this.pricingTemplateForm.value.discountType
                     );
                     this.pricingTemplateForm.controls.customerMargins.setValue(
                         updatedMargins,
@@ -195,7 +216,31 @@ export class PricingTemplatesEditComponent implements OnInit {
                     this.savePricingTemplate();
                 }
             );
+
+
+        //When Discount Type Change event
+        this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
+            (type) => {
+                 const updatedMargins = this.updateMargins(
+                    this.pricingTemplateForm.value.customerMargins,
+                    this.pricingTemplateForm.value.marginType,
+                    type ,
+
+                );
+                this.pricingTemplateForm.controls.customerMargins.setValue(
+                    updatedMargins,
+                    {
+                        emitEvent: false,
+                    }
+                );
+                this.savePricingTemplate();
+            }
+        );
+
+
         });
+
+
 
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();
@@ -288,7 +333,8 @@ export class PricingTemplatesEditComponent implements OnInit {
             min: 1,
             oid: 0,
             priceTierId: 0,
-            templateId: this.pricingTemplate.oid,
+            discountType: 0,
+            templateId: this.id,
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
@@ -321,7 +367,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         let omitRecord: any = {
             fboFeeAndTaxId: feeAndTax.oid,
             oid: 0,
-            pricingTemplateId: this.pricingTemplate.oid,
+            pricingTemplateId: this.id,
         };
         if (feeAndTax.omitsByPricingTemplate.length > 0) {
             omitRecord = feeAndTax.omitsByPricingTemplate[0];
@@ -331,7 +377,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         omitRecord.fboFeeAndTaxId = feeAndTax.oid;
         if (feeAndTax.isOmitted) {
             omitRecord.oid = 0;
-            this.fboFeeAndTaxOmitsbyPricingTemplateService 
+            this.fboFeeAndTaxOmitsbyPricingTemplateService
                 .add(omitRecord)
                 .subscribe((response: any) => {
                     omitRecord.oid = response.oid;
@@ -351,7 +397,7 @@ export class PricingTemplatesEditComponent implements OnInit {
         this.fboFeesAndTaxesService
             .getByFboAndPricingTemplate(
                 this.sharedService.currentUser.fboId,
-                this.pricingTemplate.oid
+                this.id
             )
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
@@ -375,32 +421,71 @@ export class PricingTemplatesEditComponent implements OnInit {
         });
     }
 
-    private updateMargins(oldMargins, marginType) {
+    private updateMargins(oldMargins, marginType , discountType ) {
+
         const margins = [...oldMargins];
-        for (let i = 0; i < margins?.length; i++) {
+
+       for (let i = 0; i < margins?.length; i++) {
+
             if (i > 0) {
                 margins[i - 1].max = Math.abs(margins[i].min - 1);
             }
-
+            //in Cost Mode
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin =
-                        this.jetACost + Number(margins[i].amount);
+                       if(discountType == 0)
+                       {
+                        margins[i].allin = Number(margins[i].amount);
+                        margins[i].itp  = Number(margins[i].amount);
+                       }
+                       else
+                       {
+                        margins[i].allin =
+                        this.jetACost * Number(margins[i].amount)/100;
+                       }
+
+                       margins[i].itp = this.jetACost;
+                       if (margins[i].allin !== null) {
+                           margins[i].itp = margins[i].allin ;
+                       }
+                    }
                 }
-            } else {
+
+          //in Retail Mode
+            else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
-                    margins[i].allin =
+
+                      if(discountType == 0)
+                      {
+                        margins[i].allin =
                         this.jetARetail - Number(margins[i].amount);
+
+                       }
+                    else{
+
+                        margins[i].allin =
+                        this.jetARetail * (1 - (Number(margins[i].amount /100)));
+
+                    }
+
                     margins[i].itp = this.jetARetail;
+
                     if (margins[i].allin) {
                         margins[i].itp = margins[i].allin - this.jetACost;
                     }
+
+                    console.log(i + "   " + margins[i].itp + '   ' + this.jetARetail)
+
                 }
             }
             if (margins[i].amount !== null || margins[i].amount !== '') {
                 margins[i].amount = Number(margins[i].amount).toFixed(4);
+                   this.pricingTemplate.discountType = discountType;
             }
         }
         return margins;
     }
 }
+
+
+

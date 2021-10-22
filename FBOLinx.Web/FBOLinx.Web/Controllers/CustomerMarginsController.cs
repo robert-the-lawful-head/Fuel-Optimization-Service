@@ -69,6 +69,8 @@ namespace FBOLinx.Web.Controllers
                 PriceTierId = c.PriceTierId,
                 TemplateId = c.TemplateId,
                 Amount = c.Amount,
+                discountType =   0 ,                                              
+                //c.PricingTemplate.discountType ,
                 Oid = c.Oid,
                 Min = c.PriceTier.Min,
                 Max = c.PriceTier.Max,
@@ -206,8 +208,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerMargins
-        [HttpPost("updatecustomermargin")]
-        public async Task<IActionResult> UpdateCustomerMargin(CustomerPricingTemplateViewModel model)
+        [HttpPost("updatecustomermargin/{userId}/{groupId}")]
+        public async Task<IActionResult> UpdateCustomerMargin([FromRoute] int userId ,[FromRoute] int groupId, CustomerPricingTemplateViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -219,9 +221,11 @@ namespace FBOLinx.Web.Controllers
             if (customerMarginObject != null)
             {
                 var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
+                var customerGroupOid = _context.CustomerInfoByGroup.FirstOrDefault(x => x.CustomerId == model.id && x.GroupId == groupId).Oid;
 
-                if(customerMargin != null)
+                if (customerMargin != null)
                 {
+                    UpdateCustomerMarginLog(customerMargin, customerMargin.Oid , customerGroupOid, userId);
                     customerMargin.CustomerType = customerMarginObject.Oid;
                 }
                 else
@@ -231,6 +235,13 @@ namespace FBOLinx.Web.Controllers
                     newType.Fboid = model.fboid;
                     newType.CustomerId = model.id;
                     _context.CustomCustomerTypes.Add(newType);
+                    await _context.SaveChangesAsync();
+
+                    var NewCustomerTypeId = _context.CustomCustomerTypes.FirstOrDefault(c=>c.CustomerType.Equals(customerMarginObject.Oid)
+                                                                         && c.CustomerId.Equals(model.id) 
+                                                                         && c.Fboid.Equals(model.fboid)).Oid;
+
+                    UpdateCustomerMarginLog(customerMargin, NewCustomerTypeId, customerGroupOid, userId);
                 }
 
                 var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
@@ -295,5 +306,46 @@ namespace FBOLinx.Web.Controllers
 
             return Ok("");
         }
+    
+    
+       //Private Methods 
+       private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int customerId ,int userId =0 )
+       {
+            _context.CustomCustomerTypesLogData.Add(new CustomCustomerTypesLogData { 
+              CustomerId = oldcustomerTypes.CustomerId , 
+              Fboid = oldcustomerTypes.Fboid , 
+              CustomerType = oldcustomerTypes.CustomerType});
+
+            try
+            {
+                _context.SaveChanges();
+                int oldCustomerTypeId = _context.CustomCustomerTypesLogData.FirstOrDefault(c => c.CustomerType.Equals(oldcustomerTypes.CustomerType)
+                                                                                           && c.CustomerId.Equals(oldcustomerTypes.CustomerId)
+                                                                                           && c.Fboid.Equals(oldcustomerTypes.Fboid)).Oid;
+
+
+                _context.CustomCustomerTypeLog.Add(new CustomCustomerTypesLog
+                {
+                    Action = CustomerInfoByGroupLog.Actions.itetemplateassigned,
+                    Location = CustomerInfoByGroupLog.Locations.Customer , 
+                    newcustomertypetId = newCustomerTypeId , 
+                    oldcustomertypeId = oldCustomerTypeId,
+                    Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role, 
+                    userId = userId , 
+                    Time = DateTime.Now,
+                    customerId = customerId
+                });
+
+                _context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+       }
+
     }
 }

@@ -6,15 +6,14 @@
     </div>
     <div *ngIf="domesticPrivatePricing && isCustomerActive" class="row">
         <!--Fee and tax breakdown-->
-        <div
+        <div class="col-12 fee-and-tax-breakdown-container mb-2"
             *ngIf="
                 !hideFeeAndTaxGeneralBreakdown &&
                 domesticPrivatePricing &&
                 domesticPrivatePricing.pricingList &&
                 domesticPrivatePricing.pricingList.length > 0 &&
                 domesticPrivatePricing.pricingList[0].fboPrice
-            "
-            class="col fee-and-tax-breakdown-container"
+            "            
         >
             <fee-and-tax-breakdown
                 #feeAndTaxBreakdown
@@ -26,6 +25,7 @@
                 [fboPrice]="domesticPrivatePricing.pricingList[0].fboPrice"
                 [feesAndTaxes]="feesAndTaxes"
                 [marginType]="domesticPrivatePricing.pricingList[0].marginType"
+                [discountType]="domesticPrivatePricing.pricingList[0].discountType"
                 [showLineSeparator]="showFeeAndTaxLineSeparator"
                 [validDepartureTypes]="defaultValidDepartureTypes"
                 [validFlightTypes]="defaultValidFlightTypes"
@@ -39,13 +39,12 @@
                 domesticPrivatePricing &&
                 internationalPrivatePricing &&
                 domesticCommercialPricing &&
-                internationalCommercialPricing
-            "
-            class="col"
-        >
+                internationalCommercialPricing"
+            class="col-12">
             <div class="container-fluid">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-12">
+
                         <!--No-rules display-->
                         <table *ngIf="priceBreakdownDisplayType == 0">
                             <thead>
@@ -266,7 +265,8 @@
                                             }}
                                         </div>
                                     </td>
-                                    <td
+
+                                     <td
                                         (mouseenter)="
                                             mouseEnterPriceItem(
                                                 domesticPrivatePricing
@@ -300,7 +300,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td
+
+                                     <td
                                         (mouseenter)="
                                             mouseEnterPriceItem(
                                                 domesticCommercialPricing
@@ -517,6 +518,7 @@
                                 </tr>
                             </tbody>
                         </table>
+
                     </div>
                 </div>
 
@@ -544,13 +546,15 @@
                             [fboPrice]="activeHoverPriceItem.fboPrice"
                             [feesAndTaxes]="feeAndTaxCloneForPopOver"
                             [marginType]="activeHoverPriceItem.marginType"
+                            [discountType]="activeHoverPriceItem.discountType"
                             [validDepartureTypes]="activeHoverDeparturetypes"
                             [validFlightTypes]="activeHoverFlightTypes"
                         ></fee-and-tax-breakdown>
                     </div>
                 </popover-content>
             </div>
-        </div>
+       </div>
+
     </div>
 
     <div>

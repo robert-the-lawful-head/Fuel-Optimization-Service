@@ -1,0 +1,86 @@
+<div class="customer-aircraft-table">
+    <div>
+        <div style="padding-left: 15px; padding-right: 15px;">
+            <mat-form-field>
+                <input (keyup)="applyFilter($event.target.value)"
+                       matInput
+                       placeholder="Search by Tail, Make, Model, etc." />
+                <span matPrefix><i class="fa fa-search"></i></span>
+            </mat-form-field>
+        </div>
+     <table
+
+            class="col-md-12"
+            mat-table
+            matSort
+            matSortActive="tailNumber"
+            matSortDirection="asc"
+            [dataSource]="customerHistoryDataSource"
+        >
+            <ng-container matColumnDef="time">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Time (UTC)</th>
+                <td  *matCellDef="let customer">
+                   {{ customer.time | date :'short'}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Action</th>
+                <td  *matCellDef="let customer">
+                    {{customer.action}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="change">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Changes</th>
+                <td *matCellDef="let customer">
+                   <a mat-raised-button (click)="openDetailsDialog(customer)">
+                        See Details
+                        <mat-icon>arrow_right</mat-icon>
+                    </a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    User
+                </th>
+               <td *matCellDef="let customer">
+                {{customer.username}}
+               </td>
+            </ng-container>
+
+            <ng-container  matColumnDef="role">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Role
+                </th>
+               <td *matCellDef="let customer">
+                   {{customer.role}}
+               </td>
+            </ng-container>
+
+
+            <ng-container matColumnDef="location">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Location
+                </th>
+               <td *matCellDef="let customer">
+                   {{customer.location}}
+               </td>
+            </ng-container>
+
+
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+        </table>
+    </div>
+
+    <div>
+        <mat-paginator
+            (page)="(pageIndex); onPageChanged($event)"
+            [length]="resultsLength"
+            [pageSizeOptions]="[10, 25, 50, 100, 200, 500]"
+            [pageSize]="500"
+        ></mat-paginator>
+    </div>
+</div>

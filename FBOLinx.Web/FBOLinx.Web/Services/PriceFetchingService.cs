@@ -29,27 +29,35 @@ namespace FBOLinx.Web.Services
         private CustomerService _CustomerService;
         private FboService _FboService;
         private IMailService _MailService;
+        private IPricingTemplateService _PricingTemplateService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxService fuelerLinxService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxService fuelerLinxService, IPricingTemplateService pricingTemplateService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
             _context = context;
             _MailService = mailService;
+            _PricingTemplateService = pricingTemplateService;
         }
 
         #region Public Methods
 
         public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
-            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0)
+        {
+            return await GetCustomerPricingByLocationAsync(icao, customerId, flightTypeClassifications, departureType, feesAndTaxes, fboId, 0);
+        }
+        public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
             List<CustomerWithPricing> result = new List<CustomerWithPricing>();
             List<Fboairports> fboAirports = await _context.Fboairports
                                                             .Include(x => x.Fbo)
                                                             .ThenInclude(x => x.Group)
-                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true && (fboId == 0 || x.Fbo.Oid == fboId))
+                                                            .Where(x => airports.Any(a => a == x.Icao) && x.Fbo != null && x.Fbo.Active == true && x.Fbo.Group != null && x.Fbo.Group.Active == true && (fboId == 0 || x.Fbo.Oid == fboId) && (groupId == 0 || x.Fbo.GroupId == groupId))
                                                             .ToListAsync();
             if (fboAirports == null)
                 return result;
@@ -72,7 +80,7 @@ namespace FBOLinx.Web.Services
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
-                List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
+                List<PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault());
                 if (templates == null)
                     continue;
 
@@ -87,7 +95,10 @@ namespace FBOLinx.Web.Services
                 {
                     var template = templates.FirstOrDefault(x => x.Oid == price.PricingTemplateId);
                     if (template != null && template.TailNumbers != null)
+                    {
+                        template.TailNumbers.Sort();
                         price.TailNumbers = string.Join(",", template.TailNumbers);
+                    }
                     if (alertEmailAddresses != null)
                         price.CopyEmails = string.Join(";", alertEmailAddresses);
                     if(alertEmailAddressesUsers!=null)
@@ -107,6 +118,13 @@ namespace FBOLinx.Web.Services
 
             return result;
         }
+
+
+
+
+
+
+
 
         public async Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
             int customerInfoByGroupId, List<int> pricingTemplateIds,
@@ -131,7 +149,7 @@ namespace FBOLinx.Web.Services
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {
-                    List<PricingTemplate> templates = await GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
+                    List<PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
                     pricingTemplateIds = templates.Select(x => x.Oid).ToList();
                 }
                 var fboPrices = await _context.Fboprices.Where(x =>
@@ -176,75 +194,195 @@ namespace FBOLinx.Web.Services
 
                 //Fetch the customer pricing results
                 var customerPricingResults = (from cg in customerInfoByGroup
-                    join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
-                    from pt in leftJoinPT.DefaultIfEmpty()
-                    join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
-                        into leftJoinPPT
-                    from ppt in leftJoinPPT.DefaultIfEmpty()
-                    join fp in fboPrices on new
-                    {
-                        fboId = (pt != null ? pt.Fboid : 0),
-                        product = (pt != null ? pt.MarginTypeProduct : "")
-                    } equals new
-                    {
-                        fboId = fp.Fboid ?? 0,
-                        product = fp.Product
-                    }
-                    join tmp in tempAddonMargin on new
-                    {
-                        fboId = (pt != null ? pt.Fboid : 0)
-                    } equals new
-                    {
-                        fboId = tmp.FboId
-                    } into leftJoinTMP
-                    from tmp in leftJoinTMP.DefaultIfEmpty()
-                    join cvf in customersViewedByFbo on new {cg.CustomerId, Fboid = _FboId} equals new
-                    {
-                        cvf.CustomerId,
-                        cvf.Fboid
-                    } into letJoinCVF
-                    from cvf in letJoinCVF.DefaultIfEmpty()
-                    join ccot in customerCompanyTypes on new
-                            {CustomerCompanyType = cg.CustomerCompanyType ?? 0, cg.GroupId} equals new
-                            {CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId}
-                        into leftJoinCCOT
-                    from ccot in leftJoinCCOT.DefaultIfEmpty()
-                    select new CustomerWithPricing()
-                    {
-                        CustomerId = cg.CustomerId,
-                        CustomerInfoByGroupId = cg.Oid,
-                        Company = cg.Company,
-                        PricingTemplateId = (pt == null ? 0 : pt.Oid),
-                        DefaultCustomerType = cg.CustomerType,
-                        MarginType = (pt == null ? 0 : pt.MarginType),
-                        FboPrice = (fp == null ? 0 : fp.Price),
-                        CustomerMarginAmount = (pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
-                                                (tmp.MarginJet.HasValue)
-                            ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double) tmp.MarginJet ?? 0
-                            : (ppt == null || ppt == null ? 0 : ppt.Amount)),
-                        Suspended = cg.Suspended,
-                        FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
-                        Network = cg.Network,
-                        GroupId = cg.GroupId,
-                        FboId = (pt == null ? 0 : pt.Fboid),
-                        NeedsAttention = !(cvf != null && cvf.Oid > 0),
-                        HasBeenViewed = (cvf != null && cvf.Oid > 0),
-                        PricingTemplateName = pt == null ? "" : pt.Name,
-                        MinGallons = (ppt == null ? 1 : ppt.PriceTier?.Min ?? 1),
-                        MaxGallons = (ppt == null ? 99999 : ppt.PriceTier?.Max ?? 99999),
-                        CustomerCompanyType = cg.CustomerCompanyType,
-                        CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
-                        IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
-                                                           pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
-                        ExpirationDate = fp?.EffectiveTo,
-                        Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
-                        Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
-                        Notes = (pt == null ? "" : pt.Notes),
-                        Fbo = (fbo == null ? "" : fbo.Fbo),
-                        Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
-                        PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                        Product = "Jet A"
-                    }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
+                                              join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
+                                              from pt in leftJoinPT.DefaultIfEmpty()
+                                              join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
+                                                  into leftJoinPPT
+                                              from ppt in leftJoinPPT.DefaultIfEmpty()
+                                              join fp in fboPrices on new
+                                              {
+                                                  fboId = (pt != null ? pt.Fboid : 0),
+                                                  product = (pt != null ? pt.MarginTypeProduct : "")
+                                              } equals new
+                                              {
+                                                  fboId = fp.Fboid ?? 0,
+                                                  product = fp.Product
+                                              }
+                                              join tmp in tempAddonMargin on new
+                                              {
+                                                  fboId = (pt != null ? pt.Fboid : 0)
+                                              } equals new
+                                              {
+                                                  fboId = tmp.FboId
+                                              } into leftJoinTMP
+                                              from tmp in leftJoinTMP.DefaultIfEmpty()
+                                              join cvf in customersViewedByFbo on new { cg.CustomerId, Fboid = _FboId } equals new
+                                              {
+                                                  cvf.CustomerId,
+                                                  cvf.Fboid
+                                              } into letJoinCVF
+                                              from cvf in letJoinCVF.DefaultIfEmpty()
+                                              join ccot in customerCompanyTypes on new
+                                              { CustomerCompanyType = cg.CustomerCompanyType ?? 0, cg.GroupId } equals new
+                                              { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
+                                                  into leftJoinCCOT
+                                              from ccot in leftJoinCCOT.DefaultIfEmpty()
+                                              select new CustomerWithPricing()
+                                              {
+                                                  CustomerId = cg.CustomerId,
+                                                  CustomerInfoByGroupId = cg.Oid,
+                                                  Company = cg.Company,
+                                                  PricingTemplateId = (pt == null ? 0 : pt.Oid),
+                                                  DefaultCustomerType = cg.CustomerType,
+                                                  MarginType = (pt == null ? 0 : pt.MarginType),
+                                                  DiscountType = (pt == null ? 0 : pt.DiscountType),
+                                                  FboPrice = (fp == null ? 0 : fp.Price),
+                                                  CustomerMarginAmount = (pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
+                                                                          (tmp.MarginJet.HasValue)
+                                                      ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
+                                                      : (ppt == null || ppt == null ? 0 : ppt.Amount)),
+                        amount = ppt.Amount ,
+                                                  Suspended = cg.Suspended,
+                                                  FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
+                                                  Network = cg.Network,
+                                                  GroupId = cg.GroupId,
+                                                  FboId = (pt == null ? 0 : pt.Fboid),
+                                                  NeedsAttention = !(cvf != null && cvf.Oid > 0),
+                                                  HasBeenViewed = (cvf != null && cvf.Oid > 0),
+                                                  PricingTemplateName = pt == null ? "" : pt.Name,
+                                                  MinGallons = (ppt == null ? 1 : ppt.PriceTier?.Min ?? 1),
+                                                  MaxGallons = (ppt == null ? 99999 : ppt.PriceTier?.Max ?? 99999),
+                                                  CustomerCompanyType = cg.CustomerCompanyType,
+                                                  CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
+                                                  IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
+                                                                                     pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                                                  ExpirationDate = fp?.EffectiveTo,
+                                                  Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
+                                                  Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
+                                                  Notes = (pt == null ? "" : pt.Notes),
+                                                  Fbo = (fbo == null ? "" : fbo.Fbo),
+                                                  Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
+                                                  PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                                                  Product = "Jet A"
+                                              }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
+
+                //var pricingResults = (from fp in fboPrices
+                //                      join pt in pricingTemplates on new
+                //                      {
+                //                          fboId = fp.Fboid ?? 0,
+                //                          product = fp.Product
+                //                      } equals new
+                //                      {
+                //                          fboId = (pt != null ? pt.Fboid : 0),
+                //                          product = (pt != null ? pt.MarginTypeProduct : "")
+                //                      }
+                //                      into leftJoinPT
+                //                      from pt in leftJoinPT.DefaultIfEmpty()
+                //                      join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
+                //                                  into leftJoinPPT
+                //                      from ppt in leftJoinPPT.DefaultIfEmpty()
+                //                      join tmp in tempAddonMargin on new
+                //                      {
+                //                          fboId = (pt != null ? pt.Fboid : 0)
+                //                      } equals new
+                //                      {
+                //                          fboId = tmp.FboId
+                //                      } into leftJoinTMP
+                //                      from tmp in leftJoinTMP.DefaultIfEmpty()
+                //                      select new CustomerWithPricing()
+                //                      {
+                //                          PricingTemplateId = (pt == null ? 0 : pt.Oid),
+                //                          MarginType = (pt == null ? 0 : pt.MarginType),
+                //                          discountType = (pt == null ? 0 : pt.discountType),
+                //                          FboPrice = (fp == null ? 0 : fp.Price),
+                //                          FboId = (pt == null ? 0 : pt.Fboid),
+                //                          PricingTemplateName = pt == null ? "" : pt.Name,
+                //                          CustomerMarginAmount = (pt != null && pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
+                //                                                          (tmp.MarginJet.HasValue)
+                //                                      ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
+                //                                      : (ppt == null || ppt == null ? 0 : ppt.Amount)),
+                //                          IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
+                //                                                             pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                //                          ExpirationDate = fp?.EffectiveTo,
+                //                          Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
+                //                          Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
+                //                          Notes = (pt == null ? "" : pt.Notes),
+                //                          MinGallons = (ppt == null ? 1 : ppt.PriceTier?.Min ?? 1),
+                //                          MaxGallons = (ppt == null ? 99999 : ppt.PriceTier?.Max ?? 99999),
+                //                      }).ToList();
+
+                //var customerResults = (from cg in customerInfoByGroup
+                //                              join cvf in customersViewedByFbo on new { cg.CustomerId, Fboid = _FboId } equals new
+                //                              {
+                //                                  cvf.CustomerId,
+                //                                  cvf.Fboid
+                //                              } into letJoinCVF
+                //                              from cvf in letJoinCVF.DefaultIfEmpty()
+                //                              join ccot in customerCompanyTypes on new
+                //                              { CustomerCompanyType = cg.CustomerCompanyType ?? 0, cg.GroupId } equals new
+                //                              { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
+                //                                  into leftJoinCCOT
+                //                              from ccot in leftJoinCCOT.DefaultIfEmpty()
+                //                              select new CustomerWithPricing()
+                //                              {
+                //                                  CustomerId = cg.CustomerId,
+                //                                  CustomerInfoByGroupId = cg.Oid,
+                //                                  Company = cg.Company,
+                //                                  DefaultCustomerType = cg.CustomerType,
+                //                                  Suspended = cg.Suspended,
+                //                                  FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
+                //                                  Network = cg.Network,
+                //                                  GroupId = cg.GroupId,
+                //                                  NeedsAttention = !(cvf != null && cvf.Oid > 0),
+                //                                  HasBeenViewed = (cvf != null && cvf.Oid > 0),
+                //                                  CustomerCompanyType = cg.CustomerCompanyType,
+                //                                  CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
+                //                                  Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
+                //                                  Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
+                //                                  Fbo = (fbo == null ? "" : fbo.Fbo),
+                //                                  Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
+                //                                  PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                //                                  Product = "Jet A"
+                //                              }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
+
+                //var customerPricingResults = (from pr in pricingResults
+                //                              join cr in customerResults on pr.Icao equals cr.Icao
+                //                              select new CustomerWithPricing()
+                //                              {
+                //                                  PricingTemplateId = pr.PricingTemplateId,
+                //                                  MarginType = pr.MarginType,
+                //                                  discountType = pr.discountType,
+                //                                  FboPrice = pr.FboPrice,
+                //                                  FboId = pr.FboId,
+                //                                  PricingTemplateName = pr.PricingTemplateName,
+                //                                  CustomerMarginAmount = pr.CustomerMarginAmount,
+                //                                  IsPricingExpired = pr.IsPricingExpired,
+                //                                  ExpirationDate = pr.ExpirationDate,
+                //                                  MinGallons = pr.MinGallons,
+                //                                  MaxGallons = pr.MaxGallons,
+                //                                  Icao = pr.Icao,
+                //                                  Iata = pr.Iata,
+                //                                  Notes = pr.Notes,
+                //                                  Fbo = pr.Fbo,
+                //                                  Group = pr.Group,
+                //                                  PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                //                                  Product = "Jet A",
+                //                                  CustomerId = cr.CustomerId,
+                //                                  CustomerInfoByGroupId = cr.CustomerInfoByGroupId,
+                //                                  Company = cr.Company,
+                //                                  DefaultCustomerType = cr.DefaultCustomerType,
+                //                                  Suspended = cr.Suspended,
+                //                                  FuelerLinxId = cr.FuelerLinxId,
+                //                                  Network = cr.Network,
+                //                                  GroupId = cr.GroupId,
+                //                                  NeedsAttention = cr.NeedsAttention,
+                //                                  HasBeenViewed = cr.HasBeenViewed,
+                //                                  CustomerCompanyType = cr.CustomerCompanyType,
+                //                                  CustomerCompanyTypeName = cr.CustomerCompanyTypeName
+                //                              }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
+
+
+
 
                 if (feesAndTaxes.Count == 0)
                     return customerPricingResults;
@@ -342,201 +480,6 @@ namespace FBOLinx.Web.Services
                 var test = exception;
                 return new List<CustomerWithPricing>();
             }
-        }
-
-        public async Task<List<PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
-        {
-            _FboId = fboId;
-            _GroupId = groupId;
-
-            List<PricingTemplate> result = new List<PricingTemplate>();
-            var standardTemplates = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
-            var aircraftPricesResult = await GetTailSpecificPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
-
-            result.AddRange(standardTemplates);
-
-            //Set the applicable tail numbers for the aircraft-specific templates
-            foreach (PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
-            {
-                if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
-                    continue;
-                List<string> tailNumberList = (from ca in _context.CustomerAircrafts
-                                      join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
-                                      where ap.PriceTemplateId == aircraftPricingTemplate.Oid
-                                            && ca.CustomerId == customer.CustomerId
-                                            && ca.GroupId == _GroupId
-                                            && !string.IsNullOrEmpty(ca.TailNumber)
-                                      select ca.TailNumber.Trim()).ToList();
-                if (tailNumberList == null || tailNumberList.Count == 0)
-                    continue;
-                aircraftPricingTemplate.Name += " - " + string.Join(",", tailNumberList);
-                aircraftPricingTemplate.TailNumbers = tailNumberList;
-                result.Add(aircraftPricingTemplate);
-            }
-
-            //Set the applicable tail numbers for the standard/default templates
-            var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
-
-            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
-
-            return result;
-        }
-
-        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
-        {
-            _FboId = fboId;
-            _GroupId = groupId;
-
-            var result = await (from cg in _context.CustomerInfoByGroup
-                join c in _context.Customers on cg.CustomerId equals c.Oid
-                join cct in _context.CustomCustomerTypes on new
-                {
-                    customerId = cg.CustomerId,
-                    fboId = _FboId
-                } equals new
-                {
-                    customerId = cct.CustomerId,
-                    fboId = cct.Fboid
-                }
-                join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
-
-                where cg.GroupId == _GroupId
-                      && cg.CustomerId == customer.CustomerId
-                      && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
-                select pt).ToListAsync();
-
-            return result;
-        }
-
-        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
-        {
-            _FboId = fboId;
-            _GroupId = groupId;
-
-            var aircraftPricesResult = await (from ap in _context.AircraftPrices
-                join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
-                join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                where ca.CustomerId == customer.CustomerId
-                      && ca.GroupId == _GroupId
-                      && pt.Fboid == _FboId
-                      && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
-                group pt by new { pt.Oid, pt.Name, pt.Fboid, pt.CustomerId, pt.Notes, pt.Type, pt.MarginType }
-                into groupedPrices
-                select new PricingTemplate()
-                {
-                    Oid = groupedPrices.Key.Oid,
-                    Name = groupedPrices.Key.Name,
-                    Fboid = groupedPrices.Key.Fboid,
-                    CustomerId = groupedPrices.Key.CustomerId,
-                    Notes = groupedPrices.Key.Notes,
-                    Type = groupedPrices.Key.Type,
-                    MarginType = groupedPrices.Key.MarginType
-
-                }).ToListAsync();
-
-            return aircraftPricesResult;
-        }
-
-        public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
-        {
-            //Load customer assignments by template ID
-            var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
-                                             join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
-                                             join c in _context.Customers on cibg.CustomerId equals c.Oid
-                                             where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
-                                             select new
-                                             { CustomerType = cct.CustomerType }).ToListAsync();
-
-            //Separate inner queries first for FBO Prices and Margin Tiers
-            var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
-
-            var tempMarginTiers = await (from c in _context.CustomerMargins
-                                             join tm in _context.PriceTiers on c.PriceTierId equals tm.Oid
-                                             group c by c.TemplateId into cmGroupResult
-                                             select new
-                                             {
-                                                 TemplateId = cmGroupResult.Key,
-                                                 MaxPriceTierValue = cmGroupResult.Max(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0)),
-                                                 MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
-                                             }).ToListAsync();
-            var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
-
-            //Join the inner queries on the pricing templates
-            var pricingTemplates = (from p in tempPricingTemplates
-                                    join cm in tempMarginTiers on p.Oid equals cm.TemplateId
-                                        into leftJoinCmTiers
-                                    from cm in leftJoinCmTiers.DefaultIfEmpty()
-                                    join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
-                                        into leftJoinFp
-                                    from fp in leftJoinFp.DefaultIfEmpty()
-                                    where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
-                                    select new
-                                    {
-                                        p.CustomerId,
-                                        p.Default,
-                                        p.Fboid,
-                                        Margin = cm == null ? 0 : (p.MarginType == MarginTypes.CostPlus ? cm.MaxPriceTierValue : cm.MinPriceTierValue),
-                                        p.MarginType,
-                                        p.Name,
-                                        p.Notes,
-                                        p.Oid,
-                                        p.Type,
-                                        p.Subject,
-                                        p.Email,
-                                        IsPricingExpired = fp == null && (p.MarginType == null || p.MarginType == MarginTypes.FlatFee) ? true : false,
-                                        IntoPlanePrice = cm == null ? (fp != null ? fp.Price : 0) :
-                                            p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
-                                            (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
-                                        TemplateId = cm == null ? 0 : cm.TemplateId,
-                                        p.EmailContentId
-                                    }).ToList();
-
-
-            //Group the final result
-            var result = (from pt in pricingTemplates
-                    group pt by new
-                    {
-                        pt.CustomerId,
-                        pt.Default,
-                        pt.Fboid,
-                        pt.Margin,
-                        pt.MarginType,
-                        pt.Name,
-                        pt.Notes,
-                        pt.Oid,
-                        pt.Type,
-                        pt.Subject,
-                        pt.Email,
-                        pt.IsPricingExpired,
-                        pt.IntoPlanePrice,
-                        pt.TemplateId,
-                        pt.EmailContentId,
-                    }
-                    into groupedPt
-                    select new PricingTemplatesGridViewModel
-                    {
-                        CustomerId = groupedPt.Key.CustomerId,
-                        Default = groupedPt.Key.Default,
-                        Fboid = groupedPt.Key.Fboid,
-                        Margin = groupedPt.Key.Margin,
-                        YourMargin = groupedPt.Key.Margin,
-                        MarginType = groupedPt.Key.MarginType,
-                        Name = groupedPt.Key.Name,
-                        Notes = groupedPt.Key.Notes,
-                        Oid = groupedPt.Key.Oid,
-                        Type = groupedPt.Key.Type,
-                        Subject = groupedPt.Key.Subject,
-                        Email = groupedPt.Key.Email,
-                        IsPricingExpired = groupedPt.Key.IsPricingExpired,
-                        IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
-                        CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0),
-                        EmailContentId = groupedPt.Key.EmailContentId
-                    })
-                .OrderBy(pt => pt.Name)
-                .ToList();
-
-            return result;
         }
 
         public async Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)

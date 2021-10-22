@@ -22,6 +22,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -39,9 +40,11 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxService _fuelerLinxService;
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService)
-        {
-            _hostingEnvironment = hostingEnvironment;
+        private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly AircraftService _aircraftService;
+
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService, IPricingTemplateService pricingTemplateService , AircraftService aircraftService)
+        {    _hostingEnvironment = hostingEnvironment;
             _context = context;
             _priceFetchingService = priceFetchingService;
             _customerService = customerService;
@@ -49,7 +52,10 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _priceDistributionService = priceDistributionService;
             _fuelerLinxService = fuelerLinxService;
+            _pricingTemplateService = pricingTemplateService;
+            _aircraftService = aircraftService;
         }
+
 
         // GET: api/CustomerInfoByGroup
         [HttpGet]
@@ -327,8 +333,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomerInfoByGroup/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id , [FromRoute] int userId, [FromBody] CustomerInfoByGroup customerInfoByGroup )
         {
             if (!ModelState.IsValid)
             {
@@ -340,10 +346,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
+          
+              
+         
             _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
             try
             {
+                EditCustomerToLogger(customerInfoByGroup, customerInfoByGroup.Oid, userId);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -362,8 +372,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerInfoByGroup
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerInfoByGroup([FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerInfoByGroup([FromRoute] int userId , [FromBody] CustomerInfoByGroup customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -372,7 +382,7 @@ namespace FBOLinx.Web.Controllers
             customerInfoByGroup.Active = true;
             _context.CustomerInfoByGroup.Add(customerInfoByGroup);
             await _context.SaveChangesAsync();
-
+            AddCustomerInfoGroupLog(customerInfoByGroup , userId);
             return CreatedAtAction("GetCustomerInfoByGroup", new { id = customerInfoByGroup.Oid }, customerInfoByGroup);
         }
 
@@ -702,6 +712,339 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(true);
         }
+       
+        [HttpPost("GetCustomerLogger/{id}")]
+        public async Task<IActionResult> GetCustomerLogger ([FromRoute] int id)
+       {
+          
+            List<CustomerByGroupLogVM> customers = new List<CustomerByGroupLogVM>();
+
+            try
+            {
+                //Get customer Info Group Log 
+                var CustomerInfoGroup =  _context.CustomerInfoByGroupLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+                
+                foreach (var item in CustomerInfoGroup)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Oid = item.OID,
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),                       
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username =  _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerInfo
+                         
+                    });
+                }
+
+
+
+
+                //Get customer Contact  Log 
+                var CustomerContact =   _context.CustomerContactLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerContact)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Oid = item.OID,
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustoemrContact
+                    });
+                }
+
+
+
+                //Get customer AirCaft  Log 
+                var CustomerAircraft =  _context.CustomerAircraftLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerAircraft)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    { 
+                        Oid = item.OID ,
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerAircarft
+                    });
+                }
+
+
+
+
+                //Get customer ITP MArgin  Log 
+                var CustomerITPMargin =  _context.CustomCustomerTypeLog.Where(c => c.customerId.Equals(id)).AsNoTracking().ToList();
+
+                foreach (var item in CustomerITPMargin)
+                {
+                    customers.Add(new CustomerByGroupLogVM
+                    {
+                        Oid = item.OID,
+                        Action = item.Action.ToString(),
+                        Location = item.Location.ToString(),
+                        Role = item.Role.ToString(),
+                        Time = item.Time,
+                        username = _context.User.FirstOrDefault(u => u.Oid == item.userId).FirstName , 
+                        logType = CustomerByGroupLogVM.LogType.CustomerItpMargin
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok(customers.OrderByDescending(d=>d.Time));
+        }
+
+
+        [HttpPost("GetCustomerLoggerDetails/id/{id}/logType/{logType}")]
+        public async Task<IActionResult> GetCustomerLoggerDetails ([FromRoute] int id , [FromRoute] int logType)
+        {
+            CustomerInfoByGroupLogDataVM customerInfo = new CustomerInfoByGroupLogDataVM();
+            CustomerContactLogDataVM customerContact = new CustomerContactLogDataVM();
+            CustomerAircraftLogDataVM customerAircraft = new CustomerAircraftLogDataVM();
+            CustomerMarginLogDataVM customerMargin = new CustomerMarginLogDataVM();
+
+           try
+            {
+           
+                if(logType == ((int)CustomerByGroupLogVM.LogType.CustomerInfo))
+                {
+                    var customerInfoLog = await _context.CustomerInfoByGroupLog.FirstOrDefaultAsync(x=>x.OID == id);
+                    if(customerInfoLog != null)
+                    {
+                        customerInfo.customerInfoByGroupLogData = customerInfoLog.oldcustomerId.ToString() != "" ?
+                                     _context.CustomerInfoByGroupLogData.FirstOrDefault(c => c.Oid == customerInfoLog.oldcustomerId) :null;
+
+                        customerInfo.customerInfoByGroup = customerInfoLog.newcustomerId.ToString() != "" ?
+                                          _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == customerInfoLog.newcustomerId) : null;
+
+
+                    }
+
+                    return Ok(customerInfo);
+
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustoemrContact))
+                {
+
+                    var customerContactLog = await _context.CustomerContactLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customerContactLog != null)
+                    {
+                        customerContact.customerContactLogData = customerContactLog.oldcustomercontactId.ToString() != "" ?
+                                     _context.CustomerContactLogData.FirstOrDefault(c => c.Oid == customerContactLog.oldcustomercontactId) : null;
+
+                        customerContact.customerContact = customerContactLog.newcustomercontactId.ToString() != "" ?
+                                          _context.CustomerContacts.FirstOrDefault(c => c.Oid == customerContactLog.newcustomercontactId) : null;
+
+                        if(customerContact.customerContactLogData != null  )
+                        {
+                            customerContact.OldContact = _context.Contacts.FirstOrDefault(c => c.Oid == customerContact.customerContactLogData.ContactId);
+                           
+                        }
+
+                        if(customerContact.customerContact != null)
+                        {
+                            customerContact.NewContact = _context.Contacts.FirstOrDefault(c => c.Oid == customerContact.customerContact.ContactId);
+
+                        }
+
+                    }
+
+                    return Ok(customerContact);
+
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustomerAircarft))
+                {
+
+                    var customeraircraftLog = await _context.CustomerAircraftLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customeraircraftLog != null)
+                    {
+                        customerAircraft.customerAircraftLogData = customeraircraftLog.oldcustomeraircraftId.ToString() != "" ?
+                                     _context.CustomerAircraftLogData.FirstOrDefault(c => c.Oid == customeraircraftLog.oldcustomeraircraftId) : null;
+
+                        customerAircraft.customerAircrafts = customeraircraftLog.newcustomeraircraftId.ToString() != "" ?
+                                          _context.CustomerAircrafts.FirstOrDefault(c => c.Oid == customeraircraftLog.newcustomeraircraftId) : null;
+
+
+                        if (customerAircraft.customerAircrafts != null )
+                        {
+                            customerAircraft.NewAircraft = _aircraftService.GetAircrafts(customerAircraft.customerAircrafts.AircraftId).Result;
+                           
+
+                        }
+
+                        if(customerAircraft.customerAircraftLogData != null)
+                        {
+                            customerAircraft.oldAircraft = _aircraftService.GetAircrafts(customerAircraft.customerAircraftLogData.AircraftId).Result;
+                        }
+
+                    }
+
+                    return Ok(customerAircraft);
+                }
+                else if (logType == ((int)CustomerByGroupLogVM.LogType.CustomerItpMargin))
+                {
+
+
+                    var customerMarginLog = await _context.CustomCustomerTypeLog.FirstOrDefaultAsync(x => x.OID == id);
+                    if (customerMarginLog != null)
+                    {
+                        customerMargin.customerTypesLogData = customerMarginLog.oldcustomertypeId.ToString() != "" ?
+                                     _context.CustomCustomerTypesLogData.FirstOrDefault(c => c.Oid == customerMarginLog.oldcustomertypeId) : null;
+
+                        customerMargin.customerTypes = customerMarginLog.newcustomertypetId.ToString() != "" ?
+                                          _context.CustomCustomerTypes.FirstOrDefault(c => c.Oid == customerMarginLog.newcustomertypetId) : null;
+
+                        if(customerMargin.customerTypes != null && customerMargin.customerTypesLogData != null)
+                        {
+                            customerMargin.NewMarginName = _context.PricingTemplate.
+                                                          FirstOrDefault(p => p.Oid == customerMargin.customerTypes.CustomerType).Name;
+
+                            customerMargin.oldMarginName = _context.PricingTemplate.
+                                                         FirstOrDefault(p => p.Oid == customerMargin.customerTypesLogData.CustomerType).Name;
+
+                        }
+
+                    }
+
+                    return Ok(customerMargin);
+                }
+                else
+                {
+                    return NoContent();
+                }
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+           
+        }
+
+        private void AddCustomerInfoGroupLog(CustomerInfoByGroup customer , int userId = 0)
+        {
+            var newCustomer = _context.CustomerInfoByGroup
+                                      .FirstOrDefault(c=>c.Company.Equals(customer.Company) 
+                                                      && c.CustomerId.Equals(customer.CustomerId)
+                                                      && c.GroupId.Equals(customer.GroupId));
+
+            if(newCustomer != null)
+            {
+                try
+                {
+                    _context.CustomerInfoByGroupLog.Add(new CustomerInfoByGroupLog
+                    {
+                        Action = CustomerInfoByGroupLog.Actions.Created , 
+                        Location =CustomerInfoByGroupLog.Locations.Customer,
+                        Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role, 
+                        userId  = userId, 
+                        Time = DateTime.Now , 
+                        newcustomerId = newCustomer.Oid , 
+                        customerId = newCustomer.Oid
+                    });
+                    _context.SaveChanges();
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        }
+        private  void EditCustomerToLogger ( CustomerInfoByGroup customer , int customerId , int userId = 0 )
+        {
+            var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));
+            if (oldCustomerInfoByGroup != null)
+            {
+                //Add the old info into DataLog
+                _context.CustomerInfoByGroupLogData.Add(new CustomerInfoByGroupLogData
+                {
+                    Active = oldCustomerInfoByGroup.Active,
+                    Address = oldCustomerInfoByGroup.Address,
+                    //CertificateType = oldCustomerInfoByGroup.CertificateType , 
+                    City = oldCustomerInfoByGroup.City,
+                    Company = oldCustomerInfoByGroup.Company,
+                    Country = oldCustomerInfoByGroup.Country,
+                    CustomerCompanyType = oldCustomerInfoByGroup.CustomerCompanyType,
+                    CustomerId = oldCustomerInfoByGroup.CustomerId,
+                    CustomerType = oldCustomerInfoByGroup.CustomerType,
+                    DefaultTemplate = oldCustomerInfoByGroup.DefaultTemplate,
+                    Distribute = oldCustomerInfoByGroup.Distribute,
+                    EmailSubscription = oldCustomerInfoByGroup.EmailSubscription,
+                    GroupId = oldCustomerInfoByGroup.GroupId,
+                    Joined = oldCustomerInfoByGroup.Joined,
+                    MainPhone = oldCustomerInfoByGroup.MainPhone,
+                    MergeRejected = oldCustomerInfoByGroup.MergeRejected,
+                    Network = oldCustomerInfoByGroup.Network,
+                    Password = oldCustomerInfoByGroup.Password,
+                    Sfid = oldCustomerInfoByGroup.Sfid,
+                    Show100Ll = oldCustomerInfoByGroup.Show100Ll,
+                    ShowJetA = oldCustomerInfoByGroup.ShowJetA,
+                    State = oldCustomerInfoByGroup.State,
+                    Suspended = oldCustomerInfoByGroup.Suspended,
+                    Username = oldCustomerInfoByGroup.Username,
+                    Website = oldCustomerInfoByGroup.Website,
+                    ZipCode = oldCustomerInfoByGroup.ZipCode,
+                    PricingTemplateRemoved = oldCustomerInfoByGroup.PricingTemplateRemoved,
+
+                });
+
+                try
+                {
+                    _context.SaveChanges();
+                    int OldcustomerId = _context.CustomerInfoByGroupLogData.Where(c => (c.GroupId.Equals(customer.GroupId)) && (c.CustomerId.Equals(customer.CustomerId)))
+                        .OrderByDescending(c => c.Oid).FirstOrDefault().Oid;
+
+                    CustomerInfoByGroupLog customerlog = new CustomerInfoByGroupLog();
+                    customerlog.newcustomerId = customer.Oid;
+                    customerlog.Time = DateTime.Now;
+                    customerlog.userId = userId;
+                    customerlog.Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role;
+                    customerlog.Location = CustomerInfoByGroupLog.Locations.EditCustomer;
+                    customerlog.oldcustomerId = OldcustomerId;
+                    customerlog.customerId = customerId;
+
+                    if (oldCustomerInfoByGroup.Active == true && customer.Active == false)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Deactivated;
+                    else if (oldCustomerInfoByGroup.Active == false && customer.Active == true)
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Activated;
+                    else
+                        customerlog.Action = CustomerInfoByGroupLog.Actions.Edited;
+
+                    _context.CustomerInfoByGroupLog.Add(customerlog); 
+
+                    try
+                    {
+                        _context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        throw;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+
+            }
+
+            
+           
+        }
 
         private bool CustomerInfoByGroupExists(int id)
         {
@@ -712,16 +1055,14 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                List<PricingTemplatesGridViewModel> pricingTemplates = await _priceFetchingService.GetPricingTemplates(fboId, groupId);
+                List<PricingTemplatesGridViewModel> pricingTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
 
                 PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
                     .Where(x => x.Fboid == fboId && (x.Default ?? false)).FirstOrDefaultAsync();
 
-                PricingTemplateService pricingTemplateService = new PricingTemplateService(_context);
-
-                await pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
+                await _pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
                 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
 
@@ -743,8 +1084,14 @@ namespace FBOLinx.Web.Controllers
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroup = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
-                var contactInfoByGroupForAlerts =
-                    await _context.ContactInfoByGroup.Where(x => x.GroupId == groupId && x.CopyAlerts == true).Include(x => x.Contact).ToListAsync();
+                
+                var contactInfoByFboForAlerts =
+                    await (from cibg in _context.ContactInfoByGroup
+                           join c in _context.Contacts on cibg.ContactId equals c.Oid
+                           join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                           from cibf in leftJoinCIBF.DefaultIfEmpty()
+                           where cibg.GroupId == groupId 
+                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts }).ToListAsync();
 
                 //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
@@ -776,8 +1123,8 @@ namespace FBOLinx.Web.Controllers
                             FuelerLinxId = (cg.Customer?.FuelerlinxId ?? 0),
                             CustomerCompanyTypeName = ccot?.Name,
                             CertificateType = (cg.CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet),
-                            ContactExists = contactInfoByGroupForAlerts.Any(c =>
-                                (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true),
+                            ContactExists =  contactInfoByFboForAlerts.Any(c =>
+                                (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
@@ -854,7 +1201,7 @@ namespace FBOLinx.Web.Controllers
 
 
             List<CustomerWithPricing> commercialValidPricing =
-                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial);
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial, ApplicableTaxFlights.All, null, 0, groupId);
             if (commercialValidPricing != null)
             {
                 commercialValidPricing.RemoveAll(x => x.GroupId != groupId);
@@ -862,7 +1209,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             List<CustomerWithPricing> privateValidPricing =
-                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private);
+                await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private, ApplicableTaxFlights.All, null, 0, groupId);
             if (privateValidPricing != null)
             {
                 privateValidPricing.RemoveAll(x => x.GroupId != groupId);

@@ -19,21 +19,44 @@ namespace FBOLinx.DB.Models
             Inactive = 3
         }
 
+
+        public enum DiscountTypes : short
+        {
+            [Description("Flat Per Gallon")]
+             FlatPerGallon  = 0,
+            [Description("Percentage")]
+             Percentage =  1          
+        }
+
+
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
         [StringLength(500)]
+
         public string Name { get; set; }
+
         [Column("FBOID")]
         public int Fboid { get; set; }
+
         [Column("CustomerID")]
         public int? CustomerId { get; set; }
+
         public bool? Default { get; set; }
+
         public string Notes { get; set; }
+
         public string Email { get; set; }
+
         public string Subject { get; set; }
+
         public short? Type { get; set; }
+       
+        public DiscountTypes? DiscountType { get; set; }
+        
         public MarginTypes? MarginType { get; set; }
+
         public int? EmailContentId { get; set; }
         [NotMapped]
         public List<string> TailNumbers { get; set; }
@@ -51,6 +74,8 @@ namespace FBOLinx.DB.Models
                 return "";
             }
         }
+
+      
 
         [InverseProperty("PricingTemplate")]
         public ICollection<CustomerMargins> CustomerMargins { get; set; }

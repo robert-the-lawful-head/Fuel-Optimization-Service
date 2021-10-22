@@ -69,9 +69,11 @@ namespace FBOLinx.Web.Controllers
 
             var tags = await _context.CustomerTag
                                     .Where(x => (x.GroupId == id || x.GroupId == 0))
-                                                        .OrderBy(x => x.Name)
-                                                        .ToListAsync();
-
+                                                         .OrderBy(x=>x.Name)
+                                                         .Select(x=>x.Name)
+                                                         .Distinct()
+                                                         .ToListAsync()
+                                                         ;
 
             return Ok(tags);
         }

@@ -79,11 +79,15 @@ export class FbosHomeComponent implements OnInit {
         if (!this.groupInfo) {
             this.fboService
                 .getForGroup(this.sharedService.currentUser.groupId)
-                .subscribe((data: any) => (this.fbosData = data));
+                .subscribe((data: any) => {
+                    this.fbosData = data;
+                });
         } else {
             this.fboService
                 .getForGroup(this.groupInfo.oid)
-                .subscribe((data: any) => (this.fbosData = data));
+                .subscribe((data: any) => {
+                    this.fbosData = data;
+                });
         }
     }
 }

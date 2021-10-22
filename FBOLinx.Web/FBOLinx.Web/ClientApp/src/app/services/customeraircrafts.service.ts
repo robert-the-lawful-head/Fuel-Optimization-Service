@@ -1,12 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable()
 export class CustomeraircraftsService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
 
-    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    constructor(private http: HttpClient, @Inject('BASE_URL') baseUrl: string , private route : ActivatedRoute) {
         this.headers = new HttpHeaders({
             'Content-Type': 'application/json; charset=utf-8',
         });
@@ -76,8 +77,8 @@ export class CustomeraircraftsService {
         });
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId , customerId) {
+        return this.http.post(this.accessPointUrl+'/'+userId+'/'+ customerId, payload, {
             headers: this.headers,
         });
     }
@@ -93,19 +94,20 @@ export class CustomeraircraftsService {
     }
 
     public import(payload) {
-        return this.http.post(this.accessPointUrl + '/import', payload, {
+        return this.http.post(this.accessPointUrl+'/import', payload, {
             headers: this.headers,
         });
     }
 
-    public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload.oid, {
+    public remove(payload , userId ,  customerId) {
+        return this.http.delete(this.accessPointUrl + '/'+payload.oid+'/'+userId+'/'+ customerId, {
             headers: this.headers,
         });
     }
 
-    public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+    public update(payload , userId , customerId) {
+
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+customerId, payload, {
             headers: this.headers,
         });
     }

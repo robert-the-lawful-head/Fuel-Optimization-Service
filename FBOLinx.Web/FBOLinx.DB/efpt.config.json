@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 1,
-   "ContextClassName": "Filestorage_LocalContext",
+   "ContextClassName": "FboLinxContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,11 +14,11 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[FboLinxImageFileData]",
+         "Name": "[dbo].[ContactInfoByFbo]",
          "ObjectType": 0
       }
    ],
-   "UiHint": "FL-TEST-DB01.fileStorage_Local",
+   "UiHint": "FL-TEST-DB01.paragon_test",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
@@ -27,9 +27,11 @@
    "UseInflector": false,
    "UseLegacyPluralizer": false,
    "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
    "UseNoNavigations": false,
    "UseNoObjectFilter": false,
    "UseNodaTime": false,
    "UseNullableReferences": false,
+   "UseSchemaFolders": false,
    "UseSpatial": false
 }

@@ -12,6 +12,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 /*import FlatFileImporter from 'flatfile-csv-importer';*/
 import { find, forEach, map, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
@@ -113,6 +114,7 @@ export class CustomersGridComponent implements OnInit {
     @Input() aircraftData: any[];
     @Input() customerGridState: CustomerGridState;
     @Input() fuelVendors: any[];
+    @Input () tags : any [];
 
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
@@ -121,14 +123,14 @@ export class CustomersGridComponent implements OnInit {
     tableLocalStorageKey = 'customer-manager-table-settings';
 
     customersDataSource: any = null;
-    customerFilterType: number = undefined;
+    customerFilterType: number = 0;
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
     pageSize = 100;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
-    tags: any[];
+
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
     dialogOpen : boolean = false;
     results = '[]';
@@ -151,13 +153,13 @@ export class CustomersGridComponent implements OnInit {
         private airportWatchService: AirportWatchService,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private tagsService: TagsService,
-        private dialog: MatDialog
+        private dialog: MatDialog ,
+        private route : ActivatedRoute
     ) { }
 
     ngOnInit() {
         /*this.initializeImporter();*/
-
-        if (this.customerGridState.filterType) {
+         if (this.customerGridState.filterType) {
             this.customerFilterType = this.customerGridState.filterType;
         }
 
@@ -191,10 +193,10 @@ export class CustomersGridComponent implements OnInit {
         }
         this.airportWatchService.getStartDate().subscribe((date) => {
             this.airportWatchStartDate = new Date(date);
-        });        
+        });
     }
 
-    
+
 
     onPageChanged(event: any) {
         localStorage.setItem('pageIndex', event.pageIndex);
@@ -231,6 +233,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     editCustomer(customer) {
+       
         this.editCustomerClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
@@ -349,7 +352,8 @@ export class CustomersGridComponent implements OnInit {
             id: customer.customerId,
             pricingTemplateId: changedPricingTemplate.oid,
         };
-        this.customerMarginsService.updatecustomermargin(vm).subscribe(() => {
+        const id = this.route.snapshot.paramMap.get('id');
+        this.customerMarginsService.updatecustomermargin(vm , this.sharedService.currentUser.oid ,this.sharedService.currentUser.groupId ).subscribe(() => {
             this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
         });
     }
@@ -584,7 +588,7 @@ export class CustomersGridComponent implements OnInit {
     onCustomerTagUpdate(event: any, customer: any) {
         if (event.itemValue.customerId != customer.customerId)
         {
-            this.addCustomerTag(event.itemValue, customer);                     
+            this.addCustomerTag(event.itemValue, customer);
         }
         else{
             this.removeCustomerTag(event.itemValue, customer);
@@ -605,7 +609,7 @@ export class CustomersGridComponent implements OnInit {
         tag['customerId'] = customer.customerId;
         tag['oid'] = 0;
         this.tagsService.add(tag).subscribe(response => {
-            this.loadCustomerTags(customer);   
+            this.loadCustomerTags(customer);
         });
     }
 
@@ -620,8 +624,8 @@ export class CustomersGridComponent implements OnInit {
         })
     }
 
-    newCustomTag(customer: any) {    
-        this.dialogOpen = true;    
+    newCustomTag(customer: any) {
+        this.dialogOpen = true;
         const data = {
             customerId: customer.customerId,
             groupId: this.sharedService.currentUser.groupId,
@@ -631,7 +635,7 @@ export class CustomersGridComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((response) => {
-            this.dialogOpen = false;            
+            this.dialogOpen = false;
             if (!response) {
                 return;
             }
@@ -645,7 +649,7 @@ export class CustomersGridComponent implements OnInit {
 
     checkState() {
         if (this.dialogOpen)
-            this.multiInput.show();      
+            this.multiInput.show();
     }
 
     onCustomerPriceShown(customer: any) {
@@ -688,13 +692,14 @@ export class CustomersGridComponent implements OnInit {
         }
         this.customersDataSource.data = this.customersData.filter(
             (element: any) => {
-                if (this.customerFilterType !== 1) {
-                    return true;
+               if (this.customerFilterType != 1) {
+                   return true;
                 }
                 return element.needsAttention;
+
             }
         );
-        
+
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
         this.customersDataSource.paginator = this.paginator;

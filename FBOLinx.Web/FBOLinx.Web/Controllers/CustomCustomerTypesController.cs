@@ -72,7 +72,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> PutCustomCustomerTypesForCustomer([FromBody] CustomCustomerTypeUpdateRequest request)
+        public async Task<IActionResult> PutCustomCustomerTypesForCustomer( [FromBody] CustomCustomerTypeUpdateRequest request)
         {
             var customCustomerType = _context.CustomCustomerTypes
                                             .FirstOrDefault((x => x.CustomerId == request.CustomerId && x.Fboid == request.FboId));
@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Controllers
 
             customCustomerType.CustomerType = request.PricingTemplateId;
             _context.CustomCustomerTypes.Update(customCustomerType);
-
+            
             await _context.SaveChangesAsync();
 
             return Ok();
@@ -118,6 +118,7 @@ namespace FBOLinx.Web.Controllers
             return NoContent();
         }
 
+
         // POST: api/CustomCustomerTypes
         [HttpPost]
         public async Task<ActionResult<CustomCustomerTypes>> PostCustomCustomerTypes(CustomCustomerTypes customCustomerTypes)
@@ -127,6 +128,7 @@ namespace FBOLinx.Web.Controllers
 
             return CreatedAtAction("GetCustomCustomerTypes", new { id = customCustomerTypes.Oid }, customCustomerTypes);
         }
+
 
         [HttpPost("collection")]
         public async Task<ActionResult<List<CustomCustomerTypes>>> UpdateCustomCustomerTypeCollection(List<CustomCustomerTypes> customCustomerTypesCollection)
@@ -141,6 +143,7 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
             return customCustomerTypesCollection;
         }
+
 
         // DELETE: api/CustomCustomerTypes/5
         [HttpDelete("{id}")]
@@ -157,6 +160,7 @@ namespace FBOLinx.Web.Controllers
 
             return customCustomerTypes;
         }
+
 
         private bool CustomCustomerTypesExists(int id)
         {

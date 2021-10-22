@@ -1,3 +1,4 @@
+import { identifierName } from '@angular/compiler';
 import {
     Component,
     EventEmitter,
@@ -11,6 +12,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 /*import FlatfileImporter from 'flatfile-csv-importer';*/
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -52,6 +54,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
+    public customerInfobyGroupId : any;
 
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
@@ -67,7 +70,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
         private customerAircraftsService: CustomeraircraftsService,
         private aircraftPricesService: AircraftpricesService,
         private customCustomerTypeService: CustomcustomertypesService,
-        private sharedService: SharedService
+        private sharedService: SharedService ,
+        private route : ActivatedRoute
     ) {
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
@@ -77,6 +81,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.customerInfobyGroupId =  this.route.snapshot.paramMap.get('id');
         if (!this.customerAircraftsData) {
             return;
         }
@@ -170,9 +175,10 @@ export class CustomerAircraftsGridComponent implements OnInit {
             if (!result) {
                 return;
             }
+            const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result).subscribe(() => {
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid ,id ).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
@@ -193,6 +199,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
+            console.log(this.route.snapshot.paramMap.get('id'));
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
@@ -201,6 +208,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             customerAircraft.isFuelerlinxNetwork &&
                             customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
+                       customerGroupId : this.route.snapshot.paramMap.get('id')
                     },
                     width: '450px',
                 }
@@ -212,8 +220,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 }
 
                 if (result.toDelete) {
+                    const id = this.route.snapshot.paramMap.get('id');
                     this.customerAircraftsService
-                        .remove(result)
+                        .remove(result , this.sharedService.currentUser.oid , id)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroupAndCustomerId(
@@ -329,7 +338,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 }
             });
     }
-    
+
     //[#hz0jtd] FlatFile importer was requested to be removed
     //async launchImporter() {
     //    if (!this.LICENSE_KEY) {

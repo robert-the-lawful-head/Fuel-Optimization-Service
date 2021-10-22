@@ -133,8 +133,8 @@ export class CustomerinfobygroupService {
         );
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId ) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
@@ -145,8 +145,8 @@ export class CustomerinfobygroupService {
         });
     }
 
-    public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+    public update(payload , userId) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
             headers: this.headers,
         });
     }
@@ -160,6 +160,23 @@ export class CustomerinfobygroupService {
         );
     }
 
+    getCustomerByGroupLogger(customerId) {
+        return this.http.post(
+            `${this.accessPointUrl}/GetCustomerLogger/${customerId}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    getCustomerByGroupLoggerData(oid , logType) {
+        return this.http.post(
+            `${this.accessPointUrl}/GetCustomerLoggerDetails/id/${oid}/logType/${logType}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
     public rejectmerge(customerId: number, groupId: number) {
         return this.http.post(
             `${this.accessPointUrl}/rejectmergeforcustomer/customerId/${customerId}/groupId/${groupId}`,

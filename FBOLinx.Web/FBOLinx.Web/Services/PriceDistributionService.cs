@@ -52,12 +52,13 @@ namespace FBOLinx.Web.Services
         private IHttpContextAccessor _HttpContextAccessor;
         private IMailTemplateService _MailTemplateService;
         private IPriceFetchingService _PriceFetchingService;
+        private IPricingTemplateService _PricingTemplateService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -65,6 +66,7 @@ namespace FBOLinx.Web.Services
             _context = context;
             _fileStorageContext = fileStorageContext;
             _MailService = mailService;
+            _PricingTemplateService = pricingTemplateService;
         }
         #endregion
 
@@ -341,7 +343,7 @@ namespace FBOLinx.Web.Services
         private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
         {
 
-            var result = await _PriceFetchingService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
+            var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
                 _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
             
             return result;
@@ -607,9 +609,11 @@ namespace FBOLinx.Web.Services
             var result = await (from cc in _context.Set<CustomerContacts>()
                 join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
                 join cibg in _context.Set<ContactInfoByGroup>() on c.Oid equals cibg.ContactId
+                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = _DistributePricingRequest.FboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where cibg.GroupId == _DistributePricingRequest.GroupId
                                       && cc.CustomerId == customer.CustomerId
-                                      && (cibg.CopyAlerts ?? false)
+                                      && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                       && !string.IsNullOrEmpty(cibg.Email)
                                 select cibg).ToListAsync();
             return result;

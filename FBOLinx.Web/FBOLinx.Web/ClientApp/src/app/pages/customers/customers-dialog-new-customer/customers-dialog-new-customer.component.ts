@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -66,7 +67,8 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         private contactInfoByGroupsService: ContactinfobygroupsService,
         private customCustomerTypesService: CustomcustomertypesService,
         private customerAircraftsService: CustomeraircraftsService,
-        private sharedService: SharedService
+        private sharedService: SharedService ,
+        private route : ActivatedRoute
     ) {
         this.customerForm = new FormGroup({
             aircraft: new FormArray([]),
@@ -276,13 +278,13 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 groupId: this.sharedService.currentUser.groupId,
             })
             .toPromise();
-
+       const id = this.route.snapshot.paramMap.get('id');
         const cig = (await this.customerInfoByGroupService
             .add({
                 ...this.companyFormGroup.value,
                 customerId: customer.oid,
                 groupId: this.sharedService.currentUser.groupId,
-            })
+            } , this.sharedService.currentUser.oid )
             .toPromise()) as any;
 
         await this.contactInfoByGroupsService

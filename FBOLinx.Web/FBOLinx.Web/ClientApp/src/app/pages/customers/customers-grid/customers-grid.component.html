@@ -13,7 +13,7 @@
             </div>
             <div *ngIf="customersDataSource" class="col-6">
                 <app-table-global-search [matDataSource]="customersDataSource"
-                    placeholder="Search by Company, Tail, etc."></app-table-global-search>
+                   placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
             <div class="col-2">
                 <mat-form-field>
@@ -23,7 +23,7 @@
                         <mat-option [value]="1">
                             Customers Needing Attention
                         </mat-option>
-                    </mat-select>
+                </mat-select>
                 </mat-form-field>
             </div>
             <div *ngIf="anySelected()" class="col-2 bulk-action-btn">
@@ -120,16 +120,16 @@
                     <span *ngIf="customersDataSource">
                         <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort" columnId="tags"
                             propertyName="tags" optionLabel="label" optionValue="value" [columnFormat]="11"
-                            [options]="tags"></app-table-column-filter>
+                            [options]="tags" ></app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <p-multiSelect class="tags-dropdown-filter" [options]="customer.availableTags" #multiInput
                         [(ngModel)]="customer.tags" display="chip" placeholder="No tags" optionLabel="label"  autofocusFilter="true"
-                        [virtualScroll]="true" (onChange)="onCustomerTagUpdate($event, customer)"  maxSelectedLabels="10" filterBy="name" 
-                        (onPanelShow)="onCustomerTagPanelShow($event, customer)" [showToggleAll]="false" itemSize="50" resetFilterOnHide="true" 
+                        [virtualScroll]="true" (onChange)="onCustomerTagUpdate($event, customer)"  maxSelectedLabels="10" filterBy="name"
+                        (onPanelShow)="onCustomerTagPanelShow($event, customer)" [showToggleAll]="false" itemSize="50" resetFilterOnHide="true"
                         (onPanelHide)="checkState()">
-                        <ng-template let-value pTemplate="selectedItems">                            
+                        <ng-template let-value pTemplate="selectedItems">
                             <div class="p-multiselect-token" *ngFor="let tag of customer.tags">
                                 <span class="p-multiselect-token-label">
                                     {{ tag.name }}

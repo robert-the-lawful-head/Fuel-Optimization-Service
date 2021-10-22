@@ -1,3 +1,4 @@
+import { CustomerHistoryComponent } from './customers/customer-history/customer-history.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -183,6 +184,8 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
+import { CustomerHistoryDetailsComponent } from './customers/customer-history-details/customer-history-details.component';
+import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
 
 @NgModule({
     declarations: [
@@ -299,7 +302,10 @@ import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/cust
         FlightWatchSettingsComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
-        CustomerTagDialogComponent
+        CustomerTagDialogComponent,
+        CustomerHistoryComponent ,
+       CustomersAnalyticsComponent ,
+       CustomerHistoryDetailsComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -361,7 +367,7 @@ import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/cust
         MultiSelectModule,
         ListboxModule,
         DropdownModule,
-        Ej2MultiSelectModule,
+        Ej2MultiSelectModule
     ],
     providers: [
         ColumnMenuService,

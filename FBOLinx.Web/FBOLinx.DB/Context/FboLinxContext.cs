@@ -32,6 +32,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<PriceTiers> PriceTiers { get; set; }
         public virtual DbSet<PricingTemplate> PricingTemplate { get; set; }
         public virtual DbSet<CompaniesByGroup> CompaniesByGroup { get; set; }
+        public virtual DbSet<ContactInfoByFbo> ContactInfoByFbo { get; set; }
         public virtual DbSet<ContactInfoByGroup> ContactInfoByGroup { get; set; }
         public virtual DbSet<CustomerContacts> CustomerContacts { get; set; }
         public virtual DbSet<AircraftPrices> AircraftPrices { get; set; }
@@ -77,6 +78,16 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
+        public virtual DbSet<CustomerInfoByGroupLog> CustomerInfoByGroupLog { get; set; }
+        public virtual DbSet<CustomerInfoByGroupLogData> CustomerInfoByGroupLogData { get; set; }
+        public virtual DbSet<CustomerAircraftLogData> CustomerAircraftLogData { get; set; }
+        public virtual DbSet<CustomerAircraftLog> CustomerAircraftLog { get; set; }
+        public virtual DbSet<CustomerContactLog> CustomerContactLog { get; set; }
+        public virtual DbSet<CustomerContactLogData> CustomerContactLogData { get; set; }
+        public virtual DbSet<CustomCustomerTypesLog> CustomCustomerTypeLog { get; set; }
+        public virtual DbSet<CustomCustomerTypesLogData> CustomCustomerTypesLogData { get; set; }
+
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -936,6 +947,15 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Name).IsUnicode(false);
 
+            });
+
+            modelBuilder.Entity<ContactInfoByFbo>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("Oid");
+                entity.Property(e => e.ContactId).HasColumnName("ContactId");
+                entity.Property(e => e.FboId).HasColumnName("FboId");
+                entity.Property(e => e.CopyAlerts).HasColumnName("CopyAlerts");
             });
         }
     }
