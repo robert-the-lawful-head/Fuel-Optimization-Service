@@ -39,13 +39,12 @@
                 domesticPrivatePricing &&
                 internationalPrivatePricing &&
                 domesticCommercialPricing &&
-                internationalCommercialPricing
-            "
-            class="col-12"
-        >
+                internationalCommercialPricing"
+            class="col-12">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-12">
+
                         <!--No-rules display-->
                         <table *ngIf="priceBreakdownDisplayType == 0">
                             <thead>
@@ -266,7 +265,8 @@
                                             }}
                                         </div>
                                     </td>
-                                    <td
+
+                                     <td
                                         (mouseenter)="
                                             mouseEnterPriceItem(
                                                 domesticPrivatePricing
@@ -300,7 +300,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td
+
+                                     <td
                                         (mouseenter)="
                                             mouseEnterPriceItem(
                                                 domesticCommercialPricing
@@ -517,6 +518,7 @@
                                 </tr>
                             </tbody>
                         </table>
+
                     </div>
                 </div>
 
@@ -544,13 +546,15 @@
                             [fboPrice]="activeHoverPriceItem.fboPrice"
                             [feesAndTaxes]="feeAndTaxCloneForPopOver"
                             [marginType]="activeHoverPriceItem.marginType"
+                            [discountType]="activeHoverPriceItem.discountType"
                             [validDepartureTypes]="activeHoverDeparturetypes"
                             [validFlightTypes]="activeHoverFlightTypes"
                         ></fee-and-tax-breakdown>
                     </div>
                 </popover-content>
             </div>
-        </div>
+       </div>
+
     </div>
 
     <div>

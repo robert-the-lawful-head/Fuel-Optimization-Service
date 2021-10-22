@@ -138,7 +138,7 @@
                                             <div>
                                                 Total
                                                 <a matTooltip="Please see the scenario pricing tab for out-the-door pricing that includes taxes & fees"
-                                                            matTooltipPosition="after" style="float: right">*
+                                                            matTooltipPosition="after" style="float: right"><i class="fa fa-info-circle"></i>
                                                 </a>
                                             </div>
                                         </th>
@@ -189,7 +189,7 @@
                                         .marginType == 1"
                                            [formGroupName]="i">
                                             <div class="volume-tiers-width">
-                                                <mat-form-field>
+                                                <mat-form-field style="width:100px">
                                                     <input (click)="
                                                             $event.target.select()
                                                         "
@@ -206,19 +206,19 @@
                                                     pricingTemplateForm.value
                                                         .discountType == 1 "
                                                           class="prefixPercentage"
-                                                          matPrefix>%</span>
+                                                          matSuffix>%</span>
 
                                                 </mat-form-field>
                                             </div>
                                         </td>
-                                        <!--ITP MArgin-->
+                                        <!--ITP MARGIN-->
                                         <td
                                             [formGroupName]="i"
                                             class="font-weight-bold font-italic" >
 
                                                <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
                                                .marginType == 1">
-                                                    <div>
+                                                    <div style="width:75px">
                                                         ${{
                                                             customerMargin.value.itp
                                                                 | number: "1.4-4"
@@ -228,7 +228,7 @@
                                                 </div>
 
                                                 <mat-form-field  *ngIf=" pricingTemplateForm.value
-                                                .marginType == 0">
+                                                .marginType == 0" style="width:100px">
                                                     <input (click)="
                                                             $event.target.select()
                                                         "
@@ -245,7 +245,7 @@
                                                     pricingTemplateForm.value
                                                         .discountType == 1 "
                                                           class="prefixPercentage"
-                                                          matPrefix>%</span>
+                                                          matSuffix>%</span>
 
                                                 </mat-form-field>
                                         </td>
@@ -253,47 +253,45 @@
                                         <td [formGroupName]="i"
                                             class="font-weight-bold font-italic">
                                             <div>
-                                                <div>
-                                                    <div *ngIf="
-                                                    pricingTemplateForm.value
-                                                        .marginType == 0 &&
-                                                    pricingTemplateForm.value
-                                                        .discountType == 0">
-                                                        ${{
-                                                            jetACost + customerMargin.value.itp
-                                                                | number: "1.4-4"
-                                                        }}
-                                                    </div>
-                                                    <div *ngIf="
-                                                    pricingTemplateForm.value
-                                                        .marginType == 0 &&
-                                                    pricingTemplateForm.value
-                                                        .discountType == 1">
-                                                        ${{
-                                                            jetACost + (jetACost * customerMargin.value.amount / 100)
-                                                                | number: "1.4-4"
-                                                        }}
-                                                    </div>
-                                                    <div *ngIf="
-                                                    pricingTemplateForm.value
-                                                        .marginType == 1 &&
-                                                    pricingTemplateForm.value
-                                                        .discountType == 0">
-                                                        ${{
-                                                            jetARetail - customerMargin.value.amount
-                                                                | number: "1.4-4"
-                                                        }}
-                                                    </div>
-                                                    <div *ngIf="
-                                                    pricingTemplateForm.value
-                                                        .marginType == 1 &&
-                                                    pricingTemplateForm.value
-                                                        .discountType == 1">
-                                                        ${{
-                                                            jetARetail - (jetARetail * customerMargin.value.amount / 100)
-                                                                | number: "1.4-4"
-                                                        }}
-                                                    </div>
+                                                <div *ngIf="
+                                                pricingTemplateForm.value
+                                                    .marginType == 0 &&
+                                                pricingTemplateForm.value
+                                                    .discountType == 0">
+                                                    ${{
+                                                        jetACost + customerMargin.value.itp
+                                                            | number: "1.4-4"
+                                                    }}
+                                                </div>
+                                                <div *ngIf="
+                                                pricingTemplateForm.value
+                                                    .marginType == 0 &&
+                                                pricingTemplateForm.value
+                                                    .discountType == 1">
+                                                    ${{
+                                                        jetACost + (jetACost * customerMargin.value.amount / 100)
+                                                            | number: "1.4-4"
+                                                    }}
+                                                </div>
+                                                <div *ngIf="
+                                                pricingTemplateForm.value
+                                                    .marginType == 1 &&
+                                                pricingTemplateForm.value
+                                                    .discountType == 0">
+                                                    ${{
+                                                        jetARetail - customerMargin.value.amount
+                                                            | number: "1.4-4"
+                                                    }}
+                                                </div>
+                                                <div *ngIf="
+                                                pricingTemplateForm.value
+                                                    .marginType == 1 &&
+                                                pricingTemplateForm.value
+                                                    .discountType == 1">
+                                                    ${{
+                                                        jetARetail - (jetARetail * customerMargin.value.amount / 100)
+                                                            | number: "1.4-4"
+                                                    }}
                                                 </div>
                                             </div>
                                         </td>

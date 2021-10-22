@@ -28,6 +28,8 @@ namespace FBOLinx.Web.DTO
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
         public bool NeedsAttention { get; set; }
+
+        public double? amount { get; set; }
         public string PricingTemplateName { get; set; }
         public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
         public double? MinGallons { get; set; }
@@ -111,13 +113,35 @@ namespace FBOLinx.Web.DTO
         private double GetSubtotalWithMargin(double preMarginSubTotal)
         {
             double result = 0;
+            double itp = 0;
             if (!MarginType.HasValue)
                 result = 0;
+
             else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
-                result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
+            {
+                if (discountType.Value == PricingTemplate.DiscountType.percentage)
+                {
+                    itp = preMarginSubTotal * (Math.Abs(CustomerMarginAmount.Value) / 100);
+                    result = (preMarginSubTotal + itp);
+                }
+                else
+                {
+                    result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.Value));
+                }
+            }
             else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
-                result = (preMarginSubTotal - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
-            else if (MarginType.Value == PricingTemplate.MarginTypes.FlatFee)
+            {
+                if (discountType.Value == PricingTemplate.DiscountType.percentage)
+                {
+
+                    itp = preMarginSubTotal * (Math.Abs(CustomerMarginAmount.Value) / 100);
+                    result = (preMarginSubTotal - itp);
+                }
+                else
+                {
+                    result = (preMarginSubTotal - Math.Abs(CustomerMarginAmount.Value));
+                }
+            }
                 result = preMarginSubTotal;
             return result;
         }
