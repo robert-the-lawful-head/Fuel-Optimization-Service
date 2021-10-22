@@ -23,7 +23,7 @@ namespace FBOLinx.Web.DTO
         public int FboId { get; set; }
         public PricingTemplate.MarginTypes? MarginType { get; set; }
 
-        public PricingTemplate.DiscountType? discountType { get; set; }
+        public PricingTemplate.DiscountTypes? DiscountType { get; set; }
 
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
@@ -119,30 +119,29 @@ namespace FBOLinx.Web.DTO
 
             else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
             {
-                if (discountType.Value == PricingTemplate.DiscountType.percentage)
+                if (DiscountType.GetValueOrDefault() == PricingTemplate.DiscountTypes.Percentage)
                 {
-                    itp = preMarginSubTotal * (Math.Abs(CustomerMarginAmount.Value) / 100);
+                    itp = FboPrice.GetValueOrDefault() * (Math.Abs(CustomerMarginAmount.GetValueOrDefault()) / 100);
                     result = (preMarginSubTotal + itp);
                 }
                 else
                 {
-                    result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.Value));
+                    result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 }
             }
             else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
             {
-                if (discountType.Value == PricingTemplate.DiscountType.percentage)
+                if (DiscountType.GetValueOrDefault() == PricingTemplate.DiscountTypes.Percentage)
                 {
 
-                    itp = preMarginSubTotal * (Math.Abs(CustomerMarginAmount.Value) / 100);
+                    itp = FboPrice.GetValueOrDefault() * (Math.Abs(CustomerMarginAmount.GetValueOrDefault()) / 100);
                     result = (preMarginSubTotal - itp);
                 }
                 else
                 {
-                    result = (preMarginSubTotal - Math.Abs(CustomerMarginAmount.Value));
+                    result = (preMarginSubTotal - Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 }
             }
-                result = preMarginSubTotal;
             return result;
         }
 
