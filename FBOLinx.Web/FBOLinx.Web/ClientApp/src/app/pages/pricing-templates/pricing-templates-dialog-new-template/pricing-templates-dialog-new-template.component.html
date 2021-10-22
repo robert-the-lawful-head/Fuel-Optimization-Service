@@ -210,7 +210,7 @@
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 0">
                                                 ${{
-                                                        jetACost + customerMargin.value.itp
+                                                        jetACost + customerMargin.value.amount / 1
                                                             | number: "1.4-4"
                                                 }}
                                             </div>
