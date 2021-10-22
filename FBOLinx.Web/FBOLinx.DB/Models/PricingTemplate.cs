@@ -23,9 +23,9 @@ namespace FBOLinx.DB.Models
         public enum DiscountType : short
         {
             [Description("Flat Per Gallon")]
-             discountType1 = 0,
+             percentage  = 0,
             [Description("Percentage")]
-            discountType2 = 0          
+             flactpergallon =  1          
         }
 
 

@@ -217,6 +217,7 @@
 
 <div *ngIf="sampleCalculation" class="container-fluid pb-4 sub-widget">
     <div class="row mt-4 mb-2" *ngIf="isPriceBreakdownCustomerActive">
+
         <div
             *ngIf="!hideFeeAndTaxGeneralBreakdown"
             class="col font-weight-bold"
@@ -224,6 +225,7 @@
         >
             Taxes and Fees
         </div>
+
         <div
             *ngIf="!hidePriceTierBreakdown"
             class="col font-weight-bold"
@@ -252,9 +254,7 @@
                 [tailNumber]="sampleCalculation.tailNumber"
                 [hideTooltips]="hideTooltips"
                 (customerActiveCheckCompleted)="
-                    priceBreakdownCustomerActiveCheckCompleted($event)
-                "
-            >
+                    priceBreakdownCustomerActiveCheckCompleted($event)">
             </price-breakdown>
         </div>
     </div>

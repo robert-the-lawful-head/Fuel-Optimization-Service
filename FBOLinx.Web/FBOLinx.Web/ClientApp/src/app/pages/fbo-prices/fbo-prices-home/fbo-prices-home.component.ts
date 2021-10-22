@@ -86,6 +86,7 @@ export class FboPricesHomeComponent
     priceEntryError = '';
     stagedPriceEntryError = '';
     tooltipIndex = 0;
+    discountType : number;
     updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
         fboid: 0,
@@ -546,6 +547,8 @@ export class FboPricesHomeComponent
                             this.currentFboPriceJetARetail =
                                 this.getCurrentPriceByProduct('JetA Retail');
 
+
+
                             if (this.currentFboPriceJetARetail.effectiveTo) {
                                 const tempStagedPricingEffectiveFrom = moment(
                                     this.currentFboPriceJetARetail.effectiveTo
@@ -864,6 +867,7 @@ export class FboPricesHomeComponent
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
                 this.feesAndTaxes = response;
+                console.log(response)
                 if (this.retailFeeAndTaxBreakdown) {
                     this.retailFeeAndTaxBreakdown.feesAndTaxes =
                         this.feesAndTaxes;

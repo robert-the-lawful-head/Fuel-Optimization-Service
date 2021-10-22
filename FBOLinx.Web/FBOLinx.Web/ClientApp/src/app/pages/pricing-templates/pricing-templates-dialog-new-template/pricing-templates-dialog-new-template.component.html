@@ -166,7 +166,7 @@
                                                    matInput />
                                         </mat-form-field>
                                     </td>
-                                    <td *ngIf="form.value.secondStep.marginType === 1"
+                                    <td
                                         [formGroupName]="i"
                                         class="mat-cell text-center">
                                         <div>
@@ -184,40 +184,25 @@
 
                                                 <span *ngIf="form.value.secondStep.discountType === 1"
                                                       class="prefixPercentage"
-                                                      matPrefix>%</span>
+                                                      matSuffix>%</span>
                                             </mat-form-field>
                                         </div>
                                     </td>
-                                    <td class="
+                                    <td
+                                    *ngIf="form.value.secondStep.marginType === 1"
+                                    class="
                                             mat-cell
                                             text-center
                                             font-weight-bold font-italic
                                             text-right
                                         ">
-                                        <div *ngIf="form.value.secondStep.marginType === 1">
+                                        <div >
                                             ${{
                                                 customerMargin.value.itp
                                                     | number: "1.4-4"
                                             }}
                                         </div>
-                                        <div *ngIf="form.value.secondStep.marginType === 0">
-                                            <mat-form-field class="col-6">
-                                                <input (click)="
-                                                        $event.target.select()
-                                                    "
-                                                       formControlName="amount"
-                                                       matInput
-                                                       step="0.01"
-                                                       type="number" />
-                                                <span *ngIf="form.value.secondStep.discountType === 0"
-                                                      class="prefixDollar"
-                                                      matPrefix>$</span>
 
-                                                <span *ngIf="form.value.secondStep.discountType === 1"
-                                                      class="prefixPercentage"
-                                                      matPrefix>%</span>
-                                            </mat-form-field>
-                                        </div>
                                     </td>
                                     <td [formGroupName]="i"
                                         class="mat-cell text-center">
