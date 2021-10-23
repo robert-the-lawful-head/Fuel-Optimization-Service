@@ -34,9 +34,9 @@ export class CustomerHistoryComponent implements OnInit {
               public dialog: MatDialog) { }
 
   ngOnInit() {
+
       if(! this.customerHistory)
       {
-
           this.customerInfoByGroupService.getCustomerByGroupLogger(this.route.snapshot.paramMap.get('id')).subscribe(
               data=> {
                 this.customerHistory = data
@@ -65,8 +65,10 @@ export class CustomerHistoryComponent implements OnInit {
 
 openDetailsDialog(customer : any)
 {
+
     this.customerInfoByGroupService.getCustomerByGroupLoggerData(customer.oid , customer.logType).subscribe(
         data=>{
+
             const dialogRef = this.dialog.open(CustomerHistoryDetailsComponent, {
                 width: '550px',
                 height: '300px',

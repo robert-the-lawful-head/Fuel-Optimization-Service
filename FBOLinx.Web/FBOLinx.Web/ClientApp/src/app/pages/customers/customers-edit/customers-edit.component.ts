@@ -6,6 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { combineLatest, EMPTY, of } from 'rxjs';
 import { catchError, debounceTime, map, switchMap } from 'rxjs/operators';
+import { CustomermarginsService } from 'src/app/services/customermargins.service';
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -84,6 +85,7 @@ export class CustomersEditComponent implements OnInit {
         private customerContactsService: CustomercontactsService,
         private pricingTemplatesService: PricingtemplatesService,
         private customerAircraftsService: CustomeraircraftsService,
+        private customerMarginService : CustomermarginsService,
         private sharedService: SharedService,
         private customerCompanyTypesService: CustomerCompanyTypesService,
         private customersViewedByFboService: CustomersviewedbyfboService,
@@ -108,33 +110,40 @@ export class CustomersEditComponent implements OnInit {
             .toPromise();
         this.customerId = this.customerInfoByGroup.customerId;
         const results = await combineLatest([
+            //0
             this.customerInfoByGroupService.getCertificateTypes(),
             this.pricingTemplatesService.getByFbo(
                 this.sharedService.currentUser.fboId,
                 this.sharedService.currentUser.groupId
             ),
+            //1
             this.contactInfoByGroupsService.getCustomerContactInfoByGroup(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
+            //2
             this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
+            //3
             this.customCustomerTypesService.getForFboAndCustomer(
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
+            //4
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(
                 this.sharedService.currentUser.fboId
             ),
+            //5
             this.customersViewedByFboService.add({
                 customerId: this.customerInfoByGroup.customerId,
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId,
             }),
+            //6
             this.customerInfoByGroupService.getCustomerByGroupLogger(id),
 
         ]).toPromise();
@@ -145,6 +154,8 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
+
+
 
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
@@ -222,6 +233,16 @@ export class CustomersEditComponent implements OnInit {
 
         this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
             (selectedValue) => {
+
+                this.customerMarginService.addCustomerMarginLog(
+                    this.sharedService.currentUser.oid ,
+                    this.sharedService.currentUser.groupId,
+                    {
+                        id : this.customerInfoByGroup.customerId  ,
+                        pricingTemplateId : selectedValue ,
+                        fboid : this.sharedService.currentUser.fboId
+                    }
+                ).subscribe(data=>console.log(data));
                 this.customCustomerType.customerType = selectedValue;
                 this.recalculatePriceBreakdown();
             }

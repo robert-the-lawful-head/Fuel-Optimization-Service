@@ -346,27 +346,19 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-          
-              
          
-            _context.Entry(customerInfoByGroup).State = EntityState.Modified;
 
-            try
-            {
-                EditCustomerToLogger(customerInfoByGroup, customerInfoByGroup.Oid, userId);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerInfoByGroupExists(id))
+            var oldCustomer = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == customerInfoByGroup.Oid);
+            EditCustomerToLogger(customerInfoByGroup, oldCustomer, userId);
+
+            bool Editresult = _customerService.UpdateCustomerInfo(customerInfoByGroup);
+
+                    
+              if (Editresult == false )
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
+              
 
             return NoContent();
         }
@@ -962,10 +954,10 @@ namespace FBOLinx.Web.Controllers
                 }
             }
         }
-        private  void EditCustomerToLogger ( CustomerInfoByGroup customer , int customerId , int userId = 0 )
+        private  void EditCustomerToLogger ( CustomerInfoByGroup customer , CustomerInfoByGroup oldCustomerInfoByGroup, int userId = 0 )
         {
-            var oldCustomerInfoByGroup = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid.Equals(customer.Oid));
-            if (oldCustomerInfoByGroup != null)
+            bool result = _customerService.CompareCustomers(customer, oldCustomerInfoByGroup);
+            if (oldCustomerInfoByGroup != null &&  result == false)
             {
                 //Add the old info into DataLog
                 _context.CustomerInfoByGroupLogData.Add(new CustomerInfoByGroupLogData
@@ -1013,7 +1005,7 @@ namespace FBOLinx.Web.Controllers
                     customerlog.Role = (CustomerInfoByGroupLog.UserRoles)_context.User.FirstOrDefault(u => u.Oid == userId).Role;
                     customerlog.Location = CustomerInfoByGroupLog.Locations.EditCustomer;
                     customerlog.oldcustomerId = OldcustomerId;
-                    customerlog.customerId = customerId;
+                    customerlog.customerId = customer.Oid;
 
                     if (oldCustomerInfoByGroup.Active == true && customer.Active == false)
                         customerlog.Action = CustomerInfoByGroupLog.Actions.Deactivated;
@@ -1042,8 +1034,8 @@ namespace FBOLinx.Web.Controllers
 
             }
 
-            
-           
+        
+
         }
 
         private bool CustomerInfoByGroupExists(int id)
@@ -1261,6 +1253,9 @@ namespace FBOLinx.Web.Controllers
 
             return result;
         }
+
+
+
     
     }
 }
