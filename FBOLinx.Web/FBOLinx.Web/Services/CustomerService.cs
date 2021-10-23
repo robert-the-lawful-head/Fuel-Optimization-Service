@@ -176,6 +176,89 @@ namespace FBOLinx.Web.Services
             return customerInfoByGroup;
         }
 
+
+        public bool CompareCustomers(CustomerInfoByGroup customer1 , CustomerInfoByGroup customer2)
+        {
+            return customer1.ZipCode == customer2.ZipCode
+               && customer1.Website == customer2.Website
+               && customer1.Username == customer2.Username
+               && customer1.Suspended == customer2.Suspended
+               && customer1.State == customer2.State
+               && customer1.ShowJetA == customer2.ShowJetA
+               && customer1.Show100Ll == customer2.Show100Ll
+               && customer1.Sfid == customer2.Sfid
+               && customer1.PricingTemplateRemoved == customer2.PricingTemplateRemoved
+               && customer1.Password == customer2.Password
+               && customer1.Oid == customer2.Oid
+               && customer1.Network == customer2.Network
+               && customer1.MergeRejected == customer2.MergeRejected
+               && customer1.MainPhone == customer2.MainPhone
+               && customer1.Joined == customer2.Joined
+               && customer1.GroupId == customer2.GroupId
+               && customer1.EmailSubscription == customer2.EmailSubscription
+               && customer1.Distribute == customer2.Distribute
+               && customer1.DefaultTemplate == customer2.DefaultTemplate
+               && customer1.CustomerType == customer2.CustomerType
+               && customer1.CustomerId == customer2.CustomerId
+               && customer1.CustomerCompanyType == customer2.CustomerCompanyType
+               && customer1.Country == customer2.Country
+               && customer1.Company == customer2.Company
+               && customer1.City == customer2.City
+               && customer1.CertificateType == customer2.CertificateType
+               && customer1.Address == customer2.Address
+               && customer1.Active == customer2.Active;               
+
+        }
+
+
+        public bool UpdateCustomerInfo (CustomerInfoByGroup newCustomer)
+        {
+            try
+            {
+                var oldCustomer = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == newCustomer.Oid);
+                if(oldCustomer != null)
+                {
+                    oldCustomer.Active = newCustomer.Active;
+                    oldCustomer.Address = newCustomer.Address;
+                    oldCustomer.CertificateType = newCustomer.CertificateType;
+                    oldCustomer.City = newCustomer.City;
+                    oldCustomer.Company = newCustomer.Company;
+                    oldCustomer.Country = newCustomer.Country;
+                    oldCustomer.CustomerCompanyType = newCustomer.CustomerCompanyType;
+                    oldCustomer.CustomerId = newCustomer.CustomerId;
+                    oldCustomer.CustomerType = newCustomer.CustomerType;
+                    oldCustomer.DefaultTemplate = newCustomer.DefaultTemplate;
+                    oldCustomer.Distribute = newCustomer.Distribute;
+                    oldCustomer.EmailSubscription = newCustomer.EmailSubscription;
+                    oldCustomer.GroupId = newCustomer.GroupId;
+                    oldCustomer.Joined = newCustomer.Joined;
+                    oldCustomer.MainPhone = newCustomer.MainPhone;
+                    oldCustomer.MergeRejected = newCustomer.MergeRejected;
+                    oldCustomer.Network = newCustomer.Network;
+                    oldCustomer.Password = newCustomer.Password;
+                    oldCustomer.PricingTemplateRemoved = newCustomer.PricingTemplateRemoved;
+                    oldCustomer.Sfid = newCustomer.Sfid;
+                    oldCustomer.Show100Ll = newCustomer.Show100Ll;
+                    oldCustomer.ShowJetA = newCustomer.ShowJetA;
+                    oldCustomer.State = newCustomer.State;
+                    oldCustomer.Suspended = newCustomer.Suspended;
+                    oldCustomer.Username = newCustomer.Username;
+                    oldCustomer.Website = newCustomer.Website;
+                    oldCustomer.ZipCode = newCustomer.ZipCode;
+
+                    _context.SaveChangesAsync();
+
+                    return true;
+
+                }
+
+                return false;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
         #endregion
 
         #region Private Methods

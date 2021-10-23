@@ -305,9 +305,30 @@ namespace FBOLinx.Web.Controllers
             return Ok("");
         }
     
-    
+        [HttpPost("CustomerMarginLog/{userId}/{groupId}")]
+        public  async Task<IActionResult> CustomerMarginLog([FromRoute] int userId , [FromRoute] int groupId , [FromBody] CustomerPricingTemplateViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+           
+                var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
+                var customerGroupOid = _context.CustomerInfoByGroup.FirstOrDefault(x => x.CustomerId == model.id && x.GroupId == groupId).Oid;
+
+                if (customerMargin != null)
+                {
+                    UpdateCustomerMarginLog(customerMargin, customerMargin.Oid, customerGroupOid, userId);
+
+                }
+      
+            return Ok("");
+        }
+
+
        //Private Methods 
-       private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int customerId ,int userId =0 )
+        private void UpdateCustomerMarginLog(CustomCustomerTypes oldcustomerTypes ,int newCustomerTypeId, int customerId ,int userId =0 )
        {
             _context.CustomCustomerTypesLogData.Add(new CustomCustomerTypesLogData { 
               CustomerId = oldcustomerTypes.CustomerId , 
