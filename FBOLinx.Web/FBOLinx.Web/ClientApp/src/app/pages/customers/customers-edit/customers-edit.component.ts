@@ -69,7 +69,7 @@ export class CustomersEditComponent implements OnInit {
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
-    CustomerHistory : any;
+    customerHistory : any;
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -141,9 +141,9 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-        this.CustomerHistory = results[6] as any[];
+        this.customerHistory = results[6] as any[];
 
-        console.log(this.CustomerHistory);
+
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
             address: [this.customerInfoByGroup.address],

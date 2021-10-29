@@ -11,6 +11,8 @@ namespace FBOLinx.Web.ViewModels
         public int Id { get; set; }
         public string Username { get; set; }
         public string Type { get; set; }
+
+        public string Action { get; set; }
         public string TableName { get; set; }
         public DateTime DateTime { get; set; }
         public int PrimaryKey { get; set; }

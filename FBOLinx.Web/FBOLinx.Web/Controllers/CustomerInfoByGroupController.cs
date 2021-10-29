@@ -355,13 +355,14 @@ namespace FBOLinx.Web.Controllers
 
                                     CustomCustomerTypes OldCustomCustomerTypes = JsonConvert.DeserializeObject<CustomCustomerTypes>(item.OldValues);
                                     CustomCustomerTypes NewCustomCustomerTypes = JsonConvert.DeserializeObject<CustomCustomerTypes>(item.NewValues);
-                                    
-                                  
+                                                                      
                                     if (OldCustomCustomerTypes != null && NewCustomCustomerTypes != null && OldCustomCustomerTypes.CustomerId == CustomerByGroup.CustomerId)
                                     {
 
                                         infoLoggerVM.OldPricingTemplate = _context.PricingTemplate.FirstOrDefault(x => x.Oid == OldCustomCustomerTypes.CustomerType);
                                         infoLoggerVM.NewPricingTemplate = _context.PricingTemplate.FirstOrDefault(x => x.Oid == NewCustomCustomerTypes.CustomerType);
+
+                                        infoLoggerVM.Action = infoLoggerVM.OldPricingTemplate != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ItpTemplateAssigned) : "";
                                     }
                                    
                                 }
@@ -377,26 +378,33 @@ namespace FBOLinx.Web.Controllers
                                     infoLoggerVM.NewCustomerAircrafts =
                                     JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ?
                                       JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null;
-                                }
+                                    infoLoggerVM.Action = infoLoggerVM.NewCustomerAircrafts != null? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircaftAdded) : "";
 
-                                //for Update exsit CustomerAirCraft 
-                                else if (item.Type == Audit.AuditType.Update.ToString())
+                            }
+
+                            //for Update exsit CustomerAirCraft 
+                            else if (item.Type == Audit.AuditType.Update.ToString())
                                 {
                                     infoLoggerVM.OldCustomerAircrafts =
                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
                                       JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues) : null; 
 
                                     infoLoggerVM.NewCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ?
-                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null; 
-                                }
+                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null;
+
+                                     infoLoggerVM.Action = infoLoggerVM.OldCustomerAircrafts != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircraftEdited) : "";
+                            }
 
                                 //for Delete exsit CustomerAirCraft 
                                 else if (item.Type == Audit.AuditType.Delete.ToString())
                                 {
                                     infoLoggerVM.OldCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
                                       JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues) : null; ;
-                                }
+                               
+                                infoLoggerVM.Action = infoLoggerVM.OldCustomerAircrafts != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircraftDeleted) : "";
+
                             }
+                        }
 
                             else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerContacts.ToString())
                             {
@@ -408,8 +416,10 @@ namespace FBOLinx.Web.Controllers
                                     if (NewCustomerContacts != null && NewCustomerContacts.CustomerId == CustomerByGroup.CustomerId)
                                     {
                                         infoLoggerVM.NewContact = _context.Contacts.FirstOrDefault(x => x.Oid == NewCustomerContacts.ContactId);
-                                    }
+                                    infoLoggerVM.Action = infoLoggerVM.NewContact != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactAdded) : "";
+
                                 }
+                            }
 
                                 //in case Delete Exist Contact from Customer
                                 if (item.Type == Audit.AuditType.Delete.ToString())
@@ -418,8 +428,11 @@ namespace FBOLinx.Web.Controllers
                                     if (OldCustomerContacts != null && OldCustomerContacts.CustomerId == CustomerByGroup.CustomerId)
                                     {
                                         infoLoggerVM.OldContact = _context.Contacts.FirstOrDefault(x => x.Oid == OldCustomerContacts.ContactId);
-                                    }
+
+                                    infoLoggerVM.Action = infoLoggerVM.OldContact != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactDeleted) : "";
+
                                 }
+                            }
 
 
                             }
@@ -430,18 +443,16 @@ namespace FBOLinx.Web.Controllers
                                 if (item.Type == Audit.AuditType.Create.ToString())
                                 {
                                     infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
-                                }
-                                //in Case Edit Exsit Customer 
-                                else if (item.Type == Audit.AuditType.Update.ToString())
+                                infoLoggerVM.Action = infoLoggerVM.NewCustomerInfoByGroup != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.Created) : "";
+
+                            }
+                            //in Case Edit Exsit Customer 
+                            else if (item.Type == Audit.AuditType.Update.ToString())
                                 {
                                     infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues);
                                     infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
                                 }
-                                //in Case Delete Exist Customer
-                                else if (item.Type == Audit.AuditType.Delete.ToString())
-                                {
-                                    infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues);
-                                }
+                               
                             }
 
                             customerInfoLoggerList.Add(infoLoggerVM);
@@ -475,10 +486,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(customerInfoByGroup).State = EntityState.Modified;
-
+             
             try
             {
+                _context.Entry(customerInfoByGroup).State = EntityState.Modified;
                 await _context.SaveChangesAsync(userId);
             }
             catch (DbUpdateConcurrencyException)
