@@ -24,20 +24,20 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="type">
+            <ng-container matColumnDef="action">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Action</th>
                 <td  *matCellDef="let customer">
-                    {{customer.type}}
+                    {{customer.action}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="changes">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Changes</th>
                 <td *matCellDef="let customer">
-                   <!-- <a mat-raised-button (click)="openDetailsDialog(customer)">
+                 <a mat-raised-button (click)="openDetailsDialog(customer)">
                         See Details
                         <mat-icon>arrow_right</mat-icon>
-                    </a> -->
+                    </a>
                 </td>
             </ng-container>
 
@@ -50,14 +50,14 @@
                </td>
             </ng-container>
 
-            <!-- <ng-container  matColumnDef="role">
+          <ng-container  matColumnDef="role">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Role
                 </th>
                <td *matCellDef="let customer">
                    {{customer.role}}
                </td>
-            </ng-container> -->
+            </ng-container>
 
 
             <ng-container matColumnDef="tableName">

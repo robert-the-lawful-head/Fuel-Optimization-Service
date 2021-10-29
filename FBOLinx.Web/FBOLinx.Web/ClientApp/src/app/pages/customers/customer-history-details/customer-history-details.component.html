@@ -1,0 +1,32 @@
+<h1 mat-dialog-title>Changes Details</h1>
+<div mat-dialog-content>
+    <div class="container">
+        <!--Update Stage-->
+        <div class="data" *ngIf="data.type == 'update'">
+          <!--Customer Info Update-->
+        
+          <!--Itp Assign Margin -->
+
+        </div>
+        <!--Create Stage-->
+        <div class="data" *ngIf="data.type == 'create'">
+         <!--Customer Info Create-->
+
+         <!--Customer Contact Create-->
+
+
+         <!--Customer Aircraft Create-->
+        </div>
+        <!--Delete Stage-->
+        <div class="data" *ngIf="data.type == 'delete'">
+
+         <!--Customer Contact Delete-->
+
+
+         <!--Customer Aircraft Delete-->
+        </div>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [mat-dialog-close] cdkFocusInitial>Ok</button>
+</div>

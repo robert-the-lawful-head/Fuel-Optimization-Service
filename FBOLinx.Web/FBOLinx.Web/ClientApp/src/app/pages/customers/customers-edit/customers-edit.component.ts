@@ -162,6 +162,7 @@ export class CustomersEditComponent implements OnInit {
             zipCode: [this.customerInfoByGroup.zipCode],
             customerTag: [this.customerInfoByGroup.customerTag]
         });
+
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
