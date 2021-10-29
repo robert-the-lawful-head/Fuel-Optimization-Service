@@ -4,7 +4,127 @@
         <!--Update Stage-->
         <div class="data" *ngIf="data.type == 'update'">
           <!--Customer Info Update-->
-        
+          <table  style="width:100%">
+            <tr>
+             <th></th>
+             <th>Old Data</th>
+             <th>New Data</th>
+           </tr>
+         <!--Acive-->
+         <tr *ngIf="data.OldCustomerInfoByGroup.active != data.CustomerInfoByGroup.active">
+           <th>Active</th>
+           <td>
+               <span *ngIf="data.OldCustomerInfoByGroup.active == true">Activated</span>
+               <span  *ngIf="data.CustomerInfoByGroup.active == false">Deactivated</span>
+           </td>
+           <td>
+             <span *ngIf="data.OldCustomerInfoByGroup == true">Activated</span>
+             <span  *ngIf="data.CustomerInfoByGroupactive == false">Deactivated</span>
+         </td>
+         </tr>
+     
+         <!--Address-->
+          <tr *ngIf="data.address != data.address">
+             <th>Address</th>
+             <td>{{data.address}}</td>
+             <td>{{data.address}}</td>
+           </tr>
+     
+         <!--certificateType-->
+         <tr *ngIf="data.certificateType != data.certificateType">
+             <th>certificateType</th>
+             <td>{{data.certificateType}}</td>
+             <td>{{data.certificateType}}</td>
+         </tr>
+     
+     
+           <!--city-->
+           <tr *ngIf="data.city != data.city">
+             <th>city</th>
+             <td>{{data.city}}</td>
+             <td>{{data.city}}</td>
+         </tr>
+     
+           <!--company-->
+           <tr *ngIf="data.company != data.company">
+             <th>company</th>
+             <td>{{data.company}}</td>
+             <td>{{data.company}}</td>
+         </tr>
+     
+     
+             <!--country-->
+             <tr *ngIf="data.country != data.country">
+                 <th>country</th>
+                 <td>{{data.country}}</td>
+                 <td>{{data.country}}</td>
+             </tr>
+     
+         <!--customer-->
+         <tr *ngIf="data.customer != data.customer">
+             <th>customer</th>
+             <td>{{data.customer}}</td>
+             <td>{{data.customer}}</td>
+         </tr>
+     
+       <!--customerCompanyType-->
+       <tr *ngIf="data.customerCompanyType != data.customerCompanyType">
+         <th>customerCompanyType</th>
+         <td>{{data.customerCompanyType}}</td>
+         <td>{{data.customerCompanyType}}</td>
+       </tr>
+     
+      <!--distribute-->
+      <tr *ngIf="data.distribute != data.distribute">
+         <th>distribute</th>
+         <td>{{data.distribute}}</td>
+         <td>{{data.distribute}}</td>
+       </tr>
+     
+       <!--emailSubscription-->
+      <tr *ngIf="data.emailSubscription != data.emailSubscription">
+         <th>emailSubscription</th>
+         <td>{{data.emailSubscription}}</td>
+         <td>{{data.emailSubscription}}</td>
+       </tr>
+     
+       <!--joined-->
+       <tr *ngIf="data.joined != data.joined">
+         <th>joined</th>
+         <td>{{data.joined}}</td>
+         <td>{{data.joined}}</td>
+       </tr>
+     
+     <!--mainPhone-->
+     <tr *ngIf="data.mainPhone != data.mainPhone">
+         <th>mainPhone</th>
+         <td>{{data.mainPhone}}</td>
+         <td>{{data.mainPhone}}</td>
+       </tr>
+     
+     <!--network-->
+     <tr *ngIf="data.network != data.network">
+         <th>network</th>
+         <td>{{data.network}}</td>
+         <td>{{data.network}}</td>
+       </tr>
+     
+     <!--username-->
+     <tr *ngIf="data.username != data.username">
+         <th>username</th>
+         <td>{{data.username}}</td>
+         <td>{{data.username}}</td>
+       </tr>
+     
+     
+     <!--state-->
+     <tr *ngIf="data.state != data.state">
+         <th>state</th>
+         <td>{{data.state}}</td>
+         <td>{{data.state}}</td>
+       </tr>
+     
+</table>
           <!--Itp Assign Margin -->
 
         </div>
