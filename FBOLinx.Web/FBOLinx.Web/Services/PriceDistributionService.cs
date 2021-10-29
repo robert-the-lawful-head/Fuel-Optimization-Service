@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Services
     public interface IPriceDistributionService
     {
         Task DistributePricing(DistributePricingRequest request, bool isPreview);
-        Task SendCustomerPriceEmail(int groupId, GroupCustomerAnalyticsResponse info, List<string> emails);
+        Task SendCustomerPriceEmail(int groupId, List<GroupCustomerAnalyticsResponse> info, List<string> emails);
     }
 
     public class PriceDistributionService : IPriceDistributionService
@@ -452,7 +452,7 @@ namespace FBOLinx.Web.Services
                     "PriceBreakdownRowFourColumnsAllRules.html");
         }
 
-        public async Task SendCustomerPriceEmail(int groupId, GroupCustomerAnalyticsResponse info, List<string> emails)
+        public async Task SendCustomerPriceEmail(int groupId, List<GroupCustomerAnalyticsResponse> info, List<string> emails)
         {
             var emailContent = _context.EmailContent.Where(e => e.GroupId == groupId).FirstOrDefault();
 
@@ -503,76 +503,82 @@ namespace FBOLinx.Web.Services
             await _MailService.SendAsync(mailMessage);
         }
 
-        private string GetCustomerPriceBreakdownCSV(GroupCustomerAnalyticsResponse info)
+        private string GetCustomerPriceBreakdownCSV(List<GroupCustomerAnalyticsResponse> info)
         {
-            var defaultGroupedFboPrices = info.GroupCustomerFbos.FirstOrDefault();
-            var defaultPrice = defaultGroupedFboPrices.Prices.FirstOrDefault();
-
-            string priceBreakdownTemplate, rowHTMLTemplate;
+            string priceBreakdownTemplate = "";
+            string rowHTMLTemplate = "";
             StringBuilder rowsHTML = new StringBuilder();
 
-            if (defaultGroupedFboPrices == null || defaultPrice == null)
+            foreach (GroupCustomerAnalyticsResponse groupCustomerAnalyticsResponse in info)
             {
-                priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(PriceBreakdownDisplayTypes.SingleColumnAllFlights);
-                rowsHTML.Append("");
-            }
-            else
-            {
-                priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(defaultPrice.PriceBreakdownDisplayType);
-                rowHTMLTemplate = GetCustomerPriceBreakdownRowTemplate(defaultPrice.PriceBreakdownDisplayType);
+                var defaultGroupedFboPrices = groupCustomerAnalyticsResponse.GroupCustomerFbos.FirstOrDefault();
+                var defaultPrice = defaultGroupedFboPrices.Prices.FirstOrDefault();
 
-                foreach (var groupCustomerFbos in info.GroupCustomerFbos)
+                if (defaultGroupedFboPrices == null || defaultPrice == null)
                 {
-                    for (var i = 0; i < groupCustomerFbos.Prices.Count; i++)
+                    priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(PriceBreakdownDisplayTypes.SingleColumnAllFlights);
+                    rowsHTML.Append("");
+                }
+                else
+                {
+                    priceBreakdownTemplate = GetCustomerPriceBreakdownTemplate(defaultPrice.PriceBreakdownDisplayType);
+                    rowHTMLTemplate = GetCustomerPriceBreakdownRowTemplate(defaultPrice.PriceBreakdownDisplayType);
+
+                    foreach (var groupCustomerFbos in groupCustomerAnalyticsResponse.GroupCustomerFbos)
                     {
-                        var model = groupCustomerFbos.Prices[i];
-                        string row = rowHTMLTemplate;
-
-                        if (i == 0)
+                        for (var i = 0; i < groupCustomerFbos.Prices.Count; i++)
                         {
-                            row = row.Replace("%FBO%", groupCustomerFbos.Icao);
-                        }
-                        else {
-                            row = row.Replace("%FBO%", "");
-                        }
+                            var model = groupCustomerFbos.Prices[i];
+                            string row = rowHTMLTemplate;
 
-
-                        var next = i < groupCustomerFbos.Prices.Count - 1 ? groupCustomerFbos.Prices[i + 1] : null;
-
-                        if (next != null)
-                        {
-                            row = row.Replace("%MIN_GALLON%", model.MinGallons.ToString());
-
-                            var maxValue = Convert.ToDouble(next.MinGallons) - 1;
-
-                            if (maxValue > 999)
+                            if (i == 0)
                             {
-                                string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
-                                row = row.Replace("%MAX_GALLON%", output);
+                                row = row.Replace("%FBO%", groupCustomerFbos.Icao);
                             }
                             else
                             {
-                                row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                                row = row.Replace("%FBO%", "");
                             }
-                        } else
-                        {
-                            string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
 
-                            output = output + "+";
-                            row = row.Replace("%MIN_GALLON%", output);
-                            row = row.Replace("%MAX_GALLON%", "");
-                            row = row.Replace("-", "");
+
+                            var next = i < groupCustomerFbos.Prices.Count - 1 ? groupCustomerFbos.Prices[i + 1] : null;
+
+                            if (next != null)
+                            {
+                                row = row.Replace("%MIN_GALLON%", model.MinGallons.ToString());
+
+                                var maxValue = Convert.ToDouble(next.MinGallons) - 1;
+
+                                if (maxValue > 999)
+                                {
+                                    string output = Convert.ToDouble(next.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+                                    row = row.Replace("%MAX_GALLON%", output);
+                                }
+                                else
+                                {
+                                    row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                                }
+                            }
+                            else
+                            {
+                                string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+
+                                output = output + "+";
+                                row = row.Replace("%MIN_GALLON%", output);
+                                row = row.Replace("%MAX_GALLON%", "");
+                                row = row.Replace("-", "");
+                            }
+
+                            row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", model.IntComm.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", model.IntPrivate.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", model.DomComm.GetValueOrDefault()));
+                            row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+
+                            row = row.Replace("%TAIL_NUMBERS%", groupCustomerAnalyticsResponse.TailNumbers);
+
+                            rowsHTML.Append(row);
                         }
-
-                        row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
-                        row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", model.IntComm.GetValueOrDefault()));
-                        row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", model.IntPrivate.GetValueOrDefault()));
-                        row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", model.DomComm.GetValueOrDefault()));
-                        row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
-
-                        row = row.Replace("%TAIL_NUMBERS%", info.TailNumbers);
-
-                        rowsHTML.Append(row);
                     }
                 }
             }

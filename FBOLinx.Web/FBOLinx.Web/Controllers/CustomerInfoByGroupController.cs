@@ -703,10 +703,9 @@ namespace FBOLinx.Web.Controllers
                             .Distinct()
                             .ToListAsync();
 
-            var result = await GetCustomerPricingAnalytics(groupId, customerId);
-
             if (contacts.Count > 0)
             {
+                var result = await GetCustomerPricingAnalytics(groupId, customerId);
                 await _priceDistributionService.SendCustomerPriceEmail(groupId, result, contacts);
             }
 
@@ -1184,7 +1183,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        private async Task<GroupCustomerAnalyticsResponse> GetCustomerPricingAnalytics(int groupId, int customerId)
+        private async Task<List<GroupCustomerAnalyticsResponse>> GetCustomerPricingAnalytics(int groupId, int customerId)
         {
             var airports = await _context.Fbos
                 .Where(x => x.GroupId == groupId && x.Active == true)
@@ -1216,50 +1215,54 @@ namespace FBOLinx.Web.Controllers
                 priceResults[FlightTypeClassifications.Private].AddRange(privateValidPricing);
             }
 
-            var result = priceResults[FlightTypeClassifications.Commercial]
-                .GroupBy(x => new { x.Company, x.TailNumbers, x.CustomerId })
-                .Select(x => new GroupCustomerAnalyticsResponse {
+            var results = priceResults[FlightTypeClassifications.Commercial]
+                .GroupBy(x => new { x.Company, x.TailNumbers, x.CustomerId, x.FboId })
+                .Select(x => new GroupCustomerAnalyticsResponse
+                {
                     CustomerId = x.Key.CustomerId,
                     Company = x.Key.Company,
                     TailNumbers = x.Key.TailNumbers,
+                    FboId = x.Key.FboId,
                     GroupCustomerFbos = new List<GroupedFboPrices>()
-                })
-                .FirstOrDefault();
+                }).ToList();
 
-            if (result != null)
+            if (results != null)
             {
-                result.AddGroupedFboPrices(
-                    FlightTypeClassifications.Commercial,
-                    priceResults[FlightTypeClassifications.Commercial]
-                        .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers)
-                        .ToList()
-                );
-                result.AddGroupedFboPrices(
-                    FlightTypeClassifications.Private,
-                    priceResults[FlightTypeClassifications.Private]
-                        .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers)
-                        .ToList()
-                );
-
-                var maxPriceType = result.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType));
-                if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                    maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
-
-                result.GroupCustomerFbos?.ForEach(g =>
+                results.ForEach(result =>
                 {
-                    g.Prices?.ForEach(p => p.PriceBreakdownDisplayType = maxPriceType);
+                    result.AddGroupedFboPrices(
+                        FlightTypeClassifications.Commercial,
+                        priceResults[FlightTypeClassifications.Commercial]
+                            .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers && x.FboId == result.FboId)
+                            .ToList()
+                    );
+                    result.AddGroupedFboPrices(
+                        FlightTypeClassifications.Private,
+                        priceResults[FlightTypeClassifications.Private]
+                            .Where(x => x.Company == result.Company && x.TailNumbers == result.TailNumbers && x.FboId == result.FboId)
+                            .ToList()
+                    );
+
+                    var maxPriceType = result.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType));
+                    if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                        maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+
+                    result.GroupCustomerFbos?.ForEach(g =>
+                    {
+                        g.Prices?.ForEach(p => p.PriceBreakdownDisplayType = maxPriceType);
+                    });
                 });
             } else
             {
-                result = new GroupCustomerAnalyticsResponse
-                {
+                results = new List<GroupCustomerAnalyticsResponse>();
+                results.Add(new GroupCustomerAnalyticsResponse{
                     Company = null,
                     TailNumbers = null,
                     GroupCustomerFbos = new List<GroupedFboPrices>()
-                };
+                });
             }
 
-            return result;
+            return results;
         }
     
     }
