@@ -155,7 +155,7 @@ export class AircraftsGridComponent implements OnInit {
 
                 if (result.toDelete) {
                     this.customerAircraftsService
-                        .remove(result)
+                        .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroup(

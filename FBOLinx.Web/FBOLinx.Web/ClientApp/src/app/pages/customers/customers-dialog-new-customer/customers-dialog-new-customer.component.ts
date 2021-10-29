@@ -282,7 +282,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 ...this.companyFormGroup.value,
                 customerId: customer.oid,
                 groupId: this.sharedService.currentUser.groupId,
-            })
+            } , this.sharedService.currentUser.oid)
             .toPromise()) as any;
 
         await this.contactInfoByGroupsService

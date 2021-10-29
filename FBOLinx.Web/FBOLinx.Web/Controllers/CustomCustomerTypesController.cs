@@ -89,19 +89,20 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomCustomerTypes/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomCustomerTypes(int id, CustomCustomerTypes customCustomerTypes)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomCustomerTypes(int id , [FromRoute] int userId, CustomCustomerTypes customCustomerTypes)
         {
             if (id != customCustomerTypes.Oid)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customCustomerTypes).State = EntityState.Modified;
+            
+                _context.Entry(customCustomerTypes).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(userId);
             }
             catch (DbUpdateConcurrencyException)
             {

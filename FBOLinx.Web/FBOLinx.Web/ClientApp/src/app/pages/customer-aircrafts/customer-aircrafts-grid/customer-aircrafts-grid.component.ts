@@ -172,7 +172,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             }
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result).subscribe(() => {
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
@@ -201,6 +201,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             customerAircraft.isFuelerlinxNetwork &&
                             customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
+                        customerId : this.customer.oid
                     },
                     width: '450px',
                 }
@@ -213,7 +214,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
                 if (result.toDelete) {
                     this.customerAircraftsService
-                        .remove(result)
+                        .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroupAndCustomerId(
@@ -329,7 +330,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 }
             });
     }
-    
+
     //[#hz0jtd] FlatFile importer was requested to be removed
     //async launchImporter() {
     //    if (!this.LICENSE_KEY) {

@@ -14,8 +14,16 @@ namespace FBOLinx.DB.Models
             Delete = 3
         }
 
+        public enum AuditLocation
+        {
+            CustomerInfoByGroup = 0,
+            CustomerAircrafts = 1,
+            CustomCustomerTypes = 2,
+            CustomerContacts = 3
+        }
+
         public int Id { get; set; }
-        public string UserId { get; set; }
+        public int UserId { get; set; }
         public string Type { get; set; }
         public string TableName { get; set; }
         public DateTime DateTime { get; set; }

@@ -31,13 +31,16 @@ namespace FBOLinx.DB.Context
         //for Add the new / old Data and Serilize it 
         private void OnBeforeSaveChanges(int userId)
         {
-            ChangeTracker.DetectChanges();
+            if(userId != 0)
+            {
+                ChangeTracker.DetectChanges();
             var auditEntries = new List<AuditEntry>();
             foreach (var entry in ChangeTracker.Entries())
             {
                 if (entry.Entity is Audit || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
                     continue;
                 var auditEntry = new AuditEntry(entry);
+                
                 auditEntry.TableName = entry.Entity.GetType().Name;
                 auditEntry.UserId = userId;
                 auditEntries.Add(auditEntry);
@@ -46,8 +49,8 @@ namespace FBOLinx.DB.Context
                     string propertyName = property.Metadata.Name;
                     if (property.Metadata.IsPrimaryKey())
                     {
-                        auditEntry.KeyValues[propertyName] = property.CurrentValue;
-                        continue;
+                            auditEntry.KeyValue[propertyName] = property.CurrentValue;
+                            continue;
                     }
                     switch (entry.State)
                     {
@@ -61,11 +64,11 @@ namespace FBOLinx.DB.Context
                             break;
                         case EntityState.Modified:
                             if (property.IsModified)
-                            {
-                                auditEntry.ChangedColumns.Add(propertyName);
-                                auditEntry.AuditType = AuditType.Update;
-                                auditEntry.OldValues[propertyName] = property.OriginalValue;
-                                auditEntry.NewValues[propertyName] = property.CurrentValue;
+                            {                           
+                                        auditEntry.ChangedColumns.Add(propertyName);
+                                        auditEntry.AuditType = AuditType.Update;
+                                        auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                        auditEntry.NewValues[propertyName] = property.CurrentValue;                      
                             }
                             break;
                     }
@@ -74,6 +77,7 @@ namespace FBOLinx.DB.Context
             foreach (var auditEntry in auditEntries)
             {
                 AuditsLogs.Add(auditEntry.ToAudit());
+            }
             }
         }
 

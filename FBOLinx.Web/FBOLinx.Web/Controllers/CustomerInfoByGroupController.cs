@@ -22,6 +22,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services.Interfaces;
+using Newtonsoft.Json;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -69,9 +70,9 @@ namespace FBOLinx.Web.Controllers
 
             var customerInfoByGroup = await (_context.CustomerInfoByGroup.Where(cg => cg.Oid.Equals(id))
                                                         .Include(cg => cg.Customer))
-                                                        
+
                                                         .FirstOrDefaultAsync<CustomerInfoByGroup>();
-            
+
             return Ok(customerInfoByGroup);
         }
 
@@ -123,7 +124,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group/{groupId}")]
         public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
         {
-            List < CustomersGridViewModel > customerGridVM = await (
+            List<CustomersGridViewModel> customerGridVM = await (
                     from cg in _context.CustomerInfoByGroup
                     join c in _context.Customers on cg.CustomerId equals c.Oid
                     join cct in _context.CustomCustomerTypes on c.Oid equals cct.CustomerId
@@ -223,7 +224,7 @@ namespace FBOLinx.Web.Controllers
 
             }
 
-            return Ok(new {fileLocation = fileName });
+            return Ok(new { fileLocation = fileName });
         }
 
         // GET: api/CustomerInfoByGroup/group/5/fbo/6/pricingtemplate/7
@@ -326,9 +327,143 @@ namespace FBOLinx.Web.Controllers
             return Core.Utilities.Enum.GetDescriptions(typeof(Customers.CustomerSources));
         }
 
+        //GEt : api/CustomerInfoByGroup/GetCustomerLogger
+        [HttpGet("CustomerLogger/{customerId}")]
+        public async Task<IActionResult> GetCustomerLogger([FromRoute] int customerId)
+        {
+            try
+            {
+                var DataLog = _context.AuditsLogs.ToList();
+                List<CustomerInfoLoggerVM> customerInfoLoggerList = new List<CustomerInfoLoggerVM>();
+                CustomerInfoByGroup CustomerByGroup = _context.CustomerInfoByGroup.FirstOrDefault(x => x.Oid == customerId);
+                if (DataLog.Count > 0 && CustomerByGroup != null)
+                {
+                    foreach (var item in DataLog)
+                    {
+                        CustomerInfoByGroupIDVM Customer = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey);
+                        CustomerInfoLoggerVM infoLoggerVM = new CustomerInfoLoggerVM();
+                            infoLoggerVM.Username = _context.User.FirstOrDefault(u => u.Oid == item.UserId).FirstName;
+                            infoLoggerVM.TableName = item.TableName;
+                            infoLoggerVM.Type = item.Type;
+                            infoLoggerVM.DateTime = item.DateTime;
+                            //to Know the Location of Logging 
+                            if (infoLoggerVM.TableName == Audit.AuditLocation.CustomCustomerTypes.ToString())
+                            {
+                                //just here case Edit
+                                if (item.Type == Audit.AuditType.Update.ToString())
+                                {
+
+                                    CustomCustomerTypes OldCustomCustomerTypes = JsonConvert.DeserializeObject<CustomCustomerTypes>(item.OldValues);
+                                    CustomCustomerTypes NewCustomCustomerTypes = JsonConvert.DeserializeObject<CustomCustomerTypes>(item.NewValues);
+                                    
+                                  
+                                    if (OldCustomCustomerTypes != null && NewCustomCustomerTypes != null && OldCustomCustomerTypes.CustomerId == CustomerByGroup.CustomerId)
+                                    {
+
+                                        infoLoggerVM.OldPricingTemplate = _context.PricingTemplate.FirstOrDefault(x => x.Oid == OldCustomCustomerTypes.CustomerType);
+                                        infoLoggerVM.NewPricingTemplate = _context.PricingTemplate.FirstOrDefault(x => x.Oid == NewCustomCustomerTypes.CustomerType);
+                                    }
+                                   
+                                }
+                                  
+                            }
+
+                            else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerAircrafts.ToString())
+                            {
+
+                                //for AddNew AirCraft 
+                                if (item.Type == Audit.AuditType.Create.ToString())
+                                {
+                                    infoLoggerVM.NewCustomerAircrafts =
+                                    JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ?
+                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null;
+                                }
+
+                                //for Update exsit CustomerAirCraft 
+                                else if (item.Type == Audit.AuditType.Update.ToString())
+                                {
+                                    infoLoggerVM.OldCustomerAircrafts =
+                                     JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
+                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues) : null; 
+
+                                    infoLoggerVM.NewCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ?
+                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null; 
+                                }
+
+                                //for Delete exsit CustomerAirCraft 
+                                else if (item.Type == Audit.AuditType.Delete.ToString())
+                                {
+                                    infoLoggerVM.OldCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
+                                      JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues) : null; ;
+                                }
+                            }
+
+                            else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerContacts.ToString())
+                            {
+
+                                //in case add new Contact to Customer
+                                if (item.Type == Audit.AuditType.Create.ToString())
+                                {
+                                    CustomerContacts NewCustomerContacts = JsonConvert.DeserializeObject<CustomerContacts>(item.NewValues);
+                                    if (NewCustomerContacts != null && NewCustomerContacts.CustomerId == CustomerByGroup.CustomerId)
+                                    {
+                                        infoLoggerVM.NewContact = _context.Contacts.FirstOrDefault(x => x.Oid == NewCustomerContacts.ContactId);
+                                    }
+                                }
+
+                                //in case Delete Exist Contact from Customer
+                                if (item.Type == Audit.AuditType.Delete.ToString())
+                                {
+                                    CustomerContacts OldCustomerContacts = JsonConvert.DeserializeObject<CustomerContacts>(item.OldValues);
+                                    if (OldCustomerContacts != null && OldCustomerContacts.CustomerId == CustomerByGroup.CustomerId)
+                                    {
+                                        infoLoggerVM.OldContact = _context.Contacts.FirstOrDefault(x => x.Oid == OldCustomerContacts.ContactId);
+                                    }
+                                }
+
+
+                            }
+
+                            else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerInfoByGroup.ToString())
+                            {
+                                //in Case Add New Customer 
+                                if (item.Type == Audit.AuditType.Create.ToString())
+                                {
+                                    infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
+                                }
+                                //in Case Edit Exsit Customer 
+                                else if (item.Type == Audit.AuditType.Update.ToString())
+                                {
+                                    infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues);
+                                    infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
+                                }
+                                //in Case Delete Exist Customer
+                                else if (item.Type == Audit.AuditType.Delete.ToString())
+                                {
+                                    infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues);
+                                }
+                            }
+
+                            customerInfoLoggerList.Add(infoLoggerVM);
+                      }
+                    }
+                
+
+
+                return Ok(customerInfoLoggerList);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+
+            }
+            return BadRequest();
+        }
+
         // PUT: api/CustomerInfoByGroup/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerInfoByGroup customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -344,7 +479,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(userId);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -362,8 +497,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerInfoByGroup
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerInfoByGroup([FromBody] CustomerInfoByGroup customerInfoByGroup)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerInfoByGroup([FromRoute] int userId , [FromBody] CustomerInfoByGroup customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -371,7 +506,7 @@ namespace FBOLinx.Web.Controllers
             }
             customerInfoByGroup.Active = true;
             _context.CustomerInfoByGroup.Add(customerInfoByGroup);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId);
 
             return CreatedAtAction("GetCustomerInfoByGroup", new { id = customerInfoByGroup.Oid }, customerInfoByGroup);
         }

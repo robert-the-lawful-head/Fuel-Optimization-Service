@@ -18,7 +18,8 @@ namespace FBOLinx.DB.Models
         public EntityEntry Entry { get; }
         public int UserId { get; set; }
         public string TableName { get; set; }
-        public Dictionary<string, object> KeyValues { get; } = new Dictionary<string, object>();
+
+        public Dictionary<string, object> KeyValue { get; } = new Dictionary<string, object>();
         public Dictionary<string, object> OldValues { get; } = new Dictionary<string, object>();
         public Dictionary<string, object> NewValues { get; } = new Dictionary<string, object>();
         public AuditType AuditType { get; set; }
@@ -32,7 +33,7 @@ namespace FBOLinx.DB.Models
             audit.Type = AuditType.ToString();
             audit.TableName = TableName;
             audit.DateTime = DateTime.Now;
-            audit.PrimaryKey = JsonConvert.SerializeObject(KeyValues);
+            audit.PrimaryKey =  JsonConvert.SerializeObject(KeyValue);
             audit.OldValues = OldValues.Count == 0 ? null : JsonConvert.SerializeObject(OldValues);
             audit.NewValues = NewValues.Count == 0 ? null : JsonConvert.SerializeObject(NewValues);
             audit.AffectedColumns = ChangedColumns.Count == 0 ? null : JsonConvert.SerializeObject(ChangedColumns);
