@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>Change Details</h1>
+<div mat-dialog-content>
+    <div *ngIf="data.newCustomerInfoByGroup != null || data.oldCustomerInfoByGroup != null ">
+        <app-customer-info-by-group-history
+        [newCustomerInfoByGroup]="newCustomerInfoByGroup"
+        [oldCustomerInfoByGroup]="oldCustomerInfoByGroup"
+        ></app-customer-info-by-group-history>
+    </div>
+</div>
+<div mat-dialog-actions style="justify-content: center;">
+    <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial>Ok</button>
+  </div>
