@@ -186,6 +186,9 @@ import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
 import { CustomerInfoByGroupHistoryComponent } from './customer-history/customer-info-by-group-history/customer-info-by-group-history.component';
+import { CustomerContactHistoryComponent } from './customer-history/customer-contact-history/customer-contact-history.component';
+import { CustomerAircraftHistoryComponent } from './customer-history/customer-aircraft-history/customer-aircraft-history.component';
+import { CutomerItpMraginHistoryComponent } from './customer-history/cutomer-itp-mragin-history/cutomer-itp-mragin-history.component';
 
 
 @NgModule({
@@ -306,7 +309,10 @@ import { CustomerInfoByGroupHistoryComponent } from './customer-history/customer
         CustomerTagDialogComponent,
         CustomerHistoryComponent,
         CustomerHistoryDetailsComponent,
-        CustomerInfoByGroupHistoryComponent
+        CustomerInfoByGroupHistoryComponent,
+        CustomerContactHistoryComponent,
+        CustomerAircraftHistoryComponent,
+        CutomerItpMraginHistoryComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

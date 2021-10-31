@@ -6,6 +6,29 @@
         [oldCustomerInfoByGroup]="oldCustomerInfoByGroup"
         ></app-customer-info-by-group-history>
     </div>
+
+    <div *ngIf="data.newContact != null || data.oldContact != null">
+        <app-customer-contact-history
+          [oldContact]="oldContact"
+          [newContact]="newContact"
+        >
+        </app-customer-contact-history>
+    </div>
+
+    <div *ngIf="data.oldCustomerAircrafts != null || data.newCustomerAircrafts != null">
+        <app-customer-aircraft-history
+        [newCustomerAircrafts]="newCustomerAircrafts"
+        [oldCustomerAircrafts]="oldCustomerAircrafts"
+        >
+        </app-customer-aircraft-history>
+    </div>
+
+    <div *ngIf="data.oldPricingTemplate != null && data.newPricingTemplate != null">
+       <app-cutomer-itp-mragin-history
+          [newPricingTemplate]="newPricingTemplate"
+          [oldPricingTemplate]="oldPricingTemplate"
+       ></app-cutomer-itp-mragin-history>
+    </div>
 </div>
 <div mat-dialog-actions style="justify-content: center;">
     <button mat-raised-button color="primary" mat-dialog-close cdkFocusInitial>Ok</button>

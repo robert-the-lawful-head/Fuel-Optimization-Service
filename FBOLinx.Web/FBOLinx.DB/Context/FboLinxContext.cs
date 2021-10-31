@@ -65,8 +65,9 @@ namespace FBOLinx.DB.Context
                         case EntityState.Modified:
                             if (property.IsModified)
                             {                           
-                                        auditEntry.ChangedColumns.Add(propertyName);
-                                        auditEntry.AuditType = AuditType.Update;
+                                        auditEntry.ChangedColumns.Add(propertyName);                                    
+                                    auditEntry.AuditType = AuditType.Update;
+
                                         auditEntry.OldValues[propertyName] = property.OriginalValue;
                                         auditEntry.NewValues[propertyName] = property.CurrentValue;                      
                             }
