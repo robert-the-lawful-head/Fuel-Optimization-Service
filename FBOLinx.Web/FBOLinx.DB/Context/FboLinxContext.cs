@@ -33,7 +33,7 @@ namespace FBOLinx.DB.Context
         {
             if(userId != 0)
             {
-                ChangeTracker.DetectChanges();
+            ChangeTracker.DetectChanges();
             var auditEntries = new List<AuditEntry>();
             foreach (var entry in ChangeTracker.Entries())
             {
