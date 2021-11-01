@@ -18,7 +18,7 @@
             <!--Type-->
              <tr>
              <th>Type</th>
-                <th>{{oldCustomerAircrafts.make }} {{oldCustomerAircrafts.model }}</th>
+                <th>{{oldAircraft.make }} {{oldAircraft.model }}</th>
             </tr>
 
            </tbody>
@@ -26,7 +26,7 @@
 </div>
 
 
-<!--for Delete Exsiting Aircraft of Customer-->
+<!--for ADD Exsiting Aircraft of Customer-->
 <div *ngIf="oldCustomerAircrafts == null && newCustomerAircrafts != null">
     <table class="table table-hover table-respoisve table-bordered">
         <thead>
@@ -46,7 +46,7 @@
             <!--Type-->
              <tr>
              <th>Type</th>
-                <th>{{newCustomerAircrafts.make }} {{newCustomerAircrafts.model }}</th>
+                <th>{{newAircraft.make }} {{newAircraft.model }}</th>
             </tr>
 
            </tbody>

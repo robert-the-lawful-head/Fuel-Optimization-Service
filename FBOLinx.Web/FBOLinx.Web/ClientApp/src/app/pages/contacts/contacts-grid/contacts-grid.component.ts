@@ -79,10 +79,10 @@ export class ContactsGridComponent implements OnInit {
     // Public Methods
     public deleteRecord(record) {
         this.customerContactsService
-            .remove(record.customerContactId , this.sharedService.currentUser.oid)
+            .remove(record.customerContactId)
             .subscribe(() => {
                 this.contactInfoByGroupsService
-                    .remove(record.contactInfoByGroupId)
+                    .remove(record.contactInfoByGroupId , this.sharedService.currentUser.oid)
                     .subscribe(() => {
                         const index = this.contactsData.findIndex(
                             (d) =>
@@ -124,10 +124,10 @@ export class ContactsGridComponent implements OnInit {
             if (result !== 'cancel') {
                 if (result.toDelete) {
                     this.customerContactsService
-                        .remove(record.customerContactId , this.sharedService.currentUser.oid)
+                        .remove(record.customerContactId)
                         .subscribe(() => {
                             this.contactInfoByGroupsService
-                                .remove(record.contactInfoByGroupId)
+                                .remove(record.contactInfoByGroupId ,this.sharedService.currentUser.oid)
                                 .subscribe(() => {
                                     const index = this.contactsData.findIndex(
                                         (d) =>

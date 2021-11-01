@@ -33,7 +33,6 @@ export class CustomerHistoryComponent implements OnInit {
 
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
     this.customerHistoryDataSource =   new MatTableDataSource(this.customerHistroy);
-    console.log(this.customerHistroy);
     this.customerHistoryDataSource.sort = this.sort;
     this.customerHistoryDataSource.paginator = this.paginator;
     if (sessionStorage.getItem('pageIndex')) {

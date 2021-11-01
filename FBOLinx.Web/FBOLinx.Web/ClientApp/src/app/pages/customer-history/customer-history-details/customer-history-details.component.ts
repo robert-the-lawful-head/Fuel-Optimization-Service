@@ -9,12 +9,14 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class CustomerHistoryDetailsComponent implements OnInit {
 
-    newCustomerInfoByGroup : any; 
+    newCustomerInfoByGroup : any;
     oldCustomerInfoByGroup : any;
     oldContact : any;
     newContact : any;
     oldCustomerAircrafts : any;
     newCustomerAircrafts : any;
+    oldAircraft : any;
+    newAircraft : any;
     oldPricingTemplate : any;
     newPricingTemplate : any;
 
@@ -22,8 +24,7 @@ export class CustomerHistoryDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
-      console.log(this.data)
-
+        console.log(this.data)
            this.newCustomerInfoByGroup = this.data.newCustomerInfoByGroup;
            this.oldCustomerInfoByGroup =  this.data.oldCustomerInfoByGroup;
            this.oldCustomerAircrafts = this.data.oldCustomerAircrafts;
@@ -32,7 +33,9 @@ export class CustomerHistoryDetailsComponent implements OnInit {
            this.newPricingTemplate =  this.data.newPricingTemplate;
            this.oldContact = this.data.oldContact;
            this.newContact =  this.data.newContact;
- 
+           this.newAircraft = this.data.newAircaft;
+           this.oldAircraft = this.data.oldAircaft;
+
 
 
   }

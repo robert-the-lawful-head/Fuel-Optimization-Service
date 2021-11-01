@@ -9,6 +9,8 @@ export class CustomerAircraftHistoryComponent implements OnInit {
 
    @Input() oldCustomerAircrafts:any;
    @Input () newCustomerAircrafts : any;
+   @Input () oldAircraft : any;
+   @Input () newAircraft : any;
   constructor() { }
 
   ngOnInit(): void {

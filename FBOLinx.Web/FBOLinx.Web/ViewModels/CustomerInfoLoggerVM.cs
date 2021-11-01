@@ -21,15 +21,18 @@ namespace FBOLinx.Web.ViewModels
         //for OldDate
         public CustomerInfoByGroup OldCustomerInfoByGroup { get; set; }
         public CustomerAircrafts OldCustomerAircrafts { get; set; }
-        public Contacts OldContact { get; set; }
-       public PricingTemplate OldPricingTemplate { get; set; }
+        public AirCrafts OldAircaft { get; set; }
+        public ContactInfoByGroup OldContact { get; set; }
+         public PricingTemplate OldPricingTemplate { get; set; }
 
 
 
         //for NewDate
         public CustomerInfoByGroup NewCustomerInfoByGroup { get; set; }
         public CustomerAircrafts NewCustomerAircrafts { get; set; }
-        public Contacts NewContact { get; set; }
+        public ContactInfoByGroup NewContact { get; set; }
+
+        public AirCrafts NewAircaft { get; set; }
         public PricingTemplate NewPricingTemplate { get; set; }
 
     }

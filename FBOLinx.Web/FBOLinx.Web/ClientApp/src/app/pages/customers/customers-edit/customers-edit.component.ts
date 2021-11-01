@@ -97,7 +97,6 @@ export class CustomersEditComponent implements OnInit {
 
     async ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
-
         this.customerInfoByGroup = await this.customerInfoByGroupService
             .get({ oid: id })
             .toPromise();
@@ -123,16 +122,14 @@ export class CustomersEditComponent implements OnInit {
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(
                 this.sharedService.currentUser.fboId
             ),
-            this.customerInfoByGroupService.getCustomerLogger(
-                id
-                )
-              ,
+
+            this.customerInfoByGroupService.getCustomerLogger(id),
+
             this.customersViewedByFboService.add({
                 customerId: this.customerInfoByGroup.customerId,
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId,
             }),
-
         ]).toPromise();
 
         this.certificateTypes = results[0] as any[];
@@ -141,7 +138,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-        this.customerHistory = results[6] as any[];
+        this.customerHistory = results[6] as any [];
 
 
         this.customerForm = this.formBuilder.group({
@@ -162,7 +159,6 @@ export class CustomersEditComponent implements OnInit {
             zipCode: [this.customerInfoByGroup.zipCode],
             customerTag: [this.customerInfoByGroup.customerTag]
         });
-
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
@@ -179,7 +175,7 @@ export class CustomersEditComponent implements OnInit {
 
 
                     await this.customerInfoByGroupService
-                        .update(customerInfoByGroup ,this.sharedService.currentUser.oid)
+                        .update(customerInfoByGroup ,  this.sharedService.currentUser.oid)
                         .toPromise();
                     if (
                         !this.customCustomerType.oid ||
@@ -190,7 +186,7 @@ export class CustomersEditComponent implements OnInit {
                             .toPromise();
                     } else {
                         await this.customCustomerTypesService
-                            .update(this.customCustomerType , this.sharedService.currentUser.oid )
+                            .update(this.customCustomerType ,  this.sharedService.currentUser.oid)
                             .toPromise();
                     }
                     this.customerInfoByGroup = customerInfoByGroup;
@@ -217,7 +213,6 @@ export class CustomersEditComponent implements OnInit {
         this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
             (selectedValue) => {
                 this.customCustomerType.customerType = selectedValue;
-
                 this.recalculatePriceBreakdown();
             }
         );
@@ -233,15 +228,17 @@ export class CustomersEditComponent implements OnInit {
 
     contactDeleted(contact) {
         this.customerContactsService
-            .remove(contact.customerContactId , this.sharedService.currentUser.oid)
+            .remove(contact.customerContactId)
             .subscribe(() => {
                 this.contactInfoByGroupsService
-                    .remove(contact.contactInfoByGroupId)
-                    .subscribe(() => {
+                    .remove(contact.contactInfoByGroupId , this.sharedService.currentUser.oid)
+                    .subscribe((data) => {
+
+                        this.contactsService.update(data).subscribe();
                         const index = this.contactsData.findIndex(
                             (d) =>
-                                d.customerContactId ===
-                                contact.customerContactId
+                            d.customerContactId ===
+                            contact.customerContactId
                         ); // find index in your array
                         this.contactsData.splice(index, 1); // remove element from array
                     });
@@ -271,6 +268,7 @@ export class CustomersEditComponent implements OnInit {
                     this.contactsService
                         .add({ oid: 0 })
                         .subscribe((data: any) => {
+
                             this.currentContactInfoByGroup.contactId = data.oid;
                             this.saveContactInfoByGroup();
                         });
@@ -494,14 +492,14 @@ export class CustomersEditComponent implements OnInit {
     private saveContactInfoByGroup() {
         if (this.currentContactInfoByGroup.oid === 0) {
             this.contactInfoByGroupsService
-                .add(this.currentContactInfoByGroup)
+                .add(this.currentContactInfoByGroup , this.sharedService.currentUser.oid)
                 .subscribe((data: any) => {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();
                 });
         } else {
             this.contactInfoByGroupsService
-                .update(this.currentContactInfoByGroup )
+                .update(this.currentContactInfoByGroup)
                 .subscribe(() => {
                     this.saveCustomerContact();
                 });
@@ -514,7 +512,7 @@ export class CustomersEditComponent implements OnInit {
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                } , this.sharedService.currentUser.oid)
+                })
                 .subscribe(() => {
                     this.loadCustomerContacts();
                 });

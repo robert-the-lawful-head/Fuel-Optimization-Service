@@ -9,6 +9,7 @@ import { ContactsDialogConfirmContactDeleteComponent } from '../contact-confirm-
 
 export interface NewContactDialogData {
     oid: number;
+
     firstName: string;
     lastName: string;
     title: string;

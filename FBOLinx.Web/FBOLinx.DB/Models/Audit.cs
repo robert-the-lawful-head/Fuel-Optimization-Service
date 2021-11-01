@@ -19,7 +19,7 @@ namespace FBOLinx.DB.Models
             CustomerInfoByGroup = 0,
             CustomerAircrafts = 1,
             CustomCustomerTypes = 2,
-            CustomerContacts = 3
+            ContactInfoByGroup = 3
         }
 
         public int Id { get; set; }

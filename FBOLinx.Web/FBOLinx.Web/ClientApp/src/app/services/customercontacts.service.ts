@@ -19,20 +19,20 @@ export class CustomercontactsService {
         });
     }
 
-    public add(payload , userId) {
-        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
+    public add(payload) {
+        return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,
         });
     }
 
-    public remove(payload , userId) {
-        return this.http.delete(this.accessPointUrl + '/' + payload + '/'+userId, {
+    public remove(payload) {
+        return this.http.delete(this.accessPointUrl + '/' + payload , {
             headers: this.headers,
         });
     }
 
-    public update(payload , userId) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
+    public update(payload) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
     }

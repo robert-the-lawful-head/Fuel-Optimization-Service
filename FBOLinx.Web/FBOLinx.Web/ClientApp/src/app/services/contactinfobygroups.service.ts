@@ -32,8 +32,8 @@ export class ContactinfobygroupsService {
         });
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
@@ -48,8 +48,8 @@ export class ContactinfobygroupsService {
         );
     }
 
-    public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload, {
+    public remove(payload , userId) {
+        return this.http.delete(this.accessPointUrl + '/' + payload+'/'+userId, {
             headers: this.headers,
         });
     }

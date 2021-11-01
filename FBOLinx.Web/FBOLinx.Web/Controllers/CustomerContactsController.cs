@@ -87,8 +87,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerContacts
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> PostCustomerContacts([FromRoute] int userId, [FromBody] CustomerContacts customerContacts)
+        [HttpPost]
+        public async Task<IActionResult> PostCustomerContacts([FromBody] CustomerContacts customerContacts)
         {
             if (!ModelState.IsValid)
             {
@@ -96,14 +96,14 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.CustomerContacts.Add(customerContacts);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCustomerContacts", new { id = customerContacts.Oid }, customerContacts);
         }
 
         // DELETE: api/CustomerContacts/5
-        [HttpDelete("{id}/{userId}")]
-        public async Task<IActionResult> DeleteCustomerContacts([FromRoute] int id , [FromRoute] int userId)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCustomerContacts([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
@@ -117,7 +117,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.CustomerContacts.Remove(customerContacts);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync();
 
             return Ok(customerContacts);
         }
