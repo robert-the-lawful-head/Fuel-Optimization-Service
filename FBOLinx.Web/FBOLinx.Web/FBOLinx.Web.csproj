@@ -94,6 +94,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\app\ui\" />
     <Folder Include="ClientApp\src\assets\img\landing-page\" />
+    <Folder Include="SQL\deploy_sprint_84\1rvmmm1\" />
   </ItemGroup>
 
   <ItemGroup>
