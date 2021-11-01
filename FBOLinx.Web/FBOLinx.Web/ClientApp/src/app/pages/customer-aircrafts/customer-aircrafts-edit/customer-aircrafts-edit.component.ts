@@ -1,5 +1,4 @@
-import { SharedService } from 'src/app/layouts/shared-service';
-
+import { SharedService } from './../../../layouts/shared-service';
 import {
     Component,
     EventEmitter,
@@ -43,8 +42,6 @@ export class CustomerAircraftsEditComponent implements OnInit {
         private customerAircraftsService: CustomeraircraftsService,
         private dialogAircraftDeleteRef: MatDialog ,
         private sharedService : SharedService
-
-
     ) {}
 
     ngOnInit() {
@@ -68,7 +65,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
     public saveEdit() {
         console.log(this.data.customerGroupId)
         this.customerAircraftsService
-            .update(this.customerAircraftInfo , this.sharedService.currentUser.oid , this.data.customerGroupId )
+            .update(this.customerAircraftInfo , this.sharedService.currentUser.oid)
             .subscribe((data: any) => {
                 this.dialogRef.close(data);
             });

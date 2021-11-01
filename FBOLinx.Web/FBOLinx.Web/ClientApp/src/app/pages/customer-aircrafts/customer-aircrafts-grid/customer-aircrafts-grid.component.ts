@@ -178,7 +178,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid ,id ).subscribe(() => {
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
@@ -208,7 +208,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                             customerAircraft.isFuelerlinxNetwork &&
                             customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
-                       customerGroupId : this.route.snapshot.paramMap.get('id')
+                        customerId : this.customer.oid
                     },
                     width: '450px',
                 }
@@ -222,7 +222,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
                 if (result.toDelete) {
                     const id = this.route.snapshot.paramMap.get('id');
                     this.customerAircraftsService
-                        .remove(result , this.sharedService.currentUser.oid , id)
+                        .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroupAndCustomerId(

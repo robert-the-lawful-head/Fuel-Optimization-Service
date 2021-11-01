@@ -128,8 +128,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/ContactInfoByGroups
-        [HttpPost]
-        public async Task<IActionResult> PostContactInfoByGroup([FromBody] ContactInfoByGroup contactInfoByGroup)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostContactInfoByGroup([FromRoute] int userId ,[FromBody] ContactInfoByGroup contactInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -137,7 +137,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.ContactInfoByGroup.Add(contactInfoByGroup);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId);
 
             return CreatedAtAction("GetContactInfoByGroup", new { id = contactInfoByGroup.Oid }, contactInfoByGroup);
         }
@@ -188,8 +188,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // DELETE: api/ContactInfoByGroups/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteContactInfoByGroup([FromRoute] int id)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteContactInfoByGroup([FromRoute] int id , [FromRoute] int userId)
         {
             if (!ModelState.IsValid)
             {
@@ -203,7 +203,8 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.ContactInfoByGroup.Remove(contactInfoByGroup);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId);
+
 
             return Ok(contactInfoByGroup);
         }

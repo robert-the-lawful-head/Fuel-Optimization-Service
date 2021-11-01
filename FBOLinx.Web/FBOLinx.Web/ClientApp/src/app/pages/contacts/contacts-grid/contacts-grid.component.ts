@@ -86,7 +86,7 @@ export class ContactsGridComponent implements OnInit {
             .remove(record.customerContactId , this.sharedService.currentUser.oid , id)
             .subscribe(() => {
                 this.contactInfoByGroupsService
-                    .remove(record.contactInfoByGroupId)
+                    .remove(record.contactInfoByGroupId , this.sharedService.currentUser.oid)
                     .subscribe(() => {
                         const index = this.contactsData.findIndex(
                             (d) =>
@@ -132,7 +132,7 @@ export class ContactsGridComponent implements OnInit {
                         .remove(record.customerContactId , this.sharedService.currentUser.oid  , id)
                         .subscribe(() => {
                             this.contactInfoByGroupsService
-                                .remove(record.contactInfoByGroupId)
+                                .remove(record.contactInfoByGroupId ,this.sharedService.currentUser.oid)
                                 .subscribe(() => {
                                     this.contactInfoByFboService
                                         .remove(record.contactId)

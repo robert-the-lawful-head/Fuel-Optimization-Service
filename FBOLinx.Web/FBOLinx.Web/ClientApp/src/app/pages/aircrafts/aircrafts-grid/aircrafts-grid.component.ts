@@ -157,7 +157,7 @@ export class AircraftsGridComponent implements OnInit {
                 const id = this.route.snapshot.paramMap.get('id');
                 if (result.toDelete) {
                     this.customerAircraftsService
-                        .remove(result , this.sharedService.currentUser.oid , id)
+                        .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
                             this.customerAircraftsService
                                 .getCustomerAircraftsByGroup(

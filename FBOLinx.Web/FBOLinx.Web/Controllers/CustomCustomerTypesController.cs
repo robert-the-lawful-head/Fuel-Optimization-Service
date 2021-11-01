@@ -89,19 +89,29 @@ namespace FBOLinx.Web.Controllers
         }
 
         // PUT: api/CustomCustomerTypes/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomCustomerTypes(int id, CustomCustomerTypes customCustomerTypes)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomCustomerTypes(int id , [FromRoute] int userId, CustomCustomerTypes customCustomerTypes)
         {
             if (id != customCustomerTypes.Oid)
             {
                 return BadRequest();
-            }
-
-            _context.Entry(customCustomerTypes).State = EntityState.Modified;
-
+            }           
             try
             {
-                await _context.SaveChangesAsync();
+                CustomCustomerTypes oldValue = _context.CustomCustomerTypes.FirstOrDefault(c=>c.Oid == customCustomerTypes.Oid);
+
+                if(oldValue != null)
+                {
+                    if(CompareCustoemrType(oldValue , customCustomerTypes) == false)
+                    {
+                        oldValue.CustomerId = customCustomerTypes.CustomerId;
+                        oldValue.CustomerType = customCustomerTypes.CustomerType;
+                        oldValue.Fboid = customCustomerTypes.Fboid;
+                        _context.CustomCustomerTypes.Update(oldValue);
+                        await _context.SaveChangesAsync(userId);
+                    }
+                }
+               
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -212,5 +222,15 @@ namespace FBOLinx.Web.Controllers
 
             return null;
         }
+
+        #region Private Methods 
+         private bool CompareCustoemrType (CustomCustomerTypes oldValue , CustomCustomerTypes newValue)
+        {
+            return oldValue.CustomerId == newValue.CustomerId &&
+                   oldValue.CustomerType == newValue.CustomerType &&
+                   oldValue.Fboid == newValue.Fboid;
+               
+        }
+        #endregion
     }
 }

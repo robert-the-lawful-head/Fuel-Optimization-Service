@@ -74,6 +74,7 @@ export class CustomersEditComponent implements OnInit {
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
+    customerHistory : any;
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -137,7 +138,9 @@ export class CustomersEditComponent implements OnInit {
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(
                 this.sharedService.currentUser.fboId
             ),
-            //5
+
+            this.customerInfoByGroupService.getCustomerLogger(id),
+
             this.customersViewedByFboService.add({
                 customerId: this.customerInfoByGroup.customerId,
                 fboId: this.sharedService.currentUser.fboId,
@@ -154,7 +157,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-
+        this.customerHistory = results[6] as any [];
 
 
         this.customerForm = this.formBuilder.group({
@@ -193,7 +196,7 @@ export class CustomersEditComponent implements OnInit {
 
 
                     await this.customerInfoByGroupService
-                        .update(customerInfoByGroup , this.sharedService.currentUser.oid)
+                        .update(customerInfoByGroup ,  this.sharedService.currentUser.oid)
                         .toPromise();
                     if (
                         !this.customCustomerType.oid ||
@@ -204,7 +207,7 @@ export class CustomersEditComponent implements OnInit {
                             .toPromise();
                     } else {
                         await this.customCustomerTypesService
-                            .update(this.customCustomerType)
+                            .update(this.customCustomerType ,  this.sharedService.currentUser.oid)
                             .toPromise();
                     }
 
@@ -271,12 +274,14 @@ export class CustomersEditComponent implements OnInit {
             .remove(contact.customerContactId , this.sharedService.currentUser.oid , this.route.snapshot.paramMap.get('id'))
             .subscribe(() => {
                 this.contactInfoByGroupsService
-                    .remove(contact.contactInfoByGroupId)
-                    .subscribe(() => {
+                    .remove(contact.contactInfoByGroupId , this.sharedService.currentUser.oid)
+                    .subscribe((data) => {
+
+                        this.contactsService.update(data).subscribe();
                         const index = this.contactsData.findIndex(
                             (d) =>
-                                d.customerContactId ===
-                                contact.customerContactId
+                            d.customerContactId ===
+                            contact.customerContactId
                         ); // find index in your array
                         this.contactsData.splice(index, 1); // remove element from array
                     });
@@ -306,6 +311,7 @@ export class CustomersEditComponent implements OnInit {
                     this.contactsService
                         .add({ oid: 0 })
                         .subscribe((data: any) => {
+
                             this.currentContactInfoByGroup.contactId = data.oid;
                             this.saveContactInfoByGroup();
                         });
@@ -539,7 +545,7 @@ export class CustomersEditComponent implements OnInit {
                 currentContactInfoByGroup.CopyAlerts = false;
 
             this.contactInfoByGroupsService
-                .add(currentContactInfoByGroup)
+                .add(this.currentContactInfoByGroup , this.sharedService.currentUser.oid)
                 .subscribe((data: any) => {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();

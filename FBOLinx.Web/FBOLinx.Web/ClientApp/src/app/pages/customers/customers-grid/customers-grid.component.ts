@@ -225,7 +225,7 @@ export class CustomersGridComponent implements OnInit {
                 return;
             }
             this.customerInfoByGroupService
-                .remove({ oid: result.item.customerInfoByGroupId })
+                .remove({ oid: result.item.customerInfoByGroupId } )
                 .subscribe(() => {
                     this.customerDeleted.emit();
                 });

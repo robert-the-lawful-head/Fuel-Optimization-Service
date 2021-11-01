@@ -39,6 +39,13 @@ export class CustomerinfobygroupService {
         );
     }
 
+    public getCustomerLogger(customerId)
+    {
+        return this.http.get(`${this.accessPointUrl}/CustomerLogger/${customerId}`, {
+            headers: this.headers,
+        });
+    }
+
     public getNeedsAttentionByGroupAndFbo(groupId: number, fboId: number) {
         return this.http.get(
             `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/needs-attention`,
@@ -133,7 +140,7 @@ export class CustomerinfobygroupService {
         );
     }
 
-    public add(payload , userId ) {
+    public add(payload , userId) {
         return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
@@ -233,4 +240,6 @@ export class CustomerinfobygroupService {
             headers: this.headers,
         });
     }
+
+
 }

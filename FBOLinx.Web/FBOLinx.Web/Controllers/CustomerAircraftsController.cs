@@ -148,8 +148,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(result?.Count);
         }
 
-        [HttpPut("{id}/{userId}/{customerId}")]
-        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id ,[FromRoute] int userId, [FromRoute] int customerId,  [FromBody] CustomerAircraftsViewModel customerAircrafts)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerAircraftsViewModel customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -174,8 +174,7 @@ namespace FBOLinx.Web.Controllers
                     custAircraft.Size = customerAircrafts.Size;
                     _context.CustomerAircrafts.Update(custAircraft);
                 }
-
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(userId);
 
                 return Ok(custAircraft);
             }
@@ -260,8 +259,8 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost("{userId}/{customerId}")]
-        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId, [FromRoute] int customerId, [FromBody] CustomerAircrafts customerAircrafts)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -269,8 +268,8 @@ namespace FBOLinx.Web.Controllers
             }
           
             _context.CustomerAircrafts.Add(customerAircrafts);
-            await _context.SaveChangesAsync();
-            AddCustomerAirCraftLog(customerAircrafts, customerId , userId  );
+            await _context.SaveChangesAsync(userId);
+
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
 
@@ -436,8 +435,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerAircrafts);
         }
 
-        [HttpDelete("{id}/{userId}/{customerId}")]
-        public async Task<IActionResult> DeleteCustomerAircraft([FromRoute] int id , [FromRoute] int userId  , [FromRoute] int customerId)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteCustomerAircraft([FromRoute] int id , [FromRoute] int userId)
         {
             if (!ModelState.IsValid)
             {
@@ -452,7 +451,7 @@ namespace FBOLinx.Web.Controllers
 
             DeleteCustomerAirCraftLog(customerAircrafts, customerId, userId);
             _context.CustomerAircrafts.Remove(customerAircrafts);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId);
 
             return Ok(customerAircrafts);
         }
