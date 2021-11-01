@@ -74,7 +74,7 @@ export class CustomersEditComponent implements OnInit {
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
-    customerHistory : any;
+
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
@@ -146,8 +146,8 @@ export class CustomersEditComponent implements OnInit {
                 fboId: this.sharedService.currentUser.fboId,
                 groupId: this.sharedService.currentUser.groupId,
             }),
-            //6
-            this.customerInfoByGroupService.getCustomerByGroupLogger(id),
+
+
 
         ]).toPromise();
 
@@ -271,7 +271,7 @@ export class CustomersEditComponent implements OnInit {
 
     contactDeleted(contact) {
         this.customerContactsService
-            .remove(contact.customerContactId , this.sharedService.currentUser.oid , this.route.snapshot.paramMap.get('id'))
+            .remove(contact.customerContactId )
             .subscribe(() => {
                 this.contactInfoByGroupsService
                     .remove(contact.contactInfoByGroupId , this.sharedService.currentUser.oid)
@@ -560,7 +560,7 @@ export class CustomersEditComponent implements OnInit {
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                }, this.sharedService.currentUser.oid ,this.route.snapshot.paramMap.get('id'))
+                })
                 .subscribe(() => {
                     this.loadCustomerContacts();
                     this.loadCustomerHistory();

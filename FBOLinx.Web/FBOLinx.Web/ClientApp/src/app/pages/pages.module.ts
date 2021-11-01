@@ -1,4 +1,3 @@
-import { CustomerHistoryDetailsComponent } from './customer-history/customer-history-details/customer-history-details.component';
 import { CustomerHistoryComponent } from './customer-history/customer-history/customer-history.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -189,7 +188,7 @@ import { CustomerInfoByGroupHistoryComponent } from './customer-history/customer
 import { CustomerContactHistoryComponent } from './customer-history/customer-contact-history/customer-contact-history.component';
 import { CustomerAircraftHistoryComponent } from './customer-history/customer-aircraft-history/customer-aircraft-history.component';
 import { CutomerItpMraginHistoryComponent } from './customer-history/cutomer-itp-mragin-history/cutomer-itp-mragin-history.component';
-import { CustomerHistoryDetailsComponent } from './customers/customer-history-details/customer-history-details.component';
+import { CustomerHistoryDetailsComponent } from './customer-history/customer-history-details/customer-history-details.component';
 import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
 
 
@@ -309,15 +308,14 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         CsvExportModalComponent,
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
-        CustomerHistoryComponent,
-        CustomerHistoryDetailsComponent,
-        CustomerInfoByGroupHistoryComponent,
+       CustomerInfoByGroupHistoryComponent,
         CustomerContactHistoryComponent,
         CustomerAircraftHistoryComponent,
-        CutomerItpMraginHistoryComponent
-        CustomerTagDialogComponent,      
-       CustomersAnalyticsComponent
-    
+        CutomerItpMraginHistoryComponent,
+        CustomersAnalyticsComponent ,
+        CustomerHistoryComponent,
+        CustomerHistoryDetailsComponent
+
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

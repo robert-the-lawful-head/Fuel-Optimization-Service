@@ -168,7 +168,7 @@ namespace FBOLinx.Web.Controllers
                  
                 if (custAircraft != null)
                 {
-                    EditAirCraftLog(custAircraft, customerId, userId);
+                  
                     custAircraft.TailNumber = customerAircrafts.TailNumber;
                     custAircraft.AircraftId = customerAircrafts.AircraftId;
                     custAircraft.Size = customerAircrafts.Size;
@@ -449,7 +449,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            DeleteCustomerAirCraftLog(customerAircrafts, customerId, userId);
+           
             _context.CustomerAircrafts.Remove(customerAircrafts);
             await _context.SaveChangesAsync(userId);
 

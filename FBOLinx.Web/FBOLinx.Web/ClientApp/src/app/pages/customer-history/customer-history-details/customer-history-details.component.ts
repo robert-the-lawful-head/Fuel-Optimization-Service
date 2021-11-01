@@ -24,7 +24,7 @@ export class CustomerHistoryDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
-        console.log(this.data)
+
            this.newCustomerInfoByGroup = this.data.newCustomerInfoByGroup;
            this.oldCustomerInfoByGroup =  this.data.oldCustomerInfoByGroup;
            this.oldCustomerAircrafts = this.data.oldCustomerAircrafts;
