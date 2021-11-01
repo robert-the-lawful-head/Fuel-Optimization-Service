@@ -100,7 +100,7 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
-        this.loadCustomerHistory();
+       
     }
 
     async ngOnInit() {
