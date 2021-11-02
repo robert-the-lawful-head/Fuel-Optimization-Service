@@ -348,20 +348,12 @@ namespace FBOLinx.Web.Controllers
                 {
                     foreach (var item in DataLog)
                     {
-                        CustomerInfoByGroupIDVM Customer = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey);
+                      
                         CustomerInfoLoggerVM infoLoggerVM = new CustomerInfoLoggerVM();
                         User user = _context.User.FirstOrDefault(u => u.Oid == item.UserId);
-                            if(user != null)
-                            {
-                            infoLoggerVM.Username = user.FirstName;
-                            
-                            infoLoggerVM.Role = FBOLinx.Core.Utilities.Enum.GetDescription(user.Role);
-                            }
-                            infoLoggerVM.TableName = item.TableName;
-                            infoLoggerVM.Type = item.Type;
-                            infoLoggerVM.DateTime = item.DateTime;
+
                             //to Know the Location of Logging 
-                            if (infoLoggerVM.TableName == Audit.AuditLocation.CustomCustomerTypes.ToString())
+                            if (item.TableName == Audit.AuditLocation.CustomCustomerTypes.ToString())
                             {
                                 //just here case Edit
                                 if (item.Type == Audit.AuditType.Update.ToString())
@@ -383,7 +375,7 @@ namespace FBOLinx.Web.Controllers
                                   
                             }
 
-                            else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerAircrafts.ToString())
+                            else if (item.TableName == Audit.AuditLocation.CustomerAircrafts.ToString())
                             {
 
                             //for AddNew AirCraft 
@@ -395,33 +387,14 @@ namespace FBOLinx.Web.Controllers
                                 if (infoLoggerVM.NewCustomerAircrafts != null)
                                 {
                                     infoLoggerVM.NewAircaft = _degaContext.AirCrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.NewCustomerAircrafts.AircraftId);
+                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircaftAdded);
 
                                 }
-                                infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircaftAdded);
+                             
 
                             }
 
-                            //for Update exsit CustomerAirCraft 
-                            //else if (item.Type == Audit.AuditType.Update.ToString())
-                            //{
-                            //    infoLoggerVM.OldCustomerAircrafts =
-                            //     JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
-                            //      JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues) : null;
-
-                            //    infoLoggerVM.NewCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ?
-                            //      JsonConvert.DeserializeObject<CustomerAircrafts>(item.NewValues) : null;
-
-                            //    if (infoLoggerVM.OldCustomerAircrafts != null && infoLoggerVM.NewCustomerAircrafts != null)
-                            //    {
-                            //        infoLoggerVM.OldAircaft = _degaContext.AirCrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.OldCustomerAircrafts.AircraftId);
-                            //        infoLoggerVM.NewAircaft = _degaContext.AirCrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.NewCustomerAircrafts.AircraftId);
-
-                            //    }
-                       
-                            //   infoLoggerVM.Action =  FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircraftEdited);
-                            //}
-
-                                //for Delete exsit CustomerAirCraft 
+                               //for Delete exsit CustomerAirCraft 
                                 else if (item.Type == Audit.AuditType.Delete.ToString())
                                 {
                                     infoLoggerVM.OldCustomerAircrafts = JsonConvert.DeserializeObject<CustomerAircrafts>(item.OldValues).CustomerId == CustomerByGroup.CustomerId ?
@@ -430,53 +403,84 @@ namespace FBOLinx.Web.Controllers
                                  if(infoLoggerVM.OldCustomerAircrafts != null)
                                 {
                                     infoLoggerVM.OldAircaft = _degaContext.AirCrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.OldCustomerAircrafts.AircraftId);
-                                   
+                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircraftDeleted);
+
                                 }
 
-                                infoLoggerVM.Action =FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.AircraftDeleted) ;
+                         
 
 
                             }
                         }
 
-                            else if (infoLoggerVM.TableName == Audit.AuditLocation.ContactInfoByGroup.ToString())
+                            else if (item.TableName == Audit.AuditLocation.ContactInfoByGroup.ToString())
                             {
 
                             //in case add new Contact to Customer
                             if (item.Type == Audit.AuditType.Create.ToString())
                             {
-                                infoLoggerVM.NewContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.NewValues);
 
+                                ContactInfoByGroup NewContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.NewValues);
 
-                                infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactAdded);
-
-                            }
-
-                                //in case Delete Exist Contact from Customer
-                                if (item.Type == Audit.AuditType.Delete.ToString())
+                                List<CustomerContacts> customerContacts = new List<CustomerContacts>();
+                                var  NewCustomerContacts = _context.AuditsLogs.Where(a => a.TableName == Audit.AuditLocation.CustomerContacts.ToString() && a.Type == item.Type).ToList();
+                                if (NewCustomerContacts.Count > 0)
                                 {
-                                infoLoggerVM.OldContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.OldValues);
+                                    foreach (var contact in NewCustomerContacts)
+                                    {
+                                        customerContacts.Add(JsonConvert.DeserializeObject<CustomerContacts>(contact.NewValues));
+                                    }
+
+                                    infoLoggerVM.NewContact = customerContacts.Where(x => x.CustomerId == CustomerByGroup.CustomerId).FirstOrDefault() != null ? NewContact : null;
+                                    infoLoggerVM.Action = infoLoggerVM.NewContact != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactAdded) : null;
+                                }
+
+
+
+
+
+                            }
+
+                            //in case Delete Exist Contact from Customer
+                            if (item.Type == Audit.AuditType.Delete.ToString())
+                                {
+
+                                ContactInfoByGroup OldContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.OldValues);
+                            
+                                    List<CustomerContacts> customerContacts = new List<CustomerContacts>();
+                                    var OldCustomerContacts = _context.AuditsLogs.Where(a => a.TableName == Audit.AuditLocation.CustomerContacts.ToString() && a.Type == item.Type).ToList();
+                                    if(OldCustomerContacts.Count > 0 )
+                                    {
+                                        foreach (var contact in OldCustomerContacts)
+                                        {
+                                            customerContacts.Add(JsonConvert.DeserializeObject<CustomerContacts>(contact.OldValues));
+                                        }
+
+                                        infoLoggerVM.OldContact = customerContacts.Where(x => x.CustomerId == CustomerByGroup.CustomerId).FirstOrDefault() != null ? OldContact : null   ;
+                                        infoLoggerVM.Action = infoLoggerVM.OldContact != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactDeleted) : null;
+                                    }
+
+
                               
-                                    infoLoggerVM.Action =  FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.ContactDeleted);
-                            }
+                                }
 
 
                             }
 
-                            else if (infoLoggerVM.TableName == Audit.AuditLocation.CustomerInfoByGroup.ToString())
+                            else if (item.TableName == Audit.AuditLocation.CustomerInfoByGroup.ToString())
                             {
                                 //in Case Add New Customer 
                                 if (item.Type == Audit.AuditType.Create.ToString())
                                 {
-                                    infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
-                                infoLoggerVM.Action =  FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.Created) ;
-
+                                   infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey).OID == customerId ? JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues) : null;
+                                   infoLoggerVM.Action = infoLoggerVM.NewCustomerInfoByGroup != null? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.Created) : null ;
+  
                             }
                             //in Case Edit Exsit Customer 
                             else if (item.Type == Audit.AuditType.Update.ToString())
                                 {
-                                    infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues);
-                                    infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
+                                infoLoggerVM.OldCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey).OID == customerId ? JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.OldValues) : null;
+                                infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey).OID == customerId ? JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues) : null;
 
                                    if(infoLoggerVM.OldCustomerInfoByGroup != null && infoLoggerVM.NewCustomerInfoByGroup != null)
                                         {
@@ -491,14 +495,28 @@ namespace FBOLinx.Web.Controllers
                                            else
                                             {
                                                infoLoggerVM.Action =  FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.Edited);
-                                    }
-                                }
-                                }
+                                           }
+                                       }
+                                   }
                                
                             }
 
-                            customerInfoLoggerList.Add(infoLoggerVM);
-                      }
+                            //Add Item to list
+                             if(infoLoggerVM.Action != null)
+                                {
+                                    if (user != null)
+                                    {
+                                        infoLoggerVM.Username = user.FirstName;
+
+                                        infoLoggerVM.Role = FBOLinx.Core.Utilities.Enum.GetDescription(user.Role);
+                                    }
+                                    infoLoggerVM.TableName = item.TableName;
+                                    infoLoggerVM.Type = item.Type;
+                                    infoLoggerVM.DateTime = item.DateTime;
+                                    customerInfoLoggerList.Add(infoLoggerVM);
+                        }
+                                
+                    }
                     }
                 
 

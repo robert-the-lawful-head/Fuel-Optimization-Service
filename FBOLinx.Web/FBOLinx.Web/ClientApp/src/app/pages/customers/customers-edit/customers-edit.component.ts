@@ -100,7 +100,7 @@ export class CustomersEditComponent implements OnInit {
     ) {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
-       
+
     }
 
     async ngOnInit() {
@@ -158,7 +158,7 @@ export class CustomersEditComponent implements OnInit {
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
         this.customerHistory = results[6] as any [];
-
+    console.log( this.customerHistory );
 
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
@@ -271,7 +271,7 @@ export class CustomersEditComponent implements OnInit {
 
     contactDeleted(contact) {
         this.customerContactsService
-            .remove(contact.customerContactId )
+            .remove(contact.customerContactId , this.sharedService.currentUser.oid)
             .subscribe(() => {
                 this.contactInfoByGroupsService
                     .remove(contact.contactInfoByGroupId , this.sharedService.currentUser.oid)
@@ -560,7 +560,7 @@ export class CustomersEditComponent implements OnInit {
                 .add({
                     contactId: this.currentContactInfoByGroup.contactId,
                     customerId: this.customerInfoByGroup.customerId,
-                })
+                } , this.sharedService.currentUser.oid)
                 .subscribe(() => {
                     this.loadCustomerContacts();
                     this.loadCustomerHistory();
