@@ -49,6 +49,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
         public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
