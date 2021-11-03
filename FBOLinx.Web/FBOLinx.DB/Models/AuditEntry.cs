@@ -17,9 +17,9 @@ namespace FBOLinx.DB.Models
 
         public enum AuditEntryType : int
         {
-            [Description("Deactvated")]
+            [Description("Deactivate")]
             Deactivated = 0 ,
-            [Description("Acitvated")]
+            [Description("Activated")]
             Acitviated = 1 ,
             [Description("Contact Added")]
             ContactAdded = 2 ,
