@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { combineLatest, EMPTY, of } from 'rxjs';
@@ -75,6 +74,7 @@ export class CustomersEditComponent implements OnInit {
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
+    Historyupdate : boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -160,7 +160,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-        this.customerHistory = new MatTableDataSource (results[6] as any []);
+        this.customerHistory = results[6] as any [];
 
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
@@ -264,14 +264,8 @@ export class CustomersEditComponent implements OnInit {
 
     loadCustomerHistory()
     {
-        const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroupService.getCustomerLogger(id).toPromise().then(
-           (Response:any)=>{ this.customerHistory = new MatTableDataSource(Response)
-
-            console.log(this.customerHistory)
-           }
-        )
-
+       this.sharedService.updatedHistory.next(true);
+     
     }
 
     // Methods

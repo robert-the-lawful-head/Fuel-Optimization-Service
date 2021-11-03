@@ -1,9 +1,12 @@
+import { ActivatedRoute } from '@angular/router';
+import { SharedService } from 'src/app/layouts/shared-service';
 import { CustomerHistoryDetailsComponent } from '../customer-history-details/customer-history-details.component';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 
 @Component({
   selector: 'app-customer-history',
@@ -13,7 +16,7 @@ import { MatTableDataSource } from '@angular/material/table';
 export class CustomerHistoryComponent implements OnInit {
 
   @Input() customerHistroy : any;
-  customerHistory : any;
+  customerHistoryDataSource : any;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   public pageIndex = 0;
@@ -27,12 +30,26 @@ export class CustomerHistoryComponent implements OnInit {
     'tableName'
     ];
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog,
+     private sharedService : SharedService,
+     private customerInfobyGroupService : CustomerinfobygroupService ,
+     private route : ActivatedRoute) { }
 
   ngOnInit(): void {
-
+    this.sharedService.updatedHistory.subscribe(
+        update => {
+            if(update == true)
+            {
+                this.customerInfobyGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id')).subscribe(
+                    data=> this.customerHistroy = data
+                )
+            }
+        }
+    )
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.customerHistory.paginator = this.paginator;
+    this.customerHistoryDataSource =   new MatTableDataSource(this.customerHistroy);
+    this.customerHistoryDataSource.sort = this.sort;
+    this.customerHistoryDataSource.paginator = this.paginator;
     if (sessionStorage.getItem('pageIndex')) {
         this.paginator.pageIndex = sessionStorage.getItem(
             'pageIndex'
@@ -45,7 +62,7 @@ export class CustomerHistoryComponent implements OnInit {
 
   }
   public applyFilter(filterValue: string) {
-    this.customerHistory.filter = filterValue.trim().toLowerCase();
+    this.customerHistoryDataSource.filter = filterValue.trim().toLowerCase();
 }
 openDetailsDialog(customer)
 {
