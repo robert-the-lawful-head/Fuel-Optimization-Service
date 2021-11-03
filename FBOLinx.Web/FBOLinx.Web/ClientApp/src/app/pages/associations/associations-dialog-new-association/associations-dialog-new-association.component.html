@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Create New Association</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-form-field>
+            <input aria-label="Association Name"
+            matInput
+            placeholder="Association Name"
+            [(ngModel)]="data.associationName"
+            />
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button
+        (click)="onSaveClick()"
+        class="mr-1"
+        color="accent"
+        mat-flat-button
+    >
+        Add Association
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+</div>

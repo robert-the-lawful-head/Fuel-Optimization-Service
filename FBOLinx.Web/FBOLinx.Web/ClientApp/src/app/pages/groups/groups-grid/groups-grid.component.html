@@ -1,36 +1,35 @@
 <div class="row">
     <div class="col-6 col-md-10">
         <mat-form-field class="filter">
-            <input
-                (keyup)="applyFilter($event.target.value)"
-                [value]="searchValue"
-                matInput
-                placeholder="Search by Group, FBO, User, ..."
-            />
+            <input (keyup)="applyFilter($event.target.value)"
+                   [value]="searchValue"
+                   matInput
+                   placeholder="Search by Group, FBO, User, ..." />
             <span matPrefix><i class="fa fa-search"></i></span>
         </mat-form-field>
 
         <mat-form-field class="account-filter">
             <mat-label>Account</mat-label>
-            <mat-select
-                [(ngModel)]="accountType"
-                (selectionChange)="filterChanged()"
-            >
+            <mat-select [(ngModel)]="accountType"
+                        (selectionChange)="filterChanged()">
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
             </mat-select>
         </mat-form-field>
 
-        <button
-            (click)="mergeGroups()"
-            color="warn"
-            mat-flat-button
-            [disabled]="selectedRows.length < 2"
-        >
+        <button (click)="mergeGroups()"
+                color="warn"
+                mat-flat-button
+                [disabled]="selectedRows.length < 2">
             <mat-icon>merge_type</mat-icon>
             Merge Groups
         </button>
+
+        <!--<button (click)="addAssociation()"
+           mat-flat-button>
+        Add Association
+    </button>-->
     </div>
 
     <div class="actions col-6 col-md-2">

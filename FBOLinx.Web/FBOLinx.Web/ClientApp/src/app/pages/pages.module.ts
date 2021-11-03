@@ -183,6 +183,7 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
+import { AssociationsDialogNewAssociationComponent } from './associations/associations-dialog-new-association/associations-dialog-new-association.component';
 
 @NgModule({
     declarations: [
@@ -299,7 +300,8 @@ import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/cust
         FlightWatchSettingsComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
-        CustomerTagDialogComponent
+        CustomerTagDialogComponent,
+        AssociationsDialogNewAssociationComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
