@@ -83,6 +83,7 @@ namespace FBOLinx.DB.Context
         }
 
         public virtual DbSet<AccessTokens> AccessTokens { get; set; }
+        public virtual DbSet<Association> Associations { get; set; }
         //public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
@@ -1023,6 +1024,11 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.ContactId).HasColumnName("ContactId");
                 entity.Property(e => e.FboId).HasColumnName("FboId");
                 entity.Property(e => e.CopyAlerts).HasColumnName("CopyAlerts");
+            });
+             modelBuilder.Entity<Association>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.AssociationName).IsUnicode(false);
             });
         }
     }
