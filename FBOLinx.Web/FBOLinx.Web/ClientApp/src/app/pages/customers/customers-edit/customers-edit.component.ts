@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { combineLatest, EMPTY, of } from 'rxjs';
@@ -110,6 +111,7 @@ export class CustomersEditComponent implements OnInit {
             .get({ oid: id })
             .toPromise();
         this.customerId = this.customerInfoByGroup.customerId;
+
         const results = await combineLatest([
             //0
             this.customerInfoByGroupService.getCertificateTypes(),
@@ -158,7 +160,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerAircraftsData = results[3] as any[];
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
-        this.customerHistory = results[6] as any [];
+        this.customerHistory = new MatTableDataSource (results[6] as any []);
 
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
@@ -214,7 +216,7 @@ export class CustomersEditComponent implements OnInit {
 
                     this.customerInfoByGroup = customerInfoByGroup;
                     this.isEditing = false;
-                    this.loadCustomerHistory();
+
                 }),
                 catchError((err: Error) => {
                     console.error(err);
@@ -226,7 +228,7 @@ export class CustomersEditComponent implements OnInit {
                     return of(EMPTY);
                 })
             )
-            .subscribe();
+            .subscribe( scusess => {this.loadCustomerHistory();});
 
         this.customerForm.controls.customerCompanyType.valueChanges.subscribe(
             (type) => {
@@ -248,11 +250,11 @@ export class CustomersEditComponent implements OnInit {
                         pricingTemplateId : selectedValue ,
                         fboid : this.sharedService.currentUser.fboId
                     }
-                ).subscribe();
+                ).subscribe(scuesss=>{ this.loadCustomerHistory();});
 
                 this.customCustomerType.customerType = selectedValue;
                 this.recalculatePriceBreakdown();
-                this.loadCustomerHistory();
+
             }
         );
 
@@ -263,11 +265,13 @@ export class CustomersEditComponent implements OnInit {
     loadCustomerHistory()
     {
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerInfoByGroupService.getCustomerByGroupLogger(id).subscribe(
-            (data : any)=>{
-                this.customerHistory = data
-            }
+        this.customerInfoByGroupService.getCustomerLogger(id).toPromise().then(
+           (Response:any)=>{ this.customerHistory = new MatTableDataSource(Response)
+
+            console.log(this.customerHistory)
+           }
         )
+
     }
 
     // Methods
@@ -291,6 +295,8 @@ export class CustomersEditComponent implements OnInit {
                         ); // find index in your array
                         this.contactsData.splice(index, 1); // remove element from array
                     });
+
+                    this.loadCustomerHistory();
             });
     }
 
@@ -320,14 +326,17 @@ export class CustomersEditComponent implements OnInit {
 
                             this.currentContactInfoByGroup.contactId = data.oid;
                             this.saveContactInfoByGroup();
+                            this.loadCustomerHistory();
                         });
                 } else {
                     this.saveContactInfoByGroup();
                     this.loadCustomerHistory();
+
                 }
             } else {
                 this.loadCustomerContacts();
                 this.loadCustomerHistory();
+
             }
         });
     }
@@ -335,6 +344,7 @@ export class CustomersEditComponent implements OnInit {
     updateCustomerPricingTemplate(pricingTemplateId: number) {
         if (this.customCustomerType) {
             this.customCustomerType.customerType = pricingTemplateId;
+            this.loadCustomerHistory();
         }
 
     }
@@ -359,6 +369,7 @@ export class CustomersEditComponent implements OnInit {
                     this.customerForm.patchValue({
                         customerCompanyType: result.oid,
                     });
+                    this.loadCustomerHistory();
                 });
         });
     }
@@ -501,6 +512,8 @@ export class CustomersEditComponent implements OnInit {
                     return;
                 }
             });
+
+            this.loadCustomerHistory();
     }
     isOptionDisabled(opt: any): boolean {
         return this.tagsSelected.length >= 10 && !this.tagsSelected.find(el => el.oid == opt)
@@ -555,9 +568,10 @@ export class CustomersEditComponent implements OnInit {
                 .subscribe((data: any) => {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();
-                    this.loadCustomerHistory();
+
                 });
         }
+        this.loadCustomerHistory();
     }
 
     private saveCustomerContact() {
@@ -569,12 +583,12 @@ export class CustomersEditComponent implements OnInit {
                 } , this.sharedService.currentUser.oid)
                 .subscribe(() => {
                     this.loadCustomerContacts();
-                    this.loadCustomerHistory();
+
                     this.UpdateCopyAlerts(this.currentContactInfoByGroup);
                 });
         } else {
             this.UpdateCopyAlerts(this.currentContactInfoByGroup);
-            this.loadCustomerHistory();
+
         }
     }
 

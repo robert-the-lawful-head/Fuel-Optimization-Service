@@ -13,7 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 export class CustomerHistoryComponent implements OnInit {
 
   @Input() customerHistroy : any;
-  customerHistoryDataSource : any;
+  customerHistory : any;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   public pageIndex = 0;
@@ -32,9 +32,7 @@ export class CustomerHistoryComponent implements OnInit {
   ngOnInit(): void {
 
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.customerHistoryDataSource =   new MatTableDataSource(this.customerHistroy);
-    this.customerHistoryDataSource.sort = this.sort;
-    this.customerHistoryDataSource.paginator = this.paginator;
+    this.customerHistory.paginator = this.paginator;
     if (sessionStorage.getItem('pageIndex')) {
         this.paginator.pageIndex = sessionStorage.getItem(
             'pageIndex'
@@ -47,7 +45,7 @@ export class CustomerHistoryComponent implements OnInit {
 
   }
   public applyFilter(filterValue: string) {
-    this.customerHistoryDataSource.filter = filterValue.trim().toLowerCase();
+    this.customerHistory.filter = filterValue.trim().toLowerCase();
 }
 openDetailsDialog(customer)
 {
