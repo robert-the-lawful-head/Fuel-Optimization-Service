@@ -91,6 +91,8 @@ import { RequestDemoSuccessComponent } from './shared/components/request-demo-su
 import { metaReducers, reducers } from './store/reducers';
 import { UIModule } from './ui/ui.module';
 import { TagsService } from './services/tags.service';
+import { AssociationsService } from './services/associations.service';
+import { AssociationsDialogNewAssociationComponent } from './pages/associations/associations-dialog-new-association/associations-dialog-new-association.component';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -199,7 +201,8 @@ import { TagsService } from './services/tags.service';
         UserService,
         AppService,
         AirportWatchService,
-        TagsService
+        TagsService,
+        AssociationsService
     ],
 })
 export class AppModule { }

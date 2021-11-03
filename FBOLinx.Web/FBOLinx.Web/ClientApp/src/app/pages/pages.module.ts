@@ -185,6 +185,7 @@ import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
 import { CustomerInfoByGroupHistoryComponent } from './customer-history/customer-info-by-group-history/customer-info-by-group-history.component';
+import { AssociationsDialogNewAssociationComponent } from './associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { CustomerContactHistoryComponent } from './customer-history/customer-contact-history/customer-contact-history.component';
 import { CustomerAircraftHistoryComponent } from './customer-history/customer-aircraft-history/customer-aircraft-history.component';
 import { CutomerItpMraginHistoryComponent } from './customer-history/cutomer-itp-mragin-history/cutomer-itp-mragin-history.component';
@@ -309,10 +310,11 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
        CustomerInfoByGroupHistoryComponent,
+        AssociationsDialogNewAssociationComponent,
         CustomerContactHistoryComponent,
         CustomerAircraftHistoryComponent,
         CutomerItpMraginHistoryComponent,
-        CustomersAnalyticsComponent ,
+        CustomersAnalyticsComponent,
         CustomerHistoryComponent,
         CustomerHistoryDetailsComponent
 

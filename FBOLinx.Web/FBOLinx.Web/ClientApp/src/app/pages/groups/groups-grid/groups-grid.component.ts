@@ -23,6 +23,7 @@ import {
     SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
 import { first, last } from 'lodash';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { fboChangedEvent } from '../../../models/sharedEvents';
@@ -41,6 +42,7 @@ import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-d
 // Components
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
+import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -146,7 +148,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private manageDialog: MatDialog,
         private mergeGroupsDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private addAssociationDialog: MatDialog
     ) {}
 
     ngOnInit() {
@@ -530,6 +533,20 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             this.childGrid.dataSource = this.fboDataSource;
 
             this.grid.refresh();
+        });
+    }
+
+    addAssociation() {
+        const dialogRef = this.addAssociationDialog.open(
+            AssociationsDialogNewAssociationComponent,
+            {
+                width: '450px',
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
         });
     }
 
