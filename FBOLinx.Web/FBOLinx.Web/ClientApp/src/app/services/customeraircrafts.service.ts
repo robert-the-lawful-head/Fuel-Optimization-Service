@@ -77,8 +77,8 @@ export class CustomeraircraftsService {
         });
     }
 
-    public add(payload , userId , customerId) {
-        return this.http.post(this.accessPointUrl+'/'+userId+'/'+ customerId, payload, {
+    public add(payload , userId) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
@@ -99,15 +99,14 @@ export class CustomeraircraftsService {
         });
     }
 
-    public remove(payload , userId ,  customerId) {
-        return this.http.delete(this.accessPointUrl + '/'+payload.oid+'/'+userId+'/'+ customerId, {
+    public remove(payload , userId) {
+        return this.http.delete(this.accessPointUrl + '/' + payload.oid+'/'+userId, {
             headers: this.headers,
         });
     }
 
-    public update(payload , userId , customerId) {
-
-        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId+'/'+customerId, payload, {
+    public update(payload , userId) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
             headers: this.headers,
         });
     }

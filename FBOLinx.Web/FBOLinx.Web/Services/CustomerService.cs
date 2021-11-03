@@ -176,6 +176,26 @@ namespace FBOLinx.Web.Services
             return customerInfoByGroup;
         }
 
+        public bool CompareCustomers (CustomerInfoByGroup oldCustomer , CustomerInfoByGroup newCustomer)
+        {
+            return
+            oldCustomer.Active == newCustomer.Active &&
+            oldCustomer.Address == newCustomer.Address &&
+            oldCustomer.CertificateType == newCustomer.CertificateType &&
+            oldCustomer.City == newCustomer.City &&
+            oldCustomer.Company == newCustomer.Company &&
+            oldCustomer.Country == newCustomer.Country &&
+            oldCustomer.CustomerCompanyType == newCustomer.CustomerCompanyType &&
+            oldCustomer.Distribute == newCustomer.Distribute &&
+            oldCustomer.EmailSubscription == newCustomer.EmailSubscription &&
+            oldCustomer.MainPhone == newCustomer.MainPhone &&
+            oldCustomer.Show100Ll == newCustomer.Show100Ll &&
+            oldCustomer.ShowJetA == newCustomer.ShowJetA &&
+            oldCustomer.State == newCustomer.State &&
+            oldCustomer.Website == newCustomer.Website;
+          
+        }
+
         #endregion
 
         #region Private Methods

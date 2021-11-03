@@ -1,4 +1,4 @@
-import { CustomerHistoryComponent } from './customers/customer-history/customer-history.component';
+import { CustomerHistoryComponent } from './customer-history/customer-history/customer-history.component';
 import { A11yModule } from '@angular/cdk/a11y';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -184,8 +184,14 @@ import { UsersEditComponent } from './users/users-edit/users-edit.component';
 import { UsersGridComponent } from './users/users-grid/users-grid.component';
 import { UsersHomeComponent } from './users/users-home/users-home.component';
 import { CustomerTagDialogComponent } from './customers/customer-tag-dialog/customer-tag-dialog.component';
-import { CustomerHistoryDetailsComponent } from './customers/customer-history-details/customer-history-details.component';
+import { CustomerInfoByGroupHistoryComponent } from './customer-history/customer-info-by-group-history/customer-info-by-group-history.component';
+import { AssociationsDialogNewAssociationComponent } from './associations/associations-dialog-new-association/associations-dialog-new-association.component';
+import { CustomerContactHistoryComponent } from './customer-history/customer-contact-history/customer-contact-history.component';
+import { CustomerAircraftHistoryComponent } from './customer-history/customer-aircraft-history/customer-aircraft-history.component';
+import { CutomerItpMraginHistoryComponent } from './customer-history/cutomer-itp-mragin-history/cutomer-itp-mragin-history.component';
+import { CustomerHistoryDetailsComponent } from './customer-history/customer-history-details/customer-history-details.component';
 import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
+
 
 @NgModule({
     declarations: [
@@ -303,9 +309,15 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         CsvExportModalComponent,
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
-        CustomerHistoryComponent ,
-       CustomersAnalyticsComponent ,
-       CustomerHistoryDetailsComponent
+       CustomerInfoByGroupHistoryComponent,
+        AssociationsDialogNewAssociationComponent,
+        CustomerContactHistoryComponent,
+        CustomerAircraftHistoryComponent,
+        CutomerItpMraginHistoryComponent,
+        CustomersAnalyticsComponent,
+        CustomerHistoryComponent,
+        CustomerHistoryDetailsComponent
+
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

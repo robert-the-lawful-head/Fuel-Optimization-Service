@@ -123,7 +123,7 @@ export class AccountProfileComponent {
     }
 
     saveEditContactClicked() {
-        this.contactsService.update(this.currentContact).subscribe(() => {
+        this.contactsService.update(this.currentContact ).subscribe(() => {
             this.currentContact = null;
         });
     }

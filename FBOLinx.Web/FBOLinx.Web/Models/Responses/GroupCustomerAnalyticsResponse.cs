@@ -15,6 +15,8 @@ namespace FBOLinx.Web.Models.Responses
         public string Company { get; set; }
         public string TailNumbers { get; set; }
 
+        public int FboId { get; set; }
+
         public List<GroupedFboPrices> GroupCustomerFbos { get; set; }
 
         public void AddGroupedFboPrices(FlightTypeClassifications flightTypeClassification,

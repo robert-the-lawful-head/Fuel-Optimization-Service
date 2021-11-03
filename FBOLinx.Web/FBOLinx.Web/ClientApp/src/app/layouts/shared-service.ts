@@ -26,6 +26,9 @@ export class SharedService {
     priceUpdateMessage = new BehaviorSubject('Enable button');
     priceMessage = this.priceUpdateMessage.asObservable();
 
+    //for Log History
+    updatedHistory = new BehaviorSubject<boolean>(false);
+
     // Observable string sources
     titleChangeSource = new Subject();
     emitChangeSource = new Subject();

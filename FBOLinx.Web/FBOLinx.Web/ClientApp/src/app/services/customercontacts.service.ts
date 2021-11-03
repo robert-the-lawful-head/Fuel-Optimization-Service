@@ -19,14 +19,14 @@ export class CustomercontactsService {
         });
     }
 
-    public add(payload , userId , customerId ) {
-        return this.http.post(this.accessPointUrl+'/'+userId+'/'+customerId, payload, {
+    public add(payload , userId) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
 
-    public remove(payload , userId ,  customerId) {
-        return this.http.delete(this.accessPointUrl + '/' + payload+'/'+userId+'/'+ customerId, {
+    public remove(payload , userId) {
+        return this.http.delete(this.accessPointUrl + '/' + payload+'/'+userId , {
             headers: this.headers,
         });
     }

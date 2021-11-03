@@ -1,0 +1,54 @@
+<!--for Add new Aircraft to Customer-->
+<div *ngIf="oldCustomerAircrafts != null && newCustomerAircrafts == null">
+    <table class="table table-hover table-respoisve table-bordered">
+        <thead>
+           <tr>
+               <th>Name</th>
+               <th>Old Data</th>
+           </tr>
+         </thead>
+
+           <tbody>
+                <!--Tial Number-->
+            <tr>
+                <th>Tail Number</th>
+                <td>{{oldCustomerAircrafts.tailNumber}}</td>
+            </tr>
+
+            <!--Type-->
+             <tr>
+             <th>Type</th>
+                <th>{{oldAircraft.make }} {{oldAircraft.model }}</th>
+            </tr>
+
+           </tbody>
+ </table>
+</div>
+
+
+<!--for ADD Exsiting Aircraft of Customer-->
+<div *ngIf="oldCustomerAircrafts == null && newCustomerAircrafts != null">
+    <table class="table table-hover table-respoisve table-bordered">
+        <thead>
+           <tr>
+               <th>Name</th>
+               <th>New Data</th>
+           </tr>
+         </thead>
+
+           <tbody>
+                <!--Tial Number-->
+            <tr>
+                <th>Tail Number</th>
+                <td>{{newCustomerAircrafts.tailNumber}}</td>
+            </tr>
+
+            <!--Type-->
+             <tr>
+             <th>Type</th>
+                <th>{{newAircraft.make }} {{newAircraft.model }}</th>
+            </tr>
+
+           </tbody>
+ </table>
+</div>

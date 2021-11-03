@@ -122,12 +122,11 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                 const exportData: any[] = [];
 
                 this.populateExportDataForCustomer(
-                    data.tailNumbers,
-                    data.groupCustomerFbos,
+                    data,
                     exportData
                 );
 
-                await this.exportReportForCustomer(exportData, data.company);
+                await this.exportReportForCustomer(exportData, data[0].company);
             }
         );
 
@@ -169,50 +168,51 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     }
 
     populateExportDataForCustomer(
-        tailNumbers: string,
         data: any,
         exportData: any[]
     ) {
-        for (const fboPrice of data) {
-            for (let i = 0; i < fboPrice.prices.length; i++) {
-                const row: any = {};
-                row.FBO = i === 0 ? fboPrice.icao : '';
-                row['Volume Tier'] = fboPrice.prices[i].volumeTier;
-                if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
-                    row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
-                    row['International Price'] =
-                        fboPrice.prices[i].intPrivate?.toFixed(4);
-                    row['Domestic Price'] =
-                        fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType === 2) {
-                    row['Commercial Price'] =
-                        fboPrice.prices[i].domComm?.toFixed(4);
-                    row['Private Price'] =
-                        fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else {
-                    row['Int/Comm Price'] =
-                        fboPrice.prices[i].intComm?.toFixed(4);
-                    row['Int/Private Price'] =
-                        fboPrice.prices[i].intPrivate?.toFixed(4);
-                    row['Dom/Comm Price'] =
-                        fboPrice.prices[i].domComm?.toFixed(4);
-                    row['Dom/Private Price'] =
-                        fboPrice.prices[i].domPrivate?.toFixed(4);
+        for (const fbo of data) {
+            for (const fboPrice of fbo.groupCustomerFbos) {
+                for (let i = 0; i < fboPrice.prices.length; i++) {
+                    const row: any = {};
+                    row.ICAO = i === 0 ? fboPrice.icao : '';
+                    row['Volume Tier'] = fboPrice.prices[i].volumeTier;
+                    if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
+                        row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
+                        row['International Price'] =
+                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        row['Domestic Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else if (fboPrice.prices[i].priceBreakdownDisplayType === 2) {
+                        row['Commercial Price'] =
+                            fboPrice.prices[i].domComm?.toFixed(4);
+                        row['Private Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else {
+                        row['Int/Comm Price'] =
+                            fboPrice.prices[i].intComm?.toFixed(4);
+                        row['Int/Private Price'] =
+                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        row['Dom/Comm Price'] =
+                            fboPrice.prices[i].domComm?.toFixed(4);
+                        row['Dom/Private Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    }
+                    row['Tail Numbers'] = fbo.tailNumbers;
+                    exportData.push(row);
                 }
-                row['Tail Numbers'] = tailNumbers;
-                exportData.push(row);
-            }
-            if (!fboPrice.prices.length) {
-                exportData.push({
-                    'Dom/Comm': '',
-                    'Dom/Private': '',
-                    FBO: fboPrice.icao,
-                    'Int/Comm': '',
-                    'Int/Private': '',
-                    'Tail Numbers': '',
-                    'Volume Tier': '',
-                });
+                if (!fboPrice.prices.length) {
+                    exportData.push({
+                        'Dom/Comm': '',
+                        'Dom/Private': '',
+                        ICAO: fboPrice.icao,
+                        'Int/Comm': '',
+                        'Int/Private': '',
+                        'Tail Numbers': '',
+                        'Volume Tier': '',
+                    });
+                }
             }
         }
     }
