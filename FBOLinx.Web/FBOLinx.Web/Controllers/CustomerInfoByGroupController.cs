@@ -472,10 +472,10 @@ namespace FBOLinx.Web.Controllers
                                 //in Case Add New Customer 
                                 if (item.Type == Audit.AuditType.Create.ToString())
                                 {
-                                   infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroupIDVM>(item.PrimaryKey).OID == customerId ? JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues) : null;
+                                   infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues).CustomerId == CustomerByGroup.CustomerId ? JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues) : null;
                                    infoLoggerVM.Action = infoLoggerVM.NewCustomerInfoByGroup != null? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntry.AuditEntryType.Created) : null ;
   
-                            }
+                                }
                             //in Case Edit Exsit Customer 
                             else if (item.Type == Audit.AuditType.Update.ToString())
                                 {

@@ -113,32 +113,33 @@ export class CustomersEditComponent implements OnInit {
         const results = await combineLatest([
             //0
             this.customerInfoByGroupService.getCertificateTypes(),
+            //1
             this.pricingTemplatesService.getByFbo(
                 this.sharedService.currentUser.fboId,
                 this.sharedService.currentUser.groupId
             ),
-            //1
+            //2
             this.contactInfoByGroupsService.getCustomerContactInfoByGroup(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
-            //2
+            //3
             this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
-            //3
+            //4
             this.customCustomerTypesService.getForFboAndCustomer(
                 this.sharedService.currentUser.fboId,
                 this.customerInfoByGroup.customerId
             ),
-            //4
+            //5
             this.customerCompanyTypesService.getNonFuelerLinxForFbo(
                 this.sharedService.currentUser.fboId
             ),
-
+            //6
             this.customerInfoByGroupService.getCustomerLogger(id),
 
             this.customersViewedByFboService.add({
@@ -158,7 +159,6 @@ export class CustomersEditComponent implements OnInit {
         this.customCustomerType = results[4];
         this.customerCompanyTypes = results[5] as any[];
         this.customerHistory = results[6] as any [];
-    console.log( this.customerHistory );
 
         this.customerForm = this.formBuilder.group({
             active: [this.customerInfoByGroup.active],
@@ -178,6 +178,7 @@ export class CustomersEditComponent implements OnInit {
             zipCode: [this.customerInfoByGroup.zipCode],
             customerTag: [this.customerInfoByGroup.customerTag]
         });
+
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
@@ -226,10 +227,12 @@ export class CustomersEditComponent implements OnInit {
                 })
             )
             .subscribe();
+
         this.customerForm.controls.customerCompanyType.valueChanges.subscribe(
             (type) => {
                 if (type < 0) {
                     this.customerCompanyTypeChanged();
+                    this.loadCustomerHistory();
                 }
             }
         );
@@ -245,9 +248,11 @@ export class CustomersEditComponent implements OnInit {
                         pricingTemplateId : selectedValue ,
                         fboid : this.sharedService.currentUser.fboId
                     }
-                ).subscribe(data=>console.log(data));
+                ).subscribe();
+
                 this.customCustomerType.customerType = selectedValue;
                 this.recalculatePriceBreakdown();
+                this.loadCustomerHistory();
             }
         );
 
@@ -264,6 +269,7 @@ export class CustomersEditComponent implements OnInit {
             }
         )
     }
+
     // Methods
     cancelCustomerEdit() {
         this.router.navigate(['/default-layout/customers/']).then();
