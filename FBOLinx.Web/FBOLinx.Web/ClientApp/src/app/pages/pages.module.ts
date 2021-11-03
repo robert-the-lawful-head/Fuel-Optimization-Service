@@ -310,11 +310,11 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
        CustomerInfoByGroupHistoryComponent,
-        AssociationsDialogNewAssociationComponent
+        AssociationsDialogNewAssociationComponent,
         CustomerContactHistoryComponent,
         CustomerAircraftHistoryComponent,
         CutomerItpMraginHistoryComponent,
-        CustomersAnalyticsComponent ,
+        CustomersAnalyticsComponent,
         CustomerHistoryComponent,
         CustomerHistoryDetailsComponent
 
