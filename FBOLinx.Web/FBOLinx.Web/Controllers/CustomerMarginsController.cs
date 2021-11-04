@@ -221,8 +221,7 @@ namespace FBOLinx.Web.Controllers
             if (customerMarginObject != null)
             {
                 var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
-                var customerGroupOid = _context.CustomerInfoByGroup.FirstOrDefault(x => x.CustomerId == model.id && x.GroupId == groupId).Oid;
-
+                
                 if (customerMargin != null)
                 {
                     customerMargin.CustomerType = customerMarginObject.Oid;
