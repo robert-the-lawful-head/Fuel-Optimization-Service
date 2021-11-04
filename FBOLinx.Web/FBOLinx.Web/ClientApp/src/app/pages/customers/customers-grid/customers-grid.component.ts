@@ -233,7 +233,7 @@ export class CustomersGridComponent implements OnInit {
     }
 
     editCustomer(customer) {
-       
+
         this.editCustomerClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
@@ -353,7 +353,7 @@ export class CustomersGridComponent implements OnInit {
             pricingTemplateId: changedPricingTemplate.oid,
         };
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerMarginsService.updatecustomermargin(vm , this.sharedService.currentUser.oid ,this.sharedService.currentUser.groupId ).subscribe(() => {
+        this.customerMarginsService.updatecustomermargin(vm).subscribe(() => {
             this.sharedService.emitChange(SharedEvents.customerUpdatedEvent);
         });
     }

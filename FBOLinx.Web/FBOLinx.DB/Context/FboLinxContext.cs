@@ -18,8 +18,7 @@ namespace FBOLinx.DB.Context
         {
         }
 
-        public DbSet<Audit> AuditsLogs { get; set; }
-
+      
 
         public virtual async Task<int> SaveChangesAsync(int userId = 0)
         {
@@ -84,6 +83,8 @@ namespace FBOLinx.DB.Context
 
         public virtual DbSet<AccessTokens> AccessTokens { get; set; }
         public virtual DbSet<Association> Associations { get; set; }
+        public DbSet<Audit> AuditsLogs { get; set; }
+
         //public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
@@ -146,16 +147,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
-        public virtual DbSet<CustomerInfoByGroupLog> CustomerInfoByGroupLog { get; set; }
-        public virtual DbSet<CustomerInfoByGroupLogData> CustomerInfoByGroupLogData { get; set; }
-        public virtual DbSet<CustomerAircraftLogData> CustomerAircraftLogData { get; set; }
-        public virtual DbSet<CustomerAircraftLog> CustomerAircraftLog { get; set; }
-        public virtual DbSet<CustomerContactLog> CustomerContactLog { get; set; }
-        public virtual DbSet<CustomerContactLogData> CustomerContactLogData { get; set; }
-        public virtual DbSet<CustomCustomerTypesLog> CustomCustomerTypeLog { get; set; }
-        public virtual DbSet<CustomCustomerTypesLogData> CustomCustomerTypesLogData { get; set; }
-
-
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
