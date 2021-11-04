@@ -241,17 +241,7 @@ export class CustomersEditComponent implements OnInit {
 
         this.customerForm.controls.customerMarginTemplate.valueChanges.subscribe(
             (selectedValue) => {
-
-                this.customerMarginService.addCustomerMarginLog(
-                    this.sharedService.currentUser.oid ,
-                    this.sharedService.currentUser.groupId,
-                    {
-                        id : this.customerInfoByGroup.customerId  ,
-                        pricingTemplateId : selectedValue ,
-                        fboid : this.sharedService.currentUser.fboId
-                    }
-                ).subscribe(scuesss=>{ this.loadCustomerHistory();});
-
+                this.loadCustomerHistory();
                 this.customCustomerType.customerType = selectedValue;
                 this.recalculatePriceBreakdown();
 
@@ -265,7 +255,7 @@ export class CustomersEditComponent implements OnInit {
     loadCustomerHistory()
     {
        this.sharedService.updatedHistory.next(true);
-     
+
     }
 
     // Methods

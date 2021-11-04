@@ -54,16 +54,10 @@ export class CustomermarginsService {
         });
     }
 
-    public addCustomerMarginLog(userId , groupId , payload)
-    {
-        return this.http.post(this.accessPointUrl + '/CustomerMarginLog/' + userId+'/'+groupId, payload, {
-            headers: this.headers,
-        });
-    }
 
-    public updatecustomermargin(payload , userId  , groupId) {
+    public updatecustomermargin(payload) {
         return this.http.post(
-            this.accessPointUrl + '/updatecustomermargin/'+userId+'/'+groupId,
+            this.accessPointUrl + '/updatecustomermargin',
             payload,
             { headers: this.headers }
         );

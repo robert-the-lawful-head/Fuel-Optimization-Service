@@ -208,8 +208,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerMargins
-        [HttpPost("updatecustomermargin/{userId}/{groupId}")]
-        public async Task<IActionResult> UpdateCustomerMargin([FromRoute] int userId ,[FromRoute] int groupId, CustomerPricingTemplateViewModel model)
+        [HttpPost("updatecustomermargin")]
+        public async Task<IActionResult> UpdateCustomerMargin(CustomerPricingTemplateViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -304,20 +304,6 @@ namespace FBOLinx.Web.Controllers
             return Ok("");
         }
     
-        [HttpPost("CustomerMarginLog/{userId}/{groupId}")]
-        public  async Task<IActionResult> CustomerMarginLog([FromRoute] int userId , [FromRoute] int groupId , [FromBody] CustomerPricingTemplateViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-                      
-                var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
-                var customerGroupOid = _context.CustomerInfoByGroup.FirstOrDefault(x => x.CustomerId == model.id && x.GroupId == groupId).Oid;
-
-                          return Ok("");
-        }
-
 
     
 
