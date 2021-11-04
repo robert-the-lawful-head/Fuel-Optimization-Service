@@ -79,7 +79,7 @@ CREATE TABLE [dbo].[AuditsLogs](
 GO
 Drop TABLE [dbo].[CustomCustomerTypeLog]
 
-Drop TABLE [dbo].[CustomCustomerTypes]
+Drop TABLE [dbo].[CustomCustomerTypesLogData]
 
 Drop TABLE [dbo].[CustomerAircraftLog]
 
