@@ -8,11 +8,20 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
 {
     public class AirportWatchParkingGlobAdressResponse : DBSCAN.IPointData
     {
+        public AirportWatchParkingGlobAdressResponse()
+        {
+           
+
+        }
+
+        private static Point origin;
         public double Lat { get; set; }
         public double Long { get; set; }
 
-
-      
-        public ref readonly Point Point => throw new NotImplementedException();
+        public void AddOrigin ()
+        {
+            origin = new Point(Lat, Long);
+        }
+        public ref readonly Point Point => ref origin;
     }
 }

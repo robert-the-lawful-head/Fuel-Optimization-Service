@@ -34,9 +34,11 @@ namespace FBOLinx.Web.Services
         private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
         private FuelerLinxService _fuelerLinxService;
         private IOptions<DemoData> _demoData;
-
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxService fuelerLinxService, IOptions<DemoData> demoData)
+        private DBSCANService _dBSCANService;
+        public AirportWatchService( DBSCANService DBSCANService , 
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxService fuelerLinxService, IOptions<DemoData> demoData)
         {
+            _dBSCANService = DBSCANService;
             _demoData = demoData;
             _context = context;
             _degaContext = degaContext;
@@ -47,6 +49,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(int groupId, int fboId, Coordinate coordinate)
         {
+            _dBSCANService.GetParkingLocations();
             var fbo = await (from f in _context.Fbos
                             join fa in _context.Fboairports on f.Oid equals fa.Fboid
                             select new { f, fa }).FirstOrDefaultAsync();

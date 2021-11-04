@@ -50,7 +50,12 @@ namespace FBOLinx.Web.Services
                               Lat = a.Latitude,
                               Long = a.Longitude
                               
-                          }).ToListAsync();
+                          }).Take(100).ToListAsync();
+
+            foreach (var item in responses)
+            {
+                item.AddOrigin();
+            }
 
            var result =  DBSCAN.DBSCAN.CalculateClusters(responses, 1.5, 6);
 
