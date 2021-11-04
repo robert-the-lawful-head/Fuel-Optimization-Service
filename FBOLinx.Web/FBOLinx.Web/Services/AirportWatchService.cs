@@ -303,53 +303,7 @@ namespace FBOLinx.Web.Services
             return noCustomerData.Concat(customerData).OrderByDescending(h => h.DateTime).ToList();
         }
 
-        //get List of Lat & Long of Parked Airports in Specific Group 
-        public async Task<List<AirportWatchParkingGlobAdressResponse>> GetParking(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
-        {
-
-            var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcao(fboId.Value) : null;
-
-            List<AirportWatchParkingGlobAdressResponse> responses = new List<AirportWatchParkingGlobAdressResponse>();
-            responses = await (from awhd in _context.AirportWatchHistoricalData
-                                        join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
-                                        join ca in (
-                                            from ca in _context.CustomerAircrafts
-                                            join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
-                                            where ca.GroupId == groupId
-                                            select new
-                                            {
-                                                ca.GroupId,
-                                                ca.CustomerId,
-                                                ca.TailNumber,
-                                                ca.AircraftId,
-                                                cig.Company,
-                                                CustomerInfoByGroupID = cig.Oid,
-                                            }
-                                        ) on awat.AtcFlightNumber equals ca.TailNumber
-                                        into leftJoinedCustomers
-                                        from ca in leftJoinedCustomers.DefaultIfEmpty()
-                                        where
-                                            (!fboId.HasValue || awhd.AirportICAO == fboIcao) &&
-                                            (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
-                                            (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1)) &&
-                                            (awhd.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
-                                        group awhd by new
-                                        {
-                                          awhd.Latitude , 
-                                          awhd.Longitude , 
-                                            
-                                        }
-                                        into groupedResult
-                                        select new AirportWatchParkingGlobAdressResponse
-                                        {
-                                            Lat = groupedResult.Key.Latitude , 
-                                            Long = groupedResult.Key.Longitude
-                                        }).ToListAsync();
-
-            return responses;
-
-        }
-
+   
         public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)
         {
             _LiveDataToUpdate = new List<AirportWatchLiveData>();
