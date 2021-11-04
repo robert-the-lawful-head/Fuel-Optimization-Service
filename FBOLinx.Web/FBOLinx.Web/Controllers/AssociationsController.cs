@@ -73,7 +73,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/Associations/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAssociation([FromRoute] int id, [FromBody] Association association)
+        public async Task<IActionResult> PutAssociation([FromRoute] int id, [FromBody] Associations association)
         {
             if (!ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/associations
         [HttpPost]
-        public async Task<IActionResult> PostAssociation([FromBody] Association association)
+        public async Task<IActionResult> PostAssociation([FromBody] Associations association)
         {
             if (!ModelState.IsValid)
             {

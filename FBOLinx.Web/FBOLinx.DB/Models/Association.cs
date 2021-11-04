@@ -6,7 +6,7 @@ using System.Text;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class Association
+    public partial class Associations
     {
         [Key]
         [Column("OID")]
