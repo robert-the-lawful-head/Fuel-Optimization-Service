@@ -78,6 +78,9 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
 
+        public virtual DbSet<AirportFBOGeoFenceClusters> AirportFBOGeoFenceClusters { get; set; }
+        public virtual DbSet<AirportFBOGeoFenceClusterCoordinates> AirportFBOGeoFenceClusterCoordinates { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

@@ -9,13 +9,14 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
     public class AirportWatchParkingGlobAdressResponse : DBSCAN.IPointData
     {
         public AirportWatchParkingGlobAdressResponse()
-        {
-           
+        {         
 
         }
-
-        private static Point origin;
+        
+        private static Point origin;      
+        
         public double Lat { get; set; }
+        
         public double Long { get; set; }
 
         public void AddOrigin ()

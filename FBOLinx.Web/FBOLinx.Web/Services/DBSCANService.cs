@@ -42,7 +42,7 @@ namespace FBOLinx.Web.Services
         public async void GetParkingLocations()
         {
 
-
+            //just take 10 element for test 
             var responses = await _context.AirportWatchHistoricalData
                           .Where(a => a.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking && a.AirportICAO == "kvny")
                           .Select(a => new AirportWatchParkingGlobAdressResponse
@@ -50,16 +50,51 @@ namespace FBOLinx.Web.Services
                               Lat = a.Latitude,
                               Long = a.Longitude
                               
-                          }).Take(100).ToListAsync();
+                          }).Take(10).Skip(10).ToListAsync();
 
             foreach (var item in responses)
             {
                 item.AddOrigin();
             }
 
-           var result =  DBSCAN.DBSCAN.CalculateClusters(responses, 1.5, 6);
 
+            //All these static value are for Test
+            var result =  DBSCAN.DBSCAN.CalculateClusters(responses, 1.5, 6);
+            int AirpoirtId = _degaContext.AcukwikAirports.FirstOrDefault(a => a.Icao == "kvny").AirportId;
+            
+            try
+            {
+                _context.AirportFBOGeoFenceClusters.Add(new AirportFBOGeoFenceClusters
+                {
+                    AcukwikAirportID = AirpoirtId > 0 ? AirpoirtId : 0,
+                });
 
+                _context.SaveChanges();
+
+                int ClusterID = _context.AirportFBOGeoFenceClusters.FirstOrDefault(a => a.AcukwikAirportID == AirpoirtId).OID;
+
+                foreach (var item in result.Clusters)
+                {
+                    foreach (var item2 in item.Objects)
+                    {
+                        _context.AirportFBOGeoFenceClusterCoordinates.Add(new AirportFBOGeoFenceClusterCoordinates
+                        {
+                            ClusterID = ClusterID , 
+                            Latitude = float.Parse(item2.Point.X.ToString()),
+                            Longitude = float.Parse(item2.Point.Y.ToString())
+                        });
+
+                        _context.SaveChanges();
+                    }
+                }
+
+               
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
     }
 
