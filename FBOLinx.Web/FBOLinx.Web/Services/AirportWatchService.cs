@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(int groupId, int fboId, Coordinate coordinate)
         {
-            _dBSCANService.GetParkingLocations();
+           
             var fbo = await (from f in _context.Fbos
                             join fa in _context.Fboairports on f.Oid equals fa.Fboid
                             select new { f, fa }).FirstOrDefaultAsync();

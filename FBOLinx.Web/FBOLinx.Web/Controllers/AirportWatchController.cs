@@ -22,12 +22,14 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly FboService _fboService;
         private readonly FboLinxContext _context;
+        private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context)
+        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context , DBSCANService dBSCANService)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
+            _dBSCANService = dBSCANService;
         }
 
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
@@ -35,6 +37,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
+               // await _dBSCANService.GetParkingLocations();
                 var fboLocation = await _fboService.GetFBOLocaiton(fboId);
                 var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
                 return Ok(new

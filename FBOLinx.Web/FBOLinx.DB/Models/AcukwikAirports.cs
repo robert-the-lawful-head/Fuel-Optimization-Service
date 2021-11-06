@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
+    [Table("AcukwikAirports")]
+
     public partial class AcukwikAirports
     {
         [Key]

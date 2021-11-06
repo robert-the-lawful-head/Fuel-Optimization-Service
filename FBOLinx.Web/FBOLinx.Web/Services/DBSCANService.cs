@@ -17,40 +17,28 @@ namespace FBOLinx.Web.Services
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        private readonly AircraftService _aircraftService;
-        private readonly FboService _fboService;
-        private List<AirportWatchLiveData> _LiveDataToUpdate;
-        private List<AirportWatchLiveData> _LiveDataToInsert;
-        private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
-        private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
-        private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
-        private FuelerLinxService _fuelerLinxService;
-        private IOptions<DemoData> _demoData;
-
-        public DBSCANService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxService fuelerLinxService, IOptions<DemoData> demoData)
+     
+        public DBSCANService(FboLinxContext context, DegaContext degaContext)
         {
-            _demoData = demoData;
+           
             _context = context;
             _degaContext = degaContext;
-            _aircraftService = aircraftService;
-            _fboService = fboService;
-            _fuelerLinxService = fuelerLinxService;
+          
         }
 
 
         //get List of Lat & Long of Parked Airports in Kvny 
-        public async void GetParkingLocations()
+        public async Task GetParkingLocations()
         {
-
             //just take 10 element for test 
             var responses = await _context.AirportWatchHistoricalData
-                          .Where(a => a.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking && a.AirportICAO == "kvny")
+                          .Where(a => a.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking && a.AirportICAO == "KVNY")
                           .Select(a => new AirportWatchParkingGlobAdressResponse
                           {
                               Lat = a.Latitude,
                               Long = a.Longitude
                               
-                          }).Take(10).Skip(10).ToListAsync();
+                          }).Take(10).ToListAsync();
 
             foreach (var item in responses)
             {
@@ -60,18 +48,34 @@ namespace FBOLinx.Web.Services
 
             //All these static value are for Test
             var result =  DBSCAN.DBSCAN.CalculateClusters(responses, 1.5, 6);
-            int AirpoirtId = _degaContext.AcukwikAirports.FirstOrDefault(a => a.Icao == "kvny").AirportId;
+         
             
             try
             {
-                _context.AirportFBOGeoFenceClusters.Add(new AirportFBOGeoFenceClusters
+                var AirpoirtId = await _degaContext.AcukwikAirports.FirstOrDefaultAsync(a => a.Icao == "KVNY");
+                double totalLat = 0, totalLong = 0;
+
+                //Calc Center of Cluster 
+                foreach (var item in result.Clusters)
                 {
-                    AcukwikAirportID = AirpoirtId > 0 ? AirpoirtId : 0,
-                });
+                    foreach (var item2 in item.Objects)
+                    {
+                        totalLat += item2.Lat;
+                        totalLong += item2.Long;
+                    }
 
-                _context.SaveChanges();
 
-                int ClusterID = _context.AirportFBOGeoFenceClusters.FirstOrDefault(a => a.AcukwikAirportID == AirpoirtId).OID;
+                    _context.AirportFBOGeoFenceClusters.Add(new AirportFBOGeoFenceClusters
+                    {
+                        AcukwikAirportID = AirpoirtId != null ? AirpoirtId.AirportId : 0,
+                        CenterLatitude = float.Parse((totalLat / item.Objects.Count).ToString()) , 
+                        CenterLongitude  = float.Parse((totalLong / item.Objects.Count).ToString())
+
+                    });
+                    await _context.SaveChangesAsync();
+                }             
+
+                var ClusterID = await _context.AirportFBOGeoFenceClusters.FirstOrDefaultAsync(a => a.AcukwikAirportID == AirpoirtId.AirportId);
 
                 foreach (var item in result.Clusters)
                 {
@@ -79,12 +83,12 @@ namespace FBOLinx.Web.Services
                     {
                         _context.AirportFBOGeoFenceClusterCoordinates.Add(new AirportFBOGeoFenceClusterCoordinates
                         {
-                            ClusterID = ClusterID , 
+                            ClusterID = ClusterID.OID , 
                             Latitude = float.Parse(item2.Point.X.ToString()),
                             Longitude = float.Parse(item2.Point.Y.ToString())
                         });
 
-                        _context.SaveChanges();
+                       await _context.SaveChangesAsync();
                     }
                 }
 
