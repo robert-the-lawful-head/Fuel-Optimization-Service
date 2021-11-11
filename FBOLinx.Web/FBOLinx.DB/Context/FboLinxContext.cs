@@ -82,7 +82,7 @@ namespace FBOLinx.DB.Context
         }
 
         public virtual DbSet<AccessTokens> AccessTokens { get; set; }
-        public virtual DbSet<Association> Associations { get; set; }
+        public virtual DbSet<Associations> Associations { get; set; }
         public DbSet<Audit> AuditsLogs { get; set; }
 
         //public virtual DbSet<AirCrafts> Aircrafts { get; set; }
@@ -1021,7 +1021,10 @@ namespace FBOLinx.DB.Context
             {
                 entity.HasKey(e => e.Oid);
                 entity.Property(e => e.AssociationName).IsUnicode(false);
+                entity.Property(e => e.Oid).HasColumnName("OID");
+                entity.Property(e => e.AssociationName).HasColumnName("Association");
             });
+
         }
     }
 }

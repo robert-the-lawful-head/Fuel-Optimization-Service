@@ -21,9 +21,9 @@ namespace FBOLinx.Web.Services
             _services = services;
         }
 
-        public async Task<Association> CreateNewAssociation(string associationName)
+        public async Task<Associations> CreateNewAssociation(string associationName)
         {
-            Association association = new Association
+            Associations association = new Associations
             {
                 AssociationName = associationName,
             };
