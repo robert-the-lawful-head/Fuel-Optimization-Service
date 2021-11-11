@@ -1017,7 +1017,7 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.FboId).HasColumnName("FboId");
                 entity.Property(e => e.CopyAlerts).HasColumnName("CopyAlerts");
             });
-             modelBuilder.Entity<Association>(entity =>
+             modelBuilder.Entity<Associations>(entity =>
             {
                 entity.HasKey(e => e.Oid);
                 entity.Property(e => e.AssociationName).IsUnicode(false);
