@@ -4,36 +4,30 @@
         <mat-form-field>
             <mat-label>Base Group</mat-label>
             <mat-select [(ngModel)]="baseGroup" [disabled]="loading">
-                <mat-option
-                    *ngFor="let group of data.groups"
-                    [value]="group.oid"
-                >
+                <mat-option *ngFor="let group of data.groups"
+                            [value]="group.oid">
                     {{ group.groupName }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
-        <mat-hint *ngIf="failed" class="text-danger"
-            >Failed to merge groups. Contact the support team!</mat-hint
-        >
+        <mat-hint *ngIf="failed" class="text-danger">Failed to merge groups. Contact the support team!</mat-hint>
     </div>
 
+    <div *ngIf="loading">* May take a few minutes</div>
+
     <div mat-dialog-actions>
-        <button
-            (click)="onSaveClick()"
-            [disabled]="loading"
-            class="mr-1"
-            color="accent"
-            mat-flat-button
-        >
+        <button (click)="onSaveClick()"
+                [disabled]="loading"
+                class="mr-1"
+                color="accent"
+                mat-flat-button>
             {{ loading ? "Merging &nbsp;" : "Merge Groups" }}
             <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
         </button>
-        <button
-            (click)="onCancelClick()"
-            [disabled]="loading"
-            mat-stroked-button
-        >
+        <button (click)="onCancelClick()"
+                [disabled]="loading"
+                mat-stroked-button>
             Cancel
         </button>
     </div>
