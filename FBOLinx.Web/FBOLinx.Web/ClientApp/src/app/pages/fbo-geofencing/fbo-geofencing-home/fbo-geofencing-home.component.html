@@ -1,0 +1,10 @@
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
+    <div *ngIf="fuelreqsData">
+        <app-fbo-geofencing-grid [fboGeofencingData]="fboGeofencingData"></app-fbo-geofencing-grid>
+    </div>
+    <div *ngIf="!fboGeofencingData">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>

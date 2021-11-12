@@ -187,9 +187,9 @@ export class DefaultLayoutComponent implements OnInit {
 
     isSidebarInvisible() {
         return (
-            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.role &&
             !this.sharedService.currentUser.impersonatedRole
-        );
+        ); //this.sharedService.currentUser.role === 3 &&
     }
 
     private loadFboPrices() {
