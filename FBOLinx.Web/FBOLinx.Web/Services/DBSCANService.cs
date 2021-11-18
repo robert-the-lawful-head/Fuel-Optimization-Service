@@ -65,7 +65,7 @@ namespace FBOLinx.Web.Services
                     }
 
 
-                    _context.AirportFBOGeoFenceClusters.Add(new AirportFBOGeoFenceClusters
+                    _context.AirportFboGeofenceClusters.Add(new AirportFboGeofenceClusters
                     {
                         AcukwikAirportID = AirpoirtId != null ? AirpoirtId.AirportId : 0,
                         CenterLatitude = float.Parse((totalLat / item.Objects.Count).ToString()) , 
@@ -75,15 +75,15 @@ namespace FBOLinx.Web.Services
                     await _context.SaveChangesAsync();
                 }             
 
-                var ClusterID = await _context.AirportFBOGeoFenceClusters.FirstOrDefaultAsync(a => a.AcukwikAirportID == AirpoirtId.AirportId);
+                var ClusterID = await _context.AirportFboGeofenceClusters.FirstOrDefaultAsync(a => a.AcukwikAirportID == AirpoirtId.AirportId);
 
                 foreach (var item in result.Clusters)
                 {
                     foreach (var item2 in item.Objects)
                     {
-                        _context.AirportFBOGeoFenceClusterCoordinates.Add(new AirportFBOGeoFenceClusterCoordinates
+                        _context.AirportFboGeoFenceClusterCoordinates.Add(new AirportFboGeofenceClusterCoordinates
                         {
-                            ClusterID = ClusterID.OID , 
+                            ClusterID = ClusterID.Oid , 
                             Latitude = float.Parse(item2.Point.X.ToString()),
                             Longitude = float.Parse(item2.Point.Y.ToString())
                         });
@@ -91,8 +91,6 @@ namespace FBOLinx.Web.Services
                        await _context.SaveChangesAsync();
                     }
                 }
-
-               
             }
             catch (Exception ex)
             {

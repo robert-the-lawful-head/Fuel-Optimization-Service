@@ -1,15 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-
+import { MatPaginator } from '@angular/material/paginator';
+import { forEach } from 'lodash';
 
 // Services
-import { SharedService } from '../../layouts/shared-service';
+import { SharedService } from '../../../layouts/shared-service';
 import {
     ColumnType,
     TableSettingsComponent,
-} from '../../shared/components/table-settings/table-settings.component';
+} from '../../../shared/components/table-settings/table-settings.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -21,26 +22,32 @@ const initialColumns: ColumnType[] = [
         name: 'FBO'
     },
     {
-        id: 'needsAttention',
-        name: 'Needs Attention',
-    },
-    {
         id: 'isNotFbo',
         name: 'Is Not FBO',
+    },
+    {
+        id: 'needsAttention',
+        name: 'Needs Attention',
     },
 ];
 
 @Component({
-    selector: 'app-fbo-geofencing',
-    styleUrls: ['./fbo-geofencing.component.scss'],
-    templateUrl: './fbo-geofencing.component.html',
+    selector: 'app-fbo-geofencing-grid',
+    styleUrls: ['./fbo-geofencing-grid.component.scss'],
+    templateUrl: './fbo-geofencing-grid.component.html',
 })
-export class GeofencingComponent implements OnInit {
-    @Input() customersData: any[];
+export class FboGeofencingGridComponent implements OnInit {
+    @ViewChild('fboGeofencingTableContainer') table: ElementRef;
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @Input() fboGeofencingData: any[];
 
-    geofencingDataSource: any = null;
+    tableLocalStorageKey = 'fbo-geofencing-table-settings';
+
+    fboGeofencingDataSource: any = null;
     pageIndex = 0;
     pageSize = 100;
+    selectAll = false;
     columns: ColumnType[] = [];
 
     constructor(private router: Router, private sharedService: SharedService) {
@@ -49,7 +56,15 @@ export class GeofencingComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.refreshGeofencingDataSource();
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
+        } else {
+            this.columns = initialColumns;
+        }
+
+        this.refreshFboGeofencingDataSource();
     }
 
     onPageChanged(event: any) {
@@ -59,24 +74,24 @@ export class GeofencingComponent implements OnInit {
             this.paginator.pageSize.toString()
         );
         this.selectAll = false;
-        forEach(this.customersData, (customer) => {
-            customer.selectAll = false;
+        forEach(this.fboGeofencingData, (fbo) => {
+            fbo.selectAll = false;
         });
     }
 
-    private refreshGeofencingDataSource() {
-        this.customersDataSource = new MatTableDataSource();
-        this.customersDataSource.data = this.customersData.filter(
-            (element: any) => {
-                if (this.customerFilterType != 1) {
-                    return true;
-                }
-                return element.needsAttention;
+    getTableColumns() {
+        return this.columns
+            .filter((column) => !column.hidden)
+            .map((column) => column.id);
+    }
 
-            }
-        );
+    private refreshFboGeofencingDataSource() {
+        if (!this.fboGeofencingDataSource) {
+            this.fboGeofencingDataSource = new MatTableDataSource();
+        }
 
-        this.customersDataSource.sort = this.sort;
-        this.customersDataSource.paginator = this.paginator;
+        this.fboGeofencingDataSource.data = this.fboGeofencingData;
+        this.fboGeofencingDataSource.sort = this.sort;
+        this.fboGeofencingDataSource.paginator = this.paginator;
     }
 }

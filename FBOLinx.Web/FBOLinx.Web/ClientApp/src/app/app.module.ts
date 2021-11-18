@@ -93,6 +93,7 @@ import { UIModule } from './ui/ui.module';
 import { TagsService } from './services/tags.service';
 import { AssociationsService } from './services/associations.service';
 import { AssociationsDialogNewAssociationComponent } from './pages/associations/associations-dialog-new-association/associations-dialog-new-association.component';
+import { AirportFboGeofenceClustersService } from './services/airportfbogeofenceclusters.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -202,7 +203,8 @@ import { AssociationsDialogNewAssociationComponent } from './pages/associations/
         AppService,
         AirportWatchService,
         TagsService,
-        AssociationsService
+        AssociationsService,
+        AirportFboGeofenceClustersService
     ],
 })
 export class AppModule { }

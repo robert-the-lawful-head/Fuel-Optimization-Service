@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
-namespace FBOLinx.DB.Models
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FboGeofence
 {
-   public class AirportFboGeofenceClusters
+    public class FboGeofenceClustersViewModel
     {
-
-        [Key]
-        [Column("OID")]
         public int Oid { get; set; }
         public int AcukwikAirportID { get; set; }
         public int AcukwikFBOHandlerID { get; set; }
         public double CenterLatitude { get; set; }
         public double CenterLongitude { get; set; }
+        public string Icao { get; set; }
+        public string Fbo { get; set; }
     }
 }

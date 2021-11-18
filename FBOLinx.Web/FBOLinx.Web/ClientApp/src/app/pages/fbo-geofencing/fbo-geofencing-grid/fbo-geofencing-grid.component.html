@@ -1,80 +1,53 @@
-<div *ngIf="customersDataSource" class="col-6">
-    <app-table-global-search [matDataSource]="customersDataSource"
+<div #fboGeofencingTableContainer>
+    <div *ngIf="fboGeofencingData" class="col-6">
+        <app-table-global-search [matDataSource]="fboGeofencingDataSource"
                                  placeholder="Search by Company, Tail, etc."></app-table-global-search>
-</div>
+    </div>
 
-<div>
-    <table #fboGeofencingTable [dataSource]="fboGeofencingDataSource" class="col-md-12 mb-0" mat-table matSort>
-        <ng-container matColumnDef="icao">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                <span>ICAO</span>
-                <span *ngIf="fboGeofencingDataSource">
-                    <app-table-column-filter [matDataSource]="fboGeofencingDataSource" [matSort]="sort"
-                                             columnId="ICAO" propertyName="ICAO"></app-table-column-filter>
-                </span>
-            </th>
-            <td *matCellDef="let ICAO" mat-cell>
-                {{ ICAO }}
-            </td>
-        </ng-container>
+    <div>
+        <table #fboGeofencingTable [dataSource]="fboGeofencingDataSource" class="col-md-12 mb-0" mat-table matSort>
+            <ng-container matColumnDef="icao">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    <span>ICAO</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{ geofence.icao }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="fbo">
-            <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
-                <span>FBO</span>
-                <span *ngIf="customersDataSource">
-                    <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
-                                             columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
-                    </app-table-column-filter>
-                </span>
-            </th>
-            <td *matCellDef="let customer" mat-cell>
-                {{ customer.customerCompanyTypeName }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="fbo">
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
+                    <span>FBO</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{ geofence.fbo }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="isNotFbo">
-            <th *matHeaderCellDef mat-header-cell>
-                <span>Is Not FBO</span>
-            </th>
-            <td *matCellDef="let customer" mat-cell>
-                <div class="pull-right">
-                    <button (click)="
-                                deleteCustomer(customer);
-                                $event.stopPropagation()
-                            " *ngIf="!customer.isFuelerLinxCustomer" [view]="'error'" beforeIcon="fa fa-trash"
-                            ni-button size="small">
-                        Delete
-                    </button>
-                </div>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="isNotFbo">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span>Is Not FBO</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    <div>
+                        {{geofence.fbo}}
+                    </div>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="needsAttention">
-            <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
-                <div class="">Needs Attention</div>
-            </th>
-            <td *matCellDef="let customer" mat-cell>
-                <div>
-                    <ni-badge *ngIf="customer.needsAttention" [arrow]="'right'" [borderRadius]="false"
-                              [color]="'warning'" matTooltip="{{ customer.needsAttention }}"
-                              matTooltipPosition="after">
-                        Needs Attention
-                    </ni-badge>
-                    <a *ngIf="
-                                !customer.isFuelerLinxCustomer &&
-                                !customer.contactExists
-                            "
-                       matTooltip="This customer does not have any contacts setup to receive price distribution."
-                       matTooltipPosition="after" style="float: right">
-                        <i class="fa fa-warning" style="color: red"></i>
-                    </a>
-                </div>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="needsAttention">
+                <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
+                    <div class="">Needs Attention</div>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{geofence.icao}}
+                </td>
+            </ng-container>
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+            <!--<tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>-->
+        </table>
 
-        <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
-        <!--<tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>-->
-    </table>
-    <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="fboGeofencingData.length"
-                   [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+        <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="fboGeofencingData.length"
+                       [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+    </div>
 </div>

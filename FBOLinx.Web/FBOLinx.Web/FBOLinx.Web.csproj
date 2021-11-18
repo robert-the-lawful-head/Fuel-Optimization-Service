@@ -37,15 +37,8 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
-    <Compile Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-home\**" />
     <Content Remove="$(SpaRoot)**" />
-    <Content Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-home\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-home\**" />
-    <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-home\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +72,7 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <None Remove="ClientApp\src\app\services\associations.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
@@ -138,6 +132,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\associations.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />

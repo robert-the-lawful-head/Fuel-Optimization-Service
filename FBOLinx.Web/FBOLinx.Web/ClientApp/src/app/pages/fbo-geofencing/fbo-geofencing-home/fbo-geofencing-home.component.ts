@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import * as moment from 'moment';
-import { interval, Subscription } from 'rxjs';
-import * as XLSX from 'xlsx';
 
-import { SharedService } from '../../../layouts/shared-service';
 // Services
+import { SharedService } from '../../../layouts/shared-service';
+import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -13,8 +11,8 @@ const BREADCRUMBS: any[] = [
         title: 'Main',
     },
     {
-        link: '/default-layout/fuelreqs',
-        title: 'Fuel Orders',
+        link: '/default-layout/fbo-geofencing',
+        title: 'FBO Geofencing',
     },
 ];
 
@@ -23,18 +21,18 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./fbo-geofencing-home.component.scss'],
     templateUrl: './fbo-geofencing-home.component.html',
 })
-export class FuelreqsHomeComponent implements OnDestroy, OnInit {
+export class FboGeofencingHomeComponent implements OnInit {
     // Public Members
     public pageTitle = 'FBO Geofencing';
     public breadcrumb: any[] = BREADCRUMBS;
     public fboGeofencingData: any[];
 
     constructor(
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private airportFboGeofenceService: AirportFboGeofenceClustersService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
-
 
     ngOnInit() {
         this.loadFbogeofencing();
@@ -42,15 +40,10 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
 
     // PRIVATE METHODS
     private loadFbogeofencing() {
-        this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                this.filterStartDate,
-                this.filterEndDate
-            )
+        this.airportFboGeofenceService
+            .getAllClusters()
             .subscribe((data: any) => {
-                this.fuelreqsData = data;
+                this.fboGeofencingData = data;
             });
     }
 }

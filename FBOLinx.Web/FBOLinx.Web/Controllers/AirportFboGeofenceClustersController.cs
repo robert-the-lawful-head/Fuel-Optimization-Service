@@ -1,47 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FBOLinx.DB.Context;
+﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
+using FBOLinx.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.ViewModels;
-using FBOLinx.Web.Models.Requests;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
+
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AssociationsController : ControllerBase
+
+    public class AirportFboGeofenceClustersController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FuelerLinxContext _fcontext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
-        private readonly AssociationsService _associationsService;
+        private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
 
-        public AssociationsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AssociationsService associationsService)
+        public AirportFboGeofenceClustersController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService)
         {
-            _associationsService = associationsService;
+            _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _context = context;
-            _fcontext = fcontext;
             _HttpContextAccessor = httpContextAccessor;
             _serviceScopeFactory = serviceScopeFactory;
         }
-                    
-        // GET: api/Associations/5
+
+        // GET: api/airportfbogeofenceclusters
+        [HttpGet]
+        public async Task<IActionResult> GetAllFboGeofenceClusters()
+        {
+            try
+            {
+                if (JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var airportFBOGeoFenceClusters = await _airportFboGeofenceClustersService.GetAllClusters();
+
+                if (airportFBOGeoFenceClusters == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(airportFBOGeoFenceClusters);
+            }
+            catch (Exception ex)
+            {
+                return Ok("Get error: " + ex.Message);
+            }
+
+        }
+
+        // GET: api/airportfbogeofenceclusters/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAssociation([FromRoute] int id)
+        public async Task<IActionResult> GetFboGeofenceClusters([FromRoute] int id)
         {
             try
             {
@@ -55,14 +77,14 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var association = await _context.Associations.FindAsync(id);
+                var airportFBOGeoFenceClusters = await _context.AirportFboGeofenceClusters.FindAsync(id);
 
-                if (association == null)
+                if (airportFBOGeoFenceClusters == null)
                 {
                     return NotFound();
                 }
 
-                return Ok(association);
+                return Ok(airportFBOGeoFenceClusters);
             }
             catch (Exception ex)
             {
@@ -71,9 +93,9 @@ namespace FBOLinx.Web.Controllers
 
         }
 
-        // PUT: api/Associations/5
+        // PUT: api/airportfbogeofenceclusters/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAssociation([FromRoute] int id, [FromBody] Association association)
+        public async Task<IActionResult> PutAssociation([FromRoute] int id, [FromBody] AirportFboGeofenceClusters airportFboGeofenceClusters)
         {
             if (!ModelState.IsValid)
             {
@@ -85,7 +107,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Associations.Update(association);
+            _context.AirportFboGeofenceClusters.Update(airportFboGeofenceClusters);
 
             try
             {
@@ -106,9 +128,9 @@ namespace FBOLinx.Web.Controllers
             return NoContent();
         }
 
-        // POST: api/associations
+        // POST: api/airportfbogeofenceclusters
         [HttpPost]
-        public async Task<IActionResult> PostAssociation([FromBody] Association association)
+        public async Task<IActionResult> PostAirportFboGeofenceClusters([FromBody] AirportFboGeofenceClusters airportFboGeoFenceClusters)
         {
             if (!ModelState.IsValid)
             {
@@ -117,26 +139,26 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                association = await _associationsService.CreateNewAssociation(association.AssociationName);
+                airportFboGeoFenceClusters = await _airportFboGeofenceClustersService.CreateNewCluster(airportFboGeoFenceClusters);
             }
             catch (Exception ex)
             {
                 return Ok(ex.Message);
             }
 
-            return CreatedAtAction("GetAssociation", new { id = association.Oid }, association);
+            return CreatedAtAction("GetFboGeofenceClusters", new { id = airportFboGeoFenceClusters.Oid }, airportFboGeoFenceClusters);
         }
 
-        // DELETE: api/associations/5
+        // DELETE: api/airportfbogeofenceclusters/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAssociation([FromRoute] int id)
+        public async Task<IActionResult> DeleteAirportFboGeofenceClusters([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var association = await _context.Associations.FindAsync(id);
+            var association = await _context.AirportFboGeofenceClusters.FindAsync(id);
             if (association == null)
             {
                 return NotFound();
@@ -144,7 +166,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                await _associationsService.DeleteAssociation(id);
+                await _airportFboGeofenceClustersService.DeleteCluster(id);
             }
             catch (Exception ex)
             {

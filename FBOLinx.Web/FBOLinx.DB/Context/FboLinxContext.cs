@@ -149,8 +149,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
         
 
-        public virtual DbSet<AirportFBOGeoFenceClusters> AirportFBOGeoFenceClusters { get; set; }
-        public virtual DbSet<AirportFBOGeoFenceClusterCoordinates> AirportFBOGeoFenceClusterCoordinates { get; set; }
+        public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
+        public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
