@@ -77,7 +77,7 @@ namespace FBOLinx.Web.Controllers
 
             var fuelReqs = await (from fr in _context.FuelReq
                                   join f in _context.Fbos on fr.Fboid equals f.Oid
-                                  where fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                  where (fr.Cancelled == null || fr.Cancelled == false) && fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
                                   select new
                                   {
                                       fr.Oid,
