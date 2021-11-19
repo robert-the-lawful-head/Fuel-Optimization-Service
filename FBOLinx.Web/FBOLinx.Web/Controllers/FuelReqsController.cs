@@ -397,7 +397,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            int fuelReqCount = await GetAllFuelRequests().Include("Fbo").Where((x => x.Fboid == fboId && x.Eta > request.StartDateTime)).CountAsync();
+            int fuelReqCount = await GetAllFuelRequests().Include("Fbo").Where((x => x.Fboid == fboId && (x.Cancelled == null || x.Cancelled == false) && x.Eta > request.StartDateTime)).CountAsync();
 
             return Ok(fuelReqCount);
         }
@@ -492,6 +492,7 @@ namespace FBOLinx.Web.Controllers
                 var customerFuelReqsByCustomer = await (from orders in (from fr in _context.FuelReq
                                                                         join c in _context.Customers on (fr.CustomerId ?? 0) equals c.Oid
                                                                         where fr.Fboid == fboId &&
+                                                                            (fr.Cancelled == null || fr.Cancelled == false) &&
                                                                             fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
                                                                             fr.DateCreated.Value <= request.EndDateTime
                                                                         select new
@@ -576,6 +577,7 @@ namespace FBOLinx.Web.Controllers
                 //Total orders by month
                 var fuelReqsOrdersByMonth = await (from f in _context.FuelReq
                                             where f.Fboid == fboId
+                                                  && (f.Cancelled == null || f.Cancelled == false)
                                                   && f.DateCreated.HasValue
                                                   && f.DateCreated >= request.StartDateTime
                                                   && f.DateCreated <= request.EndDateTime
@@ -662,6 +664,7 @@ namespace FBOLinx.Web.Controllers
                                                                ca.Oid
                                                            }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId
+                                                            && (f.Cancelled == null || f.Cancelled == false) 
                                                             && f.DateCreated >= request.StartDateTime
                                                             && f.DateCreated <= request.EndDateTime
                                                       group f by new
@@ -932,7 +935,7 @@ namespace FBOLinx.Web.Controllers
                 request.Icao = icao;
 
                 int fboOrderCount = await _context.FuelReq
-                    .CountAsync(f => f.Fboid.Equals(fboId) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.AddDays(1));
+                    .CountAsync(f => f.Fboid.Equals(fboId) && (f.Cancelled == null || f.Cancelled == false) && f.Etd >= request.StartDateTime && f.Etd < request.EndDateTime.AddDays(1));
 
                 string fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefaultAsync();
                 request.Fbo = fbo;
@@ -993,7 +996,7 @@ namespace FBOLinx.Web.Controllers
 
                 var fbosOrders = await (from fr in _context.FuelReq
                                         join f in _context.Fbos on fr.Fboid equals f.Oid
-                                        where f.GroupId == groupId && fr.Etd >= request.StartDateTime && fr.Etd < request.EndDateTime.AddDays(1)
+                                        where f.GroupId == groupId && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd < request.EndDateTime.AddDays(1)
                                         group fr by new
                                         {
                                             f.Oid,
@@ -1109,7 +1112,7 @@ namespace FBOLinx.Web.Controllers
                 var result = icaos.Select(f =>
                 {
                     var order = fuelerlinxFBOsOrdersCount.Result.Where(o => o.Icao == f.Icao).FirstOrDefault();
-                    var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
+                    var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && (y.Cancelled == null || y.Cancelled == false) && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
                     var airportOrder = order == null ? 0 : order?.AirportOrders;
                     var fboOrder = (order == null ? 0 : order?.FboOrders);
                     var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder + (double)yourOrder) / (double)airportOrder) * 100);
@@ -1146,7 +1149,7 @@ namespace FBOLinx.Web.Controllers
 
                 var chartData = await (from fr in (
                                      from fr in _context.FuelReq
-                                     where fr.Fboid.Equals(fboId) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                     where fr.Fboid.Equals(fboId) && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
                                      group fr by new
                                      {
                                          CustomerID = fr.CustomerId,
@@ -1195,7 +1198,7 @@ namespace FBOLinx.Web.Controllers
             {
                 string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
                 var validTransactions = await _context.FuelReq.Where(fr =>
-                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid.HasValue && fr.Fboid.Value == fboId).ToListAsync();
+                    (fr.Cancelled == null || fr.Cancelled == false) &&fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid.HasValue && fr.Fboid.Value == fboId).ToListAsync();
 
                 var fuelReqs = (from fr in validTransactions
                                       group fr by fr.CustomerId
@@ -1314,7 +1317,7 @@ namespace FBOLinx.Web.Controllers
                 List<string> icaos = await _context.Fboairports.Where(f => request.FboIds.Contains(f.Fboid)).Select(f => f.Icao).ToListAsync();
                 List<int> airportfbos = await _context.Fboairports.Where(f => icaos.Contains(f.Icao)).Select(f => f.Fboid).ToListAsync();
                 var validTransactions = await _context.FuelReq.Where(fr =>
-                    fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
+                    (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime && fr.Fboid > 0 &&
                     airportfbos.Contains(fr.Fboid ?? 0)).ToListAsync();
 
                 var fuelReqs = (from fr in validTransactions
@@ -1409,7 +1412,7 @@ namespace FBOLinx.Web.Controllers
             List<FuelReqForChart> fuelReqs = await
                            (from f in (
                                from f in _context.FuelReq
-                               where f.Fboid.Equals(fboId) && f.Etd.HasValue && f.Etd >= startDateTime && f.Etd <= endDateTime
+                               where f.Fboid.Equals(fboId) && (f.Cancelled == null || f.Cancelled == false) && f.Etd.HasValue && f.Etd >= startDateTime && f.Etd <= endDateTime
                                select new
                                {
                                    f.Etd,
