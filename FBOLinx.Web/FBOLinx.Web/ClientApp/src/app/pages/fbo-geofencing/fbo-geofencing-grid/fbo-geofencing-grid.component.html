@@ -1,7 +1,7 @@
 <div #fboGeofencingTableContainer>
     <div *ngIf="fboGeofencingData" class="col-6">
         <app-table-global-search [matDataSource]="fboGeofencingDataSource"
-                                 placeholder="Search by Company, Tail, etc."></app-table-global-search>
+                                 placeholder="Search by ICAO, FBO"></app-table-global-search>
     </div>
 
     <div>
@@ -30,7 +30,7 @@
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
                     <div>
-                        {{geofence.fbo}}
+
                     </div>
                 </td>
             </ng-container>
@@ -40,11 +40,24 @@
                     <div class="">Needs Attention</div>
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
-                    {{geofence.icao}}
                 </td>
             </ng-container>
-            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
-            <!--<tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>-->
+
+            <ng-container matColumnDef="addNew">
+                <th *matHeaderCellDef mat-header-cell>
+                    <div class="pull-right">
+                        <button (click)="showFboGeofencingMap()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                                ni-button>
+                            Add New
+                        </button>
+                    </div>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                </td>
+            </ng-container>
+
+                <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
 
         <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="fboGeofencingData.length"

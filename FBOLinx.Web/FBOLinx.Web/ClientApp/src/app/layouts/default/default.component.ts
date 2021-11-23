@@ -120,6 +120,7 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/groups',
             '/default-layout/fbos',
             '/default-layout/group-analytics',
+            '/default-layout/fbo-geofencing'
         ];
         if (
             blacklist.findIndex((v) =>

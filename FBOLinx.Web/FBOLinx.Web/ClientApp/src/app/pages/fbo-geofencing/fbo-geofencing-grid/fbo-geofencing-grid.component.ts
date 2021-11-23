@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { forEach } from 'lodash';
 
 // Services
@@ -11,6 +12,9 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+
+//Map
+import { FboGeofencingMapComponent } from '../../fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -28,6 +32,10 @@ const initialColumns: ColumnType[] = [
     {
         id: 'needsAttention',
         name: 'Needs Attention',
+    },
+    {
+        id: 'addNew',
+        name: 'Add New',
     },
 ];
 
@@ -50,8 +58,7 @@ export class FboGeofencingGridComponent implements OnInit {
     selectAll = false;
     columns: ColumnType[] = [];
 
-    constructor(private router: Router, private sharedService: SharedService) {
-       
+    constructor(private router: Router, private sharedService: SharedService, private fboGeofencingMapDialog: MatDialog) {
 
     }
 
@@ -83,6 +90,20 @@ export class FboGeofencingGridComponent implements OnInit {
         return this.columns
             .filter((column) => !column.hidden)
             .map((column) => column.id);
+    }
+
+    showFboGeofencingMap() {
+        const dialogRef = this.fboGeofencingMapDialog.open(
+            FboGeofencingMapComponent,
+            {
+                height: '500px',
+                width: '1140px',
+            }
+        );
+
+        dialogRef.afterClosed().subscribe(() => {
+
+        });
     }
 
     private refreshFboGeofencingDataSource() {

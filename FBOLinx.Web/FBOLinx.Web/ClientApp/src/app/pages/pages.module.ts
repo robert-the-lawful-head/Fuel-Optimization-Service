@@ -193,6 +193,7 @@ import { CustomerHistoryDetailsComponent } from './customer-history/customer-his
 import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
 import { FboGeofencingHomeComponent } from './fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
 import { FboGeofencingGridComponent } from './fbo-geofencing/fbo-geofencing-grid/fbo-geofencing-grid.component';
+import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
 
 @NgModule({
     declarations: [
@@ -319,7 +320,8 @@ import { FboGeofencingGridComponent } from './fbo-geofencing/fbo-geofencing-grid
         CustomerHistoryComponent,
         CustomerHistoryDetailsComponent,
         FboGeofencingHomeComponent,
-        FboGeofencingGridComponent
+        FboGeofencingGridComponent,
+        FboGeofencingMapComponent
 
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
