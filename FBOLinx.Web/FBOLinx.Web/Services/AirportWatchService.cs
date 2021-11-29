@@ -29,6 +29,7 @@ namespace FBOLinx.Web.Services
         private readonly FboService _fboService;
         private List<AirportWatchLiveData> _LiveDataToUpdate;
         private List<AirportWatchLiveData> _LiveDataToInsert;
+        private List<AirportWatchLiveData> _LiveDataToDelete;
         private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
         private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
         private List<AirportWatchAircraftTailNumber> _TailNumberDataToInsert;
@@ -328,21 +329,23 @@ namespace FBOLinx.Web.Services
             //Preload the collection of past records from the last 7 days to use in the loop
             var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
                 && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                && distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                && distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
                 && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             foreach (var record in data)
             {
-                var oldAirportWatchLiveData = oldAirportWatchLiveDataCollection
-                    .FirstOrDefault(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber);
+                var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).ToList();
+
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault();
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
-                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode && aw.AtcFlightNumber == record.AtcFlightNumber)
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
                     .FirstOrDefault();
 
@@ -378,6 +381,13 @@ namespace FBOLinx.Web.Services
                 {
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
                     _LiveDataToUpdate.Add(oldAirportWatchLiveData);
+
+                    if (aircraftOldAirportWatchLiveDataCollection.Count > 1)
+                    {
+                        _LiveDataToDelete = new List<AirportWatchLiveData>();
+                        aircraftOldAirportWatchLiveDataCollection.Remove(oldAirportWatchLiveData);
+                        _LiveDataToDelete = aircraftOldAirportWatchLiveDataCollection;
+                    }
                 }
             }
 
@@ -547,6 +557,8 @@ namespace FBOLinx.Web.Services
                 await _context.BulkInsertAsync(_LiveDataToInsert);
             if (_LiveDataToUpdate != null)
                 await _context.BulkUpdateAsync(_LiveDataToUpdate);
+            if (_LiveDataToDelete != null)
+                await _context.BulkDeleteAsync(_LiveDataToDelete);
             if (_HistoricalDataToInsert != null)
                 await _context.BulkInsertAsync(_HistoricalDataToInsert);
             if (_HistoricalDataToUpdate != null)
