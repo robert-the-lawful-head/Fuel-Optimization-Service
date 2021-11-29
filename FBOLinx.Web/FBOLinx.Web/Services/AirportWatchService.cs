@@ -314,6 +314,7 @@ namespace FBOLinx.Web.Services
         {
             _LiveDataToUpdate = new List<AirportWatchLiveData>();
             _LiveDataToInsert = new List<AirportWatchLiveData>();
+            _LiveDataToDelete = new List<AirportWatchLiveData>();
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
             _TailNumberDataToInsert = new List<AirportWatchAircraftTailNumber>();
@@ -329,12 +330,12 @@ namespace FBOLinx.Web.Services
             //Preload the collection of past records from the last 7 days to use in the loop
             var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                && distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
                 && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                && distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
+                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
                 && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
 
             foreach (var record in data)
@@ -384,9 +385,8 @@ namespace FBOLinx.Web.Services
 
                     if (aircraftOldAirportWatchLiveDataCollection.Count > 1)
                     {
-                        _LiveDataToDelete = new List<AirportWatchLiveData>();
                         aircraftOldAirportWatchLiveDataCollection.Remove(oldAirportWatchLiveData);
-                        _LiveDataToDelete = aircraftOldAirportWatchLiveDataCollection;
+                        _LiveDataToDelete.AddRange(aircraftOldAirportWatchLiveDataCollection);
                     }
                 }
             }
