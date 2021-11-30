@@ -492,6 +492,47 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
+        public async Task<List<AcukwikAirports>> GetAirportsWithAntennaData()
+        {
+            try
+            {
+                var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
+                var distinctBoxes = await _context.AirportWatchHistoricalData
+                    .Where(x => x.BoxTransmissionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.BoxName))
+                    .Select(x => x.BoxName)
+                    .Distinct()
+                    .ToListAsync();
+                distinctBoxes = distinctBoxes.Select(x => x.Split('_')[0].ToUpper()).ToList();
+                var airports = await _degaContext.AcukwikAirports.Where(x => distinctBoxes.Contains(x.Icao))
+                    .Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
+                return airports;
+            }
+            catch (System.Exception exception)
+            {
+                Debug.WriteLine("Error in AirportWatchService.GetAirportsWithAntennaData: " + exception.Message);
+                return new List<AcukwikAirports>();
+            }
+        }
+
+        public async Task<List<AirportWatchHistoricalData>> GetParkingOccurencesByAirport(string icao,
+            DateTime startDateTimeUtc, DateTime endDateTimeUtc)
+        {
+            try
+            {
+                var occurrences = await _context.AirportWatchHistoricalData.Where(x =>
+                    x.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking
+                    && x.BoxTransmissionDateTimeUtc >= startDateTimeUtc
+                    && x.BoxTransmissionDateTimeUtc <= endDateTimeUtc
+                    && x.AirportICAO == icao).ToListAsync();
+                return occurrences;
+            }
+            catch (System.Exception exception)
+            {
+                Debug.WriteLine("Error in AirportWatchService.GetParkingOccurencesByAirport: " + exception.Message);
+                return new List<AirportWatchHistoricalData>();
+            }
+        }
+
         private void AddDemoDataToAirportWatchResult(List<AirportWatchLiveData> result, int fboId)
         {
             if (_demoData == null || _demoData.Value == null || _demoData.Value.FlightWatch == null)

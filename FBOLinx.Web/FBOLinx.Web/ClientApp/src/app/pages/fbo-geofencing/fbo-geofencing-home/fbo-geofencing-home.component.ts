@@ -5,6 +5,10 @@ import * as _ from 'lodash';
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
 
+// Models
+import { AirportFboGeoFenceGridViewmodel as airportFboGeoFenceGridViewmodel } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-grid-viewmodel';
+import { NgxUiLoaderService } from "ngx-ui-loader";
+
 const BREADCRUMBS: any[] = [
     {
         link: '/default-layout',
@@ -26,16 +30,30 @@ export class FboGeofencingHomeComponent implements OnInit {
     public pageTitle = 'FBO Geofencing';
     public breadcrumb: any[] = BREADCRUMBS;
     public fboGeofencingData: any[];
+    public airportFboGeoFenceGridData: any[];
+    public airportFboGeofenceGridItem: airportFboGeoFenceGridViewmodel;
+    public fboHomeLoaderName: string = 'fbo-home-loader';
 
     constructor(
         private sharedService: SharedService,
-        private airportFboGeofenceService: AirportFboGeofenceClustersService
+        private airportFboGeofenceService: AirportFboGeofenceClustersService,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
 
     ngOnInit() {
         this.loadFbogeofencing();
+        this.loadAirportsWithAntennaData();
+    }
+
+    public onEditAirportFboGeoFence(airportFboGeoFenceClusterViewModel: airportFboGeoFenceGridViewmodel): void {
+        this.airportFboGeofenceGridItem = airportFboGeoFenceClusterViewModel;
+    }
+
+    public onEditClosed(): void {
+        this.airportFboGeofenceGridItem = null;
+        this.loadAirportsWithAntennaData();
     }
 
     // PRIVATE METHODS
@@ -44,6 +62,16 @@ export class FboGeofencingHomeComponent implements OnInit {
             .getAllClusters()
             .subscribe((data: any) => {
                 this.fboGeofencingData = data;
+            });
+    }
+
+    private loadAirportsWithAntennaData() {
+        this.ngxLoader.startLoader(this.fboHomeLoaderName);
+        this.airportFboGeofenceService
+            .getAirportsWithAntennaData()
+            .subscribe((data: any) => {
+                this.airportFboGeoFenceGridData = data;
+                this.ngxLoader.stopLoader(this.fboHomeLoaderName);
             });
     }
 }

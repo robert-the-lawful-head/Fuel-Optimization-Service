@@ -14,5 +14,11 @@ namespace FBOLinx.DB.Models
         public int ClusterID { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+
+        #region Relationships
+        [ForeignKey("ClusterID")]
+        [InverseProperty("ClusterCoordinatesCollection")]
+        public AirportFboGeofenceClusters Cluster { get; set; }
+        #endregion
     }
 }

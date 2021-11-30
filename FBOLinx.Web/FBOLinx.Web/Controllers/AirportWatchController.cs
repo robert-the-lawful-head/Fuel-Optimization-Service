@@ -89,5 +89,25 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(startRecord.AircraftPositionDateTimeUtc);
         }
+
+        [HttpGet(("parking-occurrences/{icao}"))]
+        public async Task<ActionResult<List<AirportWatchHistoricalData>>> GetParkingOccurrencesByAirportIcao(
+            [FromRoute] string icao, DateTime? startDateTime, DateTime? endDateTime)
+        {
+            try
+            {
+                if (startDateTime == null)
+                    startDateTime = DateTime.UtcNow.AddDays(-7);
+                if (endDateTime == null)
+                    endDateTime = DateTime.UtcNow;
+                var result = await _airportWatchService.GetParkingOccurencesByAirport(icao,
+                    startDateTime.GetValueOrDefault(), endDateTime.GetValueOrDefault());
+                return result.Take(50).ToList();
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new List<AirportWatchHistoricalData>());
+            }
+        }
     }
 }

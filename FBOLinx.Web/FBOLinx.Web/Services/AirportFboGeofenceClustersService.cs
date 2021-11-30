@@ -44,49 +44,29 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<FboGeofenceClustersViewModel>> GetAllClusters()
+        public async Task<List<AirportFboGeofenceClusters>> GetAllClusters(int acukwikAirportId = 0)
         {
-            var allFboGeoClusters = await (from afgc in _context.AirportFboGeofenceClusters select afgc).ToListAsync();
+            var allFboGeoClusters = await _context.AirportFboGeofenceClusters.Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId)).ToListAsync();
 
-            var allFbos = await (from aa in _degaContext.AcukwikAirports
-                                 join al in _degaContext.AcukwikFbohandlerDetail on aa.AirportId equals al.AirportId
-                                 select new FboGeofenceClustersViewModel
-                                 {
-                                     AcukwikAirportID = aa.AirportId,
-                                     AcukwikFBOHandlerID = al.HandlerId,
-                                     Icao = aa.Icao,
-                                     Fbo = al.HandlerLongName,
-                                 }).ToListAsync();
+            var airportIds = allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToList();
 
-            var fboClusters = (from afgc in allFboGeoClusters
-                               join af in allFbos on new { afgc.AcukwikFBOHandlerID, afgc.AcukwikAirportID } equals new { af.AcukwikFBOHandlerID, af.AcukwikAirportID }
-                               select new FboGeofenceClustersViewModel
-                               {
-                                   Oid = afgc.Oid,
-                                   AcukwikAirportID = af.AcukwikAirportID,
-                                   AcukwikFBOHandlerID = af.AcukwikFBOHandlerID,
-                                   CenterLatitude = afgc.CenterLatitude,
-                                   CenterLongitude = afgc.CenterLongitude,
-                                   Icao = af.Icao,
-                                   Fbo = af.Fbo
-                               }).ToList();
+            var airports = await _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection)
+                .ToListAsync();
+            
+            allFboGeoClusters.ForEach(x =>
+            {
+                var airport = airports.FirstOrDefault(a => a.AirportId == x.AcukwikAirportID);
+                if (airport == null)
+                    return;
+                x.Icao = airport.Icao;
+                var fbo = airport.AcukwikFbohandlerDetailCollection?.FirstOrDefault(f =>
+                    f.HandlerId == x.AcukwikFBOHandlerID);
+                if (fbo == null)
+                    return;
+                x.AcukwikFBOHandlerID = fbo.HandlerId;
+            });
 
-            //var fboClusters = (from af in allFbos
-            //                   join afgc in allFboGeoClusters on new { af.AcukwikFBOHandlerID, af.AcukwikAirportID } equals new { afgc.AcukwikFBOHandlerID, afgc.AcukwikAirportID }
-            //                   into afgcLeftJoin
-            //                   from afgc in afgcLeftJoin.DefaultIfEmpty()
-            //                   select new FboGeofenceClustersViewModel
-            //                   {
-            //                       Oid = afgc == null ? 0 : afgc.Oid,
-            //                       AcukwikAirportID = af.AcukwikAirportID,
-            //                       AcukwikFBOHandlerID = af.AcukwikFBOHandlerID,
-            //                       CenterLatitude = afgc == null ? 0 : afgc.CenterLatitude,
-            //                       CenterLongitude = afgc == null ? 0 : afgc.CenterLongitude,
-            //                       Icao = af.Icao,
-            //                       Fbo = af.Fbo
-            //                   }).ToList();
-
-            return fboClusters;
+            return allFboGeoClusters;
         }
     }
 }

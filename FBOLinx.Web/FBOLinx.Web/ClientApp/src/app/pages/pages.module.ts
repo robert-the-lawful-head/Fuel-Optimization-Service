@@ -194,6 +194,8 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
 import { FboGeofencingHomeComponent } from './fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
 import { FboGeofencingGridComponent } from './fbo-geofencing/fbo-geofencing-grid/fbo-geofencing-grid.component';
 import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
+import { FboGeofencingDialogNewClusterComponent } from
+    './fbo-geofencing/fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component';
 
 @NgModule({
     declarations: [
@@ -321,7 +323,8 @@ import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/f
         CustomerHistoryDetailsComponent,
         FboGeofencingHomeComponent,
         FboGeofencingGridComponent,
-        FboGeofencingMapComponent
+        FboGeofencingMapComponent,
+        FboGeofencingDialogNewClusterComponent
 
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],

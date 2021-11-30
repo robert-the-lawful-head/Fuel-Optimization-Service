@@ -1,17 +1,20 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { forEach } from 'lodash';
-
-// Services
-import { SharedService } from '../../../layouts/shared-service';
 import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+
+// Services
+import { SharedService } from '../../../layouts/shared-service';
+
+// Models
+import { AirportFboGeoFenceGridViewmodel as airportFboGeoFenceGridViewmodel } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-grid-viewmodel';
 
 //Map
 import { FboGeofencingMapComponent } from '../../fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
@@ -22,12 +25,12 @@ const initialColumns: ColumnType[] = [
         name: 'ICAO',
     },
     {
-        id: 'fbo',
-        name: 'FBO'
+        id: 'fboCount',
+        name: 'FBOCount'
     },
     {
-        id: 'isNotFbo',
-        name: 'Is Not FBO',
+        id: 'geoFenceCount',
+        name: 'Fences Mapped',
     },
     {
         id: 'needsAttention',
@@ -36,7 +39,7 @@ const initialColumns: ColumnType[] = [
     {
         id: 'addNew',
         name: 'Add New',
-    },
+    }
 ];
 
 @Component({
@@ -49,6 +52,8 @@ export class FboGeofencingGridComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Input() fboGeofencingData: any[];
+    @Input() airportFboGeoFenceGridData: any[];
+    @Output() onEditRow = new EventEmitter<airportFboGeoFenceGridViewmodel>();
 
     tableLocalStorageKey = 'fbo-geofencing-table-settings';
 
@@ -81,7 +86,7 @@ export class FboGeofencingGridComponent implements OnInit {
             this.paginator.pageSize.toString()
         );
         this.selectAll = false;
-        forEach(this.fboGeofencingData, (fbo) => {
+        forEach(this.airportFboGeoFenceGridData, (fbo) => {
             fbo.selectAll = false;
         });
     }
@@ -92,26 +97,31 @@ export class FboGeofencingGridComponent implements OnInit {
             .map((column) => column.id);
     }
 
-    showFboGeofencingMap() {
-        const dialogRef = this.fboGeofencingMapDialog.open(
-            FboGeofencingMapComponent,
-            {
-                height: '500px',
-                width: '1140px',
-            }
-        );
-
-        dialogRef.afterClosed().subscribe(() => {
-
-        });
+    editRowClicked(airportFboGeoFence) {
+        this.onEditRow.emit(airportFboGeoFence);
     }
+
+    //showFboGeofencingMap(airportFboGeoFence) {
+    //    const dialogRef = this.fboGeofencingMapDialog.open(
+    //        FboGeofencingMapComponent,
+    //        {
+    //            height: '500px',
+    //            width: '1140px',
+    //            data: airportFboGeoFence
+    //        }
+    //    );
+
+    //    dialogRef.afterClosed().subscribe(() => {
+
+    //    });
+    //}
 
     private refreshFboGeofencingDataSource() {
         if (!this.fboGeofencingDataSource) {
             this.fboGeofencingDataSource = new MatTableDataSource();
         }
 
-        this.fboGeofencingDataSource.data = this.fboGeofencingData;
+        this.fboGeofencingDataSource.data = this.airportFboGeoFenceGridData;
         this.fboGeofencingDataSource.sort = this.sort;
         this.fboGeofencingDataSource.paginator = this.paginator;
     }

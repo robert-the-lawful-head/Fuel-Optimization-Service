@@ -15,22 +15,22 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="fbo">
+            <ng-container matColumnDef="fboCount">
                 <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
-                    <span>FBO</span>
+                    <span>FBO Count</span>
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
-                    {{ geofence.fbo }}
+                    {{ geofence.fboCount }}
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="isNotFbo">
+            <ng-container matColumnDef="geoFenceCount">
                 <th *matHeaderCellDef mat-header-cell>
-                    <span>Is Not FBO</span>
+                    <span>Fence Count</span>
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
                     <div>
-
+                        {{ geofence.geoFenceCount }}
                     </div>
                 </td>
             </ng-container>
@@ -40,19 +40,19 @@
                     <div class="">Needs Attention</div>
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
+                    {{geofence.needsAttention}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="addNew">
                 <th *matHeaderCellDef mat-header-cell>
-                    <div class="pull-right">
-                        <button (click)="showFboGeofencingMap()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
-                                ni-button>
-                            Add New
-                        </button>
-                    </div>
+                    
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
+                    <button (click)="editRowClicked(geofence)" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                            ni-button>
+                        Edit
+                    </button>
                 </td>
             </ng-container>
 

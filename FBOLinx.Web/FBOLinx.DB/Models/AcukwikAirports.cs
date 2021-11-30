@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Web;
 
 namespace FBOLinx.DB.Models
 {
@@ -69,5 +71,10 @@ namespace FBOLinx.DB.Models
         public string Lighting { get; set; }
         [StringLength(255)]
         public string AirportNameShort { get; set; }
+
+        #region Relationships
+        [InverseProperty("AcukwikAirport")]
+        public ICollection<AcukwikFbohandlerDetail> AcukwikFbohandlerDetailCollection { get; set; }
+        #endregion
     }
 }

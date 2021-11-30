@@ -64,4 +64,17 @@ export class AirportWatchService {
             headers: this.headers,
         });
     }
+
+    public getParkingOccurrencesAtAirport(icao, startDateTime = null, endDateTime = null) {
+        var route = this.accessPointUrl + '/parking-occurrences/' + icao;
+        if (startDateTime != null) {
+            route += '?startDateTime=' + startDateTime.toString();
+            if (endDateTime != null) {
+                route += 'endDateTime=' + endDateTime.toString();
+            }
+        }
+        return this.http.get(route,
+            {
+            });
+    }
 }

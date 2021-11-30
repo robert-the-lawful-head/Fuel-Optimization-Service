@@ -1,1 +1,65 @@
-<div id="fbo-geofencing-map"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <ngx-ui-loader [loaderId]="loaderName"
+                           bgsColor="rgb(100, 181, 246)"
+                           bgsPosition="center-center"
+                           bgsType="ball-spin"
+                           overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-9">
+            <div id="fbo-geofencing-map" style="min-height: 600px;"></div>
+        </div>
+
+        <div class="col-3">
+            <div class="container-fluid">
+                <div class="row pb-2">
+                    <div class="col-9">
+                        <div class="font-weight-bold">Existing Clusters</div>
+                    </div>
+                    <div class="col-3">
+                        <button (click)="newClusterClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn" size="small"
+                                ni-button>
+                            Add New
+                        </button>
+                    </div>
+                </div>
+
+                <hr/>
+
+                <div class="row">
+                    <div class="col-12">
+                        
+                    </div>
+                </div>
+
+                <div class="row pt-2" *ngFor="let cluster of clusters">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-3">
+                                {{cluster.icao}}
+                            </div>
+                            <div class="col-6">
+                                {{cluster.fboName}}
+                            </div>
+                            <div class="col-3">
+                                <button (click)="editRowClicked(cluster)" [view]="'accent'" beforeIcon="fa fa-edit" class="action-btn" ni-button size="small">
+                                    Edit
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

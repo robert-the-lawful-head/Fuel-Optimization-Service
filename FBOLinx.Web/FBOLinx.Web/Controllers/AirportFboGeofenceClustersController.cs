@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Web.ViewModels;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -25,9 +26,11 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
+        private AirportWatchService _airportWatchService;
 
-        public AirportFboGeofenceClustersController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService)
+        public AirportFboGeofenceClustersController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService)
         {
+            _airportWatchService = airportWatchService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
@@ -174,6 +177,45 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(association);
+        }
+
+        [HttpGet("airports/list")]
+        public async Task<ActionResult<List<AirportFboGeoFenceGridVM>>> GetAirportsForGeoFencing()
+        {
+            try
+            {
+                var airportsWithAntennaData = await _airportWatchService.GetAirportsWithAntennaData();
+                var fenceClusters = await _airportFboGeofenceClustersService.GetAllClusters();
+                var result = airportsWithAntennaData.Select(x => new AirportFboGeoFenceGridVM()
+                {
+                    AcukwikAirportId = x.AirportId,
+                    FboCount = (x.AcukwikFbohandlerDetailCollection?.Count).GetValueOrDefault(),
+                    Icao = x.Icao,
+                    GeoFenceCount = (fenceClusters?.Count).GetValueOrDefault(),
+                    Latitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLatitudeGeoLocationFromGPS(x.Latitude),
+                    Longitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLongitudeGeoLocationFromGPS(x.Longitude)
+                }).ToList();
+                result.ForEach(x => x.GeoFenceCount = fenceClusters.Count(f => f.AcukwikAirportID == x.AcukwikAirportId));
+                return result;
+            }
+            catch (System.Exception exception)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet("clusters-by-acukwik-airport-id/{acukwikAirportId}")]
+        public async Task<ActionResult<List<AirportFboGeofenceClusters>>> GetClustersByAcukwikAirportId([FromRoute] int acukwikAirportId)
+        {
+            try
+            {
+                var clusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirportId);
+                return clusters;
+            }
+            catch (System.Exception exception)
+            {
+                return new List<AirportFboGeofenceClusters>();
+            }
         }
     }
 }

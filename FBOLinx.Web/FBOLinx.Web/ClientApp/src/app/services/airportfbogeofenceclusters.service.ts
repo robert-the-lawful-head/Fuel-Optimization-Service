@@ -42,4 +42,18 @@ export class AirportFboGeofenceClustersService {
             headers: this.headers,
         });
     }
+
+    getAirportsWithAntennaData() {
+        return this.http.get(this.accessPointUrl + '/airports/list',
+            {
+                headers: this.headers
+            });
+    }
+
+    getClustersByAcukwikAirportId(acukwikAirportId) {
+        return this.http.get(this.accessPointUrl + '/clusters-by-acukwik-airport-id/' + acukwikAirportId,
+            {
+                headers: this.headers
+            });
+    }
 }
