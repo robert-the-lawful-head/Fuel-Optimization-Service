@@ -341,9 +341,9 @@ namespace FBOLinx.Web.Services
             foreach (var record in data)
             {
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
-                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).ToList();
+                    .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
-                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault();
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid)).FirstOrDefault();
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
