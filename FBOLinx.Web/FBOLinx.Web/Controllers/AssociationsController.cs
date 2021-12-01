@@ -129,7 +129,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/associations/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGroup([FromRoute] int id)
+        public async Task<IActionResult> DeleteAssociation([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {

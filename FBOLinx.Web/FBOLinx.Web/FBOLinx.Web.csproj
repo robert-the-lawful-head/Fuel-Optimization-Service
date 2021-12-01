@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+	<PackageReference Include="DBSCAN" Version="2.0.12" />
 	<PackageReference Include="Geolocation" Version="1.2.1" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
 	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
@@ -57,6 +58,9 @@
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
@@ -66,11 +70,14 @@
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <None Remove="ClientApp\src\app\services\associations.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
@@ -116,6 +123,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
@@ -125,11 +135,14 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\associations.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />

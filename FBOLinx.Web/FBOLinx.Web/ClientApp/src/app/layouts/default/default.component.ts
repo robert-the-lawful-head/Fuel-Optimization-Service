@@ -120,6 +120,7 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/groups',
             '/default-layout/fbos',
             '/default-layout/group-analytics',
+            '/default-layout/fbo-geofencing'
         ];
         if (
             blacklist.findIndex((v) =>
@@ -187,9 +188,9 @@ export class DefaultLayoutComponent implements OnInit {
 
     isSidebarInvisible() {
         return (
-            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.role &&
             !this.sharedService.currentUser.impersonatedRole
-        );
+        ); //this.sharedService.currentUser.role === 3 &&
     }
 
     private loadFboPrices() {

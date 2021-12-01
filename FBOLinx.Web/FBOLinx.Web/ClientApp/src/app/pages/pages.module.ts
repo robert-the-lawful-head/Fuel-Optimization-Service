@@ -191,7 +191,11 @@ import { CustomerAircraftHistoryComponent } from './customer-history/customer-ai
 import { CutomerItpMraginHistoryComponent } from './customer-history/cutomer-itp-mragin-history/cutomer-itp-mragin-history.component';
 import { CustomerHistoryDetailsComponent } from './customer-history/customer-history-details/customer-history-details.component';
 import { CustomersAnalyticsComponent } from './customers/customers-analytics/customers-analytics.component';
-
+import { FboGeofencingHomeComponent } from './fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
+import { FboGeofencingGridComponent } from './fbo-geofencing/fbo-geofencing-grid/fbo-geofencing-grid.component';
+import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
+import { FboGeofencingDialogNewClusterComponent } from
+    './fbo-geofencing/fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component';
 
 @NgModule({
     declarations: [
@@ -316,7 +320,11 @@ import { CustomersAnalyticsComponent } from './customers/customers-analytics/cus
         CutomerItpMraginHistoryComponent,
         CustomersAnalyticsComponent,
         CustomerHistoryComponent,
-        CustomerHistoryDetailsComponent
+        CustomerHistoryDetailsComponent,
+        FboGeofencingHomeComponent,
+        FboGeofencingGridComponent,
+        FboGeofencingMapComponent,
+        FboGeofencingDialogNewClusterComponent
 
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
