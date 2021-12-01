@@ -1,65 +1,93 @@
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12">
-            <ngx-ui-loader [loaderId]="loaderName"
-                           bgsColor="rgb(100, 181, 246)"
-                           bgsPosition="center-center"
-                           bgsType="ball-spin"
-                           overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+<div class="card-wrap">
+    <h3 class="card-header h5">
+        <div class="row">
+            <div class="col-12">
+                <span class="card-header-title">
+                    {{airportFboGeofenceGridItem.icao}}
+                </span>
+                <button (click)="closeGeofenceEdit()" class="float-right close-btn"
+                        mat-icon-button>
+                    <mat-icon aria-hidden="false">close</mat-icon>
+                </button>
+            </div>
         </div>
-    </div>
+    </h3>
+    <div class="card-content edit-customer-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <ngx-ui-loader [loaderId]="loaderName"
+                                   bgsColor="rgb(100, 181, 246)"
+                                   bgsPosition="center-center"
+                                   bgsType="ball-spin"
+                                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+                </div>
+            </div>
 
-    <div class="row">
+            <div class="row">
+                <div class="col-12 text-center mb-3" *ngIf="isEditing && activeCluster">
+                    You are currently editing the cluster for {{this.activeCluster.fboName}}.  Click on the map to drop points for your fence.
+                </div>
+            </div>
 
-        <div class="col-md-9">
-            <div id="fbo-geofencing-map" style="min-height: 600px;"></div>
-        </div>
+            <div class="row">
 
-        <div class="col-3">
-            <div class="container-fluid">
-                <div class="row pb-2">
-                    <div class="col-9">
-                        <div class="font-weight-bold">Existing Clusters</div>
-                    </div>
-                    <div class="col-3">
-                        <button (click)="newClusterClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn" size="small"
-                                ni-button>
-                            Add New
-                        </button>
-                    </div>
+                <div class="col-md-8">
+                    <div id="fbo-geofencing-map" style="min-height: 600px;"></div>
                 </div>
 
-                <hr/>
-
-                <div class="row">
-                    <div class="col-12">
-                        
-                    </div>
-                </div>
-
-                <div class="row pt-2" *ngFor="let cluster of clusters">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-3">
-                                {{cluster.icao}}
-                            </div>
-                            <div class="col-6">
-                                {{cluster.fboName}}
+                <div class="col-4">
+                    <div class="container-fluid">
+                        <div class="row pb-2">
+                            <div class="col-9">
+                                <div class="font-weight-bold">Ramp GeoFences</div>
                             </div>
                             <div class="col-3">
-                                <button (click)="editRowClicked(cluster)" [view]="'accent'" beforeIcon="fa fa-edit" class="action-btn" ni-button size="small">
-                                    Edit
+                                <button (click)="newClusterClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn" size="small"
+                                        ni-button>
+                                    Add New
                                 </button>
                             </div>
                         </div>
-                        
+
+                        <hr />
+
+                        <div class="row">
+                            <div class="col-12">
+
+                            </div>
+                        </div>
+
+                        <div class="row pt-2" *ngFor="let cluster of clusters">
+                            <div class="col-12" (mouseenter)="onMouseEnterFbo(cluster)" (mouseleave)="onMouseLeaveFbo(cluster)">
+                                <div class="row" [ngClass]="{'inactive-custer': (activeCluster && activeCluster != cluster)}">
+                                    <div class="col-9">
+                                        {{cluster.fboName}}
+                                    </div>
+                                    <div class="col-3" *ngIf="isEditing && activeCluster == cluster">
+                                        <button (click)="stopEditingRowClicked(cluster)" [view]="'basic'" beforeIcon="fa fa-stop" class="action-btn" ni-button size="small">
+                                            Stop Editing
+                                        </button>
+                                    </div>
+                                    <div class="col-3" *ngIf="!isEditing">
+                                        <button (click)="deleteRowClicked(cluster)" [view]="'error'" beforeIcon="fa fa-trash" class="action-btn" ni-button size="small">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
                     </div>
-                    
                 </div>
+
             </div>
+
         </div>
-
     </div>
-
 </div>
+
+
+
+

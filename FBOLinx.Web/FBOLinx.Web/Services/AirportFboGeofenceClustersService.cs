@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 
 namespace FBOLinx.Web.Services
 {
@@ -38,15 +39,34 @@ namespace FBOLinx.Web.Services
 
         public async Task DeleteCluster(int id)
         {
-            var airportFboGeoFenceClusters = _context.AirportFboGeofenceClusters.Find(id);
-            _context.AirportFboGeofenceClusters.Remove(airportFboGeoFenceClusters);
+            try
+            {
+                var airportFboGeoFenceClusters = await _context.AirportFboGeofenceClusters.Where(x => x.Oid == id)
+                    .Include(x => x.ClusterCoordinatesCollection).FirstOrDefaultAsync();
+                if (airportFboGeoFenceClusters.ClusterCoordinatesCollection != null)
+                {
+                    foreach (var clusterCoordinate in airportFboGeoFenceClusters.ClusterCoordinatesCollection)
+                    {
+                        _context.Entry(clusterCoordinate).State = EntityState.Deleted;
+                    }
+                }
 
-            await _context.SaveChangesAsync();
+                _context.Entry(airportFboGeoFenceClusters).State = EntityState.Deleted;
+                await _context.SaveChangesAsync();
+            }
+            catch (System.Exception exception)
+            {
+
+            }
         }
+
 
         public async Task<List<AirportFboGeofenceClusters>> GetAllClusters(int acukwikAirportId = 0)
         {
-            var allFboGeoClusters = await _context.AirportFboGeofenceClusters.Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId)).ToListAsync();
+            var allFboGeoClusters = await _context.AirportFboGeofenceClusters
+                .Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId))
+                .Include(x => x.ClusterCoordinatesCollection)
+                .ToListAsync();
 
             var airportIds = allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToList();
 
@@ -64,6 +84,7 @@ namespace FBOLinx.Web.Services
                 if (fbo == null)
                     return;
                 x.AcukwikFBOHandlerID = fbo.HandlerId;
+                x.FboName = fbo.HandlerLongName;
             });
 
             return allFboGeoClusters;

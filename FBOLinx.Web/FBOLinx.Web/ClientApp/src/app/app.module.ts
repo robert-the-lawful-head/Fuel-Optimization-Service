@@ -94,6 +94,7 @@ import { TagsService } from './services/tags.service';
 import { AssociationsService } from './services/associations.service';
 import { AssociationsDialogNewAssociationComponent } from './pages/associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { AirportFboGeofenceClustersService } from './services/airportfbogeofenceclusters.service';
+import { AirportFboGeofenceClusterCoordinatesService } from './services/airportfbogeofenceclustercoordinates.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -204,7 +205,8 @@ import { AirportFboGeofenceClustersService } from './services/airportfbogeofence
         AirportWatchService,
         TagsService,
         AssociationsService,
-        AirportFboGeofenceClustersService
+        AirportFboGeofenceClustersService,
+        AirportFboGeofenceClusterCoordinatesService
     ],
 })
 export class AppModule { }

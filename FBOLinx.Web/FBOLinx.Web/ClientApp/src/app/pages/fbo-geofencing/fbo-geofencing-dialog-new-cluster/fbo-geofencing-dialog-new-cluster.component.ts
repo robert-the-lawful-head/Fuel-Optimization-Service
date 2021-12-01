@@ -27,6 +27,7 @@ export class FboGeofencingDialogNewClusterComponent implements OnInit {
     public dataSources: any = {};
     public icao: string = '';
     public acukwikFbo: any = null;
+    public loaderName: string = 'fbo-geofence-grid-loader';
 
     constructor(public dialogRef: MatDialogRef<FboGeofencingDialogNewClusterComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,

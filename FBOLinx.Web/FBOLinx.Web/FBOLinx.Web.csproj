@@ -76,6 +76,7 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
     <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <None Remove="ClientApp\src\app\services\associations.service.ts" />
@@ -140,6 +141,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\associations.service.ts" />

@@ -69,7 +69,7 @@
         "title": "FBO Geofencing",
         "icon": {
             "class": "fa fa-map-marker",
-            "bg": "#C5CAE9",
+            "bg": "#FFCCBC",
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/fbo-geofencing",

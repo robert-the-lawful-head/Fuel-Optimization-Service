@@ -1,3 +1,5 @@
+import { AirportFboGeoFenceClusterCoordinates } from './airport-fbo-geo-fence-cluster-coordinates';
+
 export type AirportFboGeoFenceCluster = {
     oid: number;
     acukwikAirportId: number;
@@ -6,5 +8,5 @@ export type AirportFboGeoFenceCluster = {
     centerLongitude: number;
     icao: string;
     fboName: string;
-    clusterCoordinatesCollection: any[];
+    clusterCoordinatesCollection: AirportFboGeoFenceClusterCoordinates[];
 };

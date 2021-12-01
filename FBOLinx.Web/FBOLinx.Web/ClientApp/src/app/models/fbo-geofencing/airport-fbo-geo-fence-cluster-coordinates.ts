@@ -3,4 +3,5 @@ export type AirportFboGeoFenceClusterCoordinates = {
     clusterId: number;
     latitude: number;
     longitude: number;
+    longitudeLatitudeAsList: any[];
 }

@@ -12,8 +12,20 @@ namespace FBOLinx.DB.Models
         [Column("OID")]
         public int Oid { get; set; }
         public int ClusterID { get; set; }
-        public float Latitude { get; set; }
-        public float Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        [NotMapped]
+        public List<double> LongitudeLatitudeAsList
+        {
+            get
+            {
+                var result = new List<double>();
+                result.Add(Longitude);
+                result.Add(Latitude);
+                return result;
+            }
+        }
 
         #region Relationships
         [ForeignKey("ClusterID")]

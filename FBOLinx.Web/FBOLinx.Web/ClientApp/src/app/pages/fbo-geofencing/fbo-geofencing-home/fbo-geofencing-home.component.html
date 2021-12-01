@@ -1,16 +1,30 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+<ni-breadcrumb [menu]="breadcrumb" *ngIf="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <div *ngIf="!airportFboGeofenceGridItem && airportFboGeoFenceGridData">
-        <div *ngIf="fboGeofencingData">
-            <app-fbo-geofencing-grid [fboGeofencingData]="fboGeofencingData" [airportFboGeoFenceGridData]="airportFboGeoFenceGridData" (onEditRow)="onEditAirportFboGeoFence($event)"></app-fbo-geofencing-grid>
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <div class="col-12">
+                <ngx-ui-loader [loaderId]="fboHomeLoaderName"
+                               bgsColor="rgb(100, 181, 246)"
+                               bgsPosition="center-center"
+                               bgsType="ball-spin"
+                               overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+            </div>
         </div>
-        <div *ngIf="!airportFboGeoFenceGridData">
-            <mat-spinner></mat-spinner>
+
+        <div *ngIf="!airportFboGeofenceGridItem && airportFboGeoFenceGridData" class="row">
+            <div *ngIf="fboGeofencingData" class="col-12">
+                <app-fbo-geofencing-grid [fboGeofencingData]="fboGeofencingData" [airportFboGeoFenceGridData]="airportFboGeoFenceGridData" (onEditRow)="onEditAirportFboGeoFence($event)"></app-fbo-geofencing-grid>
+            </div>
         </div>
-    </div>
-    <div *ngIf="airportFboGeofenceGridItem">
-        <app-fbo-geofencing-map [airportFboGeofenceGridItem]="airportFboGeofenceGridItem"></app-fbo-geofencing-map>
+        <div *ngIf="airportFboGeofenceGridItem" class="row">
+            <div class="col-12">
+                <app-fbo-geofencing-map [airportFboGeofenceGridItem]="airportFboGeofenceGridItem" (onCloseEditing)="onEditClosed($event)"></app-fbo-geofencing-map>
+            </div>
+        </div>
     </div>
     
+
+    
+
 </div>
