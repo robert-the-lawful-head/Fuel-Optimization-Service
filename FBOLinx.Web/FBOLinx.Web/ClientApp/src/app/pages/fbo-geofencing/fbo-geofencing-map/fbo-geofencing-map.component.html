@@ -40,7 +40,15 @@
                     <div class="container-fluid">
                         <div class="row pb-2">
                             <div class="col-9">
-                                <div class="font-weight-bold">Ramp GeoFences</div>
+                                <div>
+                                    <!--Ramp GeoFences-->
+                                    <mat-form-field>
+                                        <input (keyup)="onClusterFilterChanged($event.target.value)"
+                                               placeholder="Search Geo-Fences"
+                                               matInput />
+                                        <span matPrefix><i class="fa fa-search"></i></span>
+                                    </mat-form-field>
+                                </div>
                             </div>
                             <div class="col-3">
                                 <button (click)="newClusterClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn" size="small"
@@ -58,7 +66,13 @@
                             </div>
                         </div>
 
-                        <div class="row pt-2" *ngFor="let cluster of clusters">
+                        <div class="row pt-2" *ngIf="!clustersFiltered || clustersFiltered.length == 0">
+                            <div class="col-12">
+                                No records to display
+                            </div>
+                        </div>
+
+                        <div class="row pt-2" *ngFor="let cluster of clustersFiltered">
                             <div class="col-12" (mouseenter)="onMouseEnterFbo(cluster)" (mouseleave)="onMouseLeaveFbo(cluster)">
                                 <div class="row" [ngClass]="{'inactive-custer': (activeCluster && activeCluster != cluster)}">
                                     <div class="col-9">
