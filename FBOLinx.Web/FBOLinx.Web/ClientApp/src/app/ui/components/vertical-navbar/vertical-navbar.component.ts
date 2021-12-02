@@ -12,9 +12,9 @@ export class VerticalNavbarComponent implements OnInit {
 
     menuVisible() {
         return (
-            this.sharedService.currentUser.role !== 3 ||
+            this.sharedService.currentUser.role ||
             this.sharedService.currentUser.impersonatedRole
-        );
+        ); //this.sharedService.currentUser.role !== 3 ||
     }
 
     ngOnInit() {}

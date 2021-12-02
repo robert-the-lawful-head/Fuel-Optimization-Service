@@ -132,8 +132,7 @@ namespace FBOLinx.Job.AirportWatch
 
                 var airportWatchRow = new AirportWatchLiveData { };
 
-                if (string.IsNullOrEmpty(record.AircraftHexCode) ||
-                    string.IsNullOrEmpty(record.AtcFlightNumber))
+                if (string.IsNullOrEmpty(record.AircraftHexCode))
                 {
                     continue;
                 }

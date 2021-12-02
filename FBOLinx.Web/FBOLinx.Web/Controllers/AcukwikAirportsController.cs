@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
+using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -17,6 +18,7 @@ namespace FBOLinx.Web.Controllers
     public class AcukwikAirportsController : ControllerBase
     {
         private readonly DegaContext _context;
+     
 
         public AcukwikAirportsController(DegaContext context)
         {

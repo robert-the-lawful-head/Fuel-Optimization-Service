@@ -32,6 +32,8 @@ import { PricingTemplatesHomeComponent } from './pages/pricing-templates/pricing
 import { RampFeesHomeComponent } from './pages/ramp-fees/ramp-fees-home/ramp-fees-home.component';
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
+import { FboGeofencingHomeComponent } from './pages/fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
+
 const defaultRoutes: Routes = [
     {
         canActivate: [AuthGuard],
@@ -94,6 +96,14 @@ const defaultRoutes: Routes = [
             expectedRoles: [2, 3],
         },
         path: 'fbos/:id',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: FboGeofencingHomeComponent,
+        data: {
+            expectedRoles: [3],
+        },
+        path: 'fbo-geofencing',
     },
     {
         canActivate: [AuthGuard],

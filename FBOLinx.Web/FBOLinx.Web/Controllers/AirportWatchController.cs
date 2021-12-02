@@ -22,12 +22,14 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly FboService _fboService;
         private readonly FboLinxContext _context;
+        private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context)
+        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context , DBSCANService dBSCANService)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
+            _dBSCANService = dBSCANService;
         }
 
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
@@ -35,6 +37,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
+               // await _dBSCANService.GetParkingLocations();
                 var fboLocation = await _fboService.GetFBOLocaiton(fboId);
                 var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
                 return Ok(new
@@ -49,6 +52,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
         public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
@@ -65,16 +69,16 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("list")]
-        public async Task<ActionResult<AiriportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveData> data)
+        public async Task<ActionResult<AirportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveData> data)
         {
             try
             {
                 await _airportWatchService.ProcessAirportWatchData(data);
-                return Ok(new AiriportWatchDataPostResponse(true));
+                return Ok(new AirportWatchDataPostResponse(true));
             }
             catch (Exception exception)
             {
-                return Ok(new AiriportWatchDataPostResponse(false, exception.Message));
+                return Ok(new AirportWatchDataPostResponse(false, exception.Message));
             }
         }
 
@@ -84,6 +88,26 @@ namespace FBOLinx.Web.Controllers
             var startRecord = await _context.AirportWatchHistoricalData.OrderBy(item => item.AircraftPositionDateTimeUtc).FirstOrDefaultAsync();
 
             return Ok(startRecord.AircraftPositionDateTimeUtc);
+        }
+
+        [HttpGet(("parking-occurrences/{icao}"))]
+        public async Task<ActionResult<List<AirportWatchHistoricalData>>> GetParkingOccurrencesByAirportIcao(
+            [FromRoute] string icao, DateTime? startDateTime, DateTime? endDateTime)
+        {
+            try
+            {
+                if (startDateTime == null)
+                    startDateTime = DateTime.UtcNow.AddDays(-7);
+                if (endDateTime == null)
+                    endDateTime = DateTime.UtcNow;
+                var result = await _airportWatchService.GetParkingOccurencesByAirport(icao,
+                    startDateTime.GetValueOrDefault(), endDateTime.GetValueOrDefault());
+                return result.Take(50).ToList();
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new List<AirportWatchHistoricalData>());
+            }
         }
     }
 }

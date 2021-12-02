@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Add New Geo-Fence for FBO</h1>
+<div mat-dialog-content>
+    <div>
+        <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
+            <mat-select [(ngModel)]="acukwikFbo"
+                        placeholder="FBO">
+                <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
+                            [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button (click)="onStartClick()"
+            class="mr-1"
+            color="accent"
+            mat-flat-button>
+        Start
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+</div>

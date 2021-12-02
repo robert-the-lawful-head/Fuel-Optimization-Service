@@ -1,0 +1,66 @@
+<div #fboGeofencingTableContainer>
+    <div *ngIf="fboGeofencingData" class="col-6">
+        <app-table-global-search [matDataSource]="fboGeofencingDataSource"
+                                 placeholder="Search by ICAO, FBO"></app-table-global-search>
+    </div>
+
+    <div>
+        <table #fboGeofencingTable [dataSource]="fboGeofencingDataSource" class="col-md-12 mb-0" mat-table matSort>
+            <ng-container matColumnDef="icao">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    <span>ICAO</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{ geofence.icao }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fboCount">
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
+                    <span>FBO Count</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{ geofence.fboCount }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="geoFenceCount">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span>Fence Count</span>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    <div>
+                        {{ geofence.geoFenceCount }}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="needsAttention">
+                <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
+                    <div class="">Needs Attention</div>
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    {{geofence.needsAttention}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="addNew">
+                <th *matHeaderCellDef mat-header-cell>
+                    
+                </th>
+                <td *matCellDef="let geofence" mat-cell>
+                    <button (click)="editRowClicked(geofence)" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                            ni-button>
+                        Edit
+                    </button>
+                </td>
+            </ng-container>
+
+                <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+        </table>
+
+        <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="fboGeofencingData.length"
+                       [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+    </div>
+</div>

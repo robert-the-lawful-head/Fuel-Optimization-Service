@@ -62,7 +62,18 @@
             "color": "rgba(0,0,0,.87)"
         },
         "routing": "/default-layout/groups",
-        "roles": [3]
+        "roles": [ 3 ]
+    },
+    {
+
+        "title": "FBO Geofencing",
+        "icon": {
+            "class": "fa fa-map-marker",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fbo-geofencing",
+        "roles": [ 3 ]
     },
     {
         "title": "ITP Margin Templates",

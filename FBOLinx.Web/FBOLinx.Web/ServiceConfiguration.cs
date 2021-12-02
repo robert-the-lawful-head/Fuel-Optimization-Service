@@ -109,6 +109,7 @@ namespace FBOLinx.Web
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
 
             services.AddTransient<GroupFboService, GroupFboService>();
+           
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<FboService, FboService>();
             services.AddTransient<GroupService, GroupService>();
@@ -118,9 +119,11 @@ namespace FBOLinx.Web
             services.AddTransient<FbopricesService, FbopricesService>();
             services.AddTransient<EmailContentService, EmailContentService>();
             services.AddTransient <AssociationsService, AssociationsService>();
+            services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<CustomerAircraftService, CustomerAircraftService>();

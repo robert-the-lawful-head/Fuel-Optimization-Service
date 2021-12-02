@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.DB.Models;
 
 namespace FBOLinx.Web
 {
@@ -39,5 +40,11 @@ namespace FBOLinx.Web
         public string Avcard { get; set; }
         [Column("Acukwik_ID")]
         public double? AcukwikId { get; set; }
+
+        #region Relationships
+        [ForeignKey("AirportId")]
+        [InverseProperty("AcukwikFbohandlerDetailCollection")]
+        public AcukwikAirports AcukwikAirport { get; set; }
+        #endregion
     }
 }
