@@ -4,6 +4,7 @@ import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
 import { FeeCalculationApplyingTypes } from '../enums/fee-calculation-applying-types';
 import { FeeCalculationTypes } from '../enums/fee-calculation-types';
 import { FlightTypeClassifications } from '../enums/flight-type-classifications';
+import { StringFilterConditions } from '../enums/string-filter-conditions';
 
 export namespace EnumOptions {
     export class EnumOption {
@@ -54,5 +55,16 @@ export namespace EnumOptions {
             text: 'Below the Line',
             value: FeeCalculationApplyingTypes.PostMargin,
         },
+    ];
+
+    export const stringFilterConditionOptions: Array<EnumOption> = [
+        {
+            text: 'Contains',
+            value: StringFilterConditions.Contains,
+        },
+        {
+            text: 'Does Not Contain',
+            value: StringFilterConditions.DoesNotContain,
+        }
     ];
 }
