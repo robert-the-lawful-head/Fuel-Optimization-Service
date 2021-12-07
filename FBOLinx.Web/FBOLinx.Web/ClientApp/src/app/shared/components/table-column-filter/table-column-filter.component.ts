@@ -8,6 +8,8 @@ import {
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import * as moment from 'moment';
+import { EnumOptions } from "../../../models/enum-options";
+import { StringFilterConditions } from "../../../enums/string-filter-conditions";
 
 @Component({
     animations: [
@@ -62,9 +64,11 @@ export class TableColumnFilterComponent implements OnInit {
         },
         optionsFilter: [],
         stringFilter: '',
+        filterStringCondition: StringFilterConditions.Contains
     };
     public isHeadingOpen = false;
     public isFilterOpen = false;
+    public stringFilterConditionOptions: Array<EnumOptions.EnumOption> = EnumOptions.stringFilterConditionOptions;
 
     constructor() {}
 
@@ -194,14 +198,27 @@ export class TableColumnFilterComponent implements OnInit {
                             typeof propertyValue === 'number' ||
                             typeof propertyValue === 'string'
                         ) {
-                            if (
-                                propertyValue
-                                    .toString()
-                                    .toLowerCase()
-                                    .indexOf(element.filterValue) > -1
-                            ) {
-                                return true;
+                            if (element.filter.filterStringCondition == StringFilterConditions.Contains) {
+                                if (
+                                    propertyValue
+                                        .toString()
+                                        .toLowerCase()
+                                        .indexOf(element.filterValue) >
+                                        -1
+                                ) {
+                                    return true;
+                                }
+                            } else if (element.filter.filterStringCondition == StringFilterConditions.DoesNotContain) {
+                                if (
+                                    propertyValue
+                                        .toString()
+                                        .toLowerCase()
+                                        .indexOf(element.filterValue) === -1
+                                ) {
+                                    return true;
+                                }
                             }
+
                         } else if (propertyValue.amount) {
                             if (
                                 propertyValue.amount
@@ -242,7 +259,10 @@ export class TableColumnFilterComponent implements OnInit {
                             !element.filter.optionsFilter.length
                                 ||
                             element.filter.optionsFilter.some((v) =>
-                                columnValue.find((c) => c.value === v || c.name === v))
+                                columnValue.find((c) => ((c.value === v || c.name === v) && element.filter.filterStringCondition == StringFilterConditions.Contains)))
+                            ||
+                            (element.filter.filterStringCondition == StringFilterConditions.DoesNotContain && element.filter.optionsFilter.every((v) =>
+                                    !(columnValue.find((c) => ((c.value === v || c.name === v))))))
 
                         );
                     }
@@ -281,15 +301,24 @@ export class TableColumnFilterComponent implements OnInit {
                                     parseFloat(columnValue))
                         );
                     }
-                    return (
-                        columnValue
-                            .toLowerCase()
-                            .indexOf(
-                                element.filter.stringFilter
-                                    .toString()
-                                    .toLowerCase()
-                            ) > -1
-                    );
+                    if (element.filter.filterStringCondition == StringFilterConditions.Contains) {
+                        return (
+                            columnValue
+                                .toLowerCase()
+                                .indexOf(element.filter.stringFilter
+                                    .toLowerCase()) >
+                                -1
+                        );
+                    } else if (element.filter.filterStringCondition == StringFilterConditions.DoesNotContain) {
+                        return (
+                            columnValue
+                                .toLowerCase()
+                                .indexOf(element.filter.stringFilter
+                                    .toLowerCase()) ===
+                                -1
+                        );
+                    }
+                    return true;
                 }
             };
 

@@ -135,16 +135,27 @@
                 </div>
                 <div
                     *ngIf="[0, 7].indexOf(column.columnFormat) > -1"
-                    class="col-12"
-                >
+                    class="col-12">
+                    <div>
+                        <mat-form-field *ngIf="isFilterOpen">
+                            <mat-label>{{ column.heading }} Filter</mat-label>
+                            <mat-select [(ngModel)]="filter.filterStringCondition">
+                                <mat-option *ngFor="
+                                                let condition of stringFilterConditionOptions
+                                            "
+                                            [value]="condition.value">
+                                    {{ condition.text }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                     <div>
                         <mat-form-field *ngIf="isFilterOpen">
                             <mat-label>{{ column.heading }} Filter</mat-label>
                             <input
                                 (click)="$event.stopPropagation()"
                                 [(ngModel)]="filter.stringFilter"
-                                matInput
-                            />
+                                matInput/>
                         </mat-form-field>
                     </div>
                 </div>
@@ -211,18 +222,27 @@
                         </div>
                     </div>
                 </div>
-                <div
-                    *ngIf="[10, 11].indexOf(column.columnFormat) > -1"
-                    class="col-12"
-                >
+                <div *ngIf="[10, 11].indexOf(column.columnFormat) > -1"
+                     class="col-12">
+                    <div>
+                        <mat-form-field *ngIf="isFilterOpen">
+                            <mat-label>{{ column.heading }} Filter</mat-label>
+                            <mat-select [(ngModel)]="filter.filterStringCondition">
+                                <mat-option *ngFor="
+                                                let condition of stringFilterConditionOptions
+                                            "
+                                            [value]="condition.value">
+                                    {{ condition.text }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                     <div (click)="$event.stopPropagation()" class="mb-2 mt-2">
-                        <ejs-multiselect
-                            [dataSource]="options"
-                            [fields]="{ text: optionLabel, value: optionValue }"
-                            placeholder="Select filters"
-                            [showSelectAll]="true"
-                            [(ngModel)]="filter.optionsFilter"
-                        ></ejs-multiselect>
+                        <ejs-multiselect [dataSource]="options"
+                                         [fields]="{ text: optionLabel, value: optionValue }"
+                                         placeholder="Select filters"
+                                         [showSelectAll]="true"
+                                         [(ngModel)]="filter.optionsFilter"></ejs-multiselect>
                     </div>
                 </div>
                 <div *ngIf="isFilterOpen" class="col-12">
