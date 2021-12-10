@@ -214,6 +214,13 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
         }
     }
 
+    public layerToggleClicked(styleId: string): void {
+        if (styleId.indexOf('default') == -1)
+            this.map.setStyle('mapbox://styles/mapbox/' + styleId);
+        else
+            this.map.setStyle('mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd');
+    }
+
     public onMouseEnterFbo(cluster: AirportFboGeoFenceCluster): void {
         var layerId = 'fbo-cluster-layer-' + cluster.oid;
         var layer = this.map.getLayer(layerId);

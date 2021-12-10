@@ -581,6 +581,10 @@ div.customer-aircraft-table {
     font-size: 30px;
 }
 
+.is-editing .mapboxgl-canvas-container.mapboxgl-interactive {
+    cursor: pointer !important
+}
+
 .mat-flat-button.mat-black {
     background-color: black;
     color: white;
