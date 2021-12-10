@@ -32,8 +32,26 @@
 
             <div class="row">
 
-                <div class="col-md-8">
+                <div class="col-md-8" [ngClass]="{'is-editing': (isEditing)}">
                     <div id="fbo-geofencing-map" style="min-height: 600px;"></div>
+                    <div id="fbo-geofencing-layer-menu">
+                        <input id="default-fbolinx" type="radio" name="rtoggle" value="default" checked="checked" (click)="layerToggleClicked('default')">
+                        <!-- See a list of Mapbox-hosted public styles at -->
+                        <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
+                        <label for="default-fbolinx">Default</label>
+                        <input id="satellite-v9" type="radio" name="rtoggle" value="satellite" (click)="layerToggleClicked('satellite-v9')">
+                        <!-- See a list of Mapbox-hosted public styles at -->
+                        <!-- https://docs.mapbox.com/api/maps/styles/#mapbox-styles -->
+                        <label for="satellite-v9">Satellite</label>
+                        <input id="light-v10" type="radio" name="rtoggle" value="light" (click)="layerToggleClicked('light-v10')">
+                        <label for="light-v10">Light</label>
+                        <input id="dark-v10" type="radio" name="rtoggle" value="dark" (click)="layerToggleClicked('dark-v10')">
+                        <label for="dark-v10">Dark</label>
+                        <input id="streets-v11" type="radio" name="rtoggle" value="streets" (click)="layerToggleClicked('streets-v11')">
+                        <label for="streets-v11">Streets</label>
+                        <input id="outdoors-v11" type="radio" name="rtoggle" value="outdoors" (click)="layerToggleClicked('outdoors-v11')">
+                        <label for="outdoors-v11">Outdoors</label>
+                    </div>
                 </div>
 
                 <div class="col-4">

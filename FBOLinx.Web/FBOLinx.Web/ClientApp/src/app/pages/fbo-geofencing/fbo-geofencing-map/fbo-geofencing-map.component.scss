@@ -11,6 +11,22 @@
     opacity: 0.5;
 }
 
+#fbo-geofencing-layer-menu {
+    position: absolute;
+    background: #efefef;
+    padding: 10px;
+    font-family: 'Open Sans', sans-serif;
+    top: 0;
+}
+
+#fbo-geofencing-layer-menu input {
+    margin-right: 3px;
+}
+
+#fbo-geofencing-layer-menu label {
+    padding-right: 7px;
+}
+
 #menu {
     background: #fff;
     position: absolute;
