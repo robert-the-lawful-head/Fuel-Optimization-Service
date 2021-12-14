@@ -50,6 +50,7 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
 
     public acukwikFbos: any[];
     public clusters: AirportFboGeoFenceCluster[];
+    public clustersFiltered: AirportFboGeoFenceCluster[];
     public parkingOccurrences: FlightWatch[];
     
     public loaderName: string = 'fbo-geofence-map-loader';
@@ -150,6 +151,7 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
                 if (!response)
                     return;
                 this.clusters.push(response);
+                this.clustersFiltered.push(response);
                 this.activeCluster = response;
                 this.isEditing = true;
             });
@@ -186,6 +188,7 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
             this.airportFboGeoFenceClustersService.remove(cluster).subscribe((response: any) => {
                 this.ngxLoader.stopLoader(this.loaderName);
                 this.clusters.splice(this.clusters.indexOf(cluster), 1);
+                this.clustersFiltered.splice(this.clustersFiltered.indexOf(cluster), 1);
                 this.refreshClustersOnMap();
             });
         });
@@ -224,6 +227,16 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
         if (!layer)
             return;
         this.map.setPaintProperty(layerId, 'fill-color', '#0080ff');
+    }
+
+    public onClusterFilterChanged(value: string) {
+        this.clustersFiltered.length = 0;
+        this.clusters.forEach((cluster: AirportFboGeoFenceCluster) => {
+            if (value == null || value == '')
+                this.clustersFiltered.push(cluster);
+            else if (cluster.fboName.toLowerCase().indexOf(value.toLowerCase()) > -1)
+                this.clustersFiltered.push(cluster);
+        });
     }
 
     private refreshParkingOccurrencesOnMap(): void {
@@ -311,7 +324,7 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
                 this.checkLoadingStatus();
                 if (!response)
                     return;
-                this.acukwikFbos.push(...response);
+                this.acukwikFbos.push(...response.sort(x => x.handlerLongName));
             });
     }
 
@@ -319,10 +332,12 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
         this.airportFboGeoFenceClustersService.getClustersByAcukwikAirportId(this.airportFboGeofenceGridItem.acukwikAirportId)
             .subscribe((response: any) => {
                 this.clusters = [];
+                this.clustersFiltered = [];
                 this.checkLoadingStatus();
                 if (!response)
                     return;
-                this.clusters.push(...response);
+                this.clusters.push(...response.sort(x => x.fboName));
+                this.clustersFiltered.push(...response.sort(x => x.fboName));
                 this.refreshClustersOnMap();
             });
     }

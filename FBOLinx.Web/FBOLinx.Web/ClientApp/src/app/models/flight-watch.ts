@@ -17,4 +17,5 @@ export type FlightWatch = {
     isAircraftOnGround: boolean;
     fuelOrder?: boolean;
     isFuelerLinxCustomer: boolean;
+    tailNumber: string;
 };

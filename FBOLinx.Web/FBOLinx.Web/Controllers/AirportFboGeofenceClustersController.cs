@@ -191,7 +191,7 @@ namespace FBOLinx.Web.Controllers
                 var result = airportsWithAntennaData.Select(x => new AirportFboGeoFenceGridVM()
                 {
                     AcukwikAirportId = x.AirportId,
-                    FboCount = (x.AcukwikFbohandlerDetailCollection?.Count).GetValueOrDefault(),
+                    FboCount = (x.AcukwikFbohandlerDetailCollection == null ? 0 : x.AcukwikFbohandlerDetailCollection.Where(x => x.HandlerType == "FBO").ToList().Count),
                     Icao = x.Icao,
                     GeoFenceCount = (fenceClusters?.Count).GetValueOrDefault(),
                     Latitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLatitudeGeoLocationFromGPS(x.Latitude),
