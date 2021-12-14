@@ -17,7 +17,6 @@ import { FboGeofencingDialogNewClusterComponent } from
     "../fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component";
 
 // Services
-import { SharedService } from '../../../layouts/shared-service';
 import { AcukwikairportsService } from "../../../services/acukwikairports.service";
 import { AirportFboGeofenceClustersService } from "../../../services/airportfbogeofenceclusters.service";
 import { AirportWatchService } from "../../../services/airportwatch.service";

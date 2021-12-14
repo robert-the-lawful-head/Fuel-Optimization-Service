@@ -18,5 +18,7 @@ namespace FBOLinx.Web.Models.Responses.AirportWatch
         public int? PastVisits { get; set; }
         public string Originated { get; set; }
         public string AirportIcao { get; set; }
+        public int? VisitsToMyFbo { get; set; }
+        public double? PercentOfVisits { get; set; }
     }
 }

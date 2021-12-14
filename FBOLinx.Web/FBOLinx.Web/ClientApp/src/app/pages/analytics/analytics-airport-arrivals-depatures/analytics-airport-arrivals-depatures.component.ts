@@ -20,15 +20,20 @@ import {
 import * as XLSX from 'xlsx';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
+import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
+
 // Services
 import { SharedService } from '../../../layouts/shared-service';
+import { AirportWatchService } from '../../../services/airportwatch.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FbosService } from '../../../services/fbos.service';
+
+//Models
 import { CustomersListType } from '../../../models/customer';
 import {
     FlightWatchHistorical,
     FlightWatchStatus,
 } from '../../../models/flight-watch-historical';
-import { AirportWatchService } from '../../../services/airportwatch.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
@@ -37,7 +42,7 @@ import {
     CsvExportModalComponent,
     ICsvExportModalData,
 } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
-import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
+
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -63,6 +68,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         'dateTime',
         'status',
         'pastVisits',
+        'visitsToMyFbo',
+        'percentOfVisits',
     ];
 
     filterStartDate: Date;
@@ -81,7 +88,58 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     aircraftTypes = AIRCRAFT_IMAGES;
 
     tableLocalStorageKey: string;
+
     columns: ColumnType[] = [];
+
+    fboName: string = "";
+
+    initialColumns: ColumnType[] = [
+        {
+            id: 'company',
+            name: 'Company',
+        },
+        {
+            id: 'tailNumber',
+            name: 'Tail #',
+        },
+        {
+            id: 'flightNumber',
+            name: 'Flight #',
+        },
+        {
+            id: 'hexCode',
+            name: 'Hex #',
+        },
+        {
+            id: 'aircraftType',
+            name: `Aircraft`,
+        },
+        {
+            id: 'aircraftTypeCode',
+            name: 'Aircraft Type',
+        },
+        {
+            id: 'dateTime',
+            name: 'Date and Time',
+            sort: 'desc',
+        },
+        {
+            id: 'status',
+            name: 'Departure / Arrival',
+        },
+        {
+            id: 'pastVisits',
+            name: 'Past Visits',
+        },
+        {
+            id: 'visitsToMyFbo',
+            name: 'Visits to My FBO',
+        },
+        {
+            id: 'percentOfVisits',
+            name: 'Percent of Visits',
+        },
+    ];
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -90,7 +148,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private customerInfoByGroupService: CustomerinfobygroupService
+        private customerInfoByGroupService: CustomerinfobygroupService,
+        private fbosService: FbosService
     ) {
         this.filterStartDate = new Date(
             moment().add(-1, 'M').format('MM/DD/YYYY')
@@ -111,6 +170,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.getFboName();
         this.getCustomersList();
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
@@ -127,6 +187,18 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         });
 
         this.refreshData();
+    }
+
+    getFboName() {
+        if (this.fboName && this.fboName != "")
+            return;
+        this.fbosService
+            .get({
+                oid: this.sharedService.currentUser.fboId,
+            })
+            .subscribe((data: any) => {
+                this.fboName = data.fbo;
+            });
     }
 
     getCustomersList() {
@@ -155,57 +227,23 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
+
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
                 localStorage.getItem(this.tableLocalStorageKey)
             );
+            if (this.columns.length !== this.initialColumns.length) {
+                this.columns = this.initialColumns;
+            }
         } else {
-            this.columns = [
-                {
-                    id: 'company',
-                    name: 'Company',
-                },
-                {
-                    id: 'tailNumber',
-                    name: 'Tail #',
-                },
-                {
-                    id: 'flightNumber',
-                    name: 'Flight #',
-                },
-                {
-                    id: 'hexCode',
-                    name: 'Hex #',
-                },
-                {
-                    id: 'aircraftType',
-                    name: `Aircraft`,
-                },
-                {
-                    id: 'aircraftTypeCode',
-                    name: 'Aircraft Type',
-                },
-                {
-                    id: 'dateTime',
-                    name: 'Date and Time',
-                    sort: 'desc',
-                },
-                {
-                    id: 'status',
-                    name: 'Departure / Arrival',
-                },
-                {
-                    id: 'pastVisits',
-                    name: 'Past Visits',
-                },
-            ];
+            this.columns = this.initialColumns;
         }
     }
 
     refreshData() {
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
-            (data) => {
+            (data: any[]) => {
                 this.data = data;
 
                 this.refreshDataSource();

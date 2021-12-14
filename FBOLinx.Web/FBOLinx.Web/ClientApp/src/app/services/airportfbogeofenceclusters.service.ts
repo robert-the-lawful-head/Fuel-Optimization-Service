@@ -56,4 +56,11 @@ export class AirportFboGeofenceClustersService {
                 headers: this.headers
             });
     }
+
+    getClustersByIcao(icao) {
+        return this.http.get(this.accessPointUrl + '/clusters-by-icao/' + icao,
+            {
+                headers: this.headers
+            });
+    }
 }
