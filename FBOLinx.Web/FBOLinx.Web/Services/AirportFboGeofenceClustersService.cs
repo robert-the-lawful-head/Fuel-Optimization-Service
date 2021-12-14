@@ -89,5 +89,11 @@ namespace FBOLinx.Web.Services
 
             return allFboGeoClusters;
         }
+
+        public async Task<List<AirportFboGeofenceClusterCoordinates>> GetClusterCoordinatesByClusterId(int clusterId)
+        {
+            var clusterCoordinates = await _context.AirportFboGeoFenceClusterCoordinates.Where(a => a.ClusterID == clusterId).ToListAsync();
+            return clusterCoordinates;
+        }
     }
 }

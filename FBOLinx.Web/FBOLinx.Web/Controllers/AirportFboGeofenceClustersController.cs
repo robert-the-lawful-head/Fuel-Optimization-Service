@@ -22,14 +22,16 @@ namespace FBOLinx.Web.Controllers
 
     public class AirportFboGeofenceClustersController : ControllerBase
     {
+        private readonly DegaContext _degaContext;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private AirportWatchService _airportWatchService;
 
-        public AirportFboGeofenceClustersController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService)
+        public AirportFboGeofenceClustersController(DegaContext degaContext, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService)
         {
+            _degaContext = degaContext;
             _airportWatchService = airportWatchService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _context = context;
@@ -210,6 +212,22 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 var clusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirportId);
+                return clusters;
+            }
+            catch (System.Exception exception)
+            {
+                return new List<AirportFboGeofenceClusters>();
+            }
+        }
+
+        [HttpGet("clusters-by-icao/{icao}")]
+        public async Task<ActionResult<List<AirportFboGeofenceClusters>>> GetClustersByIcao([FromRoute] string icao)
+        {
+            try
+            {
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => (x != null && x.Icao == icao)).FirstOrDefaultAsync();
+
+                var clusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirport.AirportId);
                 return clusters;
             }
             catch (System.Exception exception)

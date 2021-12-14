@@ -29,6 +29,12 @@ export class FbosService {
         });
     }
 
+    public getByFboId(fboid) {
+        return this.http.get(this.accessPointUrl + '/' + fboid, {
+            headers: this.headers,
+        });
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,

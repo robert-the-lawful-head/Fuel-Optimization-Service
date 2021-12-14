@@ -12,8 +12,14 @@ import {
 import { difference, isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { AirportFboGeofenceClustersService } from "../../../services/airportfbogeofenceclusters.service";
+import { AirportFboGeofenceClusterCoordinatesService } from
+    "../../../services/airportfbogeofenceclustercoordinates.service";
+
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { FlightWatch } from '../../../models/flight-watch';
+import { AirportFboGeoFenceCluster } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-cluster';
 import { AIRCRAFT_IMAGES } from './aircraft-images';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -44,7 +50,14 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     focusedMarkerId: number = 0;
     showLayers: boolean = false;
 
-    constructor() {}
+    public clusters: AirportFboGeoFenceCluster[];
+    public fboClusterLayerIds: string[] = [];
+    public fboClusterSourceIds: string[] = [];
+    public activeCluster: AirportFboGeoFenceCluster = null;
+
+    constructor(private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
+        private airportFboGeofenceClusterCoordinatesService: AirportFboGeofenceClusterCoordinatesService,
+        private sharedService: SharedService) { }
 
     ngOnInit(): void {
         this.map = new mapboxgl.Map({
@@ -109,6 +122,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             };
             fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
         });
+
+        this.loadClusters();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -358,5 +373,105 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
 
     mapResize() {
         this.map.resize();
+    }
+
+    private loadClusters(): void {
+        this.airportFboGeoFenceClustersService.getClustersByIcao(this.sharedService.currentUser.icao)
+            .subscribe((response: any) => {
+                this.clusters = [];
+                if (!response)
+                    return;
+                this.clusters.push(...response);
+                this.refreshClustersOnMap();
+            });
+    }
+
+    private refreshClustersOnMap(): void {
+        if (!this.styleLoaded)
+            return;
+
+        if (!this.clusters)
+            return;
+
+        this.fboClusterLayerIds.forEach((id) => {
+            this.map.removeLayer(id);
+        });
+
+        this.fboClusterLayerIds = [];
+
+        this.fboClusterSourceIds.forEach((id) => {
+            this.map.removeSource(id);
+        });
+
+        this.fboClusterSourceIds = [];
+
+        this.clusters.forEach((cluster: AirportFboGeoFenceCluster) => {
+            if (this.activeCluster != null && this.activeCluster != cluster)
+                return;
+
+            const clusterPolygonSourceId: string = 'fbo-cluster-source-' + cluster.oid;
+            const clusterPolygonLayerId: string = 'fbo-cluster-layer-' + cluster.oid;
+            this.map.addSource(clusterPolygonSourceId,
+                {
+                    data: {
+                        geometry: {
+                            coordinates: [cluster.clusterCoordinatesCollection.map(coords => coords.longitudeLatitudeAsList)],
+                            //coordinates: cluster.clusterCoordinatesCollection.map(coords => new mapboxgl.LngLat(coords.longitude, coords.latitude)),
+                            type: 'Polygon',
+                        },
+                        properties: {
+                            id: cluster.oid,
+                            description: cluster.fboName
+                        },
+                        type: 'Feature',
+                    },
+                    type: 'geojson',
+                });
+
+            this.map.addLayer({
+                id: clusterPolygonLayerId,
+                layout: {},
+                source: clusterPolygonSourceId,
+                type: 'fill',
+                paint: {
+                    'fill-color': '#0080ff',
+                    'fill-opacity': 0.5
+                }
+            });
+
+            // Create a popup, but don't add it to the map yet.
+            const popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick: false
+            });
+
+            this.map.on('mouseenter', clusterPolygonLayerId, (e) => {
+                // Change the cursor style as a UI indicator.
+                this.map.getCanvas().style.cursor = 'pointer';
+
+                // Copy coordinates array.
+                const coordinates = e.lngLat;
+                const description = e.features[0].properties.description;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                // Populate the popup and set its coordinates
+                // based on the feature found.
+                popup.setLngLat(coordinates).setHTML(description).addTo(this.map);
+            });
+
+            this.map.on('mouseleave', clusterPolygonLayerId, () => {
+                this.map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
+
+            this.fboClusterLayerIds.push(clusterPolygonLayerId);
+            this.fboClusterSourceIds.push(clusterPolygonSourceId);
+        });
     }
 }
