@@ -1,8 +1,11 @@
 <mat-card [@openClose]="flightWatch ? 'open' : 'closed'" *ngIf="flightWatch">
     <mat-card-header>
         <mat-card-title>{{ flightWatch?.atcFlightNumber }}</mat-card-title>
-        <mat-card-subtitle
-            >Hex: {{ flightWatch?.aircraftHexCode }}</mat-card-subtitle
+        <mat-card-subtitle>
+            <div>
+                Hex: {{ flightWatch?.aircraftHexCode }}
+            </div>
+        </mat-card-subtitle
         >
 
         <button
@@ -17,6 +20,9 @@
     </mat-card-header>
 
     <mat-card-content>
+        <h6>
+            Tail: <span>{{ flightWatch?.tailNumber }}</span>
+        </h6>
         <h6>
             Type: <span>{{ flightWatch?.aircraftTypeCode }}</span>
         </h6>
