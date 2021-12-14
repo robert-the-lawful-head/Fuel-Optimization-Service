@@ -327,8 +327,6 @@ namespace FBOLinx.Web.Services
             //Grab distinct aircraft for this set of data
             var distinctAircraftHexCodes =
                 data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
-            var distinctFlightNumbers = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
-                .Select(x => x.AtcFlightNumber).ToList().Distinct();
 
             //Preload the collection of past records from the last 7 days to use in the loop
             var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
@@ -421,7 +419,7 @@ namespace FBOLinx.Web.Services
             var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcao(fboId.Value) : null;
 
             var historicalData = await (from awhd in _context.AirportWatchHistoricalData
-                                        join awat in _context.AirportWatchAircraftTailNumber on new { awhd.AircraftHexCode, awhd.AtcFlightNumber } equals new { awat.AircraftHexCode, awat.AtcFlightNumber }
+                                        join awat in _context.AircraftHexTailMapping on new { awhd.AircraftHexCode } equals new { awat.AircraftHexCode }
                                         join ca in (
                                             from ca in _context.CustomerAircrafts
                                             join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
@@ -435,7 +433,7 @@ namespace FBOLinx.Web.Services
                                                 cig.Company,
                                                 CustomerInfoByGroupID = cig.Oid,
                                             }
-                                        ) on awat.AtcFlightNumber equals ca.TailNumber
+                                        ) on awat.TailNumber equals ca.TailNumber
                                         into leftJoinedCustomers
                                         from ca in leftJoinedCustomers.DefaultIfEmpty()
                                         where
