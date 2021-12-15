@@ -287,8 +287,8 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
         this.fboClusterSourceIds = [];
 
         this.clusters.forEach((cluster: AirportFboGeoFenceCluster) => {
-            if (this.activeCluster != null && this.activeCluster != cluster)
-                return;
+            //if (this.activeCluster != null && this.activeCluster != cluster)
+            //    return;
 
             const clusterPolygonSourceId: string = 'fbo-cluster-source-' + cluster.oid;
             const clusterPolygonLayerId: string = 'fbo-cluster-layer-' + cluster.oid;
@@ -307,14 +307,14 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
                     },
                     type: 'geojson',
                 });
-
+            
             this.map.addLayer({
                 id: clusterPolygonLayerId,
                 layout: {},
                 source: clusterPolygonSourceId,
                 type: 'fill',
                 paint: {
-                    'fill-color': '#0080ff',
+                    'fill-color': (this.activeCluster != null && this.activeCluster != cluster ? '#FFB042' : '#0080ff'),
                     'fill-opacity': 0.5
                 }
             });
