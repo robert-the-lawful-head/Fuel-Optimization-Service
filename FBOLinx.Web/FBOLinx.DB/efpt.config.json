@@ -1,5 +1,4 @@
 ﻿{
-   "CodeGenerationMode": 1,
    "ContextClassName": "FboLinxContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
@@ -14,24 +13,17 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[ContactInfoByFbo]",
-         "ObjectType": 0
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[AircraftHexTailMapping]"
       }
    ],
-   "UiHint": "FL-TEST-DB01.paragon_test",
-   "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
    "UseFluentApiOnly": false,
    "UseHandleBars": false,
    "UseInflector": false,
    "UseLegacyPluralizer": false,
-   "UseNoConstructor": false,
-   "UseNoDefaultConstructor": false,
-   "UseNoNavigations": false,
-   "UseNoObjectFilter": false,
    "UseNodaTime": false,
-   "UseNullableReferences": false,
-   "UseSchemaFolders": false,
-   "UseSpatial": false
+   "UseSpatial": false,
+   "UseStoredProcedures": false
 }

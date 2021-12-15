@@ -34,6 +34,8 @@ namespace FBOLinx.DB.Models
         public FuelReq FuelOrder { get; set; }
         [NotMapped]
         public bool? IsFuelerLinxCustomer { get; set; }
+        [NotMapped]
+        public string TailNumber { get; set; }
 
         public static void CopyEntity(AirportWatchLiveData oldRecord, AirportWatchLiveData newRecord)
         {

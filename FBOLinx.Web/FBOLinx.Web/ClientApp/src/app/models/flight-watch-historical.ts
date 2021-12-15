@@ -18,6 +18,8 @@ export type FlightWatchHistorical = {
     pastVisits: number;
     originated: string;
     isFuelerlinx: boolean;
+    visitsToMyFbo: number;
+    percentOfVisits: number;
 };
 
 export type AirportWatchHistoricalDataRequest = {
