@@ -147,7 +147,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
-        
+        public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
+
 
         public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
         public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
@@ -1027,6 +1028,13 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Oid).HasColumnName("OID");
                 entity.Property(e => e.AssociationName).HasColumnName("Association");
             });
+
+             modelBuilder.Entity<AircraftHexTailMapping>(entity =>
+             {
+                 entity.Property(e => e.AircraftHexCode).IsUnicode(false);
+
+                 entity.Property(e => e.TailNumber).IsUnicode(false);
+             });
 
         }
     }
