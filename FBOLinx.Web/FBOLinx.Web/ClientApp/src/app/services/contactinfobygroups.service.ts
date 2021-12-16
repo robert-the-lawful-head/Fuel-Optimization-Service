@@ -34,8 +34,8 @@ export class ContactinfobygroupsService {
         });
     }
 
-    public add(payload , userId) {
-        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
+    public add(payload, userId, customerId) {
+        return this.http.post(this.accessPointUrl + '/' + userId + '/customer/' + customerId, payload, {
             headers: this.headers,
         });
     }
