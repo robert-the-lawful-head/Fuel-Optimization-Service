@@ -20,64 +20,67 @@ namespace FBOLinx.DB.Context
 
       
 
-        public virtual async Task<int> SaveChangesAsync(int userId = 0)
+        public virtual async Task<int> SaveChangesAsync(int userId = 0, int customerId = 0, int groupId = 0, int fboId = 0)
         {
-            OnBeforeSaveChanges(userId);
+            OnBeforeSaveChanges(userId, customerId, groupId, fboId);
             var result = await base.SaveChangesAsync();
             return result;
         }
 
         //for Add the new / old Data and Serilize it 
-        private void OnBeforeSaveChanges(int userId)
+        private void OnBeforeSaveChanges(int userId, int customerId, int groupId, int fboId)
         {
-            if(userId != 0)
+            if (userId != 0)
             {
-            ChangeTracker.DetectChanges();
-            var auditEntries = new List<AuditEntry>();
-            foreach (var entry in ChangeTracker.Entries())
-            {
-                if (entry.Entity is Audit || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
-                    continue;
-                var auditEntry = new AuditEntry(entry);
-                
-                auditEntry.TableName = entry.Entity.GetType().Name;
-                auditEntry.UserId = userId;
-                auditEntries.Add(auditEntry);
-                foreach (var property in entry.Properties)
+                ChangeTracker.DetectChanges();
+                var auditEntries = new List<AuditEntry>();
+                foreach (var entry in ChangeTracker.Entries())
                 {
-                    string propertyName = property.Metadata.Name;
-                    if (property.Metadata.IsPrimaryKey())
+                    if (entry.Entity is Audit || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                        continue;
+                    var auditEntry = new AuditEntry(entry);
+
+                    auditEntry.CustomerId = customerId;
+                    auditEntry.FboId = fboId;
+                    auditEntry.GroupId = groupId;
+                    auditEntry.TableName = entry.Entity.GetType().Name;
+                    auditEntry.UserId = userId;
+                    auditEntries.Add(auditEntry);
+                    foreach (var property in entry.Properties)
                     {
+                        string propertyName = property.Metadata.Name;
+                        if (property.Metadata.IsPrimaryKey())
+                        {
                             auditEntry.KeyValue[propertyName] = property.CurrentValue;
                             continue;
-                    }
-                    switch (entry.State)
-                    {
-                        case EntityState.Added:
-                            auditEntry.AuditType = AuditType.Create;
-                            auditEntry.NewValues[propertyName] = property.CurrentValue;
-                            break;
-                        case EntityState.Deleted:
-                            auditEntry.AuditType = AuditType.Delete;
-                            auditEntry.OldValues[propertyName] = property.OriginalValue;
-                            break;
-                        case EntityState.Modified:
-                            if (property.IsModified)
-                            {                           
-                                        auditEntry.ChangedColumns.Add(propertyName);                                    
+                        }
+                        switch (entry.State)
+                        {
+                            case EntityState.Added:
+                                auditEntry.AuditType = AuditType.Create;
+                                auditEntry.NewValues[propertyName] = property.CurrentValue;
+                                break;
+                            case EntityState.Deleted:
+                                auditEntry.AuditType = AuditType.Delete;
+                                auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                break;
+                            case EntityState.Modified:
+                                if (property.IsModified)
+                                {
+                                    auditEntry.ChangedColumns.Add(propertyName);
                                     auditEntry.AuditType = AuditType.Update;
 
-                                        auditEntry.OldValues[propertyName] = property.OriginalValue;
-                                        auditEntry.NewValues[propertyName] = property.CurrentValue;                      
-                            }
-                            break;
+                                    auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                    auditEntry.NewValues[propertyName] = property.CurrentValue;
+                                }
+                                break;
+                        }
                     }
                 }
-            }
-            foreach (var auditEntry in auditEntries)
-            {
-                AuditsLogs.Add(auditEntry.ToAudit());
-            }
+                foreach (var auditEntry in auditEntries)
+                {
+                    AuditsLogs.Add(auditEntry.ToAudit());
+                }
             }
         }
 

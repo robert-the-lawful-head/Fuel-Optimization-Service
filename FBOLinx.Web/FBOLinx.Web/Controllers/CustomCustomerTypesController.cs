@@ -98,17 +98,18 @@ namespace FBOLinx.Web.Controllers
             }           
             try
             {
-                CustomCustomerTypes oldValue = _context.CustomCustomerTypes.FirstOrDefault(c=>c.Oid == customCustomerTypes.Oid);
+                CustomCustomerTypes oldValue = await _context.CustomCustomerTypes.FirstOrDefaultAsync(c => c.Oid == customCustomerTypes.Oid);
+                Fbos fbo = await _context.Fbos.Where(f => f.Oid == customCustomerTypes.Fboid).FirstOrDefaultAsync();
 
-                if(oldValue != null)
+                if (oldValue != null)
                 {
-                    if(CompareCustoemrType(oldValue , customCustomerTypes) == false)
+                    if (CompareCustoemrType(oldValue, customCustomerTypes) == false)
                     {
                         oldValue.CustomerId = customCustomerTypes.CustomerId;
                         oldValue.CustomerType = customCustomerTypes.CustomerType;
                         oldValue.Fboid = customCustomerTypes.Fboid;
                         _context.CustomCustomerTypes.Update(oldValue);
-                        await _context.SaveChangesAsync(userId);
+                        await _context.SaveChangesAsync(userId, customCustomerTypes.CustomerId, fbo.GroupId.GetValueOrDefault(), customCustomerTypes.Fboid);
                     }
                 }
                

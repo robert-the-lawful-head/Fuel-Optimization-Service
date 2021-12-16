@@ -48,12 +48,17 @@ namespace FBOLinx.DB.Models
         public Dictionary<string, object> NewValues { get; } = new Dictionary<string, object>();
         public AuditType AuditType { get; set; }
         public List<string> ChangedColumns { get; } = new List<string>();
-
+        public int CustomerId { get; set; }
+        public int GroupId { get; set; }
+        public int FboId { get; set; }
 
         public Audit ToAudit()
         {
             var audit = new Audit();
             audit.UserId = UserId;
+            audit.CustomerId = CustomerId;
+            audit.FboId = FboId;
+            audit.GroupId = GroupId;
             audit.Type = AuditType.ToString();
             audit.TableName = TableName;
             audit.DateTime = DateTime.Now;
@@ -63,7 +68,5 @@ namespace FBOLinx.DB.Models
             audit.AffectedColumns = ChangedColumns.Count == 0 ? null : JsonConvert.SerializeObject(ChangedColumns);
             return audit;
         }
-
-
     }
 }
