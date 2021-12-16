@@ -15,7 +15,7 @@ import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup
 })
 export class CustomerHistoryComponent implements OnInit {
 
-  @Input() customerHistroy : any;
+  @Input() customerHistory : any;
   customerHistoryDataSource : any;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -40,14 +40,14 @@ export class CustomerHistoryComponent implements OnInit {
         update => {
             if(update == true)
             {
-                this.customerInfobyGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id')).subscribe(
-                    data=> this.customerHistroy = data
+                this.customerInfobyGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id'), this.sharedService.currentUser.fboId).subscribe(
+                    data => this.customerHistory = data
                 )
             }
         }
     )
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-    this.customerHistoryDataSource =   new MatTableDataSource(this.customerHistroy);
+      this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory);
     this.customerHistoryDataSource.sort = this.sort;
     this.customerHistoryDataSource.paginator = this.paginator;
     if (sessionStorage.getItem('pageIndex')) {

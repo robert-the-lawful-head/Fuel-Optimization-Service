@@ -142,7 +142,8 @@ export class CustomersEditComponent implements OnInit {
                 this.sharedService.currentUser.fboId
             ),
             //6
-            this.customerInfoByGroupService.getCustomerLogger(id),
+            this.customerInfoByGroupService.getCustomerLogger(id,
+                this.sharedService.currentUser.fboId),
 
             this.customersViewedByFboService.add({
                 customerId: this.customerInfoByGroup.customerId,
@@ -548,7 +549,7 @@ export class CustomersEditComponent implements OnInit {
                 currentContactInfoByGroup.CopyAlerts = false;
 
             this.contactInfoByGroupsService
-                .add(this.currentContactInfoByGroup , this.sharedService.currentUser.oid)
+                .add(this.currentContactInfoByGroup, this.sharedService.currentUser.oid, this.customerInfoByGroup.customerId)
                 .subscribe((data: any) => {
                     this.currentContactInfoByGroup.oid = data.oid;
                     this.saveCustomerContact();

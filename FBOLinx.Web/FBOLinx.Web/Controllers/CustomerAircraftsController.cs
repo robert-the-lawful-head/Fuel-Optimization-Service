@@ -164,7 +164,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
+                CustomerAircrafts custAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.Oid == customerAircrafts.Oid);
                  
                 if (custAircraft != null)
                 {
@@ -174,7 +174,7 @@ namespace FBOLinx.Web.Controllers
                     custAircraft.Size = customerAircrafts.Size;
                     _context.CustomerAircrafts.Update(custAircraft);
                 }
-                await _context.SaveChangesAsync(userId);
+                await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
 
                 return Ok(custAircraft);
             }
@@ -268,7 +268,7 @@ namespace FBOLinx.Web.Controllers
             }
           
             _context.CustomerAircrafts.Add(customerAircrafts);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
@@ -451,7 +451,7 @@ namespace FBOLinx.Web.Controllers
 
            
             _context.CustomerAircrafts.Remove(customerAircrafts);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
 
             return Ok(customerAircrafts);
         }

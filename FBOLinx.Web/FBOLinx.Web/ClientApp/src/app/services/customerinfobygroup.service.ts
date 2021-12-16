@@ -39,9 +39,9 @@ export class CustomerinfobygroupService {
         );
     }
 
-    public getCustomerLogger(customerId)
+    public getCustomerLogger(customerId, fboId: number)
     {
-        return this.http.get(`${this.accessPointUrl}/CustomerLogger/${customerId}`, {
+        return this.http.get(`${this.accessPointUrl}/CustomerLogger/customer/${customerId}/fbo/${fboId}`, {
             headers: this.headers,
         });
     }
