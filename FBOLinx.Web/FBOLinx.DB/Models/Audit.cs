@@ -32,5 +32,8 @@ namespace FBOLinx.DB.Models
         public string NewValues { get; set; }
         public string AffectedColumns { get; set; }
         public string PrimaryKey { get; set; }
+        public int CustomerId { get; set; }
+        public int GroupId { get; set; }
+        public int FboId { get; set; }
     }
 }

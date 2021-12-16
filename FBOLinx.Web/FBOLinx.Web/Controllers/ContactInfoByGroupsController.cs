@@ -128,8 +128,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/ContactInfoByGroups
-        [HttpPost("{userId}")]
-        public async Task<IActionResult> PostContactInfoByGroup([FromRoute] int userId ,[FromBody] ContactInfoByGroup contactInfoByGroup)
+        [HttpPost("{userId}/customer/{customerId}")]
+        public async Task<IActionResult> PostContactInfoByGroup([FromRoute] int userId, [FromRoute] int customerId, [FromBody] ContactInfoByGroup contactInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -137,7 +137,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.ContactInfoByGroup.Add(contactInfoByGroup);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(userId, customerId, contactInfoByGroup.GroupId);
 
             return CreatedAtAction("GetContactInfoByGroup", new { id = contactInfoByGroup.Oid }, contactInfoByGroup);
         }
@@ -202,8 +202,9 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
+            var customerContact = await _context.CustomerContacts.Where(c => c.ContactId == contactInfoByGroup.ContactId).FirstOrDefaultAsync();
             _context.ContactInfoByGroup.Remove(contactInfoByGroup);
-            await _context.SaveChangesAsync(userId);
+            await _context.SaveChangesAsync(userId, customerContact.CustomerId, contactInfoByGroup.GroupId);
 
 
             return Ok(contactInfoByGroup);
