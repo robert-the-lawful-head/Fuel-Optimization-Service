@@ -19,10 +19,8 @@ GO
 /****** Object:  Table [dbo].[FAAAircraftHexTailMapping]    Script Date: 12/13/2021 11:36:18 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
-
 CREATE TABLE [dbo].[FAAAircraftHexTailMapping](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[AircraftHexCode] [varchar](25) NOT NULL,
@@ -32,6 +30,11 @@ CREATE TABLE [dbo].[FAAAircraftHexTailMapping](
 	[OID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+ALTER TABLE [AuditsLogs]
+ADD CustomerId int,
+GroupId int,
+FboId int;
 GO
 insert into AircraftHexTailMapping (AircraftHexCode, TailNumber)
 select f.AircraftHexCode, f.TailNumber
