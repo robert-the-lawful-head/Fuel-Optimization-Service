@@ -452,7 +452,9 @@ namespace FBOLinx.Web.Services
 
             var historicalData = await (from awhd in _context.AirportWatchHistoricalData
                                       join awat in _context.AircraftHexTailMapping on new { awhd.AircraftHexCode } equals new { awat.AircraftHexCode }
-                                      where
+                                          into leftJoinedTailMappings
+                                      from awat in leftJoinedTailMappings.DefaultIfEmpty()
+                                        where
                                          (!fboId.HasValue || awhd.AirportICAO == fboIcao) &&
                                          (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
                                          (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
