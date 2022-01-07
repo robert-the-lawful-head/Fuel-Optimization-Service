@@ -153,7 +153,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
                 g.FboCount = groupFbos.Count();
-                g.ExpiredFboPricingCount = groupFbos.Count(f => f.PricingExpired == true);
+                g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
                 g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
             });
 
