@@ -71,10 +71,8 @@
         <e-column field="groupName" headerText="Group"></e-column>
         <e-column field="expiredFboPricingCount" headerText="Pricing Expired">
             <ng-template #template let-data>
-                <span
-                    [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
-                    class="status"
-                >
+                <span [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
+                      class="status">
                     {{
                         data.expiredFboPricingCount === 0
                             ? "All Pricing Live"
@@ -89,7 +87,7 @@
         <e-column field="needAttentionCustomers" headerText="Need Attentions">
             <ng-template #template let-data>
                 <span
-                    [ngClass]="{ good: data.needAttentionCustomers == 0 }"
+                    [ngClass]="{ good: data.needAttentionCustomers == 0}"
                     class="status"
                 >
                     {{ data.needAttentionCustomers }} Need Attentions
@@ -119,7 +117,7 @@
             field="orders30Days"
             headerText="Fuel Orders (last 30 days)"
         ></e-column>
-        <e-column field="expiredFboAccountCount" headerText="Accounts Expired">
+        <e-column field="expiredFboAccountCount" headerText="Active / Inactive">
             <ng-template #template let-data>
                 <span
                     [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
