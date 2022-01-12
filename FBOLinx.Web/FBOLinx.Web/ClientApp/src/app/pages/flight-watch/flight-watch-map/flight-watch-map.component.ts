@@ -122,8 +122,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             };
             fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
         });
-
-        this.loadClusters();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -314,6 +312,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     mapStyleLoaded() {
+        if (!this.styleLoaded)
+            this.loadClusters();
         this.styleLoaded = true;
     }
 
@@ -376,6 +376,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private loadClusters(): void {
+        if (this.clusters)
+            return;
         this.airportFboGeoFenceClustersService.getClustersByIcao(this.sharedService.currentUser.icao)
             .subscribe((response: any) => {
                 this.clusters = [];
@@ -387,9 +389,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private refreshClustersOnMap(): void {
-        if (!this.styleLoaded)
-            return;
-
         if (!this.clusters)
             return;
 
