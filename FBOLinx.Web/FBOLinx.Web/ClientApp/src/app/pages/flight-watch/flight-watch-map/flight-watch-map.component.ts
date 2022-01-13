@@ -73,7 +73,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         this.map.on('dragend', eventHandler);
         this.map.on('rotate', eventHandler);
         this.map.on('resize', eventHandler);
-        this.map.on('load', () => eventHandler());
+        this.map.on('load', () => { eventHandler(); this.loadClusters(); });
         this.map.on('styledata', () => this.mapStyleLoaded());
 
         AIRCRAFT_IMAGES.forEach((image) => {
@@ -312,8 +312,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     mapStyleLoaded() {
-        if (!this.styleLoaded)
-            this.loadClusters();
         this.styleLoaded = true;
     }
 
