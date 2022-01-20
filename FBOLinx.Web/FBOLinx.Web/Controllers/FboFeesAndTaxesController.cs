@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Controllers
                 if (x.IsOmitted)
                     x.OmittedFor = "P";
             });
-            return Ok(fboFeesAndTaxes);
+            return Ok(fboFeesAndTaxes); 
         }
 
         // PUT: api/FboFeesAndTaxes/5
