@@ -33,6 +33,11 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 
 import { NiComponentsModule } from '../ni-components/ni-components.module';
 import { AdditionNavbarComponent } from './components/addition-navbar/addition-navbar.component';
@@ -96,6 +101,9 @@ import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-n
         MatToolbarModule,
         MatTooltipModule,
         NgbPopoverModule,
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule,
     ],
 })
 export class UIModule {}

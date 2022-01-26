@@ -369,8 +369,8 @@ export class PricingTemplatesEditComponent implements OnInit {
             oid: 0,
             pricingTemplateId: this.id,
         };
-        if (feeAndTax.omitsByPricingTemplate.length > 0) {
-            omitRecord = feeAndTax.omitsByPricingTemplate[0];
+        if (feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid) != undefined) {
+            omitRecord = feeAndTax.omitsByPricingTemplate.find(o => o.fboFeeAndTaxId == feeAndTax.oid);
         } else {
             feeAndTax.omitsByPricingTemplate.push(omitRecord);
         }

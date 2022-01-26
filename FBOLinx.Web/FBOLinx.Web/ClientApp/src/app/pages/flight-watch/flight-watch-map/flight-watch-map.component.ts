@@ -73,7 +73,7 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
         this.map.on('dragend', eventHandler);
         this.map.on('rotate', eventHandler);
         this.map.on('resize', eventHandler);
-        this.map.on('load', () => eventHandler());
+        this.map.on('load', () => { eventHandler(); this.loadClusters(); });
         this.map.on('styledata', () => this.mapStyleLoaded());
 
         AIRCRAFT_IMAGES.forEach((image) => {
@@ -122,8 +122,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
             };
             fuelerlinxReversedImg.src = image.fuelerlinxReverseUrl;
         });
-
-        this.loadClusters();
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -376,6 +374,8 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private loadClusters(): void {
+        if (this.clusters)
+            return;
         this.airportFboGeoFenceClustersService.getClustersByIcao(this.sharedService.currentUser.icao)
             .subscribe((response: any) => {
                 this.clusters = [];
@@ -387,9 +387,6 @@ export class FlightWatchMapComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private refreshClustersOnMap(): void {
-        if (!this.styleLoaded)
-            return;
-
         if (!this.clusters)
             return;
 

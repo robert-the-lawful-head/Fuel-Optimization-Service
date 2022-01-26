@@ -95,7 +95,7 @@ export class PriceBreakdownComponent implements OnInit {
 
     public omitChanged(fee: any): void {
         if (fee.isOmitted) {
-            fee.omittedFor = (this.feeAndTaxDisplayMode == FeeAndTaxBreakdownDisplayModes.CustomerOmitting ? 'C' : 'P');
+            fee.omittedFor = (this.feeAndTaxDisplayMode == FeeAndTaxBreakdownDisplayModes.CustomerOmitting && this.customerInfoByGroupId > 0 ? 'C' : 'P');
         } else {
             fee.omittedFor = '';
         }
