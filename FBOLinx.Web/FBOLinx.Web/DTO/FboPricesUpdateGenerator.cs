@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace FBOLinx.Web.DTO
+{
+    public class FboPricesUpdateGenerator
+    {
+        public int OidCost { get; set; }
+        public int OidPap { get; set; }
+        public int Fboid { get; set; }
+        public string Product { get; set; }
+        public double? PriceCost { get; set; }
+        public double? PricePap { get; set; }
+        public DateTime EffectiveFrom { get; set; }
+        public DateTime EffectiveFromUtc { get; set; }
+        public DateTime? EffectiveTo { get; set; }
+    }
+}

@@ -62,6 +62,7 @@
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
@@ -72,6 +73,7 @@
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-home\fbo-prices-pricing-update-generator.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
@@ -128,6 +130,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
@@ -138,6 +141,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-update-generator\fbo-prices-update-generator.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />

@@ -36,6 +36,11 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { TextMaskModule } from 'angular2-text-mask';
 import { PopoverModule } from 'ngx-smart-popover';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
+import {
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
@@ -139,6 +144,9 @@ import { AirportFboGeofenceClusterCoordinatesService } from './services/airportf
         MatToolbarModule,
         MatTooltipModule,
         NgxUiLoaderModule,
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule,
         TextMaskModule,
         EffectsModule.forRoot([]),
         StoreModule.forRoot(reducers, {
