@@ -120,6 +120,7 @@ namespace FBOLinx.Web
             services.AddTransient<EmailContentService, EmailContentService>();
             services.AddTransient <AssociationsService, AssociationsService>();
             services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
+            services.AddTransient<DateTimeService, DateTimeService>();
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();

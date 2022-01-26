@@ -59,6 +59,12 @@ import {
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { ResizableModule } from 'angular-resizable-element';
 import { TextMaskModule } from 'angular2-text-mask';
+import {
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
+
 // Popover
 import { PopoverModule } from 'ngx-smart-popover';
 import { NgxUiLoaderModule } from 'ngx-ui-loader';
@@ -136,11 +142,14 @@ import { CustomersEditComponent } from './customers/customers-edit/customers-edi
 import { CustomersGridComponent } from './customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardFboUpdatedComponent } from './dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
 import { EmailTemplatesEditComponent } from './email-templates/email-templates-edit/email-templates-edit.component';
 import { EmailTemplatesGridComponent } from './email-templates/email-templates-grid/email-templates-grid.component';
 import { EmailTemplatesHomeComponent } from './email-templates/email-templates-home/email-templates-home.component';
 import { FboPricesHomeComponent } from './fbo-prices/fbo-prices-home/fbo-prices-home.component';
+import { FboPricesUpdateGeneratorComponent } from './fbo-prices/fbo-prices-update-generator/fbo-prices-update-generator.component';
+import { FboPricesUpdateGeneratorGridComponent } from './fbo-prices/fbo-prices-update-generator-grid/fbo-prices-update-generator-grid.component';
 import { FboPricesSelectDefaultTemplateComponent } from './fbo-prices/fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from './fbo-prices/fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 import { FbosContactsComponent } from './fbos/fbos-contacts/fbos-contacts.component';
@@ -219,6 +228,7 @@ import { FboGeofencingDialogNewClusterComponent } from
         CustomersGridComponent,
         CustomersHomeComponent,
         DashboardFboComponent,
+        DashboardFboUpdatedComponent,
         DashboardHomeComponent,
         EmailTemplatesDialogNewTemplateComponent,
         EmailTemplatesEditComponent,
@@ -228,6 +238,8 @@ import { FboGeofencingDialogNewClusterComponent } from
         FbosDialogNewFboComponent,
         FbosGridNewFboDialogComponent,
         FboPricesHomeComponent,
+        FboPricesUpdateGeneratorComponent,
+        FboPricesUpdateGeneratorGridComponent,
         FbosHomeComponent,
         FbosGridComponent,
         FbosEditComponent,
@@ -387,7 +399,10 @@ import { FboGeofencingDialogNewClusterComponent } from
         MultiSelectModule,
         ListboxModule,
         DropdownModule,
-        Ej2MultiSelectModule
+        Ej2MultiSelectModule,
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule
     ],
     providers: [
         ColumnMenuService,

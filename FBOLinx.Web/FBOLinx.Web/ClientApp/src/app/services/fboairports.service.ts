@@ -42,4 +42,17 @@ export class FboairportsService {
             headers: this.headers,
         });
     }
+
+    public getLocalDateTime(payload) {
+        return this.http.get(this.accessPointUrl + '/local-datetime-now/fbo/' + payload.fboid, {
+            headers: this.headers,
+        });
+    }
+
+    public getLocalTimeZone(fboid) {
+        return this.http.get(this.accessPointUrl + '/local-timezone/fbo/' + fboid, {
+            headers: this.headers,
+            responseType: 'text',
+        });
+    }
 }
