@@ -58,6 +58,15 @@ export class FbopricesService {
         );
     }
 
+    public getFbopricesByFboIdAllStaged(fboId) {
+        return this.http.get(
+            this.accessPointUrl + '/fbo/' + fboId + '/all-staged',
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getFbopricesByFboIdAndProductCurrent(fboId, product) {
         return this.http.get(
             this.accessPointUrl +
@@ -98,6 +107,15 @@ export class FbopricesService {
         });
     }
 
+    public suspendPricingGenerator(payload) {
+        return this.http.post(this.accessPointUrl + '/suspendpricinggenerator/', 
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(
             this.accessPointUrl + '/analysis/prices-by-month/fbo/' + fboId,
@@ -130,8 +148,20 @@ export class FbopricesService {
         });
     }
 
+    public removePricingGenerator(payload) {
+        return this.http.post(this.accessPointUrl + '/delete-price-generator/', payload, {
+            headers: this.headers,
+        });
+    }
+
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
+
+    public updatePricingGenerator(payload) {
+        return this.http.post(this.accessPointUrl + '/update-price-generator/', payload, {
             headers: this.headers,
         });
     }

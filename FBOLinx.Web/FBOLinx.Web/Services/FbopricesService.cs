@@ -52,7 +52,7 @@ namespace FBOLinx.Web.Services
                           join s in addOnMargins on new { FboId = fboId } equals new { s.FboId }
                           into tmpJoin
                           from s in tmpJoin.DefaultIfEmpty()
-                          where p.Description.StartsWith("JetA")
+                          where p.Description.StartsWith("JetA") || p.Description.StartsWith("SAF")
                           select new FbopricesResult
                           {
                               Oid = f?.Oid ?? 0,

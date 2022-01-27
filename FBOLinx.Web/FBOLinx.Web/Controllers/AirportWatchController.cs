@@ -38,7 +38,7 @@ namespace FBOLinx.Web.Controllers
             try
             {
                // await _dBSCANService.GetParkingLocations();
-                var fboLocation = await _fboService.GetFBOLocaiton(fboId);
+                var fboLocation = await _fboService.GetFBOLocation(fboId);
                 var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
                 return Ok(new
                 {

@@ -17,7 +17,11 @@ namespace FBOLinx.DB.Models
             [Description("100LL Cost")]
             Fuel100LLCost = 2,
             [Description("100LL Retail")]
-            Fuel100LRetail = 3
+            Fuel100LRetail = 3,
+            [Description("SAF Cost")]
+            FuelSAFCost = 4,
+            [Description("SAF Retail")]
+            FuelSAFRetail = 5
         }
 
         [Key]

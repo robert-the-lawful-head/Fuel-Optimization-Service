@@ -15,6 +15,7 @@ import { ResetPasswordComponent } from './pages/auth/reset-password/reset-passwo
 import { CustomersEditComponent } from './pages/customers/customers-edit/customers-edit.component';
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardFboUpdatedComponent } from './pages/dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
 import { EmailTemplatesEditComponent } from './pages/email-templates/email-templates-edit/email-templates-edit.component';
 import { EmailTemplatesHomeComponent } from './pages/email-templates/email-templates-home/email-templates-home.component';
@@ -54,6 +55,11 @@ const defaultRoutes: Routes = [
         canActivate: [AuthGuard],
         component: DashboardFboComponent,
         path: 'dashboard-fbo',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: DashboardFboUpdatedComponent,
+        path: 'dashboard-fbo-updated',
     },
     {
         canActivate: [AuthGuard],

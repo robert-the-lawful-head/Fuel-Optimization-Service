@@ -9,6 +9,7 @@ using FBOLinx.DB.Context;
 using Geolocation;
 using FBOLinx.Web.Models.Requests;
 using System.IO;
+using FBOLinx.DB.Models;
 
 namespace FBOLinx.Web.Services
 {
@@ -56,7 +57,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        public async Task<Coordinate> GetFBOLocaiton(int fboid)
+        public async Task<Coordinate> GetFBOLocation(int fboid)
         {
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboid).FirstOrDefaultAsync();
             if (fboAirport == null)
@@ -132,6 +133,55 @@ namespace FBOLinx.Web.Services
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
 
             return fboAirport.Icao;
+        }
+
+        public async Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId)
+        {
+            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+
+            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        where afh.HandlerId == fboAcukwikId
+                                        select aa).FirstOrDefaultAsync();
+
+            if (acukwikAirport == null)
+                return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+
+            var result = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTime(utcDateTime, acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
+            result = DateTime.SpecifyKind(result, DateTimeKind.Unspecified);
+            return result;
+        }
+
+        public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
+        {
+            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+
+            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        where afh.HandlerId == fboAcukwikId
+                                        select aa).FirstOrDefaultAsync();
+
+            if (acukwikAirport == null)
+                return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+
+            var result = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeNow(acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
+            result = DateTime.SpecifyKind(result, DateTimeKind.Unspecified);
+            return result;
+        }
+
+        public async Task<string> GetAirportTimeZoneByFboId(int fboId)
+        {
+            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+
+            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        where afh.HandlerId == fboAcukwikId
+                                        select aa).FirstOrDefaultAsync();
+
+            if (acukwikAirport == null)
+                return "";
+
+            return Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeZone(acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
         }
     }
 }
