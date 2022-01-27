@@ -75,7 +75,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxNearbyAirportsResponse result = await apiClient.GetTransactionsCountForNearbyAirportsAsync(request);
+            FBOLinxNearbyAirportsResponse result = await apiClient.FBOLinx_GetTransactionsCountForNearbyAirportsAsync(request);
             return result;
         }
 
@@ -83,7 +83,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxOrdersResponse result = await apiClient.GetTransactionsCountAsync(request);
+            FBOLinxOrdersResponse result = await apiClient.FBOLinx_GetTransactionsCountAsync(request);
             return result;
         }
 
@@ -91,7 +91,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxContractFuelVendorsCountResponse result = await apiClient.GetContractFuelVendorsTransactionsCountAsync(request);
+            FboLinxContractFuelVendorsCountResponse result = await apiClient.FBOLinx_GetContractFuelVendorsTransactionsCountAsync(request);
             return result;
         }
 
@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxContractFuelVendorsCountsByAirportsResponse result = await apiClient.GetContractFuelVendorsTransactionsCountByAirportsAsync(request);
+            FboLinxContractFuelVendorsCountsByAirportsResponse result = await apiClient.FBOLinx_GetContractFuelVendorsTransactionsCountByAirportsAsync(request);
             return result;
         }
 
@@ -107,7 +107,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxFbosTransactionsCountResponse result = await apiClient.GetFboTransactionsCountAsync(request);
+            FboLinxFbosTransactionsCountResponse result = await apiClient.FBOLinx_GetFboTransactionsCountAsync(request);
             return result;
         }
 
@@ -115,7 +115,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxGroupOrdersResponse result = await apiClient.GetGroupFbosTransactionsCountAsync(request);
+            FBOLinxGroupOrdersResponse result = await apiClient.FBOLinx_GetGroupFbosTransactionsCountAsync(request);
             return result;
         }
 
@@ -123,7 +123,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerTransactionsCountAsync(request);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.FBOLinx_GetCustomerTransactionsCountAsync(request);
             return result;
         }
 
@@ -131,7 +131,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerTransactionsCountForMultipleAirportsAsync(request);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.FBOLinx_GetCustomerTransactionsCountForMultipleAirportsAsync(request);
             return result;
         }
 
@@ -139,7 +139,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.GetCustomerFBOTransactionsCountAsync(request);
+            FboLinxCustomerTransactionsCountAtAirportResponse result = await apiClient.FBOLinx_GetCustomerFBOTransactionsCountAsync(request);
             return result;
         }
 
@@ -147,7 +147,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxOrdersResponse result = await apiClient.GetTransactionsDirectOrdersCountAsync(request);
+            FBOLinxOrdersResponse result = await apiClient.FBOLinx_GetTransactionsDirectOrdersCountAsync(request);
             return result;
         }
 
@@ -155,7 +155,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxContractFuelOrdersResponse result = await apiClient.GetContractFuelOrdersAsync(request);
+            FBOLinxContractFuelOrdersResponse result = await apiClient.FBOLinx_GetContractFuelOrdersAsync(request);
             return result;
         }
 
@@ -163,7 +163,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxAircraftsResponse result = await apiClient.GetAircraftTailsGroupedByCompanyAsync();
+            FboLinxAircraftsResponse result = await apiClient.FBOLinx_GetAircraftTailsGroupedByCompanyAsync();
             return result;
         }
 
@@ -171,7 +171,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FBOLinxFuelVendorUpdateResponse result = await apiClient.UpdateFuelVendorAsync(request);
+            FBOLinxFuelVendorUpdateResponse result = await apiClient.FBOLinx_UpdateFuelVendorAsync(request);
             return result.Result;
         }
 
@@ -179,7 +179,7 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            int result = await apiClient.GetLatestPullHistoryFlightDepartmentForICAOAsync(request);
+            int result = await apiClient.FBOLinx_GetLatestPullHistoryFlightDepartmentForICAOAsync(request);
             return result;
         }
 
@@ -187,8 +187,15 @@ namespace FBOLinx.Web.Services
         {
             var authToken = await GetAuthenticationTokenFromService();
             var apiClient = GetApiClient(authToken);
-            FboLinxCustomerFuelVendorsResponse result = await apiClient.GetCustomerFuelVendorsAsync();
+            FboLinxCustomerFuelVendorsResponse result = await apiClient.FBOLinx_GetCustomerFuelVendorsAsync();
             return result.Result;
+        }
+
+        public async Task ClearQuoteCacheForAirports(List<string> airportIdentifiers)
+        {
+            var apiClient = await GetApiClient();
+            await apiClient.FBOLinx_ClearQuoteCacheForLocationsAsync(new FboLinxClearQuoteCacheRequest()
+                {AirportIdentifiers = airportIdentifiers});
         }
         #endregion
 
@@ -226,6 +233,12 @@ namespace FBOLinx.Web.Services
             }
         }
 
+        public async Task<IClient> GetApiClient()
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            return GetApiClient(authToken);
+        }
+
         public IClient GetApiClient(string authToken)
         {
             _httpClient = new HttpClient();
@@ -237,7 +250,8 @@ namespace FBOLinx.Web.Services
                 AdjustHeader("Authorization", "Bearer " + authToken.Replace("JWT ", ""));
             }
 
-            Client client = new Client(_fuelerlinxSdkSettings.APIEndpoint, _httpClient);
+            Client client = new Client(_httpClient);
+            client.BaseUrl = _fuelerlinxSdkSettings.APIEndpoint;
             return client;
         }
 

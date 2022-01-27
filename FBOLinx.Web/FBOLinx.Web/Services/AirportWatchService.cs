@@ -101,7 +101,7 @@ namespace FBOLinx.Web.Services
                             fuelReq.QuotedVolume = transaction.DispatchedVolume.Amount;
                             fuelReq.Source = transaction.FuelVendor;
                             fuelReq.SourceId = transaction.Id;
-                            fuelReq.TimeStandard = transaction.TimeStandard.GetValueOrDefault().ToString() == "0" ? "Z" : "L";
+                            fuelReq.TimeStandard = transaction.TimeStandard.ToString() == "0" ? "Z" : "L";
                             fuelReq.Email = "";
                             fuelReq.PhoneNumber = "";
                             fuelReq.CustomerAircraft = new CustomerAircrafts() { TailNumber = transaction.TailNumber };

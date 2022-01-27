@@ -910,7 +910,7 @@ namespace FBOLinx.Web.Controllers
                 IEnumerable<NgxChartBarChartItemType> result = volumes.Select(f => new NgxChartBarChartItemType
                 {
                     Name = f.Icao,
-                    Value = f.AirportsCount.GetValueOrDefault()
+                    Value = f.AirportsCount
                 });
                 return Ok(result);
             }
@@ -959,7 +959,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.ContractFuelVendor;
-                        chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
+                        chartItemType.Value = vendor.TransactionsCount;
                         chartData.Add(chartItemType);
                     }
                 }
@@ -1058,7 +1058,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.Fbo + " " + i;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                         i++;
                     }
@@ -1066,7 +1066,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.Fbo;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                     }
                 }
@@ -1262,7 +1262,7 @@ namespace FBOLinx.Web.Controllers
                     List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
                         .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
                     var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
-                        !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId.GetValueOrDefault())).Select(x => x.FuelerLinxCustomerId.GetValueOrDefault()).Where(x => x > 0).Distinct();
+                        !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId)).Select(x => x.FuelerLinxCustomerId).Where(x => x > 0).Distinct();
                     foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
                     {
                         var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
