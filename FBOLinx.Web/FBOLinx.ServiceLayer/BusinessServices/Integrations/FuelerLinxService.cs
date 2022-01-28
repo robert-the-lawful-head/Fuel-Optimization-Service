@@ -1,18 +1,17 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Json;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.Http;
-using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Models.Responses;
-using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.DTO.Requests.Integrations.FuelerLinx;
+using FBOLinx.ServiceLayer.DTO.Responses.Integrations.FuelerLinx;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
+using Microsoft.Extensions.Options;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 {
     public class FuelerLinxService
     {
@@ -23,16 +22,18 @@ namespace FBOLinx.Web.Services
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IOptions<AppSettings> _appSettings;
         private HttpClient _httpClient;
+        private IAirportService _airportService;
 
         #endregion
 
-        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
+        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, IAirportService airportService)
         {
+            _airportService = airportService;
             _appSettings = appSettings;
             _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
             _APIKey = _fuelerlinxSdkSettings.APIKey;
         }
-        
+
         #region Public Methods
         public async Task<FuelerLinxUpliftsByLocationResponseContent> GetOrderCountByLocation(FuelerLinxUpliftsByLocationRequestContent request)
         {
@@ -58,7 +59,7 @@ namespace FBOLinx.Web.Services
                             Newtonsoft.Json.JsonConvert.DeserializeObject<FuelerLinxUpliftsByLocationResponse>(
                                 await response.Content.ReadAsStringAsync());
                         if (upliftsResult == null || upliftsResult.d == null)
-                            return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+                            return new FuelerLinxUpliftsByLocationResponseContent() { ICAO = request.ICAO };
                         upliftsResult.d.ICAO = request.ICAO;
                         return upliftsResult.d;
                     }
@@ -66,7 +67,7 @@ namespace FBOLinx.Web.Services
             }
             catch (System.Exception)
             {
-                return new FuelerLinxUpliftsByLocationResponseContent() {ICAO = request.ICAO};
+                return new FuelerLinxUpliftsByLocationResponseContent() { ICAO = request.ICAO };
             }
 
         }
@@ -191,11 +192,20 @@ namespace FBOLinx.Web.Services
             return result.Result;
         }
 
+        public async Task ClearQuoteCacheForFbo(int fboId)
+        {
+            var apiClient = await GetApiClient();
+            var airport = await _airportService.GetAirportForFboId(fboId);
+            if (airport == null)
+                return;
+            await ClearQuoteCacheForAirports(new List<string>() { airport.Icao });
+        }
+
         public async Task ClearQuoteCacheForAirports(List<string> airportIdentifiers)
         {
             var apiClient = await GetApiClient();
             await apiClient.FBOLinx_ClearQuoteCacheForLocationsAsync(new FboLinxClearQuoteCacheRequest()
-                {AirportIdentifiers = airportIdentifiers});
+            { AirportIdentifiers = airportIdentifiers });
         }
         #endregion
 
@@ -209,14 +219,14 @@ namespace FBOLinx.Web.Services
                 {
                     client.DefaultRequestHeaders.Add("APIKey", _APIKey);
                     using (HttpResponseMessage response = await client.PostAsync(authURL, new JsonContent(new FuelerLinxAuthenticationRequest()
+                    {
+                        request = new FuelerLinxAuthenticationRequestContent()
                         {
-                            request = new FuelerLinxAuthenticationRequestContent()
-                            {
-                                Username = _ProductionUsername,
-                                Password = _ProductionPassword
-                            }
+                            Username = _ProductionUsername,
+                            Password = _ProductionPassword
+                        }
 
-                        })))
+                    })))
                     {
                         var authenticationResult =
                             Newtonsoft.Json.JsonConvert.DeserializeObject<FuelerLinxAuthenticationResponse>(

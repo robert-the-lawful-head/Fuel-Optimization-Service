@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace FBOLinx.Web.Configurations
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations
 {
     public class AppPartnerSDKSettings
     {

@@ -6,7 +6,6 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using FBOLinx.Web.Models;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
@@ -15,6 +14,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Services

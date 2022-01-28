@@ -165,4 +165,11 @@ export class FbopricesService {
             headers: this.headers,
         });
     }
+
+    public handlePriceChangeCleanUp(fboId) {
+        return this.http.post(this.accessPointUrl + '/handle-price-change-cleanup/' + fboId,
+            {
+                headers: this.headers
+            });
+    }
 }

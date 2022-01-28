@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FBOLinx.Web.Models.Responses
+﻿namespace FBOLinx.ServiceLayer.DTO.Responses.Integrations.FuelerLinx
 {
     public class FuelerLinxUpliftsByLocationResponse
     {

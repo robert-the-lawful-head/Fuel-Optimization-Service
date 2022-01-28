@@ -51630,15 +51630,12 @@ namespace Fuelerlinx.SDK
         public string SupplierName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierSite", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string SupplierSite { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(155)]
         public string SupplierNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentTerms { get; set; }
 
     }
@@ -51662,15 +51659,12 @@ namespace Fuelerlinx.SDK
         public string SupplierName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierSite", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string SupplierSite { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(155)]
         public string SupplierNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentTerms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentTerms { get; set; }
 
     }
@@ -51685,7 +51679,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateSupplierDetailsRequest
     {
         [Newtonsoft.Json.JsonProperty("supplierDetails", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public SupplierDetailsDTO SupplierDetails { get; set; }
 
     }
@@ -51835,38 +51828,30 @@ namespace Fuelerlinx.SDK
         public int CompanyID { get; set; }
 
         [Newtonsoft.Json.JsonProperty("itemName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ItemName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingCategory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AccountingCategory { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingItemName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AccountingItemName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingItemCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string AccountingItemCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingDepartment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string AccountingDepartment { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelVendor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -51921,38 +51906,30 @@ namespace Fuelerlinx.SDK
         public int CompanyID { get; set; }
 
         [Newtonsoft.Json.JsonProperty("itemName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ItemName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingCategory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AccountingCategory { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingItemName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AccountingItemName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingItemCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string AccountingItemCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingDepartment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string AccountingDepartment { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
     }
@@ -51961,7 +51938,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateAccountingIntegrationItemCodesDetailsRequest
     {
         [Newtonsoft.Json.JsonProperty("accountingIntegrationItemCodes", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public AccountingIntegrationItemCodesDTO AccountingIntegrationItemCodes { get; set; }
 
     }
@@ -52141,19 +52117,15 @@ namespace Fuelerlinx.SDK
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string AccountingCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("acukwikFboHandlerLookup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52174,15 +52146,12 @@ namespace Fuelerlinx.SDK
         public int? AcukwikFboHandlerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("acukwikFboHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AcukwikFboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("acukwikAirportId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52247,7 +52216,6 @@ namespace Fuelerlinx.SDK
         public int CompanyFuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("qbvendorName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string QbvendorName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("discrepancyMaxPriceDif", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52257,26 +52225,21 @@ namespace Fuelerlinx.SDK
         public bool? IsNewlyAdded { get; set; }
 
         [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string UserName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string Password { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string AccountNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("showBasePriceByDefault", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ShowBasePriceByDefault { get; set; }
 
         [Newtonsoft.Json.JsonProperty("alias", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Alias { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string PaymentMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("disableWebPull", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52289,7 +52252,6 @@ namespace Fuelerlinx.SDK
         public string TailNumbers { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchEmail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string DispatchEmail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52349,11 +52311,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FuelerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FuelerType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("creationDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52363,37 +52323,30 @@ namespace Fuelerlinx.SDK
         public System.DateTime? ChangeDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("eMail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EMail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("processName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ProcessName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isAllInclusive", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsAllInclusive { get; set; }
 
         [Newtonsoft.Json.JsonProperty("webLink", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string WebLink { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerPhone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FuelerPhone { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contactEmail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ContactEmail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("imagePath", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ImagePath { get; set; }
 
         [Newtonsoft.Json.JsonProperty("pullFlag", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool PullFlag { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailToCC", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string EmailToCC { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isInternational", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52415,14 +52368,12 @@ namespace Fuelerlinx.SDK
         public bool? IsPricingAlwaysShown { get; set; }
 
         [Newtonsoft.Json.JsonProperty("internationalEmail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string InternationalEmail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("useOldService", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? UseOldService { get; set; }
 
         [Newtonsoft.Json.JsonProperty("serviceUrl", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string ServiceUrl { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isMessagesEnabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52467,7 +52418,6 @@ namespace Fuelerlinx.SDK
         public int? AddedByUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedByName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AddedByName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52480,7 +52430,6 @@ namespace Fuelerlinx.SDK
         public int? AssociatedWithNoteId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
     }
@@ -52561,7 +52510,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("rateToDollar", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52649,19 +52597,15 @@ namespace Fuelerlinx.SDK
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountingCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string AccountingCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
     }
@@ -52676,7 +52620,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateAccountingContractMappingsRequest
     {
         [Newtonsoft.Json.JsonProperty("accountingContractMappings", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public AccountingContractMappingsDTO AccountingContractMappings { get; set; }
 
     }
@@ -52714,7 +52657,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("minLandingRunwayLength", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -52990,11 +52932,9 @@ namespace Fuelerlinx.SDK
         public int AircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("make", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Make { get; set; }
 
         [Newtonsoft.Json.JsonProperty("model", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Model { get; set; }
 
         [Newtonsoft.Json.JsonProperty("normalCruiseTas", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53049,7 +52989,6 @@ namespace Fuelerlinx.SDK
         public Weight BasicOperatingWeight { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string FuelType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("ifrreseve", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53073,7 +53012,6 @@ namespace Fuelerlinx.SDK
         public int? AircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("modelName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ModelName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuselageDimensionsLengthFt", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53086,15 +53024,12 @@ namespace Fuelerlinx.SDK
         public double? FuselageDimensionsWingSpanFt { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsLengthFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsLengthFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsHeightFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsHeightFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsWidthFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsWidthFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("crewConfiguration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53170,7 +53105,6 @@ namespace Fuelerlinx.SDK
         public double? NumberOfEngines { get; set; }
 
         [Newtonsoft.Json.JsonProperty("engineModelS", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EngineModelS { get; set; }
 
         [Newtonsoft.Json.JsonProperty("engineThrustLbsPerEngine", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53295,50 +53229,39 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("make", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Make { get; set; }
 
         [Newtonsoft.Json.JsonProperty("model", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Model { get; set; }
 
         [Newtonsoft.Json.JsonProperty("serial", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Serial { get; set; }
 
         [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Owner { get; set; }
 
         [Newtonsoft.Json.JsonProperty("operator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Operator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("managementCompany", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ManagementCompany { get; set; }
 
         [Newtonsoft.Json.JsonProperty("registration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Registration { get; set; }
 
         [Newtonsoft.Json.JsonProperty("certification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Certification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("baseAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string BaseAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("operatorDefaultToOwner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string OperatorDefaultToOwner { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftGroup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftGroup { get; set; }
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Region { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -53857,7 +53780,6 @@ namespace Fuelerlinx.SDK
     public partial class IFlightPlannerAircraftRegistrationRequest
     {
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftModelId", Required = Newtonsoft.Json.Required.Always)]
@@ -53909,7 +53831,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateUserAircraftTankeringSettingsRequest
     {
         [Newtonsoft.Json.JsonProperty("userAircraftTankeringSettings", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public UserAircraftTankeringSettingsDTO UserAircraftTankeringSettings { get; set; }
 
     }
@@ -54084,7 +54005,6 @@ namespace Fuelerlinx.SDK
         public int? AircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("modelName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ModelName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuselageDimensionsLengthFt", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54097,15 +54017,12 @@ namespace Fuelerlinx.SDK
         public double? FuselageDimensionsWingSpanFt { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsLengthFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsLengthFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsHeightFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsHeightFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cabinDimensionsWidthFtInches", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CabinDimensionsWidthFtInches { get; set; }
 
         [Newtonsoft.Json.JsonProperty("crewConfiguration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54181,7 +54098,6 @@ namespace Fuelerlinx.SDK
         public double? NumberOfEngines { get; set; }
 
         [Newtonsoft.Json.JsonProperty("engineModelS", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EngineModelS { get; set; }
 
         [Newtonsoft.Json.JsonProperty("engineThrustLbsPerEngine", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54222,15 +54138,12 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftTypeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftTypeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftTypeEngineName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftTypeEngineName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("degaAircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54271,15 +54184,12 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftTypeName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftTypeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftTypeEngineName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftTypeEngineName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("degaAircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54334,50 +54244,39 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("make", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Make { get; set; }
 
         [Newtonsoft.Json.JsonProperty("model", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Model { get; set; }
 
         [Newtonsoft.Json.JsonProperty("serial", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Serial { get; set; }
 
         [Newtonsoft.Json.JsonProperty("owner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Owner { get; set; }
 
         [Newtonsoft.Json.JsonProperty("operator", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Operator { get; set; }
 
         [Newtonsoft.Json.JsonProperty("managementCompany", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ManagementCompany { get; set; }
 
         [Newtonsoft.Json.JsonProperty("registration", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Registration { get; set; }
 
         [Newtonsoft.Json.JsonProperty("certification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Certification { get; set; }
 
         [Newtonsoft.Json.JsonProperty("baseAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string BaseAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("operatorDefaultToOwner", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string OperatorDefaultToOwner { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftGroup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AircraftGroup { get; set; }
 
         [Newtonsoft.Json.JsonProperty("region", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Region { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54412,8 +54311,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54521,97 +54418,75 @@ namespace Fuelerlinx.SDK
         public int AirportId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("iata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Iata { get; set; }
 
         [Newtonsoft.Json.JsonProperty("faa", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Faa { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fullAirportName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FullAirportName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportCity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportCity { get; set; }
 
         [Newtonsoft.Json.JsonProperty("stateSubdivision", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string StateSubdivision { get; set; }
 
         [Newtonsoft.Json.JsonProperty("country", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Country { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("distanceFromCity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string DistanceFromCity { get; set; }
 
         [Newtonsoft.Json.JsonProperty("latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Latitude { get; set; }
 
         [Newtonsoft.Json.JsonProperty("longitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Longitude { get; set; }
 
         [Newtonsoft.Json.JsonProperty("elevation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? Elevation { get; set; }
 
         [Newtonsoft.Json.JsonProperty("variation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Variation { get; set; }
 
         [Newtonsoft.Json.JsonProperty("intlTimeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? IntlTimeZone { get; set; }
 
         [Newtonsoft.Json.JsonProperty("daylightSavingsYn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string DaylightSavingsYn { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FuelType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportOfEntry", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportOfEntry { get; set; }
 
         [Newtonsoft.Json.JsonProperty("customs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Customs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlingMandatory", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlingMandatory { get; set; }
 
         [Newtonsoft.Json.JsonProperty("slotsRequired", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string SlotsRequired { get; set; }
 
         [Newtonsoft.Json.JsonProperty("open24Hours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Open24Hours { get; set; }
 
         [Newtonsoft.Json.JsonProperty("controlTowerHours", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ControlTowerHours { get; set; }
 
         [Newtonsoft.Json.JsonProperty("approachList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ApproachList { get; set; }
 
         [Newtonsoft.Json.JsonProperty("primaryRunwayId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PrimaryRunwayId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("runwayLength", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54621,11 +54496,9 @@ namespace Fuelerlinx.SDK
         public double? RunwayWidth { get; set; }
 
         [Newtonsoft.Json.JsonProperty("lighting", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Lighting { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportNameShort", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportNameShort { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isUnitedStatesAirport", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54658,50 +54531,39 @@ namespace Fuelerlinx.SDK
         public int HandlerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerLongName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerLongName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerTelephone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerTelephone { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerFax", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerFax { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerTollFree", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerTollFree { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerFreq", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? HandlerFreq { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerFuelBrand", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerFuelBrand { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerFuelBrand2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerFuelBrand2 { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerFuelSupply", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerFuelSupply { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerLocationOnField", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string HandlerLocationOnField { get; set; }
 
         [Newtonsoft.Json.JsonProperty("multiService", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string MultiService { get; set; }
 
         [Newtonsoft.Json.JsonProperty("avcard", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Avcard { get; set; }
 
         [Newtonsoft.Json.JsonProperty("acukwikId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54734,35 +54596,27 @@ namespace Fuelerlinx.SDK
         public int AirportId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("iata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Iata { get; set; }
 
         [Newtonsoft.Json.JsonProperty("faa", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Faa { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fullAirportName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FullAirportName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportCity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportCity { get; set; }
 
         [Newtonsoft.Json.JsonProperty("stateSubdivision", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string StateSubdivision { get; set; }
 
         [Newtonsoft.Json.JsonProperty("country", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Country { get; set; }
 
         [Newtonsoft.Json.JsonProperty("approachList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ApproachList { get; set; }
 
         [Newtonsoft.Json.JsonProperty("runwayLength", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54772,7 +54626,6 @@ namespace Fuelerlinx.SDK
         public double? RunwayWidth { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportNameShort", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportNameShort { get; set; }
 
         [Newtonsoft.Json.JsonProperty("latitude", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54782,11 +54635,9 @@ namespace Fuelerlinx.SDK
         public string Longitude { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FuelType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AirportType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("intlTimeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54832,15 +54683,12 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportIdentifier", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string AirportIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("preferredHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PreferredHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportDetailsByCompanyNotes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54867,7 +54715,6 @@ namespace Fuelerlinx.SDK
         public int? AddedByUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedByName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AddedByName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -54880,7 +54727,6 @@ namespace Fuelerlinx.SDK
         public int? AssociatedWithNoteId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
     }
@@ -54909,12 +54755,9 @@ namespace Fuelerlinx.SDK
     public partial class PostAirportDetailsByCompanyRequest
     {
         [Newtonsoft.Json.JsonProperty("airportIdentifier", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string AirportIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("preferredHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PreferredHandlerName { get; set; }
 
     }
@@ -54976,7 +54819,6 @@ namespace Fuelerlinx.SDK
         public int? AssociatedWithNoteId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateStamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -55045,7 +54887,6 @@ namespace Fuelerlinx.SDK
         public double? AveragePricePerGallon { get; set; }
 
         [Newtonsoft.Json.JsonProperty("airportIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string AirportIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -55258,12 +55099,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string Description { get; set; }
 
         [Newtonsoft.Json.JsonProperty("warning", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -56822,11 +56660,9 @@ namespace Fuelerlinx.SDK
     public partial class ReportFilter
     {
         [Newtonsoft.Json.JsonProperty("startDate", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime StartDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("endDate", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime EndDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumberList", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -56936,12 +56772,9 @@ namespace Fuelerlinx.SDK
     public partial class PostReportRequest
     {
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string Description { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isFavorite", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -56968,7 +56801,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateReportRequest
     {
         [Newtonsoft.Json.JsonProperty("report", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ReportDTO Report { get; set; }
 
     }
@@ -57020,11 +56852,9 @@ namespace Fuelerlinx.SDK
     public partial class ReportDataJsonRequest
     {
         [Newtonsoft.Json.JsonProperty("report", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ReportDTO Report { get; set; }
 
         [Newtonsoft.Json.JsonProperty("filter", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ReportFilter Filter { get; set; } = new ReportFilter();
 
     }
@@ -57074,7 +56904,6 @@ namespace Fuelerlinx.SDK
         public ReportFilter Filter { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailSubject", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EmailSubject { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -57189,7 +57018,6 @@ namespace Fuelerlinx.SDK
     public partial class PostReportScheduledDistributionRequest
     {
         [Newtonsoft.Json.JsonProperty("emailRecipients", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> EmailRecipients { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
         [Newtonsoft.Json.JsonProperty("reportPeriod", Required = Newtonsoft.Json.Required.Always)]
@@ -57214,7 +57042,6 @@ namespace Fuelerlinx.SDK
         public ReportFilter Filter { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailSubject", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EmailSubject { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isEnabled", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -57232,7 +57059,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateReportScheduledDistributionRequest
     {
         [Newtonsoft.Json.JsonProperty("reportScheduledDistribution", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ReportScheduledDistributionDTO ReportScheduledDistribution { get; set; }
 
     }
@@ -57312,7 +57138,6 @@ namespace Fuelerlinx.SDK
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -57401,7 +57226,6 @@ namespace Fuelerlinx.SDK
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -57608,7 +57432,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateDeploymentNotesRequest
     {
         [Newtonsoft.Json.JsonProperty("deploymentNotes", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public DeploymentNotesDTO DeploymentNotes { get; set; }
 
     }
@@ -57929,11 +57752,9 @@ namespace Fuelerlinx.SDK
         public bool? ShowArrivalOfFinalLeg { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchMessageFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string DispatchMessageFormat { get; set; }
 
         [Newtonsoft.Json.JsonProperty("nonDispatchMessageFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string NonDispatchMessageFormat { get; set; }
 
         [Newtonsoft.Json.JsonProperty("allowRampFeeInTripSheet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58557,29 +58378,24 @@ namespace Fuelerlinx.SDK
         public int? AFSAccountID { get; set; }
 
         [Newtonsoft.Json.JsonProperty("IFlightPlannerGUID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string IFlightPlannerGUID { get; set; }
 
         [Newtonsoft.Json.JsonProperty("UserID", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? UserID { get; set; }
 
         [Newtonsoft.Json.JsonProperty("DefaultRouting", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string DefaultRouting { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FleetGroup", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FleetGroup { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FlightPlanningProvider", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public FlightPlanningProviders? FlightPlanningProvider { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FlightPlanningProviderUsername", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightPlanningProviderUsername { get; set; }
 
         [Newtonsoft.Json.JsonProperty("FlightPlanningProviderPassword", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightPlanningProviderPassword { get; set; }
 
         [Newtonsoft.Json.JsonProperty("defaultRoutingType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58680,7 +58496,6 @@ namespace Fuelerlinx.SDK
     public partial class PostCompanyRequest
     {
         [Newtonsoft.Json.JsonProperty("companyName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string CompanyName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("maxUsers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58762,7 +58577,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateCompanyAccountSettingsRequest
     {
         [Newtonsoft.Json.JsonProperty("companyAccountSettings", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public CompanyAccountSettingsDTO CompanyAccountSettings { get; set; } = new CompanyAccountSettingsDTO();
 
     }
@@ -58794,7 +58608,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DateAddedUtc { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EmailAddress { get; set; }
 
     }
@@ -58829,7 +58642,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DateAddedUtc { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EmailAddress { get; set; }
 
     }
@@ -58886,11 +58698,9 @@ namespace Fuelerlinx.SDK
     public partial class DispatchFuelRequest
     {
         [Newtonsoft.Json.JsonProperty("fuelRequestDetails", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public FuelRequestDetails FuelRequestDetails { get; set; } = new FuelRequestDetails();
 
         [Newtonsoft.Json.JsonProperty("fuelPriceOption", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public FuelPriceOption FuelPriceOption { get; set; } = new FuelPriceOption();
 
         [Newtonsoft.Json.JsonProperty("dispatchEmailOptions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58905,7 +58715,6 @@ namespace Fuelerlinx.SDK
     public partial class FuelRequestDetails
     {
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("iata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58942,11 +58751,9 @@ namespace Fuelerlinx.SDK
         public Weight ReportedRampFeeWaivedAt { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalDate", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string ArrivalDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string ArrivalTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58956,11 +58763,9 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DepartureDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureDate", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string DepartureDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string DepartureTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeStandard", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -58985,7 +58790,6 @@ namespace Fuelerlinx.SDK
         public System.Collections.Generic.ICollection<string> CustomerOrderNotes { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("userCurrentTimeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59186,19 +58990,15 @@ namespace Fuelerlinx.SDK
         public double? MaxVolume { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Description { get; set; }
 
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double Price { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("unitOfMeasure", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(30)]
         public string UnitOfMeasure { get; set; }
 
         [Newtonsoft.Json.JsonProperty("priceType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59264,11 +59064,9 @@ namespace Fuelerlinx.SDK
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("recipient", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Recipient { get; set; }
 
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Email { get; set; }
 
     }
@@ -59340,7 +59138,6 @@ namespace Fuelerlinx.SDK
         public string TripType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("customerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59368,11 +59165,9 @@ namespace Fuelerlinx.SDK
         public string ArrivalRemarks { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightPlanId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightPlanId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TripKey { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureTransactionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59396,8 +59191,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightTypeName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightTypeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightTypeClassification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59525,7 +59318,6 @@ namespace Fuelerlinx.SDK
         public int? AddedByUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedByName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AddedByName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59538,7 +59330,6 @@ namespace Fuelerlinx.SDK
         public int? AssociatedWithNoteId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
     }
@@ -59565,11 +59356,9 @@ namespace Fuelerlinx.SDK
     public partial class PostFboDetailsByCompanyRequest
     {
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isBlackListed", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -59996,7 +59785,6 @@ namespace Fuelerlinx.SDK
     public partial class PostFboAliasRequest
     {
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("alias", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60054,15 +59842,12 @@ namespace Fuelerlinx.SDK
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentMethod { get; set; }
 
     }
@@ -60100,15 +59885,12 @@ namespace Fuelerlinx.SDK
         public int? FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentMethod { get; set; }
 
     }
@@ -60383,18 +60165,15 @@ namespace Fuelerlinx.SDK
     public partial class FBOLinxNearbyAirportsRequest
     {
         [Newtonsoft.Json.JsonProperty("startDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("endDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("distanceMile", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? DistanceMile { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
     }
@@ -60409,15 +60188,12 @@ namespace Fuelerlinx.SDK
     public partial class FBOLinxOrdersRequest
     {
         [Newtonsoft.Json.JsonProperty("startDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("endDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60454,15 +60230,12 @@ namespace Fuelerlinx.SDK
     public partial class FBOLinxOrdersForMultipleAirportsRequest
     {
         [Newtonsoft.Json.JsonProperty("startDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("endDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icaosFbos", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.IDictionary<string, string> IcaosFbos { get; set; } = new System.Collections.Generic.Dictionary<string, string>();
 
     }
@@ -60580,19 +60353,15 @@ namespace Fuelerlinx.SDK
     public partial class FBOLinxGroupOrdersRequest
     {
         [Newtonsoft.Json.JsonProperty("startDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime StartDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("endDateTime", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.DateTime EndDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icaos", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> Icaos { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
         [Newtonsoft.Json.JsonProperty("fbos", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<string> Fbos { get; set; } = new System.Collections.ObjectModel.Collection<string>();
 
     }
@@ -60680,7 +60449,6 @@ namespace Fuelerlinx.SDK
         public int? AirportId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelVendorId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60696,7 +60464,6 @@ namespace Fuelerlinx.SDK
         public string InvoiceStatusDescription { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60709,15 +60476,12 @@ namespace Fuelerlinx.SDK
         public System.DateTime? ServiceDateTime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("iata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(15)]
         public string Iata { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelVendor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string FuelVendor { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchedVolume", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60775,22 +60539,18 @@ namespace Fuelerlinx.SDK
         public double? PlattsPrice { get; set; }
 
         [Newtonsoft.Json.JsonProperty("customerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CustomerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TripType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelMasterId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? FuelMasterId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("intoPlane", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string IntoPlane { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("mailBoxForFuelRelease", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60821,7 +60581,6 @@ namespace Fuelerlinx.SDK
         public TransactionSources? Source { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string DispatchNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("reportedRampFeeWaivedAt", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60938,14 +60697,12 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string EmailAddress { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string JobName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("parametersJson", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60981,7 +60738,6 @@ namespace Fuelerlinx.SDK
         public int? AddedByUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedByName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AddedByName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("associatedWithNoteId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -60991,7 +60747,6 @@ namespace Fuelerlinx.SDK
         public NoteStates? State { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
     }
@@ -61032,7 +60787,6 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("taxDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string TaxDescription { get; set; }
 
         [Newtonsoft.Json.JsonProperty("taxAmountPerGallon", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61065,7 +60819,6 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("feeDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FeeDescription { get; set; }
 
         [Newtonsoft.Json.JsonProperty("feeAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61092,7 +60845,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DateAdded { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("attachmentFileDataId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61134,7 +60886,6 @@ namespace Fuelerlinx.SDK
         public int IntegrationType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripsAircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TripsAircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripsTripNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61147,7 +60898,6 @@ namespace Fuelerlinx.SDK
         public int? LegsKidtime { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legsKiduser", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string LegsKiduser { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legsKidmult", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61160,22 +60910,18 @@ namespace Fuelerlinx.SDK
         public bool? TripsTripStatusClosed { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripsAircraftTypeId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TripsAircraftTypeId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripsDepartDateZulu", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? TripsDepartDateZulu { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripsAircraftTailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TripsAircraftTailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legsAircraftId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string LegsAircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalIcao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string ArrivalIcao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("etdzulu", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61209,7 +60955,6 @@ namespace Fuelerlinx.SDK
         public int? Fuelburn { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departIcao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string DepartIcao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61222,7 +60967,6 @@ namespace Fuelerlinx.SDK
         public int? CancelCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("preferFbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string PreferFbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalRequestId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61235,19 +60979,15 @@ namespace Fuelerlinx.SDK
         public bool? Viewed { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalPrefFbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string ArrivalPrefFbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departurePrefFbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string DeparturePrefFbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("foscustomerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FoscustomerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TripType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("cargoLbs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61284,11 +61024,9 @@ namespace Fuelerlinx.SDK
         public int? PaxWeight { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightPlanId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightPlanId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("schedulingLegIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string SchedulingLegIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61345,15 +61083,12 @@ namespace Fuelerlinx.SDK
         public double? SpeedBias { get; set; }
 
         [Newtonsoft.Json.JsonProperty("alternateAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string AlternateAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FlightType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("nextDestination", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string NextDestination { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61369,19 +61104,15 @@ namespace Fuelerlinx.SDK
         public bool? LockFuelAmount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string HandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("handlerEmail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string HandlerEmail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("customOrderNotes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string CustomOrderNotes { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyAlias", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CompanyAlias { get; set; }
 
     }
@@ -61402,15 +61133,12 @@ namespace Fuelerlinx.SDK
         public int RequestId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FlightType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("schedulingServiceId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(150)]
         public string SchedulingServiceId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string FuelOn { get; set; }
 
         [Newtonsoft.Json.JsonProperty("noFuel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61432,19 +61160,15 @@ namespace Fuelerlinx.SDK
         public bool? PreventSyncingWithDegaFuelOrders { get; set; }
 
         [Newtonsoft.Json.JsonProperty("vendorServiceId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(150)]
         public string VendorServiceId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("customerNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string CustomerNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("referenceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ReferenceNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requiresCancellation", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61559,11 +61283,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("rampFee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61619,7 +61341,6 @@ namespace Fuelerlinx.SDK
         public bool? Applicable { get; set; }
 
         [Newtonsoft.Json.JsonProperty("categoryStringValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string CategoryStringValue { get; set; }
 
         [Newtonsoft.Json.JsonProperty("rampFeeByCompanyNotes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61828,7 +61549,6 @@ namespace Fuelerlinx.SDK
         public bool? DemoMode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("phoneNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PhoneNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fullName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61847,7 +61567,6 @@ namespace Fuelerlinx.SDK
         public int? CredentialsId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aspNetUserId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(450)]
         public string AspNetUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requirePasswordChangeOnLogin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61857,27 +61576,21 @@ namespace Fuelerlinx.SDK
         public System.DateTime? LastLoginDateUtc { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobTitle", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string JobTitle { get; set; }
 
         [Newtonsoft.Json.JsonProperty("address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Address { get; set; }
 
         [Newtonsoft.Json.JsonProperty("address2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Address2 { get; set; }
 
         [Newtonsoft.Json.JsonProperty("city", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string City { get; set; }
 
         [Newtonsoft.Json.JsonProperty("stateProvince", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string StateProvince { get; set; }
 
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PostalCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -61919,14 +61632,12 @@ namespace Fuelerlinx.SDK
         public bool? OmitFromDispatchConfirmation { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelOn", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string FuelOn { get; set; }
 
         [Newtonsoft.Json.JsonProperty("excludeAllEmailsByDefault", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ExcludeAllEmailsByDefault { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("siteMode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62384,15 +62095,12 @@ namespace Fuelerlinx.SDK
         public string FirstName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string LastName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("username", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Username { get; set; }
 
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Password { get; set; }
 
         [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62518,19 +62226,15 @@ namespace Fuelerlinx.SDK
         public int CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62540,7 +62244,6 @@ namespace Fuelerlinx.SDK
         public Weight VolumeToAvoidFee { get; set; }
 
         [Newtonsoft.Json.JsonProperty("priceCurrency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string PriceCurrency { get; set; }
 
         /// <summary>
@@ -62572,7 +62275,6 @@ namespace Fuelerlinx.SDK
         public int? CategoryMaxValue { get; set; }
 
         [Newtonsoft.Json.JsonProperty("categoryStringValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string CategoryStringValue { get; set; }
 
         [Newtonsoft.Json.JsonProperty("applicableTailNumbers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62613,15 +62315,12 @@ namespace Fuelerlinx.SDK
     public partial class PostServicesAndFeesByCompanyRequest
     {
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62631,7 +62330,6 @@ namespace Fuelerlinx.SDK
         public Weight VolumeToAvoidFee { get; set; }
 
         [Newtonsoft.Json.JsonProperty("priceCurrency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string PriceCurrency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("preferredWeightUnitFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62656,7 +62354,6 @@ namespace Fuelerlinx.SDK
         /// Provide a comma delimited list of tails here if the categoryType is by tail number (5)
         /// </summary>
         [Newtonsoft.Json.JsonProperty("categoryStringValue", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string CategoryStringValue { get; set; }
 
     }
@@ -62705,7 +62402,6 @@ namespace Fuelerlinx.SDK
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerProcessName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FuelerProcessName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("invoiceImportTemplatesJson", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62732,7 +62428,6 @@ namespace Fuelerlinx.SDK
         public int? CompanyId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerProcessName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FuelerProcessName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("invoiceFileTemplatesJson", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62750,7 +62445,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateSupportedFileTemplateRequest
     {
         [Newtonsoft.Json.JsonProperty("supportedInvoiceImportTemplate", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public SupportedInvoiceImportTemplateDTO SupportedInvoiceImportTemplate { get; set; }
 
     }
@@ -62782,11 +62476,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62810,11 +62502,9 @@ namespace Fuelerlinx.SDK
     public partial class PostImportFileCaptureRequest
     {
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62832,7 +62522,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateImportFileCaptureRequest
     {
         [Newtonsoft.Json.JsonProperty("importFileCapture", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ImportFileCaptureDTO ImportFileCapture { get; set; }
 
     }
@@ -62864,11 +62553,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62909,7 +62596,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateImageFileDataRequest
     {
         [Newtonsoft.Json.JsonProperty("imageFileCapture", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ImageFileDataDTO ImageFileCapture { get; set; }
 
     }
@@ -62941,11 +62627,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62969,11 +62653,9 @@ namespace Fuelerlinx.SDK
     public partial class PostTransactionFileDataRequest
     {
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -62991,7 +62673,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionFileDataRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionFileData", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionFileDataDTO TransactionFileData { get; set; }
 
     }
@@ -63023,11 +62704,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63051,16 +62730,12 @@ namespace Fuelerlinx.SDK
     public partial class PostPriceSheetFileDataRequest
     {
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FileDataAsBase64String { get; set; }
 
     }
@@ -63075,7 +62750,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdatePriceSheetFileDataRequest
     {
         [Newtonsoft.Json.JsonProperty("priceSheetFileData", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public PriceSheetFileDataDTO PriceSheetFileData { get; set; }
 
     }
@@ -63110,11 +62784,9 @@ namespace Fuelerlinx.SDK
         public string FileDataAsBase64String { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
     }
@@ -63141,11 +62813,9 @@ namespace Fuelerlinx.SDK
         public string FileDataAsBase64String { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
     }
@@ -63208,11 +62878,9 @@ namespace Fuelerlinx.SDK
         public byte[] FileData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63239,11 +62907,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63292,11 +62958,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63326,11 +62990,9 @@ namespace Fuelerlinx.SDK
         public byte[] FileData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63379,11 +63041,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63410,11 +63070,9 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("contentType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string ContentType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileDataAsBase64String", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63490,7 +63148,6 @@ namespace Fuelerlinx.SDK
     public partial class PostTripInfoRequest
     {
         [Newtonsoft.Json.JsonProperty("tripInfo", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public object TripInfo { get; set; }
 
     }
@@ -63505,7 +63162,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateFuelPurchaseInfoRequest
     {
         [Newtonsoft.Json.JsonProperty("fuelPurchaseInfo", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public FuelPriceOption FuelPurchaseInfo { get; set; } = new FuelPriceOption();
 
         [Newtonsoft.Json.JsonProperty("flightPlanTripId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63705,7 +63361,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? RequestDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("apikey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Apikey { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Always)]
@@ -63715,16 +63370,12 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string DepartureAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string ArrivalAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("request", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63765,7 +63416,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? RequestDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("apikey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Apikey { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Always)]
@@ -63775,16 +63425,12 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string DepartureAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalAirport", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string ArrivalAirport { get; set; }
 
         [Newtonsoft.Json.JsonProperty("request", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63805,7 +63451,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateIFlightPlannerRouteRequestServiceLogRequest
     {
         [Newtonsoft.Json.JsonProperty("iFlightPlannerRouteRequestServiceLog", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public IFlightPlannerRouteRequestServiceLogDTO IFlightPlannerRouteRequestServiceLog { get; set; }
 
     }
@@ -63899,8 +63544,6 @@ namespace Fuelerlinx.SDK
     public partial class PostFlightTypeMappingRequest
     {
         [Newtonsoft.Json.JsonProperty("flightTypeName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string FlightTypeName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("flightTypeClassification", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -63921,7 +63564,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateFlightTypeMappingRequest
     {
         [Newtonsoft.Json.JsonProperty("flightTypeMapping", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public FlightTypeMappingDTO FlightTypeMapping { get; set; }
 
     }
@@ -64042,11 +63684,9 @@ namespace Fuelerlinx.SDK
     public partial class AssociatedDetailsRequest
     {
         [Newtonsoft.Json.JsonProperty("fuelPriceOption", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public FuelPriceOption FuelPriceOption { get; set; } = new FuelPriceOption();
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TailNumber { get; set; }
 
     }
@@ -64251,12 +63891,9 @@ namespace Fuelerlinx.SDK
         public int FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64269,7 +63906,6 @@ namespace Fuelerlinx.SDK
         public int? MaxGallons { get; set; }
 
         [Newtonsoft.Json.JsonProperty("product", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Product { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64288,7 +63924,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? ExpirationDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("priceCurrency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string PriceCurrency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("inclusive", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64341,12 +63976,9 @@ namespace Fuelerlinx.SDK
         public int FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("price", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64359,7 +63991,6 @@ namespace Fuelerlinx.SDK
         public int? MaxGallons { get; set; }
 
         [Newtonsoft.Json.JsonProperty("product", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Product { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64378,7 +64009,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? ExpirationDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("priceCurrency", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string PriceCurrency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("inclusive", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64394,7 +64024,6 @@ namespace Fuelerlinx.SDK
         public System.Guid? ValidityKey { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailAddress", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string EmailAddress { get; set; }
 
     }
@@ -64429,7 +64058,6 @@ namespace Fuelerlinx.SDK
         public int SupportedPriceSheetFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateAddedUtc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64511,7 +64139,6 @@ namespace Fuelerlinx.SDK
         public int SupportedPriceSheetFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateAddedUtc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64797,7 +64424,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateCompanyFuelerRequest
     {
         [Newtonsoft.Json.JsonProperty("companyFueler", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public CompanyFuelerDTO CompanyFueler { get; set; }
 
     }
@@ -64891,7 +64517,6 @@ namespace Fuelerlinx.SDK
         public int CompanyFuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("qbvendorName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string QbvendorName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("discrepancyMaxPriceDif", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64901,26 +64526,21 @@ namespace Fuelerlinx.SDK
         public bool? IsNewlyAdded { get; set; }
 
         [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string UserName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string Password { get; set; }
 
         [Newtonsoft.Json.JsonProperty("accountNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string AccountNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("showBasePriceByDefault", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? ShowBasePriceByDefault { get; set; }
 
         [Newtonsoft.Json.JsonProperty("alias", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(250)]
         public string Alias { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string PaymentMethod { get; set; }
 
         [Newtonsoft.Json.JsonProperty("disableWebPull", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -64933,7 +64553,6 @@ namespace Fuelerlinx.SDK
         public string TailNumbers { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchEmail", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string DispatchEmail { get; set; }
 
         [Newtonsoft.Json.JsonProperty("supplierID", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65068,19 +64687,15 @@ namespace Fuelerlinx.SDK
         public int FuelerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
 
         [Newtonsoft.Json.JsonProperty("firstName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FirstName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string LastName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Phone { get; set; }
 
     }
@@ -65123,7 +64738,6 @@ namespace Fuelerlinx.SDK
         public int FileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("pricingTransitionValidityKey", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65141,7 +64755,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateCompanyFuelerPriceSheetFileCaptureRequest
     {
         [Newtonsoft.Json.JsonProperty("companyFuelerPriceSheetFileCapture", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public CompanyFuelerPriceSheetFileCaptureDTO CompanyFuelerPriceSheetFileCapture { get; set; }
 
     }
@@ -65288,7 +64901,6 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("integrationDataIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string IntegrationDataIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("integrationPartnerType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65338,7 +64950,6 @@ namespace Fuelerlinx.SDK
         public int SupportedInvoiceImportFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateAddedUtc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65426,7 +65037,6 @@ namespace Fuelerlinx.SDK
         public int SupportedInvoiceImportFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateAddedUtc", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65593,7 +65203,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateBytescoutFilesRequest
     {
         [Newtonsoft.Json.JsonProperty("bytescoutFile", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public BytescoutFilesDTO BytescoutFile { get; set; }
 
     }
@@ -65715,7 +65324,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DateCapturedUtc { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("pageCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65736,26 +65344,21 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("vendor", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Vendor { get; set; }
 
         [Newtonsoft.Json.JsonProperty("invoiceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string InvoiceNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("iata", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(8)]
         public string Iata { get; set; }
 
         [Newtonsoft.Json.JsonProperty("invoiceDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string InvoiceDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65765,7 +65368,6 @@ namespace Fuelerlinx.SDK
         public double? Price { get; set; }
 
         [Newtonsoft.Json.JsonProperty("product", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Product { get; set; }
 
         [Newtonsoft.Json.JsonProperty("volume", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65775,14 +65377,12 @@ namespace Fuelerlinx.SDK
         public string ServiceDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("itemCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string ItemCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requestId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int RequestId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("processId", Required = Newtonsoft.Json.Required.Always)]
@@ -65792,32 +65392,27 @@ namespace Fuelerlinx.SDK
         public bool? Discrepancy { get; set; }
 
         [Newtonsoft.Json.JsonProperty("itemDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string ItemDescription { get; set; }
 
         [Newtonsoft.Json.JsonProperty("terms", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Terms { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dueDate", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string DueDate { get; set; }
 
         [Newtonsoft.Json.JsonProperty("relInvoiceNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string RelInvoiceNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedAsDirect", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool? AddedAsDirect { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TripNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? LegNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("paymentMethod", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PaymentMethod { get; set; }
 
     }
@@ -65844,7 +65439,6 @@ namespace Fuelerlinx.SDK
         public int JobQueueResultId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("eventLabel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EventLabel { get; set; }
 
         [Newtonsoft.Json.JsonProperty("eventDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -65929,7 +65523,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string JobName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobVariablesJson", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66068,7 +65661,6 @@ namespace Fuelerlinx.SDK
         public int? JobFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
     }
@@ -66112,7 +65704,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string JobName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("jobVariablesJson", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66191,7 +65782,6 @@ namespace Fuelerlinx.SDK
         public int? JobFileDataId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
     }
@@ -66246,7 +65836,6 @@ namespace Fuelerlinx.SDK
         public int JobQueueResultId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("eventLabel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string EventLabel { get; set; }
 
         [Newtonsoft.Json.JsonProperty("eventDescription", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66384,12 +65973,9 @@ namespace Fuelerlinx.SDK
     public partial class PostMobileAppSettingsRequest
     {
         [Newtonsoft.Json.JsonProperty("key", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Key { get; set; }
 
         [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Value { get; set; }
 
     }
@@ -66404,7 +65990,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateMobileAppSettingsRequest
     {
         [Newtonsoft.Json.JsonProperty("mobileAppSetting", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public MobileAppSettingsDTO MobileAppSetting { get; set; }
 
     }
@@ -66436,7 +66021,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("partnerName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string PartnerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("partnerType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66461,7 +66045,6 @@ namespace Fuelerlinx.SDK
         public System.Guid PartnerId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("partnerLogo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(500)]
         public string PartnerLogo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("trustLevel", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66499,7 +66082,6 @@ namespace Fuelerlinx.SDK
         public PartnerEnvironmentTypes Environment { get; set; }
 
         [Newtonsoft.Json.JsonProperty("webHookEndPoint", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string WebHookEndPoint { get; set; }
 
         [Newtonsoft.Json.JsonProperty("webHookType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -66782,7 +66364,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateCompanyActiveIntegrationRequest
     {
         [Newtonsoft.Json.JsonProperty("companyActiveIntegration", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public CompanyActiveIntegrationDTO CompanyActiveIntegration { get; set; }
 
     }
@@ -66826,11 +66407,9 @@ namespace Fuelerlinx.SDK
     public partial class CodeCallbackRequest
     {
         [Newtonsoft.Json.JsonProperty("code", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Code { get; set; }
 
         [Newtonsoft.Json.JsonProperty("redirectUri", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string RedirectUri { get; set; }
 
     }
@@ -66880,7 +66459,6 @@ namespace Fuelerlinx.SDK
     public partial class AmountDetails
     {
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("number", Required = Newtonsoft.Json.Required.Always)]
@@ -66892,27 +66470,21 @@ namespace Fuelerlinx.SDK
     public partial class PayeeDetail
     {
         [Newtonsoft.Json.JsonProperty("countryCode", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string CountryCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
 
         [Newtonsoft.Json.JsonProperty("firstName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FirstName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("lastName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string LastName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("phone", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Phone { get; set; }
 
         [Newtonsoft.Json.JsonProperty("type", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Type { get; set; }
 
         [Newtonsoft.Json.JsonProperty("businessName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67027,11 +66599,9 @@ namespace Fuelerlinx.SDK
     public partial class PostRampFeeByCompanyRequest
     {
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fboHandlerName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string FboHandlerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("rampFee", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67199,7 +66769,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Always)]
@@ -67212,7 +66781,6 @@ namespace Fuelerlinx.SDK
         public int? UserAircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelUnitType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FuelUnitType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("startingFuel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67236,7 +66804,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67290,7 +66857,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("companyId", Required = Newtonsoft.Json.Required.Always)]
@@ -67303,7 +66869,6 @@ namespace Fuelerlinx.SDK
         public int? UserAircraftId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelUnitType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string FuelUnitType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("startingFuel", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67324,7 +66889,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateSavedTripRequest
     {
         [Newtonsoft.Json.JsonProperty("savedTrip", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public SavedTripDTO SavedTrip { get; set; }
 
     }
@@ -67362,7 +66926,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(4)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelAmount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67434,11 +66997,9 @@ namespace Fuelerlinx.SDK
     public partial class PostScheduledLegFromIntegrationRequest
     {
         [Newtonsoft.Json.JsonProperty("scheduledLegData", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public object ScheduledLegData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legIdentifier", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string LegIdentifier { get; set; }
 
     }
@@ -67493,11 +67054,9 @@ namespace Fuelerlinx.SDK
         public bool? ShowArrivalOfFinalLeg { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dispatchMessageFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string DispatchMessageFormat { get; set; }
 
         [Newtonsoft.Json.JsonProperty("nonDispatchMessageFormat", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(1000)]
         public string NonDispatchMessageFormat { get; set; }
 
         [Newtonsoft.Json.JsonProperty("allowRampFeeInTripSheet", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67545,7 +67104,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateScheduledTripSettingsRequest
     {
         [Newtonsoft.Json.JsonProperty("scheduledTripSettings", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ScheduledTripSettingsDTO ScheduledTripSettings { get; set; }
 
     }
@@ -67660,14 +67218,12 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripDisplayName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string TripDisplayName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? LegNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("schedulingLegIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string SchedulingLegIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -67705,21 +67261,18 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tripDisplayName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string TripDisplayName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("legNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int? LegNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("schedulingLegIdentifier", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string SchedulingLegIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("note", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Note { get; set; }
 
         [Newtonsoft.Json.JsonProperty("location", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string Location { get; set; }
 
     }
@@ -67734,7 +67287,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionSchedulingNotePlacementRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionSchedulingNotePlacement", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionSchedulingNotePlacementDTO TransactionSchedulingNotePlacement { get; set; }
 
     }
@@ -67823,7 +67375,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateServiceLogErrorRuleRequest
     {
         [Newtonsoft.Json.JsonProperty("serviceLogErrorRule", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public ServiceLogErrorRuleDTO ServiceLogErrorRule { get; set; }
 
     }
@@ -68152,7 +67703,6 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("action", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -68323,7 +67873,6 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailSent", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -68371,7 +67920,6 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(50)]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("emailSent", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -68511,14 +68059,12 @@ namespace Fuelerlinx.SDK
         public string RequestSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requestSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string RequestSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ResponseSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string ResponseSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("integrationType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -68571,18 +68117,15 @@ namespace Fuelerlinx.SDK
         public string RequestSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requestSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string RequestSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ResponseSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string ResponseSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FuelerName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fuelerId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -68652,14 +68195,12 @@ namespace Fuelerlinx.SDK
         public string RequestSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requestSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string RequestSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ResponseSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string ResponseSerializedAs { get; set; }
 
     }
@@ -68698,14 +68239,12 @@ namespace Fuelerlinx.SDK
         public string RequestSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requestSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string RequestSerializedAs { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedData", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string ResponseSerializedData { get; set; }
 
         [Newtonsoft.Json.JsonProperty("responseSerializedAs", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(25)]
         public string ResponseSerializedAs { get; set; }
 
     }
@@ -68760,11 +68299,9 @@ namespace Fuelerlinx.SDK
         public int? UserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fbo", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Fbo { get; set; }
 
         [Newtonsoft.Json.JsonProperty("icao", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(10)]
         public string Icao { get; set; }
 
         [Newtonsoft.Json.JsonProperty("changedItem", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69333,7 +68870,6 @@ namespace Fuelerlinx.SDK
     public partial class CalculateTankeringRequest
     {
         [Newtonsoft.Json.JsonProperty("trip", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public Trip Trip { get; set; } = new Trip();
 
         [Newtonsoft.Json.JsonProperty("summaryOptions", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69348,7 +68884,6 @@ namespace Fuelerlinx.SDK
     public partial class Trip
     {
         [Newtonsoft.Json.JsonProperty("legs", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<Leg> Legs { get; set; } = new System.Collections.ObjectModel.Collection<Leg>();
 
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69705,15 +69240,12 @@ namespace Fuelerlinx.SDK
     public partial class CalculateRouteDetailsRequest : LegFlightPlanningRequest
     {
         [Newtonsoft.Json.JsonProperty("tailNumber", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TailNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureAirportIdentifier", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string DepartureAirportIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("arrivalAirportIdentifier", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string ArrivalAirportIdentifier { get; set; }
 
         [Newtonsoft.Json.JsonProperty("departureDateTime", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69760,8 +69292,6 @@ namespace Fuelerlinx.SDK
         public int Id { get; set; }
 
         [Newtonsoft.Json.JsonProperty("country", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Country { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currencyConversionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69840,8 +69370,6 @@ namespace Fuelerlinx.SDK
     public partial class PostTaxesByCountryRequest
     {
         [Newtonsoft.Json.JsonProperty("country", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Country { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currencyConversionId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -69880,7 +69408,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTaxesByCountryRequest
     {
         [Newtonsoft.Json.JsonProperty("taxesByCountry", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TaxesByCountryDTO TaxesByCountry { get; set; }
 
     }
@@ -70071,7 +69598,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionRequest
     {
         [Newtonsoft.Json.JsonProperty("transaction", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionDTO Transaction { get; set; }
 
     }
@@ -70086,7 +69612,6 @@ namespace Fuelerlinx.SDK
     public partial class PostTransactionRequest
     {
         [Newtonsoft.Json.JsonProperty("transaction", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionDTO Transaction { get; set; }
 
     }
@@ -70206,7 +69731,6 @@ namespace Fuelerlinx.SDK
         public System.DateTime? DateCapturedUtc { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(200)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("pageCount", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70292,7 +69816,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionAccountingDataRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionAccountingData", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionAccountingDataDTO TransactionAccountingData { get; set; }
 
     }
@@ -70370,7 +69893,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionAccountingTransferRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionAccountingTransfer", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionAccountingTransferDTO TransactionAccountingTransfer { get; set; }
 
     }
@@ -70411,11 +69933,9 @@ namespace Fuelerlinx.SDK
         public string Note { get; set; }
 
         [Newtonsoft.Json.JsonProperty("dateAdded", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string DateAdded { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeAdded", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string TimeAdded { get; set; }
 
         [Newtonsoft.Json.JsonProperty("noteType", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70425,7 +69945,6 @@ namespace Fuelerlinx.SDK
         public int? AddedByUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("addedByName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string AddedByName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("associatedWithNoteId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70435,7 +69954,6 @@ namespace Fuelerlinx.SDK
         public NoteStates? State { get; set; }
 
         [Newtonsoft.Json.JsonProperty("timeZone", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(100)]
         public string TimeZone { get; set; }
 
     }
@@ -70450,7 +69968,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionNoteRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionNote", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionNoteDTO TransactionNote { get; set; }
 
     }
@@ -70488,8 +70005,6 @@ namespace Fuelerlinx.SDK
         public int TransactionId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("fileName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string FileName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("attachmentFileDataId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70510,7 +70025,6 @@ namespace Fuelerlinx.SDK
     public partial class UpdateTransactionAttachmentRequest
     {
         [Newtonsoft.Json.JsonProperty("transactionAttachment", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public TransactionAttachmentDTO TransactionAttachment { get; set; }
 
     }
@@ -70692,7 +70206,6 @@ namespace Fuelerlinx.SDK
         public bool? DemoMode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("phoneNumber", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PhoneNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("role", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70705,7 +70218,6 @@ namespace Fuelerlinx.SDK
         public int? CredentialsId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("aspNetUserId", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(450)]
         public string AspNetUserId { get; set; }
 
         [Newtonsoft.Json.JsonProperty("requirePasswordChangeOnLogin", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70715,23 +70227,18 @@ namespace Fuelerlinx.SDK
         public string JobTitle { get; set; }
 
         [Newtonsoft.Json.JsonProperty("address", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Address { get; set; }
 
         [Newtonsoft.Json.JsonProperty("address2", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string Address2 { get; set; }
 
         [Newtonsoft.Json.JsonProperty("city", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string City { get; set; }
 
         [Newtonsoft.Json.JsonProperty("stateProvince", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string StateProvince { get; set; }
 
         [Newtonsoft.Json.JsonProperty("postalCode", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        [System.ComponentModel.DataAnnotations.StringLength(255)]
         public string PostalCode { get; set; }
 
         [Newtonsoft.Json.JsonProperty("active", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -70803,11 +70310,9 @@ namespace Fuelerlinx.SDK
     public partial class ExchangeRefreshTokenRequest
     {
         [Newtonsoft.Json.JsonProperty("authToken", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string AuthToken { get; set; }
 
         [Newtonsoft.Json.JsonProperty("refreshToken", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string RefreshToken { get; set; }
 
     }
@@ -70860,7 +70365,6 @@ namespace Fuelerlinx.SDK
     public partial class SaveCompanyToIFlightPlannerRequest
     {
         [Newtonsoft.Json.JsonProperty("companyName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string CompanyName { get; set; }
 
     }
@@ -71035,11 +70539,9 @@ namespace Fuelerlinx.SDK
     public partial class PostChangeCredentialsRequest
     {
         [Newtonsoft.Json.JsonProperty("oldUsername", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string OldUsername { get; set; }
 
         [Newtonsoft.Json.JsonProperty("newUsername", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required]
         public string NewUsername { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isChangingUsername", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]

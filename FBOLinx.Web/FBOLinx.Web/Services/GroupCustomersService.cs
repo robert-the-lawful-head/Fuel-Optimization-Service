@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Fuelerlinx.SDK;
 using Microsoft.EntityFrameworkCore;
 

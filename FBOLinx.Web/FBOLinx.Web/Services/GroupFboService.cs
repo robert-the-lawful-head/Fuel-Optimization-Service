@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;

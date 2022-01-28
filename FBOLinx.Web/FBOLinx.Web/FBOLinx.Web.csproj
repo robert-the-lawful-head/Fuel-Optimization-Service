@@ -105,6 +105,7 @@
   <ItemGroup>
     <Folder Include="ClientApp\src\app\ui\" />
     <Folder Include="ClientApp\src\assets\img\landing-page\" />
+    <Folder Include="Configurations\" />
   </ItemGroup>
 
   <ItemGroup>

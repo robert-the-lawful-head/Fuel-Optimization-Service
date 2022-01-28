@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.Extensions;
-using FBOLinx.Web.Configurations;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -22,9 +21,9 @@ namespace FBOLinx.Web.Services
 
     public class MailService : IMailService
     {
-        private readonly FBOLinx.Web.Configurations.MailSettings _MailSettings;
+        private readonly FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations.MailSettings _MailSettings;
 
-        public MailService(IOptions<FBOLinx.Web.Configurations.MailSettings> mailSettings)
+        public MailService(IOptions<FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations.MailSettings> mailSettings)
         {
             _MailSettings = mailSettings.Value;
         }

@@ -1,7 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.EntityFrameworkCore;

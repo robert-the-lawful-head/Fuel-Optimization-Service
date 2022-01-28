@@ -7,10 +7,13 @@ import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 // Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { FbopricesService } from "../../../services/fboprices.service";
+
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { pricingTemplateGridSet } from '../../../store/actions';
 import { State } from '../../../store/reducers';
+
 
 const BREADCRUMBS: any[] = [
     {
@@ -40,6 +43,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         private store: Store<State>,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
+        private fboPricesService: FbopricesService,
         public deleteFBODialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
@@ -115,6 +119,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
                         .subscribe((data: any) => {
                             this.pricingTemplatesData = data;
                         });
+
+                    this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId);
                 });
 
             this.sharedService.NotifyPricingTemplateComponent(

@@ -18,6 +18,7 @@ using static FBOLinx.DB.Models.PricingTemplate;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web.Services
 {

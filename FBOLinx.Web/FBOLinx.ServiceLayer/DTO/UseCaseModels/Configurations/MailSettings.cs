@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace FBOLinx.Web.Configurations
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations
 {
     public class MailSettings
     {

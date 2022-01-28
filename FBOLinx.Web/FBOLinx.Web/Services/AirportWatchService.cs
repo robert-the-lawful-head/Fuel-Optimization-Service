@@ -15,7 +15,8 @@ using EFCore.BulkExtensions;
 using FBOLinx.DB;
 using System.Collections;
 using System.Diagnostics;
-using FBOLinx.Web.Configurations;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
 

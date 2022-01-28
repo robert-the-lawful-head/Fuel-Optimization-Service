@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -101,15 +104,12 @@ namespace FBOLinx.Web
             var demoData = demoDataSection.Get<DemoData>();
 
             // configure DI for application services
-            services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddScoped<RampFeesService, RampFeesService>();
             services.AddScoped<IPriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
-
             services.AddTransient<GroupFboService, GroupFboService>();
-           
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<FboService, FboService>();
             services.AddTransient<GroupService, GroupService>();
@@ -124,12 +124,15 @@ namespace FBOLinx.Web
 
             //Business Services
             services.AddTransient<AircraftService, AircraftService>();
+            services.AddScoped<FuelerLinxService, FuelerLinxService>();
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
             services.AddTransient<AirportWatchService, AirportWatchService>();
             services.AddTransient<IMailService, MailService>();
+            services.AddTransient<IAirportService, AirportService>();
+            services.AddTransient<IFuelPriceAdjustmentCleanUpService, FuelPriceAdjustmentCleanUpService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
