@@ -72,7 +72,7 @@
       "classStyle": "Poco",
       "jsonLibrary": "NewtonsoftJson",
       "generateDefaultValues": true,
-      "generateDataAnnotations": true,
+      "generateDataAnnotations": false,
       "excludedTypeNames": [],
       "excludedParameterNames": [],
       "handleReferences": false,
