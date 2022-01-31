@@ -43,6 +43,9 @@ namespace FBOLinx.DB.Models
         public AircraftStatusType AircraftStatus { get; set; }
         public string AirportICAO { get; set; }
 
+        [StringLength(25)]
+        public string TailNumber { get; set; }
+
         public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)
         {
             return new AirportWatchHistoricalData
