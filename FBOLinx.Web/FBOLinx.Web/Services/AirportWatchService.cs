@@ -109,9 +109,6 @@ namespace FBOLinx.Web.Services
                         }
 
                         filteredResult = await (from awhd in _context.AirportWatchLiveData
-                            join ahtm in _degaContext.AircraftHexTailMapping on awhd.AircraftHexCode equals ahtm.AircraftHexCode
-                            into leftJoinedHexTailMapping
-                            from ahtm in leftJoinedHexTailMapping.DefaultIfEmpty()
                                                 join ca in (
                                                         from ca in _context.CustomerAircrafts
                                                         join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 }
@@ -128,7 +125,7 @@ namespace FBOLinx.Web.Services
                                                             CustomerInfoByGroupID = cig.Oid,
                                                             cu.FuelerlinxId
                                                         }
-                                                ) on ahtm.TailNumber equals ca.TailNumber
+                                                ) on awhd.TailNumber equals ca.TailNumber
                                                     into leftJoinedCustomers
                                                 from ca in leftJoinedCustomers.DefaultIfEmpty()
                                                 where awhd.Latitude >= minLatitude && awhd.Latitude <= maxLatitude &&
@@ -153,7 +150,7 @@ namespace FBOLinx.Web.Services
                                                     AircraftTypeCode = awhd.AircraftTypeCode,
                                                     AltitudeInStandardPressure = awhd.AltitudeInStandardPressure,
                                                 IsFuelerLinxCustomer = (ca.FuelerlinxId.HasValue && ca.FuelerlinxId.Value > 0),
-                                                TailNumber = (ahtm == null ? "" : ahtm.TailNumber)
+                                                TailNumber = awhd.TailNumber ?? ""
                                                 })
                             .OrderBy(x => x.AircraftPositionDateTimeUtc)
                             .ThenBy(x => x.AircraftHexCode)
@@ -442,9 +439,9 @@ namespace FBOLinx.Web.Services
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
-
-            // Set tail numbers for all historical records on insert
+            
             await SetTailNumber(_HistoricalDataToInsert);
+            await SetTailNumber(_LiveDataToInsert);
             
             await CommitChanges();
         }
@@ -602,14 +599,14 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        private async Task SetTailNumber(List<AirportWatchHistoricalData> airportWatchHistoricalRecords)
+        private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)
         {
-            IEnumerable<string> aircraftHexCodesToInsert = airportWatchHistoricalRecords.Select(x => x.AircraftHexCode).Distinct();
+            IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
             List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
-            airportWatchHistoricalRecords.ForEach(x =>
+            foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
             {
-                x.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == x.AircraftHexCode)?.TailNumber;
-            });
+                airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
+            }
         }
 
         private void AddDemoDataToAirportWatchResult(List<AirportWatchLiveData> result, int fboId)

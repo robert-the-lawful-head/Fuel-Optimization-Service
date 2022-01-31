@@ -2,7 +2,7 @@ USE [paragon_test]
 
 GO
 
-ALTER TABLE [AirportWatchHistoricalData]
+ALTER TABLE [AirportWatchLiveData]
 ADD [TailNumber] [varchar](25) NULL
 
 GO
@@ -13,7 +13,7 @@ INSERT @FAAAircraftHexTailMapping SELECT AircraftHexCode,TailNumber FROM Dega.[d
 
 UPDATE a
 SET a.TailNumber = f.TailNumber
-FROM AirportWatchHistoricalData a
+FROM AirportWatchLiveData a
 INNER JOIN @FAAAircraftHexTailMapping f ON f.AircraftHexCode = a.AircraftHexCode
 WHERE isnull(f.TailNumber, '') <> ''
 

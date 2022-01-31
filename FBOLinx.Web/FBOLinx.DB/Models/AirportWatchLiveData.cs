@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class AirportWatchLiveData
+    public class AirportWatchLiveData: BaseAirportWatchData
     {
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
-        [Required]
-        [StringLength(10)]
-        public string AircraftHexCode { get; set; }
         [StringLength(20)]
         public string AtcFlightNumber { get; set; }
         public int? AltitudeInStandardPressure { get; set; }
@@ -34,9 +31,7 @@ namespace FBOLinx.DB.Models
         public FuelReq FuelOrder { get; set; }
         [NotMapped]
         public bool? IsFuelerLinxCustomer { get; set; }
-        [NotMapped]
-        public string TailNumber { get; set; }
-
+        
         public static void CopyEntity(AirportWatchLiveData oldRecord, AirportWatchLiveData newRecord)
         {
             oldRecord.BoxTransmissionDateTimeUtc = newRecord.BoxTransmissionDateTimeUtc;
@@ -54,6 +49,7 @@ namespace FBOLinx.DB.Models
             oldRecord.AircraftTypeCode = newRecord.AircraftTypeCode;
             oldRecord.GpsAltitude = newRecord.GpsAltitude;
             oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
+            oldRecord.TailNumber = newRecord.TailNumber;
         }
     }
 }
