@@ -110,26 +110,27 @@ export class LandingSiteLayoutComponent {
     }
 
     openRequestDemo() {
-        const data = {
-            succeed: false,
-        };
-        const dialogRef = this.requestDemoDialog.open(
-            RequestDemoModalComponent,
-            {
-                data,
-                height: '650px',
-                panelClass: 'request-demo-container',
-                width: '600px',
-            }
-        );
+        window.open('https://bookings.fuelerlinx.com/#/customer/fbolinxdemo', '_blank').focus();
+        //const data = {
+        //    succeed: false,
+        //};
+        //const dialogRef = this.requestDemoDialog.open(
+        //    RequestDemoModalComponent,
+        //    {
+        //        data,
+        //        height: '650px',
+        //        panelClass: 'request-demo-container',
+        //        width: '600px',
+        //    }
+        //);
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
+        //dialogRef.afterClosed().subscribe((result) => {
+        //    if (!result) {
+        //        return;
+        //    }
 
-            this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
-        });
+        //    this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
+        //});
     }
 
     forgotPassword() {
