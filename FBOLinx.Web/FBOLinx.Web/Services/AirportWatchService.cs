@@ -109,9 +109,6 @@ namespace FBOLinx.Web.Services
                         }
 
                         filteredResult = await (from awhd in _context.AirportWatchLiveData
-                            join ahtm in _context.AircraftHexTailMapping on awhd.AircraftHexCode equals ahtm.AircraftHexCode
-                            into leftJoinedHexTailMapping
-                            from ahtm in leftJoinedHexTailMapping.DefaultIfEmpty()
                                                 join ca in (
                                                         from ca in _context.CustomerAircrafts
                                                         join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 }
@@ -128,7 +125,7 @@ namespace FBOLinx.Web.Services
                                                             CustomerInfoByGroupID = cig.Oid,
                                                             cu.FuelerlinxId
                                                         }
-                                                ) on ahtm.TailNumber equals ca.TailNumber
+                                                ) on awhd.TailNumber equals ca.TailNumber
                                                     into leftJoinedCustomers
                                                 from ca in leftJoinedCustomers.DefaultIfEmpty()
                                                 where awhd.Latitude >= minLatitude && awhd.Latitude <= maxLatitude &&
@@ -153,7 +150,7 @@ namespace FBOLinx.Web.Services
                                                     AircraftTypeCode = awhd.AircraftTypeCode,
                                                     AltitudeInStandardPressure = awhd.AltitudeInStandardPressure,
                                                 IsFuelerLinxCustomer = (ca.FuelerlinxId.HasValue && ca.FuelerlinxId.Value > 0),
-                                                TailNumber = (ahtm == null ? "" : ahtm.TailNumber)
+                                                TailNumber = awhd.TailNumber ?? ""
                                                 })
                             .OrderBy(x => x.AircraftPositionDateTimeUtc)
                             .ThenBy(x => x.AircraftHexCode)
@@ -442,18 +439,18 @@ namespace FBOLinx.Web.Services
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
-
+            
+            await SetTailNumber(_HistoricalDataToInsert);
+            await SetTailNumber(_LiveDataToInsert);
+            
             await CommitChanges();
         }
-
+        
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
         {
             var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcao(fboId.Value) : null;
 
             var historicalData = await (from awhd in _context.AirportWatchHistoricalData
-                                      join awat in _context.AircraftHexTailMapping on new { awhd.AircraftHexCode } equals new { awat.AircraftHexCode }
-                                          into leftJoinedTailMappings
-                                      from awat in leftJoinedTailMappings.DefaultIfEmpty()
                                         where
                                          (!fboId.HasValue || awhd.AirportICAO == fboIcao) &&
                                          (request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime()) &&
@@ -469,10 +466,9 @@ namespace FBOLinx.Web.Services
                                           awhd.AircraftTypeCode,
                                           awhd.Latitude,
                                           awhd.Longitude,
-                                          AirportWatchAircraftTailNumberFlightNumber = awat.TailNumber,
-                                          TailNumber = awat.TailNumber
-                                      }
-                                      ).ToListAsync();
+                                          AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
+                                          TailNumber = awhd.TailNumber
+                                      }).ToListAsync();
 
             var customerAircraftsData = await (from ca in _context.CustomerAircrafts
                                        join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 } equals new { cig.CustomerId, cig.GroupId }
@@ -600,6 +596,16 @@ namespace FBOLinx.Web.Services
             {
                 Debug.WriteLine("Error in AirportWatchService.GetParkingOccurencesByAirport: " + exception.Message);
                 return new List<AirportWatchHistoricalData>();
+            }
+        }
+
+        private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)
+        {
+            IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
+            List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
+            foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
+            {
+                airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
             }
         }
 
