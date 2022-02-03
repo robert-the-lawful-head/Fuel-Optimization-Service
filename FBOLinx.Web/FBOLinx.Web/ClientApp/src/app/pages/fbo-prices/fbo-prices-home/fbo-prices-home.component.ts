@@ -17,6 +17,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 // Services
+import { FboairportsService } from '../../../services/fboairports.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
@@ -48,8 +49,7 @@ export interface TemporaryAddOnMargin {
     templateUrl: './fbo-prices-home.component.html',
 })
 export class FboPricesHomeComponent
-    implements OnInit, OnDestroy, AfterViewInit
-{
+    implements OnInit, OnDestroy, AfterViewInit {
     @Input() isCsr?: boolean;
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
     @ViewChild('retailFeeAndTaxBreakdown')
@@ -86,7 +86,7 @@ export class FboPricesHomeComponent
     priceEntryError = '';
     stagedPriceEntryError = '';
     tooltipIndex = 0;
-    discountType : number;
+    discountType: number;
     updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
         fboid: 0,
@@ -97,6 +97,8 @@ export class FboPricesHomeComponent
     currentFboPriceJetACost: any;
     currentFboPrice100LLRetail: any;
     currentFboPrice100LLCost: any;
+    currentFboPriceSafRetail: any;
+    currentFboPriceSafCost: any;
     stagedFboPriceJetACost: any;
     stagedFboPriceJetARetail: any;
     stagedFboPrice100LL: any;
@@ -108,18 +110,21 @@ export class FboPricesHomeComponent
 
     subscriptions: Subscription[] = [];
 
+    timezone: string = "";
+
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private fboPricesService: FbopricesService,
         private pricingTemplateService: PricingtemplatesService,
         private sharedService: SharedService,
+        private fboairportsService: FboairportsService,
         private customCustomerService: CustomcustomertypesService,
         private temporaryAddOnMargin: TemporaryAddOnMarginService,
         private NgxUiLoader: NgxUiLoaderService,
         private fboPricesSelectDefaultTemplateDialog: MatDialog,
         private fboFeesAndTaxesDialog: MatDialog,
         private proceedConfirmationDialog: MatDialog
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.resetAll();
@@ -158,12 +163,16 @@ export class FboPricesHomeComponent
         this.stagedPrices = undefined;
         this.NgxUiLoader.startLoader(this.pricingLoader);
         this.subscriptions.push(
-            this.loadCurrentFboPrices().subscribe(() => {
+            this.getTimeZone().subscribe(() => {
                 this.subscriptions.push(
-                    this.loadStagedFboPrices().subscribe(() => {
-                        this.NgxUiLoader.stopLoader(this.pricingLoader);
+                    this.loadCurrentFboPrices().subscribe(() => {
+                        this.subscriptions.push(
+                            this.loadStagedFboPrices().subscribe(() => {
+                                this.NgxUiLoader.stopLoader(this.pricingLoader);
+                            })
+                        );
                     })
-                );
+                )
             })
         );
         this.loadFeesAndTaxes();
@@ -528,6 +537,22 @@ export class FboPricesHomeComponent
         }
     }
 
+    private getTimeZone() {
+        return new Observable((observer) => {
+            var _this = this;
+            this.subscriptions.push(
+                _this.fboairportsService.getLocalTimeZone(_this.sharedService.currentUser.fboId).subscribe((data: any) => {
+                    _this.timezone = data;
+                    observer.next();
+                },
+                    (error: any) => {
+                        observer.error(error);
+                    }
+                )
+            );
+        });
+    }
+
     private loadCurrentFboPrices() {
         return new Observable((observer) => {
             this.subscriptions.push(
@@ -546,8 +571,10 @@ export class FboPricesHomeComponent
                                 this.getCurrentPriceByProduct('JetA Cost');
                             this.currentFboPriceJetARetail =
                                 this.getCurrentPriceByProduct('JetA Retail');
-
-
+                            this.currentFboPriceSafCost =
+                                this.getCurrentPriceByProduct('SAF Cost');
+                            this.currentFboPriceSafRetail =
+                                this.getCurrentPriceByProduct('SAF Retail');
 
                             if (this.currentFboPriceJetARetail.effectiveTo) {
                                 const tempStagedPricingEffectiveFrom = moment(
@@ -595,6 +622,9 @@ export class FboPricesHomeComponent
                                 JetACost: this.currentFboPriceJetACost.price,
                                 JetARetail:
                                     this.currentFboPriceJetARetail.price,
+                                SafCost: this.currentFboPriceSafCost.price,
+                                SafRetail: this.currentFboPriceSafRetail.price,
+                                PriceExpiration: moment(this.currentFboPriceJetARetail.effectiveTo).add(1, 'minutes').format("M/D/YY @ H:m") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
@@ -840,7 +870,7 @@ export class FboPricesHomeComponent
                                                         .updateDefaultTemplate(
                                                             this.updateModel
                                                         )
-                                                        .subscribe(() => {});
+                                                        .subscribe(() => { });
                                                 }
                                             });
                                     }
@@ -959,8 +989,8 @@ export class FboPricesHomeComponent
                     this.loadStagedFboPrices().subscribe(() => {
                         this.priceShiftLoading = false;
                     })
-                );
+                )
             })
-        );
+        )
     }
 }

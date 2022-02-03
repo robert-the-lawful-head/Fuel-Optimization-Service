@@ -18,54 +18,42 @@
                     <div class="row">
                         <div class="col-6">
                             <mat-form-field>
-                                <input
-                                    [(ngModel)]="data.firstName"
-                                    aria-label="First Name"
-                                    matInput
-                                    placeholder="First Name"
-                                />
+                                <input [(ngModel)]="data.firstName"
+                                       aria-label="First Name"
+                                       matInput
+                                       placeholder="First Name" />
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input
-                                    [(ngModel)]="data.lastName"
-                                    aria-label="Last Name"
-                                    matInput
-                                    placeholder="Last Name"
-                                />
+                                <input [(ngModel)]="data.lastName"
+                                       aria-label="Last Name"
+                                       matInput
+                                       placeholder="Last Name" />
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input
-                                    #userLoginEmail="ngModel"
-                                    [(ngModel)]="data.username"
-                                    [email]="true"
-                                    aria-label="Email Login"
-                                    matInput
-                                    placeholder="Email Login"
-                                    type="email"
-                                />
+                                <input #userLoginEmail="ngModel"
+                                       [(ngModel)]="data.username"
+                                       [email]="true"
+                                       aria-label="Email Login"
+                                       matInput
+                                       placeholder="Email Login"
+                                       type="email" />
                             </mat-form-field>
-                            <div
-                                *ngIf="userLoginEmail.errors?.email"
-                                style="color: red"
-                            >
+                            <div *ngIf="userLoginEmail.errors?.email"
+                                 style="color: red">
                                 Please enter a valid email address.
                             </div>
                         </div>
                         <div class="col-6">
                             <mat-form-field *ngIf="availableroles">
-                                <mat-select
-                                    [(ngModel)]="data.role"
-                                    disabled
-                                    placeholder="Role"
-                                >
-                                    <mat-option
-                                        *ngFor="let role of availableroles"
-                                        [value]="role.value"
-                                    >
+                                <mat-select [(ngModel)]="data.role"
+                                            disabled
+                                            placeholder="Role">
+                                    <mat-option *ngFor="let role of availableroles"
+                                                [value]="role.value">
                                         {{ role.description }}
                                     </mat-option>
                                 </mat-select>
@@ -73,61 +61,53 @@
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input
-                                    [(ngModel)]="data.newPassword"
-                                    aria-label="Password"
-                                    matInput
-                                    placeholder="Password"
-                                    type="password"
-                                />
+                                <input [(ngModel)]="data.newPassword"
+                                       aria-label="Password"
+                                       matInput
+                                       placeholder="Password"
+                                       type="password" />
                             </mat-form-field>
                         </div>
                         <div class="col-6">
                             <mat-form-field>
-                                <input
-                                    [(ngModel)]="data.confirmPassword"
-                                    aria-label="Confirm Password"
-                                    matInput
-                                    placeholder="Confirm Password"
-                                    type="password"
-                                />
+                                <input [(ngModel)]="data.confirmPassword"
+                                       aria-label="Confirm Password"
+                                       matInput
+                                       placeholder="Confirm Password"
+                                       type="password" />
                             </mat-form-field>
                         </div>
                     </div>
                     <div class="row">
-                        <div
-                            *ngIf="
-                                data.confirmPassword &&
-                                data.confirmPassword.length > 0 &&
-                                data.newPassword &&
-                                data.newPassword.length > 0 &&
-                                data.newPassword != data.confirmPassword
+                        <div *ngIf="
+                             data.confirmPassword &&
+                             data.confirmPassword.length>
+                            0 &&
+                            data.newPassword &&
+                            data.newPassword.length > 0 &&
+                            data.newPassword != data.confirmPassword
                             "
                             class="text-danger"
-                        >
+                            >
                             Passwords must match
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 mt-2 text-center">
-                            <button
-                                [disabled]="
+                            <button [disabled]="
                                     !data.confirmPassword ||
                                     !data.newPassword ||
                                     data.confirmPassword !== data.newPassword ||
                                     userLoginEmail.errors?.email
                                 "
-                                [mat-dialog-close]="data"
-                                class="mr-1"
-                                color="accent"
-                                mat-raised-button
-                            >
+                                    [mat-dialog-close]="data"
+                                    class="mr-1"
+                                    color="accent"
+                                    mat-raised-button>
                                 Save
                             </button>
-                            <button
-                                (click)="onCancelClick()"
-                                mat-stroked-button
-                            >
+                            <button (click)="onCancelClick()"
+                                    mat-stroked-button>
                                 Cancel
                             </button>
                         </div>
@@ -136,53 +116,41 @@
             </mat-tab>
 
             <mat-tab *ngIf="!isCsr" label="System Contacts">
-                <form
-                    (ngSubmit)="onSaveSystemContacts()"
-                    [formGroup]="systemContactsForm"
-                >
+                <form (ngSubmit)="onSaveSystemContacts()"
+                      [formGroup]="systemContactsForm">
                     <div class="mt-4 mb-2 pl-4">
                         <p>
                             Add contacts at your FBO to copy on relevant system
                             emails, such as fuel requests.
                         </p>
                         <mat-form-field style="max-width: 240px">
-                            <input
-                                aria-label="FuelDesk Email"
-                                formControlName="fuelDeskEmail"
-                                matInput
-                                placeholder="FuelDesk Email"
-                                required
-                            />
+                            <input aria-label="FuelDesk Email"
+                                   formControlName="fuelDeskEmail"
+                                   matInput
+                                   placeholder="FuelDesk Email"
+                                   required />
                         </mat-form-field>
 
-                        <button
-                            [disabled]="!systemContactsForm.valid"
-                            class="ml-3"
-                            color="accent"
-                            mat-raised-button
-                            type="submit"
-                        >
+                        <button [disabled]="!systemContactsForm.valid"
+                                class="ml-3"
+                                color="accent"
+                                mat-raised-button
+                                type="submit">
                             Save Email
                         </button>
 
-                        <div
-                            class="d-inline-block float-right"
-                            style="margin-top: 12px"
-                        >
-                            <button
-                                (click)="newRecord($event)"
-                                [view]="'accent'"
-                                beforeIcon="fa fa-plus"
-                                ni-button
-                            >
+                        <div class="d-inline-block float-right"
+                             style="margin-top: 12px">
+                            <button (click)="newRecord($event)"
+                                    [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    ni-button>
                                 Add New
                             </button>
                         </div>
 
-                        <div
-                            *ngIf="fuelDeskEmail.errors?.email"
-                            style="color: red"
-                        >
+                        <div *ngIf="fuelDeskEmail.errors?.email"
+                             style="color: red">
                             Please enter a valid email address.
                         </div>
                     </div>
@@ -190,62 +158,48 @@
 
                 <!--Contacts Grid-->
                 <div *ngIf="contactsData">
-                    <app-systemcontacts-grid
-                        (contactDeleted)="contactDeleted($event)"
-                        [contactsData]="contactsData"
-                    ></app-systemcontacts-grid>
+                    <app-systemcontacts-grid (contactDeleted)="contactDeleted($event)"
+                                             [contactsData]="contactsData"></app-systemcontacts-grid>
                 </div>
             </mat-tab>
 
             <mat-tab label="Email Distribution">
-                <form
-                    (ngSubmit)="onSaveEmailDistribution()"
-                    [formGroup]="emailDistributionForm"
-                >
+                <form (ngSubmit)="onSaveEmailDistribution()"
+                      [formGroup]="emailDistributionForm">
                     <div class="mt-4 mb-2 pl-4">
                         <mat-form-field style="max-width: 240px">
-                            <input
-                                formControlName="senderAddress"
-                                matInput
-                                placeholder="Sender Address"
-                                matTooltip="Your distribution emails will come from this address"
-                                matTooltipPosition="after"
-                                required
-                            />
+                            <input formControlName="senderAddress"
+                                   matInput
+                                   placeholder="Sender Address"
+                                   matTooltip="Your distribution emails will come from this address"
+                                   matTooltipPosition="after"
+                                   required />
                         </mat-form-field>
                         @FBOLinx.com
-                        <div
-                            *ngIf="senderAddress.errors?.pattern"
-                            style="color: red"
-                        >
+                        <div *ngIf="senderAddress.errors?.pattern"
+                             style="color: red">
                             Please enter with no spaces.
                         </div>
                         <div>
                             <mat-form-field style="max-width: 240px">
-                                <input
-                                    formControlName="replyTo"
-                                    matInput
-                                    placeholder="ReplyTo"
-                                    matTooltip="For distribution emails, customer replies will default to this address"
-                                    matTooltipPosition="after"
-                                    required
-                                />
+                                <input formControlName="replyTo"
+                                       matInput
+                                       placeholder="ReplyTo"
+                                       matTooltip="For distribution emails, customer replies will default to this address"
+                                       matTooltipPosition="after"
+                                       required />
                             </mat-form-field>
-                            <div
-                                *ngIf="replyTo.errors?.email"
-                                style="color: red"
-                            >
+                            <div *ngIf="replyTo.errors?.email"
+                                 style="color: red">
                                 Please enter a valid email address.
                             </div>
                         </div>
                         <div class="mt-4 mb-2 pl-4">
-                            <button
-                                [disabled]="!emailDistributionForm.valid"
-                                class="ml-3"
-                                color="accent"
-                                mat-raised-button
-                                type="submit"
-                            >
+                            <button [disabled]="!emailDistributionForm.valid"
+                                    class="ml-3"
+                                    color="accent"
+                                    mat-raised-button
+                                    type="submit">
                                 Save Emails
                             </button>
                         </div>
@@ -256,18 +210,14 @@
             <mat-tab label="Company">
                 <div class="mt-4 mb-2 pl-4">
                     <label>Upload your logo</label><br />
-                    <input
-                        type="file"
-                        (change)="onFileChange($event)"
-                        accept=".jpg,.jpeg,.png"
-                    />
-                    <button
-                        *ngIf="!isUploadingLogo"
-                        (click)="uploadFile()"
-                        class="ml-3"
-                        color="accent"
-                        mat-raised-button
-                    >
+                    <input type="file"
+                           (change)="onFileChange($event)"
+                           accept=".jpg,.jpeg,.png" />
+                    <button *ngIf="!isUploadingLogo"
+                            (click)="uploadFile()"
+                            class="ml-3"
+                            color="accent"
+                            mat-raised-button>
                         Upload File
                     </button>
                     <div *ngIf="isUploadingLogo">
@@ -278,16 +228,27 @@
                     <img src="{{ 'data:' + logoUrl }}" />
 
                     <div class="mt-4 mb-2 pl-4">
-                        <button
-                            (click)="deleteFile()"
-                            class="mr-1"
-                            color="warn"
-                            mat-raised-button
-                        >
+                        <button (click)="deleteFile()"
+                                class="mr-1"
+                                color="warn"
+                                mat-raised-button>
                             Delete
                         </button>
                     </div>
                 </div>
+            </mat-tab>
+
+            <mat-tab label="Products">
+                <form [formGroup]="productsForm" *ngIf="fboPreferencesData">
+                    <div class="mt-4 mb-2 pl-4">
+                        <div>
+                            <mat-slide-toggle color="accent" (click)="onProductsChange('JetA')" formControlName="enableJetA">JetA</mat-slide-toggle>
+                        </div>
+                        <div>
+                            <mat-slide-toggle color="accent" (click)="onProductsChange('SAF')" formControlName="enableSaf">Sustainable Fuel (SAF)</mat-slide-toggle>
+                        </div>
+                    </div>
+                </form>
             </mat-tab>
         </mat-tab-group>
     </div>

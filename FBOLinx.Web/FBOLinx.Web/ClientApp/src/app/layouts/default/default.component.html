@@ -16,8 +16,14 @@
 
     <app-fbo-prices-panel
         *ngIf="isPricePanelVisible()"
-        [cost]="cost"
-        [retail]="retail"
+        [enableSaf]="enableSaf"
+        [enableJetA]="enableJetA"
+        [costSaf]="costSaf"
+        [retailSaf]="retailSaf"
+        [costJetA]="costJetA"
+        [retailJetA]="retailJetA"
+        [effectiveTo]="effectiveTo"
+        (onClearFboPrice)="onClearFboPrice($event)"
         class="sticky-panel"
     ></app-fbo-prices-panel>
 

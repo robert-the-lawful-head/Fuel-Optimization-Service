@@ -10,13 +10,33 @@
                      outline="true"
                      theme="small"
                      title="Pricing Update Generator">
+                <div style="position: absolute; right: 10px; top: -30px">
+                    <button (click)="editFeesAndTaxes()"
+                            class="mr-1"
+                            ni-button
+                            size="small"
+                            view="'default'">
+                        Fees &amp; Taxes
+                    </button>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <ngx-ui-loader [loaderId]="pricingLoader"
+                                       bgsColor="rgb(100, 181, 246)"
+                                       bgsPosition="center-center"
+                                       bgsType="ball-spin"
+                                       overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+                    </div>
+                </div>
+
                 <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="col-12">
-                    <app-fbo-prices-update-generator-grid [fboPricesUpdateData]="fboPricesUpdateData" [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onEditRow)="onEditFboPrice($event)"></app-fbo-prices-update-generator-grid>
+                    <app-fbo-prices-update-generator-grid [fboPricesUpdateData]="fboPricesUpdateData" [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
                 </div>
             </ni-card>
         </div>
         <div class="prices-board-row">
-            <ni-card [collapsible]="true"
+            <ni-card [collapsible]="false"
                      [opened]="true"
                      bgColor="dead"
                      class="

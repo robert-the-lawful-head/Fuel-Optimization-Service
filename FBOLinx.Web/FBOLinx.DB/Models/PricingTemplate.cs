@@ -68,14 +68,12 @@ namespace FBOLinx.DB.Models
                 if (!MarginType.HasValue)
                     return "";
                 if (MarginType.Value == MarginTypes.CostPlus)
-                    return "JetA Cost";
+                    return "Cost";
                 if (MarginType.Value == MarginTypes.RetailMinus)
-                    return "JetA Retail";
+                    return "Retail";
                 return "";
             }
         }
-
-      
 
         [InverseProperty("PricingTemplate")]
         public ICollection<CustomerMargins> CustomerMargins { get; set; }

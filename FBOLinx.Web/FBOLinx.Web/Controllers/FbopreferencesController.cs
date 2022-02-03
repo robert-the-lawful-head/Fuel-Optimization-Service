@@ -54,7 +54,11 @@ namespace FBOLinx.Web.Controllers
 
             if (fbopreferences == null)
             {
-                return NotFound();
+                fbopreferences = new Fbopreferences() { Fboid = fboId, EnableJetA = true, EnableSaf = true };
+                _context.Fbopreferences.Add(fbopreferences);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetFbopreferences", new { id = fbopreferences.Oid }, fbopreferences);
             }
 
             return fbopreferences;

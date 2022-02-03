@@ -28,7 +28,7 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="effective">
+                    <ng-container matColumnDef="effectiveFrom">
                         <th *matHeaderCellDef mat-header-cell>
                             <span>Effective</span>
                         </th>
@@ -63,7 +63,7 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="expiration">
+                    <ng-container matColumnDef="effectiveTo">
                         <th *matHeaderCellDef mat-header-cell>
                             <span>Expiration</span>
                         </th>
@@ -97,7 +97,7 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="retailPap">
+                    <ng-container matColumnDef="pricePap">
                         <th *matHeaderCellDef class="text-left" mat-header-cell>
                             <div class="">Retail PAP</div>
                         </th>
@@ -144,7 +144,7 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="fuelCost">
+                    <ng-container matColumnDef="priceCost">
                         <th *matHeaderCellDef class="text-left" mat-header-cell>
                             <div class="">Fuel Cost</div>
                         </th>
@@ -181,7 +181,7 @@
                                 Edit
                             </button>
 
-                            <button *ngIf="pricing.isEdit" (click)="submitPricingClicked(pricing)"
+                            <button *ngIf="pricing.isEdit" (click)="submitPricing(pricing)"
                                     class="mr-1"
                                     color="green"
                                      [disabled]="!pricing.pricePap && !pricing.priceCost"
