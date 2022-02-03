@@ -24,6 +24,7 @@ using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services.Interfaces;
 using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web.Controllers
@@ -40,13 +41,13 @@ namespace FBOLinx.Web.Controllers
         private readonly FboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AircraftService _aircraftService;
         private readonly DegaContext _degaContext;
 
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxService fuelerLinxService, IPricingTemplateService pricingTemplateService , AircraftService aircraftService , DegaContext degaContext)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService , AircraftService aircraftService , DegaContext degaContext)
         {    _hostingEnvironment = hostingEnvironment;
             _context = context;
             _priceFetchingService = priceFetchingService;
@@ -326,7 +327,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("CertificateTypes")]
         public IEnumerable<Core.Utilities.Enum.EnumDescriptionValue> GetCertificateTypes()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(CustomerInfoByGroup.CertificateTypes));
+            return Core.Utilities.Enum.GetDescriptions(typeof(CertificateTypes));
         }
 
         // GET: api/CustomerInfoByGroup/CustomerSources
@@ -952,7 +953,7 @@ namespace FBOLinx.Web.Controllers
                                 cg.Company,
                                 FuelerLinxId = (cg.Customer?.FuelerlinxId ?? 0),
                                 CustomerCompanyTypeName = ccot?.Name,
-                                CertificateType = (cg.CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet),
+                                CertificateType = (cg.CertificateType ?? CertificateTypes.NotSet),
                                 ContactExists = contactInfoByFboForAlerts.Any(c =>
                                (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
                                 PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,

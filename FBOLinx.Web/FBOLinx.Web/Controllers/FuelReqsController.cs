@@ -34,10 +34,10 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly AircraftService _aircraftService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxService fuelerLinxService, AircraftService aircraftService)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -661,9 +661,9 @@ namespace FBOLinx.Web.Controllers
                                                            join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
-                                                               Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet
+                                                               Size = (ca.Size.HasValue && ca.Size.Value != Core.Enums.AircraftSizes.NotSet
                                                                 ? ca.Size
-                                                                : (AirCrafts.AircraftSizes)ac.Size),
+                                                                : (Core.Enums.AircraftSizes)ac.Size),
                                                                ca.Oid
                                                            }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId

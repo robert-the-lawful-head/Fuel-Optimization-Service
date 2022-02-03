@@ -106,6 +106,7 @@
     <Folder Include="ClientApp\src\app\ui\" />
     <Folder Include="ClientApp\src\assets\img\landing-page\" />
     <Folder Include="Configurations\" />
+    <Folder Include="EntityServices\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,18 +4,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models.Responses;
+using FBOLinx.DB.Specifications.Customers;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.Responses.Customers;
+using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public class CustomerService
     {
         private FboLinxContext _context;
+        private CustomerEntityService _customerEntityService;
 
-        public CustomerService(FboLinxContext context)
+        public CustomerService(FboLinxContext context, CustomerEntityService customerEntityService)
         {
+            _customerEntityService = customerEntityService;
             _context = context;
         }
 
@@ -193,9 +197,14 @@ namespace FBOLinx.Web.Services
             oldCustomer.ShowJetA == newCustomer.ShowJetA &&
             oldCustomer.State == newCustomer.State &&
             oldCustomer.Website == newCustomer.Website;
-          
         }
 
+        public async Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId)
+        {
+            var result =
+                await _customerEntityService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
+            return result;
+        }
         #endregion
 
         #region Private Methods

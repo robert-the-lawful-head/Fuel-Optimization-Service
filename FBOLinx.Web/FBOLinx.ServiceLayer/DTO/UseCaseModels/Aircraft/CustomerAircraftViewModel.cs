@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
@@ -13,7 +14,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public string Company { get; set; }
         public int AircraftId { get; set; }
         public string TailNumber { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
         public string BasedPaglocation { get; set; }
         public string NetworkCode { get; set; }
         public int? AddedFrom { get; set; }
@@ -25,7 +26,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
 
         public string AircraftSizeDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AirCrafts.AircraftSizes.NotSet); }
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AircraftSizes.NotSet); }
         }
     }
 }

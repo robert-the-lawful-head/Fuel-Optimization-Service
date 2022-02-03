@@ -23,12 +23,12 @@ namespace FBOLinx.Web.Controllers
     public class FbocontactsController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxApiService;
 
-        public FbocontactsController(FboLinxContext context, FuelerLinxService fuelerLinxService)
+        public FbocontactsController(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService)
         {
             _context = context;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
         }
 
         // GET: api/Fbocontacts/fbo/5
@@ -185,7 +185,7 @@ namespace FBOLinx.Web.Controllers
                 Email = fbo.FuelDeskEmail
             };
 
-            var response = await _fuelerLinxService.UpdateFuelVendorEmails(request);
+            var response = await _fuelerLinxApiService.UpdateFuelVendorEmails(request);
 
             return Ok(response);
         }

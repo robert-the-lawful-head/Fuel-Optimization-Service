@@ -18,6 +18,7 @@ using static FBOLinx.DB.Models.PricingTemplate;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web.Services
@@ -32,7 +33,7 @@ namespace FBOLinx.Web.Services
         private IMailService _MailService;
         private IPricingTemplateService _PricingTemplateService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxService fuelerLinxService, IPricingTemplateService pricingTemplateService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService)
         {
             _FboService = fboService;
             _CustomerService = customerService;

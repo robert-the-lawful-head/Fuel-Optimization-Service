@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 {
-    public class FuelerLinxService
+    public class FuelerLinxApiService
     {
         #region Private Members
         private string _ProductionUsername = "fbolinx";
@@ -26,7 +26,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
         #endregion
 
-        public FuelerLinxService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, IAirportService airportService)
+        public FuelerLinxApiService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, IAirportService airportService)
         {
             _airportService = airportService;
             _appSettings = appSettings;
@@ -207,6 +207,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             await apiClient.FBOLinx_ClearQuoteCacheForLocationsAsync(new FboLinxClearQuoteCacheRequest()
             { AirportIdentifiers = airportIdentifiers });
         }
+
+        public async Task<IClient> GetApiClient()
+        {
+            var authToken = await GetAuthenticationTokenFromService();
+            return GetApiClient(authToken);
+        }
+
+        public IClient GetApiClient(string authToken)
+        {
+            _httpClient = new HttpClient();
+
+            AdjustHeader("x-api-key", _APIKey);
+
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                AdjustHeader("Authorization", "Bearer " + authToken.Replace("JWT ", ""));
+            }
+
+            Client client = new Client(_httpClient);
+            client.BaseUrl = _fuelerlinxSdkSettings.APIEndpoint;
+            return client;
+        }
         #endregion
 
         #region Private Methods
@@ -241,28 +263,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             {
                 return "";
             }
-        }
-
-        public async Task<IClient> GetApiClient()
-        {
-            var authToken = await GetAuthenticationTokenFromService();
-            return GetApiClient(authToken);
-        }
-
-        public IClient GetApiClient(string authToken)
-        {
-            _httpClient = new HttpClient();
-
-            AdjustHeader("x-api-key", _APIKey);
-
-            if (!string.IsNullOrEmpty(authToken))
-            {
-                AdjustHeader("Authorization", "Bearer " + authToken.Replace("JWT ", ""));
-            }
-
-            Client client = new Client(_httpClient);
-            client.BaseUrl = _fuelerlinxSdkSettings.APIEndpoint;
-            return client;
         }
 
         private void AdjustHeader(string headerName, string headerValue)

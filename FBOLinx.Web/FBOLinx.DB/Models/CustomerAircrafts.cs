@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class CustomerAircrafts
+    public partial class CustomerAircrafts : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         [Column("GroupID")]
         public int? GroupId { get; set; }
         [Column("CustomerID")]
@@ -17,7 +15,7 @@ namespace FBOLinx.DB.Models
         public int AircraftId { get; set; }
         [StringLength(25)]
         public string TailNumber { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
         [Column("BasedPAGLocation")]
         [StringLength(50)]
         public string BasedPaglocation { get; set; }

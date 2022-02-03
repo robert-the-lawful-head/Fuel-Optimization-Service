@@ -1,18 +1,13 @@
-﻿using FBOLinx.Web.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.DB.Context;
-using Geolocation;
-using FBOLinx.Web.Models.Requests;
-using System.IO;
-using System.Transactions;
 using EFCore.BulkExtensions;
+using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.DTO.Requests.Groups;
+using Microsoft.EntityFrameworkCore;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 {
     public class GroupService
     {
@@ -223,5 +218,7 @@ namespace FBOLinx.Web.Services
             {
             }
         }
+
+        
     }
 }

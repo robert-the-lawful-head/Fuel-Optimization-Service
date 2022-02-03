@@ -13,12 +13,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
     public class FuelPriceAdjustmentCleanUpService : IFuelPriceAdjustmentCleanUpService
     {
-        private FuelerLinxService _fuelerLinxService;
+        private FuelerLinxApiService _fuelerLinxApiService;
         private int _fboId;
 
-        public FuelPriceAdjustmentCleanUpService(FuelerLinxService fuelerLinxService)
+        public FuelPriceAdjustmentCleanUpService(FuelerLinxApiService fuelerLinxApiService)
         {
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
         }
 
         public async Task PerformFuelPriceAdjustmentCleanUp(int fboId)
@@ -29,7 +29,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
         private async Task CleanUpFuelerLinx()
         {
-            await _fuelerLinxService.ClearQuoteCacheForFbo(_fboId);
+            await _fuelerLinxApiService.ClearQuoteCacheForFbo(_fboId);
         }
     }
 }

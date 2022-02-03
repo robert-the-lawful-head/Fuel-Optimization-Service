@@ -33,12 +33,12 @@ namespace FBOLinx.Web.Services
         private List<AirportWatchLiveData> _LiveDataToDelete;
         private List<AirportWatchHistoricalData> _HistoricalDataToUpdate;
         private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
-        private FuelerLinxService _fuelerLinxService;
+        private FuelerLinxApiService _fuelerLinxApiService;
         private IOptions<DemoData> _demoData;
         private DBSCANService _dBSCANService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         public AirportWatchService( DBSCANService DBSCANService , 
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxService fuelerLinxService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService)
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService)
         {
             _dBSCANService = DBSCANService;
             _demoData = demoData;
@@ -46,7 +46,7 @@ namespace FBOLinx.Web.Services
             _degaContext = degaContext;
             _aircraftService = aircraftService;
             _fboService = fboService;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
         }
 
@@ -81,7 +81,7 @@ namespace FBOLinx.Web.Services
                             .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow && x.Cancelled == false)
                             .Include(x => x.CustomerAircraft).ToListAsync();
 
-                        FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+                        FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
                         { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.fa.Icao, Fbo = fbo.f.Fbo });
 
                         foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)

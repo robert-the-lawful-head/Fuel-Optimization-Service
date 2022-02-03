@@ -7,10 +7,14 @@ using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
@@ -103,7 +107,28 @@ namespace FBOLinx.Web
             services.Configure<DemoData>(demoDataSection);
             var demoData = demoDataSection.Get<DemoData>();
 
+            // Register AutoMapper 
+            //var mapperConfig = new AutoMapper.MapperConfiguration(cfg =>
+            //{
+            //    cfg.AllowNullCollections = true;
+
+            //    // Model & Dto will be mapped here.
+            //    cfg.CreateMap<CustomerDTO, FBOLinx.DB.Models.Customers>();
+            //    cfg.CreateMap<FBOLinx.DB.Models.Customers, CustomerDTO>();
+            //    cfg.CreateMap<GroupDTO, FBOLinx.DB.Models.Group>();
+            //    cfg.CreateMap<FBOLinx.DB.Models.Group, GroupDTO>();
+            //    cfg.CreateMap<CustomerInfoByGroupDTO, FBOLinx.DB.Models.CustomerInfoByGroup>();
+            //    cfg.CreateMap<FBOLinx.DB.Models.CustomerInfoByGroup, CustomerInfoByGroupDTO>();
+
+            //});
+
+            //var mapper = mapperConfig.CreateMapper();
+
+            services.AddAutoMapper(c => c.AddProfile<FBOLinx.ServiceLayer.Profiles.AutoMapping>(), typeof(Startup));
+
             // configure DI for application services
+
+            //Business Services
             services.AddScoped<RampFeesService, RampFeesService>();
             services.AddScoped<IPriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
@@ -121,10 +146,9 @@ namespace FBOLinx.Web
             services.AddTransient <AssociationsService, AssociationsService>();
             services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
             services.AddTransient<DateTimeService, DateTimeService>();
-
-            //Business Services
+            
             services.AddTransient<AircraftService, AircraftService>();
-            services.AddScoped<FuelerLinxService, FuelerLinxService>();
+            services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
@@ -133,6 +157,14 @@ namespace FBOLinx.Web
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<IAirportService, AirportService>();
             services.AddTransient<IFuelPriceAdjustmentCleanUpService, FuelPriceAdjustmentCleanUpService>();
+            services.AddTransient<IFuelerLinxAccoutSyncingService, FuelerLinxAccoutSyncingService>();
+            services.AddTransient<IFuelerLinxAircraftSyncingService, FuelerLinxAircraftSyncingService>();
+
+            //Entity Services
+            services.AddTransient<CustomerEntityService, CustomerEntityService>();
+            services.AddTransient<GroupEntityService, GroupEntityService>();
+            services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
+            services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
