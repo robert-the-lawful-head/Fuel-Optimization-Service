@@ -33,12 +33,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private CustomerDTO _customerRecord;
         private CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private List<CustomerInfoByGroupDTO> _customerInfoByGroupRecords;
+        private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
+        private CustomerAircraftEntityService _customerAircraftEntityService;
 
         public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService, 
             CustomerEntityService customerEntityService, 
             GroupEntityService groupEntityService, 
-            CustomerInfoByGroupEntityService customerInfoByGroupEntityService)
+            CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
+            CustomerAircraftEntityService customerAircraftEntityService)
         {
+            _customerAircraftEntityService = customerAircraftEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _groupEntityService = groupEntityService;
             _customerEntityService = customerEntityService;
@@ -60,32 +64,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             await UpdateCustomerRecord();
 
             await UpdateCustomerInfoByGroupRecords();
+
+            await UpdateFleetStatus();
         }
 
         private async Task UpdateCustomerRecord()
         {
-            //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
-            if (_customerRecord == null)
-                _customerRecord = await _customerEntityService.Add(new CustomerDTO()
-                {
-                    Action = false,
-                    Margin = 0,
-                    Company = _fuelerlinxCompany.CompanyName,
-                    Active = (_fuelerlinxCompany.Active),
-                    Distribute = true,
-                    FuelerlinxId = (_fuelerlinxCompany.Active.GetValueOrDefault()
-                        ? _fuelerlinxCompany.Id
-                        : -(_fuelerlinxCompany.Id)),
-                    ShowJetA = true,
-                    CertificateType = ((_fuelerlinxCompany.CertificateType?.ToLower()?.Contains("charter")).GetValueOrDefault()
-                        ? CertificateTypes.Part135
-                        : CertificateTypes.Part91)
-                });
-
             //Set the FuelerLinxId equal to the FuelerLinx company's primary key.  Use a negative value if it has become de-activated.
             _customerRecord.FuelerlinxId = (_fuelerlinxCompany.Active.GetValueOrDefault()
                 ? _fuelerlinxCompany.Id
                 : -(_fuelerlinxCompany.Id));
+            _customerRecord.Suspended = _fuelerlinxCompany.HideInFboLinx.GetValueOrDefault();
             _customerRecord.Company = _fuelerlinxCompany.CompanyName;
 
             await _customerEntityService.Update(_customerRecord);
@@ -133,6 +122,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             await _customerInfoByGroupEntityService.BulkInsertOrUpdate(_customerInfoByGroupRecords);
         }
 
+        private async Task UpdateFleetStatus()
+        {
+            if (_fuelerlinxAircraftList == null || _fuelerlinxAircraftList.Count == 0)
+                return;
+
+            //Update all customer aircraft records' "AddedFrom" flag based on the customer's status.
+            //This will allow FuelerLinx accounts that have been de-activated to have their tails removed or edited in FBOLinx accounts.
+            List<int> groupIds = _customerInfoByGroupRecords.Select(x => x.GroupId).ToList();
+            List<string> tailNumbers = _fuelerlinxAircraftList.Select(x => x.TailNumber).ToList();
+
+            var customerAircraftList =
+                await _customerAircraftEntityService.GetListBySpec(
+                    new CustomerAircraftByGroupAndTailSpecification(groupIds, tailNumbers));
+
+            if (customerAircraftList == null || customerAircraftList.Count == 0)
+                return;
+            customerAircraftList.ForEach(x => x.AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0));
+        }
+
         private async Task PrepareDataForSync()
         {
             var client = await _fuelerLinxApiService.GetApiClient();
@@ -141,11 +149,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             if ((companyResponse?.Success).GetValueOrDefault())
                 _fuelerlinxCompany = companyResponse.Result;
 
+            var aircraftResponse = await client.FBOLinx_GetAircraftDataForCompanyAsync(_fuelerLinxCompanyId);
+            if ((aircraftResponse?.Success).GetValueOrDefault())
+                _fuelerlinxAircraftList = aircraftResponse.Result;
+
             _existingGroupRecords = await _groupEntityService.GetListBySpec(new AllGroupsSpecification(false));
 
             _customerRecord = await _customerEntityService.GetSingleBySpec(
                 new CustomerByFuelerLinxIdSpecification(_fuelerLinxCompanyId));
 
+            //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
             if (_customerRecord == null)
                 _customerRecord = await _customerEntityService.Add(new CustomerDTO()
                 {
@@ -156,12 +169,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                     Distribute = true,
                     FuelerlinxId = (_fuelerlinxCompany.Active.GetValueOrDefault() ? _fuelerlinxCompany.Id : -(_fuelerlinxCompany.Id)),
                     ShowJetA = true,
-                    CertificateType = ((_fuelerlinxCompany.CertificateType?.ToLower()?.Contains("charter")).GetValueOrDefault() ? CertificateTypes.Part135 : CertificateTypes.Part91)
+                    CertificateType = ((_fuelerlinxCompany.CertificateType?.ToLower()?.Contains("charter")).GetValueOrDefault() ? CertificateTypes.Part135 : CertificateTypes.Part91),
+                    Suspended = _fuelerlinxCompany.HideInFboLinx.GetValueOrDefault()
                 });
 
             _customerInfoByGroupRecords = await _customerInfoByGroupEntityService.GetListBySpec(
                 new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
-
         }
     }
 }

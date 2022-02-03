@@ -64,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Create a list of what full coverage should look like
             var fullCoverage = _existingGroupRecords.Select(x => new CustomerAircraftDTO()
             {
-                AddedFrom = 1,
+                AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
                 AircraftId = _fuelerlinxAircraft.AircraftId.GetValueOrDefault(),
                 TailNumber = _fuelerlinxAircraft.TailNumber,
                 CustomerId = _customerRecord.Oid,
