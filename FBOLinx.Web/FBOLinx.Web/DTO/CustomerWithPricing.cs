@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
@@ -31,7 +32,7 @@ namespace FBOLinx.Web.DTO
 
         public double? amount { get; set; }
         public string PricingTemplateName { get; set; }
-        public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
+        public CertificateTypes? CertificateType { get; set; }
         public double? MinGallons { get; set; }
         public double? MaxGallons { get; set; }
         public int? CustomerCompanyType { get; set; }
@@ -72,7 +73,7 @@ namespace FBOLinx.Web.DTO
         {
             get
             {
-                return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet);
+                return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
 

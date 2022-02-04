@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;

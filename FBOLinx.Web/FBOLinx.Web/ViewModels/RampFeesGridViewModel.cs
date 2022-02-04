@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models;
 
@@ -17,7 +18,7 @@ namespace FBOLinx.Web.ViewModels
 
         public int Oid { get; set; }
         public double? Price { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
         public double? Waived { get; set; }
         [Column("FBOID")]
         public int? Fboid { get; set; }
@@ -26,7 +27,7 @@ namespace FBOLinx.Web.ViewModels
         {
             get
             {
-                if ((!_CategoryType.HasValue || _CategoryType.Value == RampFees.RampFeeCategories.Notset) && (Size.HasValue && Size.Value != AirCrafts.AircraftSizes.NotSet))
+                if ((!_CategoryType.HasValue || _CategoryType.Value == RampFees.RampFeeCategories.Notset) && (Size.HasValue && Size.Value != AircraftSizes.NotSet))
                     return RampFees.RampFeeCategories.AircraftSize;
                 return _CategoryType;
             }
@@ -55,7 +56,7 @@ namespace FBOLinx.Web.ViewModels
             get
             {
                 if (CategoryType.GetValueOrDefault() == RampFees.RampFeeCategories.AircraftSize)
-                    return FBOLinx.Core.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes)CategoryMinValue);
+                    return FBOLinx.Core.Utilities.Enum.GetDescription((AircraftSizes)CategoryMinValue);
                 return "";
             }
         }

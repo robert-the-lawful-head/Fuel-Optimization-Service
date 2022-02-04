@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.Requests.Integrations.FuelerLinx;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,9 +32,11 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly AircraftService _aircraftService;
         private CustomerAircraftService _CustomerAircraftService;
+        private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, CustomerAircraftService customerAircraftService)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, CustomerAircraftService customerAircraftService, IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService)
         {
+            _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
@@ -67,9 +72,9 @@ namespace FBOLinx.Web.Controllers
                                                ca.CustomerId,
                                                ca.AircraftId,
                                                ca.Oid,
-                                               Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet) || ac == null
+                                               Size = (ca.Size.HasValue && ca.Size.Value != AircraftSizes.NotSet) || ac == null
                                                    ? ca.Size
-                                                   : (AirCrafts.AircraftSizes)(ac.Size ?? 0),
+                                                   : (AircraftSizes)(ac.Size ?? 0),
                                                ca.AddedFrom,
                                                ca.NetworkCode,
                                                ca.BasedPaglocation,
@@ -483,10 +488,25 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [AllowAnonymous]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [HttpPost("sync-fuelerlinx-aircraft/for-company/{fuelerLinxCompanyId}/for-tailnumber/{tailNumber}")]
+        public async Task<IActionResult> SyncCustomerAndAircraftFromFuelerLinx([FromRoute] int fuelerLinxCompanyId, [FromRoute] string tailNumber)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fuelerLinxAircraftSyncingService.SyncFuelerlinxAircraft(fuelerLinxCompanyId, tailNumber);
+
+            return Ok();
+        }
         #endregion
 
-       
-   
+
+
 
         private bool CustomerAircraftsExists(int id)
         {

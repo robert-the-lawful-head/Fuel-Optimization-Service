@@ -99,7 +99,8 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
         public saveConfirmationDialog: MatDialog,
         private feesAndTaxesService: FbofeesandtaxesService,
         private sharedService: SharedService,
-        private pricingTemplateService: PricingtemplatesService
+        private pricingTemplateService: PricingtemplatesService,
+        private fbopricesService: FbopricesService
     ) {}
 
     public ngOnInit(): void {
@@ -112,17 +113,28 @@ export class FeeAndTaxSettingsDialogComponent implements OnInit {
     }
 
     public saveChanges(): void {
+        var hasChange: boolean = false;
+
         for (const feeAndTax of this.data) {
             if (feeAndTax.requiresUpdate) {
                 this.saveFeeAndTax(feeAndTax);
+                hasChange = true;
             }
         }
 
         for (const deletedFeeAndTax of this.deletedFeesAndTaxes) {
             this.deleteFeeAndTax(deletedFeeAndTax);
+            hasChange = true;
         }
 
-        this.dialogRef.close(this.data);
+        if (hasChange)
+            this.fbopricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe((response:
+                any) => {
+                //Cleanup finished.
+                this.dialogRef.close(this.data);
+            });
+        else
+            this.dialogRef.close(this.data);
     }
 
     public feeAndTaxChanged(feeAndTax, avoidRecalculation = false): void {

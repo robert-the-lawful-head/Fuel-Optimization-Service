@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models;
@@ -20,14 +21,14 @@ namespace FBOLinx.Web.Services
         private FboLinxContext _context;
         private IServiceScopeFactory _serviceScopeFactory;
         private FuelerLinxContext _fuelerLinxContext;
-        private FuelerLinxService _fuelerLinxService;
+        private FuelerLinxApiService _fuelerLinxApiService;
 
-        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxService fuelerLinxService)
+        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxApiService fuelerLinxApiService)
         {
             _fuelerLinxContext = fuelerLinxContext;
             _serviceScopeFactory = serviceScopeFactory;
             _context = context;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
         }
 
         #region Public Methods
@@ -62,7 +63,7 @@ namespace FBOLinx.Web.Services
                             using (var scope = _serviceScopeFactory.CreateScope())
                             {
                                 var db = scope.ServiceProvider.GetService<FboLinxContext>();
-                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid, _fuelerLinxService);
+                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid, _fuelerLinxApiService);
                             }
 
                         });

@@ -4,24 +4,12 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
    public partial class CustomerInfoByGroupLogData
     {
-        public enum CertificateTypes : short
-        {
-            [Description("Not set")]
-            NotSet = 0,
-            [Description("Part 91")]
-            Part91 = 91,
-            [Description("Part 121")]
-            Part121 = 121,
-            [Description("Part 135")]
-            Part135 = 135
-        }
-
-
         [Column("GroupID")]
         public int GroupId { get; set; }
         [Column("CustomerID")]

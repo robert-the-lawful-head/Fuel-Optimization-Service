@@ -13,6 +13,7 @@ using FBOLinx.Web.ViewModels;
 using static FBOLinx.DB.Models.RampFees;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Services
 {
@@ -83,7 +84,7 @@ namespace FBOLinx.Web.Services
         {
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
             IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
-                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
             var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
             var allAircraft = await _aircraftService.GetAllAircrafts();
 
@@ -91,7 +92,7 @@ namespace FBOLinx.Web.Services
                 from s in sizes
                 join r in rampFees on new
                 {
-                    size = (int?)((short?)((AirCrafts.AircraftSizes)s.Value)),
+                    size = (int?)((short?)((AircraftSizes)s.Value)),
                     fboId = (int?)fboId
                 }
                     equals new
@@ -111,9 +112,9 @@ namespace FBOLinx.Web.Services
                     CategoryMinValue = r?.CategoryMinValue,
                     CategoryMaxValue = r?.CategoryMaxValue,
                     ExpirationDate = r?.ExpirationDate,
-                    Size = (AirCrafts.AircraftSizes)s.Value,
+                    Size = (AircraftSizes)s.Value,
                     AppliesTo = (from a in _aircraftService.GetAllAircraftsAsQueryable()
-                                 where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes)s.Value
+                                 where a.Size.HasValue && a.Size == (AircraftSizes)s.Value
                                  select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
                     LastUpdated = r?.LastUpdated
 
@@ -176,7 +177,7 @@ namespace FBOLinx.Web.Services
 
             var result = validRampFees.Where(servicesAndFeesByCompany => 
             (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.AircraftType && customerAircraft.AircraftId == servicesAndFeesByCompany.CategoryMinValue) ||
-                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.AircraftSize && (customerAircraft.Size == (AirCrafts.AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue) || customerAircraft?.Aircraft?.Size == (AirCrafts.AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue))) ||
+                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.AircraftSize && (customerAircraft.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue) || customerAircraft?.Aircraft?.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue))) ||
                     (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.TailNumber && !string.IsNullOrEmpty(servicesAndFeesByCompany.CategoryStringValue) && servicesAndFeesByCompany.CategoryStringValue.Split(',').Contains(customerAircraft.TailNumber)) ||
                     (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.WeightRange && servicesAndFeesByCompany.CategoryMinValue <= customerAircraft.Aircraft?.BasicOperatingWeight && servicesAndFeesByCompany.CategoryMaxValue >= customerAircraft.Aircraft?.BasicOperatingWeight) ||
                     (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.Wingspan && servicesAndFeesByCompany.CategoryMinValue <= specifications?.FuselageDimensionsWingSpanFt && servicesAndFeesByCompany.CategoryMaxValue >= specifications?.FuselageDimensionsWingSpanFt)).ToList();

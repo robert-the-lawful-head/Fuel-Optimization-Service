@@ -19,6 +19,7 @@ using System.Security.Claims;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.Web.Services.Interfaces;
 using static FBOLinx.DB.Models.Fboprices;
 
@@ -38,6 +39,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FbopricesService _fbopricesService;
         private readonly DateTimeService _dateTimeService;
         private readonly FboService _fboService;
+        private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
 
         public FbopricesController(
             FboLinxContext context,
@@ -48,8 +50,10 @@ namespace FBOLinx.Web.Controllers
             IPriceFetchingService priceFetchingService,
             FbopricesService fbopricesService,
             DateTimeService dateTimeService,
-            FboService fboService)
+            FboService fboService,
+            IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService)
         {
+            _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -308,6 +312,8 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
+            await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboId);
+
             return Ok(null);
         }
 
@@ -407,6 +413,8 @@ namespace FBOLinx.Web.Controllers
                     _context.Fboprices.Add(costPrice);
                 }
                 await _context.SaveChangesAsync();
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(user.FboId);
 
                 return Ok(new { message = "Success" });
             }
@@ -536,6 +544,8 @@ namespace FBOLinx.Web.Controllers
                     _context.Fboprices.Add(newFboPrice);
                 }
                 await _context.SaveChangesAsync();
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid.GetValueOrDefault());
             }
             catch (DbUpdateConcurrencyException)
             {                
@@ -574,6 +584,8 @@ namespace FBOLinx.Web.Controllers
             map.FboPriceId = fboprices.Oid;
             _context.MappingPrices.Add(map);
             await _context.SaveChangesAsync();
+
+            await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Oid);
 
             return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);
 
@@ -932,6 +944,20 @@ namespace FBOLinx.Web.Controllers
             {
                
             }
+
+            return Ok();
+        }
+
+        // POST: api/Fboprices/handle-price-change-cleanup/{fboId}
+        [HttpPost("handle-price-change-cleanup/{fboId}")]
+        public async Task<IActionResult> HandlePriceChangeCleanup([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboId);
 
             return Ok();
         }

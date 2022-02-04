@@ -4,16 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class Group
+    public class Group : FBOLinxBaseEntityModel<int>
     {
         public Group()
         {
             Fbos = new HashSet<Fbos>();
         }
-
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
+        
         [Column("Group")]
         [StringLength(50)]
         public string GroupName { get; set; }

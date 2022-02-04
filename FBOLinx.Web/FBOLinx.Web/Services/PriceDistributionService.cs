@@ -20,7 +20,6 @@ using System.Web;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using MailSettings = FBOLinx.Web.Configurations.MailSettings;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;

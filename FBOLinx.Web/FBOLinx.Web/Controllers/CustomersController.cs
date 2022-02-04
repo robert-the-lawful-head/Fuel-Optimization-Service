@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using Microsoft.AspNetCore.Http;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.DB.Models.AirCrafts;
-using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -24,9 +21,11 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly AircraftService _aircraftService;
+        private IFuelerLinxAccoutSyncingService _fuelerLinxAccoutSyncingService;
 
-        public CustomersController(FboLinxContext context, AircraftService aircraftService)
+        public CustomersController(FboLinxContext context, AircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService)
         {
+            _fuelerLinxAccoutSyncingService = fuelerLinxAccoutSyncingService;
             _context = context;
             _aircraftService = aircraftService;
         }
@@ -74,6 +73,21 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(customer);
+        }
+
+        [AllowAnonymous]
+        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [HttpPost("sync-fuelerlinx-company/{fuelerLinxCompanyId}")]
+        public async Task<IActionResult> SyncCustomerFromFuelerLinx([FromRoute] int fuelerLinxCompanyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fuelerLinxAccoutSyncingService.SyncFuelerLinxAccount(fuelerLinxCompanyId);
+
+            return Ok();
         }
 
         // PUT: api/Customers/5
@@ -193,7 +207,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (custWithAircrafts.Count > 0)
                 {
-                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
 
                     foreach (var custPlane in custWithAircrafts)
                     {
