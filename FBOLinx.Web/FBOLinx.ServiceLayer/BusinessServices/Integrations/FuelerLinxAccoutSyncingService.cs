@@ -88,7 +88,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                         into leftJoinCustomerInfoByGroup
                     from cg in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
                     select new {GroupId = g.Oid, CustomerInfoByGroup = cg})
-                .Where(x => x.CustomerInfoByGroup == null)
+                .Where(x => x.CustomerInfoByGroup == null
+                && _fuelerlinxCompany.Active.GetValueOrDefault())
                 .Select(x =>
                     new CustomerInfoByGroupDTO()
                     {
