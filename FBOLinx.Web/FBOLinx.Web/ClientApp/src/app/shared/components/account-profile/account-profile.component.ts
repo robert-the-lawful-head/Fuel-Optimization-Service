@@ -52,6 +52,8 @@ export class AccountProfileComponent {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() editContactClicked = new EventEmitter<any>();
     @Output() newContactClicked = new EventEmitter<any>();
+    @Output() productChanged = new EventEmitter<any>();
+
 
     // Members
     fboInfo: any;
@@ -201,14 +203,9 @@ export class AccountProfileComponent {
             this.fboPreferencesData.enableSaf = !this.productsForm.value.enableSaf;
 
         this.fboPreferencesService.update(this.fboPreferencesData).subscribe(() => {
-           
-        });
-
-        this.sharedService.emitChange('fbo-product-preference-change');
-        this.sharedService.valueChange({
-            EnableJetA: this.fboPreferencesData.enableJetA,
-            EnableSaf: this.fboPreferencesData.enableSaf,
-            message: SharedEvents.fboProductPreferenceChangeEvent,
+            this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, product).subscribe(() => {
+                this.productChanged.emit(this.fboPreferencesData);
+            });
         });
     }
 

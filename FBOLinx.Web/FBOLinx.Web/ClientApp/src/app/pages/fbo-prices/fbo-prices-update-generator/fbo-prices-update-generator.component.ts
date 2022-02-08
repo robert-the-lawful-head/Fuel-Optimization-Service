@@ -402,6 +402,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
                             fboPrice.effectiveFrom = moment(moment(localDateTime).format("MM/DD/YYYY HH:mm")).toDate();
                             fboPrice.effectiveTo = fboPrice.effectiveFrom;
+                            fboPrice.submitStatus = "Publish";
                             fboPrice.isEdit = true;
                         }
                         else {
@@ -450,6 +451,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
             oid: 0,
+            price:null
         };
         for (const fboPrice of this.currentPrices) {
             if (fboPrice.product === product) {

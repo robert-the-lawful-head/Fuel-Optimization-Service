@@ -802,6 +802,7 @@ export class FboPricesHomeComponent
             fboId: this.sharedService.currentUser.fboId,
             groupId: this.sharedService.currentUser.groupId,
             oid: 0,
+            price: null,
         };
         for (const fboPrice of this.currentPrices) {
             if (fboPrice.product === product) {

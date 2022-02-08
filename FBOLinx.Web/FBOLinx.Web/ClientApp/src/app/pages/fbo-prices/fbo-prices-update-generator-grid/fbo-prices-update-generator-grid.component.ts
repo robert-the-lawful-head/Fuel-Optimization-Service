@@ -15,6 +15,7 @@ import * as moment from 'moment';
 import { SharedService } from '../../../layouts/shared-service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FboairportsService } from '../../../services/fboairports.service';
+import { DateTimeService } from '../../../services/datetime.service';
 
 // Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
@@ -71,7 +72,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     tooltipIndex = 0;
     timezone = "";
 
-    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService) {
+    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService) {
 
     }
 
@@ -90,6 +91,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     public editRowClicked(pricingUpdate) {
         pricingUpdate.effectiveFrom = moment(pricingUpdate.effectiveFrom).toDate();
         pricingUpdate.effectiveTo = moment(pricingUpdate.effectiveTo).toDate();
+        pricingUpdate.submitStatus = "Stage";
         pricingUpdate.isEdit = true;
     }
 
@@ -97,9 +99,21 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
         if (pricingUpdate.oidRetail > 0)
             pricingUpdate.originalEffectiveFrom = pricingUpdate.effectiveFrom;
 
-        this.fboAirportsService.getLocalDateTime(pricingUpdate.fboId).subscribe((localdatetime: any) => {
-            pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
-            pricingUpdate.effectiveTo = pricingUpdate.effectiveFrom;
+        this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localDateTime: any) => {
+            pricingUpdate.effectiveFrom = moment(moment(new Date(localDateTime)).format("MM/DD/YYYY HH:mm")).toDate();
+            pricingUpdate.currentDateTime = (moment(new Date(localDateTime))).add("10", "minutes");
+        });
+    }
+
+    public onEffectiveFromChange(pricingUpdate) {
+        var effectiveFromDate = moment(pricingUpdate.effectiveFrom).format("MM-DD-YYYY");
+        this.dateTimeService.getNexTuesdayDate(effectiveFromDate).subscribe((nextTuesdayDate: any) => {
+            pricingUpdate.effectiveTo = moment(moment(new Date(nextTuesdayDate)).format("MM/DD/YYYY HH:mm")).toDate();;
+
+            if (moment(pricingUpdate.effectiveFrom) <= moment(pricingUpdate.currentDateTime))
+                pricingUpdate.submitStatus = "Publish";
+            else
+                pricingUpdate.submitStatus = "Stage";
         });
     }
 
@@ -107,7 +121,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
         if (pricingUpdate.oidRetail > 0)
             pricingUpdate.originalEffectiveTo = pricingUpdate.effectiveTo;
 
-        this.fboAirportsService.getLocalDateTime(pricingUpdate.fboId).subscribe((localdatetime: any) => {
+        this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
             pricingUpdate.effectiveTo = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
         });
     }
@@ -116,13 +130,14 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
         this.fboPricesService
             .suspendPricingGenerator(pricingUpdate)
             .subscribe((data: any) => {
-                this.fboAirportsService.getLocalDateTime(pricingUpdate.fboId).subscribe((localdatetime: any) => {
+                this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
                     pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
                     pricingUpdate.effectiveTo = pricingUpdate.effectiveFrom;
                     pricingUpdate.oidCost = 0;
                     pricingUpdate.oidPap = 0;
                     pricingUpdate.priceCost = 0;
                     pricingUpdate.pricePap = 0;
+                    pricingUpdate.submitStatus = "Publish";
                     pricingUpdate.isEdit = true;
                 });
             });
@@ -135,7 +150,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
             pricingUpdate.isEdit = false;
         }
         else {
-            this.fboAirportsService.getLocalDateTime(pricingUpdate.fboId).subscribe((localdatetime: any) => {
+            this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
                 pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
                 pricingUpdate.effectiveTo = pricingUpdate.effectiveFrom;
                 pricingUpdate.pricePap = "";

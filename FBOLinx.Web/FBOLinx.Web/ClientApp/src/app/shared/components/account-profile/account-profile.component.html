@@ -240,12 +240,21 @@
 
             <mat-tab label="Products">
                 <form [formGroup]="productsForm" *ngIf="fboPreferencesData">
-                    <div class="mt-4 mb-2 pl-4">
-                        <div>
-                            <mat-slide-toggle color="accent" (click)="onProductsChange('JetA')" formControlName="enableJetA">JetA</mat-slide-toggle>
+                    <div class="mt-4 mb-2 pl-4 container">
+                        <div class="row border-bottom row-padding">
+                            <div class="col cell-padding">Product</div>
                         </div>
-                        <div>
-                            <mat-slide-toggle color="accent" (click)="onProductsChange('SAF')" formControlName="enableSaf">Sustainable Fuel (SAF)</mat-slide-toggle>
+                        <div class="row border-bottom row-padding">
+                            <div class="col">JetA</div>
+                            <div class="col text-center">
+                                <mat-slide-toggle color="accent" (click)="onProductsChange('JetA')" formControlName="enableJetA"></mat-slide-toggle>
+                            </div>
+                        </div>
+                        <div class="row border-bottom row-padding">
+                            <div class="col">Sustainable Fuel (SAF)</div>
+                            <div class="col text-center">
+                                <mat-slide-toggle color="accent" (click)="onProductsChange('SAF')" formControlName="enableSaf"></mat-slide-toggle>
+                            </div>
                         </div>
                     </div>
                 </form>

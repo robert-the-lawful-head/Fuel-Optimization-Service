@@ -132,7 +132,7 @@ export class DefaultLayoutComponent implements OnInit {
                 this.effectiveTo = value.PriceExpiration;
             }
 
-            if (value.message === fboProductPreferenceChangeEvent || value.message == "fbo product preference change") {
+            if (value.message === fboProductPreferenceChangeEvent) {
                 this.enableJetA = value.EnableJetA;
                 this.enableSaf = value.EnableSaf;
             }
