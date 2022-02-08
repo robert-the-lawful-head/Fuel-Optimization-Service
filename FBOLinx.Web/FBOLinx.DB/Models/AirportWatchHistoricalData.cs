@@ -2,21 +2,12 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
     public class AirportWatchHistoricalData: BaseAirportWatchData
     {
-        public enum AircraftStatusType : short
-        {
-            [Description("Landing")]
-            Landing = 0,
-            [Description("Takeoff")]
-            Takeoff = 1,
-            [Description("Parking")]
-            Parking = 2,
-        }
-
         [Key]
         [Column("OID")]
         public int Oid { get; set; }

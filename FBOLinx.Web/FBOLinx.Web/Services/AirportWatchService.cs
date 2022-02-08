@@ -15,6 +15,7 @@ using EFCore.BulkExtensions;
 using FBOLinx.DB;
 using System.Collections;
 using System.Diagnostics;
+using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
@@ -209,7 +210,10 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDepartures(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
+            //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
             var historicalData = await GetAircraftsHistoricalDataAssociatedWithFbo(groupId, fboId, request);
+            historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
+
             if (historicalData != null && historicalData.Count > 0)
             {
                 var icao = historicalData.FirstOrDefault().AirportICAO;
@@ -239,7 +243,7 @@ namespace FBOLinx.Web.Services
                             .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                         var pastVisits = g
-                           .Where(ah => ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking).ToList();
+                           .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking).ToList();
 
                         var visitsToMyFbo = new List<FboHistoricalDataModel>();
                         if (coordinates.Count > 0)
@@ -256,7 +260,7 @@ namespace FBOLinx.Web.Services
                             FlightNumber = latest.AtcFlightNumber,
                             HexCode = latest.AircraftHexCode,
                             AircraftType = string.IsNullOrEmpty(latest.Make) ? null : latest.Make + " / " + latest.Model,
-                            Status = string.IsNullOrEmpty(latest.AtcFlightNumber) ? "" : latest.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing ? "Arrival" : "Departure",
+                            Status = latest.AircraftStatusDescription,
                             PastVisits = pastVisits.Count(),
                             AirportIcao = latest.AirportICAO,
                             AircraftTypeCode = latest.AircraftTypeCode,
@@ -280,7 +284,7 @@ namespace FBOLinx.Web.Services
                                   FlightNumber = h.AtcFlightNumber,
                                   HexCode = h.AircraftHexCode,
                                   AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
-                                  Status = string.IsNullOrEmpty(h.AtcFlightNumber) ? "" : h.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing ? "Arrival" : "Departure",
+                                  Status = h.AircraftStatusDescription,
                                   AirportIcao = h.AirportICAO,
                                   AircraftTypeCode = h.AircraftTypeCode,
                                   PastVisits = cv == null ? null : cv.PastVisits,
@@ -310,7 +314,7 @@ namespace FBOLinx.Web.Services
                     FlightNumber = h.AtcFlightNumber,
                     HexCode = h.AircraftHexCode,
                     AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
-                    Status = string.IsNullOrEmpty(h.AtcFlightNumber) ? "" : h.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing ? "Arrival" : "Departure",
+                    Status = h.AircraftStatusDescription,
                     AirportIcao = h.AirportICAO,
                     AircraftTypeCode = h.AircraftTypeCode
                 })
@@ -325,7 +329,7 @@ namespace FBOLinx.Web.Services
                         .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                     var pastVisits = g
-                        .Where(ah => ah.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing);
+                        .Where(ah => ah.AircraftStatus == AircraftStatusType.Landing);
 
                     return new AirportWatchHistoricalDataResponse
                     {
@@ -337,7 +341,7 @@ namespace FBOLinx.Web.Services
                         FlightNumber = latest.AtcFlightNumber,
                         HexCode = latest.AircraftHexCode,
                         AircraftType = string.IsNullOrEmpty(latest.Make) ? null : latest.Make + " / " + latest.Model,
-                        Status = string.IsNullOrEmpty(latest.AtcFlightNumber) ? "" : latest.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Landing ? "Arrival" : "Departure",
+                        Status = latest.AircraftStatusDescription,
                         PastVisits = pastVisits.Count(),
                         AirportIcao = latest.AirportICAO,
                         AircraftTypeCode = latest.AircraftTypeCode
@@ -587,7 +591,7 @@ namespace FBOLinx.Web.Services
             try
             {
                 var occurrences = await _context.AirportWatchHistoricalData.Where(x =>
-                    x.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking
+                    x.AircraftStatus == AircraftStatusType.Parking
                     && x.BoxTransmissionDateTimeUtc >= startDateTimeUtc
                     && x.BoxTransmissionDateTimeUtc <= endDateTimeUtc
                     && x.AirportICAO == icao).ToListAsync();
@@ -635,8 +639,8 @@ namespace FBOLinx.Web.Services
                 return;
 
             //First confirm the last record we are comparing with was a landing or a parking
-            if (oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Landing &&
-                oldAirportWatchHistoricalData.AircraftStatus != AirportWatchHistoricalData.AircraftStatusType.Parking)
+            if (oldAirportWatchHistoricalData.AircraftStatus != AircraftStatusType.Landing &&
+                oldAirportWatchHistoricalData.AircraftStatus != AircraftStatusType.Parking)
                 return;
 
             //If the aircraft has not moved then do not update the parking record - we want to keep the old record when it first stopped moving
@@ -647,9 +651,9 @@ namespace FBOLinx.Web.Services
             if (oldAirportWatchHistoricalData.AircraftPositionDateTimeUtc < DateTime.UtcNow.AddMinutes(-10))
                 return;
             //The aircraft has moved since landing - this should be an updated parking record
-            airportWatchHistoricalData.AircraftStatus = AirportWatchHistoricalData.AircraftStatusType.Parking;
+            airportWatchHistoricalData.AircraftStatus = AircraftStatusType.Parking;
 
-            if (oldAirportWatchHistoricalData.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking)
+            if (oldAirportWatchHistoricalData.AircraftStatus == AircraftStatusType.Parking)
             {
                 AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
                 _HistoricalDataToUpdate.Add(oldAirportWatchHistoricalData);
@@ -835,7 +839,7 @@ namespace FBOLinx.Web.Services
         public string AircraftHexCode { get; set; }
         public string AtcFlightNumber { get; set; }
         public DateTime AircraftPositionDateTimeUtc { get; set; }
-        public AirportWatchHistoricalData.AircraftStatusType AircraftStatus { get; set; }
+        public AircraftStatusType AircraftStatus { get; set; }
         public string AircraftTypeCode { get; set; }
         public string Company { get; set; }
         public int CustomerId { get; set; }
@@ -847,5 +851,15 @@ namespace FBOLinx.Web.Services
         public string Model { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+
+        public string AircraftStatusDescription
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(AtcFlightNumber))
+                    return "";
+                return FBOLinx.Core.Utilities.Enum.GetDescription(AircraftStatus);
+            }
+        }
     }
 }
