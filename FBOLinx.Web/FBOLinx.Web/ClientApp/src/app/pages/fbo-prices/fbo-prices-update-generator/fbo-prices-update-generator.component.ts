@@ -19,9 +19,11 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
+import { DateTimeService } from '../../../services/datetime.service';
 
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 // Services
@@ -100,7 +102,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     currentFboPrice100LLCost: any;
     currentFboPriceSafRetail: any;
     currentFboPriceSafCost: any;
-    //locationChangedSubscription: any;
+    locationChangedSubscription: any;
     tooltipSubscription: any;
     //tailNumberFormControlSubscription: any;
     priceShiftSubscription: any;
@@ -108,6 +110,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
     subscriptions: Subscription[] = [];
     timezone: string = "";
+    expirationDate: any;
+    localDateTime: any;
 
     constructor(
        private feesAndTaxesService: FbofeesandtaxesService,
@@ -119,6 +123,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
        private NgxUiLoader: NgxUiLoaderService,
        private fboPricesSelectDefaultTemplateDialog: MatDialog,
        private fboFeesAndTaxesDialog: MatDialog,
+        private dateTimeService: DateTimeService,
+       private notification: MatDialog,
         //    private proceedConfirmationDialog: MatDialog
     ) { }
 
@@ -127,12 +133,12 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        //this.locationChangedSubscription =
-        //    this.sharedService.changeEmitted$.subscribe((message) => {
-        //        if (message === SharedEvents.locationChangedEvent) {
-        //            this.resetAll();
-        //        }
-        //    });
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.resetAll();
+                }
+            });
 
         this.tooltipSubscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
@@ -145,7 +151,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
-        //this.locationChangedSubscription?.unsubscribe();
+        this.locationChangedSubscription?.unsubscribe();
         this.tooltipSubscription?.unsubscribe();
         //this.tailNumberFormControlSubscription?.unsubscribe();
         this.priceShiftSubscription?.unsubscribe();
@@ -172,6 +178,12 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
             this.fboPricesService.updatePricingGenerator(event)
                 .subscribe((data: any) => {
                     this.loadAllPrices();
+                    this.notification.open(NotificationComponent, {
+                        data: {
+                            text: "Your prices have been " + data.status + "!",
+                            title: 'Success',
+                        },
+                    });
                 });
         }
     }
@@ -370,7 +382,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                                     this.currentFboPriceJetARetail.price,
                                 SafCost: this.currentFboPriceSafCost.price,
                                 SafRetail: this.currentFboPriceSafRetail.price,
-                                PriceExpiration: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ H:m") + " " + this.timezone,
+                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
@@ -387,8 +400,10 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         });
     }
 
-    private loadStagedFboPrices(localDateTime) {
+    private loadStagedFboPrices() {
         this.fboPricesUpdateGridData = null;
+        var _this = this;
+
         this.fboPricesService
             .getFbopricesByFboIdAllStaged(
                 this.sharedService.currentUser.fboId
@@ -400,8 +415,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
                     this.fboPricesUpdateGridData.forEach(function (fboPrice) {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
-                            fboPrice.effectiveFrom = moment(moment(localDateTime).format("MM/DD/YYYY HH:mm")).toDate();
-                            fboPrice.effectiveTo = fboPrice.effectiveFrom;
+                            fboPrice.effectiveFrom = moment(moment(_this.localDateTime).format("MM/DD/YYYY HH:mm")).toDate();
+                            fboPrice.effectiveTo = moment(moment(_this.expirationDate).format("MM/DD/YYYY HH:mm")).toDate();
                             fboPrice.submitStatus = "Publish";
                             fboPrice.isEdit = true;
                         }
@@ -412,6 +427,26 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                         }
                     });
                 });
+    }
+
+    private getExpirationDate() {
+        return new Observable((observer) => {
+            this.subscriptions.push(
+                this.fboairportsService.getLocalDateTime(this.sharedService.currentUser.fboId).subscribe((localDateTime: any) => {
+                    this.localDateTime = localDateTime;
+
+                    this.dateTimeService.getNextTuesdayDate(moment(this.localDateTime).format("MM-DD-YYYY")).subscribe((nextTuesdayDate: any) => {
+                        this.expirationDate = nextTuesdayDate;
+
+                        observer.next();
+                    })
+                },
+                    (error: any) => {
+                        observer.error(error);
+                    }
+                )
+            )
+        });
     }
 
     private getTimeZone() {
@@ -427,16 +462,13 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                                 var _this = this;
                                 this.fboairportsService.getLocalTimeZone(_this.sharedService.currentUser.fboId).subscribe((data: any) => {
                                     this.timezone = data;
-                                    _this.fboairportsService.getLocalDateTime(_this.sharedService.currentUser.fboId).subscribe((localDateTime: any) => {
-                                        _this.loadStagedFboPrices(localDateTime);
-                                    });
+                                    _this.loadStagedFboPrices();
                                 });
                             }
                             else {
-                                this.fboairportsService.getLocalDateTime(this.sharedService.currentUser.fboId).subscribe((localDateTime: any) => {
-                                    this.loadStagedFboPrices(localDateTime);
-                                });
+                                this.loadStagedFboPrices();
                             }
+
                             observer.next();
                         },
                         (error: any) => {
@@ -620,13 +652,14 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     private loadAllPrices() {
         this.priceShiftLoading = true;
         this.NgxUiLoader.startLoader(this.pricingLoader);
+        this.getExpirationDate().subscribe((currentExpirationDate: any) => {
         this.subscriptions.push(
             this.getTimeZone().subscribe(() => {
                 this.subscriptions.push(
                     this.loadCurrentFboPrices().subscribe(() => {
                         this.priceShiftLoading = false;
-                }))
-             })
-        );
+                    }))
+            }));
+        });
     }
 }

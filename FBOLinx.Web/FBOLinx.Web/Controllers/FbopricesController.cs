@@ -102,6 +102,13 @@ namespace FBOLinx.Web.Controllers
             var result = await _fbopricesService.GetPrices(fboId);
 
             var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
+
+            foreach(var price in filteredResult)
+            {
+                price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
+                price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
+            }
+
             return Ok(filteredResult);
         }
 
@@ -797,6 +804,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
+            var isStaged = true;
+
             try
             {
                 var utcEffectiveFrom = await _dateTimeService.ConvertLocalTimeToUtc(fboprices.Fboid, fboprices.EffectiveFrom);
@@ -812,6 +821,8 @@ namespace FBOLinx.Web.Controllers
                         oldPrice.Expired = true;
                         _context.Fboprices.Update(oldPrice);
                     }
+
+                    isStaged = false;
                 }
 
                 if (FbopricesExists(fboprices.OidPap))
@@ -872,7 +883,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok();
+            return Ok(new { Status = isStaged ? "staged" : "published"});
         }
 
         // DELETE: api/Fboprices/delete-price/fbo/5/jeta
