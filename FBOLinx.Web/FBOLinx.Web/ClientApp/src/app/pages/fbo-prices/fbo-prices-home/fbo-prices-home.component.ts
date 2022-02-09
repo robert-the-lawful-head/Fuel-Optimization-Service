@@ -624,8 +624,8 @@ export class FboPricesHomeComponent
                                     this.currentFboPriceJetARetail.price,
                                 SafCost: this.currentFboPriceSafCost.price,
                                 SafRetail: this.currentFboPriceSafRetail.price,
-                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone,
-                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
