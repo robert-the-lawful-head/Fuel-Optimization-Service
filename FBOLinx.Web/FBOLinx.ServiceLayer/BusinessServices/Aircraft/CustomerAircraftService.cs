@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
@@ -49,7 +50,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                    Company = cg.Company,
                    AircraftId = ca.AircraftId,
                    TailNumber = ca.TailNumber,
-                   Size = ca.Size.HasValue && ca.Size != AirCrafts.AircraftSizes.NotSet ? ca.Size : (AirCrafts.AircraftSizes.NotSet),
+                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
                    BasedPaglocation = ca.BasedPaglocation,
                    NetworkCode = ca.NetworkCode,
                    AddedFrom = ca.AddedFrom ?? 0,
@@ -67,7 +68,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 var aircraft = allAircraft.FirstOrDefault(a => a.AircraftId == x.AircraftId);
                 x.Make = aircraft?.Make;
                 x.Model = aircraft?.Model;
-                if (x.Size == AirCrafts.AircraftSizes.NotSet && aircraft?.Size.GetValueOrDefault() != AirCrafts.AircraftSizes.NotSet)
+                if (x.Size == AircraftSizes.NotSet && aircraft?.Size.GetValueOrDefault() != AircraftSizes.NotSet)
                     x.Size = aircraft?.Size;
             });
 

@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
+
+namespace FBOLinx.ServiceLayer.DTO
+{
+    public class CustomerAircraftDTO : BaseEntityModelDTO<DB.Models.CustomerAircrafts>, IEntityModelDTO<DB.Models.CustomerAircrafts, int>
+    {
+        public int Oid { get; set; }
+        public int? GroupId { get; set; }
+        public int CustomerId { get; set; }
+        public int AircraftId { get; set; }
+        [StringLength(25)]
+        public string TailNumber { get; set; }
+        public AircraftSizes? Size { get; set; }
+        [StringLength(50)]
+        public string BasedPaglocation { get; set; }
+        [StringLength(50)]
+        public string NetworkCode { get; set; }
+        public int? AddedFrom { get; set; }
+        
+    }
+}

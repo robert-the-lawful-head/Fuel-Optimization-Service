@@ -17,6 +17,10 @@ namespace FBOLinx.DB.Models
         public bool? Omit100LLRetail { get; set; }
         [Column("Omit100LLCost")]
         public bool? Omit100LLCost { get; set; }
+        [Column("EnableJetA")]
+        public bool? EnableJetA { get; set; }
+        [Column("EnableSaf")]
+        public bool? EnableSaf { get; set; }
         [Key]
         [Column("OID")]
         public int Oid { get; set; }

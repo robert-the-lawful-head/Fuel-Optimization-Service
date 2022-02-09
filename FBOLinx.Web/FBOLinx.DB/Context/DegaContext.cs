@@ -21,6 +21,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AFSAircraft> AFSAircraft { get; set; }
         public virtual DbSet<AircraftSpecifications> AircraftSpecifications { get; set; }
         public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
+        public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -43,6 +44,13 @@ namespace FBOLinx.DB.Context
             modelBuilder.Entity<AcukwikFbohandlerDetail>(entity =>
             {
                 entity.Property(e => e.HandlerId).ValueGeneratedNever();
+            });
+
+            modelBuilder.Entity<AircraftHexTailMapping>(entity =>
+            {
+                entity.Property(e => e.AircraftHexCode).IsUnicode(false);
+
+                entity.Property(e => e.TailNumber).IsUnicode(false);
             });
         }
     }

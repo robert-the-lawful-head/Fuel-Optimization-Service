@@ -252,7 +252,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     .updateFromCustomerMarginsViewModel(customerMargins)
                     .subscribe(() => {
                         this.isSaving = false;
-                        this.dialogRef.close(savedTemplate);
+                        this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe(
+                            (response:
+                                any) => {
+                                this.dialogRef.close(savedTemplate);
+                            });
+
                     });
             });
     }

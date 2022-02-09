@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
@@ -42,7 +43,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("Sizes")]
         public IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            return Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
         }
 
         // GET: api/AirCrafts/5

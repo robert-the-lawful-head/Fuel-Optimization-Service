@@ -1,9 +1,9 @@
 export type PricingUpdateGridViewModel = {
-    oidcost: number;
-    oidretail: number;
+    oidCost: number;
+    oidPap: number;
     product: string;
-    effective: Date;
-    expiration: Date;
-    retailpap: number;
-    fuelcost: number;
+    effectiveFrom: Date;
+    effectiveTo: Date;
+    pricePap: number;
+    priceCost: number;
 }

@@ -2,6 +2,7 @@ import {
     Component,
     EventEmitter,
     OnInit,
+    OnDestroy,
     Output,
     ViewChild,
 } from '@angular/core';
@@ -43,7 +44,7 @@ const BREADCRUMBS: any[] = [
     styleUrls: ['./pricing-templates-edit.component.scss'],
     templateUrl: './pricing-templates-edit.component.html',
 })
-export class PricingTemplatesEditComponent implements OnInit {
+export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
     @ViewChild('feeAndTaxGeneralBreakdown')
@@ -98,6 +99,14 @@ export class PricingTemplatesEditComponent implements OnInit {
 
     get customerMarginsFormArray() {
         return this.pricingTemplateForm.controls.customerMargins as FormArray;
+    }
+
+    ngOnDestroy() {
+        if (!this.hasSaved)
+            return;
+        this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe((response: any) => {
+            //Do nothing
+            });
     }
 
     async ngOnInit() {

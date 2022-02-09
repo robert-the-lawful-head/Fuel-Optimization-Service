@@ -6,6 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using System.Web;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +36,7 @@ namespace FBOLinx.Web.Controllers
         private readonly OAuthService _oAuthService;
         private readonly IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeeService;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxApiService;
         private readonly FbopricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
 
@@ -48,7 +49,7 @@ namespace FBOLinx.Web.Controllers
             OAuthService oAuthService, 
             IPriceFetchingService priceFetchingService, 
             RampFeesService rampFeeService, 
-            FuelerLinxService fuelerLinxService,
+            FuelerLinxApiService fuelerLinxApiService,
             FbopricesService fbopricesService,
             IPricingTemplateService pricingTemplateService)
         {
@@ -60,7 +61,7 @@ namespace FBOLinx.Web.Controllers
             _oAuthService = oAuthService;
             _priceFetchingService = priceFetchingService;
             _rampFeeService = rampFeeService;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
             _fbopricesService = fbopricesService;
             _pricingTemplateService = pricingTemplateService;
         }
@@ -518,7 +519,7 @@ namespace FBOLinx.Web.Controllers
                         //if not, find the latest pull history record from fuelerlinx and send email
                         if (noRampFees)
                         {
-                            var fuelerLinxCustomerId = await _fuelerLinxService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
+                            var fuelerLinxCustomerId = await _fuelerLinxApiService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
                             //var fuelerLinxCustomerId = 0;
                             //var fuelerLinxCustomerIdResponse = await _apiClient.PostAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.Icao }, conductorUser.Token);
                             //if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))

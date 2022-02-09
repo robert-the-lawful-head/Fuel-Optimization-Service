@@ -1,7 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Services
 {
@@ -32,7 +32,7 @@ namespace FBOLinx.Web.Services
         {
             //just take 10 element for test 
             var responses = await _context.AirportWatchHistoricalData
-                          .Where(a => a.AircraftStatus == AirportWatchHistoricalData.AircraftStatusType.Parking && a.AirportICAO == "KVNY")
+                          .Where(a => a.AircraftStatus == AircraftStatusType.Parking && a.AirportICAO == "KVNY")
                           .Select(a => new AirportWatchParkingGlobAdressResponse
                           {
                               Lat = a.Latitude,

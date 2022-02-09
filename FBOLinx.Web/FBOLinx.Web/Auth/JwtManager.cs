@@ -1,5 +1,4 @@
-﻿using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Data;
+﻿using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
@@ -15,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 
 namespace FBOLinx.Web.Auth
 {

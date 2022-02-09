@@ -45,6 +45,19 @@ namespace FBOLinx.DB.Models
         [NotMapped]
         public int? Id { get; set; }
 
+        [NotMapped]
+        public string GenericProduct
+        {
+            get
+            {
+                if (Product.Contains("Cost"))
+                    return "Cost";
+                if (Product.Contains("Retail"))
+                    return "Retail";
+                return "";
+            }
+        }
+
         [ForeignKey("Fboid")]
         [InverseProperty("Fboprices")]
         public Fbos Fbo { get; set; }

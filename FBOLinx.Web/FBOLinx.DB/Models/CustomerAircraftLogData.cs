@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
@@ -20,7 +21,7 @@ namespace FBOLinx.DB.Models
         
         [StringLength(25)]
         public string TailNumber { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
        
         [Column("BasedPAGLocation")]
         [StringLength(50)]

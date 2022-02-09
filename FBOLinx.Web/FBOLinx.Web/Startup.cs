@@ -5,7 +5,6 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

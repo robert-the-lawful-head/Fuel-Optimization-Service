@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class Customers
+    public class Customers : FBOLinxBaseEntityModel<int>
     {
         public enum CustomerSources
         {
@@ -21,10 +22,7 @@ namespace FBOLinx.DB.Models
             [Description("Contract Fuel Vendor")]
             ContractFuelVendor = 4
         }
-
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
+        
         public bool? Action { get; set; }
         public double? Margin { get; set; }
         [StringLength(255)]
@@ -70,7 +68,7 @@ namespace FBOLinx.DB.Models
         [Column("Show100LL")]
         public bool? Show100Ll { get; set; }
         public bool? Suspended { get; set; }
-        public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
+        public CertificateTypes? CertificateType { get; set; }
 
         [InverseProperty("Customer")]
         public CompaniesByGroup CompanyByGroup { get; set; }

@@ -218,6 +218,16 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     width: '1000px',
                 }
             );
+
+            dialogRef.componentInstance.productChanged.subscribe(result => {
+                this.sharedService.emitChange('fbo-product-preference-change');
+                this.sharedService.valueChange({
+                    EnableJetA: result.enableJetA,
+                    EnableSaf: result.enableSaf,
+                    message: SharedEvents.fboProductPreferenceChangeEvent,
+                });
+            });
+
             dialogRef.afterClosed().subscribe((result) => {
                 if (!result) {
                     return;

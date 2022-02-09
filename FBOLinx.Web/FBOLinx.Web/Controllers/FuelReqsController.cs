@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.Requests.Integrations.FuelerLinx;
+using FBOLinx.ServiceLayer.DTO.Responses.Integrations.FuelerLinx;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -31,10 +34,10 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly AircraftService _aircraftService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxService fuelerLinxService, AircraftService aircraftService)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -658,9 +661,9 @@ namespace FBOLinx.Web.Controllers
                                                            join ac in _aircraftService.GetAllAircraftsAsQueryable() on ca.AircraftId equals ac.AircraftId
                                                            select new
                                                            {
-                                                               Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet
+                                                               Size = (ca.Size.HasValue && ca.Size.Value != Core.Enums.AircraftSizes.NotSet
                                                                 ? ca.Size
-                                                                : (AirCrafts.AircraftSizes)ac.Size),
+                                                                : (Core.Enums.AircraftSizes)ac.Size),
                                                                ca.Oid
                                                            }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId
@@ -910,7 +913,7 @@ namespace FBOLinx.Web.Controllers
                 IEnumerable<NgxChartBarChartItemType> result = volumes.Select(f => new NgxChartBarChartItemType
                 {
                     Name = f.Icao,
-                    Value = f.AirportsCount.GetValueOrDefault()
+                    Value = f.AirportsCount
                 });
                 return Ok(result);
             }
@@ -959,7 +962,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.ContractFuelVendor;
-                        chartItemType.Value = vendor.TransactionsCount.GetValueOrDefault();
+                        chartItemType.Value = vendor.TransactionsCount;
                         chartData.Add(chartItemType);
                     }
                 }
@@ -1058,7 +1061,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.Fbo + " " + i;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                         i++;
                     }
@@ -1066,7 +1069,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
                         chartItemType.Name = vendor.Fbo;
-                        chartItemType.Value = vendor.Count.GetValueOrDefault();
+                        chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                     }
                 }
@@ -1262,7 +1265,7 @@ namespace FBOLinx.Web.Controllers
                     List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
                         .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
                     var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
-                        !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId.GetValueOrDefault())).Select(x => x.FuelerLinxCustomerId.GetValueOrDefault()).Where(x => x > 0).Distinct();
+                        !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId)).Select(x => x.FuelerLinxCustomerId).Where(x => x > 0).Distinct();
                     foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
                     {
                         var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>

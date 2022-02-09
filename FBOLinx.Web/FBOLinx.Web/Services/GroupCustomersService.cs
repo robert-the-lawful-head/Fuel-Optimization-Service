@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Fuelerlinx.SDK;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,18 +15,18 @@ namespace FBOLinx.Web.Services
     public class GroupCustomersService
     {
         private FboLinxContext _context;
-        private FuelerLinxService _fuelerLinxService;
+        private FuelerLinxApiService _fuelerLinxApiService;
         #region Constructors
-        public GroupCustomersService(FboLinxContext context, FuelerLinxService fuelerLinxService)
+        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService)
         {
             _context = context;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
         }
         #endregion
 
-        public static async Task BeginCustomerAircraftsImport(FboLinxContext context, int groupId, FuelerLinxService fuelerLinxService)
+        public static async Task BeginCustomerAircraftsImport(FboLinxContext context, int groupId, FuelerLinxApiService fuelerLinxApiService)
         {
-            GroupCustomersService service = new GroupCustomersService(context, fuelerLinxService);
+            GroupCustomersService service = new GroupCustomersService(context, fuelerLinxApiService);
             await service.StartAircraftTransfer(groupId);
         }
 
@@ -34,7 +35,7 @@ namespace FBOLinx.Web.Services
             try
             {
                 var listWithCustomers = _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToList();
-                var aircrafts = await _fuelerLinxService.GetAircraftsFromFuelerinx();
+                var aircrafts = await _fuelerLinxApiService.GetAircraftsFromFuelerinx();
 
                 System.Collections.ArrayList customerExistsList = new System.Collections.ArrayList();
                 foreach (var cust in listWithCustomers)
