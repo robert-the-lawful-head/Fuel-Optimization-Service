@@ -108,7 +108,7 @@ export class FbopricesService {
     }
 
     public suspendPricingGenerator(payload) {
-        return this.http.post(this.accessPointUrl + '/suspendpricinggenerator/', 
+        return this.http.post(this.accessPointUrl + '/suspend-pricing-generator/', 
             payload,
             {
                 headers: this.headers,
@@ -148,8 +148,8 @@ export class FbopricesService {
         });
     }
 
-    public removePricingGenerator(payload) {
-        return this.http.post(this.accessPointUrl + '/delete-price-generator/', payload, {
+    public removePricing(fboid, product) {
+        return this.http.delete(this.accessPointUrl + '/delete-price-by-product/fbo/' + fboid + "/product/" + product, {
             headers: this.headers,
         });
     }

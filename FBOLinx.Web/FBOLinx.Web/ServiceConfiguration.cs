@@ -137,6 +137,7 @@ namespace FBOLinx.Web
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<FboService, FboService>();
+            services.AddTransient<FboPreferencesService, FboPreferencesService>();
             services.AddTransient<GroupService, GroupService>();
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<IPricingTemplateService, PricingTemplateService>();

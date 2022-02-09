@@ -32,5 +32,10 @@ namespace FBOLinx.Web.Services
 
             return DateTimeHelper.GetUtcTime(localTime, acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
         }
+
+        public DateTime GetNextTuesdayDate(DateTime date)
+        {
+            return DateTimeHelper.GetNextTuesdayDate(date);
+        }
     }
 }

@@ -1,0 +1,12 @@
+.effective-date-time {
+    width: 80%;
+}
+
+.fbo-prices-error-msg {
+    position: absolute;
+    right: 0;
+    white-space: nowrap;
+    top: calc(100% + 5px);
+    font-size: 12px;
+    color: red;
+}

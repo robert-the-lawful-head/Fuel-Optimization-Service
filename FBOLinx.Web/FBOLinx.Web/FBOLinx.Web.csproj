@@ -83,6 +83,7 @@
     <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <None Remove="ClientApp\src\app\services\associations.service.ts" />
+    <None Remove="ClientApp\src\app\services\datetime.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
@@ -153,6 +154,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\associations.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\datetime.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />

@@ -135,6 +135,7 @@ namespace FBOLinx.Web.Services
         {
             _FboId = fboId;
             _GroupId = groupId;
+            var feesAndTaxesPassedIn = feesAndTaxes;
 
             try
             {                                                                                
@@ -204,11 +205,11 @@ namespace FBOLinx.Web.Services
                                               join fp in fboPrices on new
                                               {
                                                   fboId = (pt != null ? pt.Fboid : 0),
-                                                  product = (pt != null ? pt.MarginTypeProduct : "")
+                                                  product = (pt != null ? (feesAndTaxesPassedIn == null ? pt.MarginTypeProduct : "JetA " + pt.MarginTypeProduct) : "")
                                               } equals new
                                               {
                                                   fboId = fp.Fboid ?? 0,
-                                                  product = fp.Product
+                                                  product = feesAndTaxesPassedIn == null ? fp.GenericProduct : fp.Product
                                               }
                                               join tmp in tempAddonMargin on new
                                               {
@@ -239,7 +240,7 @@ namespace FBOLinx.Web.Services
                                                   MarginType = (pt == null ? 0 : pt.MarginType),
                                                   DiscountType = (pt == null ? 0 : pt.DiscountType),
                                                   FboPrice = (fp == null ? 0 : fp.Price),
-                                                  CustomerMarginAmount = (pt.MarginTypeProduct == "JetA Retail" && tmp != null &&
+                                                  CustomerMarginAmount = (pt.MarginTypeProduct == "Retail" && tmp != null &&
                                                                           (tmp.MarginJet.HasValue)
                                                       ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
                                                       : (ppt == null || ppt == null ? 0 : ppt.Amount)),
@@ -265,8 +266,8 @@ namespace FBOLinx.Web.Services
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
                                                   PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                                                  Product = "Jet A"
-                                              }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.MinGallons).ToList();
+                                                  Product = fp.Product
+                                              }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
                 //var pricingResults = (from fp in fboPrices
                 //                      join pt in pricingTemplates on new

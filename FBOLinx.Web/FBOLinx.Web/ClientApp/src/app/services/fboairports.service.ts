@@ -43,8 +43,8 @@ export class FboairportsService {
         });
     }
 
-    public getLocalDateTime(payload) {
-        return this.http.get(this.accessPointUrl + '/local-datetime-now/fbo/' + payload.fboid, {
+    public getLocalDateTime(fboId) {
+        return this.http.get(this.accessPointUrl + '/local-datetime-now/fbo/' + fboId, {
             headers: this.headers,
         });
     }

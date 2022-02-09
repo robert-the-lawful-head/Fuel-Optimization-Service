@@ -17,11 +17,14 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as _ from 'lodash';
 
+import * as SharedEvents from '../../../models/sharedEvents';
 import { SharedService } from '../../../layouts/shared-service';
 import { SystemcontactsNewContactModalComponent } from '../../../pages/contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { ContactsService } from '../../../services/contacts.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
 import { FbosService } from '../../../services/fbos.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { FbopreferencesService } from '../../../services/fbopreferences.service';
 import { UserService } from '../../../services/user.service';
 
 export interface AccountProfileDialogData {
@@ -35,6 +38,8 @@ export interface AccountProfileDialogData {
     groupId: number;
     newPassword: string;
     confirmPassword: string;
+    enableJetA: boolean;
+    enableSaf: boolean;
 }
 
 @Component({
@@ -47,14 +52,18 @@ export class AccountProfileComponent {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() editContactClicked = new EventEmitter<any>();
     @Output() newContactClicked = new EventEmitter<any>();
+    @Output() productChanged = new EventEmitter<any>();
+
 
     // Members
     fboInfo: any;
+    fboPreferencesData: any;
     contactsData: any[];
     currentContact: any;
     availableroles: any[];
     systemContactsForm: FormGroup;
     emailDistributionForm: FormGroup;
+    productsForm: FormGroup;
     theFile: any = null;
     logoUrl: string;
     isUploadingLogo: boolean;
@@ -69,6 +78,8 @@ export class AccountProfileComponent {
         private contactsService: ContactsService,
         private fboContactsService: FbocontactsService,
         private fbosService: FbosService,
+        private fboPreferencesService: FbopreferencesService,
+        private fboPricesService: FbopricesService,
         private usersService: UserService,
         private formBuilder: FormBuilder,
         public newContactDialog: MatDialog
@@ -89,7 +100,12 @@ export class AccountProfileComponent {
                 Validators.pattern('[a-zA-Z0-9-]*'),
             ]),
         });
+        this.productsForm = new FormGroup({
+            enableJetA: new FormControl(),
+            enableSaf: new FormControl()
+        });
         this.loadFboInfo();
+        this.loadFboPreferences();
         this.loadAvailableRoles();
     }
 
@@ -178,6 +194,19 @@ export class AccountProfileComponent {
             .subscribe((logoData: any) => {
                 this.logoUrl = '';
             });
+    }
+
+    onProductsChange(product) {
+        if (product == "JetA")
+            this.fboPreferencesData.enableJetA = !this.productsForm.value.enableJetA;
+        else
+            this.fboPreferencesData.enableSaf = !this.productsForm.value.enableSaf;
+
+        this.fboPreferencesService.update(this.fboPreferencesData).subscribe(() => {
+            this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, product).subscribe(() => {
+                this.productChanged.emit(this.fboPreferencesData);
+            });
+        });
     }
 
     public newRecord(e: any) {
@@ -277,6 +306,24 @@ export class AccountProfileComponent {
                                 this.logoUrl = logoData.message;
                             });
                     });
+            });
+    }
+
+    private loadFboPreferences(): void {
+        if (
+            !this.sharedService.currentUser.fboId ||
+            this.sharedService.currentUser.fboId === 0
+        ) {
+            return;
+        }
+        this.fboPreferencesService
+            .getForFbo(this.sharedService.currentUser.fboId)
+            .subscribe((fboPreferencesData: any) => {
+                this.fboPreferencesData = fboPreferencesData;
+                this.productsForm.setValue({
+                    enableJetA: this.fboPreferencesData.enableJetA,
+                    enableSaf: this.fboPreferencesData.enableSaf
+                });
             });
     }
 

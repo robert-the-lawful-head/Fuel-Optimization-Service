@@ -200,6 +200,15 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, respectDaylightSavings);
         }
 
+        public static DateTime GetNextTuesdayDate(DateTime date)
+        {
+            DayOfWeek day = DayOfWeek.Tuesday;
+            int daysToAdd = ((int)day - (int)date.DayOfWeek + 7) % 7;
+            if (daysToAdd == 0)
+                daysToAdd = 7;
+            return date.AddDays(daysToAdd).AddMinutes(1);
+        }
+
         #region Objects
 
         public class DateRange

@@ -222,13 +222,13 @@ namespace FBOLinx.Web.Services
                 string validUntil = "";
 
                 var priceDate = new DateTime();
-                if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Retail"))
+                if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Retail"))
                 {
                     var date = await _context.Set<Fboprices>().Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Retail").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
 
                     priceDate = date.GetValueOrDefault();
                 }
-                else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("JetA Cost"))
+                else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Cost"))
                 {
                     var date = await _context.Set<Fboprices>().Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Cost").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
 

@@ -4,14 +4,18 @@ import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 
 import {
     fboChangedEvent,
     fboPricesUpdatedEvent,
     locationChangedEvent,
+    fboProductPreferenceChangeEvent,
 } from '../../models/sharedEvents';
 // Services
+import { FboairportsService } from '../../services/fboairports.service';
 import { FbopricesService } from '../../services/fboprices.service';
+import { FbopreferencesService } from '../../services/fbopreferences.service';
 import { PricingtemplatesService } from '../../services/pricingtemplates.service';
 // Components
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
@@ -34,14 +38,24 @@ export class DefaultLayoutComponent implements OnInit {
     menuStyle: string;
     layoutClasses: any;
     pricingTemplatesData: any[];
-    retail: number;
-    cost: number;
+    retailSaf: number;
+    costSaf: number;
+    retailJetA: number;
+    costJetA: number;
+    effectiveToSaf: any;
+    effectiveToJetA: any;
+    timezone: string = "";
+    enableJetA: boolean;
+    enableSaf: boolean;
 
     hidePricesPanel: boolean;
+    subscriptions: Subscription[] = [];
 
     constructor(
+        private fboairportsService: FboairportsService,
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
+        private fboPreferencesService: FbopreferencesService,
         private pricingTemplatesService: PricingtemplatesService,
         private expiredPricingDialog: MatDialog,
         private router: Router,
@@ -69,6 +83,12 @@ export class DefaultLayoutComponent implements OnInit {
             .subscribe((event: RouterEvent) => {
                 if (!event.url.startsWith('/default-layout/customers')) {
                     this.store.dispatch(customerGridClear());
+
+                    if (event.url.indexOf("/default-layout/dashboard-fbo") > -1) {
+                        if (this.canUserSeePricing()) {
+                            this.loadPrices();
+                        }
+                    }
                 }
             });
     }
@@ -79,8 +99,7 @@ export class DefaultLayoutComponent implements OnInit {
 
     ngOnInit() {
         if (this.canUserSeePricing()) {
-            this.loadFboPrices();
-            this.checkCurrentPrices();
+            this.loadPrices();
         }
 
         this.sharedService.changeEmitted$.subscribe((message) => {
@@ -107,8 +126,17 @@ export class DefaultLayoutComponent implements OnInit {
                 return;
             }
             if (value.message === fboPricesUpdatedEvent) {
-                this.cost = value.JetACost;
-                this.retail = value.JetARetail;
+                this.costJetA = value.JetACost;
+                this.retailJetA = value.JetARetail;
+                this.costSaf = value.SafCost;
+                this.retailSaf = value.SafRetail;
+                this.effectiveToSaf = value.PriceExpirationSaf;
+                this.effectiveToJetA = value.PriceExpirationJetA;
+            }
+
+            if (value.message === fboProductPreferenceChangeEvent) {
+                this.enableJetA = value.EnableJetA;
+                this.enableSaf = value.EnableSaf;
             }
         });
 
@@ -165,47 +193,121 @@ export class DefaultLayoutComponent implements OnInit {
         if (
             remindMeLaterFlag &&
             moment(new Date(moment().format('L'))) !==
-                moment(new Date(remindMeLaterFlag))
+            moment(new Date(remindMeLaterFlag))
         ) {
             return;
         }
 
-        this.fboPricesService
-            .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                if (!data) {
-                    const dialogRef = this.expiredPricingDialog.open(
-                        PricingExpiredNotificationComponent,
-                        {
-                            autoFocus: false,
-                            data: {},
+        return new Observable((observer) => {
+            this.subscriptions.push(
+                this.fboPricesService
+                    .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
+                    .subscribe((data: any) => {
+                        if (!data) {
+                            const dialogRef = this.expiredPricingDialog.open(
+                                PricingExpiredNotificationComponent,
+                                {
+                                    autoFocus: false,
+                                    data: {},
+                                }
+                            );
+                            dialogRef.afterClosed().subscribe();
                         }
-                    );
-                    dialogRef.afterClosed().subscribe();
-                }
-            });
+                    },
+                        (error: any) => {
+                            observer.error(error);
+                        }
+                    ))
+        });
     }
 
     isSidebarInvisible() {
         return (
             !this.sharedService.currentUser.role &&
             !this.sharedService.currentUser.impersonatedRole
-        ); //this.sharedService.currentUser.role === 3 &&
+        );
+    }
+
+    public onClearFboPrice(event): void {
+        this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, event)
+            .subscribe((data: any) => {
+                if (event === 'SAF') {
+                    this.costSaf = 0;
+                    this.retailSaf = 0;
+                }
+                else if (event === 'JetA') {
+                    this.costJetA = 0;
+                    this.retailJetA = 0;
+                }
+            });
+    }
+
+    private loadFboPreferences() {
+        return new Observable((observer) => {
+            this.subscriptions.push(
+                this.fboPreferencesService.getForFbo(this.sharedService.currentUser.fboId).subscribe((preferences: any) => {
+                    if (preferences.enableJetA)
+                        this.enableJetA = true;
+                    if (preferences.enableSaf)
+                        this.enableSaf = true;
+
+                    observer.next();
+                },
+                    (error: any) => {
+                        observer.error(error);
+                    }
+                ));
+        });
     }
 
     private loadFboPrices() {
-        this.fboPricesService
-            .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-            .subscribe((data: any) => {
-                for (const price of data) {
-                    if (price.product === 'JetA Cost') {
-                        this.cost = price.price;
-                    }
-                    if (price.product === 'JetA Retail') {
-                        this.retail = price.price;
-                    }
-                }
-            });
+        return new Observable((observer) => {
+            this.subscriptions.push(
+                this.fboairportsService.getLocalTimeZone(this.sharedService.currentUser.fboId).subscribe((timezone: any) => {
+                    this.timezone = timezone;
+
+                    var _this = this;
+                    this.fboPricesService
+                        .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
+                        .subscribe((data: any) => {
+                            for (const price of data) {
+                                if (price.product === 'SAF Cost') {
+                                    _this.costSaf = price.price;
+                                }
+                                if (price.product === 'SAF Retail') {
+                                    _this.retailSaf = price.price;
+                                    _this.effectiveToSaf = moment(price.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone;
+                                }
+                                if (price.product === 'JetA Cost') {
+                                    _this.costJetA = price.price;
+                                }
+                                if (price.product === 'JetA Retail') {
+                                    _this.retailJetA = price.price;
+                                    _this.effectiveToJetA = moment(price.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone;
+                                }
+                            }
+
+                            observer.next();
+                        },
+                            (error: any) => {
+                                observer.error(error);
+                            }
+                        )
+                }))
+        });
+    }
+
+    private loadPrices() {
+        this.subscriptions.push(
+            this.loadFboPreferences().subscribe(() => {
+                this.subscriptions.push(
+                    this.loadFboPrices().subscribe(() => {
+                        this.subscriptions.push(
+                            this.checkCurrentPrices().subscribe(() => {
+                            }))
+                    }))
+            })
+        );
     }
 
     private canUserSeePricing(): boolean {

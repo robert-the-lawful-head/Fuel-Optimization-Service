@@ -237,7 +237,7 @@ namespace FBOLinx.Web.Services
                                     join cm in tempMarginTiers on p.Oid equals cm.TemplateId
                                         into leftJoinCmTiers
                                     from cm in leftJoinCmTiers.DefaultIfEmpty()
-                                    join fp in tempFboPrices on p.MarginTypeProduct equals fp.Product
+                                    join fp in tempFboPrices on "JetA " + p.MarginTypeProduct equals fp.Product
                                         into leftJoinFp
                                     from fp in leftJoinFp.DefaultIfEmpty()
                                     where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
