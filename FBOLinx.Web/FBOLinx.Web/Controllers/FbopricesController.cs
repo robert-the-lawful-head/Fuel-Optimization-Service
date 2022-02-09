@@ -109,8 +109,11 @@ namespace FBOLinx.Web.Controllers
 
             foreach(var price in filteredResult)
             {
-                price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
-                price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
+                if (price.Price != null)
+                {
+                    price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
+                    price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
+                }
             }
 
             return Ok(filteredResult);
