@@ -13,7 +13,7 @@ export class DateTimeService {
         this.accessPointUrl = baseUrl + 'api/datetime';
     }
 
-    public getNexTuesdayDate(date) {
+    public getNextTuesdayDate(date) {
         return this.http.get(this.accessPointUrl + '/next-tuesday/' + date, {
             headers: this.headers,
             responseType: 'text',

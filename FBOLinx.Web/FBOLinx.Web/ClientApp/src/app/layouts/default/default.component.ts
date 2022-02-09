@@ -42,7 +42,8 @@ export class DefaultLayoutComponent implements OnInit {
     costSaf: number;
     retailJetA: number;
     costJetA: number;
-    effectiveTo: any;
+    effectiveToSaf: any;
+    effectiveToJetA: any;
     timezone: string = "";
     enableJetA: boolean;
     enableSaf: boolean;
@@ -129,7 +130,8 @@ export class DefaultLayoutComponent implements OnInit {
                 this.retailJetA = value.JetARetail;
                 this.costSaf = value.SafCost;
                 this.retailSaf = value.SafRetail;
-                this.effectiveTo = value.PriceExpiration;
+                this.effectiveToSaf = value.PriceExpirationSaf;
+                this.effectiveToJetA = value.PriceExpirationJetA;
             }
 
             if (value.message === fboProductPreferenceChangeEvent) {
@@ -274,13 +276,14 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                                 if (price.product === 'SAF Retail') {
                                     _this.retailSaf = price.price;
+                                    _this.effectiveToSaf = moment(price.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone;
                                 }
                                 if (price.product === 'JetA Cost') {
                                     _this.costJetA = price.price;
                                 }
                                 if (price.product === 'JetA Retail') {
                                     _this.retailJetA = price.price;
-                                    _this.effectiveTo = moment(price.effectiveTo).format("M/D/YY @ H:m") + " " + this.timezone;
+                                    _this.effectiveToJetA = moment(price.effectiveTo).format("MM/DD/YY @ HH:mm") + " " + this.timezone;
                                 }
                             }
 

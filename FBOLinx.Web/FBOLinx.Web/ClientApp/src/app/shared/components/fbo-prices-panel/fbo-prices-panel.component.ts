@@ -12,7 +12,8 @@ export class FboPricesPanelComponent {
     @Input() costSaf: number;
     @Input() retailJetA: number;
     @Input() costJetA: number;
-    @Input() effectiveTo: string;
+    @Input() effectiveToSaf: string;
+    @Input() effectiveToJetA: string;
     @Output() onClearFboPrice = new EventEmitter<string>();
 
     constructor() { }

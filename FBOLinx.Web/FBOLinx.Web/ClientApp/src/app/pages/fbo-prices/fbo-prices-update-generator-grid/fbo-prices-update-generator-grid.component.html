@@ -181,7 +181,7 @@
             <button *ngIf="pricing.isEdit" (click)="submitPricing(pricing)"
                     class="mr-1"
                     color="green"
-                    [disabled]="!pricing.pricePap && !pricing.priceCost && pricing.priceEntryError"
+                    [disabled]="!pricing.pricePap && !pricing.priceCost || (pricing.priceCost > pricing.pricePap)"
                     mat-stroked-button>
                 {{pricing.submitStatus}}
             </button>

@@ -107,8 +107,8 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
 
     public onEffectiveFromChange(pricingUpdate) {
         var effectiveFromDate = moment(pricingUpdate.effectiveFrom).format("MM-DD-YYYY");
-        this.dateTimeService.getNexTuesdayDate(effectiveFromDate).subscribe((nextTuesdayDate: any) => {
-            pricingUpdate.effectiveTo = moment(moment(new Date(nextTuesdayDate)).format("MM/DD/YYYY HH:mm")).toDate();;
+        this.dateTimeService.getNextTuesdayDate(effectiveFromDate).subscribe((nextTuesdayDate: any) => {
+            pricingUpdate.effectiveTo = moment(moment(new Date(nextTuesdayDate)).format("MM/DD/YYYY HH:mm")).toDate();
 
             if (moment(pricingUpdate.effectiveFrom) <= moment(pricingUpdate.currentDateTime))
                 pricingUpdate.submitStatus = "Publish";
