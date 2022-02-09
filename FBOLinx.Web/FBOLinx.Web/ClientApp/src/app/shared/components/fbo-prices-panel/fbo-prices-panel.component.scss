@@ -17,3 +17,15 @@
 .price-expired {
     color: red;
 }
+
+div .header-button button {
+    min-width: auto;
+    line-height: 22px;
+    padding: 0 10px 2px 10px;
+    font-size: .7rem;
+    margin-top: 2px;
+}
+
+h6.price-expired {
+    font-size: .7rem !important;
+}
