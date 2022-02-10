@@ -45,7 +45,7 @@ ADD EnableSaf bit;
 
 
 update fp
-set fp.enablejeta=1, fp.enablesaf=1
+set fp.enablejeta=1, fp.enablesaf=0
 from fbos f
 inner join fbopreferences fp on f.oid=fp.fboid and f.groupid>1
 GO
