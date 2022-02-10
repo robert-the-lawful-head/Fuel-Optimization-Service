@@ -69,10 +69,9 @@
                 <div class="row">
                     <div class="col">
                         <mat-form-field class="price-form-input  effective-date-time">
-                            <input matInput [(ngModel)]="pricing.effectiveTo">
-                            <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="onEffectiveToFocus(pricing);effectiveToDatePicker.open();">
-                            <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" (click)="onEffectiveToFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
-                            <ngx-mat-datetime-picker #effectiveToDatePicker></ngx-mat-datetime-picker>
+                                <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="onEffectiveToFocus(pricing);effectiveToDatePicker.open();">
+                                <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" (click)="onEffectiveToFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
+                                <ngx-mat-datetime-picker #effectiveToDatePicker></ngx-mat-datetime-picker>
                             <div style="position:absolute; top:6px; right: -11px;">{{timezone}}</div>
                         </mat-form-field>
                     </div>
