@@ -302,6 +302,9 @@ export class DefaultLayoutComponent implements OnInit {
             this.loadFboPreferences().subscribe(() => {
                 this.subscriptions.push(
                     this.loadFboPrices().subscribe(() => {
+                        var checkPricesResult = this.checkCurrentPrices();
+                        if (!checkPricesResult)
+                            return;
                         this.subscriptions.push(
                             this.checkCurrentPrices().subscribe(() => {
                             }))
