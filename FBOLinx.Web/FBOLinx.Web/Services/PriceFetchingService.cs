@@ -437,7 +437,7 @@ namespace FBOLinx.Web.Services
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x =>
                     {
-                        var productName = "Jet A";
+                        var productName = x.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A");
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
                             productName += " (Domestic Departure)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
