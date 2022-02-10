@@ -416,7 +416,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                     this.fboPricesUpdateGridData.forEach(function (fboPrice) {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
                             fboPrice.effectiveFrom = moment(moment(_this.localDateTime).format("MM/DD/YYYY HH:mm")).toDate();
-                            fboPrice.effectiveTo = moment(moment(_this.expirationDate).format("MM/DD/YYYY HH:mm")).toDate();
+                            fboPrice.effectiveTo = moment(_this.expirationDate).toDate();
                             fboPrice.submitStatus = "Publish";
                             fboPrice.isEdit = true;
                         }

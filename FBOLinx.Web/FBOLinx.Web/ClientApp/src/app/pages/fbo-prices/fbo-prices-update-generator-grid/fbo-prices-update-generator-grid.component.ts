@@ -10,6 +10,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as moment from 'moment';
+import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -55,7 +56,29 @@ const initialColumns: ColumnType[] = [
     }
 ];
 
+const INTL_DATE_INPUT_FORMAT = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hourCycle: 'h23',
+    hour: '2-digit',
+    minute: '2-digit',
+};
+
+const MAT_DATE_FORMATS: NgxMatDateFormats = {
+    parse: {
+        dateInput: INTL_DATE_INPUT_FORMAT,
+    },
+    display: {
+        dateInput: INTL_DATE_INPUT_FORMAT,
+        monthYearLabel: { year: 'numeric', month: 'short' },
+        dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
+        monthYearA11yLabel: { year: 'numeric', month: 'long' },
+    },
+};
+
 @Component({
+    providers: [{ provide: NGX_MAT_DATE_FORMATS, useValue: MAT_DATE_FORMATS }],
     selector: 'app-fbo-prices-update-generator-grid',
     styleUrls: ['./fbo-prices-update-generator-grid.component.scss'],
     templateUrl: './fbo-prices-update-generator-grid.component.html',
@@ -108,7 +131,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     public onEffectiveFromChange(pricingUpdate) {
         var effectiveFromDate = moment(pricingUpdate.effectiveFrom).format("MM-DD-YYYY");
         this.dateTimeService.getNextTuesdayDate(effectiveFromDate).subscribe((nextTuesdayDate: any) => {
-            pricingUpdate.effectiveTo = moment(moment(new Date(nextTuesdayDate)).format("MM/DD/YYYY HH:mm")).toDate();
+            pricingUpdate.effectiveTo = moment(nextTuesdayDate).toDate();
 
             if (moment(pricingUpdate.effectiveFrom) <= moment(pricingUpdate.currentDateTime))
                 pricingUpdate.submitStatus = "Publish";
@@ -131,14 +154,16 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
             .suspendPricingGenerator(pricingUpdate)
             .subscribe((data: any) => {
                 this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
-                    pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
-                    pricingUpdate.effectiveTo = pricingUpdate.effectiveFrom;
-                    pricingUpdate.oidCost = 0;
-                    pricingUpdate.oidPap = 0;
-                    pricingUpdate.priceCost = 0;
-                    pricingUpdate.pricePap = 0;
-                    pricingUpdate.submitStatus = "Publish";
-                    pricingUpdate.isEdit = true;
+                    this.dateTimeService.getNextTuesdayDate(localdatetime).subscribe((nextTuesdayDate: any) => {
+                        pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
+                        pricingUpdate.effectiveTo = moment(nextTuesdayDate).toDate();
+                        pricingUpdate.oidCost = 0;
+                        pricingUpdate.oidPap = 0;
+                        pricingUpdate.priceCost = 0;
+                        pricingUpdate.pricePap = 0;
+                        pricingUpdate.submitStatus = "Publish";
+                        pricingUpdate.isEdit = true;
+                    });
                 });
             });
     }
