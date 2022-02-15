@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+      <PackageReference Include="Mapster" Version="7.2.0" />
       <PackageReference Include="System.Linq" Version="4.3.0" />
       <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     </ItemGroup>
@@ -19,5 +20,20 @@
       <ProjectReference Include="..\FBOLinx.Core\FBOLinx.Core.csproj" />
       <ProjectReference Include="..\FBOLinx.DB\FBOLinx.DB.csproj" />
     </ItemGroup>
+
+	<ItemGroup>
+		<Generated Include="**\*.g.cs" />
+	</ItemGroup>
+	<Target Name="CleanGenerated">
+		<Delete Files="@(Generated)" />
+	</Target>
+	
+	<Target Name="Mapster">
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.DTO -o Mapping/Dto" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Extensions -o Mapping/Extensions" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.ServiceL.Mapping.Mappers -o Mapping/Mappers" />
+	</Target>
 
 </Project>
