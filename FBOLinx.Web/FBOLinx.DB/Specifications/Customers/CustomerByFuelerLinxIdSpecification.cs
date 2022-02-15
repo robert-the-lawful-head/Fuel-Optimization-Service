@@ -8,7 +8,7 @@ namespace FBOLinx.DB.Specifications.Customers
 {
     public sealed class CustomerByFuelerLinxIdSpecification : Specification<Models.Customers>
     {
-        public CustomerByFuelerLinxIdSpecification(int fuelerLinxId) : base(x => x.FuelerlinxId.HasValue && x.FuelerlinxId.Value == fuelerLinxId)
+        public CustomerByFuelerLinxIdSpecification(int fuelerLinxId) : base(x => x.FuelerlinxId.HasValue && Math.Abs(x.FuelerlinxId.Value) == fuelerLinxId)
         {
             
         }

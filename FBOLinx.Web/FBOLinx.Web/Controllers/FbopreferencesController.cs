@@ -54,7 +54,7 @@ namespace FBOLinx.Web.Controllers
 
             if (fbopreferences == null)
             {
-                fbopreferences = new Fbopreferences() { Fboid = fboId, EnableJetA = true, EnableSaf = true };
+                fbopreferences = new Fbopreferences() { Fboid = fboId, EnableJetA = true, EnableSaf = false };
                 _context.Fbopreferences.Add(fbopreferences);
                 await _context.SaveChangesAsync();
 
