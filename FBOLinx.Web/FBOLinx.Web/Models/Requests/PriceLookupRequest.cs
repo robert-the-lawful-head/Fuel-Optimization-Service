@@ -1,8 +1,7 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Models.Requests
 {
@@ -16,9 +15,9 @@ namespace FBOLinx.Web.Models.Requests
         [Required]
         public int GroupID { get; set; }
         [Required]
-        public FBOLinx.Core.Enums.FlightTypeClassifications FlightTypeClassification { get; set; }     
+        public FlightTypeClassifications FlightTypeClassification { get; set; }     
         [Required]
-        public FBOLinx.Core.Enums.ApplicableTaxFlights DepartureType { get; set; }
+        public ApplicableTaxFlights DepartureType { get; set; }
         public List<FboFeesAndTaxes> ReplacementFeesAndTaxes { get; set; }
         public int CustomerInfoByGroupId { get; set; }
     }

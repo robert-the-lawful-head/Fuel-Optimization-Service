@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace FBOLinx.Web.Services
             var emailContent = new EmailContent()
                 {
                     EmailContentHtml = "Greeting from " + fbo.Fbo + " / " + fbo.fboAirport?.Icao + ". Attached please see your custom pricing from our FBO!",
-                    EmailContentType = EmailContent.EmailContentTypes.Body,
+                    EmailContentType = EmailContentTypes.Body,
                     FboId = fboId,
                     Name = "Default Email Template",
                     Subject = "Pricing from " + fbo.Fbo + " / " + fbo.fboAirport?.Icao

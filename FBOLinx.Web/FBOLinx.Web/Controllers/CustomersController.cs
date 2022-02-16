@@ -76,7 +76,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("sync-fuelerlinx-company/{fuelerLinxCompanyId}")]
         public async Task<IActionResult> SyncCustomerFromFuelerLinx([FromRoute] int fuelerLinxCompanyId)
         {

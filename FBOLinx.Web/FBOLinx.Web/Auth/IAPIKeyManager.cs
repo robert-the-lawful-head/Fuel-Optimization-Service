@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FBOLinx.DB.Models;
 using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Auth

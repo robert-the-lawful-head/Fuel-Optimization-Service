@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
@@ -8,19 +7,6 @@ namespace FBOLinx.DB.Models
 {
     public partial class CustomerInfoByGroup : FBOLinxBaseEntityModel<int>
     {
-        //public enum CustomerCompanyTypes
-        //{
-        //    [Description("Flight Department")]
-        //    FlightDepartment = 0,
-        //    [Description("Contract Fuel Vendor")]
-        //    ContractFuelVendor = 1,
-        //    [Description("Base")]
-        //    Base = 2,
-        //    [Description("CAA")]
-        //    CAA = 3,
-        //    [Description("Fue")]
-        //}
-
         [Column("GroupID")]
         public int GroupId { get; set; }
         [Column("CustomerID")]

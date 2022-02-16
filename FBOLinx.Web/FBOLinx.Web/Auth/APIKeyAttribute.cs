@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FBOLinx.Core.Enums;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Auth
 {
     public class APIKeyAttribute : TypeFilterAttribute
     {
-        public APIKeyAttribute(params IntegrationPartners.IntegrationPartnerTypes[] partnerTypes) : base(
+        public APIKeyAttribute(params IntegrationPartnerTypes[] partnerTypes) : base(
             typeof(APIKeyActionFilter))
         {
             Arguments = new object[] { partnerTypes };

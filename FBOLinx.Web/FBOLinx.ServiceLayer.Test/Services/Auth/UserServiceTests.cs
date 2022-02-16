@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
@@ -178,7 +179,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            testUser.Role = UserRoles.Primary;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
@@ -196,7 +197,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            testUser.Role = UserRoles.Primary;
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
@@ -233,7 +234,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            testUser.Role = UserRoles.Primary;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
@@ -251,7 +252,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = UserRoles.Conductor;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
@@ -269,7 +270,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = UserRoles.Conductor;
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
@@ -300,7 +301,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = UserRoles.Conductor;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
@@ -394,7 +395,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
 
             var result = JwtManager.GetClaimedRole(httpContextAccessor);
 
-            Assert.AreEqual(User.UserRoles.NotSet, result);
+            Assert.AreEqual(UserRoles.NotSet, result);
         }
 
         private IHttpContextAccessor MockHttpContextAccessor(string claimType, string claimValue)

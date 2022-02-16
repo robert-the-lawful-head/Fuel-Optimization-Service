@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
@@ -11,22 +10,6 @@ namespace FBOLinx.DB.Models
         private RampFeeCategories? _CategoryType = RampFeeCategories.Notset;
         private int? _CategoryMinValue;
         private string _CategoryDescription = "";
-
-        public enum RampFeeCategories: short
-        {
-            [Description("Not Set")]
-            Notset = 0,
-            [Description("Aircraft Size")]
-            AircraftSize = 1,
-            [Description("Aircraft Type")]
-            AircraftType = 2,
-            [Description("Weight Range")]
-            WeightRange = 3,
-            [Description("Wingspan")]
-            Wingspan = 4,
-            [Description("Tailnumber")]
-            TailNumber = 5
-        }
 
         [Key]
         [Column("OID")]
