@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,7 @@ using FBOLinx.Web.Models.Responses;
 using System;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -57,7 +56,7 @@ namespace FBOLinx.Web.Controllers
 
         [HttpPost("authtoken")]
         [AllowAnonymous]
-        //[APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        //[APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<ActionResult<AuthTokenResponse>> GenerateAuthTokenFromAccessToken([FromBody] UserAuthTokenFromAccessTokenRequest request)
         {
             if (!ModelState.IsValid)
@@ -70,7 +69,7 @@ namespace FBOLinx.Web.Controllers
 
         [HttpPost("refreshtoken")]
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<ActionResult<ExchangeRefreshTokenResponse>> RefreshAccessToken([FromBody] ExchangeRefreshTokenRequest request)
         {
             if (!ModelState.IsValid)

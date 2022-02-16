@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 
 namespace FBOLinx.Web.DTO
@@ -22,9 +20,9 @@ namespace FBOLinx.Web.DTO
         public bool? Network { get; set; } = false;
         public int? GroupId { get; set; }
         public int FboId { get; set; }
-        public PricingTemplate.MarginTypes? MarginType { get; set; }
+        public MarginTypes? MarginType { get; set; }
 
-        public PricingTemplate.DiscountTypes? DiscountType { get; set; }
+        public DiscountTypes? DiscountType { get; set; }
 
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
@@ -73,7 +71,7 @@ namespace FBOLinx.Web.DTO
         {
             get
             {
-                return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
+                return Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
 
@@ -96,7 +94,7 @@ namespace FBOLinx.Web.DTO
 
         private double GetPreMarginSubTotal()
         {
-            if (!MarginType.HasValue || MarginType == PricingTemplate.MarginTypes.RetailMinus || MarginType == PricingTemplate.MarginTypes.FlatFee)
+            if (!MarginType.HasValue || MarginType == MarginTypes.RetailMinus || MarginType == MarginTypes.FlatFee)
                 return (FboPrice.GetValueOrDefault());
             double result = FboPrice.GetValueOrDefault();
             double basePrice = FboPrice.GetValueOrDefault();
@@ -118,9 +116,9 @@ namespace FBOLinx.Web.DTO
             if (!MarginType.HasValue)
                 result = 0;
 
-            else if (MarginType.Value == PricingTemplate.MarginTypes.CostPlus)
+            else if (MarginType.Value == MarginTypes.CostPlus)
             {
-                if (DiscountType.GetValueOrDefault() == PricingTemplate.DiscountTypes.Percentage)
+                if (DiscountType.GetValueOrDefault() == DiscountTypes.Percentage)
                 {
                     itp = FboPrice.GetValueOrDefault() * (Math.Abs(CustomerMarginAmount.GetValueOrDefault()) / 100);
                     result = (preMarginSubTotal + itp);
@@ -130,9 +128,9 @@ namespace FBOLinx.Web.DTO
                     result = (preMarginSubTotal + Math.Abs(CustomerMarginAmount.GetValueOrDefault()));
                 }
             }
-            else if (MarginType.Value == PricingTemplate.MarginTypes.RetailMinus)
+            else if (MarginType.Value == MarginTypes.RetailMinus)
             {
-                if (DiscountType.GetValueOrDefault() == PricingTemplate.DiscountTypes.Percentage)
+                if (DiscountType.GetValueOrDefault() == DiscountTypes.Percentage)
                 {
 
                     itp = FboPrice.GetValueOrDefault() * (Math.Abs(CustomerMarginAmount.GetValueOrDefault()) / 100);
