@@ -861,6 +861,8 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                     await _context.SaveChangesAsync();
+
+                    fboprices.OidPap = newFboPrice.Oid;
                 }
 
                 if (FbopricesExists(fboprices.OidCost))
@@ -884,7 +886,11 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                     await _context.SaveChangesAsync();
+
+                    fboprices.OidCost = newFboPrice.Oid;
                 }
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -898,7 +904,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok(new { Status = isStaged ? "staged" : "published"});
+            return Ok(new { OidPap = fboprices.OidPap, OidCost = fboprices.OidCost,  Status = isStaged ? "staged" : "published" }) ;
         }
 
         // DELETE: api/Fboprices/delete-price/fbo/5/jeta

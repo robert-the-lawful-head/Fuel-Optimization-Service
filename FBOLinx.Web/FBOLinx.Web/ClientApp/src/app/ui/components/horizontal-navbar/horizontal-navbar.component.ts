@@ -220,7 +220,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             );
 
             dialogRef.componentInstance.productChanged.subscribe(result => {
-                this.sharedService.emitChange('fbo-product-preference-change');
+                this.sharedService.emitChange(SharedEvents.fboProductPreferenceChangeEvent);
                 this.sharedService.valueChange({
                     EnableJetA: result.enableJetA,
                     EnableSaf: result.enableSaf,
