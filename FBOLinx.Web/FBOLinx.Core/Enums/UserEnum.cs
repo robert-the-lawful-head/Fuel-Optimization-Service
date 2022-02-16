@@ -2,7 +2,7 @@
 
 namespace FBOLinx.Core.Enums
 {
-    public enum UserRoles
+    public enum UserRoles : short
     {
         [Description("Not set")]
         NotSet = 0,
@@ -20,7 +20,7 @@ namespace FBOLinx.Core.Enums
         NonRev = 6
     }
 
-    public enum Actions
+    public enum Actions : int
     {
         [Description("Deactivated")]
         Deactivated = 0,
@@ -43,7 +43,7 @@ namespace FBOLinx.Core.Enums
 
     }
 
-    public enum Locations
+    public enum Locations : int
     {
         [Description("EditCustomer")]
         EditCustomer = 0,

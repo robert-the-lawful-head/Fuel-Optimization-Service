@@ -18,7 +18,7 @@ namespace FBOLinx.Core.Enums
         ContactInfoByGroup = 3,
         CustomerContacts = 4
     }
-    public enum AuditEntryType
+    public enum AuditEntryType : int
     {
         [Description("Deactivate")]
         Deactivated = 0,
