@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿using FBOLinx.Core.Enums;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,29 +7,6 @@ namespace FBOLinx.DB.Models
 {
     public partial class PricingTemplate
     {
-        public enum MarginTypes : short
-        {
-            [Description("Cost +")]
-            CostPlus = 0,
-            [Description("Retail -")]
-            RetailMinus = 1,
-            [Description("Flat Fee")]
-            FlatFee = 2,
-            [Description("Inactive")]
-            Inactive = 3
-        }
-
-
-        public enum DiscountTypes : short
-        {
-            [Description("Flat Per Gallon")]
-             FlatPerGallon  = 0,
-            [Description("Percentage")]
-             Percentage =  1          
-        }
-
-
-
         [Key]
         [Column("OID")]
         public int Oid { get; set; }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FBOLinx.Core.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
