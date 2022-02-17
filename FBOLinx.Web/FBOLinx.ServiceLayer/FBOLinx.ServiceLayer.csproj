@@ -25,6 +25,13 @@
 	<ItemGroup>
 		<Generated Include="**\*.g.cs" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <Generated Remove="NewFolder\**" />
+	  <None Remove="NewFolder\**" />
+	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />
 	</Target>
@@ -32,7 +39,7 @@
 	<Target Name="Mapster">
 		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build" />
 		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
-		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Dto -o Mapping/Dto" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Dto -o Dto" />
 		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Extensions -o Mapping/Extensions" />
 		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.ServiceL.Mapping.Mappers -o Mapping/Mappers" />
 	</Target>
