@@ -10,8 +10,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public int AcukwikFBOHandlerID { get; set; }
         public double CenterLatitude { get; set; }
         public double CenterLongitude { get; set; }
-        public string Icao { get; set; }
-        public string FboName { get; set; }
         public ICollection<AirportFboGeofenceClusterCoordinatesDto> ClusterCoordinatesCollection { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using FBOLinx.Core.Enums;
-using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
@@ -33,7 +32,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public int? CustomerCompanyType { get; set; }
         public bool? PricingTemplateRemoved { get; set; }
         public bool? MergeRejected { get; set; }
-        public CustomersDto Customer { get; set; }
         public int Oid { get; set; }
     }
 }

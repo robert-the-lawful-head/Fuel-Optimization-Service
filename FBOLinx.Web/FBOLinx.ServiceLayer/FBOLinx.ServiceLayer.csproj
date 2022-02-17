@@ -27,7 +27,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="NewFolder\" />
+	  <Compile Remove="NewFolder\**" />
+	  <EmbeddedResource Remove="NewFolder\**" />
+	  <Generated Remove="NewFolder\**" />
+	  <None Remove="NewFolder\**" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />

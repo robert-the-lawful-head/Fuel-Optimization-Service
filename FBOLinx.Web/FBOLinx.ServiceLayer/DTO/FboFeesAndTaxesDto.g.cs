@@ -14,8 +14,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public FlightTypeClassifications? FlightTypeClassification { get; set; }
         public ApplicableTaxFlights? DepartureType { get; set; }
         public FeeCalculationApplyingTypes? WhenToApply { get; set; }
-        public bool IsOmitted { get; set; }
-        public string OmittedFor { get; set; }
         public List<FboFeeAndTaxOmitsByCustomerDto> OmitsByCustomer { get; set; }
         public List<FboFeeAndTaxOmitsByPricingTemplateDto> OmitsByPricingTemplate { get; set; }
     }

@@ -12,7 +12,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Token { get; set; }
         public bool? CopyAlerts { get; set; }
         public long? LoginCount { get; set; }
         public int? AddOnMarginTries { get; set; }

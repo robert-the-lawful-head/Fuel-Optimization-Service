@@ -18,7 +18,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public DiscountTypes? DiscountType { get; set; }
         public MarginTypes? MarginType { get; set; }
         public int? EmailContentId { get; set; }
-        public List<string> TailNumbers { get; set; }
         public string MarginTypeProduct { get; set; }
         public ICollection<CustomerMarginsDto> CustomerMargins { get; set; }
         public ICollection<AircraftPricesDto> AircraftPrices { get; set; }

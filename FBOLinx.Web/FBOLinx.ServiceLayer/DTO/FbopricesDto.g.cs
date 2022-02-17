@@ -15,8 +15,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public double? SalesTax { get; set; }
         public string Currency { get; set; }
         public bool? Expired { get; set; }
-        public int? Id { get; set; }
-        public string GenericProduct { get; set; }
         public FbosDto Fbo { get; set; }
     }
 }

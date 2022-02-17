@@ -17,7 +17,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public string CategoryStringValue { get; set; }
         public DateTime? LastUpdated { get; set; }
         public string SizeDescription { get; set; }
-        public string CategoryDescription { get; set; }
         public string CategorizationDescription { get; set; }
     }
 }
