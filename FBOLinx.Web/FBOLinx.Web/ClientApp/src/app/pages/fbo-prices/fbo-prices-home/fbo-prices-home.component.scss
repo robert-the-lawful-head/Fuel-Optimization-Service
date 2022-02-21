@@ -15,11 +15,6 @@
 
     .prices-board-item {
         margin: 15px 15px 15px 0;
-        
-
-        &.card-content {
-            overflow-x: auto;
-        }
     }
 
     .prices-board-first-column {
@@ -29,11 +24,7 @@
 
     .prices-board-second-column {
         //flex-basis: 100px;
-        /*flex-grow: 1;*/
-        width: 100%;
-        max-width: -moz-available !important; /* For Mozzila */
-        max-width: -webkit-fill-available !important; /* For Chrome */
-        max-width: stretch !important; /* Unprefixed */
+        flex-grow: 1;
     }
 
     .updateBtn {

@@ -103,13 +103,11 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     currentFboPrice100LLCost: any;
     currentFboPriceSafRetail: any;
     currentFboPriceSafCost: any;
-    locationChangedSubscription: any;
-    tooltipSubscription: any;
     //tailNumberFormControlSubscription: any;
     priceShiftSubscription: any;
     priceShiftLoading: boolean;
 
-    productChangedSubscription: any;
+    changedSubscription: any;
     subscriptions: Subscription[] = [];
     timezone: string = "";
     expirationDate: any;
@@ -135,36 +133,23 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        this.locationChangedSubscription =
+        this.changedSubscription =
             this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.resetAll();
                 }
-            });
-
-        this.tooltipSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
-                if (message === SharedEvents.menuTooltipShowedEvent) {
+                else if (message === fboProductPreferenceChangeEvent) {
+                    this.loadStagedFboPrices();
+                }
+                else if (message === SharedEvents.menuTooltipShowedEvent) {
                     this.tooltipIndex = this.priceTooltips.length - 1;
                     this.showTooltips();
                 }
-            }
-        );
-
-        this.productChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
-                if (message === fboProductPreferenceChangeEvent) {
-                    this.loadStagedFboPrices();
-                }
-            }
-        );
+            });
     }
 
     ngOnDestroy(): void {
-        this.productChangedSubscription?.unsubcribe();
-        this.locationChangedSubscription?.unsubscribe();
-        this.tooltipSubscription?.unsubscribe();
-        //this.tailNumberFormControlSubscription?.unsubscribe();
+        this.changedSubscription?.unsubscribe();
         this.priceShiftSubscription?.unsubscribe();
         this.subscriptions.forEach((subscription) =>
             subscription.unsubscribe()
