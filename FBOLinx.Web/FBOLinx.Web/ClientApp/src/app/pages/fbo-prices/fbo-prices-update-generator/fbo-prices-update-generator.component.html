@@ -5,7 +5,7 @@
             <ni-card *ngIf="!isCsr"
                      bgColor="dead"
                      class="prices-board-item prices-board-second-column"
-                     customStyle="min-height: 160px;"
+                     customStyle="min-height: 160px; overflow-x: auto;"
                      headerBgColor="dead"
                      outline="true"
                      theme="small"
@@ -31,7 +31,7 @@
                 </div>
 
                 <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="col-12">
-                    <app-fbo-prices-update-generator-grid [fboPricesUpdateData]="fboPricesUpdateData" [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
+                    <app-fbo-prices-update-generator-grid [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
                 </div>
             </ni-card>
         </div>
