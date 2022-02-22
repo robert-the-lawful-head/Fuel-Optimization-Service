@@ -50,6 +50,13 @@ export class AirportFboGeofenceClustersService {
             });
     }
 
+    getAirportForGeoFencingByAcukwikAirportId(acukwikAirportId) {
+        return this.http.get(this.accessPointUrl + '/airports/by-acukwik-id/' + acukwikAirportId,
+            {
+                headers: this.headers
+            });
+    }
+
     getClustersByAcukwikAirportId(acukwikAirportId) {
         return this.http.get(this.accessPointUrl + '/clusters-by-acukwik-airport-id/' + acukwikAirportId,
             {

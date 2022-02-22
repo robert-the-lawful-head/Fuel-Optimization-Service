@@ -14,7 +14,7 @@
 
         <div *ngIf="!airportFboGeofenceGridItem && airportFboGeoFenceGridData" class="row">
             <div *ngIf="fboGeofencingData" class="col-12">
-                <app-fbo-geofencing-grid [fboGeofencingData]="fboGeofencingData" [airportFboGeoFenceGridData]="airportFboGeoFenceGridData" (onEditRow)="onEditAirportFboGeoFence($event)"></app-fbo-geofencing-grid>
+                <app-fbo-geofencing-grid [fboGeofencingData]="fboGeofencingData" [airportFboGeoFenceGridData]="airportFboGeoFenceGridData" (onEditRow)="onEditAirportFboGeoFence($event)" (onAddAirport)="onAddAirportFboGeoFence()"></app-fbo-geofencing-grid>
             </div>
         </div>
         <div *ngIf="airportFboGeofenceGridItem" class="row">

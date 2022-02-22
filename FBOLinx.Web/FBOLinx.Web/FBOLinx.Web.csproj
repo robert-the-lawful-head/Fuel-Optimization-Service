@@ -72,6 +72,7 @@
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-airport\fbo-geofencing-dialog-new-airport.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-home\fbo-prices-pricing-update-generator.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
@@ -143,6 +144,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-airport\fbo-geofencing-dialog-new-airport.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-update-generator\fbo-prices-update-generator.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
