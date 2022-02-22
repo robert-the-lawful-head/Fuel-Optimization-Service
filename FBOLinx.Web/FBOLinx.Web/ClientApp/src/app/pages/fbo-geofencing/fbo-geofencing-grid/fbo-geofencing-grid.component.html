@@ -46,18 +46,20 @@
 
             <ng-container matColumnDef="addNew">
                 <th *matHeaderCellDef mat-header-cell>
-                    
+                    <button (click)="addAirportClicked()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            class="mr-3"
+                            ni-button>
+                        Add New
+                    </button>
                 </th>
                 <td *matCellDef="let geofence" mat-cell>
-                    <button (click)="editRowClicked(geofence)" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
-                            ni-button>
-                        Edit
-                    </button>
                 </td>
             </ng-container>
 
                 <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
-                <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+                <tr (click)="editRowClicked(row)" *matRowDef="let row; columns: getTableColumns()" mat-row style="cursor: pointer;"></tr>
         </table>
 
         <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="fboGeofencingData.length"

@@ -567,6 +567,7 @@ namespace FBOLinx.Web.Services
         {
             try
             {
+                //Fetch all airports with antenna data
                 var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
                 var distinctBoxes = await _context.AirportWatchHistoricalData
                     .Where(x => x.BoxTransmissionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.BoxName))
@@ -574,6 +575,11 @@ namespace FBOLinx.Web.Services
                     .Distinct()
                     .ToListAsync();
                 distinctBoxes = distinctBoxes.Select(x => x.Split('_')[0].ToUpper()).ToList();
+
+                //Fetch distinct airports from clusters or that were added manually
+                var distinctAirportIdentifiersWithClusters = await _airportFboGeofenceClustersService.GetDistinctAirportIdentifiersWithClusters();
+                distinctBoxes.AddRange(distinctAirportIdentifiersWithClusters);
+
                 var airports = await _degaContext.AcukwikAirports.Where(x => distinctBoxes.Contains(x.Icao))
                     .Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
                 return airports;
