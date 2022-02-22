@@ -9,8 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
-      <PackageReference Include="Mapster" Version="7.2.0" />
+      <PackageReference Include="Mapster" Version="7.3.0" />
       <PackageReference Include="Mapster.Core" Version="1.2.0" />
       <PackageReference Include="System.Linq" Version="4.3.0" />
       <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
@@ -24,13 +23,6 @@
 
 	<ItemGroup>
 		<Generated Include="**\*.g.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Remove="NewFolder\**" />
-	  <EmbeddedResource Remove="NewFolder\**" />
-	  <Generated Remove="NewFolder\**" />
-	  <None Remove="NewFolder\**" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />
