@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using AutoMapper;
 using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices
@@ -16,11 +14,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public class FBOLinxBaseEntityService<T, TDTO, TIDType> where T : FBOLinxBaseEntityModel<TIDType> where TDTO : IEntityModelDTO<T, TIDType>
     {
         protected FboLinxContext _Context;
-        protected IMapper _Mapper;
 
-        public FBOLinxBaseEntityService(IMapper mapper, FboLinxContext context)
+        public FBOLinxBaseEntityService(FboLinxContext context)
         {
-            _Mapper = mapper;
             _Context = context;
         }
 
@@ -28,14 +24,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
             var entity = await GetEntityById(id);
             
-            if (entity != null)
-            {
-                var result = ((TDTO)Activator.CreateInstance((typeof(TDTO))));
-                result.CastFromEntity(_Mapper, entity);
-                return result;
-            }
-            
-            return default(TDTO);
+            return entity.Adapt<TDTO>();
+
         }
 
         protected virtual async Task<T> GetEntityById(TIDType id)
@@ -48,15 +38,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public virtual async Task<TDTO> GetSingleBySpec(ISpecification<T> spec)
         {
             var entity = await GetEntitySingleBySpec(spec);
-            
-            if (entity != null)
-            {
-                var result = ((TDTO)Activator.CreateInstance((typeof(TDTO))));
-                result.CastFromEntity(_Mapper, entity);
-                return result;
-            }
-            
-            return default(TDTO);
+
+            return entity.Adapt<TDTO>();
         }
 
         protected async Task<T> GetEntitySingleBySpec(ISpecification<T> spec)
@@ -69,16 +52,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
             var result = await GetEntityListBySpec(spec);
 
-            var resultDTO = new List<TDTO>();
+            return result.Adapt<List<TDTO>>();
 
-            result.ForEach(x =>
-            {
-                var dto = ((TDTO) Activator.CreateInstance((typeof(TDTO))));
-                dto.CastFromEntity(_Mapper, x);
-                resultDTO.Add(dto);
-            });
-
-            return resultDTO;
         }
 
         protected async Task<List<T>> GetEntityListBySpec(ISpecification<T> spec)
@@ -101,9 +76,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public virtual async Task<TDTO> Add(TDTO entityDTO)
         {
-            var entity = await AddEntity(entityDTO.ConvertToEntity(_Mapper));
-            entityDTO.CastFromEntity(_Mapper, entity);
-            return entityDTO;
+            var entity = await AddEntity(entityDTO.Adapt<T>());
+            return entity.Adapt<TDTO>();
+
         }
 
         protected async Task<T> AddEntity(T entity)
@@ -115,16 +90,14 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public virtual async Task<TDTO> Update(TDTO entityDTO)
         {
-            var entity = entityDTO.ConvertToEntity(_Mapper);
+            var entity = entityDTO.Adapt<T>();
             if (EqualityComparer<TIDType>.Default.Equals(entity.Oid, default(TIDType)))
                 await AddEntity(entity);
             else
             {
-                //entity = await GetEntityById(entity.Id);
                 await UpdateEntity(entity);
             }
-            entityDTO.CastFromEntity(_Mapper, entity);
-            return entityDTO;
+            return entity.Adapt<TDTO>();
         }
 
         protected async Task UpdateEntity(T entity)
@@ -143,7 +116,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task Delete(TDTO entityDTO)
         {
-            await Delete(entityDTO.ConvertToEntity(_Mapper).Oid);
+            await Delete(entityDTO.Oid);
         }
 
         public async Task Delete(TIDType id)
@@ -172,7 +145,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (entityDTOs == null)
                 return;
 
-            var entities = entityDTOs.Select(x => x.ConvertToEntity(_Mapper)).ToList();
+            var entities = entityDTOs.Select(x => x.Adapt<T>()).ToList();
             await BulkDeleteEntities(entities);
         }
 
@@ -204,7 +177,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task BulkInsertOrUpdate(List<TDTO> entityDTOs)
         {
-            var entities = entityDTOs.Select(x => x.ConvertToEntity(_Mapper)).ToList();
+            var entities = entityDTOs.Select(x => x.Adapt<T>()).ToList();
             await BulkInsertOrUpdateEntities(entities);
             for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
             {

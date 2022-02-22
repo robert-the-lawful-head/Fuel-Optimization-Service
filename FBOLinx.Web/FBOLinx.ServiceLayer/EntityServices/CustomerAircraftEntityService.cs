@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
-using FBOLinx.DB.Context;
+﻿using FBOLinx.DB.Context;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
     public class CustomerAircraftEntityService : FBOLinxBaseEntityService<DB.Models.CustomerAircrafts, DTO.CustomerAircraftDTO, int>, IEntityService<DB.Models.CustomerAircrafts, DTO.CustomerAircraftDTO, int>
     {
-        public CustomerAircraftEntityService(IMapper mapper, FboLinxContext context) : base(mapper, context)
+        public CustomerAircraftEntityService(FboLinxContext context) : base(context)
         {
         }
 
