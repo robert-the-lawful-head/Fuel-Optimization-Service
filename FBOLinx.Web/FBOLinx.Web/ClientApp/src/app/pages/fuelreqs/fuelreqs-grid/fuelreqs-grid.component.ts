@@ -26,7 +26,7 @@ import {
 
 const initialColumns: ColumnType[] = [
     {
-        id: 'customer',
+        id: 'customerName',
         name: 'Flight Dept.',
     },
     {
@@ -130,7 +130,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction }
+                ? { ...column, sort: this.sort.direction }
                     : {
                           hidden: column.hidden,
                           id: column.id,
@@ -179,7 +179,11 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     getTableColumns() {
         return this.columns
             .filter((column) => !column.hidden)
-            .map((column) => column.id);
+            .map((column) => {
+                if(column.id == 'customer')
+                    return 'customerName'
+                return column.id
+            });
     }
 
     refreshTable() {
