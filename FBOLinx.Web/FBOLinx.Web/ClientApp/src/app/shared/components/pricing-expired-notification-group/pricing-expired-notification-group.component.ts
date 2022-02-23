@@ -17,7 +17,7 @@ export class PricingExpiredNotificationGroupComponent {
     ) {}
 
     public onConfirmClicked() {
-        this.router.navigate(['/default-layout/dashboard-fbo']);
+        this.router.navigate(['/default-layout/dashboard-fbo-updated']);
         this.dialogRef.close();
     }
 

@@ -491,7 +491,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.currentUser.icao = fbo.icao;
 
                 this.sharedService.emitChange(fboChangedEvent);
-                this.router.navigate(['/default-layout/dashboard-fbo/']);
+                this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
             });
         }
     }

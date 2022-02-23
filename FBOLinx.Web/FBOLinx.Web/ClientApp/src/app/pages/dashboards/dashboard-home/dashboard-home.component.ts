@@ -19,19 +19,19 @@ export class DashboardHomeComponent {
                 this.router.navigate(['/default-layout/fbos/']);
             }
             if (this.sharedService.currentUser.impersonatedRole === 1) {
-                this.router.navigate(['/default-layout/dashboard-fbo/']);
+                this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
             }
         } else if (this.sharedService.currentUser.role === 2) {
             if (!this.sharedService.currentUser.impersonatedRole) {
                 this.router.navigate(['/default-layout/fbos/']);
             }
             if (this.sharedService.currentUser.impersonatedRole === 1) {
-                this.router.navigate(['/default-layout/dashboard-fbo/']);
+                this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
             }
         } else if (this.sharedService.currentUser.role === 5) {
             this.router.navigate(['/default-layout/dashboard-csr/']);
         } else {
-            this.router.navigate(['/default-layout/dashboard-fbo/']);
+            this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
         }
     }
 }

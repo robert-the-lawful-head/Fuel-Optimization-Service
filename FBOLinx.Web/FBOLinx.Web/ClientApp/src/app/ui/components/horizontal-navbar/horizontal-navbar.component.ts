@@ -307,7 +307,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     updatePricingClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/dashboard-fbo']);
+        this.router.navigate(['/default-layout/dashboard-fbo-updated']);
         this.close();
     }
 
