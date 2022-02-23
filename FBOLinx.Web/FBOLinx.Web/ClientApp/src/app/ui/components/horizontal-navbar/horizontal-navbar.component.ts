@@ -220,7 +220,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             );
 
             dialogRef.componentInstance.productChanged.subscribe(result => {
-                this.sharedService.emitChange('fbo-product-preference-change');
+                this.sharedService.emitChange(SharedEvents.fboProductPreferenceChangeEvent);
                 this.sharedService.valueChange({
                     EnableJetA: result.enableJetA,
                     EnableSaf: result.enableSaf,
@@ -307,7 +307,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     updatePricingClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate(['/default-layout/dashboard-fbo']);
+        this.router.navigate(['/default-layout/dashboard-fbo-updated']);
         this.close();
     }
 

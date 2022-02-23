@@ -269,7 +269,7 @@ export class FbosGridComponent implements OnInit {
             this.sharedService.currentUser.icao = fbo.icao;
 
             this.sharedService.emitChange(fboChangedEvent);
-            this.router.navigate(['/default-layout/dashboard-fbo/']);
+            this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
         });
     }
 
@@ -294,7 +294,7 @@ export class FbosGridComponent implements OnInit {
                             );
                             this.sharedService.emitChange(fboChangedEvent);
                             this.router.navigate([
-                                '/default-layout/dashboard-fbo/',
+                                '/default-layout/dashboard-fbo-updated/',
                             ]);
                         }
                     });

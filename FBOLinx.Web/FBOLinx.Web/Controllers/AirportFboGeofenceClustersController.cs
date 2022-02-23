@@ -11,7 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.Web.ViewModels;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -28,9 +30,12 @@ namespace FBOLinx.Web.Controllers
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private AirportWatchService _airportWatchService;
+        private IAirportService _airportService;
 
-        public AirportFboGeofenceClustersController(DegaContext degaContext, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService)
+        public AirportFboGeofenceClustersController(DegaContext degaContext, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService,
+            IAirportService airportService)
         {
+            _airportService = airportService;
             _degaContext = degaContext;
             _airportWatchService = airportWatchService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
@@ -45,7 +50,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                if (JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                if (JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -77,7 +82,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -107,7 +112,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }
@@ -198,6 +203,30 @@ namespace FBOLinx.Web.Controllers
                     Longitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLongitudeGeoLocationFromGPS(x.Longitude)
                 }).ToList();
                 result.ForEach(x => x.GeoFenceCount = fenceClusters.Count(f => f.AcukwikAirportID == x.AcukwikAirportId));
+                return result;
+            }
+            catch (System.Exception exception)
+            {
+                return null;
+            }
+        }
+
+        [HttpGet("airports/by-acukwik-id/{acukwikAirportId}")]
+        public async Task<ActionResult<AirportFboGeoFenceGridVM>> GetAirportForGeoFencingByAcukwikAirportId([FromRoute] int acukwikAirportId)
+        {
+            try
+            {
+                var airport = await _airportService.GetAirportByAcukwikAirportId(acukwikAirportId);
+                var fenceClusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirportId);
+                var result = new AirportFboGeoFenceGridVM()
+                {
+                    AcukwikAirportId = airport.AirportId,
+                    FboCount = (airport?.AcukwikFbohandlerDetailCollection == null ? 0 : airport?.AcukwikFbohandlerDetailCollection.Where(x => x.HandlerType == "FBO").ToList().Count).GetValueOrDefault(),
+                    Icao = airport?.Icao,
+                    GeoFenceCount = (fenceClusters?.Count).GetValueOrDefault(),
+                    Latitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLatitudeGeoLocationFromGPS(airport?.Latitude),
+                    Longitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLongitudeGeoLocationFromGPS(airport?.Longitude)
+                };
                 return result;
             }
             catch (System.Exception exception)

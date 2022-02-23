@@ -876,3 +876,43 @@ div.custom-key-content {
     /** {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }*/
+
+
+/*Pricing Update Generator */
+
+.pricing-update-generator .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: .0em !important;
+}
+
+
+.pricing-update-generator .mat-form-field-infix {
+    padding: 0.5em 0;
+    border-top: 0em solid transparent;
+}
+
+.pricing-update-generator .mat-form-field-appearance-legacy .mat-form-field-suffix .mat-datepicker-toggle-default-icon {
+    margin-top: -15px;
+}
+
+.pricing-update-generator .mat-form-field-prefix {
+    margin-top: -15px;
+}
+
+.pricing-update-generator .price-editor .mat-form-field-infix {
+    padding: 0.7em 0;
+    border-top: 0em solid transparent;
+}
+
+
+.pricing-update-generator .price-editor .mat-form-field-appearance-legacy .mat-form-field-label {
+    top: 1.5em;
+}
+
+.pricing-update-generator .price-editor .mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    margin-top: 8px;
+}
+
+.pricing-update-generator .mat-form-field-appearance-legacy .mat-form-field-underline {
+    height: 1px;
+    margin-bottom: -15px;
+}

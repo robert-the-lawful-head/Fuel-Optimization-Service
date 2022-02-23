@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
@@ -8,14 +7,10 @@ using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.ViewModels;
-using FBOLinx.Web.Models.Requests;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -50,7 +45,7 @@ namespace FBOLinx.Web.Controllers
                     return BadRequest(ModelState);
                 }
 
-                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+                if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 {
                     return BadRequest(ModelState);
                 }
@@ -80,7 +75,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (id != JwtManager.GetClaimedGroupId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
             {
                 return BadRequest(ModelState);
             }

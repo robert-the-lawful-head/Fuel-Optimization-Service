@@ -1,6 +1,4 @@
-﻿using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +7,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
-using static FBOLinx.DB.Models.PricingTemplate;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Services
 {
@@ -101,7 +99,7 @@ namespace FBOLinx.Web.Services
                 Default = true,
                 Fboid = fboId,
                 Name = "Posted Retail",
-                MarginType = PricingTemplate.MarginTypes.RetailMinus,
+                MarginType = MarginTypes.RetailMinus,
                 Notes = ""
             };
 

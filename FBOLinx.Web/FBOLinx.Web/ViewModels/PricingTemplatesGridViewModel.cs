@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
 {
@@ -18,11 +15,11 @@ namespace FBOLinx.Web.ViewModels
         public string Email { get; set; }
         public string Subject { get; set; }
         public short? Type { get; set; }
-        public PricingTemplate.MarginTypes? MarginType { get; set; }
+        public MarginTypes? MarginType { get; set; }
 
         public string MarginTypeDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(MarginType ?? PricingTemplate.MarginTypes.CostPlus); }
+            get { return FBOLinx.Core.Utilities.Enum.GetDescription(MarginType ?? MarginTypes.CostPlus); }
         }
         public double Margin { get; set; }
         public double? IntoPlanePrice { get; set; }

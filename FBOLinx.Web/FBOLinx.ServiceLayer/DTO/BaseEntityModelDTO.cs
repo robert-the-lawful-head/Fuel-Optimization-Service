@@ -1,25 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
 using FBOLinx.Core.BaseModels.Entities;
+using Mapster;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
-    public abstract class BaseEntityModelDTO<T> where T : BaseEntityModel
+    public abstract class BaseEntityModelDTO<T> where T : class
     {
-        public virtual T ConvertToEntity(IMapper mapper, T result = null)
-        {
-            if (result == null)
-                result = ((T)Activator.CreateInstance((typeof(T))));
-            mapper.Map(this, result);
-            
-            return result;
+        public virtual T ConvertToEntity(T result = null)
+        {        
+            return this.Adapt<T>();
         }
 
-        public virtual void CastFromEntity(IMapper mapper, T item)
+        public virtual Dto CastFromEntity<Dto>(T item) where Dto : class
         {
-            mapper.Map(item, this);
+            return item.Adapt<Dto>();
         }
     }
 }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel.DataAnnotations;
-using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.DTO
 {

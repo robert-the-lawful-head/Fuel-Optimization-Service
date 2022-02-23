@@ -205,6 +205,7 @@ import { FboGeofencingGridComponent } from './fbo-geofencing/fbo-geofencing-grid
 import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/fbo-geofencing-map.component';
 import { FboGeofencingDialogNewClusterComponent } from
     './fbo-geofencing/fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component';
+import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geofencing-dialog-new-airport/fbo-geofencing-dialog-new-airport.component';
 
 @NgModule({
     declarations: [
@@ -336,7 +337,8 @@ import { FboGeofencingDialogNewClusterComponent } from
         FboGeofencingHomeComponent,
         FboGeofencingGridComponent,
         FboGeofencingMapComponent,
-        FboGeofencingDialogNewClusterComponent
+        FboGeofencingDialogNewClusterComponent,
+        FboGeofencingDialogNewAirportComponent
 
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],

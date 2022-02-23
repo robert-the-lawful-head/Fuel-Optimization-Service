@@ -54,6 +54,7 @@ export class FboGeofencingGridComponent implements OnInit {
     @Input() fboGeofencingData: any[];
     @Input() airportFboGeoFenceGridData: any[];
     @Output() onEditRow = new EventEmitter<airportFboGeoFenceGridViewmodel>();
+    @Output() onAddAirport = new EventEmitter();
 
     tableLocalStorageKey = 'fbo-geofencing-table-settings';
 
@@ -99,6 +100,10 @@ export class FboGeofencingGridComponent implements OnInit {
 
     editRowClicked(airportFboGeoFence) {
         this.onEditRow.emit(airportFboGeoFence);
+    }
+
+    addAirportClicked() {
+        this.onAddAirport.emit();
     }
 
     //showFboGeofencingMap(airportFboGeoFence) {

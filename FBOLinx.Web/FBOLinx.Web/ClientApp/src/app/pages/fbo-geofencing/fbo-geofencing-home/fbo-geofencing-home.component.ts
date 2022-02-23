@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -9,6 +10,8 @@ import { AirportFboGeofenceClustersService } from '../../../services/airportfbog
 import { AirportFboGeoFenceGridViewmodel } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-grid-viewmodel';
 
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { FboGeofencingDialogNewAirportComponent } from
+    "../fbo-geofencing-dialog-new-airport/fbo-geofencing-dialog-new-airport.component";
 
 @Component({
     selector: 'app-fbo-geofencing-home',
@@ -27,7 +30,8 @@ export class FboGeofencingHomeComponent implements OnInit {
     constructor(
         private sharedService: SharedService,
         private airportFboGeofenceService: AirportFboGeofenceClustersService,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        public newAirportDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -47,6 +51,25 @@ export class FboGeofencingHomeComponent implements OnInit {
         this.airportFboGeofenceGridItem = null;
         this.loadAirportsWithAntennaData();
         this.setupBreadcrumb();
+    }
+
+    public onAddAirportFboGeoFence(): void {
+        const dialogRef = this.newAirportDialog.open(FboGeofencingDialogNewAirportComponent,
+            {
+                data: { icao: '' },
+                width: '450px'
+            });
+
+        dialogRef.afterClosed().subscribe((result: AirportFboGeoFenceGridViewmodel) => {
+            if (!result)
+                return;
+
+            this.airportFboGeofenceService.getAirportForGeoFencingByAcukwikAirportId(result.acukwikAirportId).subscribe(
+                (response:
+                    AirportFboGeoFenceGridViewmodel) => {
+                    this.onEditAirportFboGeoFence(response);
+                });
+        });
     }
 
     // PRIVATE METHODS

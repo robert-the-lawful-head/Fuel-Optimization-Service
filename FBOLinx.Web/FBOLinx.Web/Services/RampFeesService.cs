@@ -1,7 +1,4 @@
-﻿using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +7,6 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.ViewModels;
-using static FBOLinx.DB.Models.RampFees;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.Core.Enums;
@@ -64,12 +60,12 @@ namespace FBOLinx.Web.Services
             if (rampFees == null)
                 return null;
 
-            List<int> aircraftIds = rampFees.Where(x => x.CategoryType == RampFees.RampFeeCategories.AircraftType).Select(x => x.CategoryMinValue.GetValueOrDefault()).ToList();
+            List<int> aircraftIds = rampFees.Where(x => x.CategoryType == RampFeeCategories.AircraftType).Select(x => x.CategoryMinValue.GetValueOrDefault()).ToList();
 
             var aircraftTypes = await _aircraftService.GetAllAircraftsAsQueryable().Where(x => aircraftIds.Any(a => a == x.AircraftId)).ToListAsync();
 
             rampFees.ForEach(x => {
-                if (x.CategoryType != RampFees.RampFeeCategories.AircraftType)
+                if (x.CategoryType != RampFeeCategories.AircraftType)
                     return;
                 var aircraft = aircraftTypes.FirstOrDefault(a => a.AircraftId == x.CategoryMinValue);
                 if (aircraft == null)
@@ -176,11 +172,11 @@ namespace FBOLinx.Web.Services
                 return new List<RampFees>();
 
             var result = validRampFees.Where(servicesAndFeesByCompany => 
-            (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.AircraftType && customerAircraft.AircraftId == servicesAndFeesByCompany.CategoryMinValue) ||
-                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.AircraftSize && (customerAircraft.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue) || customerAircraft?.Aircraft?.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue))) ||
-                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.TailNumber && !string.IsNullOrEmpty(servicesAndFeesByCompany.CategoryStringValue) && servicesAndFeesByCompany.CategoryStringValue.Split(',').Contains(customerAircraft.TailNumber)) ||
-                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.WeightRange && servicesAndFeesByCompany.CategoryMinValue <= customerAircraft.Aircraft?.BasicOperatingWeight && servicesAndFeesByCompany.CategoryMaxValue >= customerAircraft.Aircraft?.BasicOperatingWeight) ||
-                    (servicesAndFeesByCompany.CategoryType == RampFees.RampFeeCategories.Wingspan && servicesAndFeesByCompany.CategoryMinValue <= specifications?.FuselageDimensionsWingSpanFt && servicesAndFeesByCompany.CategoryMaxValue >= specifications?.FuselageDimensionsWingSpanFt)).ToList();
+            (servicesAndFeesByCompany.CategoryType == RampFeeCategories.AircraftType && customerAircraft.AircraftId == servicesAndFeesByCompany.CategoryMinValue) ||
+                    (servicesAndFeesByCompany.CategoryType == RampFeeCategories.AircraftSize && (customerAircraft.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue) || customerAircraft?.Aircraft?.Size == (AircraftSizes?)System.Convert.ToInt16(servicesAndFeesByCompany.CategoryMinValue))) ||
+                    (servicesAndFeesByCompany.CategoryType == RampFeeCategories.TailNumber && !string.IsNullOrEmpty(servicesAndFeesByCompany.CategoryStringValue) && servicesAndFeesByCompany.CategoryStringValue.Split(',').Contains(customerAircraft.TailNumber)) ||
+                    (servicesAndFeesByCompany.CategoryType == RampFeeCategories.WeightRange && servicesAndFeesByCompany.CategoryMinValue <= customerAircraft.Aircraft?.BasicOperatingWeight && servicesAndFeesByCompany.CategoryMaxValue >= customerAircraft.Aircraft?.BasicOperatingWeight) ||
+                    (servicesAndFeesByCompany.CategoryType == RampFeeCategories.Wingspan && servicesAndFeesByCompany.CategoryMinValue <= specifications?.FuselageDimensionsWingSpanFt && servicesAndFeesByCompany.CategoryMaxValue >= specifications?.FuselageDimensionsWingSpanFt)).ToList();
 
             return result;
         }

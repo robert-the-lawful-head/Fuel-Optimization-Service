@@ -1,216 +1,179 @@
-<table #updatePricesTable [dataSource]="pricesDataSource" class="col-md-12 mb-0" mat-table>
-    <ng-container matColumnDef="status">
-        <th *matHeaderCellDef mat-header-cell>
-            <span>Status</span>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            {{pricing.oidCost == 0 && pricing.oidPap == 0 ? "Editing" : "Staged"}}
-        </td>
-    </ng-container>
+<div style="min-width:1100px;">
+    <div class="container-fluid pricing-update-generator">
+        <div class="row">
+            <div class="col-1 border-bottom font-weight-bold">Status</div>
+            <div class="col-1 border-bottom font-weight-bold">Product</div>
+            <div class="col-3 border-bottom font-weight-bold">Effective</div>
+            <div class="col-3 border-bottom font-weight-bold">Expiration</div>
+            <div class="col-1 border-bottom font-weight-bold">Retail PAP</div>
+            <div class="col-1 border-bottom font-weight-bold">Fuel Cost</div>
+            <div class="col-2 border-bottom font-weight-bold"></div>
+        </div>
 
-    <ng-container matColumnDef="product">
-        <th *matHeaderCellDef class="overflow-label" mat-header-cell>
-            <span>Product</span>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            {{pricing.product == "SAF" ? "Sustainable Fuel (SAF)" : pricing.product}}
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="effectiveFrom" style="width: 200px;">
-        <th *matHeaderCellDef mat-header-cell>
-            <span>Effective</span>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <div *ngIf="!pricing.isEdit" class="pl-3 pr-2" style="position: relative">
-                <span *ngIf="pricing.oidPap > 0">{{pricing.effectiveFrom}} {{timezone}}</span>
-            </div>
-
-            <div class="container" *ngIf="!pricing.isLoading && pricing.isEdit">
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="price-form-input effective-date-time">
-                            <input matInput [ngxMatDatetimePicker]="effectiveFromDatePicker" [(ngModel)]="pricing.effectiveFrom" [min]="pricing.effectiveFrom" (click)="onEffectiveFromFocus(pricing);effectiveFromDatePicker.open();" (ngModelChange)="onEffectiveFromChange(pricing);">
-                            <mat-datepicker-toggle matSuffix [for]="effectiveFromDatePicker" (click)="onEffectiveFromFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
-                            <ngx-mat-datetime-picker #effectiveFromDatePicker></ngx-mat-datetime-picker>
-                            <div style="position:absolute; top:6px; right: -11px;">{{timezone}}</div>
-                        </mat-form-field>
+        <div class="row" *ngFor="let pricing of fboPricesUpdateGridData;">
+            <!--Status-->
+            <div class="col-1 border-bottom pt-1"> {{pricing.oidCost == 0 && pricing.oidPap == 0 ? "Editing" : "Staged"}}</div>
+            <!--Product-->
+            <div class="col-1 border-bottom pt-1"> {{pricing.product == "SAF" ? "SAF" : pricing.product}}</div>
+            <!--Effective From-->
+            <div class="col-3 border-bottom">
+                <div *ngIf="!pricing.isEdit" class="pt-1">
+                    <span *ngIf="pricing.oidPap > 0">{{pricing.effectiveFrom}} {{timezone}}</span>
+                </div>
+                <div *ngIf="!pricing.isLoading && pricing.isEdit">
+                    <mat-form-field class="price-form-input effective-date-time">
+                        <input matInput [ngxMatDatetimePicker]="effectiveFromDatePicker" [(ngModel)]="pricing.effectiveFrom" [min]="pricing.effectiveFrom" (click)="onEffectiveFromFocus(pricing);effectiveFromDatePicker.open();" (ngModelChange)="onEffectiveFromChange(pricing);">
+                        <mat-datepicker-toggle matSuffix [for]="effectiveFromDatePicker" (click)="onEffectiveFromFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #effectiveFromDatePicker></ngx-mat-datetime-picker>
+                        <div style="position:absolute; top:10px; right: -15px; font-size:smaller;">{{timezone}}</div>
+                    </mat-form-field>
+                    <div style="position: absolute; bottom: 20px; left: 50%">
+                        <button #tooltip="ngbPopover"
+                                (hidden)="tooltipHidden()"
+                                [ngbPopover]="content1"
+                                class="tooltip-button"
+                                placement="bottom"
+                                popoverTitle="Effective Date"
+                                triggers="manual"></button>
+                        <ng-template #content1>
+                            This date controls when your pricing is valid
+                            <div class="popover-actions">
+                                <button>Got it</button>
+                            </div>
+                        </ng-template>
                     </div>
-                    
-                </div>
-                <div style="position: absolute; bottom: 20px; left: 50%">
-                    <button #tooltip="ngbPopover"
-                            (hidden)="tooltipHidden()"
-                            [ngbPopover]="content1"
-                            class="tooltip-button"
-                            placement="bottom"
-                            popoverTitle="Effective Date"
-                            triggers="manual"></button>
-                    <ng-template #content1>
-                        This date controls when your pricing is valid
-                        <div class="popover-actions">
-                            <button>Got it</button>
-                        </div>
-                    </ng-template>
                 </div>
             </div>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="effectiveTo">
-        <th *matHeaderCellDef mat-header-cell>
-            <span>Expiration</span>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <div *ngIf="!pricing.isEdit" class="pl-3 pr-2" style="position: relative">
-                {{pricing.effectiveTo}}  {{timezone}}
-            </div>
-            <div *ngIf="pricing.isEdit" class="container">
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="price-form-input  effective-date-time">
-                                <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="onEffectiveToFocus(pricing);effectiveToDatePicker.open();">
-                                <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" (click)="onEffectiveToFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
-                                <ngx-mat-datetime-picker #effectiveToDatePicker></ngx-mat-datetime-picker>
-                            <div style="position:absolute; top:6px; right: -11px;">{{timezone}}</div>
-                        </mat-form-field>
+            <!--Expiration-->
+            <div class="col-3 border-bottom">
+                <div *ngIf="!pricing.isEdit" class="pt-1">
+                    {{pricing.effectiveTo}}  {{timezone}}
+                </div>
+                <div *ngIf="pricing.isEdit">
+                    <mat-form-field class="price-form-input  effective-date-time">
+                        <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="onEffectiveToFocus(pricing);effectiveToDatePicker.open();">
+                        <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" (click)="onEffectiveToFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
+                        <ngx-mat-datetime-picker #effectiveToDatePicker></ngx-mat-datetime-picker>
+                        <div style="position:absolute; top:10px; right: -15px; font-size:smaller;">{{timezone}}</div>
+                    </mat-form-field>
+                    <div style="position: absolute; bottom: 20px; left: 50%">
+                        <button #tooltip="ngbPopover"
+                                (hidden)="tooltipHidden()"
+                                [ngbPopover]="content1"
+                                class="tooltip-button"
+                                placement="bottom"
+                                popoverTitle="Expiration Date"
+                                triggers="manual"></button>
+                        <ng-template #content1>
+                            This date controls when your pricing is valid
+                            <div class="popover-actions">
+                                <button>Got it</button>
+                            </div>
+                        </ng-template>
                     </div>
-                   
-                </div>
-                <div style="position: absolute; bottom: 20px; left: 50%">
-                    <button #tooltip="ngbPopover"
-                            (hidden)="tooltipHidden()"
-                            [ngbPopover]="content1"
-                            class="tooltip-button"
-                            placement="bottom"
-                            popoverTitle="Expiration Date"
-                            triggers="manual"></button>
-                    <ng-template #content1>
-                        This date controls when your pricing is valid
-                        <div class="popover-actions">
-                            <button>Got it</button>
-                        </div>
-                    </ng-template>
                 </div>
             </div>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="pricePap">
-        <th *matHeaderCellDef class="text-left" mat-header-cell>
-            <div class="">Retail PAP</div>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <div *ngIf="!pricing.isEdit" class="pl-3 pr-2" style="position: relative">
-                ${{pricing.pricePap | number: "1.4-4"}}
-            </div>
-            <div *ngIf="pricing.isEdit">
-                <mat-form-field class="price-form-input">
-                    <input (click)="$event.target.select()"
-                            (ngModelChange)="
-                    fboPriceRequiresUpdate(
-                        $event,
-                        pricing,
-                        'Retail'
-                    )
-                "
-                            [ngModelOptions]="{ updateOn: 'blur' }"
-                            [ngModel]="pricing.pricePap | number: '1.4-4'"
-                            matInput
-                            placeholder="Retail*"
-                            step="0.01"
-                            title="Your Retail values should be inclusive of all taxes/fees"
-                            type="number" />
-                    <span class="prefixDollar" matPrefix>$</span>
-                </mat-form-field>
-                <div style="position: absolute; right: 0; bottom: 20px">
-                    <button #tooltip="ngbPopover"
-                            (hidden)="tooltipHidden()"
-                            [ngbPopover]="content2"
-                            class="tooltip-button"
-                            placement="bottom"
-                            popoverClass="no-arrow"
-                            popoverTitle="Price/Cost Entry"
-                            triggers="manual"></button>
-                    <ng-template #content2>
-                        Enter your current pricing here
-                        <div class="popover-actions">
-                            <button>Got it</button>
-                        </div>
-                    </ng-template>
+            <!--Retail Pap-->
+            <div class="col-1 border-bottom price-editor">
+                <div *ngIf="!pricing.isEdit" class="pt-1">
+                    ${{pricing.pricePap | number: "1.4-4"}}
+                </div>
+                <div *ngIf="pricing.isEdit">
+                    <mat-form-field class="price-form-input">
+                        <input (click)="$event.target.select()"
+                               (ngModelChange)="
+                fboPriceRequiresUpdate(
+                    $event,
+                    pricing,
+                    'Retail'
+                )
+            "
+                               [ngModelOptions]="{ updateOn: 'blur' }"
+                               [ngModel]="pricing.pricePap | number: '1.4-4'"
+                               matInput
+                               placeholder="Retail*"
+                               step="0.01"
+                               title="Your Retail values should be inclusive of all taxes/fees"
+                               type="number" />
+                        <span class="prefixDollar" matPrefix>$</span>
+                    </mat-form-field>
+                    <div style="position: absolute; right: 0; bottom: 20px">
+                        <button #tooltip="ngbPopover"
+                                (hidden)="tooltipHidden()"
+                                [ngbPopover]="content2"
+                                class="tooltip-button"
+                                placement="bottom"
+                                popoverClass="no-arrow"
+                                popoverTitle="Price/Cost Entry"
+                                triggers="manual"></button>
+                        <ng-template #content2>
+                            Enter your current pricing here
+                            <div class="popover-actions">
+                                <button>Got it</button>
+                            </div>
+                        </ng-template>
+                    </div>
                 </div>
             </div>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="priceCost">
-        <th *matHeaderCellDef class="text-left" mat-header-cell>
-            <div class="">Fuel Cost</div>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <div *ngIf="!pricing.isEdit;" class="pl-3 pr-2" style="position: relative">
-                ${{pricing.priceCost | number: "1.4-4"}}
-            </div>
-            <div *ngIf="pricing.isEdit;">
-                <mat-form-field class="price-form-input">
-                    <input (click)="$event.target.select()"
-                            (ngModelChange)="
+            <!--Fuel Cost-->
+            <div class="col-1 border-bottom price-editor">
+                <div *ngIf="!pricing.isEdit;" class="pt-1">
+                    ${{pricing.priceCost | number: "1.4-4"}}
+                </div>
+                <div *ngIf="pricing.isEdit;">
+                    <mat-form-field class="price-form-input">
+                        <input (click)="$event.target.select()"
+                               (ngModelChange)="
                     fboPriceRequiresUpdate($event, pricing, 'Cost')
                 "
-                            [ngModelOptions]="{ updateOn: 'blur' }"
-                            [ngModel]="pricing.priceCost | number: '1.4-4'"
-                            matInput
-                            placeholder="Cost*"
-                            step="0.01"
-                            title="Your Cost values should be inclusive of all taxes/fees"
-                            type="number" />
-                    <span class="prefixDollar" matPrefix>$</span>
-                    <span *ngIf="pricing.priceEntryError != undefined && pricing.priceEntryError.length > 0"
-                            class="fbo-prices-error-msg">{{ pricing.priceEntryError }}</span>
-                </mat-form-field>
+                               [ngModelOptions]="{ updateOn: 'blur' }"
+                               [ngModel]="pricing.priceCost | number: '1.4-4'"
+                               matInput
+                               placeholder="Cost*"
+                               step="0.01"
+                               title="Your Cost values should be inclusive of all taxes/fees"
+                               type="number" />
+                        <span class="prefixDollar" matPrefix>$</span>
+                        <span *ngIf="pricing.priceEntryError != undefined && pricing.priceEntryError.length > 0"
+                              class="fbo-prices-error-msg">{{ pricing.priceEntryError }}</span>
+                    </mat-form-field>
+                </div>
             </div>
-        </td>
-    </ng-container>
+            <!--Submit/Edit-->
+            <div class="col-2 border-bottom">
+                <div class="row">
+                    <div *ngIf="!pricing.isEdit">
+                        <div class="pt-1 pb-1 pr-1">
+                            <button (click)="editRowClicked(pricing)" mat-stroked-button>
+                                Edit
+                            </button>
+                        </div>
 
-    <ng-container matColumnDef="edit">
-        <th *matHeaderCellDef mat-header-cell>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <button *ngIf="!pricing.isEdit" (click)="editRowClicked(pricing)" color="gray" mat-stroked-button>
-                Edit
-            </button>
+                    </div>
+                    <div *ngIf="pricing.isEdit">
+                        <div class="pt-1 pb-1">
+                            <button (click)="submitPricing(pricing)"
+                                    class="mr-1"
+                                    color="green"
+                                    [disabled]="!pricing.pricePap && !pricing.priceCost || (pricing.priceCost > pricing.pricePap)"
+                                    mat-stroked-button>
+                                {{pricing.submitStatus}}
+                            </button>
+                        </div>
+                    </div>
+                    <!--Clear-->
+                    <div *ngIf="!pricing.isEdit && pricing.oidPap > 0">
+                        <div class="pt-1 pb-1">
+                            <button (click)="clearClicked(pricing)"
+                                    class="clear-btn" color="warn" mat-flat-button>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-            <button *ngIf="pricing.isEdit" (click)="submitPricing(pricing)"
-                    class="mr-1"
-                    color="green"
-                    [disabled]="!pricing.pricePap && !pricing.priceCost || (pricing.priceCost > pricing.pricePap)"
-                    mat-stroked-button>
-                {{pricing.submitStatus}}
-            </button>
-        </td>
-    </ng-container>
-
-    <ng-container matColumnDef="remove">
-        <th *matHeaderCellDef mat-header-cell>
-        </th>
-        <td *matCellDef="let pricing" mat-cell>
-            <div>
-                <button *ngIf="!pricing.isEdit && pricing.oidPap > 0" (click)="clearClicked(pricing)"
-                        class="clear-btn" color="warn" mat-flat-button>
-                    Clear
-                </button>
             </div>
-            <div>
-                <!--<button *ngIf="pricing.isEdit && pricing.pricePap > 0" (click)="cancelClicked(pricing)"
-            class="mr-1"
-            color="red"
-            mat-stroked-button>
-        X
-    </button>-->
-            </div>
-        </td>
-    </ng-container>
+        </div>
+    </div>
+</div>
 
-    <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
-</table>

@@ -17,6 +17,7 @@ namespace FBOLinx.Job.Interfaces
         {
             try
             {
+                System.Exception lastException = null;
                 using FileStream fs = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 0x1000, FileOptions.SequentialScan);
                 using StreamReader sr = new StreamReader(fs, Encoding.ASCII);
 
@@ -31,9 +32,20 @@ namespace FBOLinx.Job.Interfaces
                 // Read All Lines
                 while (!sr.EndOfStream)
                 {
-                    var line = sr.ReadLine();
-                    records.Add(ParseCsvLineToEntity(line));
+                    try
+                    {
+                        var line = sr.ReadLine();
+                        records.Add(ParseCsvLineToEntity(line));
+                    }
+                    catch (System.Exception exception)
+                    {
+                        lastException = exception;
+                        //Continue like normal...
+                    }
                 }
+
+                if (records.Count == 0 && lastException != null)
+                    throw lastException;
 
                 return records;
             }

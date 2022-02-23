@@ -1,9 +1,8 @@
-﻿using FBOLinx.DB.Models;
-using FBOLinx.Web;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static FBOLinx.DB.Models.Audit;
 
 namespace FBOLinx.DB.Context
 {

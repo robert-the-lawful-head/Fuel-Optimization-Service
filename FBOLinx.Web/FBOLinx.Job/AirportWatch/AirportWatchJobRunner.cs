@@ -75,13 +75,13 @@ namespace FBOLinx.Job.AirportWatch
 
             if (airportWatchData.Count > 0)
             {
+                List<Task> tasks = new List<Task>();
                 foreach (var apiClientUrl in _apiClientUrls)
                 {
                     try
                     {
                         var apiClient = new ApiClient(apiClientUrl.Trim());
-                        apiClient.PostAsync("airportwatch/list", airportWatchData).Wait();
-                        logger.Information("Fbolinx api call succeed!");
+                        tasks.Add(apiClient.PostAsync("airportwatch/list", airportWatchData));
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
@@ -89,6 +89,8 @@ namespace FBOLinx.Job.AirportWatch
                         logger.Error(ex, $"Failed to call Fbolinx api!");
                     }
                 }
+                Task.WhenAll(tasks);
+                logger.Information("Fbolinx api call succeed!");
             }
 
             _isPostingData = false;

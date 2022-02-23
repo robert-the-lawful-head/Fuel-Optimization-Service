@@ -181,7 +181,12 @@ namespace FBOLinx.Web.Services
             if (acukwikAirport == null)
                 return "";
 
-            return Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeZone(acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
+            var timeZone = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeZone(acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false, acukwikAirport.AirportCity);
+
+            if (timeZone == "")
+                timeZone = "UTC" + acukwikAirport.IntlTimeZone;
+
+            return timeZone;
         }
     }
 }

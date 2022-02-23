@@ -11,17 +11,6 @@
             "color": "rgba(0,0,0,.87)"
         },
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
-        "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 4, 6 ]
-    },
-    {
-        "title": "SAF Dashboard",
-        "icon": {
-            "class": "fa fa-home",
-            "bg": "#ea8080",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo-updated",
         "roles": [ 1, 4, 6 ]
     },

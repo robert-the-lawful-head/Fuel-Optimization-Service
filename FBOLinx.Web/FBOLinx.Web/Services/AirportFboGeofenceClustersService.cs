@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.Web.Services
 {
@@ -15,8 +16,12 @@ namespace FBOLinx.Web.Services
         private readonly IServiceProvider _services;
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        public AirportFboGeofenceClustersService(FboLinxContext context, IServiceProvider services, DegaContext degaContext)
+        private IAirportService _airportService;
+
+        public AirportFboGeofenceClustersService(FboLinxContext context, IServiceProvider services, DegaContext degaContext,
+            IAirportService airportService)
         {
+            _airportService = airportService;
             _context = context;
             _services = services;
             _degaContext = degaContext;
@@ -58,6 +63,13 @@ namespace FBOLinx.Web.Services
             {
 
             }
+        }
+
+        public async Task<List<string>> GetDistinctAirportIdentifiersWithClusters()
+        {
+            var distinctAirportIds = await _context.AirportFboGeofenceClusters.Select(x => x.AcukwikAirportID).Distinct().ToListAsync();
+            var airports = await _airportService.GetAirportsByAcukwikAirportIds(distinctAirportIds);
+            return airports.Select(x => x.Icao).Distinct().ToList();
         }
 
 

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
 {
@@ -20,7 +16,7 @@ namespace FBOLinx.Web.ViewModels
         public int? FuelerLinxId { get; set; }
         public bool? Network { get; set; } = false;
         public int? GroupId { get; set; }
-        public PricingTemplate.MarginTypes? MarginType { get; set; }
+        public MarginTypes? MarginType { get; set; }
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
         public bool NeedsAttention { get; set; }
@@ -50,7 +46,7 @@ namespace FBOLinx.Web.ViewModels
         {
             get
             {
-                return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
+                return Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
 

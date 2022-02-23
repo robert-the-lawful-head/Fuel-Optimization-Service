@@ -1,5 +1,5 @@
-﻿using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
 using FBOLinx.Web.DTO;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,7 +20,7 @@ namespace FBOLinx.Web.Services
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
         {
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
             var fboprices = await (

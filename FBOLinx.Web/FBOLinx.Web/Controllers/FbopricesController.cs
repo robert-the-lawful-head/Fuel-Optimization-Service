@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
@@ -14,14 +12,13 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.Web.Services.Interfaces;
-using static FBOLinx.DB.Models.Fboprices;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -145,7 +142,7 @@ namespace FBOLinx.Web.Controllers
 
             var prices = new List<FboPricesUpdateGenerator>();
             var fboProducts = await _fboPreferencesService.GetFboProducts(fboId);
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes)).ToArray();
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes)).ToArray();
             var result = await _fbopricesService.GetPrices(fboId);
 
             foreach (var product in fboProducts)
@@ -205,7 +202,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
 
             var activePricingCost = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
             var activePricingRetail = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
@@ -360,7 +357,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("update")]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
         {
             if (request.Retail == null && request.Cost == null)
@@ -439,7 +436,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("update/stage")]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdateStagePricing([FromBody] PricingUpdateRequest request)
         {
             if (request.Retail == null && request.Cost == null)
@@ -613,7 +610,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(Fboprices.FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
 
             var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
 
@@ -643,7 +640,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("price-lookup-for-fuelerlinx")]
         public async Task<IActionResult> GetFuelPricesForFuelerlinx([FromBody] VolumeDiscountLoadRequest request)
         {
@@ -861,6 +858,8 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                     await _context.SaveChangesAsync();
+
+                    fboprices.OidPap = newFboPrice.Oid;
                 }
 
                 if (FbopricesExists(fboprices.OidCost))
@@ -884,7 +883,11 @@ namespace FBOLinx.Web.Controllers
                     newFboPrice.Timestamp = DateTime.Now;
                     _context.Fboprices.Add(newFboPrice);
                     await _context.SaveChangesAsync();
+
+                    fboprices.OidCost = newFboPrice.Oid;
                 }
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -898,7 +901,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return Ok(new { Status = isStaged ? "staged" : "published"});
+            return Ok(new { OidPap = fboprices.OidPap, OidCost = fboprices.OidCost,  Status = isStaged ? "staged" : "published" }) ;
         }
 
         // DELETE: api/Fboprices/delete-price/fbo/5/jeta

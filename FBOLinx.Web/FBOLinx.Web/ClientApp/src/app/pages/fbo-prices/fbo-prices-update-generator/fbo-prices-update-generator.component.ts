@@ -41,6 +41,7 @@ import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog
 
 //Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
+import { fboChangedEvent, fboProductPreferenceChangeEvent } from '../../../models/sharedEvents';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -102,12 +103,11 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     currentFboPrice100LLCost: any;
     currentFboPriceSafRetail: any;
     currentFboPriceSafCost: any;
-    locationChangedSubscription: any;
-    tooltipSubscription: any;
     //tailNumberFormControlSubscription: any;
     priceShiftSubscription: any;
     priceShiftLoading: boolean;
 
+    changedSubscription: any;
     subscriptions: Subscription[] = [];
     timezone: string = "";
     expirationDate: any;
@@ -133,27 +133,23 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        this.locationChangedSubscription =
+        this.changedSubscription =
             this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.resetAll();
                 }
-            });
-
-        this.tooltipSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
-                if (message === SharedEvents.menuTooltipShowedEvent) {
+                else if (message === fboProductPreferenceChangeEvent) {
+                    this.loadStagedFboPrices();
+                }
+                else if (message === SharedEvents.menuTooltipShowedEvent) {
                     this.tooltipIndex = this.priceTooltips.length - 1;
                     this.showTooltips();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy(): void {
-        this.locationChangedSubscription?.unsubscribe();
-        this.tooltipSubscription?.unsubscribe();
-        //this.tailNumberFormControlSubscription?.unsubscribe();
+        this.changedSubscription?.unsubscribe();
         this.priceShiftSubscription?.unsubscribe();
         this.subscriptions.forEach((subscription) =>
             subscription.unsubscribe()
@@ -175,14 +171,41 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
             event.effectiveFrom = moment(event.effectiveFrom).format("MM/DD/YYYY HH:mm");
             event.effectiveTo = moment(event.effectiveTo).format("MM/DD/YYYY HH:mm");
 
+            var _this = this;
             this.fboPricesService.updatePricingGenerator(event)
                 .subscribe((data: any) => {
-                    this.loadAllPrices();
-                    this.notification.open(NotificationComponent, {
-                        data: {
-                            text: "Your prices have been " + data.status + "!",
-                            title: 'Success',
-                        },
+                    this.fboairportsService.getLocalDateTime(this.sharedService.currentUser.fboId).subscribe((localDateTime: any) => {
+                        _this.localDateTime = localDateTime;
+                        _this.subscriptions.push(
+                            _this.loadCurrentFboPrices().subscribe(() => {
+                            }));
+
+                        var currentUpdatedPrice = _this.fboPricesUpdateGridData.findIndex(f => {
+                            return f.product === event.product;
+                        });
+
+                        if (data.status == "published") {
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = localDateTime;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveTo = moment(_this.expirationDate).toDate();
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].pricePap = null;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].priceCost = null;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = 0;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].oidCost = 0;
+                        }
+                        else {
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = data.oidPap;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].oidCost = data.oidCost;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = event.effectiveFrom;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveTo = event.effectiveTo;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].isEdit = false;
+                        }
+
+                        _this.notification.open(NotificationComponent, {
+                            data: {
+                                text: "Your prices have been " + data.status + "!",
+                                title: 'Success',
+                            },
+                        });
                     });
                 });
         }
