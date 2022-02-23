@@ -691,6 +691,7 @@ namespace FBOLinx.Web.Services
                 LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
                 TailNumberRecords = 0
             });
+            await _context.SaveChangesAsync();
             await transaction.CommitAsync();
         }
 
