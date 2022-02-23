@@ -84,7 +84,7 @@ export class DefaultLayoutComponent implements OnInit {
                 if (!event.url.startsWith('/default-layout/customers')) {
                     this.store.dispatch(customerGridClear());
 
-                    if (event.url.indexOf("/default-layout/dashboard-fbo") > -1) {
+                    if (event.url.indexOf("/default-layout/dashboard-fbo-updated") > -1) {
                         if (this.canUserSeePricing()) {
                             this.loadPrices();
                         }
