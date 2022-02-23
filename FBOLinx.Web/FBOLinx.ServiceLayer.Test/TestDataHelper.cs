@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
 
@@ -17,7 +15,7 @@ namespace FBOLinx.ServiceLayer.Test
             user.GroupId = 1;
             user.FboId = 1;
             user.Active = true;
-            user.Role = User.UserRoles.Member;
+            user.Role = UserRoles.Member;
 
             return user;
         }
@@ -30,7 +28,7 @@ namespace FBOLinx.ServiceLayer.Test
             distributePricingRequest.PricingTemplate = new PricingTemplate();
             distributePricingRequest.PricingTemplate.EmailContentId = 1;
             distributePricingRequest.PricingTemplate.Notes = string.Empty;
-            distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
+            distributePricingRequest.PricingTemplate.MarginType = MarginTypes.CostPlus;
             distributePricingRequest.Customer = CreateCustomerInfoByGroup();
             distributePricingRequest.Customer.CustomerId = 1;
 

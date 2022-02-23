@@ -1,13 +1,5 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+﻿using System.Linq;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Data;
-using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -16,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Services
 {
@@ -81,7 +74,7 @@ namespace FBOLinx.Web.Services
         
         public async Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == User.UserRoles.Primary)).FirstOrDefaultAsync();
+            User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
             if (user != null)
                 return user;
 
@@ -99,7 +92,7 @@ namespace FBOLinx.Web.Services
                 GroupId = fboRecord.GroupId,
                 LastName = contactRecord?.LastName,
                 Password = _EncryptionService.HashPassword(fboRecord.Password),
-                Role = User.UserRoles.Primary,
+                Role = UserRoles.Primary,
                 Username = fboRecord.Username,
                 Active = true
             };
@@ -116,7 +109,7 @@ namespace FBOLinx.Web.Services
         public async Task<User> CreateGroupLoginIfNeeded(Group groupRecord)
         {
             User user = await _Context.User.Where(
-                (x => x.GroupId == groupRecord.Oid && (x.Role == User.UserRoles.Conductor || x.Role == User.UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+                (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
             if (user != null)
                 return user;
 
@@ -130,7 +123,7 @@ namespace FBOLinx.Web.Services
                 GroupId = groupRecord.Oid,
                 LastName = "",
                 Password = _EncryptionService.HashPassword(groupRecord.Password),
-                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
+                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? UserRoles.Conductor : UserRoles.GroupAdmin,
                 Username = groupRecord.Username,
                 Active = true
             };

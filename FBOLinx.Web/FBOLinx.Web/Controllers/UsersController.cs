@@ -1,13 +1,10 @@
 ﻿using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using System;
@@ -15,11 +12,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.BusinessServices;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -108,17 +105,17 @@ namespace FBOLinx.Web.Controllers
 
             var currentRole = JwtManager.GetClaimedRole(_httpContextAccessor);
 
-            if (currentRole == DB.Models.User.UserRoles.Conductor)
+            if (currentRole == UserRoles.Conductor)
                 return Ok(user);
 
             if (JwtManager.GetClaimedUserId(_httpContextAccessor) == id)
                 return Ok(user);
 
-            if (currentRole == DB.Models.User.UserRoles.GroupAdmin &&
+            if (currentRole == UserRoles.GroupAdmin &&
                 JwtManager.GetClaimedGroupId(_httpContextAccessor) == user.GroupId)
                 return Ok(user);
 
-            if (currentRole == DB.Models.User.UserRoles.Primary &&
+            if (currentRole == UserRoles.Primary &&
                 JwtManager.GetClaimedFboId(_httpContextAccessor) == user.FboId)
                 return Ok(user);
 
@@ -127,7 +124,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/group/5
         [HttpGet("group/{groupId}")]
-        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin })]
+        [UserRole(new UserRoles[] { UserRoles.Conductor, UserRoles.GroupAdmin })]
         public async Task<IActionResult> GetUsersByGroupId([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -147,7 +144,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/users/fbo/5
         [HttpGet("fbo/{fboId}")]
-        [UserRole(new User.UserRoles[] { DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary })]
+        [UserRole(new UserRoles[] { UserRoles.Conductor, UserRoles.GroupAdmin, UserRoles.Primary })]
         public async Task<IActionResult> GetUsersByFboId([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
@@ -174,7 +171,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(User.UserRoles));
+            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(UserRoles));
 
             return Ok(roles);
         }
@@ -193,7 +190,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            if (id != JwtManager.GetClaimedUserId(_httpContextAccessor) && JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (id != JwtManager.GetClaimedUserId(_httpContextAccessor) && JwtManager.GetClaimedRole(_httpContextAccessor) != UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return BadRequest(ModelState);
             }
@@ -221,7 +218,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/users
         [HttpPost]
-        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
+        [UserRole(UserRoles.Conductor, UserRoles.GroupAdmin, UserRoles.Primary)]
         public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
@@ -229,7 +226,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }
@@ -319,7 +316,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != request.User.GroupId)
             {
                 return Unauthorized();
             }
@@ -370,7 +367,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]
-        [UserRole(DB.Models.User.UserRoles.Conductor, DB.Models.User.UserRoles.GroupAdmin, DB.Models.User.UserRoles.Primary)]
+        [UserRole(UserRoles.Conductor, UserRoles.GroupAdmin, UserRoles.Primary)]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -384,7 +381,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            if (JwtManager.GetClaimedRole(_httpContextAccessor) != DB.Models.User.UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
+            if (JwtManager.GetClaimedRole(_httpContextAccessor) != UserRoles.Conductor && JwtManager.GetClaimedGroupId(_httpContextAccessor) != user.GroupId)
             {
                 return Unauthorized();
             }

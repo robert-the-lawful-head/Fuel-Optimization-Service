@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using FBOLinx.DB.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Models.Requests
 {
@@ -19,6 +15,6 @@ namespace FBOLinx.Web.Models.Requests
         public string FuelDeskEmail { get; set; }
         [Required]
         public int AcukwikFboHandlerId { get; set; }
-        public Fbos.AccountTypes AccountType { get; set; }
+        public AccountTypes AccountType { get; set; }
     }
 }

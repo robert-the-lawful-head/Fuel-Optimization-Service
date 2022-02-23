@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -124,7 +121,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, false);
@@ -141,7 +138,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, true);

@@ -12,12 +12,8 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.DB.Models.AirCrafts;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
 
@@ -463,7 +459,7 @@ namespace FBOLinx.Web.Controllers
 
         #region Integration Partner APIs
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("fuelerlinx-aircraft")]
         public async Task<IActionResult> FuelerLinxAircraft([FromBody] FuelerLinxAircraftRequest request)
         {
@@ -490,7 +486,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("sync-fuelerlinx-aircraft/for-company/{fuelerLinxCompanyId}/for-tailnumber/{tailNumber}")]
         public async Task<IActionResult> SyncCustomerAndAircraftFromFuelerLinx([FromRoute] int fuelerLinxCompanyId, [FromRoute] string tailNumber)
         {

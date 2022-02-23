@@ -1,5 +1,4 @@
 ﻿using FBOLinx.DB.Models;
-using FBOLinx.Web;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.DB.Context

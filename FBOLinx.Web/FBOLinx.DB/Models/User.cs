@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,24 +9,6 @@ namespace FBOLinx.DB.Models
 {
     public class User
     {
-        public enum UserRoles : short
-        {
-            [Description("Not set")]
-            NotSet = 0,
-            [Description("Primary")]
-            Primary = 1,
-            [Description("Group Admin")]
-            GroupAdmin = 2,
-            [Description("Conductor")]
-            Conductor = 3,
-            [Description("Member")]
-            Member = 4,
-            [Description("CSR")]
-            CSR = 5,
-            [Description("Non-Rev")]
-            NonRev= 6
-        }
-
         [Key]
         [Column("OID")]
         public int Oid { get; set; }

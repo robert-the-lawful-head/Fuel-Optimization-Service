@@ -1,28 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FBOLinx.DB.Models
 {
     public class Audit
     {
-        public enum AuditType
-        {
-            None = 0,
-            Create = 1,
-            Update = 2,
-            Delete = 3
-        }
-
-        public enum AuditLocation
-        {
-            CustomerInfoByGroup = 0,
-            CustomerAircrafts = 1,
-            CustomCustomerTypes = 2,
-            ContactInfoByGroup = 3 , 
-            CustomerContacts = 4
-        }
-
         public int Id { get; set; }
         public int UserId { get; set; }
         public string Type { get; set; }

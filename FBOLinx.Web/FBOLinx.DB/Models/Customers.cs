@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
@@ -8,21 +7,7 @@ using FBOLinx.Core.Enums;
 namespace FBOLinx.DB.Models
 {
     public class Customers : FBOLinxBaseEntityModel<int>
-    {
-        public enum CustomerSources
-        {
-            [Description("Not Specified")]
-            NotSpecified = 0,
-            [Description("FuelerLinx")]
-            FuelerLinx = 1,
-            [Description("Base Tenant")]
-            BaseTenant = 2,
-            [Description("Transient")]
-            Transient = 3,
-            [Description("Contract Fuel Vendor")]
-            ContractFuelVendor = 4
-        }
-        
+    {        
         public bool? Action { get; set; }
         public double? Margin { get; set; }
         [StringLength(255)]

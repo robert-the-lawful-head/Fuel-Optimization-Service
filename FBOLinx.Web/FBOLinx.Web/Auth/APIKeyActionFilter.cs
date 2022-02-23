@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using FBOLinx.Web.Services;
+using FBOLinx.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -8,14 +8,14 @@ namespace FBOLinx.Web.Auth
 {
     public class APIKeyActionFilter : IAsyncActionFilter
     {
-        private readonly List<IntegrationPartners.IntegrationPartnerTypes> _PartnerTypes;
+        private readonly List<IntegrationPartnerTypes> _PartnerTypes;
         private IAPIKeyManager _APIKeyManager;
 
-        public APIKeyActionFilter(IntegrationPartners.IntegrationPartnerTypes[] partnerTypes, IAPIKeyManager apiKeyManager)
+        public APIKeyActionFilter(IntegrationPartnerTypes[] partnerTypes, IAPIKeyManager apiKeyManager)
         {
             _APIKeyManager = apiKeyManager;
             if (partnerTypes != null)
-                _PartnerTypes = new List<IntegrationPartners.IntegrationPartnerTypes>(partnerTypes);
+                _PartnerTypes = new List<IntegrationPartnerTypes>(partnerTypes);
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

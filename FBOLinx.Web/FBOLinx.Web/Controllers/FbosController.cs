@@ -10,13 +10,9 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using FBOLinx.Web.Models.Requests;
-using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
 using Fuelerlinx.SDK;
@@ -379,7 +375,7 @@ namespace FBOLinx.Web.Controllers
 
 
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpGet("by-akukwik-record/{handlerId}")]
         public async Task<ActionResult<Fbos>> GetFboByAcukwikRecord([FromRoute] int handlerId)
         {
@@ -408,7 +404,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/Fbos/add-account-handlerid/100
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.OtherSoftware)]
         [HttpGet("add-account-handlerid/{handlerId}")]
         public async Task<ActionResult<string>> AddNonRevAccountByAcukwikHandlerId([FromRoute] int handlerId)
         {
@@ -431,16 +427,16 @@ namespace FBOLinx.Web.Controllers
 
                 if (importedFboEmail != null)
                 {
-                    var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Fbos.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
+                    var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Core.Enums.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
                     fbo = await _groupFboService.CreateNewFbo(newFbo);
 
-                    User newUser = new User() { FboId = fbo.Oid, Role = DB.Models.User.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
+                    User newUser = new User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
                     _context.User.Add(newUser);
                     await _context.SaveChangesAsync();
                 }
             }
 
-            var user = await _context.User.Where(x => x.FboId == fbo.Oid && x.Role == DB.Models.User.UserRoles.NonRev).FirstOrDefaultAsync();
+            var user = await _context.User.Where(x => x.FboId == fbo.Oid && x.Role == Core.Enums.UserRoles.NonRev).FirstOrDefaultAsync();
 
             //Return URL with authentication for 3 days
             AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 4320);

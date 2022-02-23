@@ -6,15 +6,11 @@ using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Data;
 using FBOLinx.Web.DTO;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using static FBOLinx.DB.Models.PricingTemplate;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
@@ -258,7 +254,7 @@ namespace FBOLinx.Web.Services
                                                   CustomerCompanyType = cg.CustomerCompanyType,
                                                   CustomerCompanyTypeName = ccot == null || string.IsNullOrEmpty(ccot.Name) ? "" : ccot.Name,
                                                   IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
-                                                                                     pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                                                                                     pt.MarginType != MarginTypes.FlatFee)),
                                                   ExpirationDate = fp?.EffectiveTo,
                                                   Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
                                                   Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
@@ -305,7 +301,7 @@ namespace FBOLinx.Web.Services
                 //                                      ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
                 //                                      : (ppt == null || ppt == null ? 0 : ppt.Amount)),
                 //                          IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
-                //                                                             pt.MarginType != PricingTemplate.MarginTypes.FlatFee)),
+                //                                                             pt.MarginType != MarginTypes.FlatFee)),
                 //                          ExpirationDate = fp?.EffectiveTo,
                 //                          Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
                 //                          Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),

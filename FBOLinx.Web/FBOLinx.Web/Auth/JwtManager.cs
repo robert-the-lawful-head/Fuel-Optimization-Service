@@ -1,20 +1,15 @@
-﻿using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Models.Responses;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.Web.Auth
 {
@@ -31,7 +26,7 @@ namespace FBOLinx.Web.Auth
             _appSettings = appSettings.Value;
         }
 
-        public string GenerateToken(int id, int? fboid, User.UserRoles role, int? groupId, int expireMinutes = 10080)
+        public string GenerateToken(int id, int? fboid, UserRoles role, int? groupId, int expireMinutes = 10080)
         {
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -156,15 +151,15 @@ namespace FBOLinx.Web.Auth
             }
         }
 
-        public static User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
+        public static UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
         {
             try
             {
-                return (User.UserRoles)System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
+                return (UserRoles)Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
             }
             catch (System.Exception)
             {
-                return User.UserRoles.NotSet;
+                return UserRoles.NotSet;
             }
         }
 
