@@ -64,7 +64,7 @@ export class LoginModalComponent {
                                 ]);
                             } else {
                                 this.router.navigate([
-                                    '/default-layout/dashboard-fbo/',
+                                    '/default-layout/dashboard-fbo-updated/',
                                 ]);
                             }
                         });

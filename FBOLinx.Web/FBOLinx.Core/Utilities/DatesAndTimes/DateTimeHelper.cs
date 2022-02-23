@@ -138,7 +138,7 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             return DateTime.SpecifyKind(utcTime, DateTimeKind.Unspecified);
         }
 
-        public static string GetLocalTimeZone(DateTime utcDateTime, double? intlTimeZone, bool respectDaylightSavings)
+        public static string GetLocalTimeZone(DateTime utcDateTime, double? intlTimeZone, bool respectDaylightSavings, string airportCity)
         {
             var allTimeZones = TimeZoneInfo.GetSystemTimeZones();
             TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
@@ -151,38 +151,24 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             }
 
             var timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains("(US & Canada)"));
-            DateTime localTime = utcDateTime.AddHours(intlTimeZone.GetValueOrDefault());
+            if (timeZone == null)
+                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity));
 
-            if (isDaylightSavingTime)
+            var shortenedTimeZone = "";
+            if (timeZone != null)
             {
-                switch(timeZone.DaylightName)
+                var longName = "";
+                if (isDaylightSavingTime)
+                    longName = timeZone.DaylightName;
+                else
+                    longName = timeZone.StandardName;
+
+                foreach (string name in longName.Split(" "))
                 {
-                    case "Eastern Daylight Time":
-                        return "EDT";
-                    case "Central Daylight Time":
-                            return "CDT";
-                    case "Mountain Daylight Time":
-                            return "MDT";
-                    case "Pacific Daylight Time":
-                        return "PDT";
-                    default:
-                        return "";
+                    shortenedTimeZone += name.Substring(0, 1);
                 }
             }
-
-            switch (timeZone.StandardName)
-            {
-                case "Eastern Standard Time":
-                    return "EST";
-                case "Central Standard Time":
-                    return "CST";
-                case "Mountain Standard Time":
-                    return "MST";
-                case "Pacific Standard Time":
-                    return "PST";
-                default:
-                    return "";
-            }
+            return shortenedTimeZone;
         }
 
         public static DateTime GetLocalTimeNow(double? intlTimeZone, bool respectDaylightSavings)
@@ -195,9 +181,9 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             return GetLocalTime(DateTime.UtcNow, intlTimeZone, respectDaylightSavings);
         }
 
-        public static string GetLocalTimeZone(double? intlTimeZone, bool respectDaylightSavings)
+        public static string GetLocalTimeZone(double? intlTimeZone, bool respectDaylightSavings, string airportCity)
         {
-            return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, respectDaylightSavings);
+            return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, respectDaylightSavings, airportCity);
         }
 
         public static DateTime GetNextTuesdayDate(DateTime date)
