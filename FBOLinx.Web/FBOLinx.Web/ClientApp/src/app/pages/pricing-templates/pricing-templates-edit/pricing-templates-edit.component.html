@@ -307,35 +307,39 @@
                             </div>
 
                             <h5 class="mt-2">Fuel Uplift Notes</h5>
-                            <ejs-richtexteditor #typeRTE
-                                                formControlName="notes"
-                                                id="rteNotes"
-                                                [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
-
-                            <h6 class="mt-2">File Attachment</h6>
-                            <input type="file"
-                                    (change)="onFileChange($event)"
-                                    accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
-                                    #fileUpload />
-                            <button *ngIf="!isUploadingFile"
-                                    (click)="uploadFile()"
-                                    class="ml-3"
-                                    color="accent"
-                                    mat-raised-button>
-                                Upload File
-                            </button>
-                            <div *ngIf="isUploadingFile">
-                                <mat-spinner></mat-spinner>
-                            </div>
-                            <div class="mt-2" *ngIf="fileName != ''">
-                                <button (click)="downloadFile()" mat-stroked-button>
-                                    Download {{fileName}}
-                                </button>
-                            </div>
-                            <div class="mt-2" *ngIf="fileName != ''">
-                                <button (click)="deleteFile()" class="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
+                            <div style="height:600px;">
+                                <ejs-richtexteditor #typeRTE
+                                                    formControlName="notes"
+                                                    id="rteNotes"
+                                                    height="400"
+                                                    [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
+                                <h6 class="mt-2">File Attachment</h6>
+                                <div>
+                                    <input type="file"
+                                           (change)="onFileChange($event)"
+                                           accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
+                                           #fileUpload />
+                                    <button *ngIf="!isUploadingFile"
+                                            (click)="uploadFile()"
+                                            class="ml-3"
+                                            color="accent"
+                                            mat-raised-button>
+                                        Upload File
+                                    </button>
+                                    <div *ngIf="isUploadingFile">
+                                        <mat-spinner></mat-spinner>
+                                    </div>
+                                    <div class="mt-2" *ngIf="fileName != ''">
+                                        <button (click)="downloadFile()" mat-stroked-button>
+                                            Download {{fileName}}
+                                        </button>
+                                    </div>
+                                    <div class="mt-2" *ngIf="fileName != ''">
+                                        <button (click)="deleteFile()" class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </mat-tab>
 
