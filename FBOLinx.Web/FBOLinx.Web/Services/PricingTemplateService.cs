@@ -8,17 +8,20 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Services
 {
     public class PricingTemplateService : IPricingTemplateService
     {
         private readonly FboLinxContext _context;
+        private readonly FilestorageContext _fileStorageContext;
         private int _FboId;
         private int _GroupId;
-        public PricingTemplateService(FboLinxContext context)
+        public PricingTemplateService(FboLinxContext context, FilestorageContext fileStorageContext)
         {
             _context = context;
+            _fileStorageContext = fileStorageContext;
         }
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
@@ -305,6 +308,75 @@ namespace FBOLinx.Web.Services
                 .ToList();
 
             return result;
+        }
+
+        public async Task<PricingTemplate> GetPricingTemplate(int pricingTemplateId)
+        {
+            var pricingTemplate = await _context.PricingTemplate.Where(p => p.Oid == pricingTemplateId).FirstOrDefaultAsync();
+            return pricingTemplate;
+        }
+
+        public async Task<string> GetFileAttachment(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            if (pricingTemplateFile != null)
+            {
+                var fileBase64 = Convert.ToBase64String(pricingTemplateFile.FileData, 0, pricingTemplateFile.FileData.Length);
+                return "data:" + pricingTemplateFile.ContentType + ";base64," + fileBase64;
+            }
+
+            return "";
+        }
+
+        public async Task<FbolinxPricingTemplateFileAttachment> GetFileAttachmentObject(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+            return pricingTemplateFile;
+        }
+
+        public async Task<string> GetFileAttachmentName(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            if (pricingTemplateFile == null || pricingTemplateFile.Oid == 0)
+                return "";
+
+            return pricingTemplateFile.FileName;
+        }
+
+        public async Task UploadFileAttachment(FbolinxPricingTemplateAttachmentsRequest request)
+        {
+            var fileAsArray = Convert.FromBase64String(request.FileData);
+
+            var existingRecord = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(f => f.PricingTemplateId == request.PricingTemplateId).FirstOrDefaultAsync();
+
+            if (existingRecord != null && existingRecord.Oid > 0)
+            {
+                existingRecord.FileData = fileAsArray;
+                existingRecord.FileName = request.FileName;
+                existingRecord.ContentType = request.ContentType;
+                _fileStorageContext.FbolinxPricingTemplateAttachments.Update(existingRecord);
+            }
+            else
+            {
+                FBOLinx.DB.Models.FbolinxPricingTemplateFileAttachment fboLinxFileData = new DB.Models.FbolinxPricingTemplateFileAttachment();
+                fboLinxFileData.FileData = fileAsArray;
+                fboLinxFileData.FileName = request.FileName;
+                fboLinxFileData.ContentType = request.ContentType;
+                fboLinxFileData.PricingTemplateId = request.PricingTemplateId;
+                _fileStorageContext.FbolinxPricingTemplateAttachments.Add(fboLinxFileData);
+            }
+
+            await _fileStorageContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteFileAttachment(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            _fileStorageContext.FbolinxPricingTemplateAttachments.Remove(pricingTemplateFile);
+            await _fileStorageContext.SaveChangesAsync();
         }
 
         private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)

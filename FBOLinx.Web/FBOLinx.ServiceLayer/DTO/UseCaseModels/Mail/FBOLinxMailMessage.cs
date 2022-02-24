@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.Core.Utilities.Mail;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 {
@@ -11,7 +12,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         #endregion
 
         #region Properties
-        public string AttachmentBase64String { get; set; }
+        public string InlineAttachmentBase64String { get; set; }
+        public List<FileAttachment> AttachmentsCollection { get; set; } = new List<FileAttachment>();
         public LogoDetails Logo { get; set; }
         public SendGridDistributionTemplateData SendGridDistributionTemplateData { get; set; }
         public SendGridEngagementTemplateData SendGridEngagementTemplate { get; set; }

@@ -333,7 +333,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        // POST: api/get
+        // POST: api/uploadfboLogo
         [HttpPost("uploadfboLogo")]
         public async Task<IActionResult> PostFboLogo([FromBody] FboLogoRequest request)
         {
