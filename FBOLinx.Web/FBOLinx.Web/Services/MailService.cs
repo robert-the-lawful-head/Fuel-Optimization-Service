@@ -103,11 +103,21 @@ namespace FBOLinx.Web.Services
 
             var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
             pricesAttachment.Disposition = "inline";
-            pricesAttachment.Content = message.AttachmentBase64String;
+            pricesAttachment.Content = message.InlineAttachmentBase64String;
             pricesAttachment.Filename = "prices.png";
             pricesAttachment.Type = "image/png";
             pricesAttachment.ContentId = "Prices";
             sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
+
+            foreach(var attachment in message.AttachmentsCollection)
+            {
+                var sendGridAttachment = new SendGrid.Helpers.Mail.Attachment();
+                sendGridAttachment.Filename = attachment.FileName;
+                sendGridAttachment.Type = attachment.ContentType;
+                sendGridAttachment.Content = attachment.FileData;
+                sendGridAttachment.Disposition = "attachment";
+                sendGridMessageWithTemplate.AddAttachment(sendGridAttachment);
+            }
 
             if (message.Logo != null)
             {
@@ -130,7 +140,7 @@ namespace FBOLinx.Web.Services
 
             var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
             pricesAttachment.Disposition = "attachment";
-            pricesAttachment.Content = message.AttachmentBase64String;
+            pricesAttachment.Content = message.AttachmentsCollection[0].FileData;
             pricesAttachment.Filename = "Prices.csv";
             pricesAttachment.Type = "text/csv";
             pricesAttachment.ContentId = "Prices";

@@ -12,6 +12,7 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Auth;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -166,6 +167,64 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return emailContent;
+        }
+
+        // GET: api/EmailContents/fileattachment/5
+        [HttpGet("fileattachment/{emailContentId}")]
+        public async Task<IActionResult> GetFileAttachment([FromRoute] int emailContentId)
+        {
+            var file = await _emailContentService.GetFileAttachment(emailContentId);
+
+            return Ok(file);
+        }
+
+        // GET: api/EmailContent/fileattachmentname/5
+        [HttpGet("fileattachmentname/{emailContentId}")]
+        public async Task<IActionResult> GetFileAttachmentName([FromRoute] int emailContentId)
+        {
+            var file = await _emailContentService.GetFileAttachmentName(emailContentId);
+
+            return Ok(file);
+        }
+
+        // POST: api/EmailContents/uploadfileattachment
+        [HttpPost("uploadfileattachment")]
+        public async Task<IActionResult> UploadFileAttachment([FromBody] FbolinxEmailContentAttachmentsRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (request.FileData.Contains(","))
+                {
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                }
+
+                await _emailContentService.UploadFileAttachment(request);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Message = ex.Message });
+            }
+        }
+
+        // DELETE: api/EmailContents/fileattachment/4
+        [HttpDelete("fileattachment/{emailContentId}")]
+        public async Task<IActionResult> DeleteFileAttachment([FromRoute] int emailContentId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _emailContentService.DeleteFileAttachment(emailContentId);
+
+            return Ok();
         }
 
         private bool EmailContentExists(int id)

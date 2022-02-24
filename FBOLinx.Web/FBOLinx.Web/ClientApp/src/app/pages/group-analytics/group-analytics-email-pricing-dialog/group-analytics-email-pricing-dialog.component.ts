@@ -7,6 +7,7 @@ import {
     GridModel,
     SelectionSettingsModel,
 } from '@syncfusion/ej2-angular-grids';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { GroupAnalyticsGenerateDialogData } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
@@ -31,6 +32,8 @@ export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
     filterSettings: FilterSettingsModel = { type: 'Menu' };
 
     gridData: any[] = [];
+
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsEmailPricingDialogComponent>,

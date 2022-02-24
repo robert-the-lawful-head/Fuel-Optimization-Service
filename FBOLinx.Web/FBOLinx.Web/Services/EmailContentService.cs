@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Web.Models.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
@@ -11,10 +12,12 @@ namespace FBOLinx.Web.Services
     public class EmailContentService
     {
         private FboLinxContext _context;
+        private readonly FilestorageContext _fileStorageContext;
 
-        public EmailContentService(FboLinxContext context)
+        public EmailContentService(FboLinxContext context, FilestorageContext filestorageContext)
         {
             _context = context;
+            _fileStorageContext = filestorageContext;
         }
 
         public async Task<List<EmailContent>> GetEmailContentsForFbo(int fboId)
@@ -46,6 +49,64 @@ namespace FBOLinx.Web.Services
             await _context.EmailContent.AddAsync(emailContent);
             await _context.SaveChangesAsync();
             return emailContent;
+        }
+
+        public async Task<string> GetFileAttachment(int contentTemplateId)
+        {
+            var emailContentFile = await _fileStorageContext.FbolinxEmailContentAttachments.Where(p => p.EmailContentId == contentTemplateId).FirstOrDefaultAsync();
+
+            var fileBase64 = Convert.ToBase64String(emailContentFile.FileData, 0, emailContentFile.FileData.Length);
+            return "data:" + emailContentFile.ContentType + ";base64," + fileBase64;
+        }
+
+        public async Task<FbolinxEmailContentFileAttachment> GetFileAttachmentObject(int contentTemplateId)
+        {
+            var emailContentFile = await _fileStorageContext.FbolinxEmailContentAttachments.Where(p => p.EmailContentId == contentTemplateId).FirstOrDefaultAsync();
+            return emailContentFile;
+        }
+
+        public async Task<string> GetFileAttachmentName(int contentTemplateId)
+        {
+            var emailContentFile = await _fileStorageContext.FbolinxEmailContentAttachments.Where(p => p.EmailContentId == contentTemplateId).FirstOrDefaultAsync();
+
+            if (emailContentFile == null || emailContentFile.Oid == 0)
+                return "";
+
+            return emailContentFile.FileName;
+        }
+
+        public async Task UploadFileAttachment(FbolinxEmailContentAttachmentsRequest request)
+        {
+            var fileAsArray = Convert.FromBase64String(request.FileData);
+
+            var existingRecord = await _fileStorageContext.FbolinxEmailContentAttachments.Where(f => f.EmailContentId == request.EmailContentId).FirstOrDefaultAsync();
+
+            if (existingRecord != null && existingRecord.Oid > 0)
+            {
+                existingRecord.FileData = fileAsArray;
+                existingRecord.FileName = request.FileName;
+                existingRecord.ContentType = request.ContentType;
+                _fileStorageContext.FbolinxEmailContentAttachments.Update(existingRecord);
+            }
+            else
+            {
+                FBOLinx.DB.Models.FbolinxEmailContentFileAttachment fboLinxFileData = new DB.Models.FbolinxEmailContentFileAttachment();
+                fboLinxFileData.FileData = fileAsArray;
+                fboLinxFileData.FileName = request.FileName;
+                fboLinxFileData.ContentType = request.ContentType;
+                fboLinxFileData.EmailContentId = request.EmailContentId;
+                _fileStorageContext.FbolinxEmailContentAttachments.Add(fboLinxFileData);
+            }
+
+            await _fileStorageContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteFileAttachment(int emailContentId)
+        {
+            var emailContentFile = await _fileStorageContext.FbolinxEmailContentAttachments.Where(p => p.EmailContentId == emailContentId).FirstOrDefaultAsync();
+
+            _fileStorageContext.FbolinxEmailContentAttachments.Remove(emailContentFile);
+            await _fileStorageContext.SaveChangesAsync();
         }
     }
 }

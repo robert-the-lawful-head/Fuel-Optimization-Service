@@ -48,6 +48,7 @@
                     #typeEmail
                     formControlName="emailContentHtml"
                     placeholder="Enter email body here..."
+                    [insertImageSettings]='insertImageSettings'
                 ></ejs-richtexteditor>
                 <mat-error *ngIf="form.controls.emailContentHtml.invalid"
                     >Email content is required.</mat-error
