@@ -5,10 +5,11 @@ import {
     OnDestroy,
     Output,
     ViewChild,
+    ElementRef
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest } from 'rxjs';
 
@@ -50,6 +51,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     @ViewChild('feeAndTaxGeneralBreakdown')
     private feeAndTaxGeneralBreakdown: PriceBreakdownComponent;
     @ViewChild('typeRTE') rteObj: RichTextEditorComponent;
+    @ViewChild('fileUpload') fileUploadName;
 
     // Input/Output Bindings
     @Output() savePricingTemplateClicked = new EventEmitter<any>();
@@ -78,6 +80,11 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     hasSaved = false;
     isSaveQueued = false;
     feesAndTaxes: Array<any>;
+
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+    theFile: any;
+    isUploadingFile: boolean;
+    fileName: any = "";
 
     constructor(
         private route: ActivatedRoute,
@@ -123,7 +130,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             this.fboPricesService.getFbopricesByFboIdCurrent(
                 this.sharedService.currentUser.fboId
             ),
-        ]).subscribe(([customerMarginsData, fboPricesData]) => {
+            this.pricingTemplatesService.getFileAttachmentName(
+                this.id
+            ),
+        ]).subscribe(([customerMarginsData, fboPricesData, fileAttachmentName]) => {
             const jetACostRecords = (fboPricesData as any).filter(
                 (item) => item.product === 'JetA Cost'
             );
@@ -145,6 +155,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.pricingTemplate.discountType
 
             );
+
+            this.fileName = fileAttachmentName;
 
             let customerMargins: FormArray = this.formBuilder.array([]);
             if (this.pricingTemplate.customerMargins) {
@@ -316,6 +328,39 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         );
     }
 
+    onFileChange(event) {
+        this.theFile = null;
+        if (event.target.files && event.target.files.length > 0) {
+            // Set theFile property
+            this.theFile = event.target.files[0];
+        }
+    }
+
+    uploadFile(): void {
+        if (this.theFile != null) {
+            this.isUploadingFile = true;
+            this.readAndUploadFile(this.theFile);
+        }
+    }
+
+    deleteFile(): void {
+        this.pricingTemplatesService
+            .deleteFileAttachment(this.id)
+            .subscribe((data: any) => {
+                this.fileName = '';
+            });
+    }
+
+    downloadFile(): void {
+        this.pricingTemplatesService.downloadFileAttachment(this.id).subscribe((data: any) => {
+            const source = data;
+            const link = document.createElement("a");
+            link.href = source;
+            link.download = this.fileName;
+            link.click();
+        });
+    }
+
     cancelPricingTemplateEdit() {
         this.router
             .navigate(['/default-layout/pricing-templates/'])
@@ -400,6 +445,45 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                     this.recalculatePriceBreakdown();
                 });
         }
+    }
+
+    private readAndUploadFile(theFile: any) {
+        const file = {
+            ContentType: theFile.type,
+
+            PricingTemplateId: this.id,
+
+            FileData: null,
+            // Set File Information
+            FileName: theFile.name,
+        };
+
+        var printEventType = function (event) {
+            var error = event;
+        };
+
+        // Use FileReader() object to get file to upload
+        // NOTE: FileReader only works with newer browsers
+        const reader = new FileReader();
+
+        // Setup onload event for reader
+        reader.onload = () => {
+            // Store base64 encoded representation of file
+            file.FileData = reader.result.toString();
+
+            // POST to server
+            this.pricingTemplatesService.uploadFileAttachment(file).subscribe((data: any) => {
+                if (data.indexOf("Message:") < 1) {
+                    this.isUploadingFile = false;
+                    this.fileUploadName.nativeElement.value = '';
+                    this.fileName = theFile.name;
+                }
+            });
+        }
+
+        // Read the file
+        reader.readAsDataURL(theFile);
+        reader.onerror = printEventType;
     }
 
     private loadPricingTemplateFeesAndTaxes(): void {

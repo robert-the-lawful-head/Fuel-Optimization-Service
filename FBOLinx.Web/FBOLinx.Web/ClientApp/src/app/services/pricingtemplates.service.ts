@@ -98,4 +98,46 @@ export class PricingtemplatesService {
             }
         );
     }
+
+    public getFileAttachmentName(pricingTemplateId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachmentname/' +
+            pricingTemplateId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public uploadFileAttachment(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/uploadfileattachment/',
+            payload,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public downloadFileAttachment(pricingTemplateId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachment/' + 
+            pricingTemplateId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public deleteFileAttachment(pricingTemplateId) {
+        return this.http.delete(
+            this.accessPointUrl + '/fileattachment/' + pricingTemplateId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

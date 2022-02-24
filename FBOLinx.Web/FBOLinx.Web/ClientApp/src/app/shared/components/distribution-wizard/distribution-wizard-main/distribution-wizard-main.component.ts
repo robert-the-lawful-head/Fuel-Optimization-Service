@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../../layouts/shared-service';
 import { CustomerCompanyTypesService } from '../../../../services/customer-company-types.service';
@@ -46,6 +47,7 @@ export class DistributionWizardMainComponent implements OnInit {
     public validityMessage: string;
     public isForSingleCustomer = false;
     public isForSinglePricingTemplate = false;
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     // Added services
     public sharedservice: SharedService;

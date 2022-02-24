@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 // Services
 import { EmailcontentService } from '../../../services/emailcontent.service';
@@ -19,6 +20,7 @@ export interface EmailContentDialogData {
 })
 export class EmailContentEditComponent {
     public emailContentTypes: any[] = [];
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         public dialogRef: MatDialogRef<EmailContentEditComponent>,

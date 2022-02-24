@@ -7,6 +7,7 @@ import {
     Validators,
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { validateEmail } from 'src/utils/email';
@@ -23,6 +24,8 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
     logoUrl = '';
 
     form: FormGroup;
+
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsEmailTemplateDialogComponent>,
