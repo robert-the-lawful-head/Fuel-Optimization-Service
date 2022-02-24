@@ -79,8 +79,9 @@ namespace FBOLinx.Web.Services
                         TransactionScopeAsyncFlowOption.Enabled))
                     {
                         var fuelOrders = await _context.FuelReq
-                            .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow && x.Cancelled == false)
+                            .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow)
                             .Include(x => x.CustomerAircraft).ToListAsync();
+                        fuelOrders.RemoveAll(x => x.Cancelled == true);
 
                         FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
                         { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.fa.Icao, Fbo = fbo.f.Fbo });
@@ -130,9 +131,7 @@ namespace FBOLinx.Web.Services
                                                 ) on awhd.TailNumber equals ca.TailNumber
                                                     into leftJoinedCustomers
                                                 from ca in leftJoinedCustomers.DefaultIfEmpty()
-                                                where awhd.Latitude >= minLatitude && awhd.Latitude <= maxLatitude &&
-                                                      awhd.Longitude >= minLongitude && awhd.Longitude <= maxLongitude
-                                                      && awhd.AircraftPositionDateTimeUtc >= timelimit
+                                                where awhd.AircraftPositionDateTimeUtc >= timelimit
                                                 select new AirportWatchLiveData
                                                 {
                                                     Oid = awhd.Oid,
@@ -160,6 +159,10 @@ namespace FBOLinx.Web.Services
                             .ThenBy(x => x.GpsAltitude)
                             .ToListAsync(); ;
 
+                        filteredResult.RemoveAll(x =>
+                            x.Latitude < minLatitude || x.Latitude > maxLatitude || x.Longitude < minLongitude ||
+                            x.Longitude > maxLongitude);
+                        
 
                         //filteredResult = await _context.AirportWatchLiveData
                         //       .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
@@ -371,7 +374,7 @@ namespace FBOLinx.Web.Services
             var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
                 //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1)).ToListAsync();
 
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
