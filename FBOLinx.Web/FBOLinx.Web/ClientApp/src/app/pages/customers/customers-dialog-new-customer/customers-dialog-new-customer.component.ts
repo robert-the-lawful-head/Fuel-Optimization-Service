@@ -303,19 +303,21 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
             })
             .toPromise();
 
-        await this.customerAircraftsService
-            .addMultipleWithTemplate(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                customer.oid,
-                this.aircraftFormArray.value.map((v) => ({
-                    aircraftId: v.aircraft.aircraftId,
-                    pricingTemplateId: v.aircraftPricingTemplate,
-                    size: v.aircraft.size,
-                    tailNumber: v.tailNumber,
-                }))
-            )
-            .toPromise();
+        if (this.aircraftFormArray.value[0].tailNumber != null) {
+            await this.customerAircraftsService
+                .addMultipleWithTemplate(
+                    this.sharedService.currentUser.groupId,
+                    this.sharedService.currentUser.fboId,
+                    customer.oid,
+                    this.aircraftFormArray.value.map((v) => ({
+                        aircraftId: v.aircraft.aircraftId,
+                        pricingTemplateId: v.aircraftPricingTemplate,
+                        size: v.aircraft.size,
+                        tailNumber: v.tailNumber,
+                    }))
+                )
+                .toPromise();
+        }
 
         this.submitting = false;
 
@@ -328,7 +330,8 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.companyFormGroup.invalid) ||
             (step === WizardStep.ITP_MARGIN_TEMPLATE &&
                 (this.companyFormGroup.invalid ||
-                    this.contactFormArray.invalid)) ||
+                    this.contactFormArray.invalid))
+            ||
             (step === WizardStep.AIRCRAFT &&
                 (this.companyFormGroup.invalid ||
                     this.contactFormArray.invalid ||
