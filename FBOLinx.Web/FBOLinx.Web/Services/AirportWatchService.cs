@@ -687,14 +687,6 @@ namespace FBOLinx.Web.Services
                 await _context.BulkInsertAsync(_HistoricalDataToInsert);
             if (_HistoricalDataToUpdate != null)
                 await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
-            await _context.AirportWatchChangeTracker.AddAsync(new AirportWatchChangeTracker()
-            {
-                DateTimeAppliedUtc = DateTime.UtcNow,
-                HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
-                LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
-                TailNumberRecords = 0
-            });
-            await _context.SaveChangesAsync();
             await transaction.CommitAsync();
         }
 
