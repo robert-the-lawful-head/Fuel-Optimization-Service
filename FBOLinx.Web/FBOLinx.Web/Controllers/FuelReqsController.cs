@@ -145,7 +145,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         
-        // POST: api/FuelReqs/fbo/5/daterange
+        // POST: api/FuelReqs/group/3/fbo/5/daterange
         [HttpPost("group/{groupId}/fbo/{fboId}/daterange")]
         public async Task<IActionResult> GetFuelReqsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
         {
@@ -212,7 +212,8 @@ namespace FBOLinx.Web.Controllers
                      FboName = f == null ? "" : f.Fbo,
                      Email = fr.Email,
                      PhoneNumber = fr.PhoneNumber,
-                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName
+                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName,
+                     FuelOn = fr.FuelOn
                  }
                 )
                 .OrderByDescending(f => f.Oid)
@@ -309,7 +310,8 @@ namespace FBOLinx.Web.Controllers
                                      request.SourceId,
                                      request.Email,
                                      request.PhoneNumber,
-                                     PricingTemplate = pt
+                                     PricingTemplate = pt,
+                                     request.FuelOn
                                  })
                                 .Distinct()
                                 .ToList();
@@ -331,6 +333,7 @@ namespace FBOLinx.Web.Controllers
                     SourceId = fr.SourceId,
                     Email = fr.Email,
                     PhoneNumber = fr.PhoneNumber,
+                    FuelOn = fr.FuelOn,
                 }).ToList();
 
                 _context.FuelReq.AddRange(fuelReqs);
@@ -380,6 +383,7 @@ namespace FBOLinx.Web.Controllers
                 fuelReqs[0].TimeStandard = request.TimeStandard;
                 fuelReqs[0].Email = request.Email;
                 fuelReqs[0].PhoneNumber = request.PhoneNumber;
+                fuelReqs[0].FuelOn = request.FuelOn;
             }
             await _context.SaveChangesAsync();
 

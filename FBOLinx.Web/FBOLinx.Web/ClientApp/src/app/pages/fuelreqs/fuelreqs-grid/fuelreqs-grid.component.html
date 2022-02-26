@@ -76,12 +76,10 @@
         </div>
     </div>
     <div class="w-100 table-container" style="overflow-x: auto">
-        <table
-            [dataSource]="fuelreqsDataSource"
-            class="col-12 mb-0"
-            mat-table
-            matSort
-        >
+        <table [dataSource]="fuelreqsDataSource"
+               class="col-12 mb-0"
+               mat-table
+               matSort>
             <ng-container matColumnDef="customerName">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Flight Dept.
@@ -160,11 +158,9 @@
 
             <ng-container matColumnDef="email">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-                <td
-                    *matCellDef="let fuelreq"
+                <td *matCellDef="let fuelreq"
                     [matTooltip]="fuelreq.email"
-                    mat-cell
-                >
+                    mat-cell>
                     {{ fuelreq.email }}
                 </td>
             </ng-container>
@@ -192,6 +188,20 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="dateCreated">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.dateCreated | date: "MMM d, yyyy, HH:mm" }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fuelOn">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Uplift Request</th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ (fuelreq.fuelOn == "Arrival" ? fuelreq.eta : fuelreq.etd) | date: "MMM d, yyyy, HH:mm" }}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
@@ -205,10 +215,8 @@
                 </td>
             </ng-container>
 
-            <tr
-                *matHeaderRowDef="getTableColumns(); sticky: true"
-                mat-header-row
-            ></tr>
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row></tr>
             <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
         <mat-paginator
