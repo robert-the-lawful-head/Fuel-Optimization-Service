@@ -50,6 +50,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         'conversionRate',
         'totalOrders',
         'airportOrders',
+        'customerBusiness',
         'lastPullDate',
     ];
     dataSource: MatTableDataSource<any[]>;
@@ -128,8 +129,15 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
+                localStorage.getItem(this.tableLocalStorageKey));
+           
+            if (this.columns.length === 7) {
+                const customerBusiness = {
+                    id: 'customerBusiness',
+                    name: '% of Customer\'s Business',
+                };
+                this.columns.push(customerBusiness);
+            }
         } else {
             this.columns = [
                 {
@@ -155,6 +163,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                 {
                     id: 'airportOrders',
                     name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+                },
+                {
+                    id: 'customerBusiness',
+                    name: '% of Customer\'s Business',
                 },
                 {
                     id: 'lastPullDate',
