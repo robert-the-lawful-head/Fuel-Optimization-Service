@@ -6,6 +6,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.ServiceLayer.Extensions
@@ -25,6 +26,10 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFuelPriceAdjustmentCleanUpService, FuelPriceAdjustmentCleanUpService>();
             services.AddTransient<IFuelerLinxAccoutSyncingService, FuelerLinxAccoutSyncingService>();
             services.AddTransient<IFuelerLinxAircraftSyncingService, FuelerLinxAircraftSyncingService>();
+            services.AddTransient<IPricingTemplateService, PricingTemplateService>();
+            services.AddTransient<ICustomerMarginService, CustomerMarginService>();
+            services.AddTransient<ICustomCustomerTypeService, CustomCustomerTypeService>();
+
             return services;
         }
     }

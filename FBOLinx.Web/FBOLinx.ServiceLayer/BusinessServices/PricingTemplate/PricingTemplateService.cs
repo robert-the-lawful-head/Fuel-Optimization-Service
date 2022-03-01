@@ -1,17 +1,21 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿
+using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.Dto.Requests;
+using FBOLinx.ServiceLayer.Dto.Responses;
+using FBOLinx.ServiceLayer.Dto.UseCaseModels;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.DB.Context;
-using FBOLinx.DB.Models;
-using FBOLinx.Web.Services.Interfaces;
-using FBOLinx.Web.ViewModels;
-using FBOLinx.Core.Enums;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
-    public class PricingTemplateService : IPricingTemplateService
+    public class PricingTemplateService : IPricingTemplateService, IPricingTemplateGridService
     {
         private readonly FboLinxContext _context;
         private int _FboId;
@@ -27,7 +31,7 @@ namespace FBOLinx.Web.Services
                 return;
             }
 
-            PricingTemplate defaultPricingTemplate = await _context.PricingTemplate
+            var defaultPricingTemplate = await _context.PricingTemplate
                                                                         .Where(x => x.Fboid == fboId && x.Default == true)
                                                                         .FirstOrDefaultAsync();
 
@@ -94,7 +98,7 @@ namespace FBOLinx.Web.Services
                 return;
 
             //Add a default pricing template - project #1c5383
-            var newTemplate = new PricingTemplate()
+            var newTemplate = new DB.Models.PricingTemplate()
             {
                 Default = true,
                 Fboid = fboId,
@@ -112,19 +116,19 @@ namespace FBOLinx.Web.Services
             await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
         }
 
-        public async Task<List<PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             _FboId = fboId;
             _GroupId = groupId;
 
-            List<PricingTemplate> result = new List<PricingTemplate>();
+            List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
             var standardTemplates = await GetStandardPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
             var aircraftPricesResult = await GetTailSpecificPricingTemplatesForCustomerAsync(customer, fboId, groupId, pricingTemplateId);
 
             result.AddRange(standardTemplates);
 
             //Set the applicable tail numbers for the aircraft-specific templates
-            foreach (PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
+            foreach (DB.Models.PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
             {
                 if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
                     continue;
@@ -150,7 +154,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        private async Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -176,7 +180,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        private async Task<List<DB.Models.PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -190,7 +194,7 @@ namespace FBOLinx.Web.Services
                                                     && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
                                               group pt by new { pt.Oid, pt.Name, pt.Fboid, pt.CustomerId, pt.Notes, pt.Type, pt.MarginType }
                 into groupedPrices
-                                              select new PricingTemplate()
+                                              select new DB.Models.PricingTemplate()
                                               {
                                                   Oid = groupedPrices.Key.Oid,
                                                   Name = groupedPrices.Key.Name,
@@ -205,7 +209,266 @@ namespace FBOLinx.Web.Services
             return aircraftPricesResult;
         }
 
-        public async Task<List<PricingTemplatesGridViewModel>> GetPricingTemplates(int fboId, int groupId)
+        
+        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
+        {
+            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max };
+            await _context.PriceTiers.AddAsync(newPriceTier);
+            await _context.SaveChangesAsync();
+
+            var newCustomerMargin = new CustomerMargins()
+            {
+                Amount = 0,
+                TemplateId = priceTemplateId,
+                PriceTierId = newPriceTier.Oid
+            };
+            await _context.CustomerMargins.AddAsync(newCustomerMargin);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task<PricingTemplateDto> GetPricingTemplateById(int oid)
+        {
+            var result = await _context.PricingTemplate.FindAsync(oid);
+            return result.Adapt<PricingTemplateDto>();
+        }
+
+        public async Task<IEnumerable<PricingTemplateDto>> GetPricingTemplates()
+        {
+            var pricingTemplate = await _context.PricingTemplate.ToListAsync();
+            return pricingTemplate.Adapt<IEnumerable<PricingTemplateDto>>();
+        }
+
+        public async Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate)
+        { 
+
+            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            _context.Entry(pricingTemplateEntity).State = EntityState.Modified;
+            FixOtherDefaults(pricingTemplateEntity);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PricingTemplateExists(id))
+                {
+                    return false;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return true;
+        }
+        private bool PricingTemplateExists(int id)
+        {
+            return _context.PricingTemplate.Any(e => e.Oid == id);
+        }
+
+        private void FixOtherDefaults(DB.Models.PricingTemplate pricingTemplate)
+        {
+            if (pricingTemplate.Default.GetValueOrDefault())
+            {
+                var otherDefaults = _context.PricingTemplate.Where(x =>
+                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid);
+                foreach (var otherDefault in otherDefaults)
+                {
+                    otherDefault.Default = false;
+                    _context.Entry(otherDefault).State = EntityState.Modified;
+                }
+            }
+        }
+        public async Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate)
+        {
+            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            FixOtherDefaults(pricingTemplateEntity);
+
+            _context.PricingTemplate.Add(pricingTemplateEntity);
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate)
+        {
+            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            FixOtherDefaults(pricingTemplateEntity);
+
+            _context.PricingTemplate.Add(pricingTemplateEntity);
+
+            await _context.SaveChangesAsync();
+
+            return pricingTemplate.Adapt<PricingTemplateDto>(); 
+        }
+        public async Task<PricingTemplateDto> GetDefaultTemplate(int fboId)
+        {
+            var pricingTemplate =  await _context.PricingTemplate.FirstOrDefaultAsync(s => s.Fboid == fboId && s.Default == true);
+            return pricingTemplate.Adapt<PricingTemplateDto>();
+        }
+        public async Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId)
+        {
+            var pricingTemplate = await _context.PricingTemplate.FirstOrDefaultAsync(p => p.Fboid.Equals(fboId) && (p.Default ?? false));
+            return pricingTemplate.Adapt<PricingTemplateDto>();
+        }
+
+        public async Task DeletePricingTemplate(PricingTemplateDto pricingTemplate)
+        {
+            _context.PricingTemplate.Remove(pricingTemplate.Adapt<DB.Models.PricingTemplate>());
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<PricingTemplateDto> CopyPricingTemplate(PrincingTemplateRequest pricingTemplate)
+        {
+            var existingTemplate = _context.PricingTemplate.FirstOrDefault(s => s.Oid == pricingTemplate.currentPricingTemplateId);
+
+            if (existingTemplate == null) return null;
+
+            DB.Models.PricingTemplate pt = new DB.Models.PricingTemplate
+            {
+                Name = pricingTemplate.name,
+                Fboid = existingTemplate.Fboid,
+                Default = false,
+                Notes = existingTemplate.Notes,
+                MarginType = existingTemplate.MarginType,
+                Email = existingTemplate.Email,
+                Subject = existingTemplate.Subject,
+                EmailContentId = existingTemplate.EmailContentId
+            };
+
+            _context.PricingTemplate.Add(pt);
+            await _context.SaveChangesAsync();
+
+            return pt.Adapt<PricingTemplateDto>();
+        }
+        public async Task<List<PricingTemplateGrid>> GetTemplatesWithEmailContent(int fboId, int groupId)
+        {
+            List<PricingTemplateGrid> templates = await GetPricingTemplates(fboId, groupId);
+
+            var templatesWithEmailContent = (
+                from t in templates
+                join ec in _context.EmailContent on t.EmailContentId equals ec.Oid
+                into leftJoinedEC
+                from ec in leftJoinedEC.DefaultIfEmpty()
+                select new PricingTemplateGrid
+                {
+                    CustomerId = t.CustomerId,
+                    Default = t.Default,
+                    Fboid = t.Fboid,
+                    Margin = t.Margin,
+                    YourMargin = t.Margin,
+                    MarginType = t.MarginType,
+                    Name = t.Name,
+                    Notes = t.Notes,
+                    Oid = t.Oid,
+                    Type = t.Type,
+                    Subject = t.Subject,
+                    Email = t.Email,
+                    IsPricingExpired = t.IsPricingExpired,
+                    IntoPlanePrice = t.IntoPlanePrice,
+                    CustomersAssigned = t.CustomersAssigned,
+                    EmailContentId = t.EmailContentId,
+                    EmailContent = ec
+                }
+                ).ToList();
+
+            foreach (var t in templatesWithEmailContent)
+            {
+                t.CustomerEmails = await (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                                          join c in _context.Customers on cg.CustomerId equals c.Oid
+                                          join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                                          join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
+                                          join co in _context.Contacts on custc.ContactId equals co.Oid
+                                          join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                                          join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = co.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                          from cibf in leftJoinCIBF.DefaultIfEmpty()
+                                          where (cg.Active ?? false)
+                                          && cc.CustomerType == t.Oid
+                                          && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
+                                          && !string.IsNullOrEmpty(cibg.Email)
+                                          && cibg.GroupId == groupId
+                                          && (c.Suspended ?? false) == false
+                                          select cibg.Email
+                                ).ToListAsync();
+            }
+            return templatesWithEmailContent;
+        }
+
+        public List<PricingTemplateGrid> GetCostPlusPricingTemplates(int fboId)
+        {
+            var templateCustomersCount = (
+                  from tc in
+                  (
+                      from cig in _context.CustomerInfoByGroup
+                      join cct in _context.CustomCustomerTypes on cig.CustomerId equals cct.CustomerId
+                      join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+                      where pt.Fboid == fboId && !string.IsNullOrEmpty(cct.CustomerType.ToString())
+                      select new
+                      {
+                          pt.Oid,
+                          cct.CustomerId
+                      }
+                  )
+                  group tc by tc.Oid into resultsGroup
+                  select new
+                  {
+                      Oid = resultsGroup.Key,
+                      Count = resultsGroup.Count()
+                  }).ToList();
+
+            List<PricingTemplateGrid> result = (
+                from p in _context.PricingTemplate
+                join tcc in templateCustomersCount on p.Oid equals tcc.Oid
+                into leftJoinTemplateCustomersCount
+                from tcc in leftJoinTemplateCustomersCount.DefaultIfEmpty()
+                where p.Fboid == fboId && p.MarginType == 0
+                select new PricingTemplateGrid
+                {
+                    CustomersAssigned = tcc == null ? 0 : tcc.Count
+                }).ToList();
+            return result;
+        }
+
+        public async Task<List<PricingTemplateGrid>> GetDefaultPricingTemplateByFboId(int fboId)
+        {
+            return await (
+                from p in _context.PricingTemplate
+                join cm in (
+                    from c in _context.CustomerMargins
+                    group c by new { c.TemplateId }
+                    into cmResults
+                    select new CustomerMarginModel
+                    {
+                        TemplateId = cmResults.Key.TemplateId,
+                        MaxPrice = cmResults.Max(x => (x.Amount ?? 0))
+                    }) on p.Oid equals cm.TemplateId
+                into leftJoinCustomerMargins
+                from cm in leftJoinCustomerMargins.DefaultIfEmpty()
+                join fp in (
+                    from f in _context.Fboprices
+                    where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
+                    select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
+                from fp in leftJoinFboPrices.DefaultIfEmpty()
+                where p.Fboid == fboId
+                    && (p.Default ?? false)
+                select new PricingTemplateGrid
+                {
+                    CustomerId = p.CustomerId,
+                    Default = p.Default,
+                    Fboid = p.Fboid,
+                    Margin = cm == null ? 0 : cm.MaxPrice,
+                    MarginType = p.MarginType,
+                    Name = p.Name,
+                    Notes = p.Notes,
+                    Subject = p.Subject,
+                    Email = p.Email,
+                    Oid = p.Oid,
+                    Type = p.Type,
+                    IntoPlanePrice = (fp == null ? 0 : (fp.Price ?? 0)) +
+                                     (cm == null ? 0 : cm.MaxPrice)
+                }).ToListAsync();
+        }
+        public async Task<List<PricingTemplateGrid>> GetPricingTemplates(int fboId, int groupId)
         {
             //Load customer assignments by template ID
             var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
@@ -282,7 +545,7 @@ namespace FBOLinx.Web.Services
                               pt.EmailContentId,
                           }
                     into groupedPt
-                          select new PricingTemplatesGridViewModel
+                          select new PricingTemplateGrid
                           {
                               CustomerId = groupedPt.Key.CustomerId,
                               Default = groupedPt.Key.Default,
@@ -305,23 +568,6 @@ namespace FBOLinx.Web.Services
                 .ToList();
 
             return result;
-        }
-
-        private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
-        {
-            var newPriceTier = new PriceTiers() { Min = min, Max = max, MaxEntered = max };
-            await _context.PriceTiers.AddAsync(newPriceTier);
-            await _context.SaveChangesAsync();
-
-            var newCustomerMargin = new CustomerMargins()
-            {
-                Amount = 0,
-                TemplateId = priceTemplateId,
-                PriceTierId = newPriceTier.Oid
-            };
-            await _context.CustomerMargins.AddAsync(newCustomerMargin);
-            await _context.SaveChangesAsync();
-
         }
     }
 }

@@ -16,6 +16,8 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Services
 {
