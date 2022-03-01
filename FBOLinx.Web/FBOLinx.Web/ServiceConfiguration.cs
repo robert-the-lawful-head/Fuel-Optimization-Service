@@ -4,6 +4,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Extensions;
 using FBOLinx.Web.Auth;
+using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,6 +25,8 @@ namespace FBOLinx.Web
             {
                 o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
+            services.ConfigureSwagger();
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
