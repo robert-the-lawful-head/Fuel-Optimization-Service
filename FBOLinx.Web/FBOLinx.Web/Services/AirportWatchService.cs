@@ -573,10 +573,11 @@ namespace FBOLinx.Web.Services
                 //Fetch all airports with antenna data
                 var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
                 var distinctBoxes = await _context.AirportWatchHistoricalData
-                    .Where(x => x.BoxTransmissionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.BoxName))
+                    .Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime)
                     .Select(x => x.BoxName)
                     .Distinct()
                     .ToListAsync();
+                distinctBoxes.RemoveAll(x => string.IsNullOrEmpty(x));
                 distinctBoxes = distinctBoxes.Select(x => x.Split('_')[0].ToUpper()).ToList();
 
                 //Fetch distinct airports from clusters or that were added manually
