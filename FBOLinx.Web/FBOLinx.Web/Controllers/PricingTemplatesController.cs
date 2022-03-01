@@ -23,23 +23,16 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomCustomerTypeService _customCustomerTypeService;
         
 
-        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, ICustomCustomerTypeService _customCustomerTypeService)
+        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, ICustomCustomerTypeService customCustomerTypeService)
         {
             _pricingTemplateService = pricingTemplateService;
             _customerMarginService = customerMarginService;
-            _customCustomerTypeService = _customCustomerTypeService;
-        }
-
-        // GET: api/PricingTemplates
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<PricingTemplate>>> GetPricingTemplate()
-        {
-            return Ok(await _pricingTemplateService.GetPricingTemplates());
+            _customCustomerTypeService = customCustomerTypeService;
         }
 
         // GET: api/PricingTemplates/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetPricingTemplate([FromRoute] int id)
+        public async Task<ActionResult<PricingTemplateDto>> GetPricingTemplate([FromRoute] int id)
         {
             var pricingTemplate =  await _pricingTemplateService.GetPricingTemplateById(id);
 
@@ -49,7 +42,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("fbodefaultpricingtemplate/group/{groupId}/fbo/{fboId}")]
-        public async Task<IActionResult> GetPricingTemplateByFboIdForDefaultTemplate([FromRoute] int groupId, [FromRoute] int fboId)
+        public async Task<ActionResult<List<PricingTemplateGrid>>> GetPricingTemplateByFboIdForDefaultTemplate([FromRoute] int groupId, [FromRoute] int fboId)
         {
             await _pricingTemplateService.FixDefaultPricingTemplate(fboId);
 
@@ -59,7 +52,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("group/{groupId}/fbo/{fboId}")]
-        public async Task<IActionResult> GetPricingTemplateByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
+        public async Task<ActionResult<List<PricingTemplateGrid>>> GetPricingTemplateByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
         { 
             List<PricingTemplateGrid> marginTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
@@ -67,7 +60,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("with-email-content/group/{groupId}/fbo/{fboId}")]
-        public async Task<IActionResult> GetPricingTemplatesWithEmailContentByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
+        public async Task<ActionResult<List<PricingTemplateGrid>>> GetPricingTemplatesWithEmailContentByGroupIdAndFboId([FromRoute] int groupId, [FromRoute] int fboId)
         {
             var templatesWithEmailContent = await _pricingTemplateService.GetTemplatesWithEmailContent(fboId, groupId);
 
@@ -79,27 +72,19 @@ namespace FBOLinx.Web.Controllers
         {
            var result =  _pricingTemplateService.GetCostPlusPricingTemplates(fboId);
 
-            if (result.Count > 0)
-            {
-                var custAssigned = result.FirstOrDefault(s => s.CustomersAssigned > 0);
+            if (result.Count == 0) return Ok(new ExistReponse() { Exist = false });
 
-                if(custAssigned != null)
-                {
-                    return Ok(new { Exist = true });
-                }
-                else
-                {
-                    return Ok(new { Exist = false });
-                }
-            }
+            var custAssigned = result.FirstOrDefault(s => s.CustomersAssigned > 0);
 
-            return Ok(new { Exist = false });
+            if(custAssigned == null) return Ok(new ExistReponse() { Exist = false });
+
+            return Ok(new ExistReponse() { Exist = true });
         }
 
 
         // GET: api/PricingTemplates/fbo/5/default
         [HttpGet("fbo/{fboId}/default")]
-        public async Task<IActionResult> GetDefaultPricingTemplateByFboId([FromRoute] int fboId)
+        public async Task<ActionResult<List<PricingTemplateGrid>>> GetDefaultPricingTemplateByFboId([FromRoute] int fboId)
         {
             var result = _pricingTemplateService.GetDefaultPricingTemplateByFboId(fboId);
 
@@ -124,15 +109,15 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/PricingTemplates
         [HttpPost]
-        public async Task<IActionResult> PostPricingTemplate([FromBody] PricingTemplateDto pricingTemplate)
+        public async Task<ActionResult<PricingTemplateDto>> PostPricingTemplate([FromBody] PricingTemplateDto pricingTemplate)
         {
             var result = await _pricingTemplateService.PostPricingTemplate(pricingTemplate);
 
-            return CreatedAtAction("GetPricingTemplate", new { id = result.Oid }, result);
+            return CreatedAtAction(nameof(GetPricingTemplate), new { id = result.Oid }, result);
         }
 
         [HttpPost("copypricingtemplate")]
-        public async Task<IActionResult> CopyPricingTemplate([FromBody] PrincingTemplateRequest pricingTemplate)
+        public async Task<ActionResult<PricingTemplateDto>> CopyPricingTemplate([FromBody] PrincingTemplateRequest pricingTemplate)
         {
             if (pricingTemplate.currentPricingTemplateId == null && pricingTemplate.name == string.Empty) return null;
 
@@ -143,13 +128,13 @@ namespace FBOLinx.Web.Controllers
            
             if(copiedPricingTemplate.Oid == 0) return Ok(copiedPricingTemplate.Oid);
 
-            _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, copiedPricingTemplate.Oid);
+            await _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, copiedPricingTemplate.Oid);
             
             return Ok(copiedPricingTemplate.Oid);
         }
 
         [HttpGet("checkdefaulttemplate/{fboId}")]
-        public async Task<IActionResult> CheckDefaultTemplate([FromRoute] int fboId)
+        public async Task<ActionResult<PricingTemplateDto>> CheckDefaultTemplate([FromRoute] int fboId)
         {
             if(fboId == 0) return Ok(null);
             
@@ -162,7 +147,7 @@ namespace FBOLinx.Web.Controllers
 
         // DELETE: api/PricingTemplates/5/fbo/124
         [HttpDelete("{oid}/fbo/{fboId}")]
-        public async Task<IActionResult> DeletePricingTemplate([FromRoute] int oid, [FromRoute] int fboId)
+        public async Task<ActionResult<PricingTemplateDto>> DeletePricingTemplate([FromRoute] int oid, [FromRoute] int fboId)
         {
             var pricingTemplate = await _pricingTemplateService.GetPricingTemplateById(oid);
 
@@ -174,7 +159,7 @@ namespace FBOLinx.Web.Controllers
 
             if (defaultPricingTemplate == null) Ok(pricingTemplate);
 
-            _customCustomerTypeService.SaveCustomersTypes(fboId,oid, defaultPricingTemplate.Oid);
+            await _customCustomerTypeService.SaveCustomersTypes(fboId,oid, defaultPricingTemplate.Oid);
 
             return Ok(pricingTemplate);
         }

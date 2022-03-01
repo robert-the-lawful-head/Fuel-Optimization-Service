@@ -1,9 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
