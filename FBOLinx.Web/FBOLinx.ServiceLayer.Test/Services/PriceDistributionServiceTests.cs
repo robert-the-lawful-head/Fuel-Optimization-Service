@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
@@ -12,15 +11,14 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Services;
 using Moq;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using FBOLinx.Web;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 
 namespace FBOLinx.ServiceLayer.Test.Services
 {

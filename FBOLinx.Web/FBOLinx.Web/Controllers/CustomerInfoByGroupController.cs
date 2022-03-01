@@ -20,6 +20,8 @@ using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.Dto.Responses;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -880,7 +882,7 @@ namespace FBOLinx.Web.Controllers
             {
                 try
                 {
-                    List<PricingTemplatesGridViewModel> pricingTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
+                    List<PricingTemplateGrid> pricingTemplates = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
                     var fboIcao = await _fboService.GetFBOIcao(fboId);
 

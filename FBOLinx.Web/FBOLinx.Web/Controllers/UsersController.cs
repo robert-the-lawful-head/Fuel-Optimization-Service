@@ -15,8 +15,8 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 
 namespace FBOLinx.Web.Controllers
 {
