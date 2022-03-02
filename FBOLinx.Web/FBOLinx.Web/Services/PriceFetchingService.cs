@@ -262,7 +262,7 @@ namespace FBOLinx.Web.Services
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
                                                   PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                                                  Product = fp.Product
+                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A")
                                               }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
                 //var pricingResults = (from fp in fboPrices
@@ -433,7 +433,7 @@ namespace FBOLinx.Web.Services
                     allDepartureOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     allDepartureOptions.ForEach(x =>
                     {
-                        var productName = x.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A");
+                        var productName = x.Product;
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
                             productName += " (Domestic Departure)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
