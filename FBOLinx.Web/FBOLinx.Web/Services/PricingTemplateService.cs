@@ -217,7 +217,7 @@ namespace FBOLinx.Web.Services
 
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
 
             var tempMarginTiers = await (from c in _context.CustomerMargins
                                          join tm in _context.PriceTiers on c.PriceTierId equals tm.Oid

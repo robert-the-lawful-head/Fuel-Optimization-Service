@@ -116,7 +116,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var fboPrices = from f in _context.Fboprices
-                            where f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
+                            where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
                             group f by f.Fboid into g
                             select new
                             {

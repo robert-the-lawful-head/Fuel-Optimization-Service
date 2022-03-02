@@ -523,7 +523,7 @@ namespace FBOLinx.Web.Services
         public async Task<double> GetCurrentPostedRetail(int fboId)
         {
             var postedRetail = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product == "JetA Retail").ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product == "JetA Retail").ToListAsync();
             return postedRetail.FirstOrDefault().Price.GetValueOrDefault();
         }
 
