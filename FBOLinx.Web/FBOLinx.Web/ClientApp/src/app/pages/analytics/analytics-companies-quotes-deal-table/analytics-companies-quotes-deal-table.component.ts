@@ -48,6 +48,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         'directOrders',
         'companyQuotesTotal',
         'conversionRate',
+        'conversionRateTotal',
         'totalOrders',
         'airportOrders',
         'customerBusiness',
@@ -130,13 +131,18 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
                 localStorage.getItem(this.tableLocalStorageKey));
-           
-            if (this.columns.length === 7) {
+
+            if (this.columns.length === 7 ) {
                 const customerBusiness = {
                     id: 'customerBusiness',
                     name: '% of Customer\'s Business',
                 };
                 this.columns.push(customerBusiness);
+                const conversionRateTotal = {
+                    id: 'conversionRateTotal',
+                    name: 'Conversion Rate (Total)',
+                };
+                this.columns.push(conversionRateTotal);
             }
         } else {
             this.columns = [
@@ -155,6 +161,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                 {
                     id: 'conversionRate',
                     name: 'Conversion Rate',
+                },
+                {
+                    id: 'conversionRateTotal',
+                    name: 'Conversion Rate (Total)',
                 },
                 {
                     id: 'totalOrders',

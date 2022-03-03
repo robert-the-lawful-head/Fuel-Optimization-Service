@@ -121,7 +121,7 @@
 
                 <ng-container matColumnDef="conversionRate">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Conversion Rate</span>
+                        <span>Conversion Rate (Directs)</span>
                         <span *ngIf="dataSource">
                             <app-table-column-filter [matDataSource]="dataSource"
                                                      [matSort]="sort"
@@ -134,9 +134,27 @@
 
                 </ng-container>
 
+                <ng-container matColumnDef="conversionRateTotal">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Conversion Rate (Total)</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="conversionRateTotal"
+                                                     propertyName="conversionRateTotal"
+                                                     [columnFormat]="1"></app-table-column-filter>
+                        </span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.conversionRateTotal}}%</td>
+
+                </ng-container>
+
                 <ng-container matColumnDef="totalOrders">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Total Orders at {{ fbo }}</span>
+                        <div class="container">
+                            <div>Total Orders at</div>
+                            <div>{{ fbo }}</div>
+                        </div>
                         <span *ngIf="dataSource">
                             <app-table-column-filter [matDataSource]="dataSource"
                                                      [matSort]="sort"
