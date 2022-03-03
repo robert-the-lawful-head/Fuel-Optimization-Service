@@ -304,7 +304,7 @@ namespace FBOLinx.ServiceLayer.Test.Services
 
             var pricingTemplateServiceMock = new Mock<IPricingTemplateService>();
             pricingTemplateServiceMock.Setup(x => x.GetAllPricingTemplatesForCustomerAsync(
-                It.IsAny<CustomerInfoByGroup>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+                It.IsAny<CustomerInfoByGroup>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(new List<PricingTemplate>() { new PricingTemplate() }));
             services.AddSingleton(pricingTemplateServiceMock.Object);
 
