@@ -204,8 +204,8 @@ namespace FBOLinx.Web.Controllers
 
             var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
 
-            var activePricingCost = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
-            var activePricingRetail = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
+            var activePricingCost = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveFrom <= DateTime.UtcNow && s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
+            var activePricingRetail = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveFrom <= DateTime.UtcNow && s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
             
             if (activePricingCost != null && activePricingRetail != null)
             {
@@ -291,6 +291,7 @@ namespace FBOLinx.Web.Controllers
             var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId &&
                                                                 f.Product != null &&
                                                                 f.Product.ToLower() == product.ToLower() &&
+                                                                f.EffectiveFrom <= DateTime.UtcNow &&
                                                                 f.EffectiveTo > DateTime.UtcNow).FirstOrDefaultAsync();
 
             return Ok(fboprices);
@@ -615,6 +616,7 @@ namespace FBOLinx.Web.Controllers
             var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
 
             var activePricing = await _context.Fboprices.Where(s => 
+                                        s.EffectiveFrom <= DateTime.UtcNow &&
                                         s.EffectiveTo > DateTime.UtcNow && 
                                         (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
                                         groupFbos.Any(g => g == s.Fboid) && 

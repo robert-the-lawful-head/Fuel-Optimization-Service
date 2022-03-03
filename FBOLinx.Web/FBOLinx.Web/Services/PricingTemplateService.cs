@@ -225,7 +225,7 @@ namespace FBOLinx.Web.Services
 
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
 
             var tempMarginTiers = await (from c in _context.CustomerMargins
                                          join tm in _context.PriceTiers on c.PriceTierId equals tm.Oid
@@ -243,7 +243,7 @@ namespace FBOLinx.Web.Services
                                     join cm in tempMarginTiers on p.Oid equals cm.TemplateId
                                         into leftJoinCmTiers
                                     from cm in leftJoinCmTiers.DefaultIfEmpty()
-                                    join fp in tempFboPrices on "JetA " + p.MarginTypeProduct equals fp.Product
+                                    join fp in tempFboPrices on "JetA " + p.MarginTypeProduct equals fp.GenericProduct
                                         into leftJoinFp
                                     from fp in leftJoinFp.DefaultIfEmpty()
                                     where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
