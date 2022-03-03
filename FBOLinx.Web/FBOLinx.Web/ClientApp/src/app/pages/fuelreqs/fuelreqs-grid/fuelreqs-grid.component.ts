@@ -79,7 +79,7 @@ const initialColumns: ColumnType[] = [
         name: 'Transaction Status',
     },
     {
-        id: 'createdDate',
+        id: 'dateCreated',
         name: 'Created',
     },
     {
