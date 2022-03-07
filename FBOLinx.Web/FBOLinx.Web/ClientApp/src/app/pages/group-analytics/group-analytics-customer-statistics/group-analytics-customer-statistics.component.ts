@@ -7,11 +7,13 @@ import {
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subject } from 'rxjs';
+import { Subject, interval } from 'rxjs';
+import { takeWhile } from 'rxjs/operators';
 import {
     CsvExportModalComponent,
     ICsvExportModalData,
@@ -35,6 +37,7 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 export class GroupAnalyticsCustomerStatisticsComponent
     implements OnInit, AfterViewInit, OnDestroy
 {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Input() fbos: any[];
 
@@ -47,10 +50,14 @@ export class GroupAnalyticsCustomerStatisticsComponent
     dataSource: MatTableDataSource<any[]>;
     filtersChanged: Subject<any> = new Subject<any>();
 
-    selectedFbos: any[] = [];
+    selectedFbos: any[];
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
+
+    pageIndex = 0;
+    pageSize = 10;
+    dataLength = 0;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -105,6 +112,22 @@ export class GroupAnalyticsCustomerStatisticsComponent
                     this.icao = this.sharedService.currentUser.icao;
                 }
             });
+
+        if (this.fbos == undefined) {
+            var isFbosLoaded = false;
+            interval(1000)
+                .pipe(takeWhile(() => !isFbosLoaded))
+                .subscribe(() => {
+                    if (this.fbos == undefined)
+                        this.ngxLoader.startLoader(this.chartName);
+                    else {
+                        this.ngxLoader.stopLoader(this.chartName);
+                        this.selectedFbos = this.fbos;
+                        this.refreshData();
+                        isFbosLoaded = true;
+                    }
+                });
+        }
     }
 
     ngOnDestroy() {
@@ -186,6 +209,7 @@ export class GroupAnalyticsCustomerStatisticsComponent
             this.filterEndDate
         ).subscribe(
             (data: any) => {
+                this.dataLength = data.length;
                 this.dataSource = new MatTableDataSource(data);
                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
@@ -203,6 +227,8 @@ export class GroupAnalyticsCustomerStatisticsComponent
                     }
                 };
                 this.dataSource.sort = this.sort;
+                this.paginator.pageIndex = 0;
+                this.dataSource.paginator = this.paginator;
             },
             () => {},
             () => {
@@ -290,6 +316,14 @@ export class GroupAnalyticsCustomerStatisticsComponent
         localStorage.setItem(
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
+        );
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem('pageIndex', event.pageIndex);
+        sessionStorage.setItem(
+            'pageSizeValue',
+            this.paginator.pageSize.toString()
         );
     }
 }
