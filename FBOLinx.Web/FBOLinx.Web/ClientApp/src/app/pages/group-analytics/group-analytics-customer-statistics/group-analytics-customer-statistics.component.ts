@@ -165,6 +165,8 @@ export class GroupAnalyticsCustomerStatisticsComponent
     }
 
     initColumns() {
+
+
         this.tableLocalStorageKey = `group-analytics-customer-statistics-${this.sharedService.currentUser.groupId}`;
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
@@ -199,10 +201,14 @@ export class GroupAnalyticsCustomerStatisticsComponent
                 },
             ];
         }
+
+        this.refreshData();
+
+
     }
 
     refreshData() {
-        this.ngxLoader.startLoader(this.chartName);
+         this.ngxLoader.startLoader(this.chartName);
         this.fetchData(
             this.selectedFbos.map((fbo) => fbo.oid),
             this.filterStartDate,
