@@ -201,10 +201,6 @@ export class GroupAnalyticsCustomerStatisticsComponent
                 },
             ];
         }
-
-        this.refreshData();
-
-
     }
 
     refreshData() {
