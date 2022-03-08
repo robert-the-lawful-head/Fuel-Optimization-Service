@@ -70,7 +70,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("getcostpluspricingtemplate/{fboId}")]
         public async Task<IActionResult> GetCostPlusPricingTemplates([FromRoute] int fboId)
         {
-           var result =  _pricingTemplateService.GetCostPlusPricingTemplates(fboId);
+           var result = await _pricingTemplateService.GetCostPlusPricingTemplates(fboId);
 
             if (result.Count == 0) return Ok(new ExistReponse() { Exist = false });
 
