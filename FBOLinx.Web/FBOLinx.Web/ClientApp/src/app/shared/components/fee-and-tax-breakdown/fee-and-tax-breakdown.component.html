@@ -237,7 +237,7 @@
 
         <!--Below the line taxes - Display mode 2-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes" class="row">
-            <div class="col-5 label-tax-fees" style="padding-right: 0px">
+            <div class="col-6 label-tax-fees" style="padding-right: 0px">
                 <div [ngClass]="{
                         'strike-through':
                             belowLineTax.isOmitted ||
@@ -260,7 +260,7 @@
                     </div>
                 </div>                
             </div>
-            <div class="col-7 label-tax-fees" style="padding-right: 0px">
+            <div class="col-6 label-tax-fees" style="padding-right: 0px">
                 <div [ngClass]="{
                         'strike-through':
                             belowLineTax.isOmitted ||
