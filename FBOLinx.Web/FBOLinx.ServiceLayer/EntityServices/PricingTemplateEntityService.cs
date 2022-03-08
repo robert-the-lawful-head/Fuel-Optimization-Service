@@ -26,7 +26,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
     {
         private readonly FboLinxContext _context;
         public PricingTemplateEntityService(FboLinxContext context,
-            IFboPricesEntityService fboPricesEntityService,
             ICustomerMarginsEntityService customerMarginEntityService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(context)
         {
