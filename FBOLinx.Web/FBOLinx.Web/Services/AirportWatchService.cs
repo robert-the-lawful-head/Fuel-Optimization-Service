@@ -215,7 +215,7 @@ namespace FBOLinx.Web.Services
         {
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
             var historicalData = await GetAircraftsHistoricalDataAssociatedWithFbo(groupId, fboId, request);
-            historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
+            
 
             if (historicalData != null && historicalData.Count > 0)
             {
@@ -272,6 +272,8 @@ namespace FBOLinx.Web.Services
                         };
                     })
                     .ToList();
+
+                historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
                 var result = (from h in historicalData
                               join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
@@ -418,7 +420,10 @@ namespace FBOLinx.Web.Services
                 }
                 else
                 {
+                    //Capture the tail from the previous record before copying the new information to prevent needing to lookup the tail again
+                    var tailNumber = oldAirportWatchLiveData.TailNumber;
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
+                    oldAirportWatchLiveData.TailNumber = tailNumber;
                     _LiveDataToUpdate.Add(oldAirportWatchLiveData);
 
                     if (aircraftOldAirportWatchLiveDataCollection.Count > 1)
@@ -538,8 +543,6 @@ namespace FBOLinx.Web.Services
         public async Task<List<FboHistoricalDataModel>> GetAircraftsHistoricalDataAssociatedWithFbo(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             var historicalData = await GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, request);
-
-            var icao = await _fboService.GetFBOIcao(fboId);
 
             var result = (from h in historicalData
                           join a in _aircraftService.GetAllAircraftsOnlyAsQueryable() on h.AircraftId equals a.AircraftId
