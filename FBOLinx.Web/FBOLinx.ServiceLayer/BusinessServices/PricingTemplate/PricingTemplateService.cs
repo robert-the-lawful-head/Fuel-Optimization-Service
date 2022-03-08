@@ -1,8 +1,8 @@
 ﻿
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.Dto.Requests;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -15,26 +15,30 @@ using System.Threading.Tasks;
 namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
     public class PricingTemplateService : IPricingTemplateService, IPricingTemplateGridService
-    {
-        private CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
-        
+    {        
         private IPricingTemplateEntityService _pricingTemplateEntityService;
         private ICustomerTypesEntityService _customerTypesEntityService;
         private ICustomerMarginsEntityService _customerMarginsEntityService;
         private ICustomerAircraftEntityService _customerAircraftEntityService;
+        private ICustomCustomerTypeService _customCustomerTypeService;
+        private ICustomerMarginService _customerMarginService;
+        
+
 
         public PricingTemplateService(
-            CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IPricingTemplateEntityService pricingTemplateEntityService,
             ICustomerTypesEntityService customerTypesEntityService,
             ICustomerMarginsEntityService customerMarginsEntityService,
-            ICustomerAircraftEntityService customerAircraftEntityService)
+            ICustomerAircraftEntityService customerAircraftEntityService,
+            ICustomCustomerTypeService customCustomerTypeService,
+            ICustomerMarginService customerMarginService)
         {
-            _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _pricingTemplateEntityService = pricingTemplateEntityService;
             _customerTypesEntityService = customerTypesEntityService;
             _customerMarginsEntityService = customerMarginsEntityService;
             _customerAircraftEntityService = customerAircraftEntityService;
+            _customCustomerTypeService = customCustomerTypeService;
+            _customerMarginService = customerMarginService;
         }
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
@@ -180,14 +184,29 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             return pricingTemplate.Adapt<PricingTemplateDto>();
         }
 
-        public async Task DeletePricingTemplate(PricingTemplateDto pricingTemplate)
+        public async Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate,int oid, int fboId)
         {
+
             await _pricingTemplateEntityService.DeleteAsync(pricingTemplate.Oid);
+
+
+            var defaultPricingTemplate = await GetDefaultTemplateIncludeNullCheck(fboId);
+
+            if (defaultPricingTemplate == null) return pricingTemplate;
+
+            await _customCustomerTypeService.SaveCustomersTypes(fboId, oid, defaultPricingTemplate.Oid);
+
+            return pricingTemplate;
+
         }
 
         public async Task<PricingTemplateDto> CopyPricingTemplate(PrincingTemplateRequest pricingTemplate)
         {
             var pricingTemplateCopy = await _pricingTemplateEntityService.CopyPricingTemplate(pricingTemplate.currentPricingTemplateId, pricingTemplate.name);
+
+            if (pricingTemplateCopy.Oid == 0) return pricingTemplateCopy.Adapt<PricingTemplateDto>();
+
+            await _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, pricingTemplateCopy.Oid);
 
             return pricingTemplateCopy.Adapt<PricingTemplateDto>();
         }
