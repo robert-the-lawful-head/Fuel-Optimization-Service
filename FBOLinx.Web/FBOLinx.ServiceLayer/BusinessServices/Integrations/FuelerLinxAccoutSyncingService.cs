@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
-using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using AircraftSizes = FBOLinx.Core.Enums.AircraftSizes;
+using Mapster;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 {
@@ -120,7 +117,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerInfoByGroupRecords.AddRange(customerInfoByGroupRecordsToInsert);
 
             //Update/Insert all records from above
-            await _customerInfoByGroupEntityService.BulkInsertOrUpdate(_customerInfoByGroupRecords);
+            var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Adapt<CustomerInfoByGroup>()).ToList();
+            await _customerInfoByGroupEntityService.BulkInsertOrUpdate(customerInfoByGroupRecords);
         }
 
         private async Task UpdateFleetStatus()
@@ -174,8 +172,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                     Suspended = _fuelerlinxCompany.HideInFboLinx.GetValueOrDefault()
                 });
 
-            _customerInfoByGroupRecords = await _customerInfoByGroupEntityService.GetListBySpec(
+            var result = await _customerInfoByGroupEntityService.GetListBySpec(
                 new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
+            _customerInfoByGroupRecords = result.Adapt<List<CustomerInfoByGroupDTO>>();
         }
     }
 }
