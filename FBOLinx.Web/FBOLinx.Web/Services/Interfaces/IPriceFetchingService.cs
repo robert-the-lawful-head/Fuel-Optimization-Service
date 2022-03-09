@@ -17,7 +17,7 @@ namespace FBOLinx.Web.Services.Interfaces
 
         public Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
             string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
-            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0);
+            ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0, bool isAnalytics = false);
 
         public Task<List<CustomerWithPricing>> GetCustomerPricingAsync(int fboId, int groupId,
             int customerInfoByGroupId, List<int> pricingTemplateIds,

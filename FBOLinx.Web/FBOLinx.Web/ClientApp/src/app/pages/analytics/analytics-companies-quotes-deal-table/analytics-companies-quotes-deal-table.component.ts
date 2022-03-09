@@ -48,8 +48,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         'directOrders',
         'companyQuotesTotal',
         'conversionRate',
+        'conversionRateTotal',
         'totalOrders',
         'airportOrders',
+        'customerBusiness',
         'lastPullDate',
     ];
     dataSource: MatTableDataSource<any[]>;
@@ -128,8 +130,20 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
+                localStorage.getItem(this.tableLocalStorageKey));
+
+            if (this.columns.length === 7 ) {
+                const customerBusiness = {
+                    id: 'customerBusiness',
+                    name: '% of Customer\'s Business',
+                };
+                this.columns.push(customerBusiness);
+                const conversionRateTotal = {
+                    id: 'conversionRateTotal',
+                    name: 'Conversion Rate (Total)',
+                };
+                this.columns.push(conversionRateTotal);
+            }
         } else {
             this.columns = [
                 {
@@ -149,12 +163,20 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                     name: 'Conversion Rate',
                 },
                 {
+                    id: 'conversionRateTotal',
+                    name: 'Conversion Rate (Total)',
+                },
+                {
                     id: 'totalOrders',
                     name: `Total Orders at ${this.fbo}`,
                 },
                 {
                     id: 'airportOrders',
                     name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+                },
+                {
+                    id: 'customerBusiness',
+                    name: '% of Customer\'s Business',
                 },
                 {
                     id: 'lastPullDate',

@@ -18,10 +18,26 @@ namespace FBOLinx.DB.Context
         }
 
         public virtual DbSet<FboLinxImageFileData> FboLinxImageFileData { get; set; }
+        public virtual DbSet<FbolinxPricingTemplateFileAttachment> FbolinxPricingTemplateAttachments { get; set; }
+        public virtual DbSet<FbolinxEmailContentFileAttachment> FbolinxEmailContentAttachments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<FboLinxImageFileData>(entity =>
+            {
+                entity.Property(e => e.ContentType).IsUnicode(false);
+
+                entity.Property(e => e.FileName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FbolinxPricingTemplateFileAttachment>(entity =>
+            {
+                entity.Property(e => e.ContentType).IsUnicode(false);
+
+                entity.Property(e => e.FileName).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<FbolinxEmailContentFileAttachment>(entity =>
             {
                 entity.Property(e => e.ContentType).IsUnicode(false);
 

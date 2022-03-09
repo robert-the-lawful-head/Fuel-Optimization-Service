@@ -26,6 +26,7 @@ namespace FBOLinx.DB.Models
         public bool? Archived { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string FuelOn { get; set; } = "Departure";
 
         [ForeignKey("CustomerId")]
         [InverseProperty("FuelReqs")]

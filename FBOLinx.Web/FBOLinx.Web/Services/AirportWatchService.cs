@@ -79,8 +79,9 @@ namespace FBOLinx.Web.Services
                         TransactionScopeAsyncFlowOption.Enabled))
                     {
                         var fuelOrders = await _context.FuelReq
-                            .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow && x.Cancelled == false)
+                            .Where(x => x.Fboid == fboId && x.Eta > DateTime.UtcNow)
                             .Include(x => x.CustomerAircraft).ToListAsync();
+                        fuelOrders.RemoveAll(x => x.Cancelled == true);
 
                         FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
                         { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.fa.Icao, Fbo = fbo.f.Fbo });
@@ -130,9 +131,7 @@ namespace FBOLinx.Web.Services
                                                 ) on awhd.TailNumber equals ca.TailNumber
                                                     into leftJoinedCustomers
                                                 from ca in leftJoinedCustomers.DefaultIfEmpty()
-                                                where awhd.Latitude >= minLatitude && awhd.Latitude <= maxLatitude &&
-                                                      awhd.Longitude >= minLongitude && awhd.Longitude <= maxLongitude
-                                                      && awhd.AircraftPositionDateTimeUtc >= timelimit
+                                                where awhd.AircraftPositionDateTimeUtc >= timelimit
                                                 select new AirportWatchLiveData
                                                 {
                                                     Oid = awhd.Oid,
@@ -160,6 +159,10 @@ namespace FBOLinx.Web.Services
                             .ThenBy(x => x.GpsAltitude)
                             .ToListAsync(); ;
 
+                        filteredResult.RemoveAll(x =>
+                            x.Latitude < minLatitude || x.Latitude > maxLatitude || x.Longitude < minLongitude ||
+                            x.Longitude > maxLongitude);
+                        
 
                         //filteredResult = await _context.AirportWatchLiveData
                         //       .Where(x => x.Latitude >= minLatitude && x.Latitude <= maxLatitude)
@@ -212,7 +215,7 @@ namespace FBOLinx.Web.Services
         {
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
             var historicalData = await GetAircraftsHistoricalDataAssociatedWithFbo(groupId, fboId, request);
-            historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
+            
 
             if (historicalData != null && historicalData.Count > 0)
             {
@@ -269,6 +272,8 @@ namespace FBOLinx.Web.Services
                         };
                     })
                     .ToList();
+
+                historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
                 var result = (from h in historicalData
                               join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
@@ -371,7 +376,7 @@ namespace FBOLinx.Web.Services
             var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
                 //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1)).ToListAsync();
 
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
@@ -415,7 +420,10 @@ namespace FBOLinx.Web.Services
                 }
                 else
                 {
+                    //Capture the tail from the previous record before copying the new information to prevent needing to lookup the tail again
+                    var tailNumber = oldAirportWatchLiveData.TailNumber;
                     AirportWatchLiveData.CopyEntity(oldAirportWatchLiveData, record);
+                    oldAirportWatchLiveData.TailNumber = tailNumber;
                     _LiveDataToUpdate.Add(oldAirportWatchLiveData);
 
                     if (aircraftOldAirportWatchLiveDataCollection.Count > 1)
@@ -536,8 +544,6 @@ namespace FBOLinx.Web.Services
         {
             var historicalData = await GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, request);
 
-            var icao = await _fboService.GetFBOIcao(fboId);
-
             var result = (from h in historicalData
                           join a in _aircraftService.GetAllAircraftsOnlyAsQueryable() on h.AircraftId equals a.AircraftId
                           into leftJoinedAircrafts
@@ -570,10 +576,11 @@ namespace FBOLinx.Web.Services
                 //Fetch all airports with antenna data
                 var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
                 var distinctBoxes = await _context.AirportWatchHistoricalData
-                    .Where(x => x.BoxTransmissionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.BoxName))
+                    .Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime)
                     .Select(x => x.BoxName)
                     .Distinct()
                     .ToListAsync();
+                distinctBoxes.RemoveAll(x => string.IsNullOrEmpty(x));
                 distinctBoxes = distinctBoxes.Select(x => x.Split('_')[0].ToUpper()).ToList();
 
                 //Fetch distinct airports from clusters or that were added manually
@@ -684,14 +691,6 @@ namespace FBOLinx.Web.Services
                 await _context.BulkInsertAsync(_HistoricalDataToInsert);
             if (_HistoricalDataToUpdate != null)
                 await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
-            await _context.AirportWatchChangeTracker.AddAsync(new AirportWatchChangeTracker()
-            {
-                DateTimeAppliedUtc = DateTime.UtcNow,
-                HistoricalDataRecords = (_HistoricalDataToInsert?.Count ?? 0) + (_HistoricalDataToUpdate?.Count ?? 0),
-                LiveDataRecords = (_LiveDataToInsert?.Count ?? 0) + (_LiveDataToUpdate?.Count ?? 0),
-                TailNumberRecords = 0
-            });
-            await _context.SaveChangesAsync();
             await transaction.CommitAsync();
         }
 

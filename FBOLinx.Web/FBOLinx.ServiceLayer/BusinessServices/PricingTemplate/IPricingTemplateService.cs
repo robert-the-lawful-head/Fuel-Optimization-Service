@@ -10,7 +10,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
     {
         Task FixCustomCustomerTypes(int groupId, int fboId);
         Task FixDefaultPricingTemplate(int fboId);
-        Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
+        public Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false);
         Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate);
@@ -19,6 +19,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId);
         Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId);
         Task<PricingTemplateDto> GetPricingTemplateById(int oid);
-
+        public Task<FbolinxPricingTemplateFileAttachment> GetFileAttachmentObject(int pricingTemplateId);
     }
 }

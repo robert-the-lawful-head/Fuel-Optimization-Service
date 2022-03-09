@@ -3,74 +3,54 @@
         <div class="flex position-relative">
             <div class="d-inline-block mr-2 ml-2" style="width: 130px">
                 <mat-form-field>
-                    <input
-                        (dateChange)="refreshData()"
-                        (focus)="dashboardSettingsStartDateFilter.open()"
-                        [(ngModel)]="filterStartDate"
-                        [matDatepicker]="dashboardSettingsStartDateFilter"
-                        [max]="filterEndDate"
-                        matInput
-                        placeholder="Start Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsStartDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsStartDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
+                    <input (dateChange)="refreshData()"
+                           (focus)="dashboardSettingsStartDateFilter.open()"
+                           [(ngModel)]="filterStartDate"
+                           [matDatepicker]="dashboardSettingsStartDateFilter"
+                           [max]="filterEndDate"
+                           matInput
+                           placeholder="Start Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsStartDateFilter
+                                    disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="d-inline-block mr-2 ml-2" style="width: 130px">
                 <mat-form-field>
-                    <input
-                        (dateChange)="refreshData()"
-                        (focus)="dashboardSettingsEndDateFilter.open()"
-                        [(ngModel)]="filterEndDate"
-                        [matDatepicker]="dashboardSettingsEndDateFilter"
-                        [min]="filterStartDate"
-                        matInput
-                        placeholder="End Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsEndDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsEndDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
+                    <input (dateChange)="refreshData()"
+                           (focus)="dashboardSettingsEndDateFilter.open()"
+                           [(ngModel)]="filterEndDate"
+                           [matDatepicker]="dashboardSettingsEndDateFilter"
+                           [min]="filterStartDate"
+                           matInput
+                           placeholder="End Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsEndDateFilter
+                                    disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="d-inline-block mr-2 ml-2">
-                <p-multiSelect
-                    class="fbos-dropdown-filter"
-                    [options]="fbos"
-                    [(ngModel)]="selectedFbos"
-                    optionLabel="fbo"
-                    display="chip"
-                    placeholder="Select FBOs"
-                    (onChange)="filterChanged()"
-                    [virtualScroll]="true"
-                    itemSize="50"
-                >
+                <p-multiSelect class="fbos-dropdown-filter"
+                               [options]="fbos"
+                               [(ngModel)]="selectedFbos"
+                               optionLabel="fbo"
+                               display="chip"
+                               placeholder="Select FBOs"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50">
                     <ng-template let-value pTemplate="selectedItems">
-                        <div
-                            class="p-multiselect-token"
-                            *ngFor="let fbo of selectedFbos"
-                        >
-                            <span
-                                class="p-multiselect-token-label ng-tns-c52-5"
-                            >
+                        <div class="p-multiselect-token"
+                             *ngFor="let fbo of selectedFbos">
+                            <span class="p-multiselect-token-label ng-tns-c52-5">
                                 {{ fbo.icao }} - {{ fbo.fbo }}
                             </span>
-                            <span
-                                class="
+                            <span class="
                                     p-multiselect-token-icon
                                     pi pi-times-circle
-                                "
-                            ></span>
+                                "></span>
                         </div>
 
                         <div *ngIf="!selectedFbos || selectedFbos.length === 0">
@@ -93,18 +73,13 @@
             </div>
             <div class="actions">
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon
-                        aria-hidden="true"
-                        class="mat-icon material-icons"
-                        role="img"
-                        >more_vert</mat-icon
-                    >
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">more_vert</mat-icon>
                 </button>
-                <mat-menu
-                    #gridActions="matMenu"
-                    class="switch-nested-menu-left-arrows"
-                    xPosition="before"
-                >
+                <mat-menu #gridActions="matMenu"
+                          class="switch-nested-menu-left-arrows"
+                          xPosition="before">
                     <button (click)="onExport()" mat-menu-item>Export</button>
                     <button (click)="openSettings()" mat-menu-item>
                         Settings
@@ -119,13 +94,11 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Company</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="company"
-                                propertyName="company"
-                                [columnFormat]="0"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="company"
+                                                     propertyName="company"
+                                                     [columnFormat]="0"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>{{ info.company }}</td>
@@ -135,13 +108,11 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Direct Orders</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="directOrders"
-                                propertyName="directOrders"
-                                [columnFormat]="1"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="directOrders"
+                                                     propertyName="directOrders"
+                                                     [columnFormat]="1"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
@@ -153,13 +124,11 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Number of Quotes</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="companyQuotesTotal"
-                                propertyName="companyQuotesTotal"
-                                [columnFormat]="1"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="companyQuotesTotal"
+                                                     propertyName="companyQuotesTotal"
+                                                     [columnFormat]="1"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
@@ -171,13 +140,11 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Conversion Rate</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="conversionRate"
-                                propertyName="conversionRate"
-                                [columnFormat]="1"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="conversionRate"
+                                                     propertyName="conversionRate"
+                                                     [columnFormat]="1"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
@@ -189,13 +156,11 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Total Orders</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="totalOrders"
-                                propertyName="totalOrders"
-                                [columnFormat]="1"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="totalOrders"
+                                                     propertyName="totalOrders"
+                                                     [columnFormat]="1"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
@@ -207,32 +172,31 @@
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Last Quoted</span>
                         <span *ngIf="dataSource">
-                            <app-table-column-filter
-                                [matDataSource]="dataSource"
-                                [matSort]="sort"
-                                columnId="lastPullDate"
-                                propertyName="lastPullDate"
-                                [columnFormat]="4"
-                            ></app-table-column-filter>
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="lastPullDate"
+                                                     propertyName="lastPullDate"
+                                                     [columnFormat]="4"></app-table-column-filter>
                         </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
                         {{ info.lastPullDate }}
                     </td>
                 </ng-container>
-                <tr
-                    *matHeaderRowDef="visibleColumns; sticky: true"
-                    mat-header-row
-                ></tr>
+                <tr *matHeaderRowDef="visibleColumns; sticky: true"
+                    mat-header-row></tr>
                 <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
             </table>
         </div>
     </div>
-    <ngx-ui-loader
-        [loaderId]="chartName"
-        bgsColor="rgb(100, 181, 246)"
-        bgsPosition="center-center"
-        bgsType="ball-spin"
-        overlayColor="rgba(0, 0, 0, 0.1)"
-    ></ngx-ui-loader>
+    <ngx-ui-loader [loaderId]="chartName"
+                   bgsColor="rgb(100, 181, 246)"
+                   bgsPosition="center-center"
+                   bgsType="ball-spin"
+                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+
+    <mat-paginator (page)="(pageIndex); onPageChanged($event)"
+                   [length]="dataLength"
+                   [pageSizeOptions]="[10, 25, 50, 100]"
+                   [pageSize]="pageSize"></mat-paginator>
 </ni-card>
