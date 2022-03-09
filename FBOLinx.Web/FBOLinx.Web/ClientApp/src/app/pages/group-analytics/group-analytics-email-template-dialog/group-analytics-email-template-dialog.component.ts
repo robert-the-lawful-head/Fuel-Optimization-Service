@@ -39,7 +39,6 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
                 Validators.required
             ),
             fromAddress: new FormControl(this.data.fromAddress, [
-                Validators.required,
                 this.fromAddressValidator,
             ]),
             replyTo: new FormControl(
@@ -113,7 +112,7 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
         const value = control.value;
 
         if (!value) {
-            return { emailNotValid: true };
+            return null;
         }
 
         return validateEmail(value + '@fbolinx.com')
