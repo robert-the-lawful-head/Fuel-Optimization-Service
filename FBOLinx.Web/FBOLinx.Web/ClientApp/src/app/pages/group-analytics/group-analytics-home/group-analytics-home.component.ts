@@ -149,13 +149,10 @@ export class GroupAnalyticsHomeComponent implements OnInit {
                 if (!this.emailTemplate) {
                     this.emailTemplate = {
                         emailContentHtml: '',
-                        fromAddress: 'donotreply',
+                        fromAddress: '',
                         groupId: this.sharedService.currentUser.groupId,
                         subject: '',
                     };
-                }
-                if (!this.emailTemplate.fromAddress) {
-                    this.emailTemplate.fromAddress = 'donotreply';
                 }
             });
     }
