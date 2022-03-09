@@ -47,12 +47,13 @@ namespace FBOLinx.Web.Services
         private IMailTemplateService _MailTemplateService;
         private IPriceFetchingService _PriceFetchingService;
         private IPricingTemplateService _PricingTemplateService;
+        private EmailContentService _EmailContentService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -61,6 +62,7 @@ namespace FBOLinx.Web.Services
             _fileStorageContext = fileStorageContext;
             _MailService = mailService;
             _PricingTemplateService = pricingTemplateService;
+            _EmailContentService = emailContentService;
         }
         #endregion
 
@@ -257,7 +259,17 @@ namespace FBOLinx.Web.Services
                 else
                     mailMessage.To.Add(_DistributePricingRequest.PreviewEmail);
 
-                mailMessage.AttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
+                mailMessage.InlineAttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
+
+                //Get additional attachments
+                var pricingTemplateAttachment = await _PricingTemplateService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
+                if (pricingTemplateAttachment != null)
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = pricingTemplateAttachment.ContentType, FileName = pricingTemplateAttachment.FileName, FileData = Convert.ToBase64String(pricingTemplateAttachment.FileData, 0, pricingTemplateAttachment.FileData.Length)});
+
+
+                var emailContentAttachment = await _EmailContentService.GetFileAttachmentObject(_EmailContent.Oid);
+                if (emailContentAttachment != null)
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = emailContentAttachment.ContentType, FileName = emailContentAttachment.FileName, FileData = Convert.ToBase64String(emailContentAttachment.FileData, 0, emailContentAttachment.FileData.Length)});
 
                 var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToListAsync();
                 if (logo.Count > 0)
@@ -268,7 +280,7 @@ namespace FBOLinx.Web.Services
                     mailMessage.Logo.Base64String = Convert.ToBase64String(logo[0].FileData);
                 }
 
-                _DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
+                //_DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
                 {
                     recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
@@ -475,7 +487,7 @@ namespace FBOLinx.Web.Services
                 mailMessage.To.Add(email);
             }
 
-            mailMessage.AttachmentBase64String = Convert.ToBase64String(Encoding.UTF8.GetBytes(priceBreakdownCsvContent));
+            mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { FileData = Convert.ToBase64String(Encoding.UTF8.GetBytes(priceBreakdownCsvContent)) });
 
             var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.GroupId == groupId).ToListAsync();
             if (logo.Count > 0)
@@ -670,7 +682,6 @@ namespace FBOLinx.Web.Services
         {
             
         }
-        
         #endregion
     }
 }

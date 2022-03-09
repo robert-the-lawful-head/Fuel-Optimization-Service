@@ -78,6 +78,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
             this.aircraftTypes = data;
             this.isLoadingAircraftTypes = false;
         });
+
+
+
     }
 
     ngOnInit() {

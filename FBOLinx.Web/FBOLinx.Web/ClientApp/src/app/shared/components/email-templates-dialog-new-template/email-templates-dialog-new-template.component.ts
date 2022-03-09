@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 @Component({
     selector: 'app-email-templates-dialog-new-template',
@@ -7,6 +8,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
     templateUrl: './email-templates-dialog-new-template.component.html',
 })
 export class EmailTemplatesDialogNewTemplateComponent implements OnInit {
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+
     constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
     ngOnInit(): void {

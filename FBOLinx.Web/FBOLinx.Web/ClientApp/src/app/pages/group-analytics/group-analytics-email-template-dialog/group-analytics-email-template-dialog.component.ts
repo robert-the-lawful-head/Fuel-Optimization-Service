@@ -7,6 +7,7 @@ import {
     Validators,
 } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { GroupsService } from 'src/app/services/groups.service';
 import { validateEmail } from 'src/utils/email';
@@ -24,6 +25,8 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
 
     form: FormGroup;
 
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsEmailTemplateDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -36,7 +39,6 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
                 Validators.required
             ),
             fromAddress: new FormControl(this.data.fromAddress, [
-                Validators.required,
                 this.fromAddressValidator,
             ]),
             replyTo: new FormControl(
@@ -110,7 +112,7 @@ export class GroupAnalyticsEmailTemplateDialogComponent implements OnInit {
         const value = control.value;
 
         if (!value) {
-            return { emailNotValid: true };
+            return null;
         }
 
         return validateEmail(value + '@fbolinx.com')

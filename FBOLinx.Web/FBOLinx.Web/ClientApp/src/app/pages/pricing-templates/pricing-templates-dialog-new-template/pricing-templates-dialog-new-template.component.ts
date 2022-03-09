@@ -6,7 +6,7 @@ import {
     MatDialogRef,
 } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
@@ -61,6 +61,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
      ];
 
     emailTemplatesDataSource: Array<any>;
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,

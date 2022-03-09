@@ -29,6 +29,7 @@
         "@swimlane/ngx-charts": "^17.0.0",
         "@syncfusion/ej2-angular-dropdowns": "^19.1.69",
         "@syncfusion/ej2-angular-grids": "^18.4.49",
+        "@syncfusion/ej2-angular-inputs": "^19.2.55",
         "@syncfusion/ej2-angular-richtexteditor": "^18.4.42",
         "@syncfusion/ej2-material-theme": "~18.4.42",
         "angular-resizable-element": "^3.3.5",
