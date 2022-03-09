@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.Dto.Requests;
-using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 
 namespace FBOLinx.Web.Controllers
@@ -19,15 +17,10 @@ namespace FBOLinx.Web.Controllers
     public class PricingTemplatesController : ControllerBase
     {
         private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly ICustomerMarginService _customerMarginService;
-        private readonly ICustomCustomerTypeService _customCustomerTypeService;
-        
 
         public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, ICustomCustomerTypeService customCustomerTypeService)
         {
             _pricingTemplateService = pricingTemplateService;
-            _customerMarginService = customerMarginService;
-            _customCustomerTypeService = customCustomerTypeService;
         }
 
         // GET: api/PricingTemplates/5
@@ -70,7 +63,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("getcostpluspricingtemplate/{fboId}")]
         public async Task<IActionResult> GetCostPlusPricingTemplates([FromRoute] int fboId)
         {
-           var result =  _pricingTemplateService.GetCostPlusPricingTemplates(fboId);
+           var result = await _pricingTemplateService.GetCostPlusPricingTemplates(fboId);
 
             if (result.Count == 0) return Ok(new ExistReponse() { Exist = false });
 
@@ -125,11 +118,6 @@ namespace FBOLinx.Web.Controllers
 
             if (copiedPricingTemplate == null) return null;
             
-           
-            if(copiedPricingTemplate.Oid == 0) return Ok(copiedPricingTemplate.Oid);
-
-            await _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, copiedPricingTemplate.Oid);
-            
             return Ok(copiedPricingTemplate.Oid);
         }
 
@@ -153,15 +141,9 @@ namespace FBOLinx.Web.Controllers
 
             if (pricingTemplate == null)    return NotFound();
 
-            await _pricingTemplateService.DeletePricingTemplate(pricingTemplate);
+            var result = await _pricingTemplateService.DeletePricingTemplate(pricingTemplate, oid, fboId);
 
-            var defaultPricingTemplate = await _pricingTemplateService.GetDefaultTemplateIncludeNullCheck(fboId);
-
-            if (defaultPricingTemplate == null) Ok(pricingTemplate);
-
-            await _customCustomerTypeService.SaveCustomersTypes(fboId,oid, defaultPricingTemplate.Oid);
-
-            return Ok(pricingTemplate);
+            return Ok(result);
         }
     }
 }

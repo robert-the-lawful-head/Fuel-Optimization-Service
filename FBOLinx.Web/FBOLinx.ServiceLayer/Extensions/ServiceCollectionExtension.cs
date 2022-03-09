@@ -7,6 +7,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.ServiceLayer.Extensions
@@ -15,6 +16,7 @@ namespace FBOLinx.ServiceLayer.Extensions
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<GroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
@@ -27,8 +29,14 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFuelerLinxAccoutSyncingService, FuelerLinxAccoutSyncingService>();
             services.AddTransient<IFuelerLinxAircraftSyncingService, FuelerLinxAircraftSyncingService>();
             services.AddTransient<IPricingTemplateService, PricingTemplateService>();
+            services.AddTransient<IPricingTemplateGridService, PricingTemplateService>();
             services.AddTransient<ICustomerMarginService, CustomerMarginService>();
             services.AddTransient<ICustomCustomerTypeService, CustomCustomerTypeService>();
+            services.AddTransient<IPricingTemplateEntityService, PricingTemplateEntityService>();
+            services.AddTransient<ICustomerTypesEntityService, CustomerTypesEntityService>();
+            services.AddTransient<ICustomerMarginsEntityService, CustomerMarginsEntityService>();
+            services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
+            services.AddTransient<ICustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
 
             return services;
         }
