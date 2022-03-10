@@ -7,6 +7,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
@@ -35,6 +36,7 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 export class AnalyticsCompaniesQuotesDealTableComponent
     implements OnInit, AfterViewInit, OnDestroy
 {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     filterStartDate: Date;
@@ -58,6 +60,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
+
+    pageIndex = 0;
+    pageSize = 10;
+    dataLength = 0;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -235,7 +241,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                             return item[property];
                     }
                 };
+
                 this.dataSource.sort = this.sort;
+                this.paginator.pageIndex = 0;
+                this.dataSource.paginator = this.paginator;
 
                 this.refreshSort();
             },
@@ -323,6 +332,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         localStorage.setItem(
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
+        );
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem('pageIndex', event.pageIndex);
+        sessionStorage.setItem(
+            'pageSizeValue',
+            this.paginator.pageSize.toString()
         );
     }
 }
