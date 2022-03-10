@@ -51,8 +51,7 @@ export class GroupAnalyticsEmailPricingDialogComponent implements OnInit {
     ) {
         this.form = new FormGroup({
             emailContentHtml: new FormControl(
-                this.data.emailTemplate.emailContentHtml,
-                Validators.required
+                this.data.emailTemplate.emailContentHtml
             ),
             fromAddress: new FormControl(this.data.emailTemplate.fromAddress, [
                 this.fromAddressValidator,
