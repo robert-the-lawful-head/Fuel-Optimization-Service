@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class Repository<T> : IRepository<T>
-    where T : class
+    public class Repository<T,TContext> : IRepository<T,TContext>
+    where T : class where TContext : DbContext
     {
-        private readonly FboLinxContext context;
-        public Repository(FboLinxContext context)
+        private readonly TContext context;
+        public Repository(TContext context)
         {
             this.context = context;
         }

@@ -16,7 +16,7 @@ namespace FBOLinx.ServiceLayer.Extensions
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<GroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
