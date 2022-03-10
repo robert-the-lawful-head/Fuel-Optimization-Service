@@ -37,6 +37,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerMarginsEntityService, CustomerMarginsEntityService>();
             services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<ICustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
+            services.AddTransient<IFbolinxPricingTemplateAttachmentsEntityService, FbolinxPricingTemplateAttachmentsEntityService>();
 
             return services;
         }
