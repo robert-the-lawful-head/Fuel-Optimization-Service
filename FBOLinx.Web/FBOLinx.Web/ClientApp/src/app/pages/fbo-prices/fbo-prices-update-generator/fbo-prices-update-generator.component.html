@@ -1,6 +1,15 @@
 <div class="container-fluid pr-0">
     <div class="prices-board">
         <div class="prices-board-row">
+            <div *ngIf="!isCsr" style="position: absolute; right: 20px; top: 19px; z-index: 100000;">
+                <button (click)="editFeesAndTaxes()"
+                        class="mr-1"
+                        ni-button
+                        size="small"
+                        view="'default'">
+                    Fees &amp; Taxes
+                </button>
+            </div>
             <!--Pricing Update-->
             <ni-card *ngIf="!isCsr"
                      bgColor="dead"
@@ -10,16 +19,6 @@
                      outline="true"
                      theme="small"
                      title="Pricing Update Generator">
-                <div style="position: absolute; right: 10px; top: -30px">
-                    <button (click)="editFeesAndTaxes()"
-                            class="mr-1"
-                            ni-button
-                            size="small"
-                            view="'default'">
-                        Fees &amp; Taxes
-                    </button>
-                </div>
-
                 <div class="row mt-3">
                     <div class="col-12">
                         <ngx-ui-loader [loaderId]="pricingLoader"

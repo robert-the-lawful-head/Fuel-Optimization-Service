@@ -78,6 +78,14 @@ const initialColumns: ColumnType[] = [
         id: 'cancelled',
         name: 'Transaction Status',
     },
+    {
+        id: 'dateCreated',
+        name: 'Created',
+    },
+    {
+        id: 'fuelOn',
+        name: 'Uplift Request',
+    },
 ];
 
 @Component({
@@ -159,17 +167,15 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-
-            if (this.columns.length === 12) {
-                const cancelledColumn = {
-                    id: 'cancelled',
-                    name: 'Transction Status',
-                };
-                this.columns.push(cancelledColumn);
+            if (this.columns.length === 13) {
+                this.columns = initialColumns;
             }
+            else {
+                this.columns = JSON.parse(
+                    localStorage.getItem(this.tableLocalStorageKey)
+                );
+            }
+            
         } else {
             this.columns = initialColumns;
         }

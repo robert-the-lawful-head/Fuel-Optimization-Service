@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -229,7 +230,7 @@ namespace FBOLinx.Web.Controllers
                 from cm in leftJoinCustomerMargins.DefaultIfEmpty()
                 join fp in (
                     from f in _context.Fboprices
-                    where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
+                    where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                     select f) on p.MarginTypeProduct equals fp.Product into leftJoinFboPrices
                 from fp in leftJoinFboPrices.DefaultIfEmpty()
                 where p.Fboid == fboId
@@ -452,7 +453,65 @@ namespace FBOLinx.Web.Controllers
             return Ok(pricingTemplate);
         }
 
-        private bool PricingTemplateExists(int id)
+        // GET: api/PricingTemplates/fileattachment/5
+        [HttpGet("fileattachment/{pricingTemplateId}")]
+        public async Task<IActionResult> GetFileAttachment([FromRoute] int pricingTemplateId)
+        {
+           var file = await _pricingTemplateService.GetFileAttachment(pricingTemplateId);
+
+            return Ok(file);
+        }
+
+        // GET: api/PricingTemplates/fileattachmentname/5
+        [HttpGet("fileattachmentname/{pricingTemplateId}")]
+        public async Task<IActionResult> GetFileAttachmentName([FromRoute] int pricingTemplateId)
+        {
+            var file = await _pricingTemplateService.GetFileAttachmentName(pricingTemplateId);
+
+            return Ok(file);
+        }
+
+        // POST: api/PricingTemplates/uploadfileattachment
+        [HttpPost("uploadfileattachment")]
+        public async Task<IActionResult> UploadFileAttachment([FromBody] FbolinxPricingTemplateAttachmentsRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                if (request.FileData.Contains(","))
+                {
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                }
+                
+                await _pricingTemplateService.UploadFileAttachment(request);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Message = ex.Message });
+            }
+        }
+
+        // DELETE: api/PricingTemplates/fileattachment/4
+        [HttpDelete("fileattachment/{pricingTemplateId}")]
+        public async Task<IActionResult> DeleteFileAttachment([FromRoute] int pricingTemplateId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _pricingTemplateService.DeleteFileAttachment(pricingTemplateId);
+
+            return Ok();
+        }
+
+            private bool PricingTemplateExists(int id)
         {
             return _context.PricingTemplate.Any(e => e.Oid == id);
         }

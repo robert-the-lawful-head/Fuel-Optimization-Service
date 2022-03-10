@@ -48,4 +48,46 @@ export class EmailcontentService {
             headers: this.headers,
         });
     }
+
+    public getFileAttachmentName(emailContentId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachmentname/' +
+            emailContentId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public uploadFileAttachment(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/uploadfileattachment/',
+            payload,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public downloadFileAttachment(emailContentId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachment/' +
+            emailContentId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public deleteFileAttachment(emailContentId) {
+        return this.http.delete(
+            this.accessPointUrl + '/fileattachment/' + emailContentId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

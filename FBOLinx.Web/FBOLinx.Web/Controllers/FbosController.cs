@@ -88,8 +88,12 @@ namespace FBOLinx.Web.Controllers
             foreach (var fbo in fbos)
             {
                 var prices = await _fbopricesService.GetPrices(fbo.Oid);
-                fbo.CostPrice = prices[0].Price;
-                fbo.RetailPrice = prices[1].Price;
+                var currentPrices = prices.Where(p => p.Product.Contains("JetA") && p.EffectiveFrom <= DateTime.UtcNow).ToList();
+                if (currentPrices.Count > 0)
+                {
+                    fbo.CostPrice = currentPrices[0].Price;
+                    fbo.RetailPrice = currentPrices[1].Price;
+                }
             }
 
             return Ok(fbos);
@@ -333,7 +337,7 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        // POST: api/get
+        // POST: api/uploadfboLogo
         [HttpPost("uploadfboLogo")]
         public async Task<IActionResult> PostFboLogo([FromBody] FboLogoRequest request)
         {

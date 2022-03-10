@@ -35,27 +35,20 @@
                         <mat-tab label="General Information">
                             <h5>General Information</h5>
                             <div class="d-inline-block" style="width: 300px">
-                                <mat-slide-toggle
-                                    color="accent"
-                                    formControlName="default"
-                                    >Default</mat-slide-toggle
-                                >
+                                <mat-slide-toggle color="accent"
+                                                  formControlName="default">Default</mat-slide-toggle>
                             </div>
                             <div class="d-inline-block">
                                 <div style="width: 300px">
                                     <mat-form-field>
-                                        <mat-select
-                                            formControlName="emailContentId"
-                                            placeholder="Select Email Template"
-                                        >
-                                            <mat-option
-                                                *ngFor="
+                                        <mat-select formControlName="emailContentId"
+                                                    placeholder="Select Email Template">
+                                            <mat-option *ngFor="
                                                     let emailContentTemplate of emailTemplatesDataSource
                                                 "
-                                                [value]="
+                                                        [value]="
                                                     emailContentTemplate.oid
-                                                "
-                                            >
+                                                ">
                                                 {{ emailContentTemplate.name }}
                                             </mat-option>
                                         </mat-select>
@@ -65,42 +58,32 @@
                             <div class="mt-2 d-flex">
                                 <div class="pr-3" style="width: 300px">
                                     <mat-form-field>
-                                        <input
-                                            formControlName="name"
-                                            matInput
-                                            placeholder="Name"
-                                        />
+                                        <input formControlName="name"
+                                               matInput
+                                               placeholder="Name" />
                                     </mat-form-field>
                                 </div>
                                 <div style="width: 300px" class="pr-3">
                                     <mat-form-field>
-                                        <mat-select
-                                            formControlName="marginType"
-                                            placeholder="Type"
-                                        >
-                                            <mat-option
-                                                *ngFor="
+                                        <mat-select formControlName="marginType"
+                                                    placeholder="Type">
+                                            <mat-option *ngFor="
                                                     let marginType of marginTypeDataSource
                                                 "
-                                                [value]="marginType.value"
-                                            >
+                                                        [value]="marginType.value">
                                                 {{ marginType.text }}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
                                 </div>
                                 <div class="pr-3" style="width: 300px">
-                                    <mat-form-field >
-                                        <mat-select
-                                            formControlName="discountType"
-                                            placeholder="Type"
-                                        >
-                                            <mat-option
-                                                *ngFor="
+                                    <mat-form-field>
+                                        <mat-select formControlName="discountType"
+                                                    placeholder="Type">
+                                            <mat-option *ngFor="
                                                     let discountType of discountTypeDataSource
                                                 "
-                                                [value]="discountType.value"
-                                            >
+                                                        [value]="discountType.value">
                                                 {{ discountType.text }}
                                             </mat-option>
                                         </mat-select>
@@ -110,13 +93,11 @@
                             </div>
 
                             <h5 class="mt-4">Volume Tiers</h5>
-                            <table
-                                class="
+                            <table class="
                                     mat-table
                                     table-responsive
                                     volume-tiers-table
-                                "
-                            >
+                                ">
                                 <thead>
                                     <tr class="mat-header-row">
                                         <th>
@@ -127,7 +108,7 @@
                                         </th>
                                         <th *ngIf=" pricingTemplateForm.value
                                         .marginType == 1">
-                                            <div class="" >Discount</div>
+                                            <div class="">Discount</div>
                                         </th>
                                         <th>
                                             <div class="volume-tiers-header">
@@ -138,7 +119,8 @@
                                             <div>
                                                 Total
                                                 <a matTooltip="Please see the scenario pricing tab for out-the-door pricing that includes taxes & fees"
-                                                            matTooltipPosition="after" style="float: right"><i class="fa fa-info-circle"></i>
+                                                   matTooltipPosition="after" style="float: right">
+                                                    <i class="fa fa-info-circle"></i>
                                                 </a>
                                             </div>
                                         </th>
@@ -185,9 +167,9 @@
                                                 </mat-form-field>
                                             </div>
                                         </td>
-                                        <td  *ngIf=" pricingTemplateForm.value
+                                        <td *ngIf=" pricingTemplateForm.value
                                         .marginType == 1"
-                                           [formGroupName]="i">
+                                            [formGroupName]="i">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field style="width:100px">
                                                     <input (click)="
@@ -212,42 +194,40 @@
                                             </div>
                                         </td>
                                         <!--ITP MARGIN-->
-                                        <td
-                                            [formGroupName]="i"
-                                            class="font-weight-bold font-italic" >
+                                        <td [formGroupName]="i"
+                                            class="font-weight-bold font-italic">
 
-                                               <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
+                                            <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
                                                .marginType == 1">
-                                                    <div style="width:75px">
-                                                        ${{
+                                                <div style="width:75px">
+                                                    ${{
                                                             customerMargin.value.itp
                                                                 | number: "1.4-4"
-
-                                                        }}
-                                                    </div>
+                                                    }}
                                                 </div>
+                                            </div>
 
-                                                <mat-form-field  *ngIf=" pricingTemplateForm.value
+                                            <mat-form-field *ngIf=" pricingTemplateForm.value
                                                 .marginType == 0" style="width:100px">
-                                                    <input (click)="
+                                                <input (click)="
                                                             $event.target.select()
                                                         "
-                                                           formControlName="amount"
-                                                           matInput
-                                                           step="0.01"
-                                                           type="number" />
-                                                    <span *ngIf="
+                                                       formControlName="amount"
+                                                       matInput
+                                                       step="0.01"
+                                                       type="number" />
+                                                <span *ngIf="
                                                     pricingTemplateForm.value
                                                         .discountType == 0 "
-                                                          class="prefixDollar"
-                                                          matPrefix>$</span>
-                                                    <span *ngIf="
+                                                      class="prefixDollar"
+                                                      matPrefix>$</span>
+                                                <span *ngIf="
                                                     pricingTemplateForm.value
                                                         .discountType == 1 "
-                                                          class="prefixPercentage"
-                                                          matSuffix>%</span>
+                                                      class="prefixPercentage"
+                                                      matSuffix>%</span>
 
-                                                </mat-form-field>
+                                            </mat-form-field>
                                         </td>
                                         <!--TOTAL-->
                                         <td [formGroupName]="i"
@@ -312,30 +292,55 @@
                                 </tbody>
                             </table>
                             <h5 class="mt-2">Tax/Fee Exclusions</h5>
-                            <div
-                                class="tax-fee-exclusions"
-                                *ngIf="feesAndTaxes"
-                            >
-                                <price-breakdown
-                                    #feeAndTaxGeneralBreakdown
-                                    (omitCheckChanged)="
+                            <div class="tax-fee-exclusions"
+                                 *ngIf="feesAndTaxes">
+                                <price-breakdown #feeAndTaxGeneralBreakdown
+                                                 (omitCheckChanged)="
                                         omitFeeAndTaxCheckChanged($event)
                                     "
-                                    [feeAndTaxDisplayMode]="1"
-                                    [feesAndTaxes]="feesAndTaxes"
-                                    [priceTemplateId]="pricingTemplate.oid"
-                                    priceBreakdownLoader="ITP-tax-fees-exclusion-loader"
-                                    tooltipPlacement="left"
-                                    [hidePriceTierBreakdown]="true"
-                                ></price-breakdown>
+                                                 [feeAndTaxDisplayMode]="1"
+                                                 [feesAndTaxes]="feesAndTaxes"
+                                                 [priceTemplateId]="pricingTemplate.oid"
+                                                 priceBreakdownLoader="ITP-tax-fees-exclusion-loader"
+                                                 tooltipPlacement="left"
+                                                 [hidePriceTierBreakdown]="true"></price-breakdown>
                             </div>
 
                             <h5 class="mt-2">Fuel Uplift Notes</h5>
-                            <ejs-richtexteditor
-                                #typeRTE
-                                formControlName="notes"
-                                id="rteNotes"
-                            ></ejs-richtexteditor>
+                            <div style="height:600px;">
+                                <ejs-richtexteditor #typeRTE
+                                                    formControlName="notes"
+                                                    id="rteNotes"
+                                                    height="400"
+                                                    [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
+                                <h6 class="mt-2">File Attachment</h6>
+                                <div>
+                                    <input type="file"
+                                           (change)="onFileChange($event)"
+                                           accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
+                                           #fileUpload />
+                                    <button *ngIf="!isUploadingFile"
+                                            (click)="uploadFile()"
+                                            class="ml-3"
+                                            color="accent"
+                                            mat-raised-button>
+                                        Upload File
+                                    </button>
+                                    <div *ngIf="isUploadingFile">
+                                        <mat-spinner></mat-spinner>
+                                    </div>
+                                    <div class="mt-2" *ngIf="fileName != ''">
+                                        <button (click)="downloadFile()" mat-stroked-button>
+                                            Download {{fileName}}
+                                        </button>
+                                    </div>
+                                    <div class="mt-2" *ngIf="fileName != ''">
+                                        <button (click)="deleteFile()" class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </mat-tab>
 
                         <mat-tab label="Scenario Pricing">

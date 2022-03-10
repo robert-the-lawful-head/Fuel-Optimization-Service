@@ -30,6 +30,7 @@ namespace FBOLinx.Web.ViewModels
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string PricingTemplateName { get; set; }
+        public string FuelOn { get; set; }
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item)
         {
@@ -55,6 +56,7 @@ namespace FBOLinx.Web.ViewModels
             FboName = item.Fbo;
             Email = "";
             PhoneNumber = "";
+            FuelOn = item.TransactionDetails.FuelOn;
         }
 
         public static FuelReqsGridViewModel Cast(Fuelerlinx.SDK.TransactionDTO item)

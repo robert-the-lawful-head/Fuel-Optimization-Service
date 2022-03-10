@@ -3,55 +3,39 @@
     <mat-tab-group>
         <mat-tab label="Email Template" [formGroup]="form">
             <div class="pt-3">
-                <mat-form-field style="max-width: 600px">
-                    <input
-                        aria-label="Subject"
-                        matInput
-                        placeholder="Subject"
-                        formControlName="subject"
-                    />
-                    <mat-error *ngIf="form.controls.subject.invalid"
-                        >Subject is required.</mat-error
-                    >
-                </mat-form-field>
-
                 <div>
                     <mat-form-field style="max-width: 200px">
-                        <input
-                            aria-label="From Email"
-                            formControlName="fromAddress"
-                            matInput
-                            placeholder="From email"
-                        />
-                        <mat-error *ngIf="form.controls.fromAddress.invalid"
-                            >Invalid email address.</mat-error
-                        >
+                        <input aria-label="From Email"
+                               formControlName="fromAddress"
+                               matInput
+                               placeholder="From email" />
+                        <mat-error *ngIf="form.controls.fromAddress.invalid">Invalid email address.</mat-error>
                     </mat-form-field>
                     @FBOLinx.com
                 </div>
 
                 <div>
                     <mat-form-field style="max-width: 600px">
-                        <input
-                            aria-label="Reply To"
-                            formControlName="replyTo"
-                            matInput
-                            placeholder="Reply To: The address replies will be sent to"
-                        />
-                        <mat-error *ngIf="form.controls.replyTo.invalid"
-                            >Invalid email address.</mat-error
-                        >
+                        <input aria-label="Reply To"
+                               formControlName="replyTo"
+                               matInput
+                               placeholder="Reply To: The address replies will be sent to" />
+                        <mat-error *ngIf="form.controls.replyTo.invalid">Invalid email address.</mat-error>
                     </mat-form-field>
                 </div>
 
-                <ejs-richtexteditor
-                    #typeEmail
-                    formControlName="emailContentHtml"
-                    placeholder="Enter email body here..."
-                ></ejs-richtexteditor>
-                <mat-error *ngIf="form.controls.emailContentHtml.invalid"
-                    >Email content is required.</mat-error
-                >
+                <mat-form-field style="max-width: 600px">
+                    <input aria-label="Subject"
+                           matInput
+                           placeholder="Subject"
+                           formControlName="subject" />
+                    <mat-error *ngIf="form.controls.subject.invalid">Subject is required.</mat-error>
+                </mat-form-field>
+
+                <ejs-richtexteditor #typeEmail
+                                    formControlName="emailContentHtml"
+                                    placeholder="Enter email body here..." [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
+                <mat-error *ngIf="form.controls.emailContentHtml.invalid">Email content is required.</mat-error>
             </div>
         </mat-tab>
 

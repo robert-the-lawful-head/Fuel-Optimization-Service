@@ -1026,7 +1026,7 @@ namespace FBOLinx.Web.Controllers
 
 
                 List<CustomerWithPricing> commercialValidPricing =
-                    await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial, ApplicableTaxFlights.All, null, 0, groupId);
+                    await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Commercial, ApplicableTaxFlights.All, null, 0, groupId, true);
                 if (commercialValidPricing != null)
                 {
                     commercialValidPricing.RemoveAll(x => x.GroupId != groupId);
@@ -1034,7 +1034,7 @@ namespace FBOLinx.Web.Controllers
                 }
 
                 List<CustomerWithPricing> privateValidPricing =
-                    await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private, ApplicableTaxFlights.All, null, 0, groupId);
+                    await _priceFetchingService.GetCustomerPricingByLocationAsync(string.Join(",", icaos), customerId, FlightTypeClassifications.Private, ApplicableTaxFlights.All, null, 0, groupId, true);
                 if (privateValidPricing != null)
                 {
                     privateValidPricing.RemoveAll(x => x.GroupId != groupId);

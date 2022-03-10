@@ -103,7 +103,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var currentPrices = await (from f in _context.Fboprices
-                where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
+                where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                 select f).ToListAsync();
 
             if (currentPrices.Count == 0)

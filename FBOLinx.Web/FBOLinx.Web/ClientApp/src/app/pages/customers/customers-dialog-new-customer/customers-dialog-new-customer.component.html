@@ -362,13 +362,6 @@
                                         placeholder="Tail Number"
                                         formControlName="tailNumber"
                                     />
-                                    <mat-error
-                                        *ngIf="
-                                            aircraftForm.controls.tailNumber
-                                                .invalid
-                                        "
-                                        >Tail Number is required.</mat-error
-                                    >
                                 </mat-form-field>
                             </div>
 
@@ -379,7 +372,6 @@
                                     [options]="aircraftTypes"
                                     [displayFn]="displayAircraft"
                                     formControlName="aircraft"
-                                    [required]="true"
                                 ></app-autocomplete-search>
                             </div>
 
@@ -465,7 +457,7 @@
                 color="accent"
                 mat-flat-button
                 (click)="submit()"
-                [disabled]="submitDisabled || submitting"
+                [disabled]="submitting"
                 style="height: 36px"
             >
                 {{ submitting ? "" : "Submit" }}

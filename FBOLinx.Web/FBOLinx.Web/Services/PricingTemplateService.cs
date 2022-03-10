@@ -8,17 +8,20 @@ using FBOLinx.DB.Models;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
+using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.Web.Services
 {
     public class PricingTemplateService : IPricingTemplateService
     {
         private readonly FboLinxContext _context;
+        private readonly FilestorageContext _fileStorageContext;
         private int _FboId;
         private int _GroupId;
-        public PricingTemplateService(FboLinxContext context)
+        public PricingTemplateService(FboLinxContext context, FilestorageContext fileStorageContext)
         {
             _context = context;
+            _fileStorageContext = fileStorageContext;
         }
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
@@ -112,7 +115,7 @@ namespace FBOLinx.Web.Services
             await AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
         }
 
-        public async Task<List<PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false)
         {
             _FboId = fboId;
             _GroupId = groupId;
@@ -143,9 +146,14 @@ namespace FBOLinx.Web.Services
             }
 
             //Set the applicable tail numbers for the standard/default templates
-            var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
+            if (!isAnalytics || (isAnalytics && aircraftPricesResult.Count > 0))
+            {
+                var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
 
-            standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
+                standardTemplates.ForEach(x => x.TailNumbers = customerAircrafts.Where(c => !string.IsNullOrEmpty(c.TailNumber) && !aircraftPricesResult.Any(a => a.TailNumbers != null && a.TailNumbers.Contains(c.TailNumber))).Select(c => c.TailNumber.Trim()).ToList());
+            }
+            else
+                standardTemplates.ForEach(x => x.TailNumbers = new List<string>() { "All Tails" });
 
             return result;
         }
@@ -217,7 +225,7 @@ namespace FBOLinx.Web.Services
 
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo > DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
 
             var tempMarginTiers = await (from c in _context.CustomerMargins
                                          join tm in _context.PriceTiers on c.PriceTierId equals tm.Oid
@@ -235,7 +243,7 @@ namespace FBOLinx.Web.Services
                                     join cm in tempMarginTiers on p.Oid equals cm.TemplateId
                                         into leftJoinCmTiers
                                     from cm in leftJoinCmTiers.DefaultIfEmpty()
-                                    join fp in tempFboPrices on "JetA " + p.MarginTypeProduct equals fp.Product
+                                    join fp in tempFboPrices on "JetA " + p.MarginTypeProduct equals fp.GenericProduct
                                         into leftJoinFp
                                     from fp in leftJoinFp.DefaultIfEmpty()
                                     where p.Fboid == fboId && (fp == null || fp.EffectiveFrom == null || fp.EffectiveFrom <= DateTime.UtcNow)
@@ -305,6 +313,75 @@ namespace FBOLinx.Web.Services
                 .ToList();
 
             return result;
+        }
+
+        public async Task<PricingTemplate> GetPricingTemplate(int pricingTemplateId)
+        {
+            var pricingTemplate = await _context.PricingTemplate.Where(p => p.Oid == pricingTemplateId).FirstOrDefaultAsync();
+            return pricingTemplate;
+        }
+
+        public async Task<string> GetFileAttachment(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            if (pricingTemplateFile != null)
+            {
+                var fileBase64 = Convert.ToBase64String(pricingTemplateFile.FileData, 0, pricingTemplateFile.FileData.Length);
+                return "data:" + pricingTemplateFile.ContentType + ";base64," + fileBase64;
+            }
+
+            return "";
+        }
+
+        public async Task<FbolinxPricingTemplateFileAttachment> GetFileAttachmentObject(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+            return pricingTemplateFile;
+        }
+
+        public async Task<string> GetFileAttachmentName(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            if (pricingTemplateFile == null || pricingTemplateFile.Oid == 0)
+                return "";
+
+            return pricingTemplateFile.FileName;
+        }
+
+        public async Task UploadFileAttachment(FbolinxPricingTemplateAttachmentsRequest request)
+        {
+            var fileAsArray = Convert.FromBase64String(request.FileData);
+
+            var existingRecord = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(f => f.PricingTemplateId == request.PricingTemplateId).FirstOrDefaultAsync();
+
+            if (existingRecord != null && existingRecord.Oid > 0)
+            {
+                existingRecord.FileData = fileAsArray;
+                existingRecord.FileName = request.FileName;
+                existingRecord.ContentType = request.ContentType;
+                _fileStorageContext.FbolinxPricingTemplateAttachments.Update(existingRecord);
+            }
+            else
+            {
+                FBOLinx.DB.Models.FbolinxPricingTemplateFileAttachment fboLinxFileData = new DB.Models.FbolinxPricingTemplateFileAttachment();
+                fboLinxFileData.FileData = fileAsArray;
+                fboLinxFileData.FileName = request.FileName;
+                fboLinxFileData.ContentType = request.ContentType;
+                fboLinxFileData.PricingTemplateId = request.PricingTemplateId;
+                _fileStorageContext.FbolinxPricingTemplateAttachments.Add(fboLinxFileData);
+            }
+
+            await _fileStorageContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteFileAttachment(int pricingTemplateId)
+        {
+            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+
+            _fileStorageContext.FbolinxPricingTemplateAttachments.Remove(pricingTemplateFile);
+            await _fileStorageContext.SaveChangesAsync();
         }
 
         private async Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max)
