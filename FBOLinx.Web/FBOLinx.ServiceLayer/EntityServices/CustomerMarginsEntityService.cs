@@ -9,12 +9,12 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface ICustomerMarginsEntityService : IRepository<DB.Models.CustomerMargins>
+    public interface ICustomerMarginsEntityService : IRepository<CustomerMargins, FboLinxContext>
     {
         Task<IEnumerable<MarginTierView>> GetMarginTiers();
         Task AddDefaultCustomerMargins(int priceTemplateId, double min, double max);
     }
-    public class CustomerMarginsEntityService : Repository<DB.Models.CustomerMargins>, ICustomerMarginsEntityService
+    public class CustomerMarginsEntityService : Repository<CustomerMargins, FboLinxContext>, ICustomerMarginsEntityService
     {
         private readonly FboLinxContext _context;
         public CustomerMarginsEntityService(FboLinxContext context) : base(context)

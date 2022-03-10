@@ -8,11 +8,11 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface ICustomerInfoByGroupEntityService : IRepository<CustomerInfoByGroup>
+    public interface ICustomerInfoByGroupEntityService : IRepository<CustomerInfoByGroup, FboLinxContext>
     {
         Task<List<CustomerTypeView>> GetCustomerAssignmentsByTemplateId(int fboId, int groupId);
     }
-    public class CustomerInfoByGroupEntityService : Repository<CustomerInfoByGroup>, ICustomerInfoByGroupEntityService
+    public class CustomerInfoByGroupEntityService : Repository<CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupEntityService
     {
         private readonly FboLinxContext _context;
         public CustomerInfoByGroupEntityService(FboLinxContext context) : base(context)

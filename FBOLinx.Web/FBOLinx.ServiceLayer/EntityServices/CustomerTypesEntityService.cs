@@ -7,11 +7,11 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface ICustomerTypesEntityService : IRepository<CustomerMargins>
+    public interface ICustomerTypesEntityService : IRepository<CustomerMargins, FboLinxContext>
     {
         Task FixAndSaveCustomCustomerTypes(int fboId, int groupId, int customerType);
     }
-    public class CustomerTypesEntityService : Repository<CustomerMargins>, ICustomerTypesEntityService
+    public class CustomerTypesEntityService : Repository<CustomerMargins, FboLinxContext>, ICustomerTypesEntityService
     {
         private readonly FboLinxContext _context;
         public CustomerTypesEntityService(FboLinxContext context) : base(context)
