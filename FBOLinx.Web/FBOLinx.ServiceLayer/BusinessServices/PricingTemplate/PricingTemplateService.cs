@@ -7,7 +7,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.Dto.Requests;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
-using Mapster;
+using FBOLinx.ServiceLayer.Mapping;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         private ICustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomCustomerTypeService _customCustomerTypeService;
         private ICustomerMarginService _customerMarginService;
-        private readonly FilestorageContext _fileStorageContext;
+        private IFbolinxPricingTemplateAttachmentsEntityService _fbolinxPricingTemplateAttachmentsEntityService;
 
         public PricingTemplateService(
             IPricingTemplateEntityService pricingTemplateEntityService,
@@ -32,7 +32,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             ICustomerAircraftEntityService customerAircraftEntityService,
             ICustomCustomerTypeService customCustomerTypeService,
             ICustomerMarginService customerMarginService,
-            FilestorageContext fileStorageContext)
+            IFbolinxPricingTemplateAttachmentsEntityService fbolinxPricingTemplateAttachmentsEntityService)
         {
             _pricingTemplateEntityService = pricingTemplateEntityService;
             _customerTypesEntityService = customerTypesEntityService;
@@ -40,7 +40,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             _customerAircraftEntityService = customerAircraftEntityService;
             _customCustomerTypeService = customCustomerTypeService;
             _customerMarginService = customerMarginService;
-            _fileStorageContext = fileStorageContext;
+            _fbolinxPricingTemplateAttachmentsEntityService = fbolinxPricingTemplateAttachmentsEntityService;
         }
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
@@ -117,11 +117,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         public async Task<PricingTemplateDto> GetPricingTemplateById(int oid)
         {
             var result = await _pricingTemplateEntityService.FindAsync(oid);
-            return result.Adapt<PricingTemplateDto>();
+            return result.Map<PricingTemplateDto>();
         }
         public async Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate)
         { 
-            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            var pricingTemplateEntity = pricingTemplate.Map<DB.Models.PricingTemplate>();
             await FixOtherDefaults(pricingTemplateEntity);
             try
             {
@@ -161,7 +161,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         }
         public async Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate)
         {
-            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            var pricingTemplateEntity = pricingTemplate.Map<DB.Models.PricingTemplate>();
             await FixOtherDefaults(pricingTemplateEntity);
 
             await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
@@ -169,24 +169,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
         public async Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate)
         {
-            var pricingTemplateEntity = pricingTemplate.Adapt<DB.Models.PricingTemplate>();
+            var pricingTemplateEntity = pricingTemplate.Map<DB.Models.PricingTemplate>();
 
             await FixOtherDefaults(pricingTemplateEntity);
 
             await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
 
-            return pricingTemplate.Adapt<PricingTemplateDto>(); 
+            return pricingTemplate.Map<PricingTemplateDto>(); 
         }
         public async Task<PricingTemplateDto> GetDefaultTemplate(int fboId)
         {
             var pricingTemplate =  await _pricingTemplateEntityService.FirstOrDefaultAsync(s => s.Fboid == fboId && s.Default == true);
-            return pricingTemplate.Adapt<PricingTemplateDto>();
+            return pricingTemplate.Map<PricingTemplateDto>();
         }
         public async Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId)
         {
             var pricingTemplate = await _pricingTemplateEntityService.FirstOrDefaultAsync(p => p.Fboid.Equals(fboId) && (p.Default ?? false));
 
-            return pricingTemplate.Adapt<PricingTemplateDto>();
+            return pricingTemplate.Map<PricingTemplateDto>();
         }
 
         public async Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate,int oid, int fboId)
@@ -209,11 +209,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         {
             var pricingTemplateCopy = await _pricingTemplateEntityService.CopyPricingTemplate(pricingTemplate.currentPricingTemplateId, pricingTemplate.name);
 
-            if (pricingTemplateCopy.Oid == 0) return pricingTemplateCopy.Adapt<PricingTemplateDto>();
+            if (pricingTemplateCopy.Oid == 0) return pricingTemplateCopy.Map<PricingTemplateDto>();
 
             await _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, pricingTemplateCopy.Oid);
 
-            return pricingTemplateCopy.Adapt<PricingTemplateDto>();
+            return pricingTemplateCopy.Map<PricingTemplateDto>();
         }
         public async Task<List<PricingTemplateGrid>> GetTemplatesWithEmailContent(int fboId, int groupId)
         {
@@ -232,10 +232,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         {
             return await _pricingTemplateEntityService.GetPricingTemplateGrid(fboId, groupId);
         }
-        public async Task<FbolinxPricingTemplateFileAttachment> GetFileAttachmentObject(int pricingTemplateId)
+        public async Task<FbolinxPricingTemplateFileAttachmentDto> GetFileAttachmentObject(int pricingTemplateId)
         {
-            var pricingTemplateFile = await _fileStorageContext.FbolinxPricingTemplateAttachments.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
-            return pricingTemplateFile;
+            var pricingTemplateFile = await _fbolinxPricingTemplateAttachmentsEntityService.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
+            return pricingTemplateFile.Map<FbolinxPricingTemplateFileAttachmentDto>();
         }
     }
 }

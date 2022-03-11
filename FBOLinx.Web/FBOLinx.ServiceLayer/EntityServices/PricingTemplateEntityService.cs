@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface IPricingTemplateEntityService : IRepository<PricingTemplate>
+    public interface IPricingTemplateEntityService : IRepository<PricingTemplate, FboLinxContext>
     {
         Task<List<PricingTemplateGrid>> GetPricingTemplateGrid(int fboId, int groupId);
         Task<List<PricingTemplateGrid>> GetDefualtPricingTemplateGridByFboId(int fboId);
@@ -22,7 +22,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
     }
     
-    public class PricingTemplateEntityService : Repository<PricingTemplate>, IPricingTemplateEntityService
+    public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService
     {
         private readonly FboLinxContext _context;
         public PricingTemplateEntityService(FboLinxContext context,

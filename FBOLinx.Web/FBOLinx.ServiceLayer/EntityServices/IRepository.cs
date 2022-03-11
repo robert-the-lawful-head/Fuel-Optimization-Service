@@ -1,4 +1,5 @@
 ﻿using FBOLinx.Core.BaseModels.Specifications;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T,TContext>
     {
         Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate);
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);

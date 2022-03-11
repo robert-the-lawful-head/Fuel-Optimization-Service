@@ -8,11 +8,11 @@ using System.Linq;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface ICustomerAircraftEntityService : IRepository<CustomerAircrafts>
+    public interface ICustomerAircraftEntityService : IRepository<CustomerAircrafts, FboLinxContext>
     {
         Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId);
     }
-    public class CustomerAircraftEntityService : Repository<CustomerAircrafts>, ICustomerAircraftEntityService
+    public class CustomerAircraftEntityService : Repository<CustomerAircrafts, FboLinxContext>, ICustomerAircraftEntityService
     {
         private readonly FboLinxContext _context;
         public CustomerAircraftEntityService(FboLinxContext context) : base(context)

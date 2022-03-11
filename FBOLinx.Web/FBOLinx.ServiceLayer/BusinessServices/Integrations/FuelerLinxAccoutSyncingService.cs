@@ -9,8 +9,8 @@ using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.Mapping;
 using Fuelerlinx.SDK;
-using Mapster;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 {
@@ -117,7 +117,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerInfoByGroupRecords.AddRange(customerInfoByGroupRecordsToInsert);
 
             //Update/Insert all records from above
-            var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Adapt<CustomerInfoByGroup>()).ToList();
+            var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
             await _customerInfoByGroupEntityService.BulkInsertOrUpdate(customerInfoByGroupRecords);
         }
 
@@ -174,7 +174,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var result = await _customerInfoByGroupEntityService.GetListBySpec(
                 new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
-            _customerInfoByGroupRecords = result.Adapt<List<CustomerInfoByGroupDTO>>();
+            _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
         }
     }
 }

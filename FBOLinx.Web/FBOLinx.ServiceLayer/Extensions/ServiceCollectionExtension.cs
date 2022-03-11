@@ -16,7 +16,7 @@ namespace FBOLinx.ServiceLayer.Extensions
     {
         public static IServiceCollection RegisterServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddTransient<CustomerService, CustomerService>();
             services.AddTransient<GroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
@@ -37,6 +37,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerMarginsEntityService, CustomerMarginsEntityService>();
             services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<ICustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
+            services.AddTransient<IFbolinxPricingTemplateAttachmentsEntityService, FbolinxPricingTemplateAttachmentsEntityService>();
 
             return services;
         }
