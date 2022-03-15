@@ -138,17 +138,12 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             return DateTime.SpecifyKind(utcTime, DateTimeKind.Unspecified);
         }
 
-        public static string GetLocalTimeZone(DateTime utcDateTime, double? intlTimeZone, bool respectDaylightSavings, string airportCity)
+        public static string GetLocalTimeZone(DateTime utcDateTime, double? intlTimeZone, string airportCity)
         {
             var allTimeZones = TimeZoneInfo.GetSystemTimeZones();
             TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
             bool isDaylightSavingTime = tst.IsDaylightSavingTime(utcDateTime);
             var offSet = (int)intlTimeZone.GetValueOrDefault();
-
-            if (isDaylightSavingTime && respectDaylightSavings)
-            {
-                offSet = offSet + 1;
-            }
 
             var timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains("(US & Canada)"));
             if (timeZone == null)
@@ -181,9 +176,9 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
             return GetLocalTime(DateTime.UtcNow, intlTimeZone, respectDaylightSavings);
         }
 
-        public static string GetLocalTimeZone(double? intlTimeZone, bool respectDaylightSavings, string airportCity)
+        public static string GetLocalTimeZone(double? intlTimeZone, string airportCity)
         {
-            return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, respectDaylightSavings, airportCity);
+            return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, airportCity);
         }
 
         public static DateTime GetNextTuesdayDate(DateTime date)
