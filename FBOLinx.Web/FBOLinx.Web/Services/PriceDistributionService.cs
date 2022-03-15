@@ -1,14 +1,8 @@
 ﻿using EFCore.BulkExtensions;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using SendGrid.Helpers.Mail;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -21,10 +15,11 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.Models.Responses;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Services
 {

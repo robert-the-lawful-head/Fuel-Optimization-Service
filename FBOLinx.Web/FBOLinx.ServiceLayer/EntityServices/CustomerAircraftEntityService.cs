@@ -1,24 +1,35 @@
 ﻿using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class CustomerAircraftEntityService : FBOLinxBaseEntityService<DB.Models.CustomerAircrafts, DTO.CustomerAircraftDTO, int>, IEntityService<DB.Models.CustomerAircrafts, DTO.CustomerAircraftDTO, int>
+    public interface ICustomerAircraftEntityService : IRepository<CustomerAircrafts, FboLinxContext>
     {
+        Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId);
+    }
+    public class CustomerAircraftEntityService : Repository<CustomerAircrafts, FboLinxContext>, ICustomerAircraftEntityService
+    {
+        private readonly FboLinxContext _context;
         public CustomerAircraftEntityService(FboLinxContext context) : base(context)
         {
+            _context = context;
         }
 
-        //public async Task<List<string>> GetMissingCustomerAircraftsFromTailList(int customerId, List<int> groupIds, List<string> tailNumbers)
-        //{
-        //    _Context.CustomerAircrafts.Where(x =>
-        //        x.GroupId.HasValue && groupIds.Contains(x.GroupId.Value) && !string.IsNullOrEmpty(x.TailNumber) &&
-        //        tailNumbers.Contains(x.TailNumber));
-
-        //    //var  (from c in _Context.Customers
-        //    //    join cg in _Context.CustomerInfoByGroup on c.Oid equals cg.CustomerId
-        //    //    join ca in _Context.CustomerAircrafts on c.Oid equals ca.CustomerId
-        //    //    into leftJoinCustomerAircrafts from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-        //    //    where c.Oid == customerId);
-        //}
+        public async Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId)
+        {
+            var tailNumberList = from ca in _context.CustomerAircrafts
+                                 join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                 where ap.PriceTemplateId == aircraftPricingTemplateId
+                                       && ca.CustomerId == customerId
+                                       && ca.GroupId == groupId
+                                       && !string.IsNullOrEmpty(ca.TailNumber)
+                                 select ca.TailNumber.Trim();
+            return await tailNumberList.ToListAsync();
+        }
     }
 }

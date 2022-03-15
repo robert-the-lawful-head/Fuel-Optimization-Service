@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.Dto.Responses
 {
-    public class PricingTemplatesGridViewModel
+    public class PricingTemplateGrid
     {
         public int Oid { get; set; }
         public string Name { get; set; }
