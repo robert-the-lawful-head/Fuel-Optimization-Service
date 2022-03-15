@@ -211,6 +211,58 @@
                     <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.lastPullDate}} </td>
 
                 </ng-container>
+
+                <ng-container matColumnDef="airportVisits">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Arrivals</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="airportVisits"
+                                                     propertyName="airportVisits"
+                                                     [columnFormat]="1"></app-table-column-filter>
+                        </span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.airportVisits}} </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="visitsToFbo">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <div>
+                            <div>Visits to</div>
+                            <div>{{ fbo }}</div>
+                        </div>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="visitsToFbo"
+                                                     propertyName="visitsToFbo"
+                                                     [columnFormat]="1"></app-table-column-filter>
+                        </span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.visitsToFbo}} </td>
+
+                </ng-container>
+
+                <ng-container matColumnDef="percentVisits">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <div>
+                            <div>% of visits to</div>
+                            <div>{{ fbo }}</div>
+                        </div>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter [matDataSource]="dataSource"
+                                                     [matSort]="sort"
+                                                     columnId="percentVisits"
+                                                     propertyName="percentVisits"
+                                                     [columnFormat]="1"></app-table-column-filter>
+                        </span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.percentVisits / 100 | percent}} </td>
+
+                </ng-container>
+
                 <tr *matHeaderRowDef="visibleColumns; sticky: true"
                     mat-header-row></tr>
                 <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
