@@ -5,3 +5,4 @@ export const fboChangedEvent = 'fbo changed';
 export const menuTooltipShowedEvent = 'menu tooltips showed';
 export const customerUpdatedEvent = 'customer updated';
 export const fboProductPreferenceChangeEvent = 'fbo product preference change'
+export const fboPricesClearedEvent = 'fbo prices cleared';
