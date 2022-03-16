@@ -125,6 +125,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
         this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localDateTime: any) => {
             pricingUpdate.effectiveFrom = moment(moment(new Date(localDateTime)).format("MM/DD/YYYY HH:mm")).toDate();
             pricingUpdate.currentDateTime = (moment(new Date(localDateTime))).add("10", "minutes");
+            pricingUpdate.submitStatus = "Publish";
         });
     }
 
@@ -153,18 +154,27 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
         this.fboPricesService
             .suspendPricingGenerator(pricingUpdate)
             .subscribe((data: any) => {
-                this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
-                    this.dateTimeService.getNextTuesdayDate(localdatetime).subscribe((nextTuesdayDate: any) => {
-                        pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
-                        pricingUpdate.effectiveTo = moment(nextTuesdayDate).toDate();
-                        pricingUpdate.oidCost = 0;
-                        pricingUpdate.oidPap = 0;
-                        pricingUpdate.priceCost = 0;
-                        pricingUpdate.pricePap = 0;
-                        pricingUpdate.submitStatus = "Publish";
-                        pricingUpdate.isEdit = true;
+                if (!data.isPricingLive) {
+                    this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
+                        this.dateTimeService.getNextTuesdayDate(localdatetime).subscribe((nextTuesdayDate: any) => {
+                            pricingUpdate.effectiveFrom = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
+                            pricingUpdate.effectiveTo = moment(nextTuesdayDate).toDate();
+                            pricingUpdate.submitStatus = "Publish";
+                        });
                     });
-                });
+                }
+                else {
+                    pricingUpdate.effectiveFrom = moment(moment(new Date(data.effectiveFrom)).format("MM/DD/YYYY HH:mm")).toDate();
+                    pricingUpdate.effectiveTo = moment(data.effectiveTo).toDate();
+                    pricingUpdate.submitStatus = "Stage";
+                    
+                }
+
+                pricingUpdate.oidCost = 0;
+                pricingUpdate.oidPap = 0;
+                pricingUpdate.priceCost = null;
+                pricingUpdate.pricePap = null;
+                pricingUpdate.isEdit = true;
             });
     }
 
