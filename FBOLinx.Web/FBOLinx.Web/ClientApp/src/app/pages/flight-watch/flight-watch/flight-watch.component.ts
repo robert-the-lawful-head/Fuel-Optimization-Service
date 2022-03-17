@@ -49,6 +49,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     flightWatchDataObservable$ = this.flightWatchDataSubject.asObservable();
 
     style: any = {};
+    isMapShowing = true;
 
     constructor(
         private airportWatchService: AirportWatchService,
@@ -97,6 +98,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                     this.loading = false;
                 });
         }
+    }
+
+    onTabClick(event) {
+        if (event.tab.textLabel == "Takeoff/Landing Cycles")
+            this.isMapShowing = false;
+        else
+            this.isMapShowing = true;
     }
 
     onFlightWatchClick(flightWatch: FlightWatch) {

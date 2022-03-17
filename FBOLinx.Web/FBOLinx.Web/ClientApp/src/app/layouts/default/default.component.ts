@@ -17,6 +17,7 @@ import { PricingExpiredNotificationComponent } from '../../shared/components/pri
 import { customerGridClear } from '../../store/actions';
 import { State } from '../../store/reducers';
 import { SharedService } from '../shared-service';
+import { ProceedConfirmationComponent } from '../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 @Component({
     providers: [SharedService],
@@ -54,7 +55,8 @@ export class DefaultLayoutComponent implements OnInit {
         private pricingTemplatesService: PricingtemplatesService,
         private expiredPricingDialog: MatDialog,
         private router: Router,
-        private store: Store<State>
+        private store: Store<State>,
+        private clearPricingDialog: MatDialog,
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -224,22 +226,40 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     public onClearFboPrice(event): void {
-        this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, event)
-            .subscribe((data: any) => {
-                if (event === 'SAF') {
-                    this.costSaf = 0;
-                    this.retailSaf = 0;
-                }
-                else if (event === 'JetA') {
-                    this.costJetA = 0;
-                    this.retailJetA = 0;
-                }
+        const dialogRef = this.clearPricingDialog.open(
+            ProceedConfirmationComponent,
+            {
+                autoFocus: false,
+                data: {
+                    buttonText: 'Yes',
+                    description:
+                        "This will unpublish all associated pricing for this product",
+                    title: 'Are you sure you want to clear your pricing?',
+                },
+            }
+        );
 
-                this.sharedService.emitChange('fbo prices cleared');
-                this.sharedService.valueChange({
-                    message: SharedEvents.fboPricesClearedEvent,
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, event)
+                .subscribe((data: any) => {
+                    if (event === 'SAF') {
+                        this.costSaf = 0;
+                        this.retailSaf = 0;
+                    }
+                    else if (event === 'JetA') {
+                        this.costJetA = 0;
+                        this.retailJetA = 0;
+                    }
+
+                    this.sharedService.emitChange('fbo prices cleared');
+                    this.sharedService.valueChange({
+                        message: SharedEvents.fboPricesClearedEvent,
+                    });
                 });
-            });
+        });
     }
 
     private loadFboPreferences() {
