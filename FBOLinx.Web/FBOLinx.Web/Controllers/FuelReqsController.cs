@@ -1267,11 +1267,11 @@ namespace FBOLinx.Web.Controllers
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = fboTransactionsResponse.Result;
 
                 List<AirportWatchHistoricalDataResponse> airportWatchHistoricalDataResponse = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = request.StartDateTime, EndDateTime = request.EndDateTime });
-                var groupedAirportWatchHistoricalDataResponse = airportWatchHistoricalDataResponse.GroupBy(ah => new { ah.CompanyId }).Select(a => new
+                var groupedAirportWatchHistoricalDataResponse = airportWatchHistoricalDataResponse.Where(g => g.Status == "Arrival").GroupBy(ah => new { ah.CompanyId }).Select(a => new
                 {
                     Company = a.Key,
-                    VisitsToMyFbo = a.Sum(f => f.VisitsToMyFbo),
-                    AirportVisis = a.Sum(a => a.PastVisits)
+                    VisitsToMyFbo = a.Count(f => f.VisitsToMyFbo > 0),
+                    AirportVisis = a.Count(a => a.PastVisits > -1)
                 }).ToList();
 
                 if (customeridval == null)
