@@ -54,6 +54,18 @@ const initialColumns: ColumnType[] = [
         name: 'Needs Attention',
     },
     {
+        id: 'pricingTemplateName',
+        name: 'ITP Margin Template',
+    },
+    {
+        id: 'pricingFormula',
+        name: 'PricingFormula',
+    },
+    {
+        id: 'allInPrice',
+        name: 'All In Price',
+    },
+    {
         id: 'tags',
         name: 'Tags',
     },
@@ -66,16 +78,8 @@ const initialColumns: ColumnType[] = [
         name: 'Fleet Size',
     },
     {
-        id: 'pricingTemplateName',
-        name: 'ITP Margin Template',
-    },
-    {
         id: 'fuelVendors',
         name: 'Fuel Vendors',
-    },
-    {
-        id: 'allInPrice',
-        name: 'All In Price',
     },
     {
         id: 'certificateTypeDescription',

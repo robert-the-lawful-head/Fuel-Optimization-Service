@@ -3,8 +3,8 @@
         <div class="row">
             <div class="col-1 border-bottom font-weight-bold">Status</div>
             <div class="col-1 border-bottom font-weight-bold">Product</div>
-            <div class="col-3 border-bottom font-weight-bold">Effective</div>
-            <div class="col-3 border-bottom font-weight-bold">Expiration</div>
+            <div class="col-2 border-bottom font-weight-bold">Effective</div>
+            <div class="col-2 border-bottom font-weight-bold">Expiration</div>
             <div class="col-1 border-bottom font-weight-bold">Retail PAP</div>
             <div class="col-1 border-bottom font-weight-bold">Fuel Cost</div>
             <div class="col-2 border-bottom font-weight-bold"></div>
@@ -16,7 +16,7 @@
             <!--Product-->
             <div class="col-1 border-bottom pt-1"> {{pricing.product == "SAF" ? "SAF" : pricing.product}}</div>
             <!--Effective From-->
-            <div class="col-3 border-bottom">
+            <div class="col-2 border-bottom">
                 <div *ngIf="!pricing.isEdit" class="pt-1">
                     <span *ngIf="pricing.oidPap > 0">{{pricing.effectiveFrom}} {{timezone}}</span>
                 </div>
@@ -45,7 +45,7 @@
                 </div>
             </div>
             <!--Expiration-->
-            <div class="col-3 border-bottom">
+            <div class="col-2 border-bottom">
                 <div *ngIf="!pricing.isEdit" class="pt-1">
                     {{pricing.effectiveTo}}  {{timezone}}
                 </div>
