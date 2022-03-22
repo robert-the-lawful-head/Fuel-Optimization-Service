@@ -30,6 +30,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFuelerLinxAircraftSyncingService, FuelerLinxAircraftSyncingService>();
             services.AddTransient<IPricingTemplateService, PricingTemplateService>();
             services.AddTransient<IPricingTemplateGridService, PricingTemplateService>();
+            services.AddTransient<IPricingTemplateAttachmentService, PricingTemplateAttachmentService>();
             services.AddTransient<ICustomerMarginService, CustomerMarginService>();
             services.AddTransient<ICustomCustomerTypeService, CustomCustomerTypeService>();
             services.AddTransient<IPricingTemplateEntityService, PricingTemplateEntityService>();

@@ -51,9 +51,10 @@ namespace FBOLinx.Web.Services
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
+        private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -63,6 +64,7 @@ namespace FBOLinx.Web.Services
             _MailService = mailService;
             _PricingTemplateService = pricingTemplateService;
             _EmailContentService = emailContentService;
+            _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
         }
         #endregion
 
@@ -262,7 +264,7 @@ namespace FBOLinx.Web.Services
                 mailMessage.InlineAttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
 
                 //Get additional attachments
-                var pricingTemplateAttachment = await _PricingTemplateService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
+                var pricingTemplateAttachment = await _pricingTemplateAttachmentService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
                 if (pricingTemplateAttachment != null)
                     mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = pricingTemplateAttachment.ContentType, FileName = pricingTemplateAttachment.FileName, FileData = Convert.ToBase64String(pricingTemplateAttachment.FileData, 0, pricingTemplateAttachment.FileData.Length)});
 

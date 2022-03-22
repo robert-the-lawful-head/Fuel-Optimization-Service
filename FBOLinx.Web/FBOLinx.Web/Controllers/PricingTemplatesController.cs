@@ -8,6 +8,8 @@ using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.Dto.Requests;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using System;
+using Microsoft.AspNetCore.Http;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -17,11 +19,13 @@ namespace FBOLinx.Web.Controllers
     public class PricingTemplatesController : ControllerBase
     {
         private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
 
-        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, ICustomCustomerTypeService customCustomerTypeService)
+        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, IPricingTemplateAttachmentService pricingTemplateAttachmentService)
         {
             _pricingTemplateService = pricingTemplateService;
-        }
+            _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
+    }
 
         // GET: api/PricingTemplates/5
         [HttpGet("{id}")]
@@ -144,6 +148,65 @@ namespace FBOLinx.Web.Controllers
             var result = await _pricingTemplateService.DeletePricingTemplate(pricingTemplate, oid, fboId);
 
             return Ok(result);
+        }
+                // GET: api/PricingTemplates/fileattachment/5
+        [HttpGet("fileattachment/{pricingTemplateId}")]
+        public async Task<IActionResult> GetFileAttachment([FromRoute] int pricingTemplateId)
+        {
+           var file = await _pricingTemplateAttachmentService.GetFileAttachment(pricingTemplateId);
+
+            if (file == null) return NotFound();
+
+            return Ok(file);
+        }
+
+        // GET: api/PricingTemplates/fileattachmentname/5
+        [HttpGet("fileattachmentname/{pricingTemplateId}")]
+        public async Task<IActionResult> GetFileAttachmentName([FromRoute] int pricingTemplateId)
+        {
+            var file = await _pricingTemplateAttachmentService.GetFileAttachmentName(pricingTemplateId);
+
+            if (file == null) return NotFound();
+
+            return Ok(file);
+        }
+
+        // POST: api/PricingTemplates/uploadfileattachment
+        [HttpPost("uploadfileattachment")]
+        public async Task<IActionResult> UploadFileAttachment([FromBody] FbolinxPricingTemplateAttachmentsRequest request)
+        {
+            try
+            {
+                if (request.FileData.Contains(","))
+                    request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
+                
+                var result = await _pricingTemplateAttachmentService.UploadFileAttachment(request);
+
+                if (result) return Ok();
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message });
+            }
+        }
+
+        // DELETE: api/PricingTemplates/fileattachment/4
+        [HttpDelete("fileattachment/{pricingTemplateId}")]
+        public async Task<IActionResult> DeleteFileAttachment([FromRoute] int pricingTemplateId)
+        {
+            try
+            {
+                var result = await _pricingTemplateAttachmentService.DeleteFileAttachment(pricingTemplateId);
+                
+                if(result) return Ok();
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Message = ex.Message }) ;
+            }
+
         }
     }
 }
