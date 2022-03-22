@@ -19,11 +19,13 @@ namespace FBOLinx.Web.Controllers
     public class PricingTemplatesController : ControllerBase
     {
         private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
 
-        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, ICustomCustomerTypeService customCustomerTypeService)
+        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, IPricingTemplateAttachmentService pricingTemplateAttachmentService)
         {
             _pricingTemplateService = pricingTemplateService;
-        }
+            _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
+    }
 
         // GET: api/PricingTemplates/5
         [HttpGet("{id}")]
@@ -151,7 +153,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fileattachment/{pricingTemplateId}")]
         public async Task<IActionResult> GetFileAttachment([FromRoute] int pricingTemplateId)
         {
-           var file = await _pricingTemplateService.GetFileAttachment(pricingTemplateId);
+           var file = await _pricingTemplateAttachmentService.GetFileAttachment(pricingTemplateId);
 
             if (file == null) return NotFound();
 
@@ -162,7 +164,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fileattachmentname/{pricingTemplateId}")]
         public async Task<IActionResult> GetFileAttachmentName([FromRoute] int pricingTemplateId)
         {
-            var file = await _pricingTemplateService.GetFileAttachmentName(pricingTemplateId);
+            var file = await _pricingTemplateAttachmentService.GetFileAttachmentName(pricingTemplateId);
 
             if (file == null) return NotFound();
 
@@ -178,7 +180,7 @@ namespace FBOLinx.Web.Controllers
                 if (request.FileData.Contains(","))
                     request.FileData = request.FileData.Substring(request.FileData.IndexOf(",") + 1);
                 
-                var result = await _pricingTemplateService.UploadFileAttachment(request);
+                var result = await _pricingTemplateAttachmentService.UploadFileAttachment(request);
 
                 if (result) return Ok();
                 return BadRequest();
@@ -195,7 +197,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                var result = await _pricingTemplateService.DeleteFileAttachment(pricingTemplateId);
+                var result = await _pricingTemplateAttachmentService.DeleteFileAttachment(pricingTemplateId);
                 
                 if(result) return Ok();
                 return NotFound();

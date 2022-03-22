@@ -6,7 +6,7 @@ using FBOLinx.ServiceLayer.Dto.Requests;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
-    public interface IPricingTemplateService: IPricingTemplateGridService, IPricingTemplateAttachmentService
+    public interface IPricingTemplateService: IPricingTemplateGridService
     {
         Task FixCustomCustomerTypes(int groupId, int fboId);
         Task FixDefaultPricingTemplate(int fboId);
