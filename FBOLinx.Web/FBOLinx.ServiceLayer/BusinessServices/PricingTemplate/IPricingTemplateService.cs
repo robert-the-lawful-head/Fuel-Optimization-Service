@@ -6,7 +6,7 @@ using FBOLinx.ServiceLayer.Dto.Requests;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
-    public interface IPricingTemplateService: IPricingTemplateGridService
+    public interface IPricingTemplateService: IPricingTemplateGridService, IPricingTemplateAttachmentService
     {
         Task FixCustomCustomerTypes(int groupId, int fboId);
         Task FixDefaultPricingTemplate(int fboId);
@@ -19,6 +19,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId);
         Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId);
         Task<PricingTemplateDto> GetPricingTemplateById(int oid);
-        public Task<FbolinxPricingTemplateFileAttachmentDto> GetFileAttachmentObject(int pricingTemplateId);
     }
 }

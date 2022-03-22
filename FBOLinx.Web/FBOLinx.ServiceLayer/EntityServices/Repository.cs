@@ -29,7 +29,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var entity = context.Set<T>().Find(id);
             if (entity == null)
             {
-                return entity;
+                return null;
             }
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();
