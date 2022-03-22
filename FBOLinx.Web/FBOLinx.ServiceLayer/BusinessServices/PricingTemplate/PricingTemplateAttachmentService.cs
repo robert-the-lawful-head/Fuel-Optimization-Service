@@ -75,7 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         public async Task<bool> DeleteFileAttachment(int pricingTemplateId)
         {
             var pricingTemplateFile = await _fbolinxPricingTemplateAttachmentsEntityService.Where(p => p.PricingTemplateId == pricingTemplateId).FirstOrDefaultAsync();
-            var result = _fbolinxPricingTemplateAttachmentsEntityService.DeleteAsync(pricingTemplateFile.Oid);
+            var result = await _fbolinxPricingTemplateAttachmentsEntityService.DeleteAsync(pricingTemplateFile.Oid);
 
             if (result == null) return false;
 
