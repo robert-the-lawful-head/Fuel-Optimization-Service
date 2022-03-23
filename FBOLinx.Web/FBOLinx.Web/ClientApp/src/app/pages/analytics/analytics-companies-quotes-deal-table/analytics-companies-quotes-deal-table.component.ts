@@ -7,6 +7,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
@@ -35,6 +36,7 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 export class AnalyticsCompaniesQuotesDealTableComponent
     implements OnInit, AfterViewInit, OnDestroy
 {
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     filterStartDate: Date;
@@ -53,11 +55,18 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         'airportOrders',
         'customerBusiness',
         'lastPullDate',
+        'airportVisits',
+        'visitsToFbo',
+        'percentVisits',
     ];
     dataSource: MatTableDataSource<any[]>;
 
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
+
+    pageIndex = 0;
+    pageSize = 10;
+    dataLength = 0;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -127,63 +136,73 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     }
 
     initColumns() {
+        var initialColumns = this.columns = [
+            {
+                id: 'company',
+                name: 'Company',
+            },
+            {
+                id: 'directOrders',
+                name: 'Direct Orders',
+            },
+            {
+                id: 'companyQuotesTotal',
+                name: 'Number of Quotes',
+            },
+            {
+                id: 'conversionRate',
+                name: 'Conversion Rate',
+            },
+            {
+                id: 'conversionRateTotal',
+                name: 'Conversion Rate (Total)',
+            },
+            {
+                id: 'totalOrders',
+                name: `Total Orders at ${this.fbo}`,
+            },
+            {
+                id: 'airportOrders',
+                name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+            },
+            {
+                id: 'customerBusiness',
+                name: '% of Customer\'s Business',
+            },
+            {
+                id: 'lastPullDate',
+                name: `${this.sharedService.currentUser.icao} Last Quoted`,
+                sort: 'desc',
+            },
+            {
+                id: 'airportVisits',
+                name: `Arrivals`,
+            },
+            {
+                id: 'visitsToFbo',
+                name: `Visits to ${this.fbo}`,
+            },
+            {
+                id: 'percentVisits',
+                name: `% of visits to ${this.fbo}`,
+            },
+        ];
+
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             this.columns = JSON.parse(
                 localStorage.getItem(this.tableLocalStorageKey));
 
-            if (this.columns.length === 7 ) {
-                const customerBusiness = {
-                    id: 'customerBusiness',
-                    name: '% of Customer\'s Business',
-                };
-                this.columns.push(customerBusiness);
-                const conversionRateTotal = {
-                    id: 'conversionRateTotal',
-                    name: 'Conversion Rate (Total)',
-                };
-                this.columns.push(conversionRateTotal);
+            if (this.columns.length === 9) {
+                this.columns = initialColumns;
+            }
+            else {
+                this.columns = JSON.parse(
+                    localStorage.getItem(this.tableLocalStorageKey)
+                );
             }
         } else {
-            this.columns = [
-                {
-                    id: 'company',
-                    name: 'Company',
-                },
-                {
-                    id: 'directOrders',
-                    name: 'Direct Orders',
-                },
-                {
-                    id: 'companyQuotesTotal',
-                    name: 'Number of Quotes',
-                },
-                {
-                    id: 'conversionRate',
-                    name: 'Conversion Rate',
-                },
-                {
-                    id: 'conversionRateTotal',
-                    name: 'Conversion Rate (Total)',
-                },
-                {
-                    id: 'totalOrders',
-                    name: `Total Orders at ${this.fbo}`,
-                },
-                {
-                    id: 'airportOrders',
-                    name: `Total Orders at ${this.sharedService.currentUser.icao}`,
-                },
-                {
-                    id: 'customerBusiness',
-                    name: '% of Customer\'s Business',
-                },
-                {
-                    id: 'lastPullDate',
-                    name: `${this.sharedService.currentUser.icao} Last Quoted`,
-                    sort: 'desc',
-                },
-            ];
+            this.columns = initialColumns;
         }
     }
 
@@ -235,7 +254,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                             return item[property];
                     }
                 };
+
                 this.dataSource.sort = this.sort;
+                this.paginator.pageIndex = 0;
+                this.dataSource.paginator = this.paginator;
 
                 this.refreshSort();
             },
@@ -289,6 +311,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent
                 row[`Total Orders at ${this.fbo}`] = item.totalOrders;
                 row[`Total Orders at ${this.icao}`] = item.airportOrders;
                 row[`${this.icao} Last Quoted`] = item.lastPullDate;
+                row[`Arrivals`] = item.airportVisits;
+                row[`Visits to ${this.fbo}`] = item.visitsToFbo;
+                row[`% of visits to ${this.fbo}`] = item.percentVisits + '%';
                 return row;
             });
             const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
@@ -323,6 +348,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         localStorage.setItem(
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
+        );
+    }
+
+    onPageChanged(event: any) {
+        localStorage.setItem('pageIndex', event.pageIndex);
+        sessionStorage.setItem(
+            'pageSizeValue',
+            this.paginator.pageSize.toString()
         );
     }
 }

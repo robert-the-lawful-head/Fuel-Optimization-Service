@@ -1,12 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace FBOLinx.DB.Models
+namespace FBOLinx.Service.Mapping.Dto
 {
-    public class FbolinxPricingTemplateFileAttachment
+    public partial class FbolinxPricingTemplateFileAttachmentDto
     {
-        [Key]
-        [Column("OID")]
         public int Oid { get; set; }
         public byte[] FileData { get; set; }
         [StringLength(200)]

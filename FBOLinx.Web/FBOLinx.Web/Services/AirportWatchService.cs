@@ -238,7 +238,6 @@ namespace FBOLinx.Web.Services
                 }
 
                 var customerVisitsData = historicalData
-                    //.Where(h => h.Company != null)
                     .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.AtcFlightNumber })
                     .Select(g =>
                     {
@@ -251,7 +250,6 @@ namespace FBOLinx.Web.Services
                         var visitsToMyFbo = new List<FboHistoricalDataModel>();
                         if (coordinates.Count > 0)
                             visitsToMyFbo = pastVisits.Where(p => IsPointInPolygon(new Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).ToList();
-                    //visitsToMyFbo = pastVisits.Where(p => IsPointInPolygon(coordinates, p.Latitude, p.Longitude)).ToList();
 
                     return new AirportWatchHistoricalDataResponse
                         {
@@ -748,64 +746,6 @@ namespace FBOLinx.Web.Services
 
             return new Tuple<double, double>(latitude, longitude);
         }
-
-        //public bool IsPointInPolygon(List<Coordinate> polygon, double latitude, double longitude)
-        //{
-        //    bool isInIntersection = false;
-        //    int actualPointIndex = 0;
-        //    int pointIndexBeforeActual = polygon.Count - 1;
-
-        //    var offset = calculateLonOffsetFromDateLine(polygon);
-        //    longitude = longitude < 0.0 ? longitude + offset : longitude;
-
-        //    foreach (var actualPointPosition in polygon)
-        //    {
-        //        var p1Lat = actualPointPosition.Latitude;
-        //        var p1Lon = actualPointPosition.Longitude;
-
-        //        var p0Lat = polygon[pointIndexBeforeActual].Latitude;
-        //        var p0Lon = polygon[pointIndexBeforeActual].Longitude;
-
-        //        if (p1Lon < 0.0) p1Lon += offset;
-        //        if (p0Lon < 0.0) p0Lon += offset;
-
-        //        // Jordan curve theorem - odd even rule algorithm
-        //        if (isPointLatitudeBetweenPolyLine(p0Lat, p1Lat, latitude)
-        //        && isPointRightFromPolyLine(p0Lat, p0Lon, p1Lat, p1Lon, latitude, longitude))
-        //        {
-        //            isInIntersection = !isInIntersection;
-        //        }
-
-        //        pointIndexBeforeActual = actualPointIndex;
-        //        actualPointIndex++;
-        //    }
-
-        //    return isInIntersection;
-        //}
-
-        //private double calculateLonOffsetFromDateLine(List<Coordinate> polygon)
-        //{
-        //    double offset = 0.0;
-        //    var maxLonPoly = polygon.Max(x => x.Longitude);
-        //    var minLonPoly = polygon.Min(x => x.Longitude);
-        //    if (Math.Abs(minLonPoly - maxLonPoly) > 180)
-        //    {
-        //        offset = 360.0;
-        //    }
-
-        //    return offset;
-        //}
-
-        //private bool isPointLatitudeBetweenPolyLine(double polyLinePoint1Lat, double polyLinePoint2Lat, double poiLat)
-        //{
-        //    return polyLinePoint2Lat <= poiLat && poiLat < polyLinePoint1Lat || polyLinePoint1Lat <= poiLat && poiLat < polyLinePoint2Lat;
-        //}
-
-        //private bool isPointRightFromPolyLine(double polyLinePoint1Lat, double polyLinePoint1Lon, double polyLinePoint2Lat, double polyLinePoint2Lon, double poiLat, double poiLon)
-        //{
-        //    // lon <(lon1-lon2)*(latp-lat2)/(lat1-lat2)+lon2
-        //    return poiLon < (polyLinePoint1Lon - polyLinePoint2Lon) * (poiLat - polyLinePoint2Lat) / (polyLinePoint1Lat - polyLinePoint2Lat) + polyLinePoint2Lon;
-        //}
 
         public bool IsPointInPolygon(Coordinate p, Coordinate[] polygon)
         {

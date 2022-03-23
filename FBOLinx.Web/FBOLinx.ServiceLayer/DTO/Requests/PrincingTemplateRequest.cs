@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.Dto.Requests
 {
-    public class PricingTemplateVM
+    public class PrincingTemplateRequest
     {
         public int? currentPricingTemplateId { get; set; }
         public string name { get; set; }

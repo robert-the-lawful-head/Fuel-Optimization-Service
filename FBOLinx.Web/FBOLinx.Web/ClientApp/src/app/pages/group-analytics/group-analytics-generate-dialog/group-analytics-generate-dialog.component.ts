@@ -119,14 +119,16 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                     )
                     .toPromise()) as any;
 
-                const exportData: any[] = [];
+                if (data.length > 0) {
+                    const exportData: any[] = [];
 
-                this.populateExportDataForCustomer(
-                    data,
-                    exportData
-                );
+                    this.populateExportDataForCustomer(
+                        data,
+                        exportData
+                    );
 
-                await this.exportReportForCustomer(exportData, data[0].company);
+                    await this.exportReportForCustomer(exportData, data[0].company);
+                }
             }
         );
 
