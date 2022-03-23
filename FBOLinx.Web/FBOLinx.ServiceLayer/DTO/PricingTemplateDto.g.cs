@@ -21,6 +21,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public MarginTypes? MarginType { get; set; }
         public int? EmailContentId { get; set; }
         public string MarginTypeProduct { get; set; }
+        public double? DefaultAmount { get; set; }
         public ICollection<CustomerMarginsDto> CustomerMargins { get; set; }
         public ICollection<AircraftPricesDto> AircraftPrices { get; set; }
         public FbosDto Fbo { get; set; }

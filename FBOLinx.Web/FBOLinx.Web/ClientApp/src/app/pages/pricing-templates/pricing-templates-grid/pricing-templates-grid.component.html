@@ -9,27 +9,24 @@
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
 
-    <table
-        [dataSource]="pricingTemplatesDataSource"
-        class="col-md-12"
-        mat-table
-        matSort
-        matSortActive="name"
-        matSortDirection="asc"
-    >
+    <table [dataSource]="pricingTemplatesDataSource"
+           class="col-md-12"
+           mat-table
+           matSort
+           matSortActive="name"
+           matSortDirection="asc">
         <ng-container matColumnDef="isInvalid">
             <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
             <td *matCellDef="let pricingTemplate" mat-cell>
-                <ni-badge
-                    *ngIf="pricingTemplate.isInvalid"
-                    [arrow]="'right'"
-                    [borderRadius]="false"
-                    [color]="'danger'"
-                    [matTooltipPosition]="'after'"
-                    [matTooltip]="
+                <ni-badge *ngIf="pricingTemplate.isInvalid"
+                          [arrow]="'right'"
+                          [borderRadius]="false"
+                          [color]="'danger'"
+                          [matTooltipPosition]="'after'"
+                          [matTooltip]="
                         'The pricing used by this template has been hidden/disabled in the FBO Prices section.'
-                    "
-                    >Invalid
+                    ">
+                    Invalid
                 </ni-badge>
             </td>
         </ng-container>
@@ -38,11 +35,8 @@
             <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 {{ pricingTemplate.name }}
-                <sup
-                    *ngIf="pricingTemplate.default"
-                    style="color: green; font-weight: bold"
-                    >Default</sup
-                >
+                <sup *ngIf="pricingTemplate.default"
+                     style="color: green; font-weight: bold">Default</sup>
             </td>
         </ng-container>
 
@@ -52,6 +46,15 @@
             </th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 {{ pricingTemplate.marginTypeDescription }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="pricingFormula">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                Pricing Formula
+            </th>
+            <td *matCellDef="let pricingTemplate" mat-cell>
+                {{ pricingTemplate.pricingFormula }}
             </td>
         </ng-container>
 
@@ -68,17 +71,15 @@
             <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 <div class="pull-right">
-                    <button
-                        (click)="
+                    <button (click)="
                             copyPricingTemplate(pricingTemplate);
                             $event.stopPropagation()
                         "
-                        [view]="'blank'"
-                        beforeIcon="fa fa-copy"
-                        ni-button
-                        size="small"
-                        style="border: 1px solid black; width: 70px !important"
-                    >
+                            [view]="'blank'"
+                            beforeIcon="fa fa-copy"
+                            ni-button
+                            size="small"
+                            style="border: 1px solid black; width: 70px !important">
                         Copy
                     </button>
                 </div>
@@ -88,28 +89,24 @@
         <ng-container matColumnDef="delete">
             <th *matHeaderCellDef mat-header-cell>
                 <div class="pull-right">
-                    <button
-                        (click)="addNewPricingTemplate()"
-                        [view]="'accent'"
-                        beforeIcon="fa fa-plus"
-                        ni-button
-                    >
+                    <button (click)="addNewPricingTemplate()"
+                            [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            ni-button>
                         Add New
                     </button>
                 </div>
             </th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 <div class="pull-right">
-                    <button
-                        (click)="
+                    <button (click)="
                             deletePricingTemplate(pricingTemplate);
                             $event.stopPropagation()
                         "
-                        [view]="'error'"
-                        beforeIcon="fa fa-trash"
-                        ni-button
-                        size="small"
-                    >
+                            [view]="'error'"
+                            beforeIcon="fa fa-trash"
+                            ni-button
+                            size="small">
                         Delete
                     </button>
                 </div>
@@ -117,11 +114,9 @@
         </ng-container>
 
         <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr
-            (click)="editPricingTemplate(row)"
+        <tr (click)="editPricingTemplate(row)"
             *matRowDef="let row; columns: displayedColumns"
-            mat-row
-        ></tr>
+            mat-row></tr>
     </table>
 
     <div>
