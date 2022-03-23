@@ -351,6 +351,8 @@ export class CustomersGridComponent implements OnInit {
                 'Customer was assigned to the default template and has not been changed yet.';
         }
 
+        customer.pricingFormula = (changedPricingTemplate.marginType == 0 ? "Cost + " : "Retail - ") + (changedPricingTemplate.discountType == 0 ? "$" + changedPricingTemplate.yourMargin.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,") : changedPricingTemplate.yourMargin + "%");
+
         const vm = {
             fboid: this.sharedService.currentUser.fboId,
             id: customer.customerId,

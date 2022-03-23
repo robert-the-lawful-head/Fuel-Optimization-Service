@@ -10,6 +10,7 @@ namespace FBOLinx.Web.Services.Interfaces
 {
     public interface IPricingTemplateService
     {
+        public Task<PricingTemplate> GetDefaultTemplate(int fboId);
         public Task FixCustomCustomerTypes(int groupId, int fboId);
 
         public Task FixDefaultPricingTemplate(int fboId);
