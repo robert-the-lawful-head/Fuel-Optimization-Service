@@ -30,5 +30,8 @@ namespace FBOLinx.Web.ViewModels
         public int? EmailContentId { get; set; }
         public EmailContent EmailContent { get; set; }
         public List<string> CustomerEmails { get; set; }
+        public DiscountTypes? DiscountType { get; set; }
+        public double InitialAmount { get; set; }
+        public string PricingFormula { get; set; }
     }
 }

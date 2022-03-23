@@ -38,6 +38,9 @@ namespace FBOLinx.DB.Models
         [NotMapped]
         public List<string> TailNumbers { get; set; }
 
+        [NotMapped]
+        public double? DefaultAmount { get; set; }
+
         public string MarginTypeProduct
         {
             get

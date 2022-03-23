@@ -351,6 +351,8 @@ export class CustomersGridComponent implements OnInit {
                 'Customer was assigned to the default template and has not been changed yet.';
         }
 
+        customer.pricingFormula = changedPricingTemplate.pricingFormula;
+
         const vm = {
             fboid: this.sharedService.currentUser.fboId,
             id: customer.customerId,

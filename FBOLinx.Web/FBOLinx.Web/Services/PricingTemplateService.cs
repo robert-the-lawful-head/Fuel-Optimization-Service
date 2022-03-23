@@ -23,6 +23,20 @@ namespace FBOLinx.Web.Services
             _context = context;
             _fileStorageContext = fileStorageContext;
         }
+
+        public async Task<PricingTemplate> GetDefaultTemplate(int fboId)
+        {
+            var pricingTemplate = await (from pt in _context.PricingTemplate
+                                   join cm in _context.CustomerMargins on pt.Oid equals cm.TemplateId
+                                   join prt in _context.PriceTiers on cm.PriceTierId equals prt.Oid
+             where prt.Min == 1
+                   && pt.Fboid == fboId
+                   && pt.Default != null
+             select new PricingTemplate { Name = pt.Name, Oid = pt.Oid, MarginType = pt.MarginType, DiscountType = pt.DiscountType, DefaultAmount = cm.Amount}).FirstOrDefaultAsync();
+
+            return pricingTemplate;
+        }
+
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
             if (groupId == 0 || fboId == 0)
@@ -236,6 +250,7 @@ namespace FBOLinx.Web.Services
                                              MaxPriceTierValue = cmGroupResult.Max(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0)),
                                              MinPriceTierValue = cmGroupResult.Min(c => Math.Abs(c.Amount.HasValue ? c.Amount.Value : 0))
                                          }).ToListAsync();
+
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
 
             //Join the inner queries on the pricing templates
@@ -265,12 +280,25 @@ namespace FBOLinx.Web.Services
                                             p.MarginType == MarginTypes.CostPlus ? (fp != null ? fp.Price : 0) + cm.MaxPriceTierValue :
                                             (p.MarginType == MarginTypes.RetailMinus ? (fp != null ? fp.Price : 0) - cm.MinPriceTierValue : 0),
                                         TemplateId = cm == null ? 0 : cm.TemplateId,
-                                        p.EmailContentId
+                                        p.EmailContentId,
+                                        p.DiscountType
                                     }).ToList();
 
+            var customerMargins = await (from pt in _context.PricingTemplate
+                                         join cm in _context.CustomerMargins on pt.Oid equals cm.TemplateId
+                                              into leftJoinCm
+                                         from cm in leftJoinCm.DefaultIfEmpty()
+                                         join prt in _context.PriceTiers on
+                                             new { PriceTierId = cm.PriceTierId, Min = 1.0 } equals
+                                             new { PriceTierId = prt.Oid, Min = prt.Min.GetValueOrDefault() }
+                                         into leftJoinPrt
+                                         from prt in leftJoinPrt.DefaultIfEmpty()
+                                         where pt.Fboid == fboId && prt != null
+                                         select new { PricingTemplateId = pt.Oid, cm.Amount }).ToListAsync();
 
             //Group the final result
             var result = (from pt in pricingTemplates
+                          join cm in customerMargins on pt.Oid equals cm.PricingTemplateId
                           group pt by new
                           {
                               pt.CustomerId,
@@ -288,6 +316,8 @@ namespace FBOLinx.Web.Services
                               pt.IntoPlanePrice,
                               pt.TemplateId,
                               pt.EmailContentId,
+                              pt.DiscountType,
+                              InitialAmount = cm.Amount
                           }
                     into groupedPt
                           select new PricingTemplatesGridViewModel
@@ -296,7 +326,7 @@ namespace FBOLinx.Web.Services
                               Default = groupedPt.Key.Default,
                               Fboid = groupedPt.Key.Fboid,
                               Margin = groupedPt.Key.Margin,
-                              YourMargin = groupedPt.Key.Margin,
+                              YourMargin = groupedPt.Key.InitialAmount,
                               MarginType = groupedPt.Key.MarginType,
                               Name = groupedPt.Key.Name,
                               Notes = groupedPt.Key.Notes,
@@ -307,7 +337,11 @@ namespace FBOLinx.Web.Services
                               IsPricingExpired = groupedPt.Key.IsPricingExpired,
                               IntoPlanePrice = groupedPt.Key.IntoPlanePrice,
                               CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == groupedPt.Key.TemplateId ? 1 : 0),
-                              EmailContentId = groupedPt.Key.EmailContentId
+                              EmailContentId = groupedPt.Key.EmailContentId,
+                              DiscountType = groupedPt.Key.DiscountType,
+                              PricingFormula = (groupedPt.Key.MarginType == MarginTypes.CostPlus ? "Cost + " : "Retail - ") + (groupedPt.Key.DiscountType == DiscountTypes.Percentage ?
+                                                    groupedPt.Key.InitialAmount.ToString() + "%"
+                                                    : string.Format("{0:C}", groupedPt.Key.InitialAmount.GetValueOrDefault()))
                           })
                 .OrderBy(pt => pt.Name)
                 .ToList();
