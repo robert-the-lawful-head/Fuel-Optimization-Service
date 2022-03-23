@@ -617,7 +617,7 @@ export class FboPricesHomeComponent
                                 ).toDate();
                             }
 
-                            this.sharedService.emitChange('fbo-prices-loaded');
+                            this.sharedService.emitChange('fbo prices updated');
                             this.sharedService.valueChange({
                                 JetACost: this.currentFboPriceJetACost.price,
                                 JetARetail:

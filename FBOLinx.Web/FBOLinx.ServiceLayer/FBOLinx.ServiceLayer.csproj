@@ -24,6 +24,11 @@
 	<ItemGroup>
 		<Generated Include="**\*.g.cs" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Generated Remove="Dto\AuditDto.g.cs" />
+	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
+	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />
 	</Target>

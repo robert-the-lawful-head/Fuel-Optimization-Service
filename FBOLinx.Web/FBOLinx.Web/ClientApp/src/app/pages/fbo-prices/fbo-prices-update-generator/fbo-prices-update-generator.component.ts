@@ -41,7 +41,6 @@ import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog
 
 //Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
-import { fboChangedEvent, fboProductPreferenceChangeEvent } from '../../../models/sharedEvents';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -138,7 +137,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.resetAll();
                 }
-                else if (message === fboProductPreferenceChangeEvent) {
+                else if (message === SharedEvents.fboProductPreferenceChangeEvent || message === SharedEvents.fboPricesClearedEvent) {
                     this.loadStagedFboPrices();
                 }
                 else if (message === SharedEvents.menuTooltipShowedEvent) {
@@ -185,8 +184,12 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                         });
 
                         if (data.status == "published") {
-                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = localDateTime;
-                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveTo = moment(_this.expirationDate).toDate();
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = moment(new Date(event.effectiveTo).getTime() + 1 * 60000).toDate();
+                            var effectiveFromDate = moment(_this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom).format("MM-DD-YYYY");
+                            this.dateTimeService.getNextTuesdayDate(effectiveFromDate).subscribe((nextTuesdayDate: any) => {
+                                _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveTo = moment(nextTuesdayDate).toDate();
+                            });
+
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].pricePap = null;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].priceCost = null;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = 0;
@@ -438,9 +441,15 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
                     this.fboPricesUpdateGridData.forEach(function (fboPrice) {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
-                            fboPrice.effectiveFrom = moment(moment(_this.localDateTime).format("MM/DD/YYYY HH:mm")).toDate();
-                            fboPrice.effectiveTo = moment(_this.expirationDate).toDate();
-                            fboPrice.submitStatus = "Publish";
+                            if (fboPrice.effectiveFrom == "0001-01-01T00:00:00") {
+                                fboPrice.effectiveTo = moment(_this.expirationDate).toDate();
+                                fboPrice.submitStatus = "Publish";
+                            }
+                            else {
+                                fboPrice.effectiveTo = moment(fboPrice.effectiveTo).toDate();
+                                fboPrice.submitStatus = "Stage";
+                            }
+                            fboPrice.effectiveFrom = moment(moment(fboPrice.effectiveFrom == "0001-01-01T00:00:00" ? _this.localDateTime : fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm")).toDate();
                             fboPrice.isEdit = true;
                         }
                         else {

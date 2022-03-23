@@ -43,7 +43,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     fuelVendors: any[];
     tags : any[];
 
-    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
+    public displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate', 'pricingFormula'];
     public dataSource:       MatTableDataSource<any[]>;
     public icao:             string;
     public fbo:              string;

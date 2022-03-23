@@ -17,15 +17,13 @@
     </table>
 </div>
 <div mat-dialog-actions>
-    <div class="text-center col-12">
-        <button
-            [mat-dialog-close]="data"
-            class="mr-1"
-            color="green"
-            mat-flat-button
-        >
+    <div class="text-right col-12">
+        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+        <button [mat-dialog-close]="data"
+                class="mr-1"
+                color="green"
+                mat-flat-button>
             {{ buttonText }}
         </button>
-        <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
     </div>
 </div>

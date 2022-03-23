@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using FBOLinx.Core.Enums;
 using FBOLinx.Service.Mapping.Dto;
 
@@ -7,6 +8,7 @@ namespace FBOLinx.Service.Mapping.Dto
     public partial class PricingTemplateDto
     {
         public int Oid { get; set; }
+        [StringLength(500)]
         public string Name { get; set; }
         public int Fboid { get; set; }
         public int? CustomerId { get; set; }
@@ -19,6 +21,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public MarginTypes? MarginType { get; set; }
         public int? EmailContentId { get; set; }
         public string MarginTypeProduct { get; set; }
+        public double? DefaultAmount { get; set; }
         public ICollection<CustomerMarginsDto> CustomerMargins { get; set; }
         public ICollection<AircraftPricesDto> AircraftPrices { get; set; }
         public FbosDto Fbo { get; set; }

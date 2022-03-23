@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.Dto.Responses
 {
-    public class PricingTemplatesGridViewModel
+    public class PricingTemplateGrid
     {
         public int Oid { get; set; }
         public string Name { get; set; }
@@ -30,5 +32,8 @@ namespace FBOLinx.Web.ViewModels
         public int? EmailContentId { get; set; }
         public EmailContent EmailContent { get; set; }
         public List<string> CustomerEmails { get; set; }
+        public DiscountTypes? DiscountType { get; set; }
+        public double InitialAmount { get; set; }
+        public string PricingFormula { get; set; }
     }
 }

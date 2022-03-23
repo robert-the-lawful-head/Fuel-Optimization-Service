@@ -1,25 +1,9 @@
-using System.Text;
-using FBOLinx.DB.Context;
-using FBOLinx.ServiceLayer.BusinessServices;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.ServiceLayer.BusinessServices.Auth;
-using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Hosting;
-using System.IO;
+using FBOLinx.Web.Extensions;
 
 namespace FBOLinx.Web
 {
@@ -44,6 +28,7 @@ namespace FBOLinx.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwaggerDocumentation();
             }
             else
             {

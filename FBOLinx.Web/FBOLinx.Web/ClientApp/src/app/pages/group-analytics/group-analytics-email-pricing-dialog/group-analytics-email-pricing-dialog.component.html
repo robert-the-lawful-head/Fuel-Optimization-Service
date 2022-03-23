@@ -29,7 +29,6 @@
 
             <ejs-richtexteditor #typeEmail formControlName="emailContentHtml"
                                 placeholder="Enter email body here..."></ejs-richtexteditor>
-            <mat-error *ngIf="form.controls.emailContentHtml.invalid">Email content is required.</mat-error>
         </mat-tab>
         <mat-tab label="Customer Emails">
             <ejs-grid #grid height="300px" [dataSource]="gridData">

@@ -20,6 +20,10 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.Auth;
 using Newtonsoft.Json;
 using Fuelerlinx.SDK;
+using Geolocation;
+using FBOLinx.Web.Services;
+using FBOLinx.Core.Enums;
+using FBOLinx.Web.Models.Responses.AirportWatch;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -32,13 +36,18 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly AircraftService _aircraftService;
-
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService)
+        private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
+        private readonly FboService _fboService;
+        private readonly AirportWatchService _airportWatchService;
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FboService fboService, AirportWatchService airportWatchService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
             _aircraftService = aircraftService;
+            _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
+            _fboService = fboService;
+            _airportWatchService = airportWatchService;
         }
 
         // GET: api/FuelReqs/5
@@ -1251,13 +1260,21 @@ namespace FBOLinx.Web.Controllers
                 FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest);
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = response.Result;
 
-                string fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefaultAsync();
-                fbolinxOrdersRequest.Fbo = fbo;
+                var fbo = await _fboService.GetFbo(fboId);
+                fbolinxOrdersRequest.Fbo = fbo.Fbo;
 
                 FboLinxCustomerTransactionsCountAtAirportResponse fboTransactionsResponse = await _fuelerLinxService.GetCustomerFBOTransactionsCount(fbolinxOrdersRequest);
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerFBOOrdersCount = fboTransactionsResponse.Result;
-                
-                if(customeridval == null)
+
+                List<AirportWatchHistoricalDataResponse> airportWatchHistoricalDataResponse = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = request.StartDateTime, EndDateTime = request.EndDateTime });
+                var groupedAirportWatchHistoricalDataResponse = airportWatchHistoricalDataResponse.Where(g => g.Status == "Arrival").GroupBy(ah => new { ah.CompanyId }).Select(a => new
+                {
+                    Company = a.Key,
+                    VisitsToMyFbo = a.Count(f => f.VisitsToMyFbo > 0),
+                    AirportVisis = a.Count(a => a.PastVisits > -1)
+                }).ToList();
+
+                if (customeridval == null)
                 {
                     //Fill-in customers that don't exist in the group anymore
                     List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
@@ -1294,6 +1311,9 @@ namespace FBOLinx.Web.Controllers
                     if (totalOrders > 0)
                         conversionRateTotalOrders += totalOrders;
 
+                    var airportVisits = groupedAirportWatchHistoricalDataResponse.Where(a => a.Company.CompanyId == customer.CustomerId).Select(a => a.AirportVisis).FirstOrDefault();
+
+                    var visitsToFbo = groupedAirportWatchHistoricalDataResponse.Where(a => a.Company.CompanyId == customer.CustomerId).Select(a => a.VisitsToMyFbo).FirstOrDefault();
 
                     tableData.Add(new
                     {
@@ -1308,7 +1328,10 @@ namespace FBOLinx.Web.Controllers
                         AirportOrders = airportTotalOrders,
                         CustomerBusiness = airportTotalOrders == 0 ? 0 : Math.Round(decimal.Parse(totalOrders.ToString()) / decimal.Parse(airportTotalOrders.ToString()) * 100, 2),
                         LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
-                        airportICAO = icao
+                        AirportICAO = icao,
+                        AirportVisits = airportVisits == null ? 0 : airportVisits,
+                        VisitsToFbo = visitsToFbo == null ? 0 : visitsToFbo,
+                        PercentVisits = visitsToFbo > 0 ? Math.Round(((double)visitsToFbo / (double)airportVisits * 100), 2) : 0
                     });
                 }
 

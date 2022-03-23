@@ -6,12 +6,7 @@ import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
-import {
-    fboChangedEvent,
-    fboPricesUpdatedEvent,
-    locationChangedEvent,
-    fboProductPreferenceChangeEvent,
-} from '../../models/sharedEvents';
+import * as SharedEvents from '../../models/sharedEvents';
 // Services
 import { FboairportsService } from '../../services/fboairports.service';
 import { FbopricesService } from '../../services/fboprices.service';
@@ -22,6 +17,7 @@ import { PricingExpiredNotificationComponent } from '../../shared/components/pri
 import { customerGridClear } from '../../store/actions';
 import { State } from '../../store/reducers';
 import { SharedService } from '../shared-service';
+import { ProceedConfirmationComponent } from '../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 @Component({
     providers: [SharedService],
@@ -59,7 +55,8 @@ export class DefaultLayoutComponent implements OnInit {
         private pricingTemplatesService: PricingtemplatesService,
         private expiredPricingDialog: MatDialog,
         private router: Router,
-        private store: Store<State>
+        private store: Store<State>,
+        private clearPricingDialog: MatDialog,
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -107,8 +104,8 @@ export class DefaultLayoutComponent implements OnInit {
                 return;
             }
             if (
-                (message === fboChangedEvent ||
-                    message === locationChangedEvent) &&
+                (message === SharedEvents.fboChangedEvent ||
+                    message === SharedEvents.locationChangedEvent) &&
                 this.sharedService.currentUser.fboId
             ) {
                 this.pricingTemplatesService
@@ -125,7 +122,7 @@ export class DefaultLayoutComponent implements OnInit {
             if (!this.canUserSeePricing()) {
                 return;
             }
-            if (value.message === fboPricesUpdatedEvent) {
+            if (value.message === SharedEvents.fboPricesUpdatedEvent) {
                 this.costJetA = value.JetACost;
                 this.retailJetA = value.JetARetail;
                 this.costSaf = value.SafCost;
@@ -134,7 +131,7 @@ export class DefaultLayoutComponent implements OnInit {
                 this.effectiveToJetA = value.PriceExpirationJetA;
             }
 
-            if (value.message === fboProductPreferenceChangeEvent) {
+            if (value.message === SharedEvents.fboProductPreferenceChangeEvent) {
                 this.enableJetA = value.EnableJetA;
                 this.enableSaf = value.EnableSaf;
             }
@@ -229,17 +226,40 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     public onClearFboPrice(event): void {
-        this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, event)
-            .subscribe((data: any) => {
-                if (event === 'SAF') {
-                    this.costSaf = 0;
-                    this.retailSaf = 0;
-                }
-                else if (event === 'JetA') {
-                    this.costJetA = 0;
-                    this.retailJetA = 0;
-                }
-            });
+        const dialogRef = this.clearPricingDialog.open(
+            ProceedConfirmationComponent,
+            {
+                autoFocus: false,
+                data: {
+                    buttonText: 'Yes',
+                    description:
+                        "This will unpublish all associated pricing for this product",
+                    title: 'Are you sure you want to clear your pricing?',
+                },
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+            this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, event)
+                .subscribe((data: any) => {
+                    if (event === 'SAF') {
+                        this.costSaf = 0;
+                        this.retailSaf = 0;
+                    }
+                    else if (event === 'JetA') {
+                        this.costJetA = 0;
+                        this.retailJetA = 0;
+                    }
+
+                    this.sharedService.emitChange('fbo prices cleared');
+                    this.sharedService.valueChange({
+                        message: SharedEvents.fboPricesClearedEvent,
+                    });
+                });
+        });
     }
 
     private loadFboPreferences() {

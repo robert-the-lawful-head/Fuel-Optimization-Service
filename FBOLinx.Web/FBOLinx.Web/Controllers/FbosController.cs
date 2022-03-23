@@ -16,6 +16,7 @@ using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Services.Interfaces;
 using Fuelerlinx.SDK;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 
 namespace FBOLinx.Web.Controllers
 {
