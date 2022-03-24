@@ -203,6 +203,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
             //Group the final result
             return (from pt in pricingTemplates
                     join cm in customerMargins on pt.Oid equals cm.PricingTemplateId
+                    into leftJoinCm
+                    from cm in leftJoinCm.DefaultIfEmpty()
                     group pt by new
                           {
                               pt.CustomerId,
@@ -221,7 +223,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                               pt.TemplateId,
                               pt.EmailContentId,
                               pt.DiscountType,
-                              InitialAmount = cm.Amount
+                              InitialAmount = cm == null ? 0 : cm.Amount
                           }
                     into groupedPt
                           select new PricingTemplateGrid()
