@@ -173,9 +173,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
             await FixOtherDefaults(pricingTemplateEntity);
 
-            await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
+            pricingTemplateEntity = await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
 
-            return pricingTemplate.Map<PricingTemplateDto>(); 
+            return pricingTemplateEntity.Map<PricingTemplateDto>(); 
         }
         public async Task<PricingTemplateDto> GetDefaultTemplate(int fboId)
         {
