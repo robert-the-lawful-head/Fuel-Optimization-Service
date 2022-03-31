@@ -948,7 +948,7 @@ namespace FBOLinx.Web.Controllers
                         } equals new { TemplateId = ai.Oid }
                             into leftJoinAi
                         from ai in leftJoinAi.DefaultIfEmpty()
-                        join cm in customerMargins on ai.Oid equals cm.PricingTemplateId
+                        join cm in customerMargins on (ai == null? 0 : ai.Oid) equals cm.PricingTemplateId
                         into leftJoinCm
                         from cm in leftJoinCm.DefaultIfEmpty()
                                                         //join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
@@ -977,7 +977,7 @@ namespace FBOLinx.Web.Controllers
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
                             Tags = customerTags.Where(x => x.CustomerId == cg.CustomerId),
                             PricingFormula = ai == null ?
-                                                (defaultPricingTemplate.MarginType + " " +
+                                                (FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(defaultPricingTemplate.MarginType) + " " +
                                                     (defaultPricingTemplate.DiscountType == DiscountTypes.Percentage ?
                                                         defaultPricingTemplate.DefaultAmount.ToString() + "%"
                                                         : string.Format("{0:C}", defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
