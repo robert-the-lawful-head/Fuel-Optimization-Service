@@ -19,5 +19,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId);
         Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId);
         Task<PricingTemplateDto> GetPricingTemplateById(int oid);
+        Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForAllCustomers(int fboId, int groupId);
     }
 }

@@ -18,5 +18,16 @@ namespace FBOLinx.Web.DTO
         public int? TempId { get; set; }
         public DateTime? TempDateFrom { get; set; }
         public DateTime? TempDateTo { get; set; }
+        public string GenericProduct
+        {
+            get
+            {
+                if (Product.Contains("Cost"))
+                    return "Cost";
+                if (Product.Contains("Retail"))
+                    return "Retail";
+                return "";
+            }
+        }
     }
 }

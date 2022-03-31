@@ -58,6 +58,17 @@
             </td>
         </ng-container>
 
+        <ng-container matColumnDef="allInPrice">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                All-In
+            </th>
+            <td *matCellDef="let pricingTemplate" mat-cell>
+                <div class="allInPrice">
+                    {{ pricingTemplate.allInPrice | currency: "USD":"symbol":"1.2-2" }}
+                </div>
+            </td>
+        </ng-container>
+
         <ng-container matColumnDef="customersAssigned">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
                 Customers Assigned
