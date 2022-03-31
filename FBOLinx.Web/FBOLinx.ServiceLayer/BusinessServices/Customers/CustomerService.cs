@@ -205,6 +205,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 await _customerEntityService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
             return result;
         }
+
+        public async Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId)
+        {
+            var result= await _context.CustomersViewedByFbo.Where(x => x.Fboid == fboId).ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId)
+        {
+            var result = await _context.CustomerCompanyTypes
+                    .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
+            return result;
+        }
         #endregion
 
         #region Private Methods

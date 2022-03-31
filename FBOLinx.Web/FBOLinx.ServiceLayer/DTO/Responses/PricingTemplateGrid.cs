@@ -35,5 +35,20 @@ namespace FBOLinx.ServiceLayer.Dto.Responses
         public DiscountTypes? DiscountType { get; set; }
         public double InitialAmount { get; set; }
         public string PricingFormula { get; set; }
+        public string MarginTypeProduct
+        {
+            get
+            {
+                if (!MarginType.HasValue)
+                    return "";
+                if (MarginType.Value == MarginTypes.CostPlus)
+                    return "Cost";
+                if (MarginType.Value == MarginTypes.RetailMinus)
+                    return "Retail";
+                return "";
+            }
+        }
+
+        public double? AllInPrice { get; set; }
     }
 }

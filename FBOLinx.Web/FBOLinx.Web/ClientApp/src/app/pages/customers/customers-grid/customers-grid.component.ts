@@ -122,6 +122,7 @@ export class CustomersGridComponent implements OnInit {
 
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
+    @Output() customerPriceClicked = new EventEmitter<any>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -344,7 +345,6 @@ export class CustomersGridComponent implements OnInit {
         );
 
         customer.needsAttention = changedPricingTemplate.default;
-        customer.allInPrice = changedPricingTemplate.intoPlanePrice;
 
         if (customer.needsAttention) {
             customer.needsAttentionReason =
@@ -352,6 +352,7 @@ export class CustomersGridComponent implements OnInit {
         }
 
         customer.pricingFormula = changedPricingTemplate.pricingFormula;
+        customer.allInPrice = changedPricingTemplate.allInPrice;
 
         const vm = {
             fboid: this.sharedService.currentUser.fboId,
@@ -372,7 +373,8 @@ export class CustomersGridComponent implements OnInit {
                 customer.needsAttention = event.value.default;
                 customer.pricingTemplateName = event.value.name;
                 customer.pricingTemplateId = event.value.oid;
-                customer.allInPrice = event.value.intoPlanePrice;
+                customer.allInPrice = event.value.allInPrice;
+                customer.pricingFormula = event.value.pricingFormula;
                 if (customer.needsAttention) {
                     customer.needsAttentionReason =
                         'Customer was assigned to the default template and has not been changed yet.';
@@ -677,6 +679,18 @@ export class CustomersGridComponent implements OnInit {
         }
         this.feesAndTaxes = null;
         this.focusedCustomer = null;
+    }
+
+    onCustomerPriceClicked(customer) {
+        this.customerPriceClicked.emit({
+            customerInfoByGroupId: customer.customerInfoByGroupId,
+            filter: this.customersDataSource.filter,
+            filterType: this.customerFilterType,
+            order: this.customersDataSource.sort.active,
+            orderBy: this.customersDataSource.sort.direction,
+            page: this.customersDataSource.paginator.pageIndex,
+            pricingTemplateId: customer.pricingTemplateId
+        });
     }
 
     private refreshCustomerDataSource() {
