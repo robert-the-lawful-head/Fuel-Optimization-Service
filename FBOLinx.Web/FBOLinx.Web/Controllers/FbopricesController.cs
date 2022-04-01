@@ -747,7 +747,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                var validPricing = _fbopricesService.GetFuelPricesForCustomer(request);
+                var validPricing = await _fbopricesService.GetFuelPricesForCustomer(request);
 
                 return Ok(validPricing);
             }
