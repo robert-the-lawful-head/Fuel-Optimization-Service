@@ -36,9 +36,6 @@ export class FlightWatchAircraftInfoDialogComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.data.flightWatch.tailNumber = "N491LG"
-    this.data.groupId = 110;
-    this.data.fboId = 364;
     this.prePopulateAircraftData(this.data.flightWatch);
     this.getCustomersList();
     if(!this.data.flightWatch.tailNumber){

@@ -66,12 +66,6 @@ namespace FBOLinx.Web.Services
                 .Include(x => x.Customer.CompanyPricingLogs)
                 .FirstOrDefaultAsync();
 
-            //var customer = await _context.Customers
-            //    .Where(x => x.Oid == customerAircrafts.CustomerId)
-            //    .Include(x => x.CustomerInfoByGroup)
-            //    .Include(x => x.CompanyPricingLogs)
-            //    .FirstOrDefaultAsync();
-
             var aircaft = await _degaContext.AirCrafts.Where(x => x.AircraftId == customerAircrafts.AircraftId).FirstOrDefaultAsync();
 
             var pricingLogs = customerInfoByGroup.Customer?.CompanyPricingLogs?.OrderByDescending(c => c.CreatedDate).FirstOrDefault();
