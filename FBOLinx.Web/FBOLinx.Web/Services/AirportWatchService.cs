@@ -45,7 +45,7 @@ namespace FBOLinx.Web.Services
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         
         public AirportWatchService(DBSCANService DBSCANService,
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService)
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService)
         {
             _dBSCANService = DBSCANService;
             _demoData = demoData;
@@ -56,6 +56,8 @@ namespace FBOLinx.Web.Services
             _fuelerLinxApiService = fuelerLinxApiService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _fboPricesService = fboPricesService;
+            _customerAircraftsEntityService = customerAircraftsEntityService;
+            _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId,int fboId,string tailNumber)
         {
