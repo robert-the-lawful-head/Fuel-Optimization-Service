@@ -10,6 +10,7 @@ using FBOLinx.Web.Services;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
+using FBOLinx.ServiceLayer.Dto.Responses;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -108,6 +109,13 @@ namespace FBOLinx.Web.Controllers
             {
                 return Ok(new List<AirportWatchHistoricalData>());
             }
+        }
+        [HttpGet("aircraftLiveData/{groupId}/{fboId}/{tailNumber}")]
+        public async Task<ActionResult<AircraftWatchLiveData>> GetAircraftLiveData(int groupId,int fboId, string tailNumber)
+        {
+            var aircraftInfo = await _airportWatchService.GetAircraftWatchLiveData(groupId, fboId, tailNumber);
+
+            return Ok(aircraftInfo);
         }
     }
 }

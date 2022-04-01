@@ -1,6 +1,10 @@
 ﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.DTO;
+using FBOLinx.Web.Models.Requests;
+using FBOLinx.Web.Models.Responses;
+using FBOLinx.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,10 +16,16 @@ namespace FBOLinx.Web.Services
     public class FbopricesService
     {
         private readonly FboLinxContext _context;
+        private readonly AircraftService _aircraftService;
+        private IPriceFetchingService _priceFetchingService;
+        private readonly RampFeesService _rampFeesService;
 
-        public FbopricesService(FboLinxContext context)
+        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService)
         {
             _context = context;
+            _aircraftService = aircraftService;
+            _priceFetchingService = priceFetchingService;
+            _rampFeesService = rampFeesService;
         }
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
@@ -72,6 +82,55 @@ namespace FBOLinx.Web.Services
                           }).ToList();
 
             return result;
+        }
+        public async Task<PriceLookupResponse> GetFuelPricesForCustomer(PriceLookupRequest request)
+        {
+            PriceLookupResponse validPricing = new PriceLookupResponse();
+
+            if (!string.IsNullOrEmpty(request.TailNumber))
+            {
+                var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == request.CustomerInfoByGroupId);
+                if (customerInfoByGroup == null)
+                    return null;
+
+                var customerAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
+                if (customerAircraft == null)
+                    return null;
+
+                var validPricingList =
+                    await _priceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes, request.FBOID);
+                if (validPricingList == null)
+                    return null;
+
+                validPricing.PricingList = validPricingList.Where(x =>
+                    !string.IsNullOrEmpty(x.TailNumbers) &&
+                    x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper()) && x.FboId == request.FBOID &&
+                    (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
+                var custAircraftMakeModel = await _aircraftService.GetAllAircraftsAsQueryable().FirstOrDefaultAsync(s => s.AircraftId == customerAircraft.AircraftId);
+
+                if (custAircraftMakeModel != null)
+                {
+                    validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
+                }
+                validPricing.RampFee = await _rampFeesService.GetRampFeeForAircraft(request.FBOID, request.TailNumber);
+            }
+            else
+            {
+                var customerInfoByGroup = await _context.CustomerInfoByGroup
+                    .Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId)))
+                    .Include(x => x.Customer)
+                    .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
+                    .FirstOrDefaultAsync();
+                validPricing.PricingList = await _priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
+            }
+
+            if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)
+                return null;
+
+            validPricing.Template = validPricing.PricingList[0].PricingTemplateName;
+            validPricing.Company = validPricing.PricingList[0].Company;
+
+            return validPricing;
         }
     }
 }

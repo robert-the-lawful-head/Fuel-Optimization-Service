@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { Aircraftwatch } from '../models/flight-watch';
 
 import {
     AirportWatchHistoricalDataRequest,
@@ -76,5 +77,10 @@ export class AirportWatchService {
         return this.http.get(route,
             {
             });
+    }
+    public getAircraftLiveData(groupId: number, fboid: number, tailNumber: string) {
+        return this.http.get<Aircraftwatch>(
+            `${this.accessPointUrl}/aircraftLiveData/${groupId}/${fboid}/${tailNumber}`
+        );
     }
 }
