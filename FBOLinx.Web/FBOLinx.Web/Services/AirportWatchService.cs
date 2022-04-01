@@ -21,6 +21,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
@@ -40,7 +41,9 @@ namespace FBOLinx.Web.Services
         private DBSCANService _dBSCANService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly FbopricesService _fboPricesService;
-
+        private ICustomerAircraftEntityService _customerAircraftsEntityService;
+        private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
+        
         public AirportWatchService(DBSCANService DBSCANService,
             FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService)
         {
@@ -58,9 +61,9 @@ namespace FBOLinx.Web.Services
         {
             var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.TailNumber == tailNumber).FirstOrDefaultAsync();
 
-            var customerAircrafts = await _context.CustomerAircrafts.Where(x => x.TailNumber == tailNumber && x.GroupId == groupId).FirstOrDefaultAsync();
+            var customerAircrafts = await _customerAircraftsEntityService.Where(x => x.TailNumber == tailNumber && x.GroupId == groupId).FirstOrDefaultAsync();
 
-            var customerInfoByGroup = await _context.CustomerInfoByGroup
+            var customerInfoByGroup = await _customerInfoByGroupEntityService
                 .Where(x => x.CustomerId == customerAircrafts.CustomerId && x.GroupId == groupId)
                 .Include(x => x.Customer)
                 .Include(x => x.Customer.CompanyPricingLogs)
@@ -68,9 +71,9 @@ namespace FBOLinx.Web.Services
 
             var aircaft = await _degaContext.AirCrafts.Where(x => x.AircraftId == customerAircrafts.AircraftId).FirstOrDefaultAsync();
 
-            var pricingLogs = customerInfoByGroup.Customer?.CompanyPricingLogs?.OrderByDescending(c => c.CreatedDate).FirstOrDefault();
-
             var fboairports = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
+
+            var pricingLogs = customerInfoByGroup.Customer?.CompanyPricingLogs?.OrderByDescending(c => c.CreatedDate).FirstOrDefault();;
 
             var lastQuote = await _fboPricesService.GetFuelPricesForCustomer(
                 new PriceLookupRequest()
