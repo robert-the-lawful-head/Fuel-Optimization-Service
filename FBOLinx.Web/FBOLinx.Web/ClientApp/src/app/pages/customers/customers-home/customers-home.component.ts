@@ -105,6 +105,24 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
             .then();
     }
 
+    customerPriceClicked(event) {
+        this.store.dispatch(
+            customerGridSet({
+                filter: event.filter,
+                filterType: event.filterType,
+                order: event.order,
+                orderBy: event.orderBy,
+                page: event.page,
+            })
+        );
+
+        this.router
+            .navigate([
+                '/default-layout/pricing-templates/' + event.pricingTemplateId,
+            ])
+            .then();
+    }
+
     customerDeleted() {
         this.loadCustomers();
     }

@@ -2,6 +2,7 @@
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
@@ -39,6 +40,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<ICustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<IFbolinxPricingTemplateAttachmentsEntityService, FbolinxPricingTemplateAttachmentsEntityService>();
+            services.AddTransient<IFboFeesAndTaxesService, FboFeesAndTaxesService>();
 
             return services;
         }

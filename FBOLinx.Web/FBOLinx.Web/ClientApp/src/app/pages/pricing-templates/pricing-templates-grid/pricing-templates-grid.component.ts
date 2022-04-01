@@ -50,6 +50,7 @@ export class PricingTemplatesGridComponent implements OnInit {
         'name',
         'marginTypeDescription',
         'pricingFormula',
+        'allInPrice',
         'customersAssigned',
         'copy',
         'delete',

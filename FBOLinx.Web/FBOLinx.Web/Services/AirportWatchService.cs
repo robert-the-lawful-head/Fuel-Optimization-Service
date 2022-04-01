@@ -20,6 +20,8 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.Dto.Responses;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
@@ -38,8 +40,12 @@ namespace FBOLinx.Web.Services
         private IOptions<DemoData> _demoData;
         private DBSCANService _dBSCANService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
-        public AirportWatchService( DBSCANService DBSCANService , 
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService)
+        private readonly FbopricesService _fboPricesService;
+        private ICustomerAircraftEntityService _customerAircraftsEntityService;
+        private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
+        
+        public AirportWatchService(DBSCANService DBSCANService,
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService)
         {
             _dBSCANService = DBSCANService;
             _demoData = demoData;
@@ -49,8 +55,69 @@ namespace FBOLinx.Web.Services
             _fboService = fboService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
+            _fboPricesService = fboPricesService;
+            _customerAircraftsEntityService = customerAircraftsEntityService;
+            _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
         }
+        public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
+        {
+            var liveDataMinDateTime = DateTime.UtcNow.AddMinutes(-10);
 
+            var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.TailNumber == tailNumber && x.AircraftPositionDateTimeUtc >= liveDataMinDateTime).FirstOrDefaultAsync();
+
+            var customerAircrafts = await _customerAircraftsEntityService.Where(x => x.TailNumber == tailNumber && x.GroupId == groupId).FirstOrDefaultAsync();
+
+            CustomerInfoByGroup customerInfoByGroup = null;
+
+            if (customerAircrafts != null)
+            {
+                customerInfoByGroup = await _customerInfoByGroupEntityService
+                    .Where(x => x.CustomerId == customerAircrafts.CustomerId && x.GroupId == groupId)
+                    .Include(x => x.Customer)                  
+                    .FirstOrDefaultAsync();
+            }
+
+
+            var aircaft = await _degaContext.AirCrafts.Where(x => x.AircraftId == (customerAircrafts == null ? 0 : customerAircrafts.AircraftId)).FirstOrDefaultAsync();
+
+            var fboairports = await _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefaultAsync();
+
+            CompanyPricingLog pricingLogs = null;
+            if (customerInfoByGroup != null && customerInfoByGroup?.Customer?.FuelerlinxId > 0)
+            {
+                pricingLogs = await _context.CompanyPricingLog
+                    .Where(x => x.CompanyId == customerInfoByGroup.Customer.FuelerlinxId.Value)
+                    .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
+            }
+
+            Models.Responses.PriceLookupResponse customerPricing = null;
+            if (customerInfoByGroup?.Oid > 0 && customerAircrafts?.Oid > 0)
+            {
+                customerPricing = await _fboPricesService.GetFuelPricesForCustomer(
+                    new PriceLookupRequest()
+                    {
+                        CustomerInfoByGroupId = customerInfoByGroup.Oid,
+                        DepartureType = Core.Enums.ApplicableTaxFlights.DomesticOnly,
+                        FBOID = fboId,
+                        FlightTypeClassification = Core.Enums.FlightTypeClassifications.Private,
+                        GroupID = groupId,
+                        ICAO = fboairports.Icao,
+                        TailNumber = tailNumber
+                    });
+            }
+
+            return new AircraftWatchLiveData()
+            {
+                TailNumber = aircraftWatchLiveData?.TailNumber,
+                AtcFlightNumber = aircraftWatchLiveData?.AtcFlightNumber,
+                AircraftTypeCode = aircraftWatchLiveData?.AircraftTypeCode,
+                IsAircraftOnGround = (aircraftWatchLiveData?.IsAircraftOnGround).GetValueOrDefault(),
+                Company = customerInfoByGroup?.Customer?.Company,
+                AircraftMakeModel = aircaft?.Make + " " + aircaft?.Model,
+                LastQuote = pricingLogs == null ? "N/A" : pricingLogs.CreatedDate.ToString(),
+                CurrentPricing = customerPricing?.PricingList?.FirstOrDefault()?.AllInPrice.GetValueOrDefault().ToString()
+            };
+        }
         public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveData(int groupId, int fboId, Coordinate coordinate)
         {
             List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();

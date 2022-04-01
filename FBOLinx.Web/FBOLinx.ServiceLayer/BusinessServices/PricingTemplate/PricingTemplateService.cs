@@ -114,6 +114,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
             return result;
         }
+
+        public async Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForAllCustomers(int fboId, int groupId)
+        {
+            List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
+
+            var standardTemplates = await _pricingTemplateEntityService.GetStandardTemplatesForAllCustomers(fboId, groupId);
+            result.AddRange(standardTemplates);
+            return result;
+        }
+
         public async Task<PricingTemplateDto> GetPricingTemplateById(int oid)
         {
             var result = await _pricingTemplateEntityService.FindAsync(oid);
@@ -173,9 +183,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
             await FixOtherDefaults(pricingTemplateEntity);
 
-            await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
+            pricingTemplateEntity = await _pricingTemplateEntityService.AddAsync(pricingTemplateEntity);
 
-            return pricingTemplate.Map<PricingTemplateDto>(); 
+            return pricingTemplateEntity.Map<PricingTemplateDto>(); 
         }
         public async Task<PricingTemplateDto> GetDefaultTemplate(int fboId)
         {

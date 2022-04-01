@@ -56,21 +56,21 @@ namespace FBOLinx.DB.Models
         public CertificateTypes? CertificateType { get; set; }
 
         [InverseProperty("Customer")]
-        public CompaniesByGroup CompanyByGroup { get; set; }
+        public virtual CompaniesByGroup CompanyByGroup { get; set; }
 
         [InverseProperty("Customer")]
-        public CustomerInfoByGroup CustomerInfoByGroup { get; set; }
+        public virtual CustomerInfoByGroup CustomerInfoByGroup { get; set; }
 
         [InverseProperty("Customer")]
-        public CustomCustomerTypes CustomCustomerType { get; set; }
+        public virtual CustomCustomerTypes CustomCustomerType { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<FuelReq> FuelReqs { get; set; }
+        public virtual ICollection<FuelReq> FuelReqs { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<CustomerContacts> CustomerContacts { get; set; }
+        public virtual ICollection<CustomerContacts> CustomerContacts { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
+        public virtual ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
     }
 }

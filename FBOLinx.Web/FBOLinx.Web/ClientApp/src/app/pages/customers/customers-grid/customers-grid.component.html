@@ -95,7 +95,7 @@
                 <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
                     <div class="">Needs Attention</div>
                 </th>
-                <td *matCellDef="let customer" mat-cell>
+                <td *matCellDef="let customer" class="text-left" mat-cell>
                     <div>
                         <ni-badge *ngIf="customer.needsAttention" [arrow]="'right'" [borderRadius]="false"
                                   [color]="'warning'" matTooltip="{{ customer.needsAttentionReason }}"
@@ -250,12 +250,11 @@
 
             <ng-container matColumnDef="allInPrice">
                 <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
-                    <div>All In Price</div>
+                    <div>All-In</div>
                 </th>
-                <td *matCellDef="let customer" mat-cell>
-                    <div [popover]="feeAndTaxPopover" class="hover-mouseenter d-inline-block ml-2 pl-1 pr-3"
-                         (onShown)="onCustomerPriceShown(customer)" (onHidden)="onCustomerPriceHidden()">
-                        <i aria-hidden="true" class="fa fa-info-circle"></i>
+                <td *matCellDef="let customer" clickStopPropagation mat-cell>
+                    <div (click)="onCustomerPriceClicked(customer)" class="allInPrice">
+                        {{ customer.allInPrice | currency: "USD":"symbol":"1.2-2" }}
                     </div>
                 </td>
             </ng-container>

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
@@ -8,6 +9,7 @@ import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
+import { FlightWatchAircraftInfoDialogComponent } from '../flight-watch-aircraft-info-dialog/flight-watch-aircraft-info-dialog.component';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 const BREADCRUMBS: any[] = [
@@ -53,7 +55,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     constructor(
         private airportWatchService: AirportWatchService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        public dialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -108,12 +111,19 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     onFlightWatchClick(flightWatch: FlightWatch) {
-        if (this.selectedFlightWatch?.oid !== flightWatch.oid) {
-            this.selectedFlightWatch = flightWatch;
-        } else if (!flightWatch.oid) {
-            this.selectedFlightWatch = undefined;
-        }
+        this.dialog.closeAll();
+        this.openFlightWatchDialog(flightWatch);
     }
+
+    openFlightWatchDialog(flightWatch: FlightWatch) {
+        this.dialog.open(FlightWatchAircraftInfoDialogComponent, {
+          data: {
+            flightWatch: flightWatch,
+            fboId : this.sharedService.currentUser.fboId,
+            groupId : this.sharedService.currentUser.groupId
+          }
+        });
+      }
 
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;
