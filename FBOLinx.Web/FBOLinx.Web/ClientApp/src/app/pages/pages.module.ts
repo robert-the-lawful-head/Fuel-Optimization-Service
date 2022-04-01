@@ -206,6 +206,7 @@ import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/f
 import { FboGeofencingDialogNewClusterComponent } from
     './fbo-geofencing/fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component';
 import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geofencing-dialog-new-airport/fbo-geofencing-dialog-new-airport.component';
+import { FlightWatchAircraftInfoDialogComponent } from './flight-watch/flight-watch-aircraft-info-dialog/flight-watch-aircraft-info-dialog.component';
 
 @NgModule({
     declarations: [
@@ -338,8 +339,8 @@ import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geo
         FboGeofencingGridComponent,
         FboGeofencingMapComponent,
         FboGeofencingDialogNewClusterComponent,
-        FboGeofencingDialogNewAirportComponent
-
+        FboGeofencingDialogNewAirportComponent,
+        FlightWatchAircraftInfoDialogComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -415,5 +416,6 @@ import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geo
         ToolbarService,
         DetailRowService
     ],
+    entryComponents: [FlightWatchAircraftInfoDialogComponent]
 })
 export class PagesModule { }
