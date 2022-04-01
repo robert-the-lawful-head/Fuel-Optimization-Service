@@ -73,8 +73,7 @@ namespace FBOLinx.Web.Services
             {
                 customerInfoByGroup = await _customerInfoByGroupEntityService
                     .Where(x => x.CustomerId == customerAircrafts.CustomerId && x.GroupId == groupId)
-                    .Include(x => x.Customer)
-                    .Include(x => x.Customer.CompanyPricingLogs)
+                    .Include(x => x.Customer)                  
                     .FirstOrDefaultAsync();
             }
 
