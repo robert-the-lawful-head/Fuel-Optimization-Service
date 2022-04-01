@@ -66,7 +66,7 @@ export class FlightWatchAircraftInfoDialogComponent implements OnInit {
   }
   prePopulateAircraftData(flightWatch : FlightWatch){
       this.aircraftWatch.tailNumber = flightWatch.tailNumber;
-      this.aircraftWatch.aircraftTypeCode = flightWatch.aircraftHexCode;
+      this.aircraftWatch.aircraftTypeCode = flightWatch.aircraftTypeCode;
       this.aircraftWatch.isAircraftOnGround = flightWatch.isAircraftOnGround;
       this.aircraftWatch.atcFlightNumber = flightWatch.atcFlightNumber;
   }

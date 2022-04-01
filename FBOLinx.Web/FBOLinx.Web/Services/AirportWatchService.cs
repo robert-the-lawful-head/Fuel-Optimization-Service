@@ -110,7 +110,7 @@ namespace FBOLinx.Web.Services
             {
                 TailNumber = aircraftWatchLiveData?.TailNumber,
                 AtcFlightNumber = aircraftWatchLiveData?.AtcFlightNumber,
-                AircraftTypeCode = aircraftWatchLiveData?.AircraftHexCode,
+                AircraftTypeCode = aircraftWatchLiveData?.AircraftTypeCode,
                 IsAircraftOnGround = (aircraftWatchLiveData?.IsAircraftOnGround).GetValueOrDefault(),
                 Company = customerInfoByGroup?.Customer?.Company,
                 AircraftMakeModel = aircaft?.Make + " " + aircaft?.Model,
