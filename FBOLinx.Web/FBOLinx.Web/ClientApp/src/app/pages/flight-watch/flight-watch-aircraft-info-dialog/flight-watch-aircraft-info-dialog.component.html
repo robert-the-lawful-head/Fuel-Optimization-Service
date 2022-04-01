@@ -1,6 +1,9 @@
-<button class="close-dialog" mat-icon-button aria-label="close dialog" mat-dialog-close>
-    <mat-icon>close</mat-icon>
-</button>
+
+<div class="close-dialog">
+    <button mat-icon-button aria-label="close dialog" mat-dialog-close>
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
 
 <div *ngIf="isLoading" class="loading-spinner">
     <mat-spinner></mat-spinner>
@@ -8,7 +11,7 @@
 
 <div *ngIf="!isLoading">
     <div mat-dialog-title class="dialog-title">
-        <span><strong>{{ aircraftWatch?.tailNumber }}</strong></span>
+        <span><strong>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</strong></span>
     </div>
     <div mat-dialog-content class="aircraft-info">
         <div class="info-labels">

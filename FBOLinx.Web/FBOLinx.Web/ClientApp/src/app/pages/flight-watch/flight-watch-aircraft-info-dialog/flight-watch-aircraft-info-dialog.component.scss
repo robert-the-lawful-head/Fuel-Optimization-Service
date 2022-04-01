@@ -4,8 +4,10 @@
     justify-content: center;
 }
 .close-dialog{
+    width: 100%;
+}
+.close-dialog>button{
     float: right;
-    position: relative;
 }
 .aircraft-info{
     display: flex;

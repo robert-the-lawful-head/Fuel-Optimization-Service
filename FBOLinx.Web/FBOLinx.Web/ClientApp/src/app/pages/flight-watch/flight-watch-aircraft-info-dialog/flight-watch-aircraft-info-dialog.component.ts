@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AnyFn } from '@ngrx/store/src/selector';
 import * as _ from 'lodash';
 import { CustomersListType } from 'src/app/models';
 import { Aircraftwatch, FlightWatch } from 'src/app/models/flight-watch';
