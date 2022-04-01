@@ -13,24 +13,62 @@
     <div mat-dialog-title class="dialog-title">
         <span><strong>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</strong></span>
     </div>
-    <div mat-dialog-content class="aircraft-info">
-        <div class="info-labels">
-            <p>Company</p>
-            <p>Flight Number</p>
-            <p>Aircraft Type</p>
-            <p>Aircraft Make/Model</p>
-            <p>On Ground</p>
-            <p>Last Quote</p>
-            <p>Current Pricing</p>
+    <div mat-dialog-content>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Company
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.company | NullOrEmptyToDefault }}&nbsp;
+            </p>
         </div>
-        <div class="info-values">
-            <p>{{ aircraftWatch?.company }}</p>
-            <p>{{ aircraftWatch?.atcFlightNumber }}</p>
-            <p>{{ aircraftWatch?.aircraftTypeCode }}</p>
-            <p>{{ aircraftWatch?.aircraftMakeModel }}</p>
-            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText}}</p>
-            <p>{{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}</p>
-            <p>{{ aircraftWatch?.currentPricing }}</p>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Flight Number
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.atcFlightNumber| NullOrEmptyToDefault }}
+            </p>
+        </div>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Aircraft Type
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.aircraftTypeCode | NullOrEmptyToDefault}}
+            </p>
+        </div>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Aircraft Make/Model
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.aircraftMakeModel | NullOrEmptyToDefault}}
+            </p>
+        </div>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                On Ground
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.isAircraftOnGround | booleanToText}}
+            </p>
+        </div>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Last Quote
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}
+            </p>
+        </div>
+        <div class="aircraft-info">
+            <p class="info-labels">
+                Current Pricing
+            </p>
+            <p class="info-values">
+                {{ aircraftWatch?.currentPricing | ToPriceFormatPipe}}
+            </p>
         </div>
     </div>
     <div mat-dialog-actions class="actions">
