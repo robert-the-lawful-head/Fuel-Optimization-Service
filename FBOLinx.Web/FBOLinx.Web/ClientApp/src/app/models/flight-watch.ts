@@ -18,4 +18,19 @@ export type FlightWatch = {
     fuelOrder?: boolean;
     isFuelerLinxCustomer: boolean;
     tailNumber: string;
+    company : string;
+    aircraftMakeModel : string;
+    lastQuote : string;
+    currentPricing : string;
+};
+
+export type Aircraftwatch = {
+    tailNumber: string;
+    atcFlightNumber: string;
+    aircraftTypeCode: string;
+    isAircraftOnGround: boolean;
+    company : string;
+    aircraftMakeModel : string;
+    lastQuote : string;
+    currentPricing : string;
 };

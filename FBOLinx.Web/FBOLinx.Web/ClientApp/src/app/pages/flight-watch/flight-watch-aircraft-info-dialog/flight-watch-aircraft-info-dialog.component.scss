@@ -1,0 +1,36 @@
+
+.dialog-title {
+    display: flex;
+    justify-content: center;
+}
+.close-dialog{
+    float: right;
+    position: relative;
+}
+.aircraft-info{
+    display: flex;
+    justify-content: center;
+}
+.aircraft-info>div>p{
+    line-height: 2 ;
+    margin-top: 0 ;
+    margin-bottom: 0 ;
+}
+.info-labels{
+    width: 50%;
+    text-align: end;
+    text-decoration: underline;
+    padding: 0 10px 0 0;
+}
+.info-values{
+    width: 50%;
+    text-align: start;
+    padding: 0 0 0 10px;
+}
+.actions{
+    display: flex;
+    justify-content: center;
+}
+.loading-spinner{
+    margin: 100px;
+}

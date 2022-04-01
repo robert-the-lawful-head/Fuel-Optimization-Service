@@ -1,0 +1,37 @@
+<button class="close-dialog" mat-icon-button aria-label="close dialog" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+</button>
+
+<div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+    <div mat-dialog-title class="dialog-title">
+        <span><strong>{{ aircraftWatch?.tailNumber }}</strong></span>
+    </div>
+    <div mat-dialog-content class="aircraft-info">
+        <div class="info-labels">
+            <p>Company</p>
+            <p>Flight Number</p>
+            <p>Aircraft Type</p>
+            <p>Aircraft Make/Model</p>
+            <p>On Ground</p>
+            <p>Last Quote</p>
+            <p>current pricing</p>
+        </div>
+        <div class="info-values">
+            <p>{{ aircraftWatch?.company }}</p>
+            <p>{{ aircraftWatch?.atcFlightNumber }}</p>
+            <p>{{ aircraftWatch?.aircraftTypeCode }}</p>
+            <p>{{ aircraftWatch?.aircraftMakeModel }}</p>
+            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText}}</p>
+            <p>{{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}</p>
+            <p>{{ aircraftWatch?.currentPricing }}</p>
+        </div>
+    </div>
+    <div mat-dialog-actions class="actions">
+        <button mat-raised-button color="accent" [disabled]="hasAircraft" [routerLink]="['/default-layout/customers']" > Customer Manager</button>
+        <button mat-raised-button color="accent" [disabled]="!hasAircraft" (click)="addAircraft()">Add Aircraft</button>
+    </div>
+</div>
