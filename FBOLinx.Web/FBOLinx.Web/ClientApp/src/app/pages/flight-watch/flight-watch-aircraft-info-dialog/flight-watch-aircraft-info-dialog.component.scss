@@ -13,10 +13,11 @@
     display: flex;
     justify-content: center;
 }
-.aircraft-info>div>p{
+.aircraft-info>p{
     line-height: 2 ;
     margin-top: 0 ;
     margin-bottom: 0 ;
+    word-wrap: break-word;
 }
 .info-labels{
     width: 50%;
