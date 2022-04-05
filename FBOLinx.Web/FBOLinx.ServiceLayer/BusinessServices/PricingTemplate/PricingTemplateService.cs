@@ -90,10 +90,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             result.AddRange(standardTemplates);
 
             //Set the applicable tail numbers for the aircraft-specific templates
+            var specificPricingIsStandardPricingCount = 0;
             foreach (DB.Models.PricingTemplate aircraftPricingTemplate in aircraftPricesResult)
             {
                 if (standardTemplates.Any(x => x.Oid == aircraftPricingTemplate.Oid))
+                {
+                    specificPricingIsStandardPricingCount++;
                     continue;
+                }
+
                 var tailNumberList = await _customerAircraftEntityService.GetTailNumbers(aircraftPricingTemplate.Oid, customer.CustomerId, groupId);
  
                 if (tailNumberList == null || tailNumberList.Count == 0)
@@ -103,7 +108,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
                 result.Add(aircraftPricingTemplate);
             }
             //Set the applicable tail numbers for the standard/default templates
-            if (!isAnalytics || (isAnalytics && aircraftPricesResult.Count > 0))
+            if (!isAnalytics || (isAnalytics && (aircraftPricesResult.Count != specificPricingIsStandardPricingCount)))
             {
                 var customerAircrafts = await _customerAircraftEntityService.Where(x => x.CustomerId == customer.CustomerId && x.GroupId == groupId).ToListAsync();
 
