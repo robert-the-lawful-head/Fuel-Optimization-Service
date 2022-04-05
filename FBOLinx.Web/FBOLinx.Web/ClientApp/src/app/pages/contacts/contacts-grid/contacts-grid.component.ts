@@ -82,11 +82,11 @@ export class ContactsGridComponent implements OnInit {
     // Public Methods
     public deleteRecord(record) {
         const id = this.route.snapshot.paramMap.get('id');
-        this.customerContactsService
-            .remove(record.customerContactId , this.sharedService.currentUser.oid)
+        this.contactInfoByGroupsService
+            .remove(record.contactInfoByGroupId, this.sharedService.currentUser.oid)
             .subscribe(() => {
-                this.contactInfoByGroupsService
-                    .remove(record.contactInfoByGroupId , this.sharedService.currentUser.oid)
+                this.customerContactsService
+                    .remove(record.customerContactId, this.sharedService.currentUser.oid)
                     .subscribe(() => {
                         const index = this.contactsData.findIndex(
                             (d) =>
@@ -128,11 +128,11 @@ export class ContactsGridComponent implements OnInit {
             if (result != undefined && result !== 'cancel') {
                 if (result.toDelete) {
                     const id = this.route.snapshot.paramMap.get('id');
-                    this.customerContactsService
-                        .remove(record.customerContactId , this.sharedService.currentUser.oid)
+                    this.contactInfoByGroupsService
+                        .remove(record.contactInfoByGroupId, this.sharedService.currentUser.oid)
                         .subscribe(() => {
-                            this.contactInfoByGroupsService
-                                .remove(record.contactInfoByGroupId ,this.sharedService.currentUser.oid)
+                            this.customerContactsService
+                                .remove(record.customerContactId, this.sharedService.currentUser.oid)
                                 .subscribe(() => {
                                     this.contactInfoByFboService
                                         .remove(record.contactId)

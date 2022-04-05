@@ -265,11 +265,11 @@ export class CustomersEditComponent implements OnInit {
     }
 
     contactDeleted(contact) {
-        this.customerContactsService
-            .remove(contact.customerContactId , this.sharedService.currentUser.oid)
+        this.contactInfoByGroupsService
+            .remove(contact.contactInfoByGroupId, this.sharedService.currentUser.oid)
             .subscribe(() => {
-                this.contactInfoByGroupsService
-                    .remove(contact.contactInfoByGroupId , this.sharedService.currentUser.oid)
+                this.customerContactsService
+                    .remove(contact.customerContactId, this.sharedService.currentUser.oid)
                     .subscribe((data) => {
 
                         this.contactsService.update(data).subscribe();
