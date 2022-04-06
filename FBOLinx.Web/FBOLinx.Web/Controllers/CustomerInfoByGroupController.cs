@@ -416,7 +416,7 @@ namespace FBOLinx.Web.Controllers
                                 if (item.Type == AuditType.Delete.ToString())
                                 {
 
-                                    infoLoggerVM.OldContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.NewValues);
+                                    infoLoggerVM.OldContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.OldValues);
                                     infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.ContactDeleted);
                                 }
                             }

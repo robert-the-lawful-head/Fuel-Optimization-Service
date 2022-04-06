@@ -35,6 +35,7 @@ namespace FBOLinx.Web
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseExceptionHandlerMiddleware();
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();

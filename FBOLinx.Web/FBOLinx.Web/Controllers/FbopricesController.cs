@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
-using FBOLinx.Web.Models.Responses;
 using FBOLinx.Web.Services;
 using System.Security.Claims;
 using FBOLinx.DB.Context;
@@ -633,31 +632,40 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
-
-            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
-
-            var activePricing = await _context.Fboprices.Where(s => 
-                                        s.EffectiveFrom <= DateTime.UtcNow &&
-                                        s.EffectiveTo > DateTime.UtcNow && 
-                                        (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
-                                        groupFbos.Any(g => g == s.Fboid) && 
-                                        s.Expired != true).ToListAsync();
             List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
-            var fbos = await _context.Fbos.Where(x => groupFbos.Any(f => f == x.Oid)).ToListAsync();
-            foreach (var groupFbo in groupFbos)
+            try
             {
-                var isFboActivePricing = activePricing.FirstOrDefault(s => s.Fboid == groupFbo);
-                
-                if (isFboActivePricing == null)
+                var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
+
+                var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
+
+                var activePricing = await _context.Fboprices.Where(s =>
+                                            s.EffectiveFrom <= DateTime.UtcNow &&
+                                            s.EffectiveTo > DateTime.UtcNow &&
+                                            (s.Product == "JetA Cost" || s.Product == "JetA Retail") &&
+                                            s.Expired != true).ToListAsync();
+
+                var fbosActivePricing = activePricing.Where(a => groupFbos.Any(g => g == a.Fboid)).ToList();
+               
+                var fbos = await _context.Fbos.Where(x => groupFbos.Any(f => f == x.Oid)).ToListAsync();
+                foreach (var groupFbo in groupFbos)
                 {
-                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
+                    var isFboActivePricing = fbosActivePricing.FirstOrDefault(s => s.Fboid == groupFbo);
+
+                    if (isFboActivePricing == null)
                     {
-                        FboId = groupFbo,
-                        FboName = fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
-                    };
-                    groupPriceUpdate.Add(gPU);
+                        FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
+                        {
+                            FboId = groupFbo,
+                            FboName = fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
+                        };
+                        groupPriceUpdate.Add(gPU);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+
             }
 
             return Ok(groupPriceUpdate);
@@ -746,56 +754,9 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("price-lookup-for-customer")]
         public async Task<IActionResult> GetFuelPricesForCustomer([FromBody] PriceLookupRequest request)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             try
             {
-                PriceLookupResponse validPricing = new PriceLookupResponse();
-
-                if (!string.IsNullOrEmpty(request.TailNumber))
-                {
-                    var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == request.CustomerInfoByGroupId);
-                    if (customerInfoByGroup == null)
-                        return Ok(null);
-
-                    var customerAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
-                    if (customerAircraft == null)
-                        return Ok(null);
-
-                    var validPricingList =
-                        await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customerAircraft.CustomerId, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes, request.FBOID);
-                    if (validPricingList == null)
-                        return Ok(null);
-
-                    validPricing.PricingList = validPricingList.Where(x =>
-                        !string.IsNullOrEmpty(x.TailNumbers) &&
-                        x.TailNumbers.ToUpper().Split(',').Contains(request.TailNumber.ToUpper())  && x.FboId == request.FBOID &&
-                        (request.CustomerInfoByGroupId == x.CustomerInfoByGroupId)).ToList();
-                    var custAircraftMakeModel = await _aircraftService.GetAllAircraftsAsQueryable().FirstOrDefaultAsync(s => s.AircraftId == customerAircraft.AircraftId);
-
-                    if (custAircraftMakeModel != null)
-                    {
-                        validPricing.MakeModel = custAircraftMakeModel.Make + " " + custAircraftMakeModel.Model;
-                    }
-                    validPricing.RampFee = await _RampFeesService.GetRampFeeForAircraft(request.FBOID, request.TailNumber);
-                } 
-                else
-                {
-                    var customerInfoByGroup = await _context.CustomerInfoByGroup
-                        .Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId)))
-                        .Include(x => x.Customer)
-                        .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
-                        .FirstOrDefaultAsync();
-                    validPricing.PricingList = await _PriceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
-                }
-
-                if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)
-                    return Ok(null);
-                
-                validPricing.Template = validPricing.PricingList[0].PricingTemplateName;
-                validPricing.Company = validPricing.PricingList[0].Company;                
+                var validPricing = await _fbopricesService.GetFuelPricesForCustomer(request);
 
                 return Ok(validPricing);
             }
