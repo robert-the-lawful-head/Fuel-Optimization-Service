@@ -632,31 +632,40 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
-
-            var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
-
-            var activePricing = await _context.Fboprices.Where(s => 
-                                        s.EffectiveFrom <= DateTime.UtcNow &&
-                                        s.EffectiveTo > DateTime.UtcNow && 
-                                        (s.Product == "JetA Cost" || s.Product == "JetA Retail") && 
-                                        groupFbos.Any(g => g == s.Fboid) && 
-                                        s.Expired != true).ToListAsync();
             List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
-            var fbos = await _context.Fbos.Where(x => groupFbos.Any(f => f == x.Oid)).ToListAsync();
-            foreach (var groupFbo in groupFbos)
+            try
             {
-                var isFboActivePricing = activePricing.FirstOrDefault(s => s.Fboid == groupFbo);
-                
-                if (isFboActivePricing == null)
+                var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
+
+                var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
+
+                var activePricing = await _context.Fboprices.Where(s =>
+                                            s.EffectiveFrom <= DateTime.UtcNow &&
+                                            s.EffectiveTo > DateTime.UtcNow &&
+                                            (s.Product == "JetA Cost" || s.Product == "JetA Retail") &&
+                                            s.Expired != true).ToListAsync();
+
+                var fbosActivePricing = activePricing.Where(a => groupFbos.Any(g => g == a.Fboid)).ToList();
+               
+                var fbos = await _context.Fbos.Where(x => groupFbos.Any(f => f == x.Oid)).ToListAsync();
+                foreach (var groupFbo in groupFbos)
                 {
-                    FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
+                    var isFboActivePricing = fbosActivePricing.FirstOrDefault(s => s.Fboid == groupFbo);
+
+                    if (isFboActivePricing == null)
                     {
-                        FboId = groupFbo,
-                        FboName = fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
-                    };
-                    groupPriceUpdate.Add(gPU);
+                        FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
+                        {
+                            FboId = groupFbo,
+                            FboName = fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
+                        };
+                        groupPriceUpdate.Add(gPU);
+                    }
                 }
+            }
+            catch(Exception ex)
+            {
+
             }
 
             return Ok(groupPriceUpdate);
