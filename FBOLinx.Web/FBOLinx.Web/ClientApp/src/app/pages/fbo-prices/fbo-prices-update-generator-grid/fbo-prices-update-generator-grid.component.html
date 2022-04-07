@@ -50,12 +50,14 @@
                     {{pricing.effectiveTo}}  {{timezone}}
                 </div>
                 <div *ngIf="pricing.isEdit">
-                    <mat-form-field class="price-form-input  effective-date-time">
-                        <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="onEffectiveToFocus(pricing);effectiveToDatePicker.open();">
-                        <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" (click)="onEffectiveToFocus(pricing)" style="vertical-align:super;"></mat-datepicker-toggle>
-                        <ngx-mat-datetime-picker #effectiveToDatePicker></ngx-mat-datetime-picker>
-                        <div style="position:absolute; top:8px; left: 140px;">{{timezone}}</div>
-                    </mat-form-field>
+                    <div class="datepicker">
+                        <mat-form-field class="price-form-input  effective-date-time">
+                            <input matInput [ngxMatDatetimePicker]="effectiveToDatePicker" [(ngModel)]="pricing.effectiveTo" [min]="pricing.effectiveFrom" (click)="effectiveToDatePicker.open();">
+                            <mat-datepicker-toggle matSuffix [for]="effectiveToDatePicker" style="vertical-align:super;"></mat-datepicker-toggle>
+                            <ngx-mat-datetime-picker #effectiveToDatePicker [color]="datePickerColor"></ngx-mat-datetime-picker>
+                            <div style="position:absolute; top:8px; left: 140px;">{{timezone}}</div>
+                        </mat-form-field>
+                    </div>
                     <div style="position: absolute; bottom: 20px; left: 50%">
                         <button #tooltip="ngbPopover"
                                 (hidden)="tooltipHidden()"
@@ -72,7 +74,7 @@
                         </ng-template>
                     </div>
                 </div>
-            </div>
+             </div>
             <!--Retail Pap-->
             <div class="col-2 border-bottom price-editor">
                 <div *ngIf="!pricing.isEdit" class="pt-1">

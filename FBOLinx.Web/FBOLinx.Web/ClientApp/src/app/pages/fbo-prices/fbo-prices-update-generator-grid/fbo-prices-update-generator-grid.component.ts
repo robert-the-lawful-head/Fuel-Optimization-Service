@@ -20,6 +20,7 @@ import { DateTimeService } from '../../../services/datetime.service';
 
 // Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
+import { ThemePalette } from '@angular/material/core';
 
 const initialColumns: ColumnType[] = [
     {
@@ -94,6 +95,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     columns: ColumnType[] = [];
     tooltipIndex = 0;
     timezone = "";
+    public datePickerColor: ThemePalette = 'accent';
 
     constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService) {
 
@@ -138,15 +140,6 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
                 pricingUpdate.submitStatus = "Publish";
             else
                 pricingUpdate.submitStatus = "Stage";
-        });
-    }
-
-    public onEffectiveToFocus(pricingUpdate) {
-        if (pricingUpdate.oidRetail > 0)
-            pricingUpdate.originalEffectiveTo = pricingUpdate.effectiveTo;
-
-        this.fboAirportsService.getLocalDateTime(pricingUpdate.fboid).subscribe((localdatetime: any) => {
-            pricingUpdate.effectiveTo = moment(moment(new Date(localdatetime)).format("MM/DD/YYYY HH:mm")).toDate();
         });
     }
 
