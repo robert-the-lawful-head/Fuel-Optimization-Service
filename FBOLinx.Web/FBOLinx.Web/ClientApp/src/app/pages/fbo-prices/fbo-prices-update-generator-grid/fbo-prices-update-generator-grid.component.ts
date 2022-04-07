@@ -11,6 +11,7 @@ import {
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as moment from 'moment';
 import { NgxMatDateFormats, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -21,6 +22,7 @@ import { DateTimeService } from '../../../services/datetime.service';
 // Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';
 import { ThemePalette } from '@angular/material/core';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -97,7 +99,7 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     timezone = "";
     public datePickerColor: ThemePalette = 'accent';
 
-    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService) {
+    constructor(private router: Router, private sharedService: SharedService, private fboPricesService: FbopricesService, private fboAirportsService: FboairportsService, private dateTimeService: DateTimeService, private shortTimeDialog: MatDialog) {
 
     }
 
@@ -188,15 +190,47 @@ export class FboPricesUpdateGeneratorGridComponent implements OnInit {
     }
 
     public submitPricing(pricingUpdate) {
-        this.onSubmitRow.emit({
-            oidCost: pricingUpdate.oidCost,
-            oidPap: pricingUpdate.oidPap,
-            product: pricingUpdate.product,
-            effectiveTo: pricingUpdate.effectiveTo,
-            effectiveFrom: pricingUpdate.effectiveFrom,
-            pricePap: pricingUpdate.pricePap,
-            priceCost: pricingUpdate.priceCost
-        });
+        var effectiveToDifference = moment(pricingUpdate.effectiveTo).diff(moment(), 'hours');
+
+        if (effectiveToDifference < 48) {
+            const dialogRef = this.shortTimeDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes',
+                        title: 'Are you sure you want to publish your pricing until the date listed below?',
+                        description: moment(pricingUpdate.effectiveTo).format("MM/DD/YYYY HH:mm") + ' ' + this.timezone
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+                this.onSubmitRow.emit({
+                    oidCost: pricingUpdate.oidCost,
+                    oidPap: pricingUpdate.oidPap,
+                    product: pricingUpdate.product,
+                    effectiveTo: pricingUpdate.effectiveTo,
+                    effectiveFrom: pricingUpdate.effectiveFrom,
+                    pricePap: pricingUpdate.pricePap,
+                    priceCost: pricingUpdate.priceCost
+                });
+            });
+        }
+        else {
+            this.onSubmitRow.emit({
+                oidCost: pricingUpdate.oidCost,
+                oidPap: pricingUpdate.oidPap,
+                product: pricingUpdate.product,
+                effectiveTo: pricingUpdate.effectiveTo,
+                effectiveFrom: pricingUpdate.effectiveFrom,
+                pricePap: pricingUpdate.pricePap,
+                priceCost: pricingUpdate.priceCost
+            });
+        }
     }
 
     tooltipHidden() {
