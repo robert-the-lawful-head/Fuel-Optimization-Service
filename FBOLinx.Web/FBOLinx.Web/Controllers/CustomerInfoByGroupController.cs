@@ -986,8 +986,8 @@ namespace FBOLinx.Web.Controllers
                                                         defaultPricingTemplate.DefaultAmount.ToString() + "%"
                                                         : string.Format("{0:C}", defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
                                                 : (ai.MarginTypeDescription + " " + (ai.DiscountType == DiscountTypes.Percentage ?
-                                                    cm.Amount.ToString() + "%"
-                                                    : string.Format("{0:C}", cm.Amount.GetValueOrDefault())))
+                                                    cm == null ? "0" : cm.Amount.ToString() + "%"
+                                                    : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))) 
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()

@@ -312,8 +312,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                         AllInPrice = c.AllInPrice,
                                         CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == p.Oid ? 1 : 0),
                                         PricingFormula = (p.MarginType == MarginTypes.CostPlus ? "Cost + " : "Retail - ") + (p.DiscountType == DiscountTypes.Percentage ?
-                                                    cm.Amount.ToString() + "%"
-                                                    : string.Format("{0:C}", cm.Amount.GetValueOrDefault()))
+                                                    (cm != null ? cm.Amount.ToString() : "0") + "%"
+                                                    : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))
                                     }).ToList();
 
             return pricingTemplates;
