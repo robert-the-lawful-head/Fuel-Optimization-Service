@@ -78,6 +78,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
     public sampleCalculation: PriceLookupRequest;
     public tailLoader = 'tail-loader';
     public isPriceBreakdownCustomerActive = true;
+    public isPriceBreakdownPricesExpired = false;
 
     public feesAndTaxes: Array<any>;
 
@@ -241,6 +242,10 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public priceBreakdownCustomerActiveCheckCompleted(event: any): void {
         this.isPriceBreakdownCustomerActive = event;
+    }
+
+    public priceBreakdownPricesExpiredCheckCompleted(event: any): void {
+        this.isPriceBreakdownPricesExpired = event;
     }
 
     // Private Methods

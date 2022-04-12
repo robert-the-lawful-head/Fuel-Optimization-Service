@@ -1090,9 +1090,9 @@ namespace FBOLinx.Web.Controllers
                                                       amount = ppt == null ? 0 : ppt.Amount,
                                                       CustomerCompanyType = cg.CustomerCompanyType,
                                                       PriceBreakdownDisplayType = priceBreakdownDisplayType
-                                                  }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
+                                                  }).OrderBy(y => y.Company).ThenBy(y => y.PricingTemplateId).ThenBy(y => y.Product).ThenBy(y => y.MinGallons).ToList();
 
-                    if (feesAndTaxes.Count > 0)
+                    if (feesAndTaxes.Count > 0 && customerPricingResults[0].FboPrice > 0)
                     {
                         //Add domestic-departure-only price options
                         List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
@@ -1160,7 +1160,7 @@ namespace FBOLinx.Web.Controllers
                     }
                     else
                     {
-                        x.AllInPrice = customerPricingResults.Count > 0 ? customerPricingResults.FirstOrDefault().AllInPrice : 0;
+                        x.AllInPrice = customerPricingResults.Count > 0 && customerPricingResults[0].FboPrice > 0 ? customerPricingResults.FirstOrDefault().AllInPrice : 0;
                     }
 
                     var needsAttentionRecord = needsAttentionCustomers.FirstOrDefault(n => n.Oid == x.CustomerInfoByGroupId);

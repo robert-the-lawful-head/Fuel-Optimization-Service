@@ -214,74 +214,79 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             customerPricingResults.ForEach(x =>
             {
-                x.AllInPrice = GetAllInPrice(x);
-
-                if (feesAndTaxes.Count > 0)
+                if (x.FboPrice > 0)
                 {
-                    //Add domestic-departure-only price options
-                    List<CustomerWithPricingResponse> domesticOptions = new List<CustomerWithPricingResponse>();
-                    if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.DomesticOnly) &&
-                        departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.DomesticOnly)
-                    {
-                        domesticOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
-                        domesticOptions.ForEach(y =>
-                        {
-                            y.Product = "Jet A (Domestic Departure)";
-                            y.FeesAndTaxes = feesAndTaxes.Where(fee =>
-                                fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
-                                fee.DepartureType == ApplicableTaxFlights.All)
-                                .ToList().Clone<FboFeesAndTaxes>().ToList();
-                        });
-                    }
+                    x.AllInPrice = GetAllInPrice(x);
 
-                    //Add international-departure-only price options
-                    List<CustomerWithPricingResponse> internationalOptions = new List<CustomerWithPricingResponse>();
-                    if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.InternationalOnly) &&
-                         departureType == ApplicableTaxFlights.All) ||
-                        departureType == ApplicableTaxFlights.InternationalOnly)
+                    if (feesAndTaxes.Count > 0)
                     {
-                        internationalOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
-                        internationalOptions.ForEach(y =>
+                        //Add domestic-departure-only price options
+                        List<CustomerWithPricingResponse> domesticOptions = new List<CustomerWithPricingResponse>();
+                        if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.DomesticOnly) &&
+                            departureType == ApplicableTaxFlights.All) || departureType == ApplicableTaxFlights.DomesticOnly)
                         {
-                            y.Product = "Jet A (International Departure)";
-                            y.FeesAndTaxes = feesAndTaxes.Where(fee =>
-                                fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
-                                fee.DepartureType == ApplicableTaxFlights.All)
-                                .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != y.PricingTemplateId))
-                                .ToList();
-                            y.FeesAndTaxes = feesAndTaxes.Where(fee =>
+                            domesticOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
+                            domesticOptions.ForEach(y =>
+                            {
+                                y.Product = "Jet A (Domestic Departure)";
+                                y.FeesAndTaxes = feesAndTaxes.Where(fee =>
+                                    fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
+                                    fee.DepartureType == ApplicableTaxFlights.All)
+                                    .ToList().Clone<FboFeesAndTaxes>().ToList();
+                            });
+                        }
+
+                        //Add international-departure-only price options
+                        List<CustomerWithPricingResponse> internationalOptions = new List<CustomerWithPricingResponse>();
+                        if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.InternationalOnly) &&
+                             departureType == ApplicableTaxFlights.All) ||
+                            departureType == ApplicableTaxFlights.InternationalOnly)
+                        {
+                            internationalOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
+                            internationalOptions.ForEach(y =>
+                            {
+                                y.Product = "Jet A (International Departure)";
+                                y.FeesAndTaxes = feesAndTaxes.Where(fee =>
                                     fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
                                     fee.DepartureType == ApplicableTaxFlights.All)
-                                .ToList().Clone<FboFeesAndTaxes>().ToList();
-                        });
-                    }
+                                    .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != y.PricingTemplateId))
+                                    .ToList();
+                                y.FeesAndTaxes = feesAndTaxes.Where(fee =>
+                                        fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
+                                        fee.DepartureType == ApplicableTaxFlights.All)
+                                    .ToList().Clone<FboFeesAndTaxes>().ToList();
+                            });
+                        }
 
-                    //Add price options for all departure types
-                    List<CustomerWithPricingResponse> allDepartureOptions = new List<CustomerWithPricingResponse>();
-                    if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.All) &&
-                       departureType == ApplicableTaxFlights.All) &&
-                      (domesticOptions.Count == 0 || internationalOptions.Count == 0))
-                    {
-                        allDepartureOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
-                        allDepartureOptions.ForEach(y =>
+                        //Add price options for all departure types
+                        List<CustomerWithPricingResponse> allDepartureOptions = new List<CustomerWithPricingResponse>();
+                        if ((feesAndTaxes.Any(y => y.DepartureType == ApplicableTaxFlights.All) &&
+                           departureType == ApplicableTaxFlights.All) &&
+                          (domesticOptions.Count == 0 || internationalOptions.Count == 0))
                         {
-                            var productName = y.Product;
-                            if (domesticOptions.Count == 0)
-                                productName += " (Domestic Departure)";
-                            y.Product = productName;
-                            y.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
-                                .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != y.PricingTemplateId))
-                                .ToList().Clone<FboFeesAndTaxes>().ToList();
-                        });
+                            allDepartureOptions = customerPricingResults.Where(c => c.PricingTemplateId == x.PricingTemplateId).ToList();
+                            allDepartureOptions.ForEach(y =>
+                            {
+                                var productName = y.Product;
+                                if (domesticOptions.Count == 0)
+                                    productName += " (Domestic Departure)";
+                                y.Product = productName;
+                                y.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
+                                    .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != y.PricingTemplateId))
+                                    .ToList().Clone<FboFeesAndTaxes>().ToList();
+                            });
+                        }
+
+                        List<CustomerWithPricingResponse> resultsWithFees = new List<CustomerWithPricingResponse>();
+                        resultsWithFees.AddRange(domesticOptions);
+                        resultsWithFees.AddRange(internationalOptions);
+                        resultsWithFees.AddRange(allDepartureOptions);
+
+                        x.AllInPrice = GetAllInPrice(resultsWithFees.FirstOrDefault());
                     }
-
-                    List<CustomerWithPricingResponse> resultsWithFees = new List<CustomerWithPricingResponse>();
-                    resultsWithFees.AddRange(domesticOptions);
-                    resultsWithFees.AddRange(internationalOptions);
-                    resultsWithFees.AddRange(allDepartureOptions);
-
-                    x.AllInPrice = GetAllInPrice(resultsWithFees.FirstOrDefault());
                 }
+                else
+                    x.AllInPrice = 0;
             });
 
                 //Join the inner queries on the pricing templates
