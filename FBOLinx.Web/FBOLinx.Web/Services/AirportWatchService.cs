@@ -730,10 +730,12 @@ namespace FBOLinx.Web.Services
                 return;
             //The aircraft has moved since landing - this should be an updated parking record
             airportWatchHistoricalData.AircraftStatus = AircraftStatusType.Parking;
+            var tailNumber = oldAirportWatchHistoricalData.TailNumber;
 
             if (oldAirportWatchHistoricalData.AircraftStatus == AircraftStatusType.Parking)
             {
                 AirportWatchHistoricalData.CopyEntity(oldAirportWatchHistoricalData, airportWatchHistoricalData);
+                oldAirportWatchHistoricalData.TailNumber = tailNumber;
                 _HistoricalDataToUpdate.Add(oldAirportWatchHistoricalData);
             }
             else
