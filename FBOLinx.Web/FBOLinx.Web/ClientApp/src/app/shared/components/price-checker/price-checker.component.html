@@ -253,7 +253,9 @@
                 [tailNumber]="sampleCalculation.tailNumber"
                 [hideTooltips]="hideTooltips"
                 (customerActiveCheckCompleted)="
-                    priceBreakdownCustomerActiveCheckCompleted($event)">
+                    priceBreakdownCustomerActiveCheckCompleted($event)"
+                (pricesExpiredCheckCompleted)="
+                    priceBreakdownPricesExpiredCheckCompleted($event)">
             </price-breakdown>
         </div>
     </div>

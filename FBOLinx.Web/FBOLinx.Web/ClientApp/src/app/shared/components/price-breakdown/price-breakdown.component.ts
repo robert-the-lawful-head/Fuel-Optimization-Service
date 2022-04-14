@@ -56,6 +56,8 @@ export class PriceBreakdownComponent implements OnInit {
         new EventEmitter<any>();
     @Output() customerActiveCheckCompleted: EventEmitter<any> =
         new EventEmitter<any>();
+    @Output() pricesExpiredCheckCompleted: EventEmitter<any> =
+        new EventEmitter<any>();
 
     public internationalCommercialPricing: any;
     public internationalPrivatePricing: any;
@@ -74,6 +76,7 @@ export class PriceBreakdownComponent implements OnInit {
     public defaultValidDepartureTypes: Array<number> = [0, 1, 2, 3];
     public defaultValidFlightTypes: Array<number> = [0, 1, 2, 3];
     public isCustomerActive = true;
+    public isPricesExpired = false;
 
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
@@ -255,6 +258,12 @@ export class PriceBreakdownComponent implements OnInit {
 
             //If no result was returned for the customer then this wasn't a customer-level price check so mark it as active.
             //Otherwise check the actual active flag of the customer.
+            if (!this.domesticPrivatePricing || this.domesticPrivatePricing.pricingList[0].fboPrice == null)
+                this.isPricesExpired = true;
+            else
+                this.isPricesExpired = false;
+            this.pricesExpiredCheckCompleted.emit(this.isPricesExpired);
+
             this.isCustomerActive =
                 !customerInfoByGroup || customerInfoByGroup.active;
             this.customerActiveCheckCompleted.emit(this.isCustomerActive);

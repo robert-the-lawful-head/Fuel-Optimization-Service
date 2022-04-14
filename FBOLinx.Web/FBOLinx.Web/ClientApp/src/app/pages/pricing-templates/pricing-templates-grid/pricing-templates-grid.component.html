@@ -64,7 +64,7 @@
             </th>
             <td *matCellDef="let pricingTemplate" mat-cell>
                 <div class="allInPrice">
-                    {{ pricingTemplate.allInPrice | currency: "USD":"symbol":"1.2-2" }}
+                    {{ pricingTemplate.allInPrice > 0 ? (pricingTemplate.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
                 </div>
             </td>
         </ng-container>
