@@ -802,7 +802,7 @@ namespace FBOLinx.Web.Controllers
                 if (utcEffectiveFrom <= DateTime.UtcNow)
                 {
                     List<Fboprices> oldPrices = await _context.Fboprices
-                                           .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(fboprices.Fboid) && f.Product.Contains(fboprices.Product) && !f.Expired.Equals(true))
+                                           .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(fboprices.Fboid) && f.Product.Contains(fboprices.Product) && f.Expired == null)
                                            .ToListAsync();
                     foreach (Fboprices oldPrice in oldPrices)
                     {
