@@ -322,9 +322,24 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public async Task<List<PricingTemplateGrid>> GetPricingTemplatesWithEmailContent(int fboId, int groupId)
         {
             var templates = await GetPricingTemplateGrid(fboId, groupId);
-            var templatesWithEmailContent = (
+
+            var emailContent = await _context.EmailContent.Where(e => e.FboId == fboId).ToListAsync();
+
+            var lastSent = await (from dl in _context.DistributionLog
+                                  join dl2 in (
+                                     from distributionLog in _context.DistributionLog
+                                     where distributionLog.Fboid == fboId
+                                     group distributionLog by distributionLog.PricingTemplateId into d
+                                     select new { PricingTemplateId = d.Key, DateMax = d.Max(x => x.DateSent) }
+                                  ) on new { PricingTemplateId = dl.PricingTemplateId, DateSent = dl.DateSent } equals new { PricingTemplateId = dl2.PricingTemplateId, DateSent = dl2.DateMax }
+                                  select new { PricingTemplateId = dl2.PricingTemplateId, LastSent = dl2.DateMax }).ToListAsync();
+
+           var templatesWithEmailContent = (
             from t in templates
-            join ec in _context.EmailContent on t.EmailContentId equals ec.Oid
+            join l in lastSent on t.Oid equals l.PricingTemplateId
+            into leftJoinedL
+            from l in leftJoinedL.DefaultIfEmpty()
+            join ec in emailContent on t.EmailContentId equals ec.Oid
             into leftJoinedEC
             from ec in leftJoinedEC.DefaultIfEmpty()
             select new PricingTemplateGrid
@@ -345,7 +360,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 //IntoPlanePrice = t.IntoPlanePrice,
                 CustomersAssigned = t.CustomersAssigned,
                 EmailContentId = t.EmailContentId,
-                EmailContent = ec
+                EmailContent = ec,
+                LastSent= l == null ? "N/A" : l.LastSent.ToString("MM/dd/yyyy HH:mm")
             }
             ).ToList();
 
