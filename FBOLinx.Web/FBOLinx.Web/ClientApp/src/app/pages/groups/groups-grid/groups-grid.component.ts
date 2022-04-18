@@ -134,6 +134,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     tableLocalStorageFilterKey = 'conductor-group-grid-filter';
     columns: ColumnType[] = [];
 
+    isDeletingGroup: boolean = false;
+
     constructor(
         private router: Router,
         private viewContainerRef: ViewContainerRef,
@@ -153,6 +155,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit() {
+        this.refreshGrid();
+    }
+
+    refreshGrid() {
         this.groupDataSource = this.groupsFbosData.groups;
         this.fboDataSource = this.groupsFbosData.fbos;
 
@@ -284,16 +290,20 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
             if (!result) {
                 return;
             }
+
+            this.isDeletingGroup = true;
+
             const deleteIndex = this.groupsFbosData.groups.findIndex(
                 (group) => group.oid === record.oid
             );
             this.groupsService.remove(record).subscribe(() => {
+                this.isDeletingGroup = false;
                 this.groupsFbosData.groups.splice(deleteIndex, 1);
                 this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
                 });
-                this.grid.refresh();
+                this.refreshGrid();
             });
         });
     }
@@ -324,7 +334,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
                 });
-                this.grid.refresh();
+                //this.grid.refresh();
+                this.applyFilter('');
             });
         });
     }
