@@ -50,5 +50,6 @@ namespace FBOLinx.ServiceLayer.Dto.Responses
         }
 
         public double? AllInPrice { get; set; }
+        public string LastSent { get; set; }
     }
 }

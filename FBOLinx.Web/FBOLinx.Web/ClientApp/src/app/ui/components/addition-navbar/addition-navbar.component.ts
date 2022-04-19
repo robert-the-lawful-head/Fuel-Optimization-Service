@@ -81,7 +81,7 @@ export class AdditionNavbarComponent
 
     get validTemplates() {
         return this.pricingTemplatesData.filter(
-            (t) => t.emailContent && t.customerEmails.length > 0
+            (t) => t.customerEmails.length > 0
         );
     }
 
@@ -91,6 +91,7 @@ export class AdditionNavbarComponent
         this.sharedService.currentMessage.subscribe((message) => {
             this.message = message;
         });
+
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -205,10 +206,10 @@ export class AdditionNavbarComponent
                 .subscribe((data: any) => {
                     if (data) {
                         this.pricingTemplatesData = data
-                            .filter((row) => row.customersAssigned > 0)
                             .map((row) => ({
                                 ...row,
-                                toSend: true,
+                                toSend: row.customersAssigned > 0 && row.customerEmails.length > 0 ? true : false,
+                                sending: false
                             }));
                     }
 
@@ -216,6 +217,7 @@ export class AdditionNavbarComponent
                         this.pricingTemplatesData
                     );
                     this.resultsLength = this.pricingTemplatesData.length;
+                    this.selectAll = true;
                 });
         }
 
@@ -327,7 +329,8 @@ export class AdditionNavbarComponent
 
     sendMails() {
         this.pricingTemplatesData.forEach((x) => {
-            if (x.toSend) {
+            if (x.toSend && !x.sending) {
+                x.sending = true;
                 const request = this.GetSendDistributionRequest(x);
                 this.distributionService
                     .distributePricing(request)
@@ -347,8 +350,7 @@ export class AdditionNavbarComponent
                 this.delay(8000).then(() => {
                     x.sent = false;
                 });
-                x.text =
-                    'Last sent ' +
+                x.lastSent =
                     moment(new Date()).format('MM/DD/YYYY HH:mm');
                 this.buttontext = 'Sent!';
             }
