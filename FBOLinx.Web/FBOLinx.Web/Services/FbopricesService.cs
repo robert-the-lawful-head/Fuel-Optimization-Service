@@ -33,12 +33,6 @@ namespace FBOLinx.Web.Services
             var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
-            var fboprices = await (
-                            from f in _context.Fboprices
-                            where f.EffectiveTo > DateTime.UtcNow
-                            && f.Fboid == fboId && f.Price != null && f.Expired != true
-                            select f).ToListAsync();
-
             var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
             foreach (var p in oldPrices)
             {
@@ -46,6 +40,43 @@ namespace FBOLinx.Web.Services
                 _context.Fboprices.Update(p);
             }
             await _context.SaveChangesAsync();
+
+            var fboprices = await (
+                            from f in _context.Fboprices
+                            where f.EffectiveTo > DateTime.UtcNow
+                            && f.Fboid == fboId && f.Expired != true
+                            orderby f.Oid
+                            select f).ToListAsync();
+
+            var oldJetAPriceExists = fboprices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
+            if (oldJetAPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldJetAPriceExists[i].Expired = true;
+                    _context.Fboprices.Update(oldJetAPriceExists[i]);
+                    await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldJetAPriceExists[i]);
+                }
+            }
+
+            var oldSafPriceExists = fboprices.Where(f => f.Product.Contains("SAF") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
+            if (oldSafPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldSafPriceExists[i].Expired = true;
+                    _context.Fboprices.Update(oldSafPriceExists[i]);
+                    await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldSafPriceExists[i]);
+                }
+            }
+
+            fboprices = fboprices.Where(f => f.Price != null).ToList();
 
             var addOnMargins = await (
                             from s in _context.TempAddOnMargin
