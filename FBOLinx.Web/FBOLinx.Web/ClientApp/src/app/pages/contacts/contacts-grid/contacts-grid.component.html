@@ -65,20 +65,20 @@
 
         <ng-container matColumnDef="copyAlerts">
             <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                <span style="margin-right: 15px">Copy All</span>
+                <span style="margin-right: 15px">Pricing Distribution</span>
                 <mat-slide-toggle
                     (change)="UpdateAllCopyAlertsValues()"
                     [checked]="copyAll"
                     color="accent"
                 ></mat-slide-toggle>
             </th>
-            <td *matCellDef="let contact" mat-cell>
-                <mat-slide-toggle
-                    (click)="UpdateCopyAlertsValue(contact)"
-                    [(ngModel)]="contact.copyAlerts"
-                    [checked]="contact.copyAlerts"
-                    color="accent"
-                ></mat-slide-toggle>
+            <td *matCellDef="let contact" mat-cell class="text-center">
+                <div style="margin-left:-25px;">
+                    <mat-slide-toggle (click)="UpdateCopyAlertsValue(contact)"
+                                      [(ngModel)]="contact.copyAlerts"
+                                      [checked]="contact.copyAlerts"
+                                      color="accent"></mat-slide-toggle>
+                </div>
             </td>
         </ng-container>
 

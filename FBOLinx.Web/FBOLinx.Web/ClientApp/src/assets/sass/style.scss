@@ -916,3 +916,26 @@ div.custom-key-content {
     height: 1px;
     margin-bottom: -15px;
 }
+
+.mat-datepicker-popup div.actions button.mat-stroked-button,
+.mat-datepicker-popup div.actions button.mat-button {
+    background: #2196f3;
+}
+
+.mat-datepicker-popup div.actions .mat-button {
+    color: white;
+}
+
+.mat-calendar-body-selected {
+    background-color: #2196f3;
+    color: white;
+}
+
+.mat-datepicker-popup div.actions button.mat-button-disabled,
+.mat-datepicker-popup div.actions button.mat-button-disabled {
+    background: #e1e6ea;
+}
+
+button.mat-button-disabled .mat-datepicker-popup div.actions .mat-button {
+    color: #ccc3c3;
+}

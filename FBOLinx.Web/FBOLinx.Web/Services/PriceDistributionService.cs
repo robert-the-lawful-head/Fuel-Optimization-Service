@@ -198,13 +198,16 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
-                await StoreSingleCustomer(customer);
+                if (!_IsPreview)
+                {
+                    await StoreSingleCustomer(customer);
 
-                var distributionQueueRecords = await _context.Set<DistributionQueue>().Where((x =>
-                    x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
-                    x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).ToListAsync();
+                    var distributionQueueRecords = await _context.Set<DistributionQueue>().Where((x =>
+                        x.CustomerId == customer.CustomerId && x.Fboid == _DistributePricingRequest.FboId &&
+                        x.GroupId == _DistributePricingRequest.GroupId && x.DistributionLogId == _DistributionLogID)).ToListAsync();
 
-                distributionQueueRecord = distributionQueueRecords.FirstOrDefault();
+                    distributionQueueRecord = distributionQueueRecords.FirstOrDefault();
+                }
 
                 var recipients = await GetRecipientsForCustomer(customer);
                 if (!_IsPreview && recipients.Count == 0)
@@ -636,7 +639,8 @@ namespace FBOLinx.Web.Services
         private async Task PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
         {
             await GetEmailContent();
-            await LogDistributionRecord();
+            if (!_IsPreview)
+                await LogDistributionRecord();
         }
 
         private async Task GetEmailContent()
