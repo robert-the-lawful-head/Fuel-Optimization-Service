@@ -40,30 +40,25 @@
                                 {{ pricingTemplate.name }}
                             </div>
                             <div class="col-6">
-                                <span
-                                    class="font-italic"
-                                    *ngIf="
+                                <span class="font-italic"
+                                      *ngIf="
                                         !pricingTemplate.customerEmails
                                             .length &&
                                         !(
                                             pricingTemplate.changeText &&
                                             !pricingTemplate.sent
                                         )
-                                    "
-                                    >No emails on template</span
-                                >
-                                <button
-                                    (click)="
+                                    ">No emails on template</span>
+                                <button (click)="
                                         openMarginInfo(pricingTemplate.oid)
                                     "
-                                    *ngIf="
+                                        *ngIf="
                                         pricingTemplate.changeText &&
                                         !pricingTemplate.sent
                                     "
-                                    [view]="'accent'"
-                                    ni-button
-                                    size="small"
-                                >
+                                        [view]="'accent'"
+                                        ni-button
+                                        size="small">
                                     Preview
                                 </button>
                                 <p *ngIf="pricingTemplate.sent">Sent!</p>
@@ -71,7 +66,7 @@
                         </div>
                         <div class="row">
                             <div
-                                *ngIf="pricingTemplate.text"
+                                *ngIf="pricingTemplate.lastSent"
                                 class="col-8"
                                 style="
                                     font-size: 9px;
@@ -80,7 +75,7 @@
                                     line-height: 18px;
                                 "
                             >
-                                {{ pricingTemplate.text }}
+                                Last Sent: {{ pricingTemplate.lastSent }}
                             </div>
                         </div>
                         <!--*ngIf="!pricingTemplate.changeText && !pricingTemplate.sent"-->

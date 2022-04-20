@@ -254,7 +254,7 @@
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <div (click)="onCustomerPriceClicked(customer)" class="allInPrice">
-                        {{ customer.allInPrice | currency: "USD":"symbol":"1.2-2" }}
+                        {{ customer.allInPrice > 0 ? (customer.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
                     </div>
                 </td>
             </ng-container>
