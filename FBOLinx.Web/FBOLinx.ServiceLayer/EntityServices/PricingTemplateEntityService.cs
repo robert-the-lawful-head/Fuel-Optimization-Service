@@ -147,7 +147,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             //Separate inner queries first for FBO Prices and Margin Tiers
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.EffectiveTo <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product.Contains("JetA")).ToListAsync();
 
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
 
