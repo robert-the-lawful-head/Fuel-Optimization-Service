@@ -641,7 +641,7 @@ namespace FBOLinx.Web.Services
                 //Fetch all airports with antenna data from the last two hours
                 var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-1, 0, 0, 0));
                 var distinctBoxes = await _context.AirportWatchHistoricalData
-                    .Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime)
+                    .Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.AirportICAO))
                     .Select(x => x.AirportICAO)
                     .Distinct()
                     .ToListAsync();
