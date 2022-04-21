@@ -109,6 +109,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     @Input() groupGridState: GroupGridState;
     @Output() editGroupClicked = new EventEmitter<any>();
     @Output() editFboClicked = new EventEmitter<any>();
+    @Output() deleteGroupClicked = new EventEmitter<any>();
 
     childGrid: GridModel;
     selectionOptions: SelectionSettingsModel = {
@@ -133,8 +134,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     tableLocalStorageKey = 'conductor-group-grid-settings';
     tableLocalStorageFilterKey = 'conductor-group-grid-filter';
     columns: ColumnType[] = [];
-
-    isDeletingGroup: boolean = false;
 
     constructor(
         private router: Router,
@@ -291,19 +290,21 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 return;
             }
 
-            this.isDeletingGroup = true;
+            this.deleteGroupClicked.emit({
+                isDeletingGroup: true
+            });
 
             const deleteIndex = this.groupsFbosData.groups.findIndex(
                 (group) => group.oid === record.oid
             );
             this.groupsService.remove(record).subscribe(() => {
-                this.isDeletingGroup = false;
                 this.groupsFbosData.groups.splice(deleteIndex, 1);
                 this.snackBar.open(record.groupName + ' is deleted', '', {
                     duration: 2000,
                     panelClass: ['blue-snackbar'],
                 });
                 this.refreshGrid();
+                this.sharedService.emitChange('group deleted');
             });
         });
     }
