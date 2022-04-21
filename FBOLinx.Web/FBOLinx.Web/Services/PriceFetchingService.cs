@@ -240,9 +240,9 @@ namespace FBOLinx.Web.Services
                                                   FboPrice = (fp == null ? 0 : fp.Price),
                                                   CustomerMarginAmount = (pt.MarginTypeProduct == "Retail" && tmp != null &&
                                                                           (tmp.MarginJet.HasValue)
-                                                      ? (ppt == null || ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
-                                                      : (ppt == null || ppt == null ? 0 : ppt.Amount)),
-                        amount = ppt.Amount ,
+                                                      ? (ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
+                                                      : (ppt == null ? 0 : ppt.Amount)),
+                                                  amount = ppt == null ? 0 : ppt.Amount ,
                                                   Suspended = cg.Suspended,
                                                   FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
                                                   Network = cg.Network,
