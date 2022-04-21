@@ -4,6 +4,10 @@ import { Store } from '@ngrx/store';
 import { groupGridSet } from 'src/app/store/actions';
 
 import { SharedService } from '../../../layouts/shared-service';
+import {
+    deleteGroupEvent
+} from '../../../models/sharedEvents';
+
 // Services
 import { GroupsService } from '../../../services/groups.service';
 import { State } from '../../../store/reducers';
@@ -32,6 +36,8 @@ export class GroupsHomeComponent implements OnInit {
     groupsFbosData: any;
     currentGroup: any;
     groupGridState: GroupGridState;
+    isDeletingGroup: boolean = false;
+    subscription: any;
 
     constructor(
         private router: Router,
@@ -45,6 +51,20 @@ export class GroupsHomeComponent implements OnInit {
         this.store.select(getGroupGridState).subscribe((state) => {
             this.groupGridState = state;
         });
+
+        this.subscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (message === deleteGroupEvent) {
+                    this.deleteGroup({ isDeletingGroup: false });
+                }
+            }
+        );
+    }
+
+    ngOnDestroy() {
+        if (this.subscription) {
+            this.subscription.unsubscribe();
+        }
     }
 
     editGroupClicked(event) {
@@ -71,7 +91,12 @@ export class GroupsHomeComponent implements OnInit {
         this.router.navigate(['/default-layout/fbos/' + fbo.oid]);
     }
 
-    deleteFboClicked() {}
+    deleteFboClicked() { }
+
+    deleteGroup(event) {
+        const { isDeletingGroup } = event;
+        this.isDeletingGroup = isDeletingGroup;
+    }
 
     saveGroupEditClicked() {
         if (this.sharedService.currentUser.role === 3) {
