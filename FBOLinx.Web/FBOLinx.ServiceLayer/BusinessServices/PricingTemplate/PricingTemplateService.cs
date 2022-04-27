@@ -161,7 +161,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             if (pricingTemplate.Default.GetValueOrDefault())
             {
                 var otherDefaults = _pricingTemplateEntityService.Where(x =>
-                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid);
+                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid).ToList();
                 foreach (var otherDefault in otherDefaults)
                 {
                     otherDefault.Default = false;
