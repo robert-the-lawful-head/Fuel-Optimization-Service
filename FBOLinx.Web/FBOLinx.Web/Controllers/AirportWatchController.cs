@@ -117,5 +117,13 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(aircraftInfo);
         }
+
+        [HttpGet("allAntennas")]
+        public async Task<ActionResult<AirportWatchAntennaStatusGrid>> GetAllAntennas()
+        {
+            var airportsWithAntennaData = await _airportWatchService.GetAntennaStatusData();
+
+            return Ok(airportsWithAntennaData);
+        }
     }
 }

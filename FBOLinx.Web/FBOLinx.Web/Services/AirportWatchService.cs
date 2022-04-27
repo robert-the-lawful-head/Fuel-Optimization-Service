@@ -663,6 +663,54 @@ namespace FBOLinx.Web.Services
             }
         }
 
+        public async Task<List<AirportWatchAntennaStatusGrid>> GetAntennaStatusData()
+        {
+            try
+            {
+                var distinctHistoricalBoxes = await _context.AirportWatchHistoricalData.GroupBy(a => a.BoxName).Select(ah => new
+                {
+                    BoxName = ah.Key,
+                    AircraftPositionDateTimeUtc = ah.Max(row => row.AircraftPositionDateTimeUtc)
+                }).ToListAsync();
+                distinctHistoricalBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
+
+                var distinctLiveBoxes = await _context.AirportWatchLiveData.GroupBy(a => a.BoxName).Select(al => new
+                {
+                    BoxName = al.Key,
+                    AircraftPositionDateTimeUtc = al.Max(row => row.AircraftPositionDateTimeUtc)
+                }).ToListAsync();
+                distinctLiveBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
+
+                var distinctBoxes = (from dh in distinctHistoricalBoxes
+                                     join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
+                                     into leftJoinDistinctLiveBoxes
+                                     from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
+                                     select new AirportWatchAntennaStatusGrid
+                                     {
+                                         BoxName = dl == null ? dh.BoxName : dl.BoxName,
+                                         Status = dl == null ? "Not Active" : "Active",
+                                         LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
+                                         LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
+                                     }).ToList();
+
+                var fbos = await (from f in _context.Fbos where f.GroupId > 1 select new { Fbo = f.Fbo, AntennaName = f.AntennaName }).ToListAsync();
+                foreach(AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
+                {
+                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToLower().Trim() == distinctBox.BoxName.ToLower().Trim()).FirstOrDefault();
+                    if (fbo != null && fbo.Fbo != null)
+                        distinctBox.FbolinxAccount = fbo.Fbo;
+                }
+
+                return distinctBoxes;
+               
+            }
+            catch (System.Exception exception)
+            {
+                Debug.WriteLine("Error in AirportWatchService.GetAntennaStatusData: " + exception.Message);
+                return new List<AirportWatchAntennaStatusGrid>();
+            }
+        }
+
         public async Task<List<AirportWatchHistoricalData>> GetParkingOccurencesByAirport(string icao,
             DateTime startDateTimeUtc, DateTime endDateTimeUtc)
         {

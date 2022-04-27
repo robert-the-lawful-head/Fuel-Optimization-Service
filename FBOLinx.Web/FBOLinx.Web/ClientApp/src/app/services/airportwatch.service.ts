@@ -83,4 +83,11 @@ export class AirportWatchService {
             `${this.accessPointUrl}/aircraftLiveData/${groupId}/${fboid}/${tailNumber}`
         );
     }
+
+    public getAntennaStatusData() {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/allAntennas`,
+            { headers: this.headers }
+        );
+    }
 }
