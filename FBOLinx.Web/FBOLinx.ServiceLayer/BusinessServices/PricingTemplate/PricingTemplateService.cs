@@ -160,8 +160,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             // to do: implement unit of work pattern with repository
             if (pricingTemplate.Default.GetValueOrDefault())
             {
-                var otherDefaults = _pricingTemplateEntityService.Where(x =>
-                    x.Fboid == pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid);
+                var otherDefaults = await _pricingTemplateEntityService.Where(x =>
+                    x.Fboid ==  pricingTemplate.Fboid && (x.Default ?? false) && x.Oid != pricingTemplate.Oid).ToListAsync();
                 foreach (var otherDefault in otherDefaults)
                 {
                     otherDefault.Default = false;
