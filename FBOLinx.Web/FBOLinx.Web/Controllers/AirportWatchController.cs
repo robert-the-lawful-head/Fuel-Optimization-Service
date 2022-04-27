@@ -125,5 +125,13 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(airportsWithAntennaData);
         }
+
+        [HttpGet("unassignedAntennas/{antennaName}")]
+        public async Task<ActionResult<AirportWatchAntennaStatusGrid>> GetAllUnassignedAntennas(string antennaName)
+        {
+            var unassignedAntennas = await _airportWatchService.GetDistinctUnassignedAntennaBoxes(antennaName);
+
+            return Ok(unassignedAntennas);
+        }
     }
 }

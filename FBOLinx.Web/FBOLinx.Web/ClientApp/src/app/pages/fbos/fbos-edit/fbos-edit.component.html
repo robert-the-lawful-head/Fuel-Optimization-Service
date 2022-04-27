@@ -1,12 +1,12 @@
 <ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
 
 <div [ngClass]="{ 'after-breadcrumb': breadcrumb }">
-    <div *ngIf="!fboInfo || !fboAirportInfo">
+    <div *ngIf="!fboInfo || !fboAirportInfo || !availableAntennas">
         <mat-spinner></mat-spinner>
     </div>
 
     <ni-card
-        *ngIf="fboInfo && fboAirportInfo"
+        *ngIf="fboInfo && fboAirportInfo && availableAntennas"
         [headerBgColor]="'info'"
         class="mb-0"
         title="FBO: {{ fboInfo.fbo }}"
@@ -84,10 +84,17 @@
                                 </mat-form-field>
                             </div>
                             <div class="col-md-6">
+                               &nbsp;
+                            </div>
+                            <div class="col-md-6">
+                                <mat-label>Antenna Box Name</mat-label>
                                 <mat-form-field>
-                                    <input [(ngModel)]="fboInfo.antennaName"
-                                           matInput
-                                           placeholder="Antenna Name" />
+                                    <mat-select [(ngModel)]="fboInfo.antennaName"
+                                                class="dropdownHeight select-dropdown" id="antennaname" name="ddlAntennaName" place>
+                                        <mat-option *ngFor="let antenna of availableAntennas" value="{{ antenna }}">
+                                            {{ antenna }}
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
                             </div>
                         </div>

@@ -90,4 +90,11 @@ export class AirportWatchService {
             { headers: this.headers }
         );
     }
+
+    public getUnassignedAntennaBoxes(antennaName: string) {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/unassignedAntennas/${antennaName}`,
+            { headers: this.headers }
+        );
+    }
 }
