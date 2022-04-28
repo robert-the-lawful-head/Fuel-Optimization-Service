@@ -92,8 +92,9 @@ export class AirportWatchService {
     }
 
     public getUnassignedAntennaBoxes(antennaName: string) {
+        var name = antennaName == null ? "none" : antennaName;
         return this.http.get<any>(
-            `${this.accessPointUrl}/unassignedAntennas/${antennaName}`,
+            `${this.accessPointUrl}/unassignedAntennas/${name}`,
             { headers: this.headers }
         );
     }

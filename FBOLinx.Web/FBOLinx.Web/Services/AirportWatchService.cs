@@ -693,7 +693,7 @@ namespace FBOLinx.Web.Services
             var fboAntennas = await (from f in _context.Fbos where f.GroupId > 1 select f.AntennaName).ToListAsync();
             var distinctUnassignedBoxes = distinctBoxes.Where(d => !fboAntennas.Contains(d.BoxName)).Select(f => f.BoxName).ToList();
 
-            if (fboAntenna != "")
+            if (fboAntenna != "none")
                 distinctUnassignedBoxes.Add(fboAntenna);
 
             return distinctUnassignedBoxes.OrderBy(d => d).ToList();
@@ -720,6 +720,7 @@ namespace FBOLinx.Web.Services
 
         private async Task<List<AirportWatchAntennaStatusGrid>> GetDistinctAntennaBoxes()
         {
+            var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
             var distinctHistoricalBoxes = await _context.AirportWatchHistoricalData.GroupBy(a => a.BoxName).Select(ah => new
             {
                 BoxName = ah.Key,
@@ -727,7 +728,7 @@ namespace FBOLinx.Web.Services
             }).ToListAsync();
             distinctHistoricalBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
 
-            var distinctLiveBoxes = await _context.AirportWatchLiveData.GroupBy(a => a.BoxName).Select(al => new
+            var distinctLiveBoxes = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime).GroupBy(a => a.BoxName).Select(al => new
             {
                 BoxName = al.Key,
                 AircraftPositionDateTimeUtc = al.Max(row => row.AircraftPositionDateTimeUtc)
