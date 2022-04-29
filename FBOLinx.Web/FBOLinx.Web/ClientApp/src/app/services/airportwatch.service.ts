@@ -83,4 +83,19 @@ export class AirportWatchService {
             `${this.accessPointUrl}/aircraftLiveData/${groupId}/${fboid}/${tailNumber}`
         );
     }
+
+    public getAntennaStatusData() {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/allAntennas`,
+            { headers: this.headers }
+        );
+    }
+
+    public getUnassignedAntennaBoxes(antennaName: string) {
+        var name = antennaName == null ? "none" : antennaName;
+        return this.http.get<any>(
+            `${this.accessPointUrl}/unassignedAntennas/${name}`,
+            { headers: this.headers }
+        );
+    }
 }

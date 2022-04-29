@@ -76,6 +76,17 @@
         "roles": [ 3 ]
     },
     {
+
+        "title": "Antenna Status",
+        "icon": {
+            "class": "fa fa-map-marker",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/antenna-status",
+        "roles": [ 3 ]
+    },
+    {
         "title": "ITP Margin Templates",
         "icon": {
             "class": "fa fa-sitemap",

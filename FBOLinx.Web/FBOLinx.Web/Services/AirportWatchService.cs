@@ -663,6 +663,42 @@ namespace FBOLinx.Web.Services
             }
         }
 
+        public async Task<List<AirportWatchAntennaStatusGrid>> GetAntennaStatusData()
+        {
+            try
+            {
+                var distinctBoxes = await GetDistinctAntennaBoxes();
+
+                var fbos = await (from f in _context.Fbos where f.GroupId > 1 select new { Fbo = f.Fbo, AntennaName = f.AntennaName }).ToListAsync();
+                foreach(AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
+                {
+                    var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToLower().Trim() == distinctBox.BoxName.ToLower().Trim()).FirstOrDefault();
+                    if (fbo != null && fbo.Fbo != null)
+                        distinctBox.FbolinxAccount = fbo.Fbo;
+                }
+
+                return distinctBoxes;
+               
+            }
+            catch (System.Exception exception)
+            {
+                Debug.WriteLine("Error in AirportWatchService.GetAntennaStatusData: " + exception.Message);
+                return new List<AirportWatchAntennaStatusGrid>();
+            }
+        }
+
+        public async Task<List<string>> GetDistinctUnassignedAntennaBoxes(string fboAntenna)
+        {
+            var distinctBoxes = await GetDistinctAntennaBoxes();
+            var fboAntennas = await (from f in _context.Fbos where f.GroupId > 1 select f.AntennaName).ToListAsync();
+            var distinctUnassignedBoxes = distinctBoxes.Where(d => !fboAntennas.Contains(d.BoxName)).Select(f => f.BoxName).ToList();
+
+            if (fboAntenna != "none")
+                distinctUnassignedBoxes.Add(fboAntenna);
+
+            return distinctUnassignedBoxes.OrderBy(d => d).ToList();
+        }
+
         public async Task<List<AirportWatchHistoricalData>> GetParkingOccurencesByAirport(string icao,
             DateTime startDateTimeUtc, DateTime endDateTimeUtc)
         {
@@ -680,6 +716,38 @@ namespace FBOLinx.Web.Services
                 Debug.WriteLine("Error in AirportWatchService.GetParkingOccurencesByAirport: " + exception.Message);
                 return new List<AirportWatchHistoricalData>();
             }
+        }
+
+        private async Task<List<AirportWatchAntennaStatusGrid>> GetDistinctAntennaBoxes()
+        {
+            var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-7, 0, 0, 0));
+            var distinctHistoricalBoxes = await _context.AirportWatchHistoricalData.GroupBy(a => a.BoxName).Select(ah => new
+            {
+                BoxName = ah.Key,
+                AircraftPositionDateTimeUtc = ah.Max(row => row.AircraftPositionDateTimeUtc)
+            }).ToListAsync();
+            distinctHistoricalBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
+
+            var distinctLiveBoxes = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime).GroupBy(a => a.BoxName).Select(al => new
+            {
+                BoxName = al.Key,
+                AircraftPositionDateTimeUtc = al.Max(row => row.AircraftPositionDateTimeUtc)
+            }).ToListAsync();
+            distinctLiveBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
+
+            var distinctBoxes = (from dh in distinctHistoricalBoxes
+                                 join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
+                                 into leftJoinDistinctLiveBoxes
+                                 from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
+                                 select new AirportWatchAntennaStatusGrid
+                                 {
+                                     BoxName = dl == null ? dh.BoxName : dl.BoxName,
+                                     Status = dl == null ? "Not Active" : "Active",
+                                     LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
+                                     LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
+                                 }).ToList();
+
+            return distinctBoxes;
         }
 
         private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)

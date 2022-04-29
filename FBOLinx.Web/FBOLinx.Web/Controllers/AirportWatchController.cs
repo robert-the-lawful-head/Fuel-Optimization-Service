@@ -117,5 +117,21 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(aircraftInfo);
         }
+
+        [HttpGet("allAntennas")]
+        public async Task<ActionResult<AirportWatchAntennaStatusGrid>> GetAllAntennas()
+        {
+            var airportsWithAntennaData = await _airportWatchService.GetAntennaStatusData();
+
+            return Ok(airportsWithAntennaData);
+        }
+
+        [HttpGet("unassignedAntennas/{antennaName}")]
+        public async Task<ActionResult<AirportWatchAntennaStatusGrid>> GetAllUnassignedAntennas(string antennaName)
+        {
+            var unassignedAntennas = await _airportWatchService.GetDistinctUnassignedAntennaBoxes(antennaName);
+
+            return Ok(unassignedAntennas);
+        }
     }
 }
