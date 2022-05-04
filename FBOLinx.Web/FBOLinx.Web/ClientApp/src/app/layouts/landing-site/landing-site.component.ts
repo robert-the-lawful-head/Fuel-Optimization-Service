@@ -110,7 +110,7 @@ export class LandingSiteLayoutComponent {
     }
 
     openRequestDemo() {
-        window.open('https://bookings.fuelerlinx.com/#/customer/fbolinxdemo', '_blank').focus();
+        window.open('https://outlook.office365.com/owa/calendar/FBOLinxSales@fuelerlinx.com/bookings/', '_blank').focus();
         //const data = {
         //    succeed: false,
         //};
