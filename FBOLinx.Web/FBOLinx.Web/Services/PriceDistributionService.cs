@@ -52,9 +52,10 @@ namespace FBOLinx.Web.Services
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
+        private FboService _fboService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, FboService fboService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -65,6 +66,7 @@ namespace FBOLinx.Web.Services
             _PricingTemplateService = pricingTemplateService;
             _EmailContentService = emailContentService;
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
+            _fboService = fboService;
         }
         #endregion
 
@@ -239,7 +241,9 @@ namespace FBOLinx.Web.Services
 
                 if (priceDate != null)
                 {
-                    validUntil = "Pricing valid until: " + priceDate.AddMinutes(-1).ToString("MM/dd/yyyy", CultureInfo.InvariantCulture);
+                    var localDateTime= await _fboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
+                    var localTimeZone= await _fboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
+                    validUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
                 }
 
                 //Add the price breakdown as an image to prevent parsing
