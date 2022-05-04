@@ -34,6 +34,7 @@ import { RampFeesHomeComponent } from './pages/ramp-fees/ramp-fees-home/ramp-fee
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
 import { FboGeofencingHomeComponent } from './pages/fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
+import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-status-home/antenna-status-home.component';
 
 const defaultRoutes: Routes = [
     {
@@ -110,6 +111,14 @@ const defaultRoutes: Routes = [
             expectedRoles: [3],
         },
         path: 'fbo-geofencing',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: AntennaStatusHomeComponent,
+        data: {
+            expectedRoles: [3],
+        },
+        path: 'antenna-status',
     },
     {
         canActivate: [AuthGuard],

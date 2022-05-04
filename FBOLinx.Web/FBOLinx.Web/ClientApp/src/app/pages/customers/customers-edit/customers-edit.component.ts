@@ -567,8 +567,6 @@ export class CustomersEditComponent implements OnInit {
                     customerId: this.customerInfoByGroup.customerId,
                 } , this.sharedService.currentUser.oid)
                 .subscribe(() => {
-                    this.loadCustomerContacts();
-
                     this.UpdateCopyAlerts(this.currentContactInfoByGroup);
                 });
         } else {

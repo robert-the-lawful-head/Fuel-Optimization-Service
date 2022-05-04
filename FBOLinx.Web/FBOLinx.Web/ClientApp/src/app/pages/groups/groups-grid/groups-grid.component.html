@@ -155,35 +155,30 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
-                    <div *ngIf="isDeletingGroup">
-                        <mat-spinner diameter="30"></mat-spinner>
-                    </div>
-                    <div *ngIf="!isDeletingGroup">
-                        <button (click)="editGroup(data)"
-                                clickStopPropagation
-                                mat-menu-item>
-                            <mat-icon>edit</mat-icon>
-                            <span>Edit Group</span>
-                        </button>
-                        <button (click)="addNewFbo(data)"
-                                clickStopPropagation
-                                mat-menu-item>
-                            <mat-icon>add</mat-icon>
-                            <span>Add FBO</span>
-                        </button>
-                        <button (click)="deleteGroup(data)"
-                                clickStopPropagation
-                                mat-menu-item>
-                            <mat-icon>delete_forever</mat-icon>
-                            <span>Delete Group</span>
-                        </button>
-                        <button [disabled]="!groupFbos(data.index).length"
-                                [matMenuTriggerFor]="fbosMenu"
-                                clickStopPropagation
-                                mat-menu-item>
-                            <span>Delete FBO</span>
-                        </button>
-                    </div>
+                    <button (click)="editGroup(data)"
+                            clickStopPropagation
+                            mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit Group</span>
+                    </button>
+                    <button (click)="addNewFbo(data)"
+                            clickStopPropagation
+                            mat-menu-item>
+                        <mat-icon>add</mat-icon>
+                        <span>Add FBO</span>
+                    </button>
+                    <button (click)="deleteGroup(data)"
+                            clickStopPropagation
+                            mat-menu-item>
+                        <mat-icon>delete_forever</mat-icon>
+                        <span>Delete Group</span>
+                    </button>
+                    <button [disabled]="!groupFbos(data.index).length"
+                            [matMenuTriggerFor]="fbosMenu"
+                            clickStopPropagation
+                            mat-menu-item>
+                        <span>Delete FBO</span>
+                    </button>
                 </mat-menu>
                 <mat-menu #fbosMenu="matMenu">
                     <button

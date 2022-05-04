@@ -98,6 +98,8 @@ namespace FBOLinx.DB.Models
 
         public AccountTypes AccountType { get; set; } = AccountTypes.RevFbo;
 
+        public string AntennaName { get; set; }
+
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]
         public Group Group { get; set; }
