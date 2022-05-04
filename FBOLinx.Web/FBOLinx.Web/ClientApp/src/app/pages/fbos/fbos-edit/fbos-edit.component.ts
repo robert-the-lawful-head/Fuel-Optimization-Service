@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSelectChange } from '@angular/material/select';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ContactsService } from '../../../services/contacts.service';
@@ -9,6 +10,7 @@ import { FbocontactsService } from '../../../services/fbocontacts.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
 import { GroupsService } from '../../../services/groups.service';
+import { AirportWatchService } from '../../../services/airportwatch.service';
 import {
     CloseConfirmationComponent,
     CloseConfirmationData,
@@ -33,6 +35,7 @@ export class FbosEditComponent implements OnInit {
     currentContact: any;
     contactsData: any;
     groups: Array<any>;
+    availableAntennas: any[];
 
     // Private Members
 
@@ -45,7 +48,8 @@ export class FbosEditComponent implements OnInit {
         private contactsService: ContactsService,
         private groupsService: GroupsService,
         private sharedService: SharedService,
-        private confirmDialog: MatDialog
+        private confirmDialog: MatDialog,
+        private airportWatchService: AirportWatchService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -228,5 +232,8 @@ export class FbosEditComponent implements OnInit {
         this.groupsService
             .getAllGroups()
             .subscribe((data: any) => (this.groups = data));
+        this.airportWatchService
+            .getUnassignedAntennaBoxes(this.fboInfo.antennaName)
+            .subscribe((data: any) => (this.availableAntennas = data));
     }
 }

@@ -1,0 +1,60 @@
+<div>
+    <div *ngIf="antennaStatusData" class="col-6">
+        <app-table-global-search [matDataSource]="antennaStatusDataSource"
+                                 placeholder="Search by Antenna Name, FBOlinx Account"></app-table-global-search>
+    </div>
+
+    <div>
+        <table [dataSource]="antennaStatusDataSource" class="col-md-12 mb-0" mat-table matSort>
+            <ng-container matColumnDef="boxName">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    <span>Antenna Name</span>
+                </th>
+                <td *matCellDef="let antenna" mat-cell>
+                    {{ antenna.boxName }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
+                    <span>Status</span>
+                </th>
+                <td *matCellDef="let antenna" mat-cell>
+                    {{ antenna.status }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastUpdateRaw">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    <span>Last Update from Raw</span>
+                </th>
+                <td *matCellDef="let antenna" mat-cell>
+                    <div>
+                        {{ antenna.lastUpdateRaw }}
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastUpdateCurated">
+                <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
+                    <div class="">Last Seen in FBOlinx Curated</div>
+                </th>
+                <td *matCellDef="let antenna" mat-cell>
+                    {{antenna.lastUpdateCurated}}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fbolinxAccount">
+                <th *matHeaderCellDef class="text-left" mat-header-cell mat-sort-header>
+                    <div class="">FBOlinx Account</div>
+                </th>
+                <td *matCellDef="let antenna" mat-cell>
+                    {{antenna.fbolinxAccount}}
+                </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: getTableColumns()" mat-row style="cursor: pointer;"></tr>
+        </table>
+    </div>
+</div>

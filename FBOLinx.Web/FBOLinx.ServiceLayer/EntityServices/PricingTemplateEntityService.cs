@@ -146,8 +146,30 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                              { CustomerType = cct.CustomerType }).ToListAsync();
 
             //Separate inner queries first for FBO Prices and Margin Tiers
+            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
+            foreach (var p in oldPrices)
+            {
+                p.Expired = true;
+                _context.Fboprices.Update(p);
+            }
+            await _context.SaveChangesAsync();
+
             var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveTo > DateTime.UtcNow && fp.EffectiveTo <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true).ToListAsync();
+                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product.Contains("JetA")).OrderBy(f => f.Oid).ToListAsync();
+
+            var oldJetAPriceExists = tempFboPrices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
+            if (oldJetAPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldJetAPriceExists[i].Expired = true;
+                    _context.Fboprices.Update(oldJetAPriceExists[i]);
+                    await _context.SaveChangesAsync();
+
+                    tempFboPrices.Remove(oldJetAPriceExists[i]);
+                }
+            }
 
             var tempPricingTemplates = await (_context.PricingTemplate.Where(x => x.Fboid == fboId).ToListAsync());
 
