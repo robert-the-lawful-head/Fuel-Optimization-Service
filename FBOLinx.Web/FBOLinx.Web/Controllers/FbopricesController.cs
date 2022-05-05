@@ -12,6 +12,7 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Services;
 using System.Security.Claims;
+using EFCore.BulkExtensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
@@ -682,14 +683,8 @@ namespace FBOLinx.Web.Controllers
             }
             try
             {
-                CompanyPricingLog companyPricingLog = new CompanyPricingLog
-                {
-                    CompanyId = request.FuelerlinxCompanyID,
-                    ICAO = request.ICAO
-                };
-                _context.CompanyPricingLog.Add(companyPricingLog);
+                await LogFuelerLinxPriceQuote(request);
 
-                await _context.SaveChangesAsync();
 
                 var customer =
                     await _context.Customers.Where(x =>
@@ -749,6 +744,27 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+
+        private async Task LogFuelerLinxPriceQuote(VolumeDiscountLoadRequest request)
+        {
+            //TODO: Refactoring: move this to a bulk insert method once we establish a service for CompanyPricingLog
+            List<string> icaoList = request.ICAO.Split(',').Select(x => x.Trim())
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            List<CompanyPricingLog> companyPricingLogs = new List<CompanyPricingLog>();
+            foreach (string icao in icaoList)
+            {
+                companyPricingLogs.Add(new CompanyPricingLog
+                {
+                    CompanyId = request.FuelerlinxCompanyID,
+                    ICAO = icao,
+                    CreatedDate = DateTime.Now
+                });
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await _context.BulkInsertAsync(companyPricingLogs);
+            await transaction.CommitAsync();
         }
 
         [HttpPost("price-lookup-for-customer")]
