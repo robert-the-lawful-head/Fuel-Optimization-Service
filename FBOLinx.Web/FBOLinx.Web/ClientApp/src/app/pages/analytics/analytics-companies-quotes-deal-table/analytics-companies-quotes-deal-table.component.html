@@ -32,11 +32,8 @@
                 </mat-form-field>
             </div>
             <div class="d-inline-block mr-2 ml-2">
-                <mat-form-field>
-                    <mat-label>Company</mat-label>
-                    <input (keyup)="applyFilter($event)" matInput />
-                    <span matPrefix><i class="fa fa-search"></i></span>
-                </mat-form-field>
+                <app-table-global-search [matDataSource]="dataSource"
+                    placeholder="Search by Company"></app-table-global-search>
             </div>
             <div class="actions">
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
