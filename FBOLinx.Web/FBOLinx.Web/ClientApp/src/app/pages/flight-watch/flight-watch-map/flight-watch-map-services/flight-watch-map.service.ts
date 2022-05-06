@@ -14,15 +14,15 @@ export class FlightWatchMapService {
             let imageName = `aircraft_image_${image.id}`;
             this.loadImageInMap(map, img, imageName, image.url);
 
-            const reversedImg = Object.assign({}, img);
+            const reversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed`;
             this.loadImageInMap(map, reversedImg, imageName, image.reverseUrl);
 
-            const releaseImg = Object.assign({}, img);
+            const releaseImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_release`;
             this.loadImageInMap(map, releaseImg, imageName, image.blueUrl);
 
-            const releaseReversedImg = Object.assign({}, img);
+            const releaseReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_release`;
             this.loadImageInMap(
                 map,
@@ -31,7 +31,7 @@ export class FlightWatchMapService {
                 image.blueReverseUrl
             );
 
-            const fuelerlinxImg = Object.assign({}, img);
+            const fuelerlinxImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_fuelerlinx`;
             this.loadImageInMap(
                 map,
@@ -40,7 +40,7 @@ export class FlightWatchMapService {
                 image.fuelerlinxUrl
             );
 
-            const fuelerlinxReversedImg = Object.assign({}, img);
+            const fuelerlinxReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
             this.loadImageInMap(
                 map,
@@ -61,22 +61,24 @@ export class FlightWatchMapService {
         };
         image.src = imageUrl;
     }
-    public getDefaultAircraftType(atype: string): string{
+    public getDefaultAircraftType(atype: string): string {
         if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
             atype = 'default';
         }
         return atype;
     }
-    public getGeojsonFeatureSourceJsonData(features: any[]): mapboxgl.AnySourceData{
-        return  {
+    public getGeojsonFeatureSourceJsonData(
+        features: any[]
+    ): mapboxgl.AnySourceData {
+        return {
             type: 'geojson',
             data: {
-              type: 'FeatureCollection',
-              features: features
-            }
+                type: 'FeatureCollection',
+                features: features,
+            },
         };
     }
-    public buildAircraftId(aircraftId: number):string{
+    public buildAircraftId(aircraftId: number): string {
         return `aircraft_${aircraftId}`;
     }
 }
