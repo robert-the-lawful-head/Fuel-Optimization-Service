@@ -92,8 +92,8 @@ namespace FBOLinx.Web.Controllers
                 var currentPrices = prices.Where(p => p.Product.Contains("JetA") && p.EffectiveFrom <= DateTime.UtcNow).ToList();
                 if (currentPrices.Count > 0)
                 {
-                    fbo.CostPrice = currentPrices[0].Price;
-                    fbo.RetailPrice = currentPrices[1].Price;
+                    fbo.CostPrice = currentPrices.FirstOrDefault(x => (x.Product?.ToLower().Contains("cost")).GetValueOrDefault())?.Price;
+                    fbo.RetailPrice = currentPrices.FirstOrDefault(x => (x.Product?.ToLower().Contains("retail")).GetValueOrDefault())?.Price;
                 }
             }
 
