@@ -222,7 +222,7 @@ export class GroupAnalyticsMarketShareComponent
         this.fetchData(startDate, endDate).subscribe((data: any[]) => {
             const exportData = data.map((item) => {
                 const row = {
-                    ICAO: item.company,
+                    ICAO: item.icao,
                     'Market Share': item.marketShare + '%',
                     'Total Orders at Airport': item.airportOrders,
                     'Your Orders at Airport: Contract Fuel Vendors': item.fboOrders,
