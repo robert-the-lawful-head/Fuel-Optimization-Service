@@ -191,8 +191,13 @@ namespace FBOLinx.Web.Controllers
                         }
                     }
 
-                    fboPricesUpdateGenerator.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
+                    
                 }
+
+                if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault()))
+                    fboPricesUpdateGenerator.EffectiveTo =
+                        await _fboService.GetAirportLocalDateTimeByUtcFboId(
+                            fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
 
                 if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveFrom))
                     fboPricesUpdateGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
