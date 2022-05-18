@@ -4,7 +4,7 @@
             <div *ngIf="anySelected()" class="col-2 bulk-update">
                 <mat-form-field>
                     <mat-select (selectionChange)="bulkMarginTemplateUpdate($event)" class="bulk-update-select"
-                        placeholder="Bulk Update Margin Template">
+                                placeholder="Bulk Update Margin Template">
                         <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate">
                             {{ pricingTemplate.name }}
                         </mat-option>
@@ -13,25 +13,31 @@
             </div>
             <div *ngIf="customersDataSource" class="col-6">
                 <app-table-global-search [matDataSource]="customersDataSource"
-                   placeholder="Search by Company, Tail, etc."></app-table-global-search>
+                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
-            <div class="col-2">
+            <div>
                 <mat-form-field>
                     <mat-select (selectionChange)="customerFilterTypeChanged()" [(ngModel)]="customerFilterType"
-                        placeholder="Search Within">
+                                placeholder="Search Within">
                         <mat-option [value]="0"> All Customers </mat-option>
                         <mat-option [value]="1">
                             Customers Needing Attention
                         </mat-option>
-                </mat-select>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div *ngIf="anySelected()" class="col-2 bulk-action-btn">
                 <div>
-                    <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button>
+                    <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button size="small">
                         Export Selected
                     </button>
                 </div>
+            </div>
+            <div>
+                <button (click)="newCustomer()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                        ni-button size="small">
+                    Add New
+                </button>
             </div>
             <div class="export-import-menu">
                 <div class="actions-menu">
@@ -40,8 +46,8 @@
                     </button>
                     <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
                         <!--<button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
-                            Import
-                        </button>-->
+                    Import
+                </button>-->
                         <button [matMenuTriggerFor]="exportActions" mat-menu-item>
                             Export
                         </button>
@@ -329,13 +335,7 @@
             </ng-container>
 
             <ng-container matColumnDef="delete">
-                <th *matHeaderCellDef mat-header-cell>
-                    <div class="pull-right">
-                        <button (click)="newCustomer()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
-                                ni-button>
-                            Add New
-                        </button>
-                    </div>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     <div class="pull-right">
