@@ -1029,6 +1029,13 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Oid).HasColumnName("OID");
                 entity.Property(e => e.AssociationName).HasColumnName("Association");
             });
+            modelBuilder.Entity<IntegrationUpdatePricingLog>(entity =>
+            {
+                entity.Property(e => e.Request).IsUnicode(false);
+
+                entity.Property(e => e.Response).IsUnicode(false);
+            });
+
         }
     }
 }

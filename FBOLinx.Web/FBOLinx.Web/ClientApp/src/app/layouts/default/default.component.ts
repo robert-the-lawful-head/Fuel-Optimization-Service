@@ -294,14 +294,20 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                                 if (price.product === 'SAF Retail') {
                                     _this.retailSaf = price.price;
-                                    _this.effectiveToSaf = moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                        _this.effectiveToSaf = "Updated by X1 POS"
+                                    else
+                                        _this.effectiveToSaf = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
                                 }
                                 if (price.product === 'JetA Cost') {
                                     _this.costJetA = price.price;
                                 }
                                 if (price.product === 'JetA Retail') {
                                     _this.retailJetA = price.price;
-                                    _this.effectiveToJetA = moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                        _this.effectiveToJetA = "Updated by X1 POS"
+                                    else
+                                        _this.effectiveToJetA = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
                                 }
                             }
 
