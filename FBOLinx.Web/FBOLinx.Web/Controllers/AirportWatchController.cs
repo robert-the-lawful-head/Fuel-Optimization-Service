@@ -86,9 +86,9 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("start-date")]
         public async Task<IActionResult> GetAirportWatchStartDate()
         {
-            var startRecord = await _context.AirportWatchHistoricalData.OrderBy(item => item.AircraftPositionDateTimeUtc).FirstOrDefaultAsync();
+            var startRecordDateTimeUtc = await _context.AirportWatchHistoricalData.MinAsync(x => x.AircraftPositionDateTimeUtc);
 
-            return Ok(startRecord.AircraftPositionDateTimeUtc);
+            return Ok(startRecordDateTimeUtc);
         }
 
         [HttpGet(("parking-occurrences/{icao}"))]

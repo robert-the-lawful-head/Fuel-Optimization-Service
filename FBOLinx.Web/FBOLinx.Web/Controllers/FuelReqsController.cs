@@ -1004,7 +1004,11 @@ namespace FBOLinx.Web.Controllers
                                        f.Oid,
                                    }).ToListAsync();
 
-                request.IcaosFbos = locations.ToDictionary(f => f.Icao, f => f.Fbo);
+                foreach (var location in locations)
+                {
+                    if (!request.IcaosFbos.ContainsKey(location.Icao))
+                        request.IcaosFbos.Add(location.Icao, location.Fbo);
+                }
 
                 var fbosOrders = await (from fr in _context.FuelReq
                                         join f in _context.Fbos on fr.Fboid equals f.Oid
@@ -1396,7 +1400,12 @@ namespace FBOLinx.Web.Controllers
                 FBOLinxOrdersForMultipleAirportsRequest fbolinxOrdersRequest = new FBOLinxOrdersForMultipleAirportsRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;
                 fbolinxOrdersRequest.EndDateTime = request.EndDateTime;
-                fbolinxOrdersRequest.IcaosFbos = icaos.ToDictionary(x => x, x => x);
+
+                foreach (var icao in icaos)
+                {
+                    if (!fbolinxOrdersRequest.IcaosFbos.ContainsKey(icao))
+                        fbolinxOrdersRequest.IcaosFbos.Add(icao, icao);
+                }
 
                 FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForMultipleAirports(fbolinxOrdersRequest);
                 ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = response.Result;

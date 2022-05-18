@@ -194,12 +194,15 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].priceCost = null;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = 0;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidCost = 0;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].status = "Editing";
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].submitStatus = "Stage";
                         }
                         else {
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = data.oidPap;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidCost = data.oidCost;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = event.effectiveFrom;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveTo = event.effectiveTo;
+                            _this.fboPricesUpdateGridData[currentUpdatedPrice].status = "Staged";
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].isEdit = false;
                         }
 
@@ -408,8 +411,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                                     this.currentFboPriceJetARetail.price,
                                 SafCost: this.currentFboPriceSafCost.price,
                                 SafRetail: this.currentFboPriceSafRetail.price,
-                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
-                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY") == "12/31/99" ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY") == "12/31/99" ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
@@ -441,20 +444,33 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
                     this.fboPricesUpdateGridData.forEach(function (fboPrice) {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
-                            if (fboPrice.effectiveFrom == "0001-01-01T00:00:00") {
+                            if (moment(fboPrice.effectiveTo).format("YYYY") == "9999") {
+                                fboPrice.effectiveFrom = moment(fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm");
+                                fboPrice.effectiveTo = "Updated by X1 POS";
+                                fboPrice.submitStatus = "Automated";
+                                fboPrice.status = "Automated";
+                                fboPrice.isEdit = false;
+                            }
+                            else if (fboPrice.effectiveFrom == "0001-01-01T00:00:00") {
                                 fboPrice.effectiveTo = moment(_this.expirationDate).toDate();
                                 fboPrice.submitStatus = "Publish";
+                                fboPrice.status = "Editing";
                             }
                             else {
                                 fboPrice.effectiveTo = moment(fboPrice.effectiveTo).toDate();
                                 fboPrice.submitStatus = "Stage";
+                                fboPrice.status = "Editing";
                             }
-                            fboPrice.effectiveFrom = moment(moment(fboPrice.effectiveFrom == "0001-01-01T00:00:00" ? _this.localDateTime : fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm")).toDate();
-                            fboPrice.isEdit = true;
+
+                            if (fboPrice.status != "Automated") {
+                                fboPrice.effectiveFrom = moment(moment(fboPrice.effectiveFrom == "0001-01-01T00:00:00" ? _this.localDateTime : fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm")).toDate();
+                                fboPrice.isEdit = true;
+                            }
                         }
                         else {
                             fboPrice.effectiveFrom = moment(fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm");
                             fboPrice.effectiveTo = moment(fboPrice.effectiveTo).format("MM/DD/YYYY HH:mm");
+                            fboPrice.status = "Staged";
                             fboPrice.isEdit = false;
                         }
                     });

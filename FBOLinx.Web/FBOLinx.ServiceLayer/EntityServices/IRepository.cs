@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
         Task<T> GetAsync(int id);
         Task<T> AddAsync(T entity);
-        Task<T> UpdateAsync(T entity);
+        Task UpdateAsync(T entity);
         Task<T> DeleteAsync(int id);
         Task<T> GetSingleBySpec(ISpecification<T> spec);
         Task<List<T>> GetListBySpec(ISpecification<T> spec);
