@@ -12,13 +12,13 @@
 
         <div class="row" *ngFor="let pricing of fboPricesUpdateGridData;">
             <!--Status-->
-            <div class="col-1 border-bottom pt-1"> {{pricing.oidCost == 0 && pricing.oidPap == 0 ? "Editing" : "Staged"}}</div>
+            <div class="col-1 border-bottom pt-1"> {{pricing.status}}</div>
             <!--Product-->
             <div class="col-1 border-bottom pt-1"> {{pricing.product == "SAF" ? "SAF" : pricing.product}}</div>
             <!--Effective From-->
             <div class="col-2 border-bottom">
                 <div *ngIf="!pricing.isEdit" class="pt-1">
-                    <span *ngIf="pricing.oidPap > 0">{{pricing.effectiveFrom}} {{timezone}}</span>
+                    <span>{{pricing.effectiveFrom}} {{timezone}}</span>
                 </div>
                 <div *ngIf="!pricing.isLoading && pricing.isEdit">
                     <div class="datepicker">
@@ -49,7 +49,7 @@
             <!--Expiration-->
             <div class="col-2 border-bottom">
                 <div *ngIf="!pricing.isEdit" class="pt-1">
-                    {{pricing.effectiveTo}}  {{timezone}}
+                    {{pricing.effectiveTo}} {{pricing.status == 'Automated' ? '' : timezone}}
                 </div>
                 <div *ngIf="pricing.isEdit">
                     <div class="datepicker">
@@ -148,8 +148,8 @@
                 <div class="row">
                     <div *ngIf="!pricing.isEdit">
                         <div class="pt-1 pb-1 pr-1">
-                            <button (click)="editRowClicked(pricing)" mat-stroked-button>
-                                Edit
+                            <button (click)="editRowClicked(pricing)" mat-stroked-button [disabled]="pricing.status == 'Automated'">
+                                {{pricing.status == "Automated" ? pricing.submitStatus : "Edit" }}
                             </button>
                         </div>
 

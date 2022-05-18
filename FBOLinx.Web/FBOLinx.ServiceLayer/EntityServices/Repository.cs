@@ -37,12 +37,20 @@ namespace FBOLinx.ServiceLayer.EntityServices
         }
         public async Task<T> GetAsync(int id) => await context.Set<T>().FindAsync(id);
         
-        public async Task<T> UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
+            try
+            {
+                context.Set<T>().Attach(entity);
+            }
+            catch (System.Exception exception)
+            {
+                //Do nothing... the entity was already attached
+            }
             context.Entry(entity).State = EntityState.Modified;
             await context.SaveChangesAsync();
-            return entity;
         }
+
         public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
         {
             var query = context.Set<T>().AsQueryable();

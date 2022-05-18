@@ -1037,6 +1037,13 @@ namespace FBOLinx.DB.Context
                  entity.Property(e => e.TailNumber).IsUnicode(false);
              });
 
+            modelBuilder.Entity<IntegrationUpdatePricingLog>(entity =>
+            {
+                entity.Property(e => e.Request).IsUnicode(false);
+
+                entity.Property(e => e.Response).IsUnicode(false);
+            });
+
         }
     }
 }
