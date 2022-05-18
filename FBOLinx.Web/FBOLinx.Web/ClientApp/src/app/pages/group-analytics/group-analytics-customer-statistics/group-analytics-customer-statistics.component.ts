@@ -103,6 +103,15 @@ export class GroupAnalyticsCustomerStatisticsComponent
 
             this.saveSettings();
         });
+    }
+
+    ngAfterViewInit() {
+        this.icaoChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === SharedEvent.icaoChangedEvent) {
+                    this.icao = this.sharedService.currentUser.icao;
+                }
+            });
 
         if (this.fbos == undefined) {
             var isFbosLoaded = false;
@@ -119,15 +128,12 @@ export class GroupAnalyticsCustomerStatisticsComponent
                     }
                 });
         }
-    }
-
-    ngAfterViewInit() {
-        this.icaoChangedSubscription =
-            this.sharedService.changeEmitted$.subscribe((message) => {
-                if (message === SharedEvent.icaoChangedEvent) {
-                    this.icao = this.sharedService.currentUser.icao;
-                }
-            });
+        else {
+            this.ngxLoader.stopLoader(this.chartName);
+            this.selectedFbos = this.fbos;
+            this.refreshData();
+            isFbosLoaded = true;
+        }
     }
 
     ngOnDestroy() {
