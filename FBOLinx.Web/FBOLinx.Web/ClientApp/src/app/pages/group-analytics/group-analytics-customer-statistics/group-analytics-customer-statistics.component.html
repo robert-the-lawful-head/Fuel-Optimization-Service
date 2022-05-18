@@ -64,7 +64,7 @@
                     </ng-template>
                 </p-multiSelect>
             </div>
-            <div class="d-inline-block mr-2 ml-2">
+            <div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
                 <app-table-global-search [matDataSource]="dataSource"
                     placeholder="Search by Company"></app-table-global-search>
             </div>
