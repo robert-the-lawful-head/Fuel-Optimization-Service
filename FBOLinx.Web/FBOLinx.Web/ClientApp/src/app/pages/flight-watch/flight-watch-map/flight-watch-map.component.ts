@@ -175,8 +175,10 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         self.setFlightWatchMarkerLayout(focusedMarker);
     }
     private setFlightWatchMarkerLayout(marker){
+        return;
+        // need to check if this code is necesary, seems to be redundant until now
         this.setLayoutProperty(
-            this.flightWatchMapService.buildAircraftId(marker.oid),
+            this.flightLayerId,
             'icon-image',
             `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(marker.aircraftTypeCode)}${this.focusedMarkerId == marker.oid ? '_reversed' : ''
             }${marker?.fuelOrder != null ? '_release' : (marker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`

@@ -10,7 +10,7 @@ namespace FBOLinx.Web.DTO
         public double? Price { get; set; }
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
-        public DateTime? TimeStamp { get; set; }
+        public DateTime? TimeStamp { get; set; } = DateTime.UtcNow;
         public double? SalesTax { get; set; }
         public string Currency { get; set; }
         public double? TempJet { get; set; }
