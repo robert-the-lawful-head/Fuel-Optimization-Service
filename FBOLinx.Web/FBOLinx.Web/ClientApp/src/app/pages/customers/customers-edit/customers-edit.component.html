@@ -25,7 +25,7 @@
                 <mat-progress-bar mode="indeterminate"></mat-progress-bar>
             </div>
             <div class="card-content edit-customer-content">
-                <mat-tab-group [selectedIndex]="selectedIndex">
+                <mat-tab-group [selectedIndex]="selectedIndex" (selectedTabChange)="tabClick($event)">
                     <mat-tab label="Customer Details">
                         <div class="container-fluid" >
                             <h5>General Information</h5>
@@ -194,11 +194,11 @@
 
 
                     <mat-tab label="History">
-                       <app-customer-history
-                         [customerHistory]="customerHistory"
-                       >
+                        <div *ngIf="!isLoadingHistory">
+                            <app-customer-history [customerHistory]="customerHistory">
 
-                       </app-customer-history>
+                            </app-customer-history>
+                        </div>
                     </mat-tab>
                 </mat-tab-group>
             </div>
