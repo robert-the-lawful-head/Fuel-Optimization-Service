@@ -36,16 +36,6 @@ export class CustomerHistoryComponent implements OnInit {
      private route : ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.sharedService.updatedHistory.subscribe(
-        update => {
-            if(update == true)
-            {
-                this.customerInfobyGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id'), this.sharedService.currentUser.fboId).subscribe(
-                    data => this.customerHistory = data
-                )
-            }
-        }
-    )
     this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
       this.customerHistoryDataSource = new MatTableDataSource(this.customerHistory);
     this.customerHistoryDataSource.sort = this.sort;
