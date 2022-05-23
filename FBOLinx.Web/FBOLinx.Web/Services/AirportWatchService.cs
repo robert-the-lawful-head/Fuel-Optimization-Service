@@ -446,7 +446,7 @@ namespace FBOLinx.Web.Services
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
                 //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddDays(-7)).ToListAsync();
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-4)).ToListAsync();
 
             foreach (var record in data)
             {
