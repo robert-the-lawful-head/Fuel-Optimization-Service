@@ -1187,7 +1187,7 @@ namespace FBOLinx.Web.Controllers
                 .Include(x => x.fboAirport)
                 .ToListAsync();
 
-            var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == customerId && c.GroupId == groupId);
+            var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.GroupId == groupId);
             if (customerInfoByGroup == null)
                 return new List<GroupCustomerAnalyticsResponse>();
 
