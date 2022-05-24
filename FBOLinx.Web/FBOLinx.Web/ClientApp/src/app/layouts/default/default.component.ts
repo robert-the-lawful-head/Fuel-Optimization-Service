@@ -112,7 +112,12 @@ export class DefaultLayoutComponent implements OnInit {
                         this.sharedService.currentUser.groupId
                     )
                     .subscribe(
-                        (data: any) => (this.pricingTemplatesData = data)
+                        (data: any) => {
+                            this.pricingTemplatesData = data;
+                            if (this.canUserSeePricing()) {
+                                this.loadPrices();
+                            }
+                        }
                     );
             }
         });
