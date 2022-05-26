@@ -249,7 +249,7 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerInfoByGroup.Update(customerInfo);
                 }
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(model.userId, model.id, groupInfo.GetValueOrDefault(), model.fboid);
             }
 
             

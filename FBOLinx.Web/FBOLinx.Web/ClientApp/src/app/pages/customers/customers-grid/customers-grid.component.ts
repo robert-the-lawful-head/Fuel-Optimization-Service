@@ -358,6 +358,7 @@ export class CustomersGridComponent implements OnInit {
             fboid: this.sharedService.currentUser.fboId,
             id: customer.customerId,
             pricingTemplateId: changedPricingTemplate.oid,
+            userId: this.sharedService.currentUser.oid
         };
         const id = this.route.snapshot.paramMap.get('id');
         this.customerMarginsService.updatecustomermargin(vm).subscribe(() => {
@@ -383,6 +384,7 @@ export class CustomersGridComponent implements OnInit {
                     fboid: this.sharedService.currentUser.fboId,
                     id: customer.customerId,
                     pricingTemplateId: event.value.oid,
+                    userId: this.sharedService.currentUser.oid
                 });
             }
         });

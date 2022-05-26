@@ -107,6 +107,7 @@ namespace FBOLinx.Web
             services.AddTransient<GroupEntityService, GroupEntityService>();
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
+            services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

@@ -64,7 +64,7 @@ namespace FBOLinx.DB.Context
                                 auditEntry.OldValues[propertyName] = property.OriginalValue;
                                 break;
                             case EntityState.Modified:
-                                if (property.IsModified)
+                                if (property.IsModified && property.CurrentValue != null && property.OriginalValue != null && property.OriginalValue.ToString() != property.CurrentValue.ToString())
                                 {
                                     auditEntry.ChangedColumns.Add(propertyName);
                                     auditEntry.AuditType = AuditType.Update;
@@ -1029,6 +1029,13 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Oid).HasColumnName("OID");
                 entity.Property(e => e.AssociationName).HasColumnName("Association");
             });
+            modelBuilder.Entity<IntegrationUpdatePricingLog>(entity =>
+            {
+                entity.Property(e => e.Request).IsUnicode(false);
+
+                entity.Property(e => e.Response).IsUnicode(false);
+            });
+
         }
     }
 }
