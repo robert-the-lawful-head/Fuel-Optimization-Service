@@ -1,7 +1,7 @@
 <div class="container-fluid pr-0">
     <div class="prices-board">
         <div class="prices-board-row">
-            <div *ngIf="!isCsr" style="position: absolute; right: 20px; top: 19px; z-index: 10000;">
+            <div class="fees-taxes-button" *ngIf="!isCsr">
                 <button (click)="editFeesAndTaxes()"
                         class="mr-1"
                         ni-button
