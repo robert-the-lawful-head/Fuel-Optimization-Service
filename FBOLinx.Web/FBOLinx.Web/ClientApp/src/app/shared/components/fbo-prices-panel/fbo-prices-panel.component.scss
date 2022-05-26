@@ -29,3 +29,14 @@ div .header-button button {
 h6.price-expired {
     font-size: .64rem !important;
 }
+
+.current-price-panel {
+    min-width: 180px;
+}
+
+
+@media (max-width: 500px) {
+    .current-price-panel {
+        min-width: auto;
+    }
+}
