@@ -962,7 +962,7 @@ div.fees-taxes-button {
 
 
     .after-breadcrumb {
-        padding-top: 85px;
+        padding-top: 0px;
     }
 
     .ni-breadcrumb-wrap {
@@ -988,7 +988,7 @@ div.fees-taxes-button {
 
     div.fees-taxes-button {
         position: absolute;
-        right: 5px;
+        right: 15px;
         top: 16px;
         z-index: 10000;
     }
@@ -1003,7 +1003,7 @@ div.fees-taxes-button {
         height: 100%;
         padding-top: 0px !important;
         padding-left: 0px !important;
-        padding-right: 20px !important;
+        padding-right: 0px !important;
         table-layout: fixed;
         width: 100%;
     }
