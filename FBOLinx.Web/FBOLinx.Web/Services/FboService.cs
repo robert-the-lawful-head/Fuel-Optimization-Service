@@ -56,6 +56,12 @@ namespace FBOLinx.Web.Services
                 .Include(x => x.fboAirport).FirstOrDefaultAsync();
             return result;
         }
+        public async Task<Fbos> GetFboAsNoTracing(int fboId)
+        {
+            var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
+                .Include(x => x.fboAirport).AsNoTracking().FirstOrDefaultAsync();
+            return result;
+        }
 
         public async Task<Coordinate> GetFBOLocation(int fboid)
         {
@@ -134,7 +140,12 @@ namespace FBOLinx.Web.Services
 
             return fboAirport.Icao;
         }
+        public async Task<string> GetFBOIcaoAsNoTracking(int fboId)
+        {
+            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).AsNoTracking().FirstOrDefaultAsync();
 
+            return fboAirport.Icao;
+        }
         public async Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId)
         {
             var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();

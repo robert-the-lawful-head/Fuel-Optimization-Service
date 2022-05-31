@@ -40,7 +40,19 @@ namespace FBOLinx.Web.Controllers
             {
                // await _dBSCANService.GetParkingLocations();
                 var fboLocation = await _fboService.GetFBOLocation(fboId);
+
+                var watch = new System.Diagnostics.Stopwatch();
+                watch.Start();
                 var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
+                watch.Stop();
+                Console.WriteLine($"GetAirportWatchLiveData Execution Time: {watch.ElapsedMilliseconds} ms");
+
+                watch = new System.Diagnostics.Stopwatch();
+                watch.Start();
+                var data2 = await _airportWatchService.GetAirportWatchLiveDataRefactored(groupId, fboId, fboLocation);
+                watch.Stop();
+                Console.WriteLine($"GetAirportWatchLiveData Execution Time: {watch.ElapsedMilliseconds} ms");
+
                 return Ok(new
                 {
                     FBOLocation = fboLocation,
@@ -57,7 +69,17 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
         public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             var data = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, request);
+            watch.Stop();
+            Console.WriteLine($"GetArrivalsDepartures Execution Time: {watch.ElapsedMilliseconds} ms");
+
+            watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request);
+            watch.Stop();
+            Console.WriteLine($"GetArrivalsDeparturesRefactored Execution Time: {watch.ElapsedMilliseconds} ms");
             return Ok(data);
         }
 

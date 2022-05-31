@@ -31,5 +31,9 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("AircraftId")]
         public AirCrafts Aircraft { get; set; }
+        //todo: check if decorator are necesary 
+        //[InverseProperty("CustomerInfoByGroup")]
+        //[ForeignKey("CustomerId")]
+        public virtual Customers Customer { get; set; }
     }
 }
