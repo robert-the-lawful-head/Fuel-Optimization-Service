@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Services
 
             var airports = await _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection)
                 .ToListAsync();
-            
+
             allFboGeoClusters.ForEach(x =>
             {
                 var airport = airports.FirstOrDefault(a => a.AirportId == x.AcukwikAirportID);
@@ -107,7 +107,7 @@ namespace FBOLinx.Web.Services
                 .Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId))
                 .Include(x => x.ClusterCoordinatesCollection);
 
-            var airportIds = allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct();
+            var airportIds = await allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToListAsync();
 
             var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection);
 
@@ -124,8 +124,8 @@ namespace FBOLinx.Web.Services
                 x.AcukwikFBOHandlerID = fbo.HandlerId;
                 x.FboName = fbo.HandlerLongName;
             });
-
             return allFboGeoClusters;
+            
         }
         public async Task<List<AirportFboGeofenceClusterCoordinates>> GetClusterCoordinatesByClusterId(int clusterId)
         {
@@ -135,5 +135,6 @@ namespace FBOLinx.Web.Services
         public async Task<IQueryable<AirportFboGeofenceClusterCoordinates>> GetClusterCoordinatesByClusterIdIQueryable(int clusterId)
         {
             return _context.AirportFboGeoFenceClusterCoordinates.Where(a => a.ClusterID == clusterId).AsNoTracking();
+        }
     }
 }

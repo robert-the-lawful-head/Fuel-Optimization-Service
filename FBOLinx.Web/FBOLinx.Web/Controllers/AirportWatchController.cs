@@ -36,52 +36,27 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetAirportLiveData([FromRoute] int groupId, [FromRoute] int fboId)
         {
-            try
+            var fboLocation = await _fboService.GetFBOLocation(fboId);
+
+            var data = await _airportWatchService.GetAirportWatchLiveDataRefactored(groupId, fboId, fboLocation);
+           
+            return Ok(new
             {
-               // await _dBSCANService.GetParkingLocations();
-                var fboLocation = await _fboService.GetFBOLocation(fboId);
-
-                var watch = new System.Diagnostics.Stopwatch();
-                watch.Start();
-                var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
-                watch.Stop();
-                Console.WriteLine($"GetAirportWatchLiveData Execution Time: {watch.ElapsedMilliseconds} ms");
-
-                watch = new System.Diagnostics.Stopwatch();
-                watch.Start();
-                var data2 = await _airportWatchService.GetAirportWatchLiveDataRefactored(groupId, fboId, fboLocation);
-                watch.Stop();
-                Console.WriteLine($"GetAirportWatchLiveData Execution Time: {watch.ElapsedMilliseconds} ms");
-
-                return Ok(new
-                {
-                    FBOLocation = fboLocation,
-                    FlightWatchData = data,
-                });
-            }
-            catch (System.Exception exception)
-            {
-                return Ok(null);
-            }
+                FBOLocation = fboLocation,
+                FlightWatchData = data,
+            });
         }
 
         //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
         public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            var data = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, request);
-            watch.Stop();
-            Console.WriteLine($"GetArrivalsDepartures Execution Time: {watch.ElapsedMilliseconds} ms");
 
-            watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request);
-            watch.Stop();
-            Console.WriteLine($"GetArrivalsDeparturesRefactored Execution Time: {watch.ElapsedMilliseconds} ms");
-            return Ok(data);
+            var data2 = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, request);
+
+            return Ok(data2);
         }
+
 
         [HttpPost("group/{groupId}/fbo/{fboId}/visits")]
         public async Task<IActionResult> GetVisits([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
