@@ -112,7 +112,12 @@ export class DefaultLayoutComponent implements OnInit {
                         this.sharedService.currentUser.groupId
                     )
                     .subscribe(
-                        (data: any) => (this.pricingTemplatesData = data)
+                        (data: any) => {
+                            this.pricingTemplatesData = data;
+                            if (this.canUserSeePricing()) {
+                                this.loadPrices();
+                            }
+                        }
                     );
             }
         });
@@ -338,7 +343,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     private canUserSeePricing(): boolean {
-        return (
+        return this.sharedService.currentUser == null ? false : (
             [1, 4].includes(this.sharedService.currentUser.role) ||
             [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
         );

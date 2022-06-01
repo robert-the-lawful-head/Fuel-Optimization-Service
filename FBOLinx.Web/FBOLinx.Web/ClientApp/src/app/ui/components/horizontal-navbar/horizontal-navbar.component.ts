@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -90,7 +91,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fbosService: FbosService,
         private fuelReqsService: FuelreqsService,
         private winRef: WindowRef,
-        private airportWatchService: AirportWatchService
+        private airportWatchService: AirportWatchService,
+        private Location: Location
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -426,11 +428,13 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             'fboId',
             this.sharedService.currentUser.fboId.toString()
         );
-        if (this.isOnDashboard()) {
-            this.sharedService.emitChange(SharedEvents.locationChangedEvent);
-        } else {
-            this.router.navigate(['/default-layout/dashboard/']).then();
-        }
+
+        this.fbosService.manageFbo(this.sharedService.currentUser.fboId).subscribe(() => {
+            if (this.isOnDashboard())
+                this.sharedService.emitChange(SharedEvents.locationChangedEvent);
+            else
+                this.router.navigate(['/default-layout/dashboard-fbo-updated/']).then();
+        });
     }
 
     toggleProfileMenu() {
@@ -513,17 +517,13 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     // Private Methods
     private isOnDashboard(): boolean {
-        if (!this.route || !this.route.url) {
+        if (!this.Location) {
             return false;
         }
-        const urlInfo: any = !this.route.url;
-        if (!urlInfo.value) {
-            return false;
-        }
-        const dashboardResults = urlInfo.value.filter(
-            (value) => value && value.toLowerCase().indexOf('dashboard') > -1
-        );
-        if (!dashboardResults || dashboardResults.length === 0) {
+
+        const urlInfo: any = this.Location.path();
+        const dashboardResults = urlInfo.toLowerCase().indexOf('dashboard') > -1 ? true : false;
+        if (!dashboardResults) {
             return false;
         }
         return true;

@@ -15,6 +15,18 @@ div.container-fluid > .row {
     line-height: 35px;
 }
 
+.container-fluid.pricing-update-generator .row .col-12 {
+    line-height: 42px;
+}
 
+@media (min-width: 768px) {
+    .pricing-update-generator-container {
+        min-width: 1400px;
+    }
+
+    .container-fluid.pricing-update-generator .row .col-12 {
+        line-height: initial;
+    }
+}
 
 

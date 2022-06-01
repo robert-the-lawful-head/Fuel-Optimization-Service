@@ -7,17 +7,17 @@
 </div>
 
 <div *ngIf="pricingTemplatesData.length > 0" class="navbar-wrap">
-    <div class="navbar-header">
-        {{ title }}
+    <div class="navbar-header distribution-header">
+        <div class="d-block">
+            {{ title }}
+        </div>
         <mat-slide-toggle
+            class="distribution-toggle"
             (change)="selectAllTemplates()"
             [checked]="selectAll"
             [labelPosition]="labelPosition"
             (ngModel)="(selectAll)"
-            color="accent"
-            style="margin-left: 217px"
-            >All</mat-slide-toggle
-        >
+            color="accent">All</mat-slide-toggle>
     </div>
 
     <div class="navbar-content">

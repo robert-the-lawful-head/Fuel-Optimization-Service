@@ -939,3 +939,79 @@ div.custom-key-content {
 button.mat-button-disabled .mat-datepicker-popup div.actions .mat-button {
     color: #ccc3c3;
 }
+
+div.fees-taxes-button {
+    position: absolute;
+    right: 20px;
+    top: 19px;
+    z-index: 10000;
+}
+
+.distribution-toggle {
+    margin-left: 217px;
+}
+
+/*Mobile Devices*/
+@media (max-width: 500px) {
+
+    .mobile-header {
+        position: absolute;
+        padding-top: 10px;
+        padding-left: 15px;
+    }
+
+
+    .after-breadcrumb {
+        padding-top: 0px;
+    }
+
+    .ni-breadcrumb-wrap {
+        display: none !important;
+    }
+
+    .open-navbar {
+        height: 70px !important;
+        top: 82px !important;
+    }
+
+    .distribution-header.navbar-header {
+        margin-top: 15px !important;
+    }
+
+    .distribution-toggle {
+        margin-left: 37px;
+    }
+
+    .addition-navbar {
+        top: -20px !important;
+    }
+
+    div.fees-taxes-button {
+        position: absolute;
+        right: 15px;
+        top: 16px;
+        z-index: 10000;
+    }
+
+    .card-wrap .card-header.small-header {
+        font-size: 14px !important;
+        padding: 0.3rem .8rem !important;
+    }
+
+    .site-container .main-content .main-content-wrap {
+        display: table;
+        height: 100%;
+        padding-top: 0px !important;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+        table-layout: fixed;
+        width: 100%;
+    }
+
+
+
+    h2.page-info {
+        margin-bottom: 0px !important;
+        margin-top: 0px !important;
+    }
+}

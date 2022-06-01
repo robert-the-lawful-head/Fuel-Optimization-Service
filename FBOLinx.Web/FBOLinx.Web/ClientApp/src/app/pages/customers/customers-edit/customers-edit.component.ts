@@ -74,7 +74,8 @@ export class CustomersEditComponent implements OnInit {
     tagsSelected: any[] = [];
     tagSubsctiption: Subscription;
     loading: boolean = false;
-    Historyupdate : boolean = false;
+    Historyupdate: boolean = false;
+    isLoadingHistory: boolean = true;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -471,6 +472,25 @@ export class CustomersEditComponent implements OnInit {
             });
         } catch (e) {
 
+        }
+    }
+
+    tabClick(selectedTab) {
+        const tab = selectedTab.tab.textLabel;
+        if (tab === "History") {
+            this.isLoadingHistory = true;
+            this.sharedService.updatedHistory.subscribe(
+                update => {
+                    if (update == true) {
+                        this.customerInfoByGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id'), this.sharedService.currentUser.fboId).subscribe(
+                            data => {
+                                this.customerHistory = data;
+                                this.isLoadingHistory = false;
+                            }
+                        )
+                    }
+                }
+            )
         }
     }
 

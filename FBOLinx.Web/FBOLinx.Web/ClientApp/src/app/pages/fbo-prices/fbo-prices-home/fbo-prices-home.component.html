@@ -183,7 +183,7 @@
                 theme="small"
                 title="Update your pricing here"
             >
-                <div style="position: absolute; right: 10px; top: -30px">
+                <div class="d-none d-md-block" style="position: absolute; right: 10px; top: -30px">
                     <button
                         (click)="editFeesAndTaxes()"
                         class="mr-1"
@@ -788,6 +788,8 @@
                 class="
                     prices-board-item prices-board-second-column
                     price-checker
+                    d-none
+                    d-md-block
                 "
                 headerBgColor="dead"
                 outline="true"
