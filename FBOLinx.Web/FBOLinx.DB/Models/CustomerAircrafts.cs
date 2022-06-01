@@ -31,5 +31,8 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("AircraftId")]
         public AirCrafts Aircraft { get; set; }
+
+        [ForeignKey("CustomerId")]
+        public virtual Customers Customer { get; set; }
     }
 }

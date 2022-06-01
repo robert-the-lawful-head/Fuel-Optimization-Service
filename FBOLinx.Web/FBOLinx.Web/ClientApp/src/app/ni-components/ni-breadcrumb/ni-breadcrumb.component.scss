@@ -294,3 +294,17 @@
         border: 1px solid $info-color;
     }
 }
+
+
+@media (max-width: 500px) {
+    .breadcrumb-container {
+        display: none !important;
+    }
+
+    .after-breadcrumb {
+        display: none !important;
+        padding-top: 0px !important;
+    }
+
+
+}

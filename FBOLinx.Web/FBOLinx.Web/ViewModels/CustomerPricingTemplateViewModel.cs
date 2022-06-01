@@ -10,5 +10,6 @@ namespace FBOLinx.Web.ViewModels
         public int id { get; set; }
         public int pricingTemplateId { get; set; }
         public int fboid { get; set; }
+        public int userId { get; set; } = 0;
     }
 }
