@@ -307,7 +307,7 @@ namespace FBOLinx.Web.Services
                 return;
             distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
-            await _context.Set<DistributionQueue>().BatchUpdateAsync(distributionQueueRecord);
+            _context.Set<DistributionQueue>().Update(distributionQueueRecord);
             await _context.SaveChangesAsync();
         }
 
