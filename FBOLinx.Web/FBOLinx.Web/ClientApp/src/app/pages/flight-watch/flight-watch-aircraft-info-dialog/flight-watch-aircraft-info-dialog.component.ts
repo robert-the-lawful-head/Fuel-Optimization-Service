@@ -14,6 +14,7 @@ import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from 'src
 })
 export class FlightWatchAircraftInfoDialogComponent implements OnInit {
   public aircraftWatch: Aircraftwatch = {
+      oid : 0,
       tailNumber: '',
       atcFlightNumber: '',
       aircraftTypeCode: '',
