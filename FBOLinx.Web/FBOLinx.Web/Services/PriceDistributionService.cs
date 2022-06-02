@@ -303,7 +303,7 @@ namespace FBOLinx.Web.Services
 
         private async Task MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
         {
-            if (distributionQueueRecord == null)
+            if (distributionQueueRecord == null || distributionQueueRecord.DistributionLogId == 0)
                 return;
             distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
