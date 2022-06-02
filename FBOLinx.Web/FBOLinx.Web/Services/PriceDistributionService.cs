@@ -618,7 +618,7 @@ namespace FBOLinx.Web.Services
             var result = await _fbopricesService.GetPrices(_DistributePricingRequest.FboId);
             //Get current posted retail
             var currentRetailResult = result.Where(f => f.Product == "JetA Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-            _CurrentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", currentRetailResult);
+            _CurrentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", currentRetailResult.Price);
 
             //Get expiration date
             var priceDate = new DateTime();
