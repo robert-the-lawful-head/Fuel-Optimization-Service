@@ -105,11 +105,12 @@ namespace FBOLinx.Web.Services
         {
             var allFboGeoClusters = _context.AirportFboGeofenceClusters
                 .Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId))
-                .Include(x => x.ClusterCoordinatesCollection);
+                .Include(x => x.ClusterCoordinatesCollection)
+                .AsNoTracking();
 
             var airportIds = await allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToListAsync();
 
-            var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection);
+            var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection).AsNoTracking();
 
             (await allFboGeoClusters.ToListAsync()).ForEach(x =>
             {
