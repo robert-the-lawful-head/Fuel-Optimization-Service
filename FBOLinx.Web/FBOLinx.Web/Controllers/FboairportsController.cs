@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
-using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -20,9 +20,9 @@ namespace FBOLinx.Web.Controllers
     public class FboairportsController : ControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
 
-        public FboairportsController(FboLinxContext context, FboService fboService)
+        public FboairportsController(FboLinxContext context, IFboService fboService)
         {
             _context = context;
             _fboService = fboService;

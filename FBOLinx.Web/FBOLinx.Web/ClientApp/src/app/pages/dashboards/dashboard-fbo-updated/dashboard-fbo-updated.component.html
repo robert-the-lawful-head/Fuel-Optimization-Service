@@ -4,36 +4,58 @@
     <app-fbo-prices-update-generator [isCsr]="isCsr"></app-fbo-prices-update-generator>
 
     <div class="row">
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-orders
-                #statisticsTotalOrders
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-orders>
-        </div>
+            <div class="col-md-6 col-xl-6">
+                <ni-card [collapsible]="false"
+                         [opened]="true"
+                         bgColor="dead"
+                         class=""
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Missed Quotes">
+                    <app-fbos-missed-quotes-grid #missedQuotes></app-fbos-missed-quotes-grid>
+                </ni-card>
+            </div>
+            <div class="col-md-6 col-xl-6">
+                <ni-card [collapsible]="false"
+                         [opened]="true"
+                         bgColor="dead"
+                         class="
+                    prices-board-item prices-board-second-column
+                    price-checker
+                "
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Missed Orders">
+                    <app-fbos-missed-orders-grid #missedOrders></app-fbos-missed-orders-grid>
+                </ni-card>
+            </div>
+     </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-customers
-                #statisticsTotalCustomers
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-customers>
-        </div>
+        <div class="row">
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-orders #statisticsTotalOrders
+                                             [endDate]="filterEndDate"
+                                             [startDate]="filterStartDate"></app-statistics-total-orders>
+            </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-aircraft
-                #statisticsTotalAircraft
-                [endDate]="filterEndDate"
-                [startDate]="filterStartDate"
-            ></app-statistics-total-aircraft>
-        </div>
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-customers #statisticsTotalCustomers
+                                                [endDate]="filterEndDate"
+                                                [startDate]="filterStartDate"></app-statistics-total-customers>
+            </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-orders-by-location
-                #statisticsOrdersByLocation
-                [endDate]="filterEndDate"
-                [startDate]="pastThirtyDaysStartDate"
-            ></app-statistics-orders-by-location>
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-aircraft #statisticsTotalAircraft
+                                               [endDate]="filterEndDate"
+                                               [startDate]="filterStartDate"></app-statistics-total-aircraft>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-orders-by-location #statisticsOrdersByLocation
+                                                   [endDate]="filterEndDate"
+                                                   [startDate]="pastThirtyDaysStartDate"></app-statistics-orders-by-location>
+            </div>
         </div>
     </div>
-</div>

@@ -20,6 +20,7 @@ using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.Web.Services
 {
@@ -52,10 +53,10 @@ namespace FBOLinx.Web.Services
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
-        private FboService _fboService;
+        private IFboService _fboService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, FboService fboService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, IFboService fboService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;

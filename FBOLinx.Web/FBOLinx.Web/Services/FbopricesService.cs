@@ -1,6 +1,7 @@
 ﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Models.Responses;
@@ -9,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Services
@@ -19,13 +21,15 @@ namespace FBOLinx.Web.Services
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeesService;
+        private IMailService _MailService;
 
-        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService)
+        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IMailService mailService)
         {
             _context = context;
             _aircraftService = aircraftService;
             _priceFetchingService = priceFetchingService;
             _rampFeesService = rampFeesService;
+            _MailService = mailService;
         }
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
@@ -162,6 +166,29 @@ namespace FBOLinx.Web.Services
             validPricing.Company = validPricing.PricingList[0].Company;
 
             return validPricing;
+        }
+
+        public async Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName)
+        {
+            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+            foreach (string email in toEmails)
+            {
+                if (_MailService.IsValidEmailRecipient(email))
+                    mailMessage.To.Add(email);
+            }
+
+            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridMissedQuoteTemplateData
+            {
+                fboName = fbo,
+                customerName = customerName,
+                subject = "Missed opportunity for " + customerName
+            };
+
+            mailMessage.SendGridMissedQuoteTemplateData = dynamicTemplateData;
+
+            //Send email
+            var result = await _MailService.SendAsync(mailMessage);
         }
     }
 }

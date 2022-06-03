@@ -135,58 +135,51 @@ namespace FBOLinx.Web.Services
             return fboAirport.Icao;
         }
 
-        public async Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId)
+        public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
         {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+            List<string> toEmails = new List<string>();
 
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
+            var fboInfo = await _context.Fbos.FindAsync(fboId);
+            //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
+            //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
 
-            if (acukwikAirport == null)
-                return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+            if (fboInfo.FuelDeskEmail != "")
+                toEmails.Add(fboInfo.FuelDeskEmail);
 
-            var result = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTime(utcDateTime, acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
-            result = DateTime.SpecifyKind(result, DateTimeKind.Unspecified);
-            return result;
+            var fboContacts = await _context.Fbocontacts
+                                .Include("Contact")
+                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
+                                .Select(f => new Contacts
+                                {
+                                    FirstName = f.Contact.FirstName,
+                                    LastName = f.Contact.LastName,
+                                    Title = f.Contact.Title,
+                                    Oid = f.Oid,
+                                    Email = f.Contact.Email,
+                                    Primary = f.Contact.Primary,
+                                    CopyAlerts = f.Contact.CopyAlerts,
+                                    CopyOrders = f.Contact.CopyOrders
+                                })
+                                .ToListAsync();
+            //var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
+            //var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
+
+            foreach (Contacts fboContact in fboContacts)
+            {
+                if (fboContact.CopyAlerts.GetValueOrDefault())
+                    toEmails.Add(fboContact.Email);
+            }
+
+            return toEmails;
         }
 
-        public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
+        public async Task<List<Fbos>> GetFbosByIcaos(string icaos)
         {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
-
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
-
-            if (acukwikAirport == null)
-                return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
-
-            var result = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeNow(acukwikAirport.IntlTimeZone, acukwikAirport.DaylightSavingsYn == "Y" ? true : false);
-            result = DateTime.SpecifyKind(result, DateTimeKind.Unspecified);
-            return result;
-        }
-
-        public async Task<string> GetAirportTimeZoneByFboId(int fboId)
-        {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
-
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
-
-            if (acukwikAirport == null)
-                return "";
-
-            var timeZone = Core.Utilities.DatesAndTimes.DateTimeHelper.GetLocalTimeZone(acukwikAirport.IntlTimeZone, acukwikAirport.AirportCity);
-
-            if (timeZone == "")
-                timeZone = "UTC" + acukwikAirport.IntlTimeZone;
-
-            return timeZone;
+            var fbos = await (from f in _context.Fbos
+                              join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                              where icaos.Contains(fa.Icao)
+                              select f).ToListAsync();
+            return fbos;
         }
     }
 }

@@ -453,7 +453,7 @@ namespace FBOLinx.Web.Services
                 subject = "FBOLinx reminder - expired pricing!"
             };
 
-            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+            mailMessage.SendGridEngagementTemplateData = dynamicTemplateData;
 
             //Send email
             var result = await _MailService.SendAsync(mailMessage);

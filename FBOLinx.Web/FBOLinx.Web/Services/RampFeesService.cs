@@ -161,7 +161,7 @@ namespace FBOLinx.Web.Services
                 subject = "FBOLinx reminder - incomplete quotes"
             };
 
-            mailMessage.SendGridEngagementTemplate = dynamicTemplateData;
+            mailMessage.SendGridEngagementTemplateData = dynamicTemplateData;
 
             //Send email
             var result = await _MailService.SendAsync(mailMessage);

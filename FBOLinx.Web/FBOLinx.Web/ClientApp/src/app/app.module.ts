@@ -77,6 +77,7 @@ import { FbocontactsService } from './services/fbocontacts.service';
 import { FbofeeandtaxomitsbycustomerService } from './services/fbofeeandtaxomitsbycustomer.service';
 import { FbofeeandtaxomitsbypricingtemplateService } from './services/fbofeeandtaxomitsbypricingtemplate.service';
 import { FbofeesandtaxesService } from './services/fbofeesandtaxes.service';
+import { FbomissedquoteslogService } from './services/fbomissedquoteslog.service';
 import { FbopreferencesService } from './services/fbopreferences.service';
 import { FbopricesService } from './services/fboprices.service';
 import { FbosService } from './services/fbos.service';
@@ -196,6 +197,7 @@ import { DateTimeService } from './services/datetime.service';
         FbofeesandtaxesService,
         FbofeeandtaxomitsbycustomerService,
         FbofeeandtaxomitsbypricingtemplateService,
+        FbomissedquoteslogService,
         FbopreferencesService,
         FbopricesService,
         FbosService,
