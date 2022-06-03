@@ -25,7 +25,7 @@ export type FlightWatch = {
 };
 
 export type Aircraftwatch = {
-    oid: number;
+    customerId: number;
     tailNumber: string;
     atcFlightNumber: string;
     aircraftTypeCode: string;
