@@ -110,7 +110,7 @@ namespace FBOLinx.Web.Services
 
             return new AircraftWatchLiveData()
             {
-                Oid = aircraftWatchLiveData.Oid,
+                CustomerId = customerInfoByGroup?.Customer.Oid,
                 TailNumber = aircraftWatchLiveData?.TailNumber,
                 AtcFlightNumber = aircraftWatchLiveData?.AtcFlightNumber,
                 AircraftTypeCode = aircraftWatchLiveData?.AircraftTypeCode,
