@@ -1,21 +1,11 @@
 <div #customerTableContainer class="customers-grid" style="position: relative">
     <div class="container-fluid">
         <div class="row">
-            <div *ngIf="anySelected()" class="col-2 bulk-update">
-                <mat-form-field>
-                    <mat-select (selectionChange)="bulkMarginTemplateUpdate($event)" class="bulk-update-select"
-                                placeholder="Bulk Update Margin Template">
-                        <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate">
-                            {{ pricingTemplate.name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div *ngIf="customersDataSource" class="col-6">
+            <div *ngIf="customersDataSource" class="col-5">
                 <app-table-global-search [matDataSource]="customersDataSource"
                                          placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
-            <div>
+            <div class="col-2">
                 <mat-form-field>
                     <mat-select (selectionChange)="customerFilterTypeChanged()" [(ngModel)]="customerFilterType"
                                 placeholder="Search Within">
@@ -26,15 +16,8 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div *ngIf="anySelected()" class="col-2 bulk-action-btn">
-                <div>
-                    <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button size="small">
-                        Export Selected
-                    </button>
-                </div>
-            </div>
-            <div>
-                <button (click)="newCustomer()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+            <div style="margin-top: 15px; margin-left: -20px;" class="col-5">
+                <button (click)="newCustomer()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
                         ni-button size="small">
                     Add New
                 </button>
@@ -64,6 +47,23 @@
                         </button>
                     </mat-menu>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div *ngIf="anySelected()" class="col-2 bulk-update">
+                <mat-form-field>
+                    <mat-select (selectionChange)="bulkMarginTemplateUpdate($event)" class="bulk-update-select"
+                                placeholder="Bulk Update Margin Template">
+                        <mat-option *ngFor="let pricingTemplate of pricingTemplatesData" [value]="pricingTemplate">
+                            {{ pricingTemplate.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div *ngIf="anySelected()" style="margin-top: 3px" class="col bulk-action-btn">
+                <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button size="small">
+                    Export Selected
+                </button>
             </div>
         </div>
     </div>
