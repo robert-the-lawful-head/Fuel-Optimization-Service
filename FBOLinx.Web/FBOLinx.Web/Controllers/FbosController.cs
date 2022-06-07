@@ -426,9 +426,11 @@ namespace FBOLinx.Web.Controllers
                 if (acukwikFbo == null)
                     return BadRequest("FBO not found");
 
-                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
-
                 var importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+                if (importedFboEmail == null || importedFboEmail.Oid == 0)
+                    return BadRequest("No email found");
+
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
                 if (importedFboEmail != null)
                 {
