@@ -157,8 +157,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var tempFboPrices = await _context.Fboprices
                                                 .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product.Contains("JetA")).OrderBy(f => f.Oid).ToListAsync();
 
-            var oldJetAPriceExists = tempFboPrices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
-            if (oldJetAPriceExists.Count() > 2)
+            var oldJetAPriceExists = tempFboPrices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo <= DateTime.UtcNow).ToList();
+            if (oldJetAPriceExists.Count() > 0)
             {
                 // Set old prices to expire, remove from collection
                 for (int i = 0; i <= 1; i++)
