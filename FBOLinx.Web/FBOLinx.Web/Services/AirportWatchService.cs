@@ -1146,8 +1146,9 @@ namespace FBOLinx.Web.Services
         private async Task<List<AirportPosition>> GetAirportPositions()
         {
             var airports = (await _degaContext.AcukwikAirports
-                            .ToListAsync()
+                    .ToListAsync()
                             )
+                            .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
                             .Select(a =>
                             {
                                 var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
