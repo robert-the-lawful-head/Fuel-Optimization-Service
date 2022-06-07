@@ -107,7 +107,10 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception exception)
             {
-                return Ok(new AirportWatchDataPostResponse(false, exception.Message));
+                if (exception.InnerException != null)
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
+                else
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
             }
         }
 
