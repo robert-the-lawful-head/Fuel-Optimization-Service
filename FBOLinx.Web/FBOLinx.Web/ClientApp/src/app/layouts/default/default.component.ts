@@ -63,17 +63,9 @@ export class DefaultLayoutComponent implements OnInit {
         this.compress = false;
         this.menuStyle = 'style-3';
 
-        if (this.sharedService.currentUser.fboId) {
-            this.pricingTemplatesService
-                .getByFbo(
-                    this.sharedService.currentUser.fboId,
-                    this.sharedService.currentUser.groupId
-                )
-                .subscribe((data: any) => (this.pricingTemplatesData = data));
-            sharedService.titleChanged$.subscribe((title) => {
-                setTimeout(() => (this.pageTitle = title), 100);
-            });
-        }
+        sharedService.titleChanged$.subscribe((title) => {
+            setTimeout(() => (this.pageTitle = title), 100);
+        });
 
         this.router.events
             .pipe(filter((event) => event instanceof NavigationStart))
@@ -81,9 +73,9 @@ export class DefaultLayoutComponent implements OnInit {
                 if (!event.url.startsWith('/default-layout/customers')) {
                     this.store.dispatch(customerGridClear());
 
-                    if (this.canUserSeePricing()) {
-                        this.loadPrices();
-                    }
+                    //if (this.canUserSeePricing()) {
+                    //    this.loadPrices();
+                    //}
                 }
             });
     }
@@ -93,10 +85,6 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (this.canUserSeePricing()) {
-            this.loadPrices();
-        }
-
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
                 return;
