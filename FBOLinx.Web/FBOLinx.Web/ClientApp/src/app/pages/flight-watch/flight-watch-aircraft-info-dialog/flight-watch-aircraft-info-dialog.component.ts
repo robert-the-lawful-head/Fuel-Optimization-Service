@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { CustomersListType } from 'src/app/models';
 import { Aircraftwatch, FlightWatch } from 'src/app/models/flight-watch';
@@ -32,7 +33,8 @@ export class FlightWatchAircraftInfoDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private newCustomerAircraftDialog: MatDialog,
     private airportWatchService : AirportWatchService,
-    private customerInfoByGroupService: CustomerinfobygroupService
+    private customerInfoByGroupService: CustomerinfobygroupService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -93,7 +95,10 @@ export class FlightWatchAircraftInfoDialogComponent implements OnInit {
                 this.customers = customers;
             });
     }
-
+    goToCustomerManager(customerInfoBygGroupId: number):void{
+      console.log(customerInfoBygGroupId);
+      this.router.navigate(['default-layout','customers',customerInfoBygGroupId])
+    }
   onNoClick(): void {
     this.dialogRef.close();
   }
