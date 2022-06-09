@@ -112,7 +112,12 @@ export class DefaultLayoutComponent implements OnInit {
                         this.sharedService.currentUser.groupId
                     )
                     .subscribe(
-                        (data: any) => (this.pricingTemplatesData = data)
+                        (data: any) => {
+                            this.pricingTemplatesData = data;
+                            if (this.canUserSeePricing()) {
+                                this.loadPrices();
+                            }
+                        }
                     );
             }
         });
@@ -294,14 +299,20 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                                 if (price.product === 'SAF Retail') {
                                     _this.retailSaf = price.price;
-                                    _this.effectiveToSaf = moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                        _this.effectiveToSaf = "Updated by X1 POS"
+                                    else
+                                        _this.effectiveToSaf = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
                                 }
                                 if (price.product === 'JetA Cost') {
                                     _this.costJetA = price.price;
                                 }
                                 if (price.product === 'JetA Retail') {
                                     _this.retailJetA = price.price;
-                                    _this.effectiveToJetA = moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                        _this.effectiveToJetA = "Updated by X1 POS"
+                                    else
+                                        _this.effectiveToJetA = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
                                 }
                             }
 
@@ -332,7 +343,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     private canUserSeePricing(): boolean {
-        return (
+        return this.sharedService.currentUser == null ? false : (
             [1, 4].includes(this.sharedService.currentUser.role) ||
             [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
         );

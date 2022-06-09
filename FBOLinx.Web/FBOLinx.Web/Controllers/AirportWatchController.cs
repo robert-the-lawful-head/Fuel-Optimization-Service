@@ -38,27 +38,55 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-               // await _dBSCANService.GetParkingLocations();
                 var fboLocation = await _fboService.GetFBOLocation(fboId);
-                var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
+
+                //var watch = new System.Diagnostics.Stopwatch();
+                //watch.Start();
+                //var data = await _airportWatchService.GetAirportWatchLiveData(groupId, fboId, fboLocation);
+                //watch.Stop();
+                //Console.WriteLine($"GetAirportWatchLiveData Execution Time: {watch.ElapsedMilliseconds} ms");
+
+                var watch2 = new System.Diagnostics.Stopwatch();
+                watch2.Start();
+                var data2 = await _airportWatchService.GetAirportWatchLiveDataRefactored(groupId, fboId, fboLocation);
+                watch2.Stop();
+                Console.WriteLine($"GetAirportWatchLiveDataRefactored Execution Time: {watch2.ElapsedMilliseconds} ms");
+
                 return Ok(new
                 {
                     FBOLocation = fboLocation,
-                    FlightWatchData = data,
+                    FlightWatchData = data2,
                 });
-            }
-            catch (System.Exception exception)
+            }catch(Exception ex)
             {
-                return Ok(null);
+                Console.WriteLine(ex);
             }
+            return UnprocessableEntity();
         }
 
         //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
         public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
         {
-            var data = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, request);
-            return Ok(data);
+            try
+            {
+                //var watch = new System.Diagnostics.Stopwatch();
+                //watch.Start();
+                //var data = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, request);
+                //watch.Stop();
+                //Console.WriteLine($"GetArrivalsDepartures Execution Time: {watch.ElapsedMilliseconds} ms");
+
+                var watch2 = new System.Diagnostics.Stopwatch();
+                watch2.Start();
+                var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request);
+                watch2.Stop();
+                Console.WriteLine($"GetArrivalsDeparturesRefactored Execution Time: {watch2.ElapsedMilliseconds} ms");
+                return Ok(data2);
+            }catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return null;
         }
 
         [HttpPost("group/{groupId}/fbo/{fboId}/visits")]
@@ -79,16 +107,19 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception exception)
             {
-                return Ok(new AirportWatchDataPostResponse(false, exception.Message));
+                if (exception.InnerException != null)
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
+                else
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
             }
         }
 
         [HttpGet("start-date")]
         public async Task<IActionResult> GetAirportWatchStartDate()
         {
-            var startRecord = await _context.AirportWatchHistoricalData.OrderBy(item => item.AircraftPositionDateTimeUtc).FirstOrDefaultAsync();
+            var startRecordDateTimeUtc = await _context.AirportWatchHistoricalData.MinAsync(x => x.AircraftPositionDateTimeUtc);
 
-            return Ok(startRecord.AircraftPositionDateTimeUtc);
+            return Ok(startRecordDateTimeUtc);
         }
 
         [HttpGet(("parking-occurrences/{icao}"))]

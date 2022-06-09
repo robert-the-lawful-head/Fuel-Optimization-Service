@@ -29,6 +29,7 @@
 	  <Generated Remove="Dto\AuditDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\MissedQuoteLogDto.g.cs" />
+	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />

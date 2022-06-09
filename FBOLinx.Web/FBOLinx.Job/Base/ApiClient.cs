@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace FBOLinx.Job.Base
 {
@@ -32,6 +33,14 @@ namespace FBOLinx.Job.Base
             var response = await _httpClient.PostAsync(endpoint, data);
 
             var result = response.Content.ReadAsStringAsync().Result;
+
+            return result;
+        }
+
+        public async Task<T> PostAsync<T>(string endpoint, object request, string token = "")
+        {
+            var responseString = PostAsync(endpoint, request, token).Result;
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseString);
             return result;
         }
 

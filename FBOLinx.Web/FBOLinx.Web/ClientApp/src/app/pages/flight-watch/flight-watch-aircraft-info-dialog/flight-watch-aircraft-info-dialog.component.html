@@ -72,7 +72,7 @@
         </div>
     </div>
     <div mat-dialog-actions class="actions">
-        <button mat-raised-button color="accent" [disabled]="hasAircraft" [routerLink]="['/default-layout/customers']" mat-dialog-close> Customer Manager</button>
+        <button mat-raised-button color="accent" [disabled]="hasAircraft" (click)="goToCustomerManager(aircraftWatch.customerInfoBygGroupId)" mat-dialog-close> Customer Manager</button>
         <button mat-raised-button color="accent" [disabled]="!hasAircraft" (click)="addAircraft()">Add Aircraft</button>
     </div>
 </div>

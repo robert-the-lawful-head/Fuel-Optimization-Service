@@ -43,6 +43,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFbolinxPricingTemplateAttachmentsEntityService, FbolinxPricingTemplateAttachmentsEntityService>();
             services.AddTransient<IFboFeesAndTaxesService, FboFeesAndTaxesService>();
             services.AddTransient<IFboService, FboService>();
+            services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
 
             return services;
         }

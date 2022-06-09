@@ -44,16 +44,22 @@ namespace FBOLinx.Web.Services
         private FboLinxContext _context;
         private bool _IsPreview = false;
         private int _DistributionLogID = 0;
+        private string _CurrentPostedRetail = "";
+        private string _ValidUntil = "";
+        private Fbos _Fbo;
+        private FboLinxImageFileData _Logo;
+        private FbolinxPricingTemplateFileAttachmentDto _PricingTemplateFileAttachment;
         private IHttpContextAccessor _HttpContextAccessor;
         private IMailTemplateService _MailTemplateService;
         private IPriceFetchingService _PriceFetchingService;
         private IPricingTemplateService _PricingTemplateService;
+        private FbolinxEmailContentFileAttachment _EmailContentAttachment;
         private EmailContentService _EmailContentService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
-        private IFboService _fboService;
+        private IFboService _fboService;    
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, IFboService fboService)
@@ -68,6 +74,7 @@ namespace FBOLinx.Web.Services
             _EmailContentService = emailContentService;
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
             _fboService = fboService;
+            _fbopricesService = fbopricesService;
         }
         #endregion
 
@@ -81,19 +88,15 @@ namespace FBOLinx.Web.Services
             var customers = new List<CustomerInfoByGroup>();
             customers = await GetCustomersForDistribution(request);
 
-            await PerformPreDistributionTasks(customers);
-
             if (customers == null)
                     return;
+
+            await PerformPreDistributionTasks(customers);
 
             //#tx9ztn - Removed the requirement for aircraft in the account to send a distribution email. A fleet is no longer requireed to receive pricing.
             if (_IsPreview)
             {
-                foreach (var customer in customers)
-                {
-                    await GenerateDistributionMailMessage(customer);
-                    break;
-                }
+                await GenerateDistributionMailMessage(customers[0]);
             }
             else
             {
@@ -219,45 +222,14 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
-                //Get current posted retail
-                var postedRetail = await _PriceFetchingService.GetCurrentPostedRetail(_DistributePricingRequest.FboId);
-                var currentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", postedRetail);
-
-                //Get expiration date
-                string validUntil = "";
-
-                var priceDate = new DateTime();
-                if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Retail"))
-                {
-                    var date = await _context.Set<Fboprices>().Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Retail").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
-
-                    priceDate = date.GetValueOrDefault();
-                }
-                else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Cost"))
-                {
-                    var date = await _context.Set<Fboprices>().Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Cost").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefaultAsync();
-
-                    priceDate = date.GetValueOrDefault();
-                }
-
-                if (priceDate != null)
-                {
-                    var localDateTime= await _fboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
-                    var localTimeZone= await _fboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
-                    validUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-                }
-
                 //Add the price breakdown as an image to prevent parsing
                 byte[] priceBreakdownImage = await GetPriceBreakdownImage(customer, validPricingTemplates);
 
-                var fbo = await _context.Set<Fbos>().Where(s => s.Oid == _DistributePricingRequest.FboId).SingleOrDefaultAsync();
-                var fboIcao = await _context.Set<Fboairports>().Where(s => s.Fboid == fbo.Oid).SingleOrDefaultAsync();
-
                 //Add email content to MailMessage
                 FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-                mailMessage.From = new MailAddress(MailService.GetFboLinxAddress(fbo.SenderAddress));
-                if (fbo.ReplyTo != null && fbo.ReplyTo != "")
-                    mailMessage.ReplyToList.Add(fbo.ReplyTo);
+                mailMessage.From = new MailAddress(MailService.GetFboLinxAddress(_Fbo.SenderAddress));
+                if (_Fbo.ReplyTo != null && _Fbo.ReplyTo != "")
+                    mailMessage.ReplyToList.Add(_Fbo.ReplyTo);
                 if (!_IsPreview)
                 {
                     foreach (ContactInfoByGroup contactInfoByGroup in recipients)
@@ -272,39 +244,35 @@ namespace FBOLinx.Web.Services
                 mailMessage.InlineAttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
 
                 //Get additional attachments
-                var pricingTemplateAttachment = await _pricingTemplateAttachmentService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
-                if (pricingTemplateAttachment != null)
-                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = pricingTemplateAttachment.ContentType, FileName = pricingTemplateAttachment.FileName, FileData = Convert.ToBase64String(pricingTemplateAttachment.FileData, 0, pricingTemplateAttachment.FileData.Length)});
+                if (_PricingTemplateFileAttachment != null)
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _PricingTemplateFileAttachment.ContentType, FileName = _PricingTemplateFileAttachment.FileName, FileData = Convert.ToBase64String(_PricingTemplateFileAttachment.FileData, 0, _PricingTemplateFileAttachment.FileData.Length)});
 
+                if (_EmailContentAttachment != null)
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _EmailContentAttachment.ContentType, FileName = _EmailContentAttachment.FileName, FileData = Convert.ToBase64String(_EmailContentAttachment.FileData, 0, _EmailContentAttachment.FileData.Length)});
 
-                var emailContentAttachment = await _EmailContentService.GetFileAttachmentObject(_EmailContent.Oid);
-                if (emailContentAttachment != null)
-                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = emailContentAttachment.ContentType, FileName = emailContentAttachment.FileName, FileData = Convert.ToBase64String(emailContentAttachment.FileData, 0, emailContentAttachment.FileData.Length)});
-
-                var logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == fbo.Oid).ToListAsync();
-                if (logo.Count > 0)
+                if (_Logo != null && _Logo.Oid > 0)
                 {
                     mailMessage.Logo = new LogoDetails();
-                    mailMessage.Logo.Filename = "logo." + logo[0].ContentType.Split('/')[1];
-                    mailMessage.Logo.ContentType = logo[0].ContentType;
-                    mailMessage.Logo.Base64String = Convert.ToBase64String(logo[0].FileData);
+                    mailMessage.Logo.Filename = "logo." + _Logo.ContentType.Split('/')[1];
+                    mailMessage.Logo.ContentType = _Logo.ContentType;
+                    mailMessage.Logo.Base64String = Convert.ToBase64String(_Logo.FileData);
                 }
 
                 //_DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
                 {
-                    recipientCompanyName = _IsPreview ? fbo.Fbo : customer.Company,
+                    recipientCompanyName = _IsPreview ? _Fbo.Fbo : customer.Company,
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_EmailContent.EmailContentHtml ?? ""),
                     templateNotesMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
-                    fboName = fbo.Fbo,
-                    fboICAOCode = fboIcao.Icao,
-                    fboAddress = fbo.Address,
-                    fboCity = fbo.City,
-                    fboState = fbo.State,
-                    fboZip = fbo.ZipCode,
+                    fboName = _Fbo.Fbo,
+                    fboICAOCode = _Fbo.fboAirport.Icao,
+                    fboAddress = _Fbo.Address,
+                    fboCity = _Fbo.City,
+                    fboState = _Fbo.State,
+                    fboZip = _Fbo.ZipCode,
                     Subject = HttpUtility.HtmlDecode(_EmailContent.Subject) ?? "Distribution pricing",
-                    expiration = validUntil,
-                    currentPostedRetail = currentPostedRetail
+                    expiration = _ValidUntil,
+                    currentPostedRetail = _CurrentPostedRetail
                 };
                 mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
 
@@ -335,11 +303,11 @@ namespace FBOLinx.Web.Services
 
         private async Task MarkDistributionRecordAsComplete(DistributionQueue distributionQueueRecord)
         {
-            if (distributionQueueRecord == null)
+            if (distributionQueueRecord == null || distributionQueueRecord.DistributionLogId == 0)
                 return;
             distributionQueueRecord.DateSent = DateTime.Now.ToUniversalTime();
             distributionQueueRecord.IsCompleted = true;
-            await _context.Set<DistributionQueue>().BatchUpdateAsync(distributionQueueRecord);
+            _context.Set<DistributionQueue>().Update(distributionQueueRecord);
             await _context.SaveChangesAsync();
         }
 
@@ -646,6 +614,41 @@ namespace FBOLinx.Web.Services
             await GetEmailContent();
             if (!_IsPreview)
                 await LogDistributionRecord();
+
+            var result = await _fbopricesService.GetPrices(_DistributePricingRequest.FboId);
+            //Get current posted retail
+            var currentRetailResult = result.Where(f => f.Product == "JetA Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
+            _CurrentPostedRetail = "Current Posted Retail: " + String.Format("{0:C}", currentRetailResult.Price);
+
+            //Get expiration date
+            var priceDate = new DateTime();
+            if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Retail"))
+            {
+                var date = result.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Retail").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefault();
+
+                priceDate = date.GetValueOrDefault();
+            }
+            else if (_DistributePricingRequest.PricingTemplate.MarginTypeProduct.Equals("Cost"))
+            {
+                var date = result.Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.EffectiveTo != null && fp.Fboid == _DistributePricingRequest.FboId && fp.Product == "JetA Cost").OrderByDescending(fp => fp.Oid).Select(fp => fp.EffectiveTo).FirstOrDefault();
+
+                priceDate = date.GetValueOrDefault();
+            }
+
+            if (priceDate != null)
+            {
+                var localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
+                var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
+                _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
+            }
+
+            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId);
+
+            _Logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == _Fbo.Oid).FirstOrDefaultAsync();
+
+            _PricingTemplateFileAttachment = await _pricingTemplateAttachmentService.GetFileAttachmentObject(_DistributePricingRequest.PricingTemplate.Oid);
+
+            _EmailContentAttachment = await _EmailContentService.GetFileAttachmentObject(_EmailContent.Oid);
         }
 
         private async Task GetEmailContent()
@@ -667,8 +670,7 @@ namespace FBOLinx.Web.Services
                 pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
             }
 
-            var emailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).ToListAsync();
-            _EmailContent = emailContent.FirstOrDefault();
+             _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
         }
         private async Task LogDistributionRecord()
         {

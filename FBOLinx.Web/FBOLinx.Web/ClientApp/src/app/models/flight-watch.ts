@@ -25,6 +25,7 @@ export type FlightWatch = {
 };
 
 export type Aircraftwatch = {
+    customerInfoBygGroupId: number;
     tailNumber: string;
     atcFlightNumber: string;
     aircraftTypeCode: string;

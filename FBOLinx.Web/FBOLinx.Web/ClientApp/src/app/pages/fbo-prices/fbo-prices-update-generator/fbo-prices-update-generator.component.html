@@ -1,7 +1,7 @@
 <div class="container-fluid pr-0">
     <div class="prices-board">
         <div class="prices-board-row">
-            <div *ngIf="!isCsr" style="position: absolute; right: 20px; top: 19px; z-index: 10000;">
+            <div class="fees-taxes-button d-none d-md-block" *ngIf="!isCsr">
                 <button (click)="editFeesAndTaxes()"
                         class="mr-1"
                         ni-button
@@ -29,7 +29,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="col-12">
+                <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="row">
                     <app-fbo-prices-update-generator-grid [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
                 </div>
             </ni-card>
@@ -42,6 +42,7 @@
                      class="
                     prices-board-item prices-board-second-column
                     price-checker
+                    d-none d-md-block
                 "
                      headerBgColor="dead"
                      outline="true"
