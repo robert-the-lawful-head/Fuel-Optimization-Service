@@ -59,10 +59,12 @@ namespace FBOLinx.Web.Services
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
-        private IFboService _fboService;    
+        private IFboService _iFboService;
+        private FboService _fboService;
+        private readonly FbopricesService _fbopricesService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, IFboService fboService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, IFboService iFboService, FboService fboService, FbopricesService fbopricesService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -73,6 +75,7 @@ namespace FBOLinx.Web.Services
             _PricingTemplateService = pricingTemplateService;
             _EmailContentService = emailContentService;
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
+            _iFboService = iFboService;
             _fboService = fboService;
             _fbopricesService = fbopricesService;
         }
@@ -89,7 +92,7 @@ namespace FBOLinx.Web.Services
             customers = await GetCustomersForDistribution(request);
 
             if (customers == null)
-                    return;
+                return;
 
             await PerformPreDistributionTasks(customers);
 
@@ -167,29 +170,29 @@ namespace FBOLinx.Web.Services
         private async Task<List<CustomerInfoByGroup>> GetCustomersForDistribution()
         {
             var result = await (from cg in _context.Set<CustomerInfoByGroup>()
-                          join c in _context.Set<Customers>() on cg.CustomerId equals c.Oid
-                          join cct in _context.Set<CustomCustomerTypes>() on cg.CustomerId equals cct.CustomerId
-                          join pt in _context.Set<PricingTemplate>() on cct.CustomerType equals pt.Oid
-                          where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
-                          && !(c.Suspended ?? false)
-                          select cg).ToListAsync();
+                                join c in _context.Set<Customers>() on cg.CustomerId equals c.Oid
+                                join cct in _context.Set<CustomCustomerTypes>() on cg.CustomerId equals cct.CustomerId
+                                join pt in _context.Set<PricingTemplate>() on cct.CustomerType equals pt.Oid
+                                where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
+                                && !(c.Suspended ?? false)
+                                select cg).ToListAsync();
             return result;
         }
 
         private async Task<List<Contacts>> GetSystemContactsForDistribution()
         {
             var result = await (from fc in _context.Set<Fbocontacts>()
-                          join c in _context.Set<Contacts>() on fc.ContactId equals c.Oid
-                          where fc.Fboid == _DistributePricingRequest.FboId && c.Email != null && c.Email != ""
-                          select c).ToListAsync();
+                                join c in _context.Set<Contacts>() on fc.ContactId equals c.Oid
+                                where fc.Fboid == _DistributePricingRequest.FboId && c.Email != null && c.Email != ""
+                                select c).ToListAsync();
             return result;
         }
 
         private async Task<List<User>> GetUsersForDistribution()
         {
             var result = await (from u in _context.Set<User>()
-                          where u.GroupId == _DistributePricingRequest.GroupId && (u.FboId == 0 || u.FboId == _DistributePricingRequest.FboId)
-                          select u).ToListAsync();
+                                where u.GroupId == _DistributePricingRequest.GroupId && (u.FboId == 0 || u.FboId == _DistributePricingRequest.FboId)
+                                select u).ToListAsync();
             return result;
         }
 
@@ -245,10 +248,10 @@ namespace FBOLinx.Web.Services
 
                 //Get additional attachments
                 if (_PricingTemplateFileAttachment != null)
-                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _PricingTemplateFileAttachment.ContentType, FileName = _PricingTemplateFileAttachment.FileName, FileData = Convert.ToBase64String(_PricingTemplateFileAttachment.FileData, 0, _PricingTemplateFileAttachment.FileData.Length)});
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _PricingTemplateFileAttachment.ContentType, FileName = _PricingTemplateFileAttachment.FileName, FileData = Convert.ToBase64String(_PricingTemplateFileAttachment.FileData, 0, _PricingTemplateFileAttachment.FileData.Length) });
 
                 if (_EmailContentAttachment != null)
-                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _EmailContentAttachment.ContentType, FileName = _EmailContentAttachment.FileName, FileData = Convert.ToBase64String(_EmailContentAttachment.FileData, 0, _EmailContentAttachment.FileData.Length)});
+                    mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _EmailContentAttachment.ContentType, FileName = _EmailContentAttachment.FileName, FileData = Convert.ToBase64String(_EmailContentAttachment.FileData, 0, _EmailContentAttachment.FileData.Length) });
 
                 if (_Logo != null && _Logo.Oid > 0)
                 {
@@ -329,7 +332,7 @@ namespace FBOLinx.Web.Services
 
             var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
                 _DistributePricingRequest.GroupId, _DistributePricingRequest.PricingTemplate.Oid);
-            
+
             return result;
         }
 
@@ -351,10 +354,10 @@ namespace FBOLinx.Web.Services
             var privateInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
             var commercialDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
             var privateDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
-            
+
             var priceBreakdownDisplayType =
                 await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
-            
+
             privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
 
             string priceBreakdownTemplate = GetPriceBreakdownTemplate(priceBreakdownDisplayType);
@@ -391,7 +394,7 @@ namespace FBOLinx.Web.Services
                     row = row.Replace("%MAX_GALLON%", "");
                     row = row.Replace("-", "");
                 }
-                   
+
                 row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
                 row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                 row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
@@ -597,10 +600,10 @@ namespace FBOLinx.Web.Services
         private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroup customer)
         {
             var result = await (from cc in _context.Set<CustomerContacts>()
-                join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
-                join cibg in _context.Set<ContactInfoByGroup>() on c.Oid equals cibg.ContactId
-                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = _DistributePricingRequest.FboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
-                from cibf in leftJoinCIBF.DefaultIfEmpty()
+                                join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
+                                join cibg in _context.Set<ContactInfoByGroup>() on c.Oid equals cibg.ContactId
+                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = _DistributePricingRequest.FboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where cibg.GroupId == _DistributePricingRequest.GroupId
                                       && cc.CustomerId == customer.CustomerId
                                       && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
@@ -637,8 +640,8 @@ namespace FBOLinx.Web.Services
 
             if (priceDate != null)
             {
-                var localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
-                var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
+                var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
+                var localTimeZone = await _iFboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
                 _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
             }
 
@@ -670,7 +673,7 @@ namespace FBOLinx.Web.Services
                 pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
             }
 
-             _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
+            _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
         }
         private async Task LogDistributionRecord()
         {
@@ -693,7 +696,7 @@ namespace FBOLinx.Web.Services
         #region Objects
         private class PriceDistributionCustomer
         {
-            
+
         }
         #endregion
     }

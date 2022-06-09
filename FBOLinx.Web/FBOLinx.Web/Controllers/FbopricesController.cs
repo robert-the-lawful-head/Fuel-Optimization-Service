@@ -60,7 +60,7 @@ namespace FBOLinx.Web.Controllers
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
             MissedQuoteLogEntityService missedQuoteLogEntityService,
-            IntegrationUpdatePricingLogService integrationUpdatePricingLogService)
+            IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
