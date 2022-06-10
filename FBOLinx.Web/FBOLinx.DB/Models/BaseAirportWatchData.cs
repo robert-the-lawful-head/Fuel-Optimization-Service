@@ -2,7 +2,7 @@
 
 namespace FBOLinx.DB.Models
 {
-    public class BaseAirportWatchData
+    public class BaseAirportWatchData: FBOLinxBaseEntityModel<int>
     {
         [Required]
         [StringLength(10)]
