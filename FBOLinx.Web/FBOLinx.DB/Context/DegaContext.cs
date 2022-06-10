@@ -21,6 +21,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AircraftSpecifications> AircraftSpecifications { get; set; }
         public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
         public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
+        public virtual DbSet<SWIMFlightLegs> SWIMFlightLegs { get; set; }
+        public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -50,6 +52,26 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.AircraftHexCode).IsUnicode(false);
 
                 entity.Property(e => e.TailNumber).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SWIMFlightLegs>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK_SWIMFlightLegs_OID");
+                entity.HasIndex(x => new { x.AircraftIdentification, x.DepartureICAO, x.ArrivalICAO, x.ATD })
+                    .HasName("IX_SWIMFlightLegs_TailNumber_DepartureICAO_ArrivalICAO_ATD");
+            });
+
+            modelBuilder.Entity<SWIMFlightLegData>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK_SWIMFlightLegData_OID");
+
+                entity.HasOne(data => data.SWIMFlightLeg)
+                    .WithMany(leg => leg.SWIMFlightLegDataMessages)
+                    .HasForeignKey(data => data.SWIMFlightLegId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_SWIMFlightLegData_SWIMFlightLegs");
             });
         }
     }

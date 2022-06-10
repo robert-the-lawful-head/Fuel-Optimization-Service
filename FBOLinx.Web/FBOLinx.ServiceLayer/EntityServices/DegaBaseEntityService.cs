@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class FBOLinxBaseEntityService<T, TDTO, TIDType>: BaseEntityService<T, TDTO, TIDType> where T : FBOLinxBaseEntityModel<TIDType> where TDTO : IEntityModelDTO<T, TIDType>
+    public class DegaBaseEntityService<T, TDTO, TIDType>: BaseEntityService<T, TDTO, TIDType> where T : FBOLinxBaseEntityModel<TIDType> where TDTO : IEntityModelDTO<T, TIDType>
     {
-        public FBOLinxBaseEntityService(FboLinxContext context): base(context)
+        public DegaBaseEntityService(DegaContext context): base(context)
         {
             _Context = context;
         }

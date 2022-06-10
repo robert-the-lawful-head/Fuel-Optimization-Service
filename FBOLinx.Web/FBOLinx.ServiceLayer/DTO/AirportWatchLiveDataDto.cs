@@ -1,8 +1,8 @@
 using System;
 
-namespace FBOLinx.Service.Mapping.Dto
+namespace FBOLinx.ServiceLayer.DTO
 {
-    public partial class AirportWatchLiveDataDto
+    public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
     {
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
