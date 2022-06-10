@@ -14,6 +14,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 {
     public class SWIMService: ISWIMService
     {
+        private const int MessageThresholdSec = 30;
+
         private readonly SWIMFlightLegEntityService _FlightLegEntityService;
         private readonly SWIMFlightLegDataEntityService _FlightLegDataEntityService;
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
@@ -34,11 +36,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 return;
             }
-
-            IList<string> aircraftIdentificationNumbers = flightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
-            DateTime atdMin = flightLegs.Min(x => x.ATD);
-            DateTime atdMax = flightLegs.Max(x => x.ATD);
-            List<SWIMFlightLegDTO> existingFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(aircraftIdentificationNumbers, atdMin, atdMax));
+            
             List<AirportWatchLiveDataDto> antennaData = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataSpecification(
                 flightLegs.Where(x => !x.AircraftIdentification.StartsWith('N')).Select(x => x.AircraftIdentification).ToList()));
             List<SWIMFlightLegDataDTO> flightLegDataMessagesToInsert = new List<SWIMFlightLegDataDTO>();
@@ -68,17 +66,29 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         }
                     }
                 }
+            }
 
+            DateTime atdMin = flightLegs.Min(x => x.ATD);
+            DateTime atdMax = flightLegs.Max(x => x.ATD);
+            IList<string> aircraftIdentificationNumbers = flightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
+            List<SWIMFlightLegDTO> existingFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(aircraftIdentificationNumbers, atdMin, atdMax));
+
+            foreach (SWIMFlightLegDTO swimFlightLegDto in flightLegs)
+            {
                 var existingFlightLeg = existingFlightLegs.SingleOrDefault(
-                    x => x.AircraftIdentification == swimFlightLegDto.AircraftIdentification && x.ATD == swimFlightLegDto.ATD && x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO);
+                    x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
                 if (existingFlightLeg != null)
                 {
+                    DateTime latestMessageTimestamp = existingFlightLeg.SWIMFlightLegDataMessages.Max(x => x.MessageTimestamp);
                     foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
                     {
-                        flightLegDataMessageDto.SWIMFlightLegId = existingFlightLeg.Oid;
+                        double messageTimestampThreshold = Math.Abs((flightLegDataMessageDto.MessageTimestamp - latestMessageTimestamp).TotalSeconds);
+                        if (messageTimestampThreshold > MessageThresholdSec)
+                        {
+                            flightLegDataMessageDto.SWIMFlightLegId = existingFlightLeg.Oid;
+                            flightLegDataMessagesToInsert.Add(flightLegDataMessageDto);
+                        }
                     }
-
-                    flightLegDataMessagesToInsert.AddRange(swimFlightLegDto.SWIMFlightLegDataMessages);
                 }
                 else
                 {
