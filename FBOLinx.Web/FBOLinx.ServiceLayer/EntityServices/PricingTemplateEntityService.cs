@@ -460,23 +460,25 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return aircraftPricesResult;
         }
 
-        public async Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId)
+        public async Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int fboId, int groupId)
         {
-            return await (from cg in _context.CustomerInfoByGroup
-                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                          join cct in _context.CustomCustomerTypes on new
-                          {
-                              customerId = cg.CustomerId,
-                              fboId = fboId
-                          } equals new
-                          {
-                              customerId = cct.CustomerId,
-                              fboId = cct.Fboid
-                          }
-                          join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+            var result = await (from cg in _context.CustomerInfoByGroup
+                                join c in _context.Customers on cg.CustomerId equals c.Oid
+                                join cct in _context.CustomCustomerTypes on new
+                                {
+                                    customerId = cg.CustomerId,
+                                    fboId = fboId
+                                } equals new
+                                {
+                                    customerId = cct.CustomerId,
+                                    fboId = cct.Fboid
+                                }
+                                join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
 
-                          where cg.GroupId == groupId
-                          select new PricingTemplate{ Oid = pt.Oid, CustomerId = cg.CustomerId }).ToListAsync();
+                                where cg.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
+                                select new PricingTemplate { Oid = pt.Oid, CustomerId = cg.CustomerId, Name = pt.Name }).ToListAsync();
+
+            return result;
         }
 
         #region Private Methods
