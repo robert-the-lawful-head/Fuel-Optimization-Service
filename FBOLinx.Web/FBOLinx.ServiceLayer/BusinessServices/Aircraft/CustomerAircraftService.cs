@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,25 +16,31 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
     {
         private FboLinxContext _Context;
         private AircraftService _AircraftService;
+        private readonly IPricingTemplateService _pricingTemplateService;
 
-        public CustomerAircraftService(FboLinxContext context, AircraftService aircraftService)
+        public CustomerAircraftService(FboLinxContext context, AircraftService aircraftService, IPricingTemplateService pricingTemplateService)
         {
             _AircraftService = aircraftService;
             _Context = context;
+            _pricingTemplateService = pricingTemplateService;
         }
 
         public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0)
         {
-            var pricingTemplates = await (
-                                   from ap in _Context.AircraftPrices
-                                   join pt in _Context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+            var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
+
+            var aircraftPricingTemplates = await (
+                                   from pt in _Context.PricingTemplate
+                                   join ap in _Context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
+                                   into leftJoinAp
+                                   from ap in leftJoinAp.DefaultIfEmpty()
                                    where pt.Fboid == fboId && fboId > 0
                                    select new
                                    {
                                        Oid = pt == null ? 0 : pt.Oid,
                                        Name = pt == null ? "" : pt.Name,
-                                       ap.CustomerAircraftId
-                                   }).Distinct().ToListAsync();
+                                       CustomerAircraftId = ap == null ? 0 : ap.CustomerAircraftId
+                                   }).ToListAsync();
 
             var allAircraft = await _AircraftService.GetAllAircrafts();
 
@@ -41,7 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                from ca in _Context.CustomerAircrafts
                join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
                join c in _Context.Customers on cg.CustomerId equals c.Oid
-               where ca.GroupId == groupId
+               where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
                select new CustomerAircraftsViewModel
                {
                    Oid = ca.Oid,
@@ -61,9 +68,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             result.ForEach(x =>
             {
-                var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
-                x.PricingTemplateId = pricingTemplate?.Oid;
-                x.PricingTemplateName = pricingTemplate?.Name;
+                var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.AircraftId);
+                if (aircraftPricingTemplate != null)
+                {
+                    x.PricingTemplateId = aircraftPricingTemplate?.Oid;
+                    x.PricingTemplateName = aircraftPricingTemplate?.Name;
+                }
+                else
+                {
+                    var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
+                    x.PricingTemplateId = pricingTemplate?.Oid;
+                    x.PricingTemplateName = pricingTemplate?.Name;
+                }
 
                 var aircraft = allAircraft.FirstOrDefault(a => a.AircraftId == x.AircraftId);
                 x.Make = aircraft?.Make;
