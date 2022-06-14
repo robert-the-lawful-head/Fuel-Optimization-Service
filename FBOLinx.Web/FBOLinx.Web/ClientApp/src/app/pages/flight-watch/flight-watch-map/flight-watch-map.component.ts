@@ -68,7 +68,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     }
 
     ngOnInit(): void {
-        const refreshMapFlight = ()=> this.updateFlightOnMap();
+        const refreshMapFlight = () => this.updateFlightOnMap();
 
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
         .addNavigationControls()
@@ -78,7 +78,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         .onResizeAsync(refreshMapFlight)
         .onStyleDataAsync(this.mapStyleLoaded());
 
-        this.onLoad(async () => {
+        this.onLoad( () => {
             this.flightWatchMapService.loadAircraftIcons(this.map);
             this.loadFlightOnMap();
             this.getFbosAndLoad();
@@ -94,13 +94,9 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     ngOnDestroy(): void {
         this.mapRemove();
     }
-    async loadFlightOnMap(){
-        if (!this.map) return;
-
+    loadFlightOnMap(){
         var newflightsInMapBounds = this.getFlightsWithinMapBounds(this.getBounds());
-
         const markers = this.getFlightSourcerFeatureMarkers(newflightsInMapBounds);
-
         this.addSource(this.flightSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.aircraftFlightWatchService.getFlightLayerJsonData(this.flightLayerId,this.flightSourceId));
         this.applyMouseFunctions(this.flightLayerId);
@@ -185,9 +181,8 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         );
     }
 
-    async getFbosAndLoad() {
+    getFbosAndLoad() {
         if (this.clusters)  return;
-
         this.airportFboGeoFenceClustersService.getClustersByIcao(this.sharedService.currentUser.icao)
             .subscribe((response: any) => {
                 this.clusters = [];

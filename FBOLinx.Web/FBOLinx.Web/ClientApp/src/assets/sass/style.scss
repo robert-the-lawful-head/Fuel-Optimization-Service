@@ -842,10 +842,9 @@ body .mat-card.flight-watch-settings-container .mat-card-header {
 /*End Flight watch settings container*/
 /*Map Plane Key*/
 div.custom-key-tab {
-    position: absolute;
     z-index: 99998;
     position: relative;
-    top: 170px;
+    top: 100px;
     font-size: 12px;
     color: #686868;
     background-color: #f1f9fd;
@@ -855,7 +854,7 @@ div.custom-key-tab {
     left: 0;
     right: 0;
     text-align: center;
-    width: 480px;
+    width: 590px;
 }
 
 div.custom-key-content {

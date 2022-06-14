@@ -22,6 +22,9 @@ using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.Service.Mapping.Dto;
+using Mapster;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Services
 {
@@ -125,7 +128,7 @@ namespace FBOLinx.Web.Services
         {
             List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();
 
-            if (fboId > 0)
+            if (fboId == 0) return filteredResult;
             {
                 var fbo = await (from f in _context.Fbos
                                  join fa in _context.Fboairports on f.Oid equals fa.Fboid
@@ -260,7 +263,7 @@ namespace FBOLinx.Web.Services
                                           })
                                     .ToList();
 
-                        AddDemoDataToAirportWatchResult(filteredResult, fboId);
+                        //cAddDemoDataToAirportWatchResult(filteredResult, fboId);
 
                         scope.Complete();
                     }
@@ -268,9 +271,9 @@ namespace FBOLinx.Web.Services
             }
             return filteredResult;
         }
-        public async Task<List<AirportWatchLiveData>> GetAirportWatchLiveDataRefactored(int groupId, int fboId, Coordinate coordinate)
+        public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRefactored(int groupId, int fboId, Coordinate coordinate)
         {
-            List<AirportWatchLiveData> filteredResult = new List<AirportWatchLiveData>();
+            List<AirportWatchLiveDataDto> filteredResult = new List<AirportWatchLiveDataDto>();
 
             if (fboId == 0) return filteredResult;
 
@@ -350,7 +353,7 @@ namespace FBOLinx.Web.Services
                                     join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
                                     from fo in fos.DefaultIfEmpty()
                                     where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
-                                    select new AirportWatchLiveData
+                                    select new AirportWatchLiveDataDto
                                     {
                                         Oid = fr.awhd.Oid,
                                         Longitude = fr.awhd.Longitude,
@@ -368,7 +371,8 @@ namespace FBOLinx.Web.Services
                                         AircraftPositionDateTimeUtc = fr.awhd.AircraftPositionDateTimeUtc,
                                         AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                         AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
-                                        FuelOrder = fo,
+                                        FuelOrder = fo.Adapt<FuelReqDto>(),
+                                        IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
                                         IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.Value > 0),
                                         TailNumber = fr.awhd.TailNumber
                                     })
@@ -1074,7 +1078,7 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        private void AddDemoDataToAirportWatchResult(List<AirportWatchLiveData> result, int fboId)
+        private void AddDemoDataToAirportWatchResult(List<AirportWatchLiveDataDto> result, int fboId)
         {
             if (_demoData == null || _demoData.Value == null || _demoData.Value.FlightWatch == null)
                 return;
