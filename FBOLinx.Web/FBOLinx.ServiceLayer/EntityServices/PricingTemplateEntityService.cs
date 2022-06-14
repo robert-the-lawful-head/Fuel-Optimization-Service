@@ -185,7 +185,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                          where pt.Fboid == fboId && prt != null
                                          select new { PricingTemplateId = pt.Oid, cm.Amount }).ToListAsync();
 
-
             var flightTypeClassifications = FlightTypeClassifications.Private;
             var departureType = ApplicableTaxFlights.DomesticOnly;
             var universalTime = DateTime.Today.ToUniversalTime();
