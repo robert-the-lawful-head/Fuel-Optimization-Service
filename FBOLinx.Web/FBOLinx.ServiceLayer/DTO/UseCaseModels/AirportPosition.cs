@@ -7,6 +7,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
     public class AirportPosition
     {
         public string Icao { get; set; }
+        public string Iata { get; set; }
+        public string Faa { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
     }
