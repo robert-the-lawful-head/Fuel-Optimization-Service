@@ -1,4 +1,5 @@
 using System;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
@@ -21,5 +22,9 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool IsAircraftOnGround { get; set; }
         public string AircraftHexCode { get; set; }
         public string TailNumber { get; set; }
+        public bool IsInNetwork { get; set; }
+        public bool IsFuelerLinxCustomer { get; set; }
+        public FuelReqDto? FuelOrder { get; set; }
+
     }
 }

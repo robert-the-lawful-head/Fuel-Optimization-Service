@@ -8,23 +8,23 @@ import { AIRCRAFT_IMAGES } from '../aircraft-images';
 export class FlightWatchMapService {
     constructor() {}
     async loadAircraftIcons(map: mapboxgl.Map): Promise<void>{
-        AIRCRAFT_IMAGES.forEach((image) => {
+        AIRCRAFT_IMAGES.forEach(async (image) => {
             const img = new Image(image.size, image.size);
 
             let imageName = `aircraft_image_${image.id}`;
-            this.loadImageInMap(map, img, imageName, image.url);
+            await this.loadImageInMap(map, img, imageName, image.url);
 
             const reversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed`;
-            this.loadImageInMap(map, reversedImg, imageName, image.reverseUrl);
+            await this.loadImageInMap(map, reversedImg, imageName, image.reverseUrl);
 
             const releaseImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_release`;
-            this.loadImageInMap(map, releaseImg, imageName, image.blueUrl);
+            await this.loadImageInMap(map, releaseImg, imageName, image.blueUrl);
 
             const releaseReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_release`;
-            this.loadImageInMap(
+            await this.loadImageInMap(
                 map,
                 releaseReversedImg,
                 imageName,
@@ -33,7 +33,7 @@ export class FlightWatchMapService {
 
             const fuelerlinxImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_fuelerlinx`;
-            this.loadImageInMap(
+            await this.loadImageInMap(
                 map,
                 fuelerlinxImg,
                 imageName,
@@ -42,7 +42,7 @@ export class FlightWatchMapService {
 
             const fuelerlinxReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
-            this.loadImageInMap(
+            await this.loadImageInMap(
                 map,
                 fuelerlinxReversedImg,
                 imageName,
@@ -50,16 +50,17 @@ export class FlightWatchMapService {
             );
         });
     }
-    private loadImageInMap(
+    async loadImageInMap(
         map: mapboxgl.Map,
         image: any,
         imageName: string,
         imageUrl: string
-    ): void {
-        image.onload = () => {
+    ): Promise<void> {
+        image.onload = async () => {
             map.addImage(imageName, image);
+            image.src = imageUrl;
         };
-        image.src = imageUrl;
+        
     }
     public getDefaultAircraftType(atype: string): string {
         if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
