@@ -56,7 +56,7 @@ export class FlightWatchMapService {
         imageName: string,
         imageUrl: string
     ): void {
-        image.onload = () => {
+        image.onload = async () => {
             map.addImage(imageName, image);
             image.src = imageUrl;
         };
