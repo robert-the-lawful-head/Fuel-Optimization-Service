@@ -7,8 +7,8 @@ import { AIRCRAFT_IMAGES } from '../aircraft-images';
 })
 export class FlightWatchMapService {
     constructor() {}
-    async loadAircraftIcons(map: mapboxgl.Map): Promise<void>{
-        AIRCRAFT_IMAGES.forEach((image) => {
+    loadAircraftIcons(map: mapboxgl.Map): void{
+        AIRCRAFT_IMAGES.forEach( (image) => {
             const img = new Image(image.size, image.size);
 
             let imageName = `aircraft_image_${image.id}`;
@@ -50,7 +50,7 @@ export class FlightWatchMapService {
             );
         });
     }
-    private loadImageInMap(
+    loadImageInMap(
         map: mapboxgl.Map,
         image: any,
         imageName: string,
@@ -58,8 +58,9 @@ export class FlightWatchMapService {
     ): void {
         image.onload = () => {
             map.addImage(imageName, image);
+            image.src = imageUrl;
         };
-        image.src = imageUrl;
+        
     }
     public getDefaultAircraftType(atype: string): string {
         if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
