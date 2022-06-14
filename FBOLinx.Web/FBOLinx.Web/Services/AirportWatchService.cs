@@ -378,31 +378,6 @@ namespace FBOLinx.Web.Services
                                     })
                                     .ToList();
 
-            var test = (from fr in airportWatchDataWithCustomers
-                        join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
-                        from fo in fos.DefaultIfEmpty()
-                        where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
-                        select new AirportWatchLiveDataDto
-                        {
-                            IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
-
-                        }).Where( x => x.IsInNetwork)
-                                    .ToList();
-
-            var test2 = (from fr in airportWatchDataWithCustomers
-                        join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
-                        from fo in fos.DefaultIfEmpty()
-                        where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
-                        select new 
-                        {
-                            ca = fr.ca,
-                            cu =fr.ca?.Customer,
-                            cbg = fr.ca?.Customer?.CompanyByGroup,
-                            oid = fr.ca?.Customer?.CompanyByGroup?.Oid
-
-                        })
-                                    .ToList();
-
             AddDemoDataToAirportWatchResult(filteredResult, fboId);
 
             return filteredResult;
