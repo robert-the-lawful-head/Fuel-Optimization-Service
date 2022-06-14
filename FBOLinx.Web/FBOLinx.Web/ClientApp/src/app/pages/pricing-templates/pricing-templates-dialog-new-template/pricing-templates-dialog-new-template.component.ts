@@ -242,7 +242,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     autoFocus: false,
                     data: {
                         buttonText: 'Yes',
-                        title: 'This ITP template contains a margin that less than or equal to zero.  Please confirm you want to proceed?'
+                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
                     },
                 }
             );
