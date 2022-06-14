@@ -22,12 +22,14 @@ using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FBOLinx.Web.Services
 {
     public class AirportWatchService
     {
         private const int _distance = 250;
+        private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
 
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
@@ -45,9 +47,10 @@ namespace FBOLinx.Web.Services
         private readonly FbopricesService _fboPricesService;
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
+        private IMemoryCache _MemoryCache;
 
         public AirportWatchService(DBSCANService DBSCANService,
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService)
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService, IMemoryCache memoryCache)
         {
             _dBSCANService = DBSCANService;
             _demoData = demoData;
@@ -60,6 +63,7 @@ namespace FBOLinx.Web.Services
             _fboPricesService = fboPricesService;
             _customerAircraftsEntityService = customerAircraftsEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
+            _MemoryCache = memoryCache;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -1119,23 +1123,43 @@ namespace FBOLinx.Web.Services
 
         private async Task<List<AirportPosition>> GetAirportPositions()
         {
-            var airports = (await _degaContext.AcukwikAirports
-                            .ToListAsync()
-                            )
-                            .Select(a =>
-                            {
-                                var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
-
-                                return new AirportPosition
+            var recordsFromCache = LookupAirportRecordsByFromCache();
+            if (recordsFromCache == null)
+            {
+                var airports = (await _degaContext.AcukwikAirports
+                                .ToListAsync()
+                                )
+                                .Select(a =>
                                 {
-                                    Latitude = alat,
-                                    Longitude = alng,
-                                    Icao = a.Icao,
-                                };
-                            })
-                            .ToList();
+                                    var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
 
-            return airports;
+                                    return new AirportPosition
+                                    {
+                                        Latitude = alat,
+                                        Longitude = alng,
+                                        Icao = a.Icao,
+                                        Iata = a.Iata,
+                                        Faa = a.Faa
+                                    };
+                                })
+                                .ToList();
+
+                //Store in cache before returning
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
+                _MemoryCache.Set(_AllAirportsPositioningCacheKey, airports, cacheEntryOptions);
+
+                recordsFromCache = airports;
+            }
+
+            return recordsFromCache;
+        }
+
+        private List<AirportPosition> LookupAirportRecordsByFromCache()
+        {
+            List<AirportPosition> result = null;
+            if (_MemoryCache.TryGetValue(_AllAirportsPositioningCacheKey, out result))
+                return result;
+            return result;
         }
 
         private string GetNearestICAO(List<AirportPosition> airportPositions, double latitude, double longitude)
@@ -1149,7 +1173,10 @@ namespace FBOLinx.Web.Services
                 if (minDistance == -1 || distance < minDistance)
                 {
                     minDistance = distance;
-                    nearestICAO = airport.Icao;
+                    var airportIcao = airport.Icao;
+                    if (airportIcao == "")
+                        airportIcao = airport.Iata == "" ? airport.Faa : airport.Faa;
+                    nearestICAO = airportIcao;
                 }
             }
 
