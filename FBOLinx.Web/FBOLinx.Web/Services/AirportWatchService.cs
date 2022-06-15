@@ -1206,7 +1206,7 @@ namespace FBOLinx.Web.Services
                     minDistance = distance;
                     var airportIcao = airport.Icao;
                     if (airportIcao == "")
-                        airportIcao = airport.Iata == "" ? airport.Faa : airport.Faa;
+                        airportIcao = airport.Faa == "" ? airport.Iata : airport.Faa;
                     nearestICAO = airportIcao;
                 }
             }
