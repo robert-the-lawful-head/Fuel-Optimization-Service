@@ -29,6 +29,7 @@ namespace FBOLinx.Web
             });
 
             services.ConfigureSwagger();
+            services.AddMemoryCache();
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
