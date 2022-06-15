@@ -100,7 +100,6 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         this.addSource(this.flightSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.aircraftFlightWatchService.getFlightLayerJsonData(this.flightLayerId,this.flightSourceId));
         this.applyMouseFunctions(this.flightLayerId);
-        this.createPopUpOnClick(this.flightLayerId);
     }
     async updateFlightOnMap(){
         if (!this.map) return;
@@ -116,7 +115,6 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
          source.setData(deita);
          this.applyMouseFunctions(this.flightLayerId);
-         this.createPopUpOnClick(this.flightLayerId);
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any{
         return keys(this.data).filter((id) => {
