@@ -115,6 +115,7 @@ namespace FBOLinx.Web
             services.AddTransient<SWIMFlightLegEntityService, SWIMFlightLegEntityService>();
             services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
+            services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
