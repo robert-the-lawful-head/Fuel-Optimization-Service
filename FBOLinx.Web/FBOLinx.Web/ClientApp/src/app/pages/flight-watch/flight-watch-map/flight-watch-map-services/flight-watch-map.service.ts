@@ -7,61 +7,43 @@ import { AIRCRAFT_IMAGES } from '../aircraft-images';
 })
 export class FlightWatchMapService {
     constructor() {}
-    loadAircraftIcons(map: mapboxgl.Map): void{
-        AIRCRAFT_IMAGES.forEach( (image) => {
-            const img = new Image(image.size, image.size);
+    async loadAircraftIcons(map: mapboxgl.Map): Promise<void>{
+        await AIRCRAFT_IMAGES.forEach( async (image,idx) => {
 
             let imageName = `aircraft_image_${image.id}`;
-            this.loadImageInMap(map, img, imageName, image.url);
+            var img1 =  this.addImageProcess(map,image,image.url,imageName,idx);
 
-            const reversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed`;
-            this.loadImageInMap(map, reversedImg, imageName, image.reverseUrl);
+            var img2 =  this.addImageProcess(map,image,image.reverseUrl,imageName,idx);
 
-            const releaseImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_release`;
-            this.loadImageInMap(map, releaseImg, imageName, image.blueUrl);
+            var img3 =  this.addImageProcess(map,image,image.blueUrl,imageName,idx);
 
-            const releaseReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_release`;
-            this.loadImageInMap(
-                map,
-                releaseReversedImg,
-                imageName,
-                image.blueReverseUrl
-            );
+            var img4 =  this.addImageProcess(map,image,image.blueReverseUrl,imageName,idx);
 
-            const fuelerlinxImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_fuelerlinx`;
-            this.loadImageInMap(
-                map,
-                fuelerlinxImg,
-                imageName,
-                image.fuelerlinxUrl
-            );
+            var img5 =  this.addImageProcess(map,image,image.fuelerlinxUrl,imageName,idx);
 
-            const fuelerlinxReversedImg = new Image(image.size, image.size);
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
-            this.loadImageInMap(
-                map,
-                fuelerlinxReversedImg,
-                imageName,
-                image.fuelerlinxReverseUrl
-            );
+            var img6 =  this.addImageProcess(map,image,image.fuelerlinxReverseUrl,imageName,idx);
+            
+            const p = Promise.resolve([img1,img2,img3,img4,img5,img6]);
+            p.then(function(v) {
+            });
         });
     }
-    loadImageInMap(
-        map: mapboxgl.Map,
-        image: any,
-        imageName: string,
-        imageUrl: string
-    ): void {
-        image.onload = async () => {
-            map.addImage(imageName, image);
-            image.src = imageUrl;
-        };
-        
-    }
+    addImageProcess(map: mapboxgl.Map, image: any, src: string,imageName:string,idx: number){
+        return new Promise((resolve, reject) => {
+          let img = new Image(image.size, image.size);
+          img.onload = () => {
+            map.addImage(imageName, img);
+            resolve(imageName);
+          };
+          img.onerror = reject;
+          img.src = src;
+        })
+      }
     public getDefaultAircraftType(atype: string): string {
         if (!AIRCRAFT_IMAGES.find((ai) => ai.id === atype)) {
             atype = 'default';

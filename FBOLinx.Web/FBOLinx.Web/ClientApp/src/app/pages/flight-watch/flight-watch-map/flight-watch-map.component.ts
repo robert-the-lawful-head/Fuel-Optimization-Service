@@ -78,8 +78,8 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         .onResizeAsync(refreshMapFlight)
         .onStyleDataAsync(this.mapStyleLoaded());
 
-        this.onLoad( () => {
-            this.flightWatchMapService.loadAircraftIcons(this.map);
+        this.onLoad( async () => {
+            await this.flightWatchMapService.loadAircraftIcons(this.map);
             this.loadFlightOnMap();
             this.getFbosAndLoad();
         });
@@ -100,6 +100,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         this.addSource(this.flightSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.aircraftFlightWatchService.getFlightLayerJsonData(this.flightLayerId,this.flightSourceId));
         this.applyMouseFunctions(this.flightLayerId);
+        this.createPopUpOnClick(this.flightLayerId);
     }
     async updateFlightOnMap(){
         if (!this.map) return;
@@ -115,6 +116,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
          source.setData(deita);
          this.applyMouseFunctions(this.flightLayerId);
+         this.createPopUpOnClick(this.flightLayerId);
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any{
         return keys(this.data).filter((id) => {
@@ -192,7 +194,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
             });
     }
 
-    async loadFbosOnMap(){
+    loadFbosOnMap(){
         if (!this.clusters) return;
 
         const markers = [];
