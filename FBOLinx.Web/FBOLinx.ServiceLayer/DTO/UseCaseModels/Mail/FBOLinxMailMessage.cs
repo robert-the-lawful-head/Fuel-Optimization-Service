@@ -16,7 +16,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public List<FileAttachment> AttachmentsCollection { get; set; } = new List<FileAttachment>();
         public LogoDetails Logo { get; set; }
         public SendGridDistributionTemplateData SendGridDistributionTemplateData { get; set; }
-        public SendGridEngagementTemplateData SendGridEngagementTemplate { get; set; }
+        public SendGridEngagementTemplateData SendGridEngagementTemplateData { get; set; }
+        public SendGridMissedQuoteTemplateData SendGridMissedQuoteTemplateData { get; set; }
         public SendGridGroupCustomerPricingTemplateData SendGridGroupCustomerPricingTemplateData { get; set; }
 
         #endregion

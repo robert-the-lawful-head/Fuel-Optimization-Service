@@ -14,7 +14,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[IntegrationUpdatePricingLog]",
+         "Name": "[dbo].[MissedQuoteLog]",
          "ObjectType": 0
       }
    ],

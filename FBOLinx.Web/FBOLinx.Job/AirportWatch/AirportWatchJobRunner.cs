@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Job.Models;
 
 namespace FBOLinx.Job.AirportWatch
 {
@@ -80,8 +81,8 @@ namespace FBOLinx.Job.AirportWatch
                 {
                     try
                     {
-                        var apiClient = new ApiClient(apiClientUrl.Trim());
-                        tasks.Add(apiClient.PostAsync("airportwatch/list", airportWatchData));
+                        
+                        tasks.Add(PostAirportWatchData(apiClientUrl.Trim(), airportWatchData, logger));
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
@@ -94,6 +95,25 @@ namespace FBOLinx.Job.AirportWatch
             }
 
             _isPostingData = false;
+        }
+
+        private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData, Serilog.Core.Logger logger)
+        {
+            try
+            {
+                var apiClient = new ApiClient(apiClientUrl.Trim());
+                var result = apiClient.PostAsync("airportwatch/list", airportWatchLiveData)
+                    .Result;
+                if (result == null)
+                    logger.Information("Fbolinx api call failed.  No result received.");
+                else 
+                    logger.Information("Fbolinx api call completed: " + result);
+            }
+            catch (System.Exception exception)
+            {
+                logger.Error(exception, $"Failed to call Fbolinx api!");
+            }
+
         }
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)

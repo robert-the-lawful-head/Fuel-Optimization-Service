@@ -15,6 +15,6 @@ namespace FBOLinx.Web.Models.Requests
         public string FuelDeskEmail { get; set; }
         [Required]
         public int AcukwikFboHandlerId { get; set; }
-        public AccountTypes AccountType { get; set; }
+        public AccountTypes AccountType { get; set; } = AccountTypes.RevFbo;
     }
 }

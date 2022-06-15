@@ -209,6 +209,8 @@ import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geo
 import { FlightWatchAircraftInfoDialogComponent } from './flight-watch/flight-watch-aircraft-info-dialog/flight-watch-aircraft-info-dialog.component';
 import { AntennaStatusHomeComponent } from './antenna-status/antenna-status-home/antenna-status-home.component';
 import { AntennaStatusGridComponent } from './antenna-status/antenna-status-grid/antenna-status-grid.component';
+import { FbosMissedOrdersGridComponent } from './fbos-missed-orders/fbos-missed-orders-grid/fbos-missed-orders-grid.component';
+import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-quotes-grid/fbos-missed-quotes-grid.component';
 
 @NgModule({
     declarations: [
@@ -344,7 +346,9 @@ import { AntennaStatusGridComponent } from './antenna-status/antenna-status-grid
         FboGeofencingDialogNewAirportComponent,
         FlightWatchAircraftInfoDialogComponent,
         AntennaStatusHomeComponent,
-        AntennaStatusGridComponent
+        AntennaStatusGridComponent,
+        FbosMissedOrdersGridComponent,
+        FbosMissedQuotesGridComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

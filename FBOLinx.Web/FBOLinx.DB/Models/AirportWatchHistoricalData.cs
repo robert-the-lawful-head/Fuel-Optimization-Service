@@ -7,9 +7,6 @@ namespace FBOLinx.DB.Models
 {
     public class AirportWatchHistoricalData: BaseAirportWatchData
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
         [StringLength(20)]
         public string AtcFlightNumber { get; set; }

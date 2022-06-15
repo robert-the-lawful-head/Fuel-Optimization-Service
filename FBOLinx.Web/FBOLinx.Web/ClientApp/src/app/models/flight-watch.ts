@@ -17,6 +17,7 @@ export type FlightWatch = {
     isAircraftOnGround: boolean;
     fuelOrder?: boolean;
     isFuelerLinxCustomer: boolean;
+    isInNetwork: boolean;
     tailNumber: string;
     company : string;
     aircraftMakeModel : string;
@@ -25,6 +26,7 @@ export type FlightWatch = {
 };
 
 export type Aircraftwatch = {
+    customerInfoBygGroupId: number;
     tailNumber: string;
     atcFlightNumber: string;
     aircraftTypeCode: string;

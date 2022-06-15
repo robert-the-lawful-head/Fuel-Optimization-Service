@@ -8,6 +8,20 @@ export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: any,id,focusedMarkerId): any {
+        let icon = "aircraft_image_";
+        if(data.isInNetwork){
+            icon = `${icon}client`;
+        }else{
+            icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
+                data.aircraftTypeCode
+            )}${id === focusedMarkerId.toString() ? '_reversed' : ''}${
+                data.fuelOrder != null
+                    ? '_release'
+                    : data.isFuelerLinxCustomer
+                    ? '_fuelerlinx'
+                    : ''
+            }`
+        }
         return {
             geometry: {
                 coordinates: [data.longitude, data.latitude],
@@ -19,15 +33,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                     '<strong>test popup' +
                     data.oid +
                     '</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a></p>',
-                'icon': `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(
-                    data.aircraftTypeCode
-                )}${id === focusedMarkerId.toString() ? '_reversed' : ''}${
-                    data.fuelOrder != null
-                        ? '_release'
-                        : data.isFuelerLinxCustomer
-                        ? '_fuelerlinx'
-                        : ''
-                }`,
+                'icon': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },

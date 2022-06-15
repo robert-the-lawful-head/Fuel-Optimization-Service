@@ -1,0 +1,40 @@
+<div class="col-12">
+    <ngx-ui-loader [loaderId]="missedOrdersLoader"
+                   bgsColor="rgb(100, 181, 246)"
+                   bgsPosition="center-center"
+                   bgsType="ball-spin"
+                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+</div>
+<div>
+    <div *ngIf="noMissedOrders">No Missed Orders</div>
+
+    <table *ngIf="!noMissedOrders" [dataSource]="fbosMissedOrdersDataSource" class="col-md-12 mb-0" mat-table matSort>
+        <ng-container matColumnDef="customerName">
+            <td *matCellDef="let missedOrder" mat-cell>
+                {{ missedOrder.customerName }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tailNumber">
+            <td *matCellDef="let missedOrder" mat-cell>
+                {{missedOrder.tailNumber}}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="missedOrdersCount">
+            <td *matCellDef="let missedOrder" mat-cell>
+                {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}
+</td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdDate">
+            <td *matCellDef="let missedOrder" mat-cell>
+                <div>
+                    {{ missedOrder.createdDate }}
+                </div>
+            </td>
+        </ng-container>
+
+        <tr *matRowDef="let row; columns: getTableColumns()" mat-row style="cursor: pointer;"></tr>
+    </table>
+</div>

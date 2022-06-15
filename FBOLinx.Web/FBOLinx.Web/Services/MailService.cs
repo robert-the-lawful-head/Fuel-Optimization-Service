@@ -37,7 +37,7 @@ namespace FBOLinx.Web.Services
                 AddDistributionEmailData(msg, ref sendGridMessage);
             }
 
-            if (msg.SendGridEngagementTemplate != null)
+            if (msg.SendGridEngagementTemplateData != null)
             {
                 AddEngagementEmailData(msg, ref sendGridMessage);
             }
@@ -45,6 +45,11 @@ namespace FBOLinx.Web.Services
             if (msg.SendGridGroupCustomerPricingTemplateData != null)
             {
                 AddGroupCustomerPricingEmailData(msg, ref sendGridMessage);
+            }
+
+            if (msg.SendGridMissedQuoteTemplateData != null)
+            {
+                AddMissedQuoteEmailData(msg, ref sendGridMessage);
             }
 
             var apiKey = _MailSettings.SendGridAPIKey;
@@ -163,12 +168,18 @@ namespace FBOLinx.Web.Services
 
         private void AddEngagementEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
         {
-            sendGridMessageWithTemplate.SetTemplateData(message.SendGridEngagementTemplate);
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridEngagementTemplateData);
 
-            if (string.IsNullOrEmpty(message.SendGridEngagementTemplate.customerName))
+            if (string.IsNullOrEmpty(message.SendGridEngagementTemplateData.customerName))
                 sendGridMessageWithTemplate.TemplateId = "d-bd3e32cbb21a4c60bf9753bcf70b2527";  //templateid for fuel price expiration
             else
                 sendGridMessageWithTemplate.TemplateId = "d-038c5d66d8034610af790492a8e184b8";  //templateid for no ramp fees
+        }
+
+        private void AddMissedQuoteEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridMissedQuoteTemplateData);
+            sendGridMessageWithTemplate.TemplateId = "d-d367c9ed538e4a52aaf34ac042aaa3fd";
         }
 
         private SmtpClient GenerateSMTP()

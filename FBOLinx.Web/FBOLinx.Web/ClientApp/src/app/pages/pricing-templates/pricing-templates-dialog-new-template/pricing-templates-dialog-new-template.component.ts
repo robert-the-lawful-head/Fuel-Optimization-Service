@@ -16,6 +16,7 @@ import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 export interface NewPricingTemplateMargin {
     min?: number;
@@ -73,7 +74,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private fboPricesService: FbopricesService,
         private sharedService: SharedService,
         private emailContentService: EmailcontentService,
-        public newTemplateDialog: MatDialog
+        public newTemplateDialog: MatDialog,
+        private marginLessThanOneDialog: MatDialog
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -221,46 +223,37 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     addTemplateClicked() {
-
-
-        this.isSaving = true;
-
-        const templatePayload = {
-            default: this.form.value.firstStep.templateDefault,
-            emailContentId: this.form.value.thirdStep.emailContentId,
-            fboId: this.data.fboId,
-            marginType: this.form.value.secondStep.marginType,
-            discountType: this.discountType,
-            name: this.form.value.firstStep.templateName,
-            notes: this.form.value.thirdStep.notes,
-        };
-
-
-        this.pricingTemplatesService
-            .add(templatePayload)
-            .subscribe((savedTemplate: any) => {
-                const customerMargins = [];
-                this.customerMarginsFormArray.value.forEach(
-                    (customerMargin: any) => {
-                        customerMargins.push({
-                            ...customerMargin,
-                            templateId: savedTemplate.oid,
-                        });
-                    }
-                );
-
-                this.priceTiersService
-                    .updateFromCustomerMarginsViewModel(customerMargins)
-                    .subscribe(() => {
-                        this.isSaving = false;
-                        this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe(
-                            (response:
-                                any) => {
-                                this.dialogRef.close(savedTemplate);
-                            });
-
-                    });
+        var isMarginLessThanZero = false;
+        this.customerMarginsFormArray.value.every(
+            (customerMargin: any) => {
+                if (customerMargin.amount <= 0) {
+                    isMarginLessThanZero = true;
+                    return false;
+                }
             });
+
+        if (!isMarginLessThanZero) {
+            this.completeTemplateAdd();
+        }
+        else {
+            const dialogRef = this.marginLessThanOneDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes',
+                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+                this.completeTemplateAdd();
+            });
+        }
     }
 
     loadCurrentPrice() {
@@ -306,6 +299,47 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                     this.loadEmailContentTemplate();
                 });
         });
+    }
+
+    private completeTemplateAdd() {
+        this.isSaving = true;
+
+        const templatePayload = {
+            default: this.form.value.firstStep.templateDefault,
+            emailContentId: this.form.value.thirdStep.emailContentId,
+            fboId: this.data.fboId,
+            marginType: this.form.value.secondStep.marginType,
+            discountType: this.discountType,
+            name: this.form.value.firstStep.templateName,
+            notes: this.form.value.thirdStep.notes,
+        };
+
+
+        this.pricingTemplatesService
+            .add(templatePayload)
+            .subscribe((savedTemplate: any) => {
+                const customerMargins = [];
+                this.customerMarginsFormArray.value.forEach(
+                    (customerMargin: any) => {
+                        customerMargins.push({
+                            ...customerMargin,
+                            templateId: savedTemplate.oid,
+                        });
+                    }
+                );
+
+                this.priceTiersService
+                    .updateFromCustomerMarginsViewModel(customerMargins)
+                    .subscribe(() => {
+                        this.isSaving = false;
+                        this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe(
+                            (response:
+                                any) => {
+                                this.dialogRef.close(savedTemplate);
+                            });
+
+                    });
+            });
     }
 
     private loadEmailContentTemplate(): void {

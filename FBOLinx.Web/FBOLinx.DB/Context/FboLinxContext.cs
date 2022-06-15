@@ -150,6 +150,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
 
+        public virtual DbSet<MissedQuoteLog> MissedQuoteLog { get; set; }
 
         public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
         public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
@@ -1036,6 +1037,10 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.Response).IsUnicode(false);
             });
 
+            modelBuilder.Entity<MissedQuoteLog>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
         }
     }
 }
