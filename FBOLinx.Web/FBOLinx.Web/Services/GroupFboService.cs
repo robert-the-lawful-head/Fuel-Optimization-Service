@@ -98,7 +98,8 @@ namespace FBOLinx.Web.Services
                 GroupId = request.GroupId,
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
                 Active = true,
-                DateActivated = DateTime.Now
+                DateActivated = DateTime.Now,
+                AccountType = request.AccountType
             };
 
             _context.Fbos.Add(fbo);

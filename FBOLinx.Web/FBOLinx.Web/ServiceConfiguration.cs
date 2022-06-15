@@ -1,7 +1,9 @@
 ﻿using System.Text;
 using FBOLinx.DB.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
@@ -27,6 +29,7 @@ namespace FBOLinx.Web
             });
 
             services.ConfigureSwagger();
+            services.AddMemoryCache();
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
@@ -101,6 +104,8 @@ namespace FBOLinx.Web
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<AirportWatchService, AirportWatchService>();
             services.AddTransient<IMailService, MailService>();
+            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
+            services.AddTransient<ISWIMService, SWIMService>();
 
             //Entity Services
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
@@ -108,6 +113,11 @@ namespace FBOLinx.Web
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
+            services.AddTransient<SWIMFlightLegEntityService, SWIMFlightLegEntityService>();
+            services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
+            services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
+            services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
+            services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

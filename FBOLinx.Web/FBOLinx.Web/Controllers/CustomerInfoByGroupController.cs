@@ -1028,7 +1028,7 @@ namespace FBOLinx.Web.Controllers
                 var customerCompanyTypes = await _customerService.GetCustomerCompanyTypes(groupId, fboId);
                 var priceBreakdownDisplayType = await _priceFetchingService.GetPriceBreakdownDisplayType(fboId);
                 fboPrices = fboPrices.Where(f => f.Product.Contains("JetA")).ToList();
-                List<PricingTemplate> templates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(groupId, fboId);
+                List<PricingTemplate> templates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
                 var flightTypeClassifications = FlightTypeClassifications.Private;
                 var departureType = ApplicableTaxFlights.DomesticOnly;
 

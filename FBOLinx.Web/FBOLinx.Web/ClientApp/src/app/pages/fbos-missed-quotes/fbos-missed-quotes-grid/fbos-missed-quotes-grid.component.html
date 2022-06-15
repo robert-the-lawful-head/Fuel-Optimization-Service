@@ -1,0 +1,33 @@
+<div class="col-12">
+    <ngx-ui-loader [loaderId]="missedQuotesLoader"
+                   bgsColor="rgb(100, 181, 246)"
+                   bgsPosition="center-center"
+                   bgsType="ball-spin"
+                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+</div>
+<div>
+    <div *ngIf="noMissedQuotes">No Missed Quotes</div>
+    <table *ngIf="!noMissedQuotes" [dataSource]="fbosMissedQuotesDataSource" class="col-md-12 mb-0" mat-table matSort>
+        <ng-container matColumnDef="customerName">
+            <td *matCellDef="let missedQuote" mat-cell>
+                {{ missedQuote.customerName }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="missedQuotesCount">
+            <td *matCellDef="let missedQuote" mat-cell>
+                {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}
+            </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdDate">
+            <td *matCellDef="let missedQuote" mat-cell>
+                <div>
+                    {{ missedQuote.createdDate }}
+                </div>
+            </td>
+        </ng-container>
+
+        <tr *matRowDef="let row; columns: getTableColumns()" mat-row style="cursor: pointer;"></tr>
+    </table>
+</div>

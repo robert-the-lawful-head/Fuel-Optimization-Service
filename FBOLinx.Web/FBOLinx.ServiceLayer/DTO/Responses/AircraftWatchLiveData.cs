@@ -2,6 +2,7 @@
 {
     public class AircraftWatchLiveData
     {
+        public int? CustomerInfoBygGroupId { get; set; }
         public string TailNumber { get; set; }
         public string AtcFlightNumber { get; set; }
         public string AircraftTypeCode { get; set; }

@@ -32,12 +32,13 @@ import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.servic
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmargin.service';
-import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
-import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
-import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+
 // Components
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
+import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 //Models
 import { PricingUpdateGridViewModel as pricingUpdateGridViewModel } from '../../../models/pricing/pricing-update-grid-viewmodel';

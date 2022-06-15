@@ -21,7 +21,11 @@ using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.DB.Specifications;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -33,14 +37,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtManager _jwtManager;
-        private readonly RampFeesService _RampFeesService;
-        private readonly AircraftService _aircraftService;
         private IPriceFetchingService _PriceFetchingService;
         private readonly FbopricesService _fbopricesService;
         private readonly DateTimeService _dateTimeService;
-        private readonly FboService _fboService;
+        private readonly Services.FboService _fboService;
+        private readonly IFboService _iFboService; 
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
+        private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
 
         public FbopricesController(
@@ -52,23 +56,25 @@ namespace FBOLinx.Web.Controllers
             IPriceFetchingService priceFetchingService,
             FbopricesService fbopricesService,
             DateTimeService dateTimeService,
-            FboService fboService,
+            Services.FboService fboService,
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
-            IntegrationUpdatePricingLogService integrationUpdatePricingLogService)
+            MissedQuoteLogEntityService missedQuoteLogEntityService,
+            IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
+            IFboService iFboService)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _jwtManager = jwtManager;
-            _RampFeesService = rampFeesService;
-            _aircraftService = aircraftService;
             _fbopricesService = fbopricesService;
             _dateTimeService = dateTimeService;
             _fboService = fboService;
             _fboPreferencesService = fboPreferencesService;
+            _missedQuoteLogEntityService = missedQuoteLogEntityService;
             _integrationUpdatePricingLogService = integrationUpdatePricingLogService;
+            _iFboService = iFboService;
         }
 
         // GET: api/Fboprices
@@ -114,8 +120,8 @@ namespace FBOLinx.Web.Controllers
             {
                 if (price.Price != null)
                 {
-                    price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
-                    price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
+                    price.EffectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
+                    price.EffectiveTo = await _iFboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
                 }
             }
 
@@ -207,11 +213,11 @@ namespace FBOLinx.Web.Controllers
                 }
 
                 if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveFrom))
-                    fboPricesUpdateGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
+                    fboPricesUpdateGenerator.EffectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
 
                 if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault()))
                     fboPricesUpdateGenerator.EffectiveTo =
-                        await _fboService.GetAirportLocalDateTimeByUtcFboId(
+                        await _iFboService.GetAirportLocalDateTimeByUtcFboId(
                             fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
 
                 prices.Add(fboPricesUpdateGenerator);
@@ -312,7 +318,7 @@ namespace FBOLinx.Web.Controllers
             var isPricingLive = false;
             if (currentRetailResult != null && currentRetailResult.Oid > 0)
             {
-                effectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesUpdateGenerator.Fboid);
+                effectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesUpdateGenerator.Fboid);
                 effectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(effectiveFrom.ToShortDateString()));
                 isPricingLive = true;
             }
@@ -782,6 +788,32 @@ namespace FBOLinx.Web.Controllers
                         FuelDeskEmail = p.FuelDeskEmail,
                         CopyEmails = p.CopyEmails
                     }).Distinct();
+
+                if (result.Count() == 0)
+                {
+                    var fbos = await _fboService.GetFbosByIcaos(request.ICAO);
+
+                    foreach (var fbo in fbos)
+                    {
+                        var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
+                        var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+
+                        if (recentMissedQuote.Count == 0)
+                        {
+                            var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+
+                            if (toEmails.Count > 0)
+                                await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+
+                            var missedQuote = new MissedQuoteLogDto();
+                            missedQuote.CreatedDate = DateTime.UtcNow;
+                            missedQuote.FboId = fbo.Oid;
+                            missedQuote.CustomerId = customer.Oid;
+                            missedQuote.Emailed = true;
+                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                        }
+                    }
+                }
 
                 return Ok(result);
             }

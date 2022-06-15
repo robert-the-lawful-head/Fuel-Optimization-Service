@@ -1,13 +1,10 @@
-import { Component, ElementRef, Input, Output, OnInit, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
 import { forEach } from 'lodash';
 import {
     ColumnType,
-    TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 
 // Services

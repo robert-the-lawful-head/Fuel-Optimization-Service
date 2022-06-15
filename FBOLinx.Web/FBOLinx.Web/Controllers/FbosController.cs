@@ -426,9 +426,11 @@ namespace FBOLinx.Web.Controllers
                 if (acukwikFbo == null)
                     return BadRequest("FBO not found");
 
-                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
-
                 var importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+                if (importedFboEmail == null || importedFboEmail.Oid == 0)
+                    return BadRequest("No email found");
+
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
                 if (importedFboEmail != null)
                 {
@@ -471,7 +473,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (airportDateTime.Hour == 9)
                 {
-                    var toEmails = await GetToEmailsForEngagementEmails(fbo.Oid);
+                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
                     if (toEmails.Count > 0)
                         await GenerateExpiredPricesEmail(toEmails, fbo.Fbo);
@@ -532,7 +534,7 @@ namespace FBOLinx.Web.Controllers
                                 //var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
                                 //var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
 
-                                var toEmails = await GetToEmailsForEngagementEmails(fbo.Oid);
+                                var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
                                 if (toEmails.Count > 0)
                                     await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.fboAirport.Icao);
@@ -541,45 +543,6 @@ namespace FBOLinx.Web.Controllers
                     }
                 }
             }
-        }
-
-        private async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
-        {
-            List<string> toEmails = new List<string>();
-
-            var fboInfo = await _context.Fbos.FindAsync(fboId);
-            //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
-            //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
-
-            if (fboInfo.FuelDeskEmail != "")
-                toEmails.Add(fboInfo.FuelDeskEmail);
-
-            var fboContacts = await _context.Fbocontacts
-                                .Include("Contact")
-                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
-                                .Select(f => new FboContactsViewModel
-                                {
-                                    ContactId = f.ContactId,
-                                    FirstName = f.Contact.FirstName,
-                                    LastName = f.Contact.LastName,
-                                    Title = f.Contact.Title,
-                                    Oid = f.Oid,
-                                    Email = f.Contact.Email,
-                                    Primary = f.Contact.Primary,
-                                    CopyAlerts = f.Contact.CopyAlerts,
-                                    CopyOrders = f.Contact.CopyOrders
-                                })
-                                .ToListAsync();
-            //var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
-            //var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
-
-            foreach (FboContactsViewModel fboContact in fboContacts)
-            {
-                if (fboContact.CopyAlerts.GetValueOrDefault())
-                    toEmails.Add(fboContact.Email);
-            }
-
-            return toEmails;
         }
 
         private async Task GenerateExpiredPricesEmail(List<string> toEmails, string fboName)
