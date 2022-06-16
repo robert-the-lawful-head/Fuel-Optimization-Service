@@ -1,5 +1,6 @@
 import * as mapboxgl from 'mapbox-gl';
 import { stringify } from 'querystring';
+import { AircraftImageData } from 'src/app/pages/flight-watch/flight-watch-map/aircraft-images';
 import { environment } from 'src/environments/environment';
 
 export abstract class MapboxglBase {
@@ -135,7 +136,7 @@ export abstract class MapboxglBase {
             popup.remove();
         });
     }
-    createPopUpOnClick(layerId: string): void{
+    createPopUpOnClickFromDescription(layerId: string): void{
         // When a click event occurs on a feature in the places layer, open a popup at the
         // location of the feature, with description HTML from its properties.
         this.map.on('click', layerId, (e) => {
@@ -164,6 +165,27 @@ export abstract class MapboxglBase {
         // Change it back to a pointer when it leaves.
         this.map.on('mouseleave', layerId, () => {
             this.map.getCanvas().style.cursor = '';
+        });
+    }
+    loadPNGImageAsync(src: string,imageId: string){
+        return new Promise((resolve, reject) => {
+            this.map.loadImage(src,
+                (error, image) => {
+                if (error) reject(imageId);
+                this.map.addImage(imageId, image);
+                resolve(imageId);
+            });
+          });
+    }
+    loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
+        return new Promise((resolve, reject) => {
+            let img = new Image(width, height);
+            img.onload = () => { 
+              this.map.addImage(imageName, img);
+              resolve(imageName);
+            };
+            img.onerror = reject;
+            img.src = src;
         });
     }
 }
