@@ -24,6 +24,8 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -43,6 +45,7 @@ namespace FBOLinx.Web.Controllers
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
         private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
+        private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
 
         public FbopricesController(
             FboLinxContext context,
@@ -57,7 +60,8 @@ namespace FBOLinx.Web.Controllers
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
             MissedQuoteLogEntityService missedQuoteLogEntityService,
-            IFboService iFboService)
+            IFboService iFboService,
+            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
@@ -70,6 +74,7 @@ namespace FBOLinx.Web.Controllers
             _fboPreferencesService = fboPreferencesService;
             _missedQuoteLogEntityService = missedQuoteLogEntityService;
             _iFboService = iFboService;
+            _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
         }
 
         // GET: api/Fboprices
@@ -761,10 +766,13 @@ namespace FBOLinx.Web.Controllers
 
                         if (recentMissedQuote.Count == 0)
                         {
-                            var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                            if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                            {
+                                var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
-                            if (toEmails.Count > 0)
-                                await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                                if (toEmails.Count > 0)
+                                    await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                            }
 
                             var missedQuote = new MissedQuoteLogDto();
                             missedQuote.CreatedDate = DateTime.UtcNow;
