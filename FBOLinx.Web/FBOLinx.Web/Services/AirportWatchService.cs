@@ -825,13 +825,29 @@ namespace FBOLinx.Web.Services
         {
             var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcaoAsNoTracking(fboId.Value) : null;
 
+            //Only select the indexed columns that are important for historical lookup.  Further data can be isolated by the ID of the historical record.
             var historicalData = await
                 _context.AirportWatchHistoricalData
-                .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
-                .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
-                .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
-                .AsNoTracking()
-                .ToListAsync();
+                    .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
+                    .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
+                    .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
+                    .Select(awhd => new
+                    {
+                        awhd.Oid,
+                        awhd.AircraftHexCode,
+                        awhd.AtcFlightNumber,
+                        awhd.AircraftPositionDateTimeUtc,
+                        awhd.AircraftStatus,
+                        awhd.AirportICAO,
+                        awhd.AircraftTypeCode,
+                        awhd.Latitude,
+                        awhd.Longitude,
+                        AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
+                        TailNumber = awhd.TailNumber
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
+
             //this is repeated query in  getwatchlivedata
             var customerAircraftsData = 
                            _context.CustomerAircrafts
