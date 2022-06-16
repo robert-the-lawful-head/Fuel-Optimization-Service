@@ -109,7 +109,17 @@ export class DefaultLayoutComponent implements OnInit {
         });
 
         if (this.canUserSeePricing() || isConductorRefresh) {
-            this.loadPrices();
+            this.pricingTemplatesService
+                .getByFbo(
+                    this.sharedService.currentUser.fboId,
+                    this.sharedService.currentUser.groupId
+                )
+                .subscribe(
+                    (data: any) => {
+                        this.pricingTemplatesData = data;
+                        this.loadPrices();
+                    }
+                );
         }
 
 
