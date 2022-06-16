@@ -7,7 +7,7 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges,
+    SimpleChanges
 } from '@angular/core';
 import { isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
@@ -22,6 +22,7 @@ import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
 import { FlightWatchMapService } from './flight-watch-map-services/flight-watch-map.service';
 import { AircraftFlightWatchService } from './flight-watch-map-services/aircraft-flight-watch.service';
 import { FboFlightWatchService } from './flight-watch-map-services/fbo-flight-watch.service';
+import { AircraftImageData, AIRCRAFT_IMAGES } from './aircraft-images';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -78,11 +79,33 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         .onResizeAsync(refreshMapFlight)
         .onStyleDataAsync(this.mapStyleLoaded());
 
-        this.onLoad( async () => {
-            await this.flightWatchMapService.loadAircraftIcons(this.map);
+        this.onLoad( async() => {
+            await this.loadAircraftIcon();
             this.loadFlightOnMap();
             this.getFbosAndLoad();
         });
+    }
+    async loadAircraftIcon(){
+        return Promise.all(AIRCRAFT_IMAGES.map( async (image: AircraftImageData,idx:number) => {
+            let imageName = `aircraft_image_${image.id}`;
+            let img1 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            
+            imageName = `aircraft_image_${image.id}_reversed`;
+            let img2 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+
+            imageName = `aircraft_image_${image.id}_release`;
+            let img3 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+
+            imageName = `aircraft_image_${image.id}_reversed_release`;
+            let img4 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+
+            imageName = `aircraft_image_${image.id}_fuelerlinx`;
+            let img5 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+
+            imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
+            let img6 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            await Promise.all([img1,img2,img3,img4,img5,img6]);
+        }));
     }
     ngOnChanges(changes: SimpleChanges): void {
         const currentData = changes.data.currentValue;
