@@ -72,10 +72,6 @@ export class DefaultLayoutComponent implements OnInit {
             .subscribe((event: RouterEvent) => {
                 if (!event.url.startsWith('/default-layout/customers')) {
                     this.store.dispatch(customerGridClear());
-
-                    //if (this.canUserSeePricing()) {
-                    //    this.loadPrices();
-                    //}
                 }
             });
     }
@@ -85,6 +81,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     ngOnInit() {
+        var isConductorRefresh = true;
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
                 return;
@@ -94,6 +91,7 @@ export class DefaultLayoutComponent implements OnInit {
                     message === SharedEvents.locationChangedEvent) &&
                 this.sharedService.currentUser.fboId
             ) {
+                isConductorRefresh = false;
                 this.pricingTemplatesService
                     .getByFbo(
                         this.sharedService.currentUser.fboId,
@@ -109,6 +107,12 @@ export class DefaultLayoutComponent implements OnInit {
                     );
             }
         });
+
+        if (this.canUserSeePricing() || isConductorRefresh) {
+            this.loadPrices();
+        }
+
+
         this.sharedService.valueChanged$.subscribe((value: any) => {
             if (!this.canUserSeePricing()) {
                 return;
