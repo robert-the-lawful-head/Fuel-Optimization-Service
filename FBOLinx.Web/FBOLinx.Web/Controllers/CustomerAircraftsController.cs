@@ -96,7 +96,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId);
+            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId, customerId);
             
             if (result == null)
                 return Ok(result);
