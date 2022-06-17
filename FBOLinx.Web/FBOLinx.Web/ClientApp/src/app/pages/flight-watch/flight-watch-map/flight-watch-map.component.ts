@@ -91,19 +91,19 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
             let img1 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
             
             imageName = `aircraft_image_${image.id}_reversed`;
-            let img2 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            let img2 = this.loadSVGImageAsync(image.size,image.size,image.reverseUrl,imageName);
 
             imageName = `aircraft_image_${image.id}_release`;
-            let img3 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            let img3 = this.loadSVGImageAsync(image.size,image.size,image.blueUrl,imageName);
 
             imageName = `aircraft_image_${image.id}_reversed_release`;
-            let img4 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            let img4 = this.loadSVGImageAsync(image.size,image.size,image.blueReverseUrl,imageName);
 
             imageName = `aircraft_image_${image.id}_fuelerlinx`;
-            let img5 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            let img5 = this.loadSVGImageAsync(image.size,image.size,image.fuelerlinxUrl,imageName);
 
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
-            let img6 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+            let img6 = this.loadSVGImageAsync(image.size,image.size,image.fuelerlinxReverseUrl,imageName);
             await Promise.all([img1,img2,img3,img4,img5,img6]);
         }));
     }
