@@ -802,6 +802,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
                         var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                        var isEmailed = false;
 
                         if (recentMissedQuote.Count == 0)
                         {
@@ -811,15 +812,17 @@ namespace FBOLinx.Web.Controllers
 
                                 if (toEmails.Count > 0)
                                     await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
-                            }
 
-                            var missedQuote = new MissedQuoteLogDto();
-                            missedQuote.CreatedDate = DateTime.UtcNow;
-                            missedQuote.FboId = fbo.Oid;
-                            missedQuote.CustomerId = customer.Oid;
-                            missedQuote.Emailed = true;
-                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                                isEmailed = true;
+                            }
                         }
+
+                        var missedQuote = new MissedQuoteLogDto();
+                        missedQuote.CreatedDate = DateTime.UtcNow;
+                        missedQuote.FboId = fbo.Oid;
+                        missedQuote.CustomerId = customer.Oid;
+                        missedQuote.Emailed = isEmailed;
+                        await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
                     }
                 }
 
