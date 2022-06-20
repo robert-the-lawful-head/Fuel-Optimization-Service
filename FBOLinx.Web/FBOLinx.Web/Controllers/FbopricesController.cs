@@ -781,6 +781,15 @@ namespace FBOLinx.Web.Controllers
                             missedQuote.Emailed = true;
                             await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
                         }
+                        else
+                        {
+                            var missedQuote = new MissedQuoteLogDto();
+                            missedQuote.CreatedDate = DateTime.UtcNow;
+                            missedQuote.FboId = fbo.Oid;
+                            missedQuote.CustomerId = customer.Oid;
+                            missedQuote.Emailed = false;
+                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                        }
                     }
                 }
 
