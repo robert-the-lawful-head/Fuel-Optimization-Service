@@ -1,13 +1,19 @@
 import {
     ChangeDetectionStrategy,
     Component,
+    ContentChild,
+    ElementRef,
     EventEmitter,
     Input,
     OnChanges,
     OnDestroy,
     OnInit,
     Output,
-    SimpleChanges
+    QueryList,
+    SimpleChanges,
+    TemplateRef,
+    ViewChild,
+    ViewChildren,
 } from '@angular/core';
 import { isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
@@ -23,6 +29,7 @@ import { FlightWatchMapService } from './flight-watch-map-services/flight-watch-
 import { AircraftFlightWatchService } from './flight-watch-map-services/aircraft-flight-watch.service';
 import { FboFlightWatchService } from './flight-watch-map-services/fbo-flight-watch.service';
 import { AircraftImageData, AIRCRAFT_IMAGES } from './aircraft-images';
+import { AircraftPopupContainerComponent } from '../aircraft-popup-container/aircraft-popup-container.component';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -39,6 +46,9 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     };
     @Input() isStable: boolean;
     @Output() markerClicked = new EventEmitter<FlightWatch>();
+
+    @ViewChild('popup') popup: AircraftPopupContainerComponent;
+    @ViewChild('aircraftPopupContainer', {read: ElementRef}) aircraftPopupContainer!: ElementRef;
 
     // Map Options
     public styleLoaded = false;
@@ -105,6 +115,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
             let img6 = this.loadSVGImageAsync(image.size,image.size,image.fuelerlinxReverseUrl,imageName);
             await Promise.all([img1,img2,img3,img4,img5,img6]);
+  
         }));
     }
     ngOnChanges(changes: SimpleChanges): void {
@@ -123,6 +134,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         this.addSource(this.flightSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.aircraftFlightWatchService.getFlightLayerJsonData(this.flightLayerId,this.flightSourceId));
         this.applyMouseFunctions(this.flightLayerId);
+        this.createPopUpOnClickRenderComponent(this.flightLayerId,this.aircraftPopupContainer);
     }
     async updateFlightOnMap(){
         if (!this.map) return;
@@ -131,13 +143,24 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
         const source = this.getSource(this.flightSourceId);
 
-          const deita : any = {
-          type: 'FeatureCollection',
-          features: this.getFlightSourcerFeatureMarkers(newflightsInMapBounds)
-          };
+        const deita : any = {
+            type: 'FeatureCollection',
+            features: this.getFlightSourcerFeatureMarkers(newflightsInMapBounds)
+        };
 
          source.setData(deita);
          this.applyMouseFunctions(this.flightLayerId);
+         this.closeAllPopUps();
+         this.createPopUpOnClickRenderComponent(this.flightLayerId,this.aircraftPopupContainer);
+         this.setDefaultPopUpOpen(newflightsInMapBounds);
+    }
+    setDefaultPopUpOpen(flightsIdsOnMap:string[]):void{
+        let selectedFlight = flightsIdsOnMap.find(key => this.data[key].oid == this.currentPopup.popupId);
+
+        if (!selectedFlight) return;
+
+        this.currentPopup.coordinates =[this.data[selectedFlight].longitude, this.data[selectedFlight].latitude];
+        this.openPopupRenderComponent(this.currentPopup.coordinates,this.aircraftPopupContainer,this.currentPopup);
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any{
         return keys(this.data).filter((id) => {
@@ -224,7 +247,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         });
         this.addSource(this.fboSourceId,this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.fboFlightWatchService.getFbosLayer(this.fboLayerId,this.fboSourceId));
-        this.createPopUpOnMouseEnter(this.fboLayerId);
+        this.createPopUpOnMouseEnterFromDescription(this.fboLayerId);
     }
 
     mapStyleLoaded() {
