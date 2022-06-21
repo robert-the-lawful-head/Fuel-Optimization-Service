@@ -1,10 +1,17 @@
+import { ElementRef } from '@angular/core';
+import { timeStamp } from 'console';
 import * as mapboxgl from 'mapbox-gl';
 import { stringify } from 'querystring';
 import { AircraftImageData } from 'src/app/pages/flight-watch/flight-watch-map/aircraft-images';
 import { environment } from 'src/environments/environment';
-
+export interface PopUpProps{
+    isPopUpOpen: boolean;
+    coordinates: [number,number];
+    popupId: number;
+}
 export abstract class MapboxglBase {
     public map: mapboxgl.Map;
+    public currentPopup: PopUpProps;
     buildMap(
         center: mapboxgl.LngLatLike,
         container: string,
@@ -12,6 +19,11 @@ export abstract class MapboxglBase {
         zoom: number = 12,
         optimizeMap: boolean = false
     ) {
+        this.currentPopup= {
+            isPopUpOpen: false,
+            popupId: null,
+            coordinates: null,
+        }
         let optimizeMapFlag = (optimizeMap)?'?optimize=true':'';
         this.map = new mapboxgl.Map({
             container: container,
@@ -104,7 +116,7 @@ export abstract class MapboxglBase {
     cursorPointer(cursor: string): void{
         this.map.getCanvas().style.cursor = cursor;
     }
-    createPopUpOnMouseEnter(layerId: string): void{
+    createPopUpOnMouseEnterFromDescription(layerId: string): void{
         // Create a popup, but don't add it to the map yet.
         const popup = new mapboxgl.Popup({
             closeButton: false,
@@ -140,10 +152,10 @@ export abstract class MapboxglBase {
         // When a click event occurs on a feature in the places layer, open a popup at the
         // location of the feature, with description HTML from its properties.
         this.map.on('click', layerId, (e) => {
+
             // Copy coordinates array.
             const coordinates = e.features[0].geometry['coordinates'].slice();
             const description = e.features[0].properties.description;
-
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
             // over the copy being pointed to.
@@ -165,6 +177,41 @@ export abstract class MapboxglBase {
         // Change it back to a pointer when it leaves.
         this.map.on('mouseleave', layerId, () => {
             this.map.getCanvas().style.cursor = '';
+        });
+    }
+    createPopUpOnClickRenderComponent(layerId: string, elemRef: ElementRef): void{
+        this.map.on("click", layerId, (e) => {
+            this.closeAllPopUps();
+            let coordinates= (this.currentPopup.isPopUpOpen)
+            ? this.currentPopup.coordinates
+            :e.features[0].geometry['coordinates'].slice();
+
+            const id = e.features[0].properties.id;
+
+            this.currentPopup.isPopUpOpen = true;
+            this.currentPopup.coordinates = coordinates;
+            this.currentPopup.popupId = id;
+
+            this.openPopupRenderComponent(coordinates,elemRef,this.currentPopup);
+          });
+    }
+    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):void{
+        console.log(currentPopup);
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setDOMContent(elemRef.nativeElement)
+            .addTo(this.map)
+            .on('close', function(e) {
+                currentPopup.isPopUpOpen = false;
+                currentPopup.coordinates = null;
+                currentPopup.popupId = null;
+            });
+    }
+    closeAllPopUps(){
+        const elements = Array.from(document.getElementsByClassName('mapboxgl-popup'));
+
+        elements.forEach(elem => {
+            elem.remove();
         });
     }
     loadPNGImageAsync(src: string,imageId: string){
