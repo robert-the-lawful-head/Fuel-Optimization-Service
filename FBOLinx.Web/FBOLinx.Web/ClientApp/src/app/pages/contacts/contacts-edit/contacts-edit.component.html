@@ -6,127 +6,102 @@
         <div class="row">
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.firstName"
-                        matInput
-                        placeholder="First Name"
-                    />
+                    <input [(ngModel)]="contactInfo.firstName"
+                           matInput
+                           placeholder="First Name" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.lastName"
-                        matInput
-                        placeholder="Last Name"
-                    />
+                    <input [(ngModel)]="contactInfo.lastName"
+                           matInput
+                           placeholder="Last Name" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.title"
-                        matInput
-                        placeholder="Title"
-                    />
+                    <input [(ngModel)]="contactInfo.title"
+                           matInput
+                           placeholder="Title" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.email"
-                        matInput
-                        placeholder="Email"
-                    />
+                    <input [(ngModel)]="contactInfo.email"
+                           matInput
+                           placeholder="Email" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.phone"
-                        [textMask]="{ mask: phoneMask }"
-                        matInput
-                        placeholder="Phone"
-                    />
+                    <input [(ngModel)]="contactInfo.phone"
+                           [textMask]="{ mask: phoneMask }"
+                           matInput
+                           placeholder="Phone" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.extension"
-                        matInput
-                        placeholder="Extension"
-                    />
+                    <input [(ngModel)]="contactInfo.extension"
+                           matInput
+                           placeholder="Extension" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.mobile"
-                        [textMask]="{ mask: phoneMask }"
-                        matInput
-                        placeholder="Mobile"
-                    />
+                    <input [(ngModel)]="contactInfo.mobile"
+                           [textMask]="{ mask: phoneMask }"
+                           matInput
+                           placeholder="Mobile" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.fax"
-                        [textMask]="{ mask: phoneMask }"
-                        matInput
-                        placeholder="Fax"
-                    />
+                    <input [(ngModel)]="contactInfo.fax"
+                           [textMask]="{ mask: phoneMask }"
+                           matInput
+                           placeholder="Fax" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.address"
-                        matInput
-                        placeholder="Address"
-                    />
+                    <input [(ngModel)]="contactInfo.address"
+                           matInput
+                           placeholder="Address" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.city"
-                        matInput
-                        placeholder="City"
-                    />
+                    <input [(ngModel)]="contactInfo.city"
+                           matInput
+                           placeholder="City" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.state"
-                        matInput
-                        placeholder="State"
-                    />
+                    <input [(ngModel)]="contactInfo.state"
+                           matInput
+                           placeholder="State" />
                 </mat-form-field>
             </div>
             <div class="col-xs-12 col-md-6">
                 <mat-form-field>
-                    <input
-                        [(ngModel)]="contactInfo.country"
-                        matInput
-                        placeholder="Country"
-                    />
+                    <input [(ngModel)]="contactInfo.country"
+                           matInput
+                           placeholder="Country" />
                 </mat-form-field>
             </div>
+            <!--<div class="col-md-4">
+        <mat-slide-toggle
+            [(ngModel)]="contactInfo.primary"
+            color="accent"
+            >Primary</mat-slide-toggle
+        >
+    </div>-->
             <div class="col-md-4">
-                <mat-slide-toggle
-                    [(ngModel)]="contactInfo.primary"
-                    color="accent"
-                    >Primary</mat-slide-toggle
-                >
-            </div>
-            <div class="col-md-4">
-                <mat-slide-toggle
-                    [(ngModel)]="contactInfo.copyAlerts"
-                    color="accent"
-                    >Copy on Distribution
+                <mat-slide-toggle [(ngModel)]="contactInfo.copyAlerts"
+                                  color="accent">
+                    Copy on Distribution
                 </mat-slide-toggle>
             </div>
         </div>
