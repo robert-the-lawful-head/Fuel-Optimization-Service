@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="Specifications\AircraftHexTailMapping\" />
+    <Folder Include="Specifications\AcukwikAirport\" />
   </ItemGroup>
 
 </Project>

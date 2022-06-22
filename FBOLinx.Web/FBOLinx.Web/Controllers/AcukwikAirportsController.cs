@@ -27,7 +27,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/AcukwikAirports
         [HttpGet]
-        public IEnumerable<AcukwikAirports> GetAcukwikAirports()
+        public IEnumerable<AcukwikAirport> GetAcukwikAirports()
         {
             return _context.AcukwikAirports;
         }
@@ -86,19 +86,19 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/AcukwikAirports/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAcukwikAirports([FromRoute] int id, [FromBody] AcukwikAirports acukwikAirports)
+        public async Task<IActionResult> PutAcukwikAirports([FromRoute] int id, [FromBody] AcukwikAirport acukwikAirport)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != acukwikAirports.AirportId)
+            if (id != acukwikAirport.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(acukwikAirports).State = EntityState.Modified;
+            _context.Entry(acukwikAirport).State = EntityState.Modified;
 
             try
             {
@@ -121,21 +121,21 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/AcukwikAirports
         [HttpPost]
-        public async Task<IActionResult> PostAcukwikAirports([FromBody] AcukwikAirports acukwikAirports)
+        public async Task<IActionResult> PostAcukwikAirports([FromBody] AcukwikAirport acukwikAirport)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.AcukwikAirports.Add(acukwikAirports);
+            _context.AcukwikAirports.Add(acukwikAirport);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (AcukwikAirportsExists(acukwikAirports.AirportId))
+                if (AcukwikAirportsExists(acukwikAirport.Id))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -145,7 +145,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return CreatedAtAction("GetAcukwikAirports", new { id = acukwikAirports.AirportId }, acukwikAirports);
+            return CreatedAtAction("GetAcukwikAirports", new { id = acukwikAirport.Id }, acukwikAirport);
         }
 
         // DELETE: api/AcukwikAirports/5
@@ -182,11 +182,11 @@ namespace FBOLinx.Web.Controllers
                                             .Where(x => !string.IsNullOrEmpty(x.Icao) && x.Icao.ToLower() == icao.ToLower())
                                             .FirstOrDefaultAsync();
 
-            if (airport == null || airport.AirportId == 0)
+            if (airport == null || airport.Id == 0)
                 return NotFound("No record found for that icao.");
 
             var results = await _context.AcukwikFbohandlerDetail
-                                            .Where(x => x.AirportId == airport.AirportId)
+                                            .Where(x => x.AirportId == airport.Id)
                                             .ToListAsync();
 
             if (results == null)
@@ -197,10 +197,10 @@ namespace FBOLinx.Web.Controllers
 
         private bool AcukwikAirportsExists(int id)
         {
-            return _context.AcukwikAirports.Any(e => e.AirportId == id);
+            return _context.AcukwikAirports.Any(e => e.Id == id);
         }
 
-        private IQueryable<AcukwikAirports> GetAllAirports()
+        private IQueryable<AcukwikAirport> GetAllAirports()
         {
             return _context.AcukwikAirports.AsQueryable();
         }

@@ -118,6 +118,7 @@ namespace FBOLinx.Web
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
             services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
+            services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

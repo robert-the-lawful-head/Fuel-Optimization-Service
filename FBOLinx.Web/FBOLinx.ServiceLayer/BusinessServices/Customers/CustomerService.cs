@@ -32,7 +32,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                         {cg.GroupId, Active = cg.Active ?? false}
                     into leftJoinCg
                 from cg in leftJoinCg.DefaultIfEmpty()
-                join c in _context.Customers on cg.CustomerId equals c.Oid
+                join c in _context.Customers on cg.CustomerId equals c.Id
                     into leftJoinCustomer
                 from c in leftJoinCustomer.DefaultIfEmpty()
                 join cct in _context.CustomCustomerTypes on new {cg.CustomerId, Fboid = fboId} equals new
@@ -54,7 +54,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 {
                     GroupId = f.GroupId ?? 0,
                     FboId = f.Oid,
-                    CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
+                    CustomerInfoByGroupID = cg == null ? 0 : cg.Id,
                     Company = cg == null ? null : cg.Company,
                     PricingTemplateId = pt == null ? 0 : pt.Oid,
                     IsDefaultPricingTemplate = pt == null ? true : pt.Default,
@@ -90,7 +90,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                     join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId ?? 0, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
                     into leftJoinCg
                     from cg in leftJoinCg.DefaultIfEmpty()
-                    join c in _context.Customers on cg.CustomerId equals c.Oid
+                    join c in _context.Customers on cg.CustomerId equals c.Id
                     into leftJoinCustomer
                     from c in leftJoinCustomer.DefaultIfEmpty()
                     join cct in _context.CustomCustomerTypes on new { cg.CustomerId, Fboid = f.Oid } equals new { cct.CustomerId, cct.Fboid }
@@ -110,7 +110,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                     {
                         GroupId = f.GroupId ?? 0,
                         FboId = f.Oid,
-                        CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
+                        CustomerInfoByGroupID = cg == null ? 0 : cg.Id,
                         PricingTemplateId = pt == null ? 0 : pt.Oid,
                         IsDefaultPricingTemplate = pt == null ? true : pt.Default,
                         IsPricingTemplateRemoved = cg.PricingTemplateRemoved,
@@ -144,7 +144,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerInfoByGroup>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
             //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId))
+            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Id == customerInfoByGroupId))
                 .Include(x => x.Customer)
                 .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
                 .Include(x => x.Customer.CustomCustomerType)
@@ -171,7 +171,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
                 .Select(x => new CustomerListResponse
                 {
-                    CustomerInfoByGroupID = x.Oid,
+                    CustomerInfoByGroupID = x.Id,
                     CompanyId = x.CustomerId,
                     Company = x.Company
                 })

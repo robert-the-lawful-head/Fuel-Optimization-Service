@@ -58,7 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //Find all aircraft currently covering the FuelerLinx company fleet
             var coveredAircraft = await _customerAircraftEntityService.GetListBySpec(
-                new CustomerAircraftByGroupAndTailSpecification(_existingGroupRecords.Select(x => x.Oid).ToList(),
+                new CustomerAircraftByGroupAndTailSpecification(_existingGroupRecords.Select(x => x.Id).ToList(),
                     new List<string>() {_tailNumber}));
 
             //Create a list of what full coverage should look like
@@ -67,9 +67,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
                 AircraftId = _fuelerlinxAircraft.AircraftId.GetValueOrDefault(),
                 TailNumber = _fuelerlinxAircraft.TailNumber,
-                CustomerId = _customerRecord.Oid,
+                CustomerId = _customerRecord.Id,
                 Size = (AircraftSizes) ((short)_fuelerlinxAircraft.Size.GetValueOrDefault()),
-                GroupId = x.Oid
+                GroupId = x.Id
             }).ToList();
 
             //Find the aircraft/groups missing records within FBOLinx
@@ -77,7 +77,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 join c in coveredAircraft on new { GroupId = f.GroupId.GetValueOrDefault(), f.TailNumber } equals new
                     { GroupId = c.GroupId.GetValueOrDefault(), TailNumber = c.TailNumber }
                 into leftJoinCoveredAircraft from c in leftJoinCoveredAircraft.DefaultIfEmpty()
-                where (c?.Oid).GetValueOrDefault() == 0
+                where (c?.Id).GetValueOrDefault() == 0
                 select f).ToList();
 
             coveredAircraft.ForEach(x => x.AircraftId = _fuelerlinxAircraft.AircraftId.GetValueOrDefault());

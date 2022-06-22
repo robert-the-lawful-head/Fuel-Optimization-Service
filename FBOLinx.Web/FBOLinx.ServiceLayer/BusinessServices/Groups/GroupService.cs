@@ -75,7 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         public async Task MergeGroups(MergeGroupRequest request)
         {
             var distinctedByCustomerIDCustomerInfoByGroups = new List<DB.Models.CustomerInfoByGroup>();
-            var changeableGroups = request.Groups.Where(group => group.Oid != request.BaseGroupId).Select(group => group.Oid).ToList();
+            var changeableGroups = request.Groups.Where(group => group.Id != request.BaseGroupId).Select(group => group.Id).ToList();
 
             try
             {
@@ -198,20 +198,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 
                 foreach (var ca in duplicatedCustomerAircrafts)
                 {
-                    List<DB.Models.AircraftPrices> aircraftPrices = await _context.AircraftPrices.Where(ap => ap.CustomerAircraftId == ca.Oid).ToListAsync();
+                    List<DB.Models.AircraftPrices> aircraftPrices = await _context.AircraftPrices.Where(ap => ap.CustomerAircraftId == ca.Id).ToListAsync();
                     var baseCustomerAircraft = distinctedCustomerAircrafts.Where(dca => dca.GroupId == ca.GroupId
                         && dca.CustomerId == ca.CustomerId
                         && dca.TailNumber == ca.TailNumber
                         && dca.AircraftId == ca.AircraftId
                     //&& dca.Size == ca.Size
                     ).First();
-                    aircraftPrices.ForEach(ap => ap.CustomerAircraftId = baseCustomerAircraft.Oid);
+                    aircraftPrices.ForEach(ap => ap.CustomerAircraftId = baseCustomerAircraft.Id);
                     await _context.BulkUpdateAsync(aircraftPrices);
                 }
 
                 await _context.BulkDeleteAsync(duplicatedCustomerAircrafts);
 
-                var removingGroups = await _context.Group.Where(a => changeableGroups.Contains(a.Oid)).ToListAsync();
+                var removingGroups = await _context.Group.Where(a => changeableGroups.Contains(a.Id)).ToListAsync();
                 await _context.BulkDeleteAsync(removingGroups);
             }
             catch (Exception ex)

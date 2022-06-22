@@ -7,7 +7,7 @@ namespace FBOLinx.ServiceLayer.DTO
 {
     public class CustomerDTO : BaseEntityModelDTO<DB.Models.Customers>, IEntityModelDTO<DB.Models.Customers, int>
     {
-        public int Oid { get; set; }
+        public int Id { get; set; }
         public bool? Action { get; set; }
         public double? Margin { get; set; }
         [StringLength(255)]

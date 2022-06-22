@@ -81,17 +81,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         {
             //Insert CustomerInfoByGroup records for each group where the FuelerLinx company doesn't exist yet.
             var customerInfoByGroupRecordsToInsert = (from g in _existingGroupRecords
-                    join cg in _customerInfoByGroupRecords on g.Oid equals cg.GroupId
+                    join cg in _customerInfoByGroupRecords on g.Id equals cg.GroupId
                         into leftJoinCustomerInfoByGroup
                     from cg in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
-                    select new {GroupId = g.Oid, CustomerInfoByGroup = cg})
+                    select new {GroupId = g.Id, CustomerInfoByGroup = cg})
                 .Where(x => x.CustomerInfoByGroup == null
                 && _fuelerlinxCompany.Active.GetValueOrDefault())
                 .Select(x =>
                     new CustomerInfoByGroupDTO()
                     {
                         GroupId = x.GroupId,
-                        CustomerId = _customerRecord.Oid,
+                        CustomerId = _customerRecord.Id,
                         Company = _fuelerlinxCompany.CompanyName,
                         Active = true,
                         Distribute = true,
@@ -173,7 +173,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 });
 
             var result = await _customerInfoByGroupEntityService.GetListBySpec(
-                new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
+                new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Id));
             _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
         }
     }

@@ -281,7 +281,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (group.IsLegacyAccount == true)
                 {
-                    await _fboService.DoLegacyGroupTransition(group.Oid);
+                    await _fboService.DoLegacyGroupTransition(group.Id);
 
                     group.IsLegacyAccount = false;
                     await _context.SaveChangesAsync();
@@ -430,7 +430,7 @@ namespace FBOLinx.Web.Controllers
                 if (importedFboEmail == null || importedFboEmail.Oid == 0)
                     return BadRequest("No email found");
 
-                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Id == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
                 if (importedFboEmail != null)
                 {

@@ -40,17 +40,17 @@ namespace FBOLinx.Web.Services
                 System.Collections.ArrayList customerExistsList = new System.Collections.ArrayList();
                 foreach (var cust in listWithCustomers)
                 {
-                    var customerExists = await _context.CustomerInfoByGroup.CountAsync(s => s.CustomerId == cust.Oid && s.GroupId == groupId);
+                    var customerExists = await _context.CustomerInfoByGroup.CountAsync(s => s.CustomerId == cust.Id && s.GroupId == groupId);
 
                     if (customerExists > 0)
                     {
-                        customerExistsList.Add(cust.Oid);
+                        customerExistsList.Add(cust.Id);
                         continue;
                     }
 
                     CustomerInfoByGroup cibg = new CustomerInfoByGroup();
                     cibg.GroupId = groupId;
-                    cibg.CustomerId = cust.Oid;
+                    cibg.CustomerId = cust.Id;
                     cibg.Company = cust.Company;
                     cibg.Username = "";
                     cibg.Password = "";
@@ -76,9 +76,9 @@ namespace FBOLinx.Web.Services
 
                 foreach (var cust in listWithCustomers)
                 {
-                    var customerAircrafts = await _context.CustomerAircrafts.CountAsync(s => s.GroupId == groupId && s.CustomerId == cust.Oid);
+                    var customerAircrafts = await _context.CustomerAircrafts.CountAsync(s => s.GroupId == groupId && s.CustomerId == cust.Id);
 
-                    if (customerExistsList.Contains(cust.Oid) || customerAircrafts > 0)
+                    if (customerExistsList.Contains(cust.Id) || customerAircrafts > 0)
                         continue;
 
                     var filteredAircraftsByCompany = aircrafts.Result.Where(s => s.CompanyId == cust.FuelerlinxId).ToList();
@@ -87,7 +87,7 @@ namespace FBOLinx.Web.Services
                     {
                         CustomerAircrafts ca = new CustomerAircrafts();
                         ca.AircraftId = Convert.ToInt32(aircraft.AircraftTypeId);
-                        ca.CustomerId = cust.Oid;
+                        ca.CustomerId = cust.Id;
                         ca.GroupId = groupId;
                         ca.TailNumber = aircraft.TailNumber;
                         

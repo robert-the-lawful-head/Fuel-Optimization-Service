@@ -124,7 +124,7 @@ namespace FBOLinx.Web.Services
 
             if (!string.IsNullOrEmpty(request.TailNumber))
             {
-                var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == request.CustomerInfoByGroupId);
+                var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Id == request.CustomerInfoByGroupId);
                 if (customerInfoByGroup == null)
                     return null;
 
@@ -152,11 +152,11 @@ namespace FBOLinx.Web.Services
             else
             {
                 var customerInfoByGroup = await _context.CustomerInfoByGroup
-                    .Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId)))
+                    .Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Id == request.CustomerInfoByGroupId)))
                     .Include(x => x.Customer)
                     .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
                     .FirstOrDefaultAsync();
-                validPricing.PricingList = await _priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
+                validPricing.PricingList = await _priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Id > 0 ? customerInfoByGroup.Id : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
             }
 
             if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)
