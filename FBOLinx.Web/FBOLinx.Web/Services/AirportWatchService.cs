@@ -731,10 +731,18 @@ namespace FBOLinx.Web.Services
                                     .Select(g => g.First())
                                     .ToList();
 
-            _LiveDataToDelete = _LiveDataToDelete.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
-                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
-                                    .Select(g => g.First())
-                                    .ToList();
+            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
+
+            var liveDataToDelete = new List<AirportWatchLiveData>();
+            foreach (var liveData in _LiveDataToDelete)
+            {
+                if (!liveDataToDelete.Any(l => l.Oid == liveData.Oid))
+                {
+                    liveDataToDelete.Add(liveData);
+                }
+            }
+
+            _LiveDataToDelete = liveDataToDelete;
 
             _HistoricalDataToUpdate = _HistoricalDataToUpdate.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
                                     .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
