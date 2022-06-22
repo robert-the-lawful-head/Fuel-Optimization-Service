@@ -215,15 +215,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 
         }
 
-        public async Task<PricingTemplateDto> CopyPricingTemplate(PrincingTemplateRequest pricingTemplate)
+        public async Task CopyPricingTemplate(PrincingTemplateRequest pricingTemplate)
         {
             var pricingTemplateCopy = await _pricingTemplateEntityService.CopyPricingTemplate(pricingTemplate.currentPricingTemplateId, pricingTemplate.name);
 
-            if (pricingTemplateCopy.Oid == 0) return pricingTemplateCopy.Map<PricingTemplateDto>();
+            if (pricingTemplateCopy.Oid == 0)
+                return;
 
             await _customerMarginService.CreateCustomerMargins(pricingTemplate.currentPricingTemplateId, pricingTemplateCopy.Oid);
-
-            return pricingTemplateCopy.Map<PricingTemplateDto>();
         }
         public async Task<List<PricingTemplateGrid>> GetTemplatesWithEmailContent(int fboId, int groupId)
         {

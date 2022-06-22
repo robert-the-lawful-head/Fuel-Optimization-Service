@@ -118,11 +118,9 @@ namespace FBOLinx.Web.Controllers
         {
             if (pricingTemplate.currentPricingTemplateId == null && pricingTemplate.name == string.Empty) return null;
 
-            var copiedPricingTemplate = await _pricingTemplateService.CopyPricingTemplate(pricingTemplate);
-
-            if (copiedPricingTemplate == null) return null;
+            await _pricingTemplateService.CopyPricingTemplate(pricingTemplate);
             
-            return Ok(copiedPricingTemplate.Oid);
+            return Ok();
         }
 
         [HttpGet("checkdefaulttemplate/{fboId}")]
