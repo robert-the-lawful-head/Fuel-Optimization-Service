@@ -300,6 +300,7 @@ export class CustomersEditComponent implements OnInit {
             ContactsDialogNewContactComponent,
             {
                 data: this.currentContactInfoByGroup,
+                disableClose: true
             }
         );
 
