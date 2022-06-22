@@ -726,7 +726,7 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
 
-            _LiveDataToUpdate = _LiveDataToDelete.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
+            _LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
             var liveDataToUpdate = new List<AirportWatchLiveData>();
             foreach (var liveData in _LiveDataToUpdate)
             {
