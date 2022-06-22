@@ -726,13 +726,18 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
 
-            _LiveDataToUpdate = _LiveDataToUpdate.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
-                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
-                                    .Select(g => g.First())
-                                    .ToList();
+            _LiveDataToUpdate = _LiveDataToDelete.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
+            var liveDataToUpdate = new List<AirportWatchLiveData>();
+            foreach (var liveData in _LiveDataToUpdate)
+            {
+                if (!liveDataToUpdate.Any(l => l.Oid == liveData.Oid))
+                {
+                    liveDataToUpdate.Add(liveData);
+                }
+            }
+            _LiveDataToUpdate = liveDataToUpdate;
 
             _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
-
             var liveDataToDelete = new List<AirportWatchLiveData>();
             foreach (var liveData in _LiveDataToDelete)
             {
@@ -741,13 +746,18 @@ namespace FBOLinx.Web.Services
                     liveDataToDelete.Add(liveData);
                 }
             }
-
             _LiveDataToDelete = liveDataToDelete;
 
-            _HistoricalDataToUpdate = _HistoricalDataToUpdate.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
-                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
-                                    .Select(g => g.First())
-                                    .ToList();
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
+            var historicalDataToUpdate = new List<AirportWatchHistoricalData>();
+            foreach (var historicalData in _HistoricalDataToUpdate)
+            {
+                if (!historicalDataToUpdate.Any(l => l.Oid == historicalData.Oid))
+                {
+                    historicalDataToUpdate.Add(historicalData);
+                }
+            }
+            _HistoricalDataToUpdate = historicalDataToUpdate;
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
