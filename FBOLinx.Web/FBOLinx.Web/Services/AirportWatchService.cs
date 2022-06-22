@@ -716,6 +716,13 @@ namespace FBOLinx.Web.Services
                 }
             }
 
+            await PrepareRecordsForDatabase(airportPositions);
+
+            await CommitChanges();
+        }
+
+        private async Task PrepareRecordsForDatabase(List<AirportPosition> airportPositions)
+        {
             //Set the nearest airport for all records that will be recorded for historical statuses
             _HistoricalDataToInsert.ForEach(x =>
             {
@@ -726,44 +733,26 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
 
-            _LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
-            var liveDataToUpdate = new List<AirportWatchLiveData>();
-            foreach (var liveData in _LiveDataToUpdate)
-            {
-                if (!liveDataToUpdate.Any(l => l.Oid == liveData.Oid))
-                {
-                    liveDataToUpdate.Add(liveData);
-                }
-            }
-            _LiveDataToUpdate = liveDataToUpdate;
+            _LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+                .GroupBy(x => x.Oid)
+                .Select(x => x.First())
+                .ToList();
 
-            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
-            var liveDataToDelete = new List<AirportWatchLiveData>();
-            foreach (var liveData in _LiveDataToDelete)
-            {
-                if (!liveDataToDelete.Any(l => l.Oid == liveData.Oid))
-                {
-                    liveDataToDelete.Add(liveData);
-                }
-            }
-            _LiveDataToDelete = liveDataToDelete;
+            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Oid)
+                .Select(x => x.First()).ToList();
 
-            _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(g => g.AircraftPositionDateTimeUtc).Select(d => d).ToList();
-            var historicalDataToUpdate = new List<AirportWatchHistoricalData>();
-            foreach (var historicalData in _HistoricalDataToUpdate)
-            {
-                if (!historicalDataToUpdate.Any(l => l.Oid == historicalData.Oid))
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+                .GroupBy(x => x.Oid)
+                .Select(x => x.First())
+                .Where(x =>
                 {
-                    historicalDataToUpdate.Add(historicalData);
-                }
-            }
-            _HistoricalDataToUpdate = historicalDataToUpdate;
+                    if (string.IsNullOrEmpty(x?.AirportICAO) || string.IsNullOrEmpty(x?.BoxName)) return false;
+                    return x.BoxName.ToLower().StartsWith(x.AirportICAO.ToLower());
+                })
+                .ToList();
 
-            _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
-                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
-                return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
-            }).ToList();
-            _HistoricalDataToUpdate = _HistoricalDataToUpdate.Where(record => {
+            _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record =>
+            {
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
@@ -771,7 +760,9 @@ namespace FBOLinx.Web.Services
             await SetTailNumber(_HistoricalDataToInsert);
             await SetTailNumber(_LiveDataToInsert);
 
-            await CommitChanges();
+            //Merge the insert data into the update collection so we can do a BulkInsertUpdate operation
+            _HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
+            _LiveDataToUpdate.AddRange(_LiveDataToInsert);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
@@ -1186,18 +1177,35 @@ namespace FBOLinx.Web.Services
 
         private async Task CommitChanges()
         {
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            if (_LiveDataToInsert != null)
-                await _context.BulkInsertAsync(_LiveDataToInsert);
-            if (_LiveDataToUpdate != null)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate);
-            if (_LiveDataToDelete != null)
-                await _context.BulkDeleteAsync(_LiveDataToDelete);
-            if (_HistoricalDataToInsert != null)
-                await _context.BulkInsertAsync(_HistoricalDataToInsert);
-            if (_HistoricalDataToUpdate != null)
-                await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
-            await transaction.CommitAsync();
+            await CommitLiveDataChanges();
+            await CommitHistoricalDataChanges();
+        }
+
+        private async Task CommitLiveDataChanges()
+        {
+            if (_LiveDataToUpdate?.Count > 0)
+            {
+                await using var updateTransaction = await _context.Database.BeginTransactionAsync();
+                await _context.BulkInsertOrUpdateAsync(_LiveDataToUpdate, config => config.SetOutputIdentity = false);
+                await updateTransaction.CommitAsync();
+            }
+
+            if (_LiveDataToDelete?.Count > 0)
+            {
+                await using var deleteTransaction = await _context.Database.BeginTransactionAsync();
+                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.SetOutputIdentity = false);
+                await deleteTransaction.CommitAsync();
+            }
+        }
+
+        private async Task CommitHistoricalDataChanges()
+        {
+            if (_HistoricalDataToUpdate?.Count > 0)
+            {
+                await using var updateTransaction = await _context.Database.BeginTransactionAsync();
+                await _context.BulkInsertOrUpdateAsync(_HistoricalDataToUpdate, config => config.SetOutputIdentity = false);
+                await updateTransaction.CommitAsync();
+            }
         }
 
         private async Task<List<AirportPosition>> GetAirportPositions()
