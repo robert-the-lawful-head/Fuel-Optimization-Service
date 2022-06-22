@@ -726,6 +726,21 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
 
+            _LiveDataToUpdate = _LiveDataToUpdate.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
+                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
+                                    .Select(g => g.First())
+                                    .ToList();
+
+            _LiveDataToDelete = _LiveDataToDelete.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
+                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
+                                    .Select(g => g.First())
+                                    .ToList();
+
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.GroupBy(i => new { i.Oid, i.AircraftPositionDateTimeUtc })
+                                    .OrderByDescending(g => g.Key.AircraftPositionDateTimeUtc)
+                                    .Select(g => g.First())
+                                    .ToList();
+
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
