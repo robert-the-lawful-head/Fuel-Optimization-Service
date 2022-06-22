@@ -760,9 +760,8 @@ namespace FBOLinx.Web.Services
             await SetTailNumber(_HistoricalDataToInsert);
             await SetTailNumber(_LiveDataToInsert);
 
-            //Merge the insert data into the update collection so we can do a BulkInsertUpdate operation
+            //Merge the insert data for historical information into the update collection so we can do a BulkInsertUpdate operation
             _HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
-            _LiveDataToUpdate.AddRange(_LiveDataToInsert);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
@@ -1183,19 +1182,14 @@ namespace FBOLinx.Web.Services
 
         private async Task CommitLiveDataChanges()
         {
+            await using var updateTransaction = await _context.Database.BeginTransactionAsync();
+            if (_LiveDataToInsert?.Count > 0)
+                await _context.BulkInsertAsync(_LiveDataToInsert, config => config.SetOutputIdentity = false);
             if (_LiveDataToUpdate?.Count > 0)
-            {
-                await using var updateTransaction = await _context.Database.BeginTransactionAsync();
-                await _context.BulkInsertOrUpdateAsync(_LiveDataToUpdate, config => config.SetOutputIdentity = false);
-                await updateTransaction.CommitAsync();
-            }
-
+                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.SetOutputIdentity = false);
             if (_LiveDataToDelete?.Count > 0)
-            {
-                await using var deleteTransaction = await _context.Database.BeginTransactionAsync();
                 await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.SetOutputIdentity = false);
-                await deleteTransaction.CommitAsync();
-            }
+            await updateTransaction.CommitAsync();
         }
 
         private async Task CommitHistoricalDataChanges()
