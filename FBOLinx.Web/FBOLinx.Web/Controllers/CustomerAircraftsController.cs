@@ -54,7 +54,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var aircrafts = await _aircraftService.GetAllAircrafts();
-            var customAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).ToListAsync();
+            var customAircraft = await _context.CustomerAircrafts.Where(x => x.Id == id).ToListAsync();
 
             if (customAircraft == null || customAircraft.Count == 0)
                 return NotFound();
@@ -62,12 +62,12 @@ namespace FBOLinx.Web.Controllers
             var result = (from ca in customAircraft
                                 join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
                                            from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                           where ca.Oid == id
+                                           where ca.Id == id
                                            select new
                                            {
                                                ca.CustomerId,
                                                ca.AircraftId,
-                                               ca.Oid,
+                                               Oid = ca.Id,
                                                Size = (ca.Size.HasValue && ca.Size.Value != AircraftSizes.NotSet) || ac == null
                                                    ? ca.Size
                                                    : (AircraftSizes)(ac.Size ?? 0),
@@ -165,7 +165,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerAircrafts custAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.Oid == customerAircrafts.Oid);
+                CustomerAircrafts custAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.Id == customerAircrafts.Oid);
                  
                 if (custAircraft != null)
                 {
@@ -202,12 +202,12 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == request.Oid);
+                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Id == request.Oid);
 
                 AircraftPrices aircraftPrice = (from ca in _context.CustomerAircrafts
-                                                join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                                join ap in _context.AircraftPrices on ca.Id equals ap.CustomerAircraftId
                                                 join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                                                where ca.Oid == request.Oid
+                                                where ca.Id == request.Oid
                                                     && pt.Fboid == fboid
                                                 select ap).FirstOrDefault();
 
@@ -229,7 +229,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     AircraftPrices newAircraftPrice = new AircraftPrices
                     {
-                        CustomerAircraftId = custAircraft.Oid,
+                        CustomerAircraftId = custAircraft.Id,
                         PriceTemplateId = pricingTemplate.Oid
                     };
                     _context.AircraftPrices.Add(newAircraftPrice);
@@ -271,7 +271,7 @@ namespace FBOLinx.Web.Controllers
             _context.CustomerAircrafts.Add(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
 
-            return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
+            return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Id }, customerAircrafts);
         }
 
         [HttpPost("group/{groupId}/fbo/{fboId}/customer/{customerId}/multiple")]
@@ -300,7 +300,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     AircraftPrices newAircraftPrice = new AircraftPrices
                     {
-                        CustomerAircraftId = customerAircrafts[i].Oid,
+                        CustomerAircraftId = customerAircrafts[i].Id,
                         PriceTemplateId = request[i].PricingTemplateId
                     };
                     _context.AircraftPrices.Add(newAircraftPrice);
@@ -334,7 +334,7 @@ namespace FBOLinx.Web.Controllers
                 var customerViewedByFbo = new CustomersViewedByFbo
                 {
                     Fboid = request.FboId,
-                    CustomerId = customer.Oid,
+                    CustomerId = customer.Id,
                     ViewDate = DateTime.Now,
                 };
                 _context.CustomersViewedByFbo.Add(customerViewedByFbo);
@@ -343,7 +343,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     GroupId = request.GroupId,
                     Company = request.Customer,
-                    CustomerId = customer.Oid,
+                    CustomerId = customer.Id,
                     Active = true,
                 };
                 _context.CustomerInfoByGroup.Add(customerInfoByGroup);
@@ -355,7 +355,7 @@ namespace FBOLinx.Web.Controllers
                     AircraftId = request.AircraftId,
                     TailNumber = request.TailNumber,
                     Size = request.Size,
-                    CustomerId = customer.Oid,
+                    CustomerId = customer.Id,
                 };
                
                 _context.CustomerAircrafts.Add(customerAircraft);
@@ -506,7 +506,7 @@ namespace FBOLinx.Web.Controllers
 
         private bool CustomerAircraftsExists(int id)
         {
-            return _context.CustomerAircrafts.Any(e => e.Oid == id);
+            return _context.CustomerAircrafts.Any(e => e.Id == id);
         }
 
         private async Task<IActionResult> ChangeFuelerLinxCustomerAircraftsAddedFrom(FuelerLinxAircraftRequest request, bool isActivate)
@@ -516,14 +516,14 @@ namespace FBOLinx.Web.Controllers
             if (tailNumbers.Length == 1)
                 customerAircrafts = await (
                                     from ca in _context.CustomerAircrafts
-                                    join c in _context.Customers on ca.CustomerId equals c.Oid
+                                    join c in _context.Customers on ca.CustomerId equals c.Id
                                     where c.FuelerlinxId == request.FuelerlinxCompanyID && ca.TailNumber == tailNumbers[0]
                                     select ca
                                     ).ToListAsync();
             else
                 customerAircrafts = await (
                                     from ca in _context.CustomerAircrafts
-                                    join c in _context.Customers on ca.CustomerId equals c.Oid
+                                    join c in _context.Customers on ca.CustomerId equals c.Id
                                     where c.FuelerlinxId == request.FuelerlinxCompanyID 
                                     select ca
                                     ).ToListAsync();

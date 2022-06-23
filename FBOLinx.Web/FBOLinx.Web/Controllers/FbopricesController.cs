@@ -506,7 +506,7 @@ namespace FBOLinx.Web.Controllers
             catch (Exception ex)
             {
                 integrationUpdatePricingLog.Response = ex.InnerException == null ? ex.Message : ex.InnerException.ToString();
-                if (integrationUpdatePricingLog.Oid > 0)
+                if (integrationUpdatePricingLog.Id > 0)
                     await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
                 else
                     await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
@@ -752,7 +752,7 @@ namespace FBOLinx.Web.Controllers
 
                 
                 List<CustomerWithPricing> validPricing =
-                    await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification, Core.Enums.ApplicableTaxFlights.All, null, 0);
+                    await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Id, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification, Core.Enums.ApplicableTaxFlights.All, null, 0);
                 if (validPricing == null)
                     return Ok(null);
 

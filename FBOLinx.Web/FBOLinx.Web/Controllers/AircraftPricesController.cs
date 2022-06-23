@@ -61,9 +61,9 @@ namespace FBOLinx.Web.Controllers
             }
 
             var aircraftPrices = await (from ca in _context.CustomerAircrafts
-                join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                join ap in _context.AircraftPrices on ca.Id equals ap.CustomerAircraftId
                 join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                where ca.Oid == customerAircraftId
+                where ca.Id == customerAircraftId
                       && pt.Fboid == fboId
                 select ap).ToListAsync();
 
@@ -154,7 +154,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircraftIds = customerAircrafts.Select(ca => ca.Oid).ToList();
+            var customerAircraftIds = customerAircrafts.Select(ca => ca.Id).ToList();
 
             var aircraftPrices = await _context.AircraftPrices
                                             .Where(ap => customerAircraftIds.Contains(ap.CustomerAircraftId))

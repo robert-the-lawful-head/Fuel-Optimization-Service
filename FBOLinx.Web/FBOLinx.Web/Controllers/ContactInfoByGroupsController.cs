@@ -233,7 +233,7 @@ namespace FBOLinx.Web.Controllers
 
                     if(singleContact.CustomerId != 0)
                     {
-                        customerId = (await _context.CustomerInfoByGroup.FirstOrDefaultAsync(s => s.Oid == singleContact.CustomerId)).CustomerId;
+                        customerId = (await _context.CustomerInfoByGroup.FirstOrDefaultAsync(s => s.Id == singleContact.CustomerId)).CustomerId;
 
                         if(customerId != 0)
                         {

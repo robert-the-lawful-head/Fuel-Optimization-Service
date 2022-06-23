@@ -9,6 +9,6 @@ namespace FBOLinx.DB.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("OID")]
-        public virtual T Oid { get; set; }
+        public virtual T Id { get; set; }
     }
 }

@@ -408,7 +408,7 @@ namespace FBOLinx.Web.Controllers
 
         private bool UserExists(int id)
         {
-            return _context.Group.Any(e => e.Oid == id);
+            return _context.Group.Any(e => e.Id == id);
         }
 
         private async Task HandlePreLoginEvents(User user)
@@ -428,7 +428,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (group.IsLegacyAccount == true)
                 {
-                    await _fboService.DoLegacyGroupTransition(group.Oid);
+                    await _fboService.DoLegacyGroupTransition(group.Id);
 
                     group.IsLegacyAccount = false;
                     await _context.SaveChangesAsync();

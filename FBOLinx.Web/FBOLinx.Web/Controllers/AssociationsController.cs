@@ -88,7 +88,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Group.Any(e => e.Oid == id))
+                if (!_context.Group.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }

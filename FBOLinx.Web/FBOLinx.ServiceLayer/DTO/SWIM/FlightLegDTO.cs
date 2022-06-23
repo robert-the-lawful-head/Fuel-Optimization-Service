@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.DTO.SWIM
 {
-    public class SWIMFlightLegDTO : BaseEntityModelDTO<SWIMFlightLeg>, IEntityModelDTO<SWIMFlightLeg, int>
+    public class FlightLegDTO
     {
         public int Id { get; set; }
-        public string AircraftIdentification { get; set; }
+        public string FlightNumber { get; set; }
         public string DepartureICAO { get; set; }
         public string ArrivalICAO { get; set; }
         public DateTime ATD { get; set; }
         public DateTime ETA { get; set; }
-
-        public virtual IEnumerable<SWIMFlightLegDataDTO> SWIMFlightLegDataMessages { get; set; }
+        public double? ActualSpeed { get; set; }
+        public double? Altitude { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }

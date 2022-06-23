@@ -91,7 +91,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public virtual async Task<TDTO> Update(TDTO entityDTO)
         {
             var entity = entityDTO.Adapt<T>();
-            if (EqualityComparer<TIDType>.Default.Equals(entity.Oid, default(TIDType)))
+            if (EqualityComparer<TIDType>.Default.Equals(entity.Id, default(TIDType)))
                 await AddEntity(entity);
             else
             {
@@ -116,7 +116,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task Delete(TDTO entityDTO)
         {
-            await Delete(entityDTO.Oid);
+            await Delete(entityDTO.Id);
         }
 
         public async Task Delete(TIDType id)
@@ -183,7 +183,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             {
                 try
                 {
-                    entityDTOs[entityIndex].Oid = entities[entityIndex].Oid;
+                    entityDTOs[entityIndex].Id = entities[entityIndex].Id;
                 }
                 catch (System.Exception exception)
                 {

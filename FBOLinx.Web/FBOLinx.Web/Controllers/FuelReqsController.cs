@@ -167,7 +167,7 @@ namespace FBOLinx.Web.Controllers
             string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
 
             var customers = await (from c in _context.Customers
-                                   join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
+                                   join ci in _context.CustomerInfoByGroup on c.Id equals ci.CustomerId
                                    where c.FuelerlinxId > 0 && ci.GroupId == groupId
                                    select new
                                    {
@@ -191,7 +191,7 @@ namespace FBOLinx.Web.Controllers
             List<FuelReqsGridViewModel> fuelReqVM = await
                 (from fr in _context.FuelReq
                  join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = (fr.CustomerId ?? 0) } equals new { c.GroupId, c.CustomerId }
-                 join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
+                 join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Id
                  join f in _context.Fbos on fr.Fboid equals f.Oid
                  join frp in _context.FuelReqPricingTemplate on fr.Oid equals frp.FuelReqId
                  into leftJoinedFRP
@@ -289,7 +289,7 @@ namespace FBOLinx.Web.Controllers
                 var fuelReqsPt =
                                 (from c in _context.Customers
                                  join cg in _context.CustomerInfoByGroup on
-                                     new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
+                                     new { CustomerId = c.Id, c.FuelerlinxId, Active = true }
                                      equals
                                      new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
                                  join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
@@ -299,13 +299,13 @@ namespace FBOLinx.Web.Controllers
                                      equals
                                      new { GroupId = (f.GroupId ?? 0), FboId = f.Oid, Active = f.Active ?? false }
                                  join ca in _context.CustomerAircrafts on
-                                     new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
+                                     new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Id, cg.GroupId }
                                      equals
                                      new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
                                  select new
                                  {
                                      Fboid = fboId,
-                                     CustomerAircraftId = ca.Oid,
+                                     CustomerAircraftId = ca.Id,
                                      request.Eta,
                                      request.Etd,
                                      request.Icao,
@@ -313,7 +313,7 @@ namespace FBOLinx.Web.Controllers
                                      QuotedPpg = request.FuelEstCost,
                                      QuotedVolume = request.FuelEstWeight,
                                      request.TimeStandard,
-                                     CustomerId = c.Oid,
+                                     CustomerId = c.Id,
                                      DateCreated = DateTime.Now,
                                      Source = "FuelerLinx",
                                      request.SourceId,
@@ -502,7 +502,7 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 var customerFuelReqsByCustomer = await (from orders in (from fr in _context.FuelReq
-                                                                        join c in _context.Customers on (fr.CustomerId ?? 0) equals c.Oid
+                                                                        join c in _context.Customers on (fr.CustomerId ?? 0) equals c.Id
                                                                         where fr.Fboid == fboId &&
                                                                             (fr.Cancelled == null || fr.Cancelled == false) &&
                                                                             fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
@@ -673,7 +673,7 @@ namespace FBOLinx.Web.Controllers
                                                                Size = (ca.Size.HasValue && ca.Size.Value != Core.Enums.AircraftSizes.NotSet
                                                                 ? ca.Size
                                                                 : (Core.Enums.AircraftSizes)ac.Size),
-                                                               ca.Oid
+                                                               Oid = ca.Id
                                                            }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId
                                                             && (f.Cancelled == null || f.Cancelled == false) 
@@ -1230,7 +1230,7 @@ namespace FBOLinx.Web.Controllers
 
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                          join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
-                                         join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
+                                         join cibg in _context.CustomerInfoByGroup on c.Id equals cibg.CustomerId
                                          where cibg.GroupId == groupId && cpl.ICAO == icao
                                          select new
                                          {
@@ -1249,7 +1249,7 @@ namespace FBOLinx.Web.Controllers
                                         .Where(x => (x.Customer != null && x.Customer.Suspended != true)&&(x.CustomerId== customeridval
                                         || customeridval == null)).Select(c => new
                                         {
-                                            c.Oid,
+                                            Oid = c.Id,
                                             c.CustomerId,
                                             Company = c.Company.Trim(),
                                             Customer = c.Customer
@@ -1289,7 +1289,7 @@ namespace FBOLinx.Web.Controllers
                     {
                         var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
                             Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
-                        customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                        customers.Add(new { Oid = 0, CustomerId = (existingCustomerRecord?.Id).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
                     }
                 }
 
@@ -1377,7 +1377,7 @@ namespace FBOLinx.Web.Controllers
 
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                        join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
-                                       join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
+                                       join cibg in _context.CustomerInfoByGroup on c.Id equals cibg.CustomerId
                                        where cibg.GroupId == groupId && icaos.Contains(cpl.ICAO)
                                        select new
                                        {

@@ -101,7 +101,7 @@ namespace FBOLinx.ServiceLayer.Test.Services
                 {
                     new Customers()
                     {
-                        Oid = distributePricingRequest.Customer.CustomerId,
+                        Id = distributePricingRequest.Customer.CustomerId,
                         GroupId = distributePricingRequest.GroupId,
                         Suspended = false
                     }

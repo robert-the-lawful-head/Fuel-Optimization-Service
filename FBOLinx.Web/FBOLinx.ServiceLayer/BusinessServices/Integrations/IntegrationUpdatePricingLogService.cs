@@ -23,7 +23,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             await _integrationPricingUpdateLogEntityService.AddAsync(integrationUpdatePricingLogEntity);
 
-            integrationUpdatePricingLog.Oid = integrationUpdatePricingLogEntity.Oid;
+            integrationUpdatePricingLog.Id = integrationUpdatePricingLogEntity.Id;
             return integrationUpdatePricingLog;
         }
 

@@ -107,7 +107,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 });
                 MockGroupDbSet(dbContextMock, new List<Group>()
                 {
-                    new Group() { Oid = testUser.GroupId.Value, Isfbonetwork = false }
+                    new Group() { Id = testUser.GroupId.Value, Isfbonetwork = false }
                 });
                 MockFboContactDbSet(dbContextMock, new List<Fbocontacts>()
                 {
@@ -148,7 +148,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 MockFbosDbSet(dbContextMock, new List<Fbos>());
                 MockGroupDbSet(dbContextMock, new List<Group>()
                 {
-                    new Group() { Oid = testUser.GroupId.Value, Isfbonetwork = false, Username = testUser.Username, Password = testUser.Password }
+                    new Group() { Id = testUser.GroupId.Value, Isfbonetwork = false, Username = testUser.Username, Password = testUser.Password }
                 });
                 MockFboContactDbSet(dbContextMock, new List<Fbocontacts>()
                 {
@@ -260,7 +260,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 services.AddSingleton(dbContextMock.Object);
             });
 
-            User user = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = testUser.GroupId.Value });
+            User user = await subject.CreateGroupLoginIfNeeded(new Group() { Id = testUser.GroupId.Value });
 
             Assert.AreEqual(testUser.Oid, user.Oid);
         }
@@ -285,7 +285,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             });
 
             User createdUser = await subject.CreateGroupLoginIfNeeded(
-                new Group() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
+                new Group() { Id = 2, Username = testUser.Username, Password = testUser.Password });
 
             Assert.Multiple(() =>
             {
@@ -309,7 +309,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 services.AddSingleton(dbContextMock.Object);
             });
 
-            var result = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = 2 });
+            var result = await subject.CreateGroupLoginIfNeeded(new Group() { Id = 2 });
 
             Assert.IsNull(result);
         }
@@ -416,7 +416,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 var dbContextMock = new Mock<FboLinxContext>();
                 MockUserDbSet(dbContextMock, new List<User>() { testUser });
                 MockFbosDbSet(dbContextMock, new List<Fbos>());
-                MockGroupDbSet(dbContextMock, new List<Group>() { new Group() { Oid = testUser.GroupId.Value, Isfbonetwork = isFboNetwork } });
+                MockGroupDbSet(dbContextMock, new List<Group>() { new Group() { Id = testUser.GroupId.Value, Isfbonetwork = isFboNetwork } });
                 services.AddSingleton(dbContextMock.Object);
 
                 MockEncryptionService(services, testUser.Username, testUser.Password);
