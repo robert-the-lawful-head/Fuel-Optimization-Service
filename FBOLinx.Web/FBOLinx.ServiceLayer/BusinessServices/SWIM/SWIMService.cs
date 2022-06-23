@@ -181,7 +181,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 AcukwikAirportDTO departureAirport = airports.FirstOrDefault(x => x.Icao == dto.DepartureICAO);
                 if (departureAirport != null)
                 {
-                    dto.ATD = DateTimeHelper.GetLocalTime(dto.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.ATD = DateTimeHelper.GetLocalTime(swimFlightLegDto.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
                 }
                 else
                 {
@@ -191,7 +191,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 AcukwikAirportDTO arrivalAirport = airports.FirstOrDefault(x => x.Icao == dto.ArrivalICAO);
                 if (arrivalAirport != null)
                 {
-                    dto.ETA = DateTimeHelper.GetLocalTime(dto.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.ETA = DateTimeHelper.GetLocalTime(swimFlightLegDto.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
                 }
                 else
                 {
