@@ -820,7 +820,7 @@ namespace FBOLinx.Web.Controllers
                         var missedQuote = new MissedQuoteLogDto();
                         missedQuote.CreatedDate = DateTime.UtcNow;
                         missedQuote.FboId = fbo.Oid;
-                        missedQuote.CustomerId = customer.Oid;
+                        missedQuote.CustomerId = customer.Id;
                         missedQuote.Emailed = isEmailed;
                         await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
                     }
