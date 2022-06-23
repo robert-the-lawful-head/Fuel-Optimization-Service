@@ -15,7 +15,7 @@ namespace FBOLinx.DB.Specifications.SWIM
         }
 
         public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime currentTime)
-            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && departureICAO == x.ArrivalICAO)) && x.ETA > currentTime)
+            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > currentTime)
         {
             AddInclude(x => x.SWIMFlightLegDataMessages);
         }
