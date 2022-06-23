@@ -1203,16 +1203,23 @@ namespace FBOLinx.Web.Services
 
         private async Task CommitChanges()
         {
+            var liveDataToInsertAndUpdate = _LiveDataToInsert;
+            if (liveDataToInsertAndUpdate == null)
+                liveDataToInsertAndUpdate = new List<AirportWatchLiveData>();
+            liveDataToInsertAndUpdate.AddRange(_LiveDataToUpdate == null ? new List<AirportWatchLiveData>() : _LiveDataToUpdate);
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
-            if (_LiveDataToInsert != null)
-                await _context.BulkInsertAsync(_LiveDataToInsert, config => config.WithHoldlock = false);
-            if (_LiveDataToUpdate != null)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.WithHoldlock = false);
-            if (_LiveDataToDelete != null)
+            if (liveDataToInsertAndUpdate.Count > 0)
+                await _context.BulkInsertOrUpdateAsync(_LiveDataToInsert, config =>
+                {
+                    config.WithHoldlock = false;
+                    config.BatchSize = 1000;
+                });
+            if (_LiveDataToDelete?.Count > 0)
                 await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
-            if (_HistoricalDataToInsert != null)
+            if (_HistoricalDataToInsert?.Count > 0)
                 await _context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
-            if (_HistoricalDataToUpdate != null)
+            if (_HistoricalDataToUpdate?.Count > 0)
                 await _context.BulkUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
             await transaction.CommitAsync();
 
