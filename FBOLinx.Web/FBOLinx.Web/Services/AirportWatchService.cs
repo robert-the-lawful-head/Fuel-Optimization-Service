@@ -723,6 +723,7 @@ namespace FBOLinx.Web.Services
 
         private async Task PrepareRecordsForDatabase(List<AirportPosition> airportPositions)
         {
+            //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
             _HistoricalDataToInsert.ForEach(x =>
             {
@@ -733,26 +734,11 @@ namespace FBOLinx.Web.Services
                 x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
             });
 
-            _LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
-                .GroupBy(x => x.Id)
-                .Select(x => x.First())
-                .ToList();
-
-            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Id)
-                .Select(x => x.First()).ToList();
-
-            _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
-                .GroupBy(x => x.Id)
-                .Select(x => x.First())
-                .Where(x =>
-                {
-                    if (string.IsNullOrEmpty(x?.AirportICAO) || string.IsNullOrEmpty(x?.BoxName)) return false;
-                    return x.BoxName.ToLower().StartsWith(x.AirportICAO.ToLower());
-                })
-                .ToList();
-
-            _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record =>
-            {
+            _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
+                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
+                return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+            }).ToList();
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.Where(record => {
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
@@ -760,8 +746,49 @@ namespace FBOLinx.Web.Services
             await SetTailNumber(_HistoricalDataToInsert);
             await SetTailNumber(_LiveDataToInsert);
 
-            //Merge the insert data for historical information into the update collection so we can do a BulkInsertUpdate operation
-            _HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
+
+
+            //[#2ht0dek] Commenting out changes made in this branch to see if performance is restored with an upgrade to EFCore and BulkExtensions
+
+            ////Set the nearest airport for all records that will be recorded for historical statuses
+            //_HistoricalDataToInsert.ForEach(x =>
+            //{
+            //    x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            //});
+            //_HistoricalDataToUpdate.ForEach(x =>
+            //{
+            //    x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            //});
+
+            //_LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+            //    .GroupBy(x => x.Id)
+            //    .Select(x => x.First())
+            //    .ToList();
+
+            //_LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Id)
+            //    .Select(x => x.First()).ToList();
+
+            //_HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+            //    .GroupBy(x => x.Id)
+            //    .Select(x => x.First())
+            //    .Where(x =>
+            //    {
+            //        if (string.IsNullOrEmpty(x?.AirportICAO) || string.IsNullOrEmpty(x?.BoxName)) return false;
+            //        return x.BoxName.ToLower().StartsWith(x.AirportICAO.ToLower());
+            //    })
+            //    .ToList();
+
+            //_HistoricalDataToInsert = _HistoricalDataToInsert.Where(record =>
+            //{
+            //    if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
+            //    return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+            //}).ToList();
+
+            //await SetTailNumber(_HistoricalDataToInsert);
+            //await SetTailNumber(_LiveDataToInsert);
+
+            ////Merge the insert data for historical information into the update collection so we can do a BulkInsertUpdate operation
+            //_HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
@@ -1176,8 +1203,24 @@ namespace FBOLinx.Web.Services
 
         private async Task CommitChanges()
         {
-            await CommitLiveDataChanges();
-            await CommitHistoricalDataChanges();
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            if (_LiveDataToInsert != null)
+                await _context.BulkInsertAsync(_LiveDataToInsert);
+            if (_LiveDataToUpdate != null)
+                await _context.BulkUpdateAsync(_LiveDataToUpdate);
+            if (_LiveDataToDelete != null)
+                await _context.BulkDeleteAsync(_LiveDataToDelete);
+            if (_HistoricalDataToInsert != null)
+                await _context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
+            if (_HistoricalDataToUpdate != null)
+                await _context.BulkUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
+            await transaction.CommitAsync();
+
+
+            //[#2ht0dek] Commenting out changes made in this branch to see if performance is restored with an upgrade to EFCore and BulkExtensions
+
+            //await CommitLiveDataChanges();
+            //await CommitHistoricalDataChanges();
         }
 
         private async Task CommitLiveDataChanges()
