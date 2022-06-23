@@ -1184,11 +1184,15 @@ namespace FBOLinx.Web.Services
         {
             await using var updateTransaction = await _context.Database.BeginTransactionAsync();
             if (_LiveDataToInsert?.Count > 0)
-                await _context.BulkInsertAsync(_LiveDataToInsert, config => config.SetOutputIdentity = false);
+                await _context.BulkInsertAsync(_LiveDataToInsert, config =>
+                {
+                    config.WithHoldlock = false;
+
+                });
             if (_LiveDataToUpdate?.Count > 0)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.SetOutputIdentity = false);
+                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.WithHoldlock = false);
             if (_LiveDataToDelete?.Count > 0)
-                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.SetOutputIdentity = false);
+                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
             await updateTransaction.CommitAsync();
         }
 
@@ -1197,7 +1201,7 @@ namespace FBOLinx.Web.Services
             if (_HistoricalDataToUpdate?.Count > 0)
             {
                 await using var updateTransaction = await _context.Database.BeginTransactionAsync();
-                await _context.BulkInsertOrUpdateAsync(_HistoricalDataToUpdate, config => config.SetOutputIdentity = false);
+                await _context.BulkInsertOrUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
                 await updateTransaction.CommitAsync();
             }
         }
