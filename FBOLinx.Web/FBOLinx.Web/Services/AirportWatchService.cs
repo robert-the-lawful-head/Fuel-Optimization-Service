@@ -1207,9 +1207,9 @@ namespace FBOLinx.Web.Services
             if (_LiveDataToInsert != null)
                 await _context.BulkInsertAsync(_LiveDataToInsert, config => config.WithHoldlock = false);
             if (_LiveDataToUpdate != null)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate);
+                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.WithHoldlock = false);
             if (_LiveDataToDelete != null)
-                await _context.BulkDeleteAsync(_LiveDataToDelete);
+                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
             if (_HistoricalDataToInsert != null)
                 await _context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
             if (_HistoricalDataToUpdate != null)
