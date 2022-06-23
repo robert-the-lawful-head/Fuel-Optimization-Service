@@ -1213,7 +1213,7 @@ namespace FBOLinx.Web.Services
                 await _context.BulkInsertOrUpdateAsync(_LiveDataToInsert, config =>
                 {
                     config.WithHoldlock = false;
-                    config.BatchSize = 1000;
+                    config.BatchSize = 5000;
                 });
             if (_LiveDataToDelete?.Count > 0)
                 await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
