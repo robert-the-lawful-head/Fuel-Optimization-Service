@@ -734,15 +734,15 @@ namespace FBOLinx.Web.Services
             });
 
             _LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
-                .GroupBy(x => x.Oid)
+                .GroupBy(x => x.Id)
                 .Select(x => x.First())
                 .ToList();
 
-            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Oid)
+            _LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Id)
                 .Select(x => x.First()).ToList();
 
             _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
-                .GroupBy(x => x.Oid)
+                .GroupBy(x => x.Id)
                 .Select(x => x.First())
                 .Where(x =>
                 {
