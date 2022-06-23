@@ -1205,7 +1205,7 @@ namespace FBOLinx.Web.Services
         {
             await using var transaction = await _context.Database.BeginTransactionAsync();
             if (_LiveDataToInsert != null)
-                await _context.BulkInsertAsync(_LiveDataToInsert);
+                await _context.BulkInsertAsync(_LiveDataToInsert, config => config.WithHoldlock = false);
             if (_LiveDataToUpdate != null)
                 await _context.BulkUpdateAsync(_LiveDataToUpdate);
             if (_LiveDataToDelete != null)
