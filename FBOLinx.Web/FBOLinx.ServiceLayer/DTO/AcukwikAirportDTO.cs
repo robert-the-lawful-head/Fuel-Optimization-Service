@@ -7,7 +7,7 @@ namespace FBOLinx.Service.Mapping.Dto
 {
     public class AcukwikAirportDTO : BaseEntityModelDTO<AcukwikAirport>, IEntityModelDTO<AcukwikAirport, int>
     {
-        public int Id { get; set; }
+        public int Oid { get; set; }
         public string Icao { get; set; }
         public string Iata { get; set; }
         public string Faa { get; set; }

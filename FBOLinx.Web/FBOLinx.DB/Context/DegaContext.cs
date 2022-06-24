@@ -36,10 +36,10 @@ namespace FBOLinx.DB.Context
         {
             modelBuilder.Entity<AcukwikAirport>(entity =>
             {
-                entity.HasIndex(e => new { AirportId = e.Id, e.Iata, e.Icao })
+                entity.HasIndex(e => new { AirportId = e.Oid, e.Iata, e.Icao })
                     .HasName("INX_ICAO_AirportID_IATA");
 
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Oid).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<AcukwikFbohandlerDetail>(entity =>
@@ -56,7 +56,7 @@ namespace FBOLinx.DB.Context
 
             modelBuilder.Entity<SWIMFlightLeg>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(e => e.Oid)
                     .HasName("PK_SWIMFlightLegs_OID");
                 entity.HasIndex(x => new { x.AircraftIdentification, x.DepartureICAO, x.ArrivalICAO, x.ATD })
                     .HasName("IX_SWIMFlightLegs_TailNumber_DepartureICAO_ArrivalICAO_ATD");
@@ -64,7 +64,7 @@ namespace FBOLinx.DB.Context
 
             modelBuilder.Entity<SWIMFlightLegData>(entity =>
             {
-                entity.HasKey(e => e.Id)
+                entity.HasKey(e => e.Oid)
                     .HasName("PK_SWIMFlightLegData_OID");
 
                 entity.HasOne(data => data.SWIMFlightLeg)

@@ -5,7 +5,7 @@ namespace FBOLinx.ServiceLayer.DTO
 {
     public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
     {
-        public int Id { get; set; }
+        public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
         public string AtcFlightNumber { get; set; }
         public int? AltitudeInStandardPressure { get; set; }

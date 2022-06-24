@@ -55,7 +55,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 missedQuoteLogDto.CustomerId = missedQuoteLog.CustomerId.GetValueOrDefault();
                 missedQuoteLogDto.Emailed = missedQuoteLog.Emailed.GetValueOrDefault();
                 missedQuoteLogDto.FboId = missedQuoteLog.FboId;
-                missedQuoteLogDto.Oid = missedQuoteLog.Id;
+                missedQuoteLogDto.Oid = missedQuoteLog.Oid;
                 recentMissedQuotedList.Add(missedQuoteLogDto);
             }
 

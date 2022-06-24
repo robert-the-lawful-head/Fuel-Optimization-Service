@@ -36,13 +36,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         //TODO: Move these to entity service when Irving is ready
         public async Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId)
         {
-            var airport = await _degaContext.AcukwikAirports.FirstOrDefaultAsync(x => x.Id == acukwikAirportId);
+            var airport = await _degaContext.AcukwikAirports.FirstOrDefaultAsync(x => x.Oid == acukwikAirportId);
             return airport;
         }
 
         public async Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds)
         {
-            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Id)).ToListAsync();
+            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).ToListAsync();
             return airports;
         }
     }

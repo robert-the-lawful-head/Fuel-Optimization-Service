@@ -78,7 +78,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 if (existingFlightLeg != null)
                 {
                     DateTime latestMessageTimestamp = existingFlightLeg.SWIMFlightLegDataMessages.Max(x => x.MessageTimestamp);
-                    DateTime latestExistingETA = existingFlightLeg.SWIMFlightLegDataMessages.OrderByDescending(x => x.Id).First().ETA;
+                    DateTime latestExistingETA = existingFlightLeg.SWIMFlightLegDataMessages.OrderByDescending(x => x.Oid).First().ETA;
                     foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
                     {
                         double messageTimestampThreshold = Math.Abs((flightLegDataMessageDto.MessageTimestamp - latestMessageTimestamp).TotalSeconds);
@@ -87,7 +87,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                              flightLegDataMessageDto.Altitude != null || flightLegDataMessageDto.Latitude != null ||
                              flightLegDataMessageDto.Longitude != null || flightLegDataMessageDto.ETA != latestExistingETA))
                         {
-                            flightLegDataMessageDto.SWIMFlightLegId = existingFlightLeg.Id;
+                            flightLegDataMessageDto.SWIMFlightLegId = existingFlightLeg.Oid;
                             flightLegDataMessagesToInsert.Add(flightLegDataMessageDto);
                         }
                     }
@@ -173,7 +173,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegs)
             {
                 FlightLegDTO dto = new FlightLegDTO();
-                dto.Id = swimFlightLegDto.Id;
+                dto.Id = swimFlightLegDto.Oid;
                 dto.FlightNumber = swimFlightLegDto.AircraftIdentification;
                 dto.DepartureICAO = swimFlightLegDto.DepartureICAO;
                 dto.ArrivalICAO = swimFlightLegDto.ArrivalICAO;
@@ -199,7 +199,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
                 
                 SWIMFlightLegDataDTO latestSWIMMessage =
-                    swimFlightLegDto.SWIMFlightLegDataMessages.OrderByDescending(x => x.Id).First();
+                    swimFlightLegDto.SWIMFlightLegDataMessages.OrderByDescending(x => x.Oid).First();
                 dto.ActualSpeed = latestSWIMMessage.ActualSpeed;
                 dto.Altitude = latestSWIMMessage.Altitude;
                 dto.Latitude = latestSWIMMessage.Latitude;

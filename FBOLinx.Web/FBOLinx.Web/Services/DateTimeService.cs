@@ -23,7 +23,7 @@ namespace FBOLinx.Web.Services
             var fboAcukwikId = await (from f in _context.Fbos where f.Oid == fboId select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
 
             var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                       join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Id
+                                       join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
                                        where afh.HandlerId == fboAcukwikId
                                        select aa).FirstOrDefaultAsync();
 

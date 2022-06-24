@@ -47,11 +47,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             List<CustomerAircraftsViewModel> result = await (
                from ca in _Context.CustomerAircrafts
                join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-               join c in _Context.Customers on cg.CustomerId equals c.Id
+               join c in _Context.Customers on cg.CustomerId equals c.Oid
                where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
                select new CustomerAircraftsViewModel
                {
-                   Oid = ca.Id,
+                   Oid = ca.Oid,
                    GroupId = ca.GroupId,
                    CustomerId = ca.CustomerId,
                    Company = cg.Company,
@@ -98,8 +98,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             List<CustomerAircraftsViewModel> result = await (
                from ca in _Context.CustomerAircrafts
                join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-               join c in _Context.Customers on cg.CustomerId equals c.Id
-               join cct in _Context.CustomCustomerTypes on new { fboId, CustomerId = c.Id } equals new { fboId = cct.Fboid, cct.CustomerId }
+               join c in _Context.Customers on cg.CustomerId equals c.Oid
+               join cct in _Context.CustomCustomerTypes on new { fboId, CustomerId = c.Oid } equals new { fboId = cct.Fboid, cct.CustomerId }
                where ca.GroupId == groupId && cct.Fboid == fboId && !string.IsNullOrEmpty(ca.TailNumber)
                select new CustomerAircraftsViewModel
                {

@@ -52,7 +52,7 @@ namespace FBOLinx.Web.Controllers
             var role = JwtManager.GetClaimedRole(_HttpContextAccessor);
 
             return await _context.Group
-                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Id == groupId || role == UserRoles.Conductor))
+                        .Where(x => !string.IsNullOrEmpty(x.GroupName) && (x.Oid == groupId || role == UserRoles.Conductor))
                         .Include(x => x.Users)
                         .OrderBy((x => x.GroupName))
                         .ToListAsync();
@@ -93,7 +93,7 @@ namespace FBOLinx.Web.Controllers
                             .OrderBy((x => x.GroupName))
                             .Select(x => new GroupViewModel
                             {
-                                Id = x.Id,
+                                Oid = x.Oid,
                                 GroupName = x.GroupName,
                                 Username = x.Username,
                                 Password = x.Password,
@@ -109,10 +109,10 @@ namespace FBOLinx.Web.Controllers
 
             foreach(var group in groups)
             {
-                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Id).ToList();
+                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
                 group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
-                group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Id);
-                group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Id);
+                group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Oid);
+                group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
             }
 
             var fboPrices = from f in _context.Fboprices
@@ -152,7 +152,7 @@ namespace FBOLinx.Web.Controllers
 
             groups.ForEach(g =>
             {
-                var groupFbos = fbos.Where(f => f.GroupId == g.Id).ToList();
+                var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
                 g.FboCount = groupFbos.Count();
                 g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
                 g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
@@ -214,7 +214,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            bool groupActiveStatus = await _context.Group.Where(g => g.Id.Equals(group.Id))
+            bool groupActiveStatus = await _context.Group.Where(g => g.Oid.Equals(group.Oid))
                                                          .Select(g => g.Active)
                                                          .FirstAsync();
             if (groupActiveStatus != group.Active)
@@ -264,7 +264,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Group.Any(e => e.Id == id))
+                if (!_context.Group.Any(e => e.Oid == id))
                 {
                     return NotFound();
                 }
@@ -296,7 +296,7 @@ namespace FBOLinx.Web.Controllers
                 return Ok(ex.Message);
             }
 
-            return CreatedAtAction("GetGroup", new { id = group.Id }, group);
+            return CreatedAtAction("GetGroup", new { id = group.Oid }, group);
         }
 
         [HttpPost("merge-groups")]

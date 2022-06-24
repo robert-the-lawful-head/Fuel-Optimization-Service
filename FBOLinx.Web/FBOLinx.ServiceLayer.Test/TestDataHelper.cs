@@ -47,7 +47,7 @@ namespace FBOLinx.ServiceLayer.Test
         public static CustomerInfoByGroup CreateCustomerInfoByGroup()
         {
             CustomerInfoByGroup customerInfoByGroup = new CustomerInfoByGroup();
-            customerInfoByGroup.Id = 1;
+            customerInfoByGroup.Oid = 1;
             customerInfoByGroup.CustomerId = 1;
 
             return customerInfoByGroup;

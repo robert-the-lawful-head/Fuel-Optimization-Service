@@ -23,7 +23,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public async Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId)
         {
             var tailNumberList = from ca in _context.CustomerAircrafts
-                                 join ap in _context.AircraftPrices on ca.Id equals ap.CustomerAircraftId
+                                 join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
                                  where ap.PriceTemplateId == aircraftPricingTemplateId
                                        && ca.CustomerId == customerId
                                        && ca.GroupId == groupId

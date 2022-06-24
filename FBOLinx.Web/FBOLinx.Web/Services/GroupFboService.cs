@@ -45,11 +45,11 @@ namespace FBOLinx.Web.Services
                 _context.Group.Add(group);
                 await _context.SaveChangesAsync();
 
-                if (group.Id != 0)
+                if (group.Oid != 0)
                 {
                     try
                     {
-                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Id + "");
+                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
                     }
                     catch (Exception ex)
                     {
@@ -63,7 +63,7 @@ namespace FBOLinx.Web.Services
                             using (var scope = _serviceScopeFactory.CreateScope())
                             {
                                 var db = scope.ServiceProvider.GetService<FboLinxContext>();
-                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Id, _fuelerLinxApiService);
+                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid, _fuelerLinxApiService);
                             }
 
                         });
@@ -87,9 +87,9 @@ namespace FBOLinx.Web.Services
             if (request.GroupId.GetValueOrDefault() == 0)
             {
                 var group = await CreateNewGroup(request.Group);
-                if (group == null || group.Id == 0)
+                if (group == null || group.Oid == 0)
                     throw new Exception("There was an issue creating a new group.");
-                request.GroupId = group.Id;
+                request.GroupId = group.Oid;
             }
 
             Fbos fbo = new Fbos

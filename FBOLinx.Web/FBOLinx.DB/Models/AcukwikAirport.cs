@@ -10,7 +10,7 @@ namespace FBOLinx.DB.Models
     {
         [Key]
         [Column("Airport_ID")]
-        public override int Id { get; set; }
+        public override int Oid { get; set; }
 
         [Column("ICAO")]
         [StringLength(255)]

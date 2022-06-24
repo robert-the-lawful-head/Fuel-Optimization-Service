@@ -8,7 +8,7 @@ namespace FBOLinx.ServiceLayer.DTO
 {
     public class GroupDTO : BaseEntityModelDTO<DB.Models.Group>, IEntityModelDTO<DB.Models.Group, int>
     {
-        public int Id { get; set; }
+        public int Oid { get; set; }
         [StringLength(50)]
         public string GroupName { get; set; }
         [StringLength(50)]

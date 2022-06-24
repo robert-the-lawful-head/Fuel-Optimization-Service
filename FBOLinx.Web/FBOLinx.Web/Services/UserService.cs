@@ -46,7 +46,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Id == user.GroupId);
+                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
 
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())
@@ -109,7 +109,7 @@ namespace FBOLinx.Web.Services
         public async Task<User> CreateGroupLoginIfNeeded(Group groupRecord)
         {
             User user = await _Context.User.Where(
-                (x => x.GroupId == groupRecord.Id && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+                (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
             if (user != null)
                 return user;
 
@@ -120,7 +120,7 @@ namespace FBOLinx.Web.Services
             {
                 FirstName = groupRecord.GroupName,
                 FboId = 0,
-                GroupId = groupRecord.Id,
+                GroupId = groupRecord.Oid,
                 LastName = "",
                 Password = _EncryptionService.HashPassword(groupRecord.Password),
                 Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? UserRoles.Conductor : UserRoles.GroupAdmin,
@@ -153,7 +153,7 @@ namespace FBOLinx.Web.Services
         private async Task<User> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
         {
             var fbo = from f in _Context.Fbos
-                      join g in _Context.Group on f.GroupId equals g.Id
+                      join g in _Context.Group on f.GroupId equals g.Oid
                       where g.Isfbonetwork == false && f.Username == username && (f.Password == password || resetPassword)
                       select f;
 

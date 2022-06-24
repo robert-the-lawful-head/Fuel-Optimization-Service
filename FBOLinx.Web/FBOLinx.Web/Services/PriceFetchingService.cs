@@ -85,7 +85,7 @@ namespace FBOLinx.Web.Services
                     continue;
 
                 List<CustomerWithPricing> pricing =
-                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Id, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
+                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
                 List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).ToListAsync();
 
@@ -231,7 +231,7 @@ namespace FBOLinx.Web.Services
                                               select new CustomerWithPricing()
                                               {
                                                   CustomerId = cg.CustomerId,
-                                                  CustomerInfoByGroupId = cg.Id,
+                                                  CustomerInfoByGroupId = cg.Oid,
                                                   Company = cg.Company,
                                                   PricingTemplateId = (pt == null ? 0 : pt.Oid),
                                                   DefaultCustomerType = cg.CustomerType,

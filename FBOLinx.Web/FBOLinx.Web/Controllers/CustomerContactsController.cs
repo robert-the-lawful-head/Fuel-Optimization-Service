@@ -133,12 +133,12 @@ namespace FBOLinx.Web.Controllers
             }
 
             var emails = await (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
-                                join c in _context.Customers on cg.CustomerId equals c.Id
+                                join c in _context.Customers on cg.CustomerId equals c.Oid
                                 join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
-                                join custc in _context.CustomerContacts on c.Id equals custc.CustomerId
+                                join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                 join co in _context.Contacts on custc.ContactId equals co.Oid
                                 join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Id, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
                                 from cibf in leftJoinCIBF.DefaultIfEmpty()
                                 where (cg.Active ?? false)
                                       && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)

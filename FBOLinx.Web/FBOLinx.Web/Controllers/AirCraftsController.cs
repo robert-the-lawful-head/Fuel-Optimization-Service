@@ -55,7 +55,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.Id == id).FirstOrDefaultAsync();
+            var customerAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).FirstOrDefaultAsync();
 
             if (customerAircraft == null)
             {
@@ -65,7 +65,7 @@ namespace FBOLinx.Web.Controllers
             var aircraft = await _aircraftService.GetAircrafts(customerAircraft.AircraftId);
             var result = new
             {
-                Oid = customerAircraft.Id,
+                Oid = customerAircraft.Oid,
                 customerAircraft.AircraftId,
                 customerAircraft.TailNumber,
                 customerAircraft.GroupId,

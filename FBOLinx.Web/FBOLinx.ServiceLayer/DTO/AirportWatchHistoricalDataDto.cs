@@ -6,7 +6,7 @@ namespace FBOLinx.Service.Mapping.Dto
 {
     public class AirportWatchHistoricalDataDto : BaseEntityModelDTO<DB.Models.AirportWatchHistoricalData>, IEntityModelDTO<DB.Models.AirportWatchHistoricalData, int>
     {
-        public int Id { get; set; }
+        public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
         public string AtcFlightNumber { get; set; }
         public int? AltitudeInStandardPressure { get; set; }

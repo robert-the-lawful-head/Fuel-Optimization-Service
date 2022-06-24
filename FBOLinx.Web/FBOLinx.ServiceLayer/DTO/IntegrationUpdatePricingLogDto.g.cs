@@ -7,7 +7,7 @@ namespace FBOLinx.ServiceLayer.DTO
 {
     public class IntegrationUpdatePricingLogDto : BaseEntityModelDTO<DB.Models.IntegrationUpdatePricingLog>, IEntityModelDTO<DB.Models.IntegrationUpdatePricingLog, int>
     {
-        public int Id { get; set; }
+        public int Oid { get; set; }
         public string Request { get; set; }
         public string Response { get; set; }
         public int? FboId { get; set; } = 0;

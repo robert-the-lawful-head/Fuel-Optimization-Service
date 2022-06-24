@@ -100,12 +100,12 @@ namespace FBOLinx.Web.Services
             }
 
             Models.Responses.PriceLookupResponse customerPricing = null;
-            if (customerInfoByGroup?.Id > 0 && customerAircrafts?.Id > 0)
+            if (customerInfoByGroup?.Oid > 0 && customerAircrafts?.Oid > 0)
             {
                 customerPricing = await _fboPricesService.GetFuelPricesForCustomer(
                     new PriceLookupRequest()
                     {
-                        CustomerInfoByGroupId = customerInfoByGroup.Id,
+                        CustomerInfoByGroupId = customerInfoByGroup.Oid,
                         DepartureType = Core.Enums.ApplicableTaxFlights.DomesticOnly,
                         FBOID = fboId,
                         FlightTypeClassification = Core.Enums.FlightTypeClassifications.Private,
@@ -117,7 +117,7 @@ namespace FBOLinx.Web.Services
 
             return new AircraftWatchLiveData()
             {
-                CustomerInfoBygGroupId = customerInfoByGroup?.Id,
+                CustomerInfoBygGroupId = customerInfoByGroup?.Oid,
                 TailNumber = aircraftWatchLiveData?.TailNumber,
                 AtcFlightNumber = aircraftWatchLiveData?.AtcFlightNumber,
                 AircraftTypeCode = aircraftWatchLiveData?.AircraftTypeCode,
@@ -192,7 +192,7 @@ namespace FBOLinx.Web.Services
                                                         from ca in _context.CustomerAircrafts
                                                         join cig in _context.CustomerInfoByGroup on new { ca.CustomerId, GroupId = ca.GroupId ?? 0 }
                                                             equals new { cig.CustomerId, cig.GroupId }
-                                                        join cu in _context.Customers on cig.CustomerId equals cu.Id
+                                                        join cu in _context.Customers on cig.CustomerId equals cu.Oid
                                                         where ca.GroupId == groupId
                                                         select new
                                                         {
@@ -201,7 +201,7 @@ namespace FBOLinx.Web.Services
                                                             ca.TailNumber,
                                                             ca.AircraftId,
                                                             cig.Company,
-                                                            CustomerInfoByGroupID = cig.Id,
+                                                            CustomerInfoByGroupID = cig.Oid,
                                                             cu.FuelerlinxId
                                                         }
                                                 ) on awhd.TailNumber equals ca.TailNumber
@@ -210,7 +210,7 @@ namespace FBOLinx.Web.Services
                                                 where awhd.AircraftPositionDateTimeUtc >= timelimit
                                                 select new AirportWatchLiveData
                                                 {
-                                                    Id = awhd.Id,
+                                                    Oid = awhd.Oid,
                                                     Longitude = awhd.Longitude,
                                                     Latitude = awhd.Latitude,
                                                     GpsAltitude = awhd.GpsAltitude,
@@ -245,7 +245,7 @@ namespace FBOLinx.Web.Services
                                           where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.Latitude, fr.Longitude, 1, Geolocation.DistanceUnit.Miles) <= _distance
                                           select new AirportWatchLiveData
                                           {
-                                              Id = fr.Id,
+                                              Oid = fr.Oid,
                                               Longitude = fr.Longitude,
                                               Latitude = fr.Latitude,
                                               GpsAltitude = fr.GpsAltitude,
@@ -359,7 +359,7 @@ namespace FBOLinx.Web.Services
                                     where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
                                     select new AirportWatchLiveDataDto
                                     {
-                                        Id = fr.awhd.Id,
+                                        Oid = fr.awhd.Oid,
                                         Longitude = fr.awhd.Longitude,
                                         Latitude = fr.awhd.Latitude,
                                         GpsAltitude = fr.awhd.GpsAltitude,
@@ -670,7 +670,7 @@ namespace FBOLinx.Web.Services
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
-                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Id == a.Id) && !_LiveDataToDelete.Any(l => l.Id == a.Id)).FirstOrDefault();
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid)).FirstOrDefault();
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
@@ -802,7 +802,7 @@ namespace FBOLinx.Web.Services
                                          (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
                                         select new
                                         {
-                                            Oid = awhd.Id,
+                                            Oid = awhd.Oid,
                                             awhd.AircraftHexCode,
                                             awhd.AtcFlightNumber,
                                             awhd.AircraftPositionDateTimeUtc,
@@ -825,7 +825,7 @@ namespace FBOLinx.Web.Services
                                                    ca.TailNumber,
                                                    ca.AircraftId,
                                                    cig.Company,
-                                                   CustomerInfoByGroupID = cig.Id,
+                                                   CustomerInfoByGroupID = cig.Oid,
                                                }).ToListAsync();
 
             var joinedHistoricalData = (from hd in historicalData
@@ -883,7 +883,7 @@ namespace FBOLinx.Web.Services
                     .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
                     .Select(awhd => new
                     {
-                        Oid = awhd.Id,
+                        Oid = awhd.Oid,
                         awhd.AircraftHexCode,
                         awhd.AtcFlightNumber,
                         awhd.AircraftPositionDateTimeUtc,
@@ -928,7 +928,7 @@ namespace FBOLinx.Web.Services
                                             CustomerId = cad == null ? 0 : cad.CustomerId,
                                             TailNumber = cad == null ? hd.TailNumber : cad.TailNumber,
                                             AircraftId = cad == null ? 0 : cad.AircraftId,
-                                            CustomerInfoByGroupID = cad == null ? 0 : cad.Customer.CustomerInfoByGroup.Id,
+                                            CustomerInfoByGroupID = cad == null ? 0 : cad.Customer.CustomerInfoByGroup.Oid,
                                         }
                                         into groupedResult
                                         select new FboHistoricalDataModel

@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != customers.Id)
+            if (id != customers.Oid)
             {
                 return BadRequest();
             }
@@ -137,7 +137,7 @@ namespace FBOLinx.Web.Controllers
             _context.Customers.Add(customers);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomers", new { id = customers.Id }, customers);
+            return CreatedAtAction("GetCustomers", new { id = customers.Oid }, customers);
         }
 
         // DELETE: api/Customers/5
@@ -187,12 +187,12 @@ namespace FBOLinx.Web.Controllers
                 _context.Customers.Add(newC);
                 await _context.SaveChangesAsync();
 
-                if(newC.Id != 0)
+                if(newC.Oid != 0)
                 {
-                    custId = newC.Id;
-                    customer.CompanyId = newC.Id;
+                    custId = newC.Oid;
+                    customer.CompanyId = newC.Oid;
                     CustomerInfoByGroup cibg = new CustomerInfoByGroup();
-                    cibg.CustomerId = newC.Id;
+                    cibg.CustomerId = newC.Oid;
                     cibg.GroupId = customer.groupid;
                     cibg.Company = newC.Company;
                     if(newC.Active == true)
@@ -287,7 +287,7 @@ namespace FBOLinx.Web.Controllers
 
         private bool CustomersExists(int id)
         {
-            return _context.Customers.Any(e => e.Id == id);
+            return _context.Customers.Any(e => e.Oid == id);
         }
     }
 }

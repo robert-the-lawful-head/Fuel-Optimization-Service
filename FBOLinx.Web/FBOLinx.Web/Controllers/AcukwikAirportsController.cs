@@ -93,7 +93,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != acukwikAirport.Id)
+            if (id != acukwikAirport.Oid)
             {
                 return BadRequest();
             }
@@ -135,7 +135,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (DbUpdateException)
             {
-                if (AcukwikAirportsExists(acukwikAirport.Id))
+                if (AcukwikAirportsExists(acukwikAirport.Oid))
                 {
                     return new StatusCodeResult(StatusCodes.Status409Conflict);
                 }
@@ -145,7 +145,7 @@ namespace FBOLinx.Web.Controllers
                 }
             }
 
-            return CreatedAtAction("GetAcukwikAirports", new { id = acukwikAirport.Id }, acukwikAirport);
+            return CreatedAtAction("GetAcukwikAirports", new { id = acukwikAirport.Oid }, acukwikAirport);
         }
 
         // DELETE: api/AcukwikAirports/5
@@ -182,11 +182,11 @@ namespace FBOLinx.Web.Controllers
                                             .Where(x => !string.IsNullOrEmpty(x.Icao) && x.Icao.ToLower() == icao.ToLower())
                                             .FirstOrDefaultAsync();
 
-            if (airport == null || airport.Id == 0)
+            if (airport == null || airport.Oid == 0)
                 return NotFound("No record found for that icao.");
 
             var results = await _context.AcukwikFbohandlerDetail
-                                            .Where(x => x.AirportId == airport.Id)
+                                            .Where(x => x.AirportId == airport.Oid)
                                             .ToListAsync();
 
             if (results == null)
@@ -197,7 +197,7 @@ namespace FBOLinx.Web.Controllers
 
         private bool AcukwikAirportsExists(int id)
         {
-            return _context.AcukwikAirports.Any(e => e.Id == id);
+            return _context.AcukwikAirports.Any(e => e.Oid == id);
         }
 
         private IQueryable<AcukwikAirport> GetAllAirports()

@@ -140,7 +140,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             //Load customer assignments by template ID
             var customerAssignments = await (from cibg in _context.CustomerInfoByGroup
                                              join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
-                                             join c in _context.Customers on cibg.CustomerId equals c.Id
+                                             join c in _context.Customers on cibg.CustomerId equals c.Oid
                                              where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
                                              select new
                                              { CustomerType = cct.CustomerType }).ToListAsync();
@@ -394,9 +394,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
             foreach (var t in templatesWithEmailContent)
             {
                 t.CustomerEmails = await(from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
-                                         join c in _context.Customers on cg.CustomerId equals c.Id
+                                         join c in _context.Customers on cg.CustomerId equals c.Oid
                                          join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
-                                         join custc in _context.CustomerContacts on c.Id equals custc.CustomerId
+                                         join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                          join co in _context.Contacts on custc.ContactId equals co.Oid
                                          join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
                                          join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = co.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
@@ -416,7 +416,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             return await(from cg in _context.CustomerInfoByGroup
-                               join c in _context.Customers on cg.CustomerId equals c.Id
+                               join c in _context.Customers on cg.CustomerId equals c.Oid
                                join cct in _context.CustomCustomerTypes on new
                                {
                                    customerId = cg.CustomerId,
@@ -437,7 +437,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             var aircraftPricesResult = await(from ap in _context.AircraftPrices
-                                             join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Id
+                                             join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
                                              join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
                                              where ca.CustomerId == customer.CustomerId
                                                    && ca.GroupId == groupId
@@ -462,7 +462,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         public async Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int fboId, int groupId)
         {
             var result = await (from cg in _context.CustomerInfoByGroup
-                                join c in _context.Customers on cg.CustomerId equals c.Id
+                                join c in _context.Customers on cg.CustomerId equals c.Oid
                                 join cct in _context.CustomCustomerTypes on new
                                 {
                                     customerId = cg.CustomerId,

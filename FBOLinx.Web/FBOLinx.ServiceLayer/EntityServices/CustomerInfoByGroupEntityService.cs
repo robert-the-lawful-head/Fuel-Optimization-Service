@@ -23,7 +23,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
             return await (from cibg in _context.CustomerInfoByGroup
                           join cct in _context.CustomCustomerTypes on cibg.CustomerId equals cct.CustomerId
-                          join c in _context.Customers on cibg.CustomerId equals c.Id
+                          join c in _context.Customers on cibg.CustomerId equals c.Oid
                           where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
                           select new CustomerTypeView()
                           { CustomerType = cct.CustomerType }).ToListAsync();
