@@ -800,29 +800,34 @@ namespace FBOLinx.Web.Controllers
 
                     foreach (var fbo in fbos)
                     {
-                        var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
-                        var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
-                        var isEmailed = false;
+                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).FirstOrDefaultAsync();
 
-                        if (recentMissedQuote.Count == 0)
+                        if (customerGroup != null && customerGroup.Oid > 0)
                         {
-                            if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                            var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
+                            var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                            var isEmailed = false;
+
+                            if (recentMissedQuote.Count == 0)
                             {
-                                var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                                if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                {
+                                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
-                                if (toEmails.Count > 0)
-                                    await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                                    if (toEmails.Count > 0)
+                                        await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
 
-                                isEmailed = true;
+                                    isEmailed = true;
+                                }
                             }
-                        }
 
-                        var missedQuote = new MissedQuoteLogDto();
-                        missedQuote.CreatedDate = DateTime.UtcNow;
-                        missedQuote.FboId = fbo.Oid;
-                        missedQuote.CustomerId = customer.Oid;
-                        missedQuote.Emailed = isEmailed;
-                        await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                            var missedQuote = new MissedQuoteLogDto();
+                            missedQuote.CreatedDate = DateTime.UtcNow;
+                            missedQuote.FboId = fbo.Oid;
+                            missedQuote.CustomerId = customer.Oid;
+                            missedQuote.Emailed = isEmailed;
+                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                        }
                     }
                 }
 
