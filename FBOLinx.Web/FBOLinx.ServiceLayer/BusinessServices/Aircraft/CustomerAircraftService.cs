@@ -79,6 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                     var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
                     x.PricingTemplateId = pricingTemplate?.Oid;
                     x.PricingTemplateName = pricingTemplate?.Name;
+                    x.IsCompanyPricing = true;
                 }
 
                 var aircraft = allAircraft.FirstOrDefault(a => a.AircraftId == x.AircraftId);

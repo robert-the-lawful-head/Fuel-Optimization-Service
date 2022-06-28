@@ -168,6 +168,11 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
             )
             .subscribe((data: any) => {
                 this.aircraftData = data;
+                this.aircraftData.forEach((result) => {
+                    if (result.isCompanyPricing) {
+                        result.pricingTemplateId = null;
+                    }
+                });
             });
     }
 
