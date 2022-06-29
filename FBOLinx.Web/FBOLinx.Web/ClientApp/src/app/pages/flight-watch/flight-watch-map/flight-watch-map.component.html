@@ -14,8 +14,7 @@
     >
 </nav>-->
 <div hidden="true" >
-    <app-aircraft-popup-container #aircraftPopupContainer ></app-aircraft-popup-container>
-    <!-- <app-flight-watch-aircraft-info-dialog ></app-flight-watch-aircraft-info-dialog> -->
+    <app-aircraft-popup-container #aircraftPopupContainer  [flightData]="popupData" [fboId]="fboId" [groupId]="groupId" [isLoading]="isAircraftDataLoading"></app-aircraft-popup-container>
 </div>
 
 <div id="flight-watch-map"></div>

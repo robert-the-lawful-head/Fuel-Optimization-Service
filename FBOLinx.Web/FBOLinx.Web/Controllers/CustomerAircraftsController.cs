@@ -67,7 +67,7 @@ namespace FBOLinx.Web.Controllers
                                            {
                                                ca.CustomerId,
                                                ca.AircraftId,
-                                               ca.Oid,
+                                               Oid = ca.Oid,
                                                Size = (ca.Size.HasValue && ca.Size.Value != AircraftSizes.NotSet) || ac == null
                                                    ? ca.Size
                                                    : (AircraftSizes)(ac.Size ?? 0),

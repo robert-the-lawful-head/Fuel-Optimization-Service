@@ -2,7 +2,10 @@ import { ElementRef } from '@angular/core';
 import { timeStamp } from 'console';
 import * as mapboxgl from 'mapbox-gl';
 import { stringify } from 'querystring';
+import { FlightWatch } from 'src/app/models/flight-watch';
+import { AircraftPopupContainerComponent } from 'src/app/pages/flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 import { AircraftImageData } from 'src/app/pages/flight-watch/flight-watch-map/aircraft-images';
+import { FlightWatchMapComponent } from 'src/app/pages/flight-watch/flight-watch-map/flight-watch-map.component';
 import { environment } from 'src/environments/environment';
 export interface PopUpProps{
     isPopUpOpen: boolean;
@@ -179,37 +182,8 @@ export abstract class MapboxglBase {
             this.map.getCanvas().style.cursor = '';
         });
     }
-    createPopUpOnClickRenderComponent(layerId: string, elemRef: ElementRef): void{
-        this.map.on("click", layerId, (e) => {
-            this.closeAllPopUps();
-            let coordinates= (this.currentPopup.isPopUpOpen)
-            ? this.currentPopup.coordinates
-            :e.features[0].geometry['coordinates'].slice();
-
-            const id = e.features[0].properties.id;
-
-            this.currentPopup.isPopUpOpen = true;
-            this.currentPopup.coordinates = coordinates;
-            this.currentPopup.popupId = id;
-
-            this.openPopupRenderComponent(coordinates,elemRef,this.currentPopup);
-          });
-    }
-    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):void{
-        console.log(currentPopup);
-        new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setDOMContent(elemRef.nativeElement)
-            .addTo(this.map)
-            .on('close', function(e) {
-                currentPopup.isPopUpOpen = false;
-                currentPopup.coordinates = null;
-                currentPopup.popupId = null;
-            });
-    }
     closeAllPopUps(){
         const elements = Array.from(document.getElementsByClassName('mapboxgl-popup'));
-
         elements.forEach(elem => {
             elem.remove();
         });
@@ -234,5 +208,18 @@ export abstract class MapboxglBase {
             img.onerror = reject;
             img.src = src;
         });
+    }
+    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):void{
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setDOMContent(elemRef.nativeElement)
+            .setMaxWidth("none")
+            .addTo(this.map)  
+            .on('close', function(e) {
+                console.log("pos loe sta cerrando");
+                currentPopup.isPopUpOpen = false;
+                currentPopup.coordinates = null;
+                currentPopup.popupId = null;
+            });
     }
 }

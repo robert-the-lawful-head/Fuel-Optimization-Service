@@ -65,7 +65,7 @@ namespace FBOLinx.Web.Controllers
             var aircraft = await _aircraftService.GetAircrafts(customerAircraft.AircraftId);
             var result = new
             {
-                customerAircraft.Oid,
+                Oid = customerAircraft.Oid,
                 customerAircraft.AircraftId,
                 customerAircraft.TailNumber,
                 customerAircraft.GroupId,

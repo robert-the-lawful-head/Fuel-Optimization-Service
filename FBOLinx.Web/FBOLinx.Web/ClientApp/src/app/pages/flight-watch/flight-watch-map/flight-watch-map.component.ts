@@ -1,7 +1,6 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    ContentChild,
     ElementRef,
     EventEmitter,
     Input,
@@ -9,11 +8,8 @@ import {
     OnDestroy,
     OnInit,
     Output,
-    QueryList,
     SimpleChanges,
-    TemplateRef,
     ViewChild,
-    ViewChildren,
 } from '@angular/core';
 import { isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
@@ -22,7 +18,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from "../../../services/airportfbogeofenceclusters.service";
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
-import { FlightWatch } from '../../../models/flight-watch';
+import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportFboGeoFenceCluster } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-cluster';
 import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
 import { FlightWatchMapService } from './flight-watch-map-services/flight-watch-map.service';
@@ -41,14 +37,30 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 })
 export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnChanges, OnDestroy {
     @Input() center: mapboxgl.LngLatLike;
-    @Input() data: {
-        [oid: string]: FlightWatch;
-    };
+    @Input() data: FlightWatchDictionary;
+    @Input() aircraftData: FlightWatch;    
     @Input() isStable: boolean;
     @Output() markerClicked = new EventEmitter<FlightWatch>();
 
-    @ViewChild('popup') popup: AircraftPopupContainerComponent;
-    @ViewChild('aircraftPopupContainer', {read: ElementRef}) aircraftPopupContainer!: ElementRef;
+    @ViewChild('aircraftPopupContainer') aircraftPopupContainer: AircraftPopupContainerComponent;
+    @ViewChild('aircraftPopupContainer', {read: ElementRef, static: false}) aircraftPopupContainerRef!: ElementRef;
+
+    //popup
+    public popupData: Aircraftwatch = {
+        customerInfoBygGroupId : 0,
+        tailNumber: '',
+        atcFlightNumber: '',
+        aircraftTypeCode: '',
+        isAircraftOnGround: false,
+        company: '',
+        aircraftMakeModel: '',
+        lastQuote: '',
+        currentPricing: ''
+    };
+    public isAircraftDataLoading: boolean = true;
+    public fboId: any;
+    public groupId: any;
+
 
     // Map Options
     public styleLoaded = false;
@@ -76,9 +88,13 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         private fboFlightWatchService : FboFlightWatchService,
         private aircraftFlightWatchService : AircraftFlightWatchService) {
         super();
+        
     }
-
-    ngOnInit(): void {
+    ngAfterViewInit(){
+        this.fboId = this.sharedService.currentUser.fboId;
+        this.groupId = this.sharedService.currentUser.groupId;
+    }
+    ngOnInit(): void {        
         const refreshMapFlight = () => this.updateFlightOnMap();
 
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
@@ -119,6 +135,8 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         }));
     }
     ngOnChanges(changes: SimpleChanges): void {
+        if(changes.aircraftData) this.setPopUpContainerData(changes);
+
         const currentData = changes.data.currentValue;
         const oldData = changes.data.previousValue;
         if (!isEqual(currentData, oldData)) {
@@ -127,6 +145,10 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     }
     ngOnDestroy(): void {
         this.mapRemove();
+    }
+    setPopUpContainerData(changes){
+        this.popupData = changes.aircraftData.currentValue;
+        this.isAircraftDataLoading = false;
     }
     loadFlightOnMap(){
         var newflightsInMapBounds = this.getFlightsWithinMapBounds(this.getBounds());
@@ -149,9 +171,8 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         };
 
          source.setData(deita);
-         this.applyMouseFunctions(this.flightLayerId);
          this.closeAllPopUps();
-         this.createPopUpOnClickRenderComponent(this.flightLayerId,this.aircraftPopupContainer);
+         this.applyMouseFunctions(this.flightLayerId);
          this.setDefaultPopUpOpen(newflightsInMapBounds);
     }
     setDefaultPopUpOpen(flightsIdsOnMap:string[]):void{
@@ -159,8 +180,10 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
         if (!selectedFlight) return;
 
+        this.popupData = {...this.data[selectedFlight]};
+
         this.currentPopup.coordinates =[this.data[selectedFlight].longitude, this.data[selectedFlight].latitude];
-        this.openPopupRenderComponent(this.currentPopup.coordinates,this.aircraftPopupContainer,this.currentPopup);
+        this.openPopupRenderComponent(this.currentPopup.coordinates,this.aircraftPopupContainerRef,this.currentPopup);
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any{
         return keys(this.data).filter((id) => {
@@ -190,41 +213,23 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         this.onClick(id,(e) => this.clickHandler(e, this));
         this.addHoverPointerActions(this.flightLayerId);
     }
-    clickHandler(
+    async clickHandler(
         e: mapboxgl.MapMouseEvent & {
             features?: mapboxgl.MapboxGeoJSONFeature[];
         } & mapboxgl.EventData,
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
-        if (self.focusedMarkerId !== Number(id)) {
-            self.focusedMarkerId = id;
-        }
-        if (self.previousMarkerId && self.data[self.previousMarkerId] != null) {
-            var previousMarker = self.data[self.previousMarkerId];
-            self.setFlightWatchMarkerLayout(previousMarker);
-        }
-
-        var focusedMarker = self.data[id];
         self.markerClicked.emit(self.data[id]);
 
-        if (self.focusedMarkerId > 0) {
-            self.previousMarkerId = self.focusedMarkerId;
-        } else {
-            self.previousMarkerId = 0;
-        }
+        this.closeAllPopUps();
+        self.currentPopup.isPopUpOpen = true;
+        self.currentPopup.coordinates = [this.data[id].longitude, this.data[id].latitude];
+        self.currentPopup.popupId = id;
+        this.isAircraftDataLoading = true;
 
-        self.setFlightWatchMarkerLayout(focusedMarker);
-    }
-    private setFlightWatchMarkerLayout(marker){
-        return;
-        // need to check if this code is necesary, seems to be redundant until now
-        this.setLayoutProperty(
-            this.flightLayerId,
-            'icon-image',
-            `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(marker.aircraftTypeCode)}${this.focusedMarkerId == marker.oid ? '_reversed' : ''
-            }${marker?.fuelOrder != null ? '_release' : (marker?.isFuelerLinxCustomer ? '_fuelerlinx' : '')}`
-        );
+        self.openPopupRenderComponent(self.currentPopup.coordinates,self.aircraftPopupContainerRef,self.currentPopup);
+
     }
 
     getFbosAndLoad() {
