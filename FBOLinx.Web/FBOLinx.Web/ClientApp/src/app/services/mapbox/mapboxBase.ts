@@ -213,10 +213,9 @@ export abstract class MapboxglBase {
         new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
-            .setMaxWidth("none")
+            .setMaxWidth("330px")
             .addTo(this.map)  
             .on('close', function(e) {
-                console.log("pos loe sta cerrando");
                 currentPopup.isPopUpOpen = false;
                 currentPopup.coordinates = null;
                 currentPopup.popupId = null;

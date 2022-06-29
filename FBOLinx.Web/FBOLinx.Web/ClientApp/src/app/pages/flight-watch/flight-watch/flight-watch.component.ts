@@ -110,9 +110,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     async onFlightWatchClick(flightWatch: FlightWatch) {
-    console.log("🚀 ~ file: flight-watch.component.ts ~ line 114 ~ FlightWatchComponent ~ onFlightWatchClick ~ flightWatch", flightWatch)
-    console.log("traera  info");
-
         if(!flightWatch.tailNumber) {
             this.selectedAircraftData = {
                 customerInfoBygGroupId : 0,
@@ -128,7 +125,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             return;
         }
         this.selectedAircraftData = await this.airportWatchService.getAircraftLiveData(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId, flightWatch.tailNumber).toPromise();
-        console.log("cargo info");
     }
     
     onAircraftInfoClose() {

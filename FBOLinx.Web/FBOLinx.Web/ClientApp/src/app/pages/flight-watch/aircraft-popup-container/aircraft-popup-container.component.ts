@@ -37,15 +37,9 @@ export class AircraftPopupContainerComponent {
     private router: Router
   ) { }
   ngOnChanges(changes) {
-    console.log("🚀 ~ file: aircraft-popup-container.component.ts ~ line 47 ~ AircraftPopupContainerComponent ~ ngOnChanges ~ changes", changes)
-    console.log("🚀 ~ file: aircraft-popup-container.component.ts ~ line 45 ~ AircraftPopupContainerComponent ~ ngOnChanges ~ changes.flightData.previousValue?.oid", changes.flightData)
-
-    console.log("🚀 ~ file: aircraft-popup-container.component.ts ~ line 46 ~ AircraftPopupContainerComponent ~ ngOnChanges ~ changes.flightData.currentValue.company", changes.flightData?.currentValue?.company)
-
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;  
     if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue; 
-    if(changes.hasAircraft?.currentValue) this.hasAircraft = changes.hasAircraft.currentValue;    
-    if(changes.aircraftData?.currentValue?.company) this.hasAircraft = true;
+    if(changes.flightData?.currentValue?.company) this.hasAircraft = true;
     else this.hasAircraft = false;   
   }
   ngOnInit() {
