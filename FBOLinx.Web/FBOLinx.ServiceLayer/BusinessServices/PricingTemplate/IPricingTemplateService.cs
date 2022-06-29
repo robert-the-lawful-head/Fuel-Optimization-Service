@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate);
-        Task<PricingTemplateDto> CopyPricingTemplate(PrincingTemplateRequest pricingTemplate);
+        Task CopyPricingTemplate(PrincingTemplateRequest pricingTemplate);
         Task<PricingTemplateDto> GetDefaultTemplate(int fboId);
         Task<PricingTemplateDto> GetDefaultTemplateIncludeNullCheck(int fboId);
         Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId);

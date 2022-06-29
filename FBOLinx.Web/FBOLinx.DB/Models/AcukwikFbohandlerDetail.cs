@@ -41,7 +41,7 @@ namespace FBOLinx.DB.Models
         #region Relationships
         [ForeignKey("AirportId")]
         [InverseProperty("AcukwikFbohandlerDetailCollection")]
-        public AcukwikAirports AcukwikAirport { get; set; }
+        public AcukwikAirport AcukwikAirport { get; set; }
         #endregion
     }
 }

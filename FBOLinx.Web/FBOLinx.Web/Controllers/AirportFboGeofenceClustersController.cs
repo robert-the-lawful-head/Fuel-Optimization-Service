@@ -195,7 +195,7 @@ namespace FBOLinx.Web.Controllers
                 var fenceClusters = await _airportFboGeofenceClustersService.GetAllClusters();
                 var result = airportsWithAntennaData.Select(x => new AirportFboGeoFenceGridVM()
                 {
-                    AcukwikAirportId = x.AirportId,
+                    AcukwikAirportId = x.Oid,
                     FboCount = (x.AcukwikFbohandlerDetailCollection == null ? 0 : x.AcukwikFbohandlerDetailCollection.Where(x => x.HandlerType == "FBO").ToList().Count),
                     Icao = x.Icao,
                     GeoFenceCount = (fenceClusters?.Count).GetValueOrDefault(),
@@ -220,7 +220,7 @@ namespace FBOLinx.Web.Controllers
                 var fenceClusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirportId);
                 var result = new AirportFboGeoFenceGridVM()
                 {
-                    AcukwikAirportId = airport.AirportId,
+                    AcukwikAirportId = airport.Oid,
                     FboCount = (airport?.AcukwikFbohandlerDetailCollection == null ? 0 : airport?.AcukwikFbohandlerDetailCollection.Where(x => x.HandlerType == "FBO").ToList().Count).GetValueOrDefault(),
                     Icao = airport?.Icao,
                     GeoFenceCount = (fenceClusters?.Count).GetValueOrDefault(),
@@ -256,7 +256,7 @@ namespace FBOLinx.Web.Controllers
             {
                 var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => (x != null && x.Icao == icao)).FirstOrDefaultAsync();
 
-                var clusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirport.AirportId);
+                var clusters = await _airportFboGeofenceClustersService.GetAllClusters(acukwikAirport.Oid);
                 return clusters;
             }
             catch (System.Exception exception)

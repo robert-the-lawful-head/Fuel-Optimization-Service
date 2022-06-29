@@ -5,7 +5,7 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.DTO.SWIM
 {
-    public class SWIMFlightLegDTO : BaseEntityModelDTO<SWIMFlightLegs>, IEntityModelDTO<SWIMFlightLegs, int>
+    public class SWIMFlightLegDTO : BaseEntityModelDTO<SWIMFlightLeg>, IEntityModelDTO<SWIMFlightLeg, int>
     {
         public int Oid { get; set; }
         public string AircraftIdentification { get; set; }

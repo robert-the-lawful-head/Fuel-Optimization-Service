@@ -430,7 +430,7 @@ namespace FBOLinx.Web.Controllers
                 if (importedFboEmail == null || importedFboEmail.Oid == 0)
                     return BadRequest("No email found");
 
-                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.AirportId == acukwikFbo.AirportId).FirstOrDefaultAsync();
+                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
                 if (importedFboEmail != null)
                 {

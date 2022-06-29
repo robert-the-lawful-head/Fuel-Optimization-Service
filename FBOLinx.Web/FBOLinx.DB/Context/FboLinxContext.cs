@@ -217,10 +217,10 @@ namespace FBOLinx.DB.Context
                 entity.HasIndex(e => e.TailNumber)
                     .HasName("INX_CustomerAircrafts_TailNumber");
 
-                entity.HasIndex(e => new { e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.GroupId })
+                entity.HasIndex(e => new { Oid = e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.GroupId })
                     .HasName("INX_CA_ID");
 
-                entity.HasIndex(e => new { e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.AddedFrom, e.GroupId })
+                entity.HasIndex(e => new { Oid = e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.AddedFrom, e.GroupId })
                     .HasName("INX_GroupID");
 
                 entity.Property(e => e.BasedPaglocation).IsUnicode(false);

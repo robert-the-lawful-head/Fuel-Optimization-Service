@@ -82,12 +82,12 @@ namespace FBOLinx.Web.Services
 
             var airportIds = allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToList();
 
-            var airports = await _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection)
+            var airports = await _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection)
                 .ToListAsync();
 
             allFboGeoClusters.ForEach(x =>
             {
-                var airport = airports.FirstOrDefault(a => a.AirportId == x.AcukwikAirportID);
+                var airport = airports.FirstOrDefault(a => a.Oid == x.AcukwikAirportID);
                 if (airport == null)
                     return;
                 x.Icao = airport.Icao;
@@ -110,11 +110,11 @@ namespace FBOLinx.Web.Services
 
             var airportIds = await allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToListAsync();
 
-            var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.AirportId)).Include(x => x.AcukwikFbohandlerDetailCollection).AsNoTracking();
+            var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection).AsNoTracking();
 
             (await allFboGeoClusters.ToListAsync()).ForEach(x =>
             {
-                var airport = airports.FirstOrDefault(a => a.AirportId == x.AcukwikAirportID);
+                var airport = airports.FirstOrDefault(a => a.Oid == x.AcukwikAirportID);
                 if (airport == null)
                     return;
                 x.Icao = airport.Icao;

@@ -188,7 +188,7 @@ public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
         {
             var fbos = await (from f in _context.Fbos
                               join fa in _context.Fboairports on f.Oid equals fa.Fboid
-                              where icaos.Contains(fa.Icao)
+                              where icaos.Contains(fa.Icao) && f.GroupId > 1 && f.Active == true
                               select f).ToListAsync();
             return fbos;
         }

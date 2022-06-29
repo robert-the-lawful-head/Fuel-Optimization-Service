@@ -1,7 +1,20 @@
 export const AircraftIconSize = 22;
 export const AircraftIconScale = 1.5;
 
-export const AIRCRAFT_IMAGES = [
+export interface AircraftImageData {
+    blueReverseUrl: string,
+    blueUrl: string,
+    fuelerlinxUrl: string,
+    fuelerlinxReverseUrl: string,
+    description: string,
+    fillColor: string,
+    id: string,
+    label: string,
+    reverseUrl: string,
+    size: number,
+    url: string,
+}
+export const AIRCRAFT_IMAGES: AircraftImageData[]= [
     {
         blueReverseUrl: '/assets/img/map-markers/default-release-reverse.svg',
         blueUrl: '/assets/img/map-markers/default-release.svg',
