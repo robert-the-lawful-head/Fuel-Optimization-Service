@@ -155,6 +155,7 @@ export abstract class MapboxglBase {
         // When a click event occurs on a feature in the places layer, open a popup at the
         // location of the feature, with description HTML from its properties.
         this.map.on('click', layerId, (e) => {
+
             // Copy coordinates array.
             const coordinates = e.features[0].geometry['coordinates'].slice();
             const description = e.features[0].properties.description;

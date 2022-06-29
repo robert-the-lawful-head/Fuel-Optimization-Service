@@ -156,6 +156,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         this.addSource(this.flightSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
         this.addLayer(this.aircraftFlightWatchService.getFlightLayerJsonData(this.flightLayerId,this.flightSourceId));
         this.applyMouseFunctions(this.flightLayerId);
+        this.createPopUpOnClickRenderComponent(this.flightLayerId,this.aircraftPopupContainer);
     }
     async updateFlightOnMap(){
         if (!this.map) return;
