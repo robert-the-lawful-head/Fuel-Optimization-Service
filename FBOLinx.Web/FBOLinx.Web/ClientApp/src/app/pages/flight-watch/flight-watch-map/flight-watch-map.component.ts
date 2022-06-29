@@ -137,9 +137,9 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.aircraftData) this.setPopUpContainerData(changes);
 
-        const currentData = changes.data.currentValue;
-        const oldData = changes.data.previousValue;
-        if (!isEqual(currentData, oldData)) {
+        const currentData = changes.data?.currentValue;
+        const oldData = changes.data?.previousValue;
+        if (currentData && !isEqual(currentData, oldData)) {
             this.updateFlightOnMap();
         }
     }
