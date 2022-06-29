@@ -29,10 +29,8 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             properties: {
                 id: data.oid,
-                description:
-                    '<strong>test popup' +
-                    data.oid +
-                    '</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a></p>',
+                // description:
+                //     '<app-flight-watch-aircraft-info-dialog><app-flight-watch-aircraft-info-dialog/>',
                 'icon': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,

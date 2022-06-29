@@ -7,9 +7,8 @@ import { LngLatLike } from 'mapbox-gl';
 import { BehaviorSubject, Subscription, timer } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { FlightWatch } from '../../../models/flight-watch';
+import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FlightWatchAircraftInfoDialogComponent } from '../flight-watch-aircraft-info-dialog/flight-watch-aircraft-info-dialog.component';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 const BREADCRUMBS: any[] = [
@@ -38,13 +37,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     mapLoadSubscription: Subscription;
     airportWatchFetchSubscription: Subscription;
     flightWatchData: FlightWatch[];
-    filteredFlightWatchData: {
-        [oid: number]: FlightWatch;
-    };
+    filteredFlightWatchData: FlightWatchDictionary;
     filter: string;
     filteredTypes: string[] = [];
     center: LngLatLike;
     selectedFlightWatch: FlightWatch;
+    selectedAircraftData: Aircraftwatch;
+
     flightWatchDataSource: MatTableDataSource<FlightWatch>;
 
     flightWatchDataSubject = new BehaviorSubject<FlightWatch[]>([]);
@@ -110,21 +109,24 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.isMapShowing = true;
     }
 
-    onFlightWatchClick(flightWatch: FlightWatch) {
-        this.dialog.closeAll();
-        this.openFlightWatchDialog(flightWatch);
+    async onFlightWatchClick(flightWatch: FlightWatch) {
+        if(!flightWatch.tailNumber) {
+            this.selectedAircraftData = {
+                customerInfoBygGroupId : 0,
+                tailNumber: flightWatch?.tailNumber,
+                atcFlightNumber: flightWatch?.atcFlightNumber,
+                aircraftTypeCode: flightWatch?.aircraftTypeCode,
+                isAircraftOnGround: flightWatch?.isAircraftOnGround,
+                company: flightWatch?.company,
+                aircraftMakeModel: flightWatch?.aircraftMakeModel,
+                lastQuote: flightWatch?.lastQuote,
+                currentPricing: flightWatch?.currentPricing
+            };
+            return;
+        }
+        this.selectedAircraftData = await this.airportWatchService.getAircraftLiveData(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId, flightWatch.tailNumber).toPromise();
     }
-
-    openFlightWatchDialog(flightWatch: FlightWatch) {
-        this.dialog.open(FlightWatchAircraftInfoDialogComponent, {
-          data: {
-            flightWatch: flightWatch,
-            fboId : this.sharedService.currentUser.fboId,
-            groupId : this.sharedService.currentUser.groupId
-          }
-        });
-      }
-
+    
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;
     }
