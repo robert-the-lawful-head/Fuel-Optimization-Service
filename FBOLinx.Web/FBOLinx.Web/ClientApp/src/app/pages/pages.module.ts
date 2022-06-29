@@ -211,6 +211,7 @@ import { AntennaStatusHomeComponent } from './antenna-status/antenna-status-home
 import { AntennaStatusGridComponent } from './antenna-status/antenna-status-grid/antenna-status-grid.component';
 import { FbosMissedOrdersGridComponent } from './fbos-missed-orders/fbos-missed-orders-grid/fbos-missed-orders-grid.component';
 import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-quotes-grid/fbos-missed-quotes-grid.component';
+import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 
 @NgModule({
     declarations: [
@@ -348,7 +349,8 @@ import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-
         AntennaStatusHomeComponent,
         AntennaStatusGridComponent,
         FbosMissedOrdersGridComponent,
-        FbosMissedQuotesGridComponent
+        FbosMissedQuotesGridComponent,
+        AircraftPopupContainerComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

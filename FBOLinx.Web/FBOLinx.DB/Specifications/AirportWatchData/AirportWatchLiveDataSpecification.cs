@@ -8,13 +8,8 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
 {
     public sealed class AirportWatchLiveDataSpecification : Specification<AirportWatchLiveData>
     {
-        public AirportWatchLiveDataSpecification(string atcFlightNumber)
-            : base(x => x.AtcFlightNumber == atcFlightNumber)
-        {
-        }
-
-        public AirportWatchLiveDataSpecification(IList<string> atcFlightNumbers)
-            : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber))
+        public AirportWatchLiveDataSpecification(string atcFlightNumber, DateTime startDate)
+            : base(x => x.AtcFlightNumber == atcFlightNumber && x.AircraftPositionDateTimeUtc >= startDate)
         {
         }
     }

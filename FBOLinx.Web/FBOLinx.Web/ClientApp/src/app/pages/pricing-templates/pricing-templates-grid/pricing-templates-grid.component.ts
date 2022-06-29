@@ -14,7 +14,9 @@ import { Store } from '@ngrx/store';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../models/sharedEvents';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
+import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { State } from '../../../store/reducers';
 import { getPricingTemplateState } from '../../../store/selectors/pricing-template';
 import { PricingTemplatesDialogCopyTemplateComponent } from '../pricing-template-dialog-copy-template/pricing-template-dialog-copy-template.component';
@@ -71,7 +73,8 @@ export class PricingTemplatesGridComponent implements OnInit {
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
         private sharedService: SharedService,
-        public customCustomerService: CustomcustomertypesService
+        public customCustomerService: CustomcustomertypesService,
+        public pricingTemplatesService: PricingtemplatesService
     ) {}
 
     ngOnInit() {
@@ -175,7 +178,13 @@ export class PricingTemplatesGridComponent implements OnInit {
                 }
             );
 
-            dialogRef.afterClosed().subscribe((result) => {});
+            dialogRef.afterClosed().subscribe((result) => {
+                if (result != 'cancel') {
+                    this.pricingTemplatesService.copy(result).subscribe((response) => {
+                        this.newPricingTemplateAdded.emit();
+                    });
+                }
+            });
         }
     }
 

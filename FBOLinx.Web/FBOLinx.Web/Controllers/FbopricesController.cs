@@ -26,6 +26,8 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.DB.Specifications;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -46,6 +48,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboPreferencesService _fboPreferencesService;
         private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
+        private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
 
         public FbopricesController(
             FboLinxContext context,
@@ -61,7 +64,8 @@ namespace FBOLinx.Web.Controllers
             FboPreferencesService fboPreferencesService,
             MissedQuoteLogEntityService missedQuoteLogEntityService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
-            IFboService iFboService)
+            IFboService iFboService,
+            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
@@ -75,6 +79,7 @@ namespace FBOLinx.Web.Controllers
             _missedQuoteLogEntityService = missedQuoteLogEntityService;
             _integrationUpdatePricingLogService = integrationUpdatePricingLogService;
             _iFboService = iFboService;
+            _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
         }
 
         // GET: api/Fboprices
@@ -795,21 +800,32 @@ namespace FBOLinx.Web.Controllers
 
                     foreach (var fbo in fbos)
                     {
-                        var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
-                        var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).FirstOrDefaultAsync();
 
-                        if (recentMissedQuote.Count == 0)
+                        if (customerGroup != null && customerGroup.Oid > 0)
                         {
-                            var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                            var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
+                            var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                            var isEmailed = false;
 
-                            if (toEmails.Count > 0)
-                                await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                            if (recentMissedQuote.Count == 0)
+                            {
+                                if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                {
+                                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+
+                                    if (toEmails.Count > 0)
+                                        await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+
+                                    isEmailed = true;
+                                }
+                            }
 
                             var missedQuote = new MissedQuoteLogDto();
                             missedQuote.CreatedDate = DateTime.UtcNow;
                             missedQuote.FboId = fbo.Oid;
                             missedQuote.CustomerId = customer.Oid;
-                            missedQuote.Emailed = true;
+                            missedQuote.Emailed = isEmailed;
                             await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
                         }
                     }

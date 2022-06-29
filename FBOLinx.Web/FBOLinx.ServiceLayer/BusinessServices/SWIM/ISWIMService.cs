@@ -8,6 +8,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 {
     public interface ISWIMService
     {
+        Task<IEnumerable<FlightLegDTO>> GetDepartures(string icao);
+        Task<IEnumerable<FlightLegDTO>> GetArrivals(string icao);
         Task SaveFlightLegData(IEnumerable<SWIMFlightLegDTO> flightLegs);
     }
 }

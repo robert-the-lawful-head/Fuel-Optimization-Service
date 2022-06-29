@@ -6,11 +6,12 @@ namespace FBOLinx.DB.Models
 {
     [Table("AcukwikAirports")]
 
-    public partial class AcukwikAirports
+    public class AcukwikAirport : FBOLinxBaseEntityModel<int>
     {
         [Key]
         [Column("Airport_ID")]
-        public int AirportId { get; set; }
+        public override int Oid { get; set; }
+
         [Column("ICAO")]
         [StringLength(255)]
         public string Icao { get; set; }

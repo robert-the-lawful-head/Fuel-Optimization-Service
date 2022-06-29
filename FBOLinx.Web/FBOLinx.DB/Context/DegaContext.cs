@@ -15,13 +15,13 @@ namespace FBOLinx.DB.Context
         }
 
         public virtual DbSet<AirCrafts> AirCrafts { get; set; }
-        public virtual DbSet<AcukwikAirports> AcukwikAirports { get; set; }
+        public virtual DbSet<AcukwikAirport> AcukwikAirports { get; set; }
         public virtual DbSet<AcukwikFbohandlerDetail> AcukwikFbohandlerDetail { get; set; }
         public virtual DbSet<AFSAircraft> AFSAircraft { get; set; }
         public virtual DbSet<AircraftSpecifications> AircraftSpecifications { get; set; }
         public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
         public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
-        public virtual DbSet<SWIMFlightLegs> SWIMFlightLegs { get; set; }
+        public virtual DbSet<SWIMFlightLeg> SWIMFlightLegs { get; set; }
         public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -34,12 +34,12 @@ namespace FBOLinx.DB.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AcukwikAirports>(entity =>
+            modelBuilder.Entity<AcukwikAirport>(entity =>
             {
-                entity.HasIndex(e => new { e.AirportId, e.Iata, e.Icao })
+                entity.HasIndex(e => new { AirportId = e.Oid, e.Iata, e.Icao })
                     .HasName("INX_ICAO_AirportID_IATA");
 
-                entity.Property(e => e.AirportId).ValueGeneratedNever();
+                entity.Property(e => e.Oid).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<AcukwikFbohandlerDetail>(entity =>
@@ -54,7 +54,7 @@ namespace FBOLinx.DB.Context
                 entity.Property(e => e.TailNumber).IsUnicode(false);
             });
 
-            modelBuilder.Entity<SWIMFlightLegs>(entity =>
+            modelBuilder.Entity<SWIMFlightLeg>(entity =>
             {
                 entity.HasKey(e => e.Oid)
                     .HasName("PK_SWIMFlightLegs_OID");

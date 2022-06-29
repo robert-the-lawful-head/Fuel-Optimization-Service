@@ -1,3 +1,6 @@
+export type FlightWatchDictionary = {
+    [oid: number]: FlightWatch;
+};
 export type FlightWatch = {
     oid: number;
     boxTransmissionDateTimeUtc: Date;

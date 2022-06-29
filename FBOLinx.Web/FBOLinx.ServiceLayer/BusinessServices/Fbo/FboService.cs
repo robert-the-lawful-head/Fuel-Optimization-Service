@@ -28,7 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
 
             var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
                                         where afh.HandlerId == fboAcukwikId
                                         select aa).FirstOrDefaultAsync();
 
@@ -45,7 +45,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
 
             var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
                                         where afh.HandlerId == fboAcukwikId
                                         select aa).FirstOrDefaultAsync();
 
@@ -62,7 +62,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
 
             var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.AirportId
+                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
                                         where afh.HandlerId == fboAcukwikId
                                         select aa).FirstOrDefaultAsync();
 

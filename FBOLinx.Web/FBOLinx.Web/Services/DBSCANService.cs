@@ -67,7 +67,7 @@ namespace FBOLinx.Web.Services
 
                     _context.AirportFboGeofenceClusters.Add(new AirportFboGeofenceClusters
                     {
-                        AcukwikAirportID = AirpoirtId != null ? AirpoirtId.AirportId : 0,
+                        AcukwikAirportID = AirpoirtId != null ? AirpoirtId.Oid : 0,
                         CenterLatitude = float.Parse((totalLat / item.Objects.Count).ToString()) , 
                         CenterLongitude  = float.Parse((totalLong / item.Objects.Count).ToString())
 
@@ -75,7 +75,7 @@ namespace FBOLinx.Web.Services
                     await _context.SaveChangesAsync();
                 }             
 
-                var ClusterID = await _context.AirportFboGeofenceClusters.FirstOrDefaultAsync(a => a.AcukwikAirportID == AirpoirtId.AirportId);
+                var ClusterID = await _context.AirportFboGeofenceClusters.FirstOrDefaultAsync(a => a.AcukwikAirportID == AirpoirtId.Oid);
 
                 foreach (var item in result.Clusters)
                 {

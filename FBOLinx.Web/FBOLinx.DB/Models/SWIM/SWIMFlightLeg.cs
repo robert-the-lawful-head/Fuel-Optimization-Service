@@ -7,7 +7,8 @@ using FBOLinx.Core.BaseModels.Entities;
 
 namespace FBOLinx.DB.Models
 {
-    public class SWIMFlightLegs : FBOLinxBaseEntityModel<int>
+    [Table("SWIMFlightLegs")]
+    public class SWIMFlightLeg : FBOLinxBaseEntityModel<int>
     {
         [Required]
         [StringLength(10)]
@@ -23,6 +24,9 @@ namespace FBOLinx.DB.Models
 
         [Required]
         public DateTime ATD { get; set; }
+
+        [Required]
+        public DateTime ETA { get; set; }
 
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }

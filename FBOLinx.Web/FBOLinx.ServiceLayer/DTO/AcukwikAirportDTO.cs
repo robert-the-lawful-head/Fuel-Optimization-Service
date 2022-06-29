@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
-    public partial class AcukwikAirportsDto
+    public class AcukwikAirportDTO : BaseEntityModelDTO<AcukwikAirport>, IEntityModelDTO<AcukwikAirport, int>
     {
-        public int AirportId { get; set; }
+        public int Oid { get; set; }
         public string Icao { get; set; }
         public string Iata { get; set; }
         public string Faa { get; set; }
