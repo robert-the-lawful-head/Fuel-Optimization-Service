@@ -1120,10 +1120,10 @@ namespace FBOLinx.Web.Services
             {
                 BoxName = al.Key,
                 AircraftPositionDateTimeUtc = al.Max(row => row.AircraftPositionDateTimeUtc)
-            }).ToListAsync();
+            }).OrderBy(b => b.BoxName).ToListAsync();
             distinctLiveBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
 
-            var distinctBoxes = (from dh in distinctHistoricalBoxes
+            var distinctBoxesHistorical = (from dh in distinctHistoricalBoxes
                                  join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
                                  into leftJoinDistinctLiveBoxes
                                  from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
@@ -1133,7 +1133,19 @@ namespace FBOLinx.Web.Services
                                      Status = dl == null ? "Not Active" : "Active",
                                      LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
                                      LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
-                                 }).ToList();
+                                 });
+
+            var distinctBoxes = (from dl in distinctLiveBoxes
+                                 join db in distinctBoxesHistorical on dl.BoxName equals db.BoxName
+                                 into leftJoinDistinctBoxes
+                                 from db in leftJoinDistinctBoxes.DefaultIfEmpty()
+                                 select new AirportWatchAntennaStatusGrid
+                                 {
+                                     BoxName = dl == null ? db.BoxName : dl.BoxName,
+                                     Status = dl == null ? "Not Active" : "Active",
+                                     LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
+                                     LastUpdateCurated = db == null ? "" : db.LastUpdateCurated
+                                 }).Union(distinctBoxesHistorical).GroupBy(d => d.BoxName) .Select(grouped => grouped.First()).ToList();
 
             return distinctBoxes;
         }
