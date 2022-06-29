@@ -1,0 +1,67 @@
+
+<div *ngIf="isLoading" class="loading-spinner">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!isLoading">
+  <div class="dialog-title">
+      <span><strong>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</strong></span>
+  </div>
+  <div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Company</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.company | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Flight Number</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.atcFlightNumber| NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Aircraft Type</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.aircraftTypeCode | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Aircraft Make/Model</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.aircraftMakeModel | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>On Ground</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Last Quote</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+      <div class="row-container">
+        <div class="column-container info-labels">
+            <button mat-raised-button class="customer-manager-button" color="accent" [disabled]="!hasAircraft" (click)="goToCustomerManager(aircraftWatch.customerInfoBygGroupId)"> Customer Manager</button>
+        </div>
+        <div class="column-container info-values">
+            <button mat-raised-button color="accent" [disabled]="hasAircraft" (click)="addAircraft()">Add Aircraft</button>
+        </div>
+      </div>
+  </div>
+</div>
