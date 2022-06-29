@@ -55,11 +55,11 @@
             <p>{{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}&nbsp;</p>
         </div>
     </div>
-      <div class="row-container">
+      <div class="row-container actions">
         <div class="column-container info-labels">
             <button mat-raised-button class="customer-manager-button" color="accent" [disabled]="!hasAircraft" (click)="goToCustomerManager(aircraftWatch.customerInfoBygGroupId)"> Customer Manager</button>
         </div>
-        <div class="column-container info-values">
+        <div class="column-container">
             <button mat-raised-button color="accent" [disabled]="hasAircraft" (click)="addAircraft()">Add Aircraft</button>
         </div>
       </div>
