@@ -51,7 +51,7 @@ namespace FBOLinx.Job.AirportWatch
             }
         }
 
-        private void OnChanged(object source, FileSystemEventArgs e)
+        private async void OnChanged(object source, FileSystemEventArgs e)
         {
             //Don't push more often than every 9 seconds to prevent consistent spikes
             if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(6))
@@ -94,7 +94,7 @@ namespace FBOLinx.Job.AirportWatch
                         logger.Error(ex, $"Failed to call Fbolinx api!");
                     }
                 }
-                Task.WhenAll(tasks);
+                await Task.WhenAll(tasks);
                 logger.Information("Fbolinx api call succeed!");
             }
 
