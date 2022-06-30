@@ -894,6 +894,8 @@ namespace FBOLinx.Web.Controllers
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
 
                 PricingTemplateDto defaultPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
+                if (defaultPricingTemplate == null)
+                    defaultPricingTemplate = new PricingTemplateDto();
 
                 await _pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
 
