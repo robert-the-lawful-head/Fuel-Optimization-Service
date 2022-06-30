@@ -655,15 +655,20 @@ namespace FBOLinx.Web.Services
                 data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
 
             //Preload the collection of past records from the last 7 days to use in the loop
-            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
+            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData
+                .Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
                 //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1)).ToListAsync();
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1))
+                .AsNoTracking()
+                .ToListAsync();
 
             var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
                 distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
                 //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-4)).ToListAsync();
+                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-4))
+                .AsNoTracking()
+                .ToListAsync();
 
             foreach (var record in data)
             {
@@ -1222,7 +1227,7 @@ namespace FBOLinx.Web.Services
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
             if (liveDataToInsertAndUpdate.Count > 0)
-                await _context.BulkInsertOrUpdateAsync(_LiveDataToInsert, config =>
+                await _context.BulkInsertOrUpdateAsync(liveDataToInsertAndUpdate, config =>
                 {
                     config.WithHoldlock = false;
                     config.BatchSize = 5000;
@@ -1273,10 +1278,11 @@ namespace FBOLinx.Web.Services
             var recordsFromCache = LookupAirportRecordsByFromCache();
             if (recordsFromCache == null)
             {
-                var airports = (await _degaContext.AcukwikAirports
-                                .ToListAsync()
-                                )
+                var airports = (await (_degaContext.AcukwikAirports
+
                             .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .AsNoTracking())
+                                .ToListAsync())
                                 .Select(a =>
                                 {
                                     var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
@@ -1304,6 +1310,9 @@ namespace FBOLinx.Web.Services
 
         private List<AirportPosition> LookupAirportRecordsByFromCache()
         {
+            //Temporarily turning off cache due to memory issues
+            return null;
+
             List<AirportPosition> result = null;
             if (_MemoryCache.TryGetValue(_AllAirportsPositioningCacheKey, out result))
                 return result;
