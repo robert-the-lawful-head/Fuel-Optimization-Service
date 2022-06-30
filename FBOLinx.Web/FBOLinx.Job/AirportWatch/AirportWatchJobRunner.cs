@@ -54,7 +54,7 @@ namespace FBOLinx.Job.AirportWatch
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             //Don't push more often than every 9 seconds to prevent consistent spikes
-            if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(9))
+            if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(6))
                 return;
             
             using var logger = new LoggerConfiguration()
@@ -81,8 +81,12 @@ namespace FBOLinx.Job.AirportWatch
                 {
                     try
                     {
-                        
-                        tasks.Add(PostAirportWatchData(apiClientUrl.Trim(), airportWatchData, logger));
+
+                        tasks.Add(
+                            Task.Run(async () =>
+                            {
+                                await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData, logger);
+                            }));
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
@@ -102,18 +106,16 @@ namespace FBOLinx.Job.AirportWatch
             try
             {
                 var apiClient = new ApiClient(apiClientUrl.Trim());
-                var result = apiClient.PostAsync("airportwatch/list", airportWatchLiveData)
-                    .Result;
+                var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
                 if (result == null)
-                    logger.Information("Fbolinx api call failed.  No result received.");
+                    logger.Information("Fbolinx api call to " + apiClientUrl + " failed.  Attempted passing " + airportWatchLiveData.Count + " records.  No result received.");
                 else 
-                    logger.Information("Fbolinx api call completed: " + result);
+                    logger.Information("Fbolinx api call to " + apiClientUrl + " completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
             }
             catch (System.Exception exception)
             {
                 logger.Error(exception, $"Failed to call Fbolinx api!");
             }
-
         }
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)
@@ -270,7 +272,7 @@ namespace FBOLinx.Job.AirportWatch
 
             return airportWatchData
                 .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-                .GroupBy(row => new { row.AircraftHexCode, row.AtcFlightNumber })
+                .GroupBy(row => new { row.AircraftHexCode })
                 .Select(grouped => grouped.First())
                 .ToList();
         }
