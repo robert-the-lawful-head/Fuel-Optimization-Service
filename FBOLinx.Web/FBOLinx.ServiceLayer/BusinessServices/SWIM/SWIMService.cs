@@ -182,6 +182,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 if (departureAirport != null)
                 {
                     dto.ATD = DateTimeHelper.GetLocalTime(swimFlightLegDto.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.DepartureCity = departureAirport.AirportCity;
                 }
                 else
                 {
@@ -192,6 +193,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 if (arrivalAirport != null)
                 {
                     dto.ETA = DateTimeHelper.GetLocalTime(swimFlightLegDto.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.ArrivalCity = arrivalAirport.AirportCity;
                 }
                 else
                 {
