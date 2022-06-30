@@ -654,23 +654,26 @@ namespace FBOLinx.Web.Services
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
 
-            var airportPositions = await GetAirportPositions();
+            await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
+            await using var degaContext = _ServiceProvider.GetService<DegaContext>();
+
+            var airportPositions = await GetAirportPositions(degaContext);
 
             //Grab distinct aircraft for this set of data
             var distinctAircraftHexCodes =
                 data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
-            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-1));
+            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-1));
 
-            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-4));
+            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-4));
 
             foreach (var record in data)
             {
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
-                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid)).FirstOrDefault();
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
@@ -716,12 +719,12 @@ namespace FBOLinx.Web.Services
                 }
             }
 
-            await PrepareRecordsForDatabase(airportPositions);
+            await PrepareRecordsForDatabase(degaContext, airportPositions);
 
-            await CommitChanges();
+            await CommitChanges(fboLinxContext);
         }
 
-        private async Task PrepareRecordsForDatabase(List<AirportPosition> airportPositions)
+        private async Task PrepareRecordsForDatabase(DegaContext degaContext, List<AirportPosition> airportPositions)
         {
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
@@ -743,8 +746,8 @@ namespace FBOLinx.Web.Services
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
 
-            await SetTailNumber(_HistoricalDataToInsert);
-            await SetTailNumber(_LiveDataToInsert);
+            await SetTailNumber(degaContext, _HistoricalDataToInsert);
+            await SetTailNumber(degaContext, _LiveDataToInsert);
 
 
 
@@ -1150,10 +1153,10 @@ namespace FBOLinx.Web.Services
             return distinctBoxes;
         }
 
-        private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)
+        private async Task SetTailNumber(DegaContext context, IEnumerable<BaseAirportWatchData> airportWatchRecords)
         {
             IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
-            List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
+            List<AircraftHexTailMapping> hexTailMappings = await context.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
             foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
             {
                 airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
@@ -1213,14 +1216,13 @@ namespace FBOLinx.Web.Services
 
         }
 
-        private async Task CommitChanges()
+        private async Task CommitChanges(FboLinxContext context)
         {
             var liveDataToInsertAndUpdate = _LiveDataToInsert;
             if (liveDataToInsertAndUpdate == null)
                 liveDataToInsertAndUpdate = new List<AirportWatchLiveData>();
             liveDataToInsertAndUpdate.AddRange(_LiveDataToUpdate == null ? new List<AirportWatchLiveData>() : _LiveDataToUpdate);
-
-            await using var context = _ServiceProvider.GetService<FboLinxContext>();
+            
             await using var transaction = await context.Database.BeginTransactionAsync();
             if (liveDataToInsertAndUpdate.Count > 0)
                 await context.BulkInsertOrUpdateAsync(liveDataToInsertAndUpdate, config =>
@@ -1237,11 +1239,10 @@ namespace FBOLinx.Web.Services
             await transaction.CommitAsync();
         }
 
-        private async Task<List<AirportPosition>> GetAirportPositions()
+        private async Task<List<AirportPosition>> GetAirportPositions(DegaContext context)
         {
             var recordsFromCache = LookupAirportRecordsByFromCache();
 
-            await using var context = _ServiceProvider.GetService<DegaContext>();
             if (recordsFromCache == null)
             {
                 var airports = (await (context.AcukwikAirports
@@ -1350,9 +1351,8 @@ namespace FBOLinx.Web.Services
             return inside;
         }
 
-        private async Task<List<AirportWatchLiveData>> GetAirportWatchLiveDataFromDatabase(List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        private async Task<List<AirportWatchLiveData>> GetAirportWatchLiveDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
         {
-            await using var context = _ServiceProvider.GetService<FboLinxContext>();
             var result = await context.AirportWatchLiveData
                 .Where(x =>
                     distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
@@ -1362,9 +1362,8 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task<List<AirportWatchHistoricalData>> GetAirportWatchHistoricalDataFromDatabase(List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        private async Task<List<AirportWatchHistoricalData>> GetAirportWatchHistoricalDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
         {
-            await using var context = _ServiceProvider.GetService<FboLinxContext>();
             var result = await context.AirportWatchHistoricalData
                 .Where(x =>
                     distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
