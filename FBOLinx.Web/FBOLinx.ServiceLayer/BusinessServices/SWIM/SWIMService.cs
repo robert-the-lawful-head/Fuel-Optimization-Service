@@ -70,6 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             
             List<SWIMFlightLegDataDTO> flightLegDataMessagesToInsert = new List<SWIMFlightLegDataDTO>();
             List<SWIMFlightLegDTO> flightLegsToUpdate = new List<SWIMFlightLegDTO>();
+            List<SWIMFlightLegDTO> flightLegsToAdd = new List<SWIMFlightLegDTO>();
             
             foreach (SWIMFlightLegDTO swimFlightLegDto in flightLegs)
             {
@@ -102,7 +103,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 {
                     await SetTailNumber(swimFlightLegDto);
                     swimFlightLegDto.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
-                    await _FlightLegEntityService.Add(swimFlightLegDto);
+                    flightLegsToAdd.Add(swimFlightLegDto);
+                }
+            }
+
+            if (flightLegsToAdd.Count > 0)
+            {
+                await _FlightLegEntityService.BulkInsertOrUpdate(flightLegsToAdd);
+
+                foreach (SWIMFlightLegDTO flightLegDto in flightLegsToAdd)
+                {
+                    foreach (SWIMFlightLegDataDTO legDataMessage in flightLegDto.SWIMFlightLegDataMessages)
+                    {
+                        legDataMessage.SWIMFlightLegId = flightLegDto.Oid;
+                    }
+
+                    flightLegDataMessagesToInsert.AddRange(flightLegDto.SWIMFlightLegDataMessages);
                 }
             }
 
