@@ -124,7 +124,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 return;
             }
 
-            List<AirportWatchLiveDataDto> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataSpecification(swimFlightLegDto.AircraftIdentification, DateTime.UtcNow.AddHours(-1)));
+            List<AirportWatchLiveDataDto> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByFlightNumberSpecification(swimFlightLegDto.AircraftIdentification, DateTime.UtcNow.AddHours(-1)));
             AirportWatchLiveDataDto antennaLiveDataRecord = antennaLiveData.OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
             if (antennaLiveDataRecord != null)
             {
