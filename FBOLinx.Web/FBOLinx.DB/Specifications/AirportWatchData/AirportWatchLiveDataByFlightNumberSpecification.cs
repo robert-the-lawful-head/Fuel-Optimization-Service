@@ -6,9 +6,9 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.DB.Specifications.AirportWatchData
 {
-    public sealed class AirportWatchLiveDataSpecification : Specification<AirportWatchLiveData>
+    public sealed class AirportWatchLiveDataByFlightNumberSpecification : Specification<AirportWatchLiveData>
     {
-        public AirportWatchLiveDataSpecification(string atcFlightNumber, DateTime startDate)
+        public AirportWatchLiveDataByFlightNumberSpecification(string atcFlightNumber, DateTime startDate)
             : base(x => x.AtcFlightNumber == atcFlightNumber && x.AircraftPositionDateTimeUtc >= startDate)
         {
         }

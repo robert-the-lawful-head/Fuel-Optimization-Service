@@ -804,6 +804,20 @@ namespace FBOLinx.Web.Controllers
 
                         if (customerGroup != null && customerGroup.Oid > 0)
                         {
+                            var universalTime = DateTime.UtcNow;
+                            var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).FirstOrDefaultAsync();
+                            var customerType = new CustomCustomerTypes();
+                            customerType.CustomerType = customCustomerType.CustomerType;
+                            customerType.Oid = customCustomerType.Oid;
+                            var fboPrices = await _context.Fboprices.Where(x =>
+                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
+                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
+                    x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+
+                            var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
+                            debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
+                            debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
+
                             var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
                             var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
                             var isEmailed = false;
@@ -826,6 +840,7 @@ namespace FBOLinx.Web.Controllers
                             missedQuote.FboId = fbo.Oid;
                             missedQuote.CustomerId = customer.Oid;
                             missedQuote.Emailed = isEmailed;
+                            missedQuote.Debugs = debugging;
                             await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
                         }
                     }
