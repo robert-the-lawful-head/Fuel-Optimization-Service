@@ -12,5 +12,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public int CustomerId { get; set; }
         public bool? Emailed { get; set; }
         public string CreatedDateString { get; set; }
+        public string Debugs { get; set; }
     }
 }
