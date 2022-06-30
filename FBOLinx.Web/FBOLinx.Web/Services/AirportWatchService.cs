@@ -377,7 +377,7 @@ namespace FBOLinx.Web.Services
                                         AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                         FuelOrder = fo.Adapt<FuelReqDto>(),
                                         IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
-                                        IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.Value > 0),
+                                        IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
                                         TailNumber = fr.awhd.TailNumber
                                     })
                                     .ToList();
