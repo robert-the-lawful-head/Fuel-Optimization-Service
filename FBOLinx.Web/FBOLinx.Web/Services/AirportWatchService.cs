@@ -26,6 +26,7 @@ using FBOLinx.Service.Mapping.Dto;
 using Microsoft.Extensions.Caching.Memory;
 using Mapster;
 using FBOLinx.ServiceLayer.DTO;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Services
 {
@@ -51,10 +52,15 @@ namespace FBOLinx.Web.Services
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
+        private IServiceProvider _ServiceProvider;
 
         public AirportWatchService(DBSCANService DBSCANService,
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService, IMemoryCache memoryCache)
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, 
+            IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, 
+            FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService, 
+            IMemoryCache memoryCache, IServiceProvider serviceProvider)
         {
+            _ServiceProvider = serviceProvider;
             _dBSCANService = DBSCANService;
             _demoData = demoData;
             _context = context;
@@ -648,29 +654,26 @@ namespace FBOLinx.Web.Services
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
 
-            var airportPositions = await GetAirportPositions();
+            await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
+            await using var degaContext = _ServiceProvider.GetService<DegaContext>();
+
+            var airportPositions = await GetAirportPositions(degaContext);
 
             //Grab distinct aircraft for this set of data
             var distinctAircraftHexCodes =
-                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
+                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
-            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
-                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1)).ToListAsync();
+            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-1));
 
-            var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
-                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-4)).ToListAsync();
+            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-4));
 
             foreach (var record in data)
             {
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
-                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid)).FirstOrDefault();
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
@@ -716,12 +719,12 @@ namespace FBOLinx.Web.Services
                 }
             }
 
-            await PrepareRecordsForDatabase(airportPositions);
+            await PrepareRecordsForDatabase(degaContext, airportPositions);
 
-            await CommitChanges();
+            await CommitChanges(fboLinxContext);
         }
 
-        private async Task PrepareRecordsForDatabase(List<AirportPosition> airportPositions)
+        private async Task PrepareRecordsForDatabase(DegaContext degaContext, List<AirportPosition> airportPositions)
         {
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
@@ -743,8 +746,8 @@ namespace FBOLinx.Web.Services
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
 
-            await SetTailNumber(_HistoricalDataToInsert);
-            await SetTailNumber(_LiveDataToInsert);
+            await SetTailNumber(degaContext, _HistoricalDataToInsert);
+            await SetTailNumber(degaContext, _LiveDataToInsert);
 
 
 
@@ -1150,10 +1153,10 @@ namespace FBOLinx.Web.Services
             return distinctBoxes;
         }
 
-        private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)
+        private async Task SetTailNumber(DegaContext context, IEnumerable<BaseAirportWatchData> airportWatchRecords)
         {
             IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
-            List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
+            List<AircraftHexTailMapping> hexTailMappings = await context.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
             foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
             {
                 airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
@@ -1213,70 +1216,40 @@ namespace FBOLinx.Web.Services
 
         }
 
-        private async Task CommitChanges()
+        private async Task CommitChanges(FboLinxContext context)
         {
             var liveDataToInsertAndUpdate = _LiveDataToInsert;
             if (liveDataToInsertAndUpdate == null)
                 liveDataToInsertAndUpdate = new List<AirportWatchLiveData>();
             liveDataToInsertAndUpdate.AddRange(_LiveDataToUpdate == null ? new List<AirportWatchLiveData>() : _LiveDataToUpdate);
-
-            await using var transaction = await _context.Database.BeginTransactionAsync();
+            
+            await using var transaction = await context.Database.BeginTransactionAsync();
             if (liveDataToInsertAndUpdate.Count > 0)
-                await _context.BulkInsertOrUpdateAsync(_LiveDataToInsert, config =>
+                await context.BulkInsertOrUpdateAsync(liveDataToInsertAndUpdate, config =>
                 {
                     config.WithHoldlock = false;
                     config.BatchSize = 5000;
                 });
             if (_LiveDataToDelete?.Count > 0)
-                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
+                await context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
             if (_HistoricalDataToInsert?.Count > 0)
-                await _context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
+                await context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
             if (_HistoricalDataToUpdate?.Count > 0)
-                await _context.BulkUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
+                await context.BulkUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
             await transaction.CommitAsync();
-
-
-            //[#2ht0dek] Commenting out changes made in this branch to see if performance is restored with an upgrade to EFCore and BulkExtensions
-
-            //await CommitLiveDataChanges();
-            //await CommitHistoricalDataChanges();
         }
 
-        private async Task CommitLiveDataChanges()
-        {
-            await using var updateTransaction = await _context.Database.BeginTransactionAsync();
-            if (_LiveDataToInsert?.Count > 0)
-                await _context.BulkInsertAsync(_LiveDataToInsert, config =>
-                {
-                    config.WithHoldlock = false;
-
-                });
-            if (_LiveDataToUpdate?.Count > 0)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate, config => config.WithHoldlock = false);
-            if (_LiveDataToDelete?.Count > 0)
-                await _context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
-            await updateTransaction.CommitAsync();
-        }
-
-        private async Task CommitHistoricalDataChanges()
-        {
-            if (_HistoricalDataToUpdate?.Count > 0)
-            {
-                await using var updateTransaction = await _context.Database.BeginTransactionAsync();
-                await _context.BulkInsertOrUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
-                await updateTransaction.CommitAsync();
-            }
-        }
-
-        private async Task<List<AirportPosition>> GetAirportPositions()
+        private async Task<List<AirportPosition>> GetAirportPositions(DegaContext context)
         {
             var recordsFromCache = LookupAirportRecordsByFromCache();
+
             if (recordsFromCache == null)
             {
-                var airports = (await _degaContext.AcukwikAirports
-                                .ToListAsync()
-                                )
+                var airports = (await (context.AcukwikAirports
+
                             .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .AsNoTracking())
+                                .ToListAsync())
                                 .Select(a =>
                                 {
                                     var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
@@ -1376,6 +1349,28 @@ namespace FBOLinx.Web.Services
                 }
             }
             return inside;
+        }
+
+        private async Task<List<AirportWatchLiveData>> GetAirportWatchLiveDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        {
+            var result = await context.AirportWatchLiveData
+                .Where(x =>
+                    distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                    && x.AircraftPositionDateTimeUtc >= aircraftPositionDateTime)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
+        private async Task<List<AirportWatchHistoricalData>> GetAirportWatchHistoricalDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        {
+            var result = await context.AirportWatchHistoricalData
+                .Where(x =>
+                    distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                    && x.AircraftPositionDateTimeUtc >= aircraftPositionDateTime)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
         }
     }
 
