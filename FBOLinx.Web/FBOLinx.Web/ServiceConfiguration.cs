@@ -113,10 +113,10 @@ namespace FBOLinx.Web
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
-            services.AddTransient<SWIMFlightLegEntityService, SWIMFlightLegEntityService>();
-            services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
-            services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
-            services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
+            services.AddTransient<SWIMFlightLegRepository, SWIMFlightLegRepository>();
+            services.AddTransient<SWIMFlightLegDataRepository, SWIMFlightLegDataRepository>();
+            services.AddTransient<AirportWatchLiveDataRepository, AirportWatchLiveDataRepository>();
+            services.AddTransient<AirportWatchHistoricalDataRepository, AirportWatchHistoricalDataRepository>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
 
