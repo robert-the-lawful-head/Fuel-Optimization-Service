@@ -8,12 +8,19 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
     {
         public int Id { get; set; }
         public string FlightNumber { get; set; }
+        public string FlightDepartment { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string Origin { get; set; }
+        public string City { get; set; }
         public string DepartureICAO { get; set; }
         public string DepartureCity { get; set; }
         public string ArrivalICAO { get; set; }
         public string ArrivalCity { get; set; }
-        public DateTime ATD { get; set; }
-        public DateTime ETA { get; set; }
+        public DateTime ATDLocal { get; set; }
+        public DateTime ATDZulu { get; set; }
+        public DateTime ETALocal { get; set; }
+        public DateTime ETAZulu { get; set; }
         public double? ActualSpeed { get; set; }
         public double? Altitude { get; set; }
         public double? Latitude { get; set; }
