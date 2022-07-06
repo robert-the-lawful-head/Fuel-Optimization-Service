@@ -640,7 +640,7 @@ namespace FBOLinx.Web.Services
         }
 
 
-        public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data)
+        public async Task ProcessAirportWatchData(List<AirportWatchLiveData> data, bool isTesting = false)
         {
             _LiveDataToUpdate = new List<AirportWatchLiveData>();
             _LiveDataToInsert = new List<AirportWatchLiveData>();
@@ -738,7 +738,8 @@ namespace FBOLinx.Web.Services
             await SetTailNumber(_HistoricalDataToInsert);
             await SetTailNumber(_LiveDataToInsert);
 
-            await CommitChanges();
+            if (!isTesting)
+                await CommitChanges();
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
@@ -1038,6 +1039,14 @@ namespace FBOLinx.Web.Services
                 Debug.WriteLine("Error in AirportWatchService.GetParkingOccurencesByAirport: " + exception.Message);
                 return new List<AirportWatchHistoricalData>();
             }
+        }
+
+        public async Task GetAirportWatchTestData()
+        {
+            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -10, 0));
+
+            var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc >= pastTenMinutes).ToListAsync();
+            await ProcessAirportWatchData(aircraftWatchLiveData, true);
         }
 
         private async Task<List<AirportWatchAntennaStatusGrid>> GetDistinctAntennaBoxes()
