@@ -50,7 +50,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(string icao)
         {
             IEnumerable<SWIMFlightLeg> swimFlightLegs = await _flightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow));
-            IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs);
+            IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, false);
 
             return result;
         }
@@ -58,7 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(string icao)
         {
             IEnumerable<SWIMFlightLeg> swimFlightLegs = await _flightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow));
-            IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs);
+            IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, true);
             
             return result;
         }
@@ -187,7 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private async Task<IEnumerable<FlightLegDTO>> GetFlightLegs(IEnumerable<SWIMFlightLeg> swimFlightLegs)
+        private async Task<IEnumerable<FlightLegDTO>> GetFlightLegs(IEnumerable<SWIMFlightLeg> swimFlightLegs, bool isArrivals)
         {
             List<string> airportICAOs = swimFlightLegs.Select(x => x.DepartureICAO).ToList();
             airportICAOs.AddRange(swimFlightLegs.Select(x => x.ArrivalICAO).ToList());
@@ -205,7 +205,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 dto.DepartureICAO = swimFlightLeg.DepartureICAO;
                 dto.ArrivalICAO = swimFlightLeg.ArrivalICAO;
                 
-                var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLegDto.AircraftIdentification);
+                var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
                 if (aircraftByFlightDepartment != null)
                 {
                     dto.FlightDepartment = aircraftByFlightDepartment.Item3;
@@ -217,28 +217,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     }
                 }
 
-                dto.ATDZulu = swimFlightLegDto.ATD;
+                dto.ATDZulu = swimFlightLeg.ATD;
                 AcukwikAirportDTO departureAirport = airports.FirstOrDefault(x => x.Icao == dto.DepartureICAO);
                 if (departureAirport != null)
                 {
-                    dto.ATDLocal = DateTimeHelper.GetLocalTime(swimFlightLegDto.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.ATDLocal = DateTimeHelper.GetLocalTime(swimFlightLeg.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
                     dto.DepartureCity = departureAirport.AirportCity;
                 }
                 else
                 {
-                    dto.ATDLocal = swimFlightLegDto.ATD;
+                    dto.ATDLocal = swimFlightLeg.ATD;
                 }
 
-                dto.ETALocal = swimFlightLegDto.ETA;
+                dto.ETALocal = swimFlightLeg.ETA;
                 AcukwikAirportDTO arrivalAirport = airports.FirstOrDefault(x => x.Icao == dto.ArrivalICAO);
                 if (arrivalAirport != null)
                 {
-                    dto.ETALocal = DateTimeHelper.GetLocalTime(swimFlightLegDto.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                    dto.ETALocal = DateTimeHelper.GetLocalTime(swimFlightLeg.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
                     dto.ArrivalCity = arrivalAirport.AirportCity;
                 }
                 else
                 {
-                    dto.ETALocal = swimFlightLegDto.ETA;
+                    dto.ETALocal = swimFlightLeg.ETA;
                 }
 
                 if (isArrivals)
