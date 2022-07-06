@@ -217,8 +217,6 @@ export abstract class MapboxglBase {
             .addTo(this.map)  
             .on('close', function(e) {
                 currentPopup.isPopUpOpen = false;
-                currentPopup.coordinates = null;
-                currentPopup.popupId = null;
             });
     }
 }

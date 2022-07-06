@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { ThrowStmt } from '@angular/compiler';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CustomersListType } from 'src/app/models';
@@ -16,6 +17,7 @@ export class AircraftPopupContainerComponent {
   @Input() isLoading: boolean;
   @Input() fboId: any;
   @Input() groupId: any;
+  @Output() refreshAircraftProperties = new EventEmitter<Aircraftwatch>();
 
   public aircraftWatch: Aircraftwatch = {
       customerInfoBygGroupId : 0,
@@ -29,23 +31,27 @@ export class AircraftPopupContainerComponent {
       currentPricing: ''
   };
   public hasAircraft = false;
-  private customers: CustomersListType[] = []
+  public customers: CustomersListType[] = []
+  public selectedFboId: number;
+  public selectedGroupId: number;
 
   constructor(
     private newCustomerAircraftDialog: MatDialog,
     private customerInfoByGroupService: CustomerinfobygroupService,
     private router: Router
   ) { }
-  ngOnChanges(changes) {
+  ngOnChanges(changes) { 
+  console.log("🚀 ~ file: aircraft-popup-container.component.ts ~ line 45 ~ AircraftPopupContainerComponent ~ ngOnChanges ~ changes", changes)
+    
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;  
     if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue; 
     if(changes.flightData?.currentValue?.company) this.hasAircraft = true;
     else this.hasAircraft = false;   
   }
-  ngOnInit() {
-    this.getCustomersList();
+  ngOnInit(){
+    if(this.fboId && this.groupId)
+    this.getCustomersList(this.groupId,this.fboId);
   }
-
   addAircraft() {
     const dialogRef = this.newCustomerAircraftDialog.open<
         AircraftAssignModalComponent,
@@ -62,16 +68,18 @@ export class AircraftPopupContainerComponent {
     .afterClosed()
     .subscribe((result: any) => {
         if (result) {
-            this.aircraftWatch.aircraftTypeCode = result.aircraftType
-            this.aircraftWatch.company = result.company
+          console.log(result)
+            this.aircraftWatch.aircraftMakeModel = result.aircraftType;
+            this.aircraftWatch.company = result.company;
+            this.refreshAircraftProperties.emit(this.aircraftWatch);
         }
     });
   }
-  getCustomersList() {
+  getCustomersList(groupId,fboId) {
       this.customerInfoByGroupService
           .getCustomersListByGroupAndFbo(
-              this.groupId,
-              this.fboId
+              groupId,
+              fboId
           )
           .subscribe((customers: any[]) => {
               this.customers = customers;

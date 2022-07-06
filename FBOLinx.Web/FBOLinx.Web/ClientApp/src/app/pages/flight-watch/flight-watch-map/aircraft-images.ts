@@ -119,4 +119,17 @@ export const AIRCRAFT_IMAGES: AircraftImageData[]= [
         size: 65,
         url: '/assets/img/map-markers/default.svg',
     },
+    {
+        blueReverseUrl: '/assets/img/map-markers/airplane-CLIENT.svg',
+        blueUrl: '/assets/img/map-markers/airplane-CLIENT.svg',
+        fuelerlinxUrl: '/assets/img/map-markers/airplane-CLIENT.svg',
+        fuelerlinxReverseUrl: '/assets/img/map-markers/airplane-CLIENT.svg',
+        description: '',
+        fillColor: '#2b62ae',
+        id: 'client',
+        label: 'Other',
+        reverseUrl: '/assets/img/map-markers/airplane-CLIENT.svg',
+        size: 65,
+        url: '/assets/img/map-markers/airplane-CLIENT.svg',
+    }
 ];
