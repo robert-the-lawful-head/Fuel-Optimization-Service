@@ -196,6 +196,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             var flightDepartmentsByTailNumbers = 
                 await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(swimFlightLegs.Select(x => x.AircraftIdentification).ToList());
             var aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList()));
+            List<AirportWatchLiveData> antennaLiveData =
+                await _airportWatchLiveDataEntityService.GetListBySpec(
+                    new AirportWatchLiveDataByFlightNumberSpecification(swimFlightLegs.Select(x => x.AircraftIdentification).ToList(), DateTime.UtcNow.AddHours(-1)));
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
             foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
             {
@@ -204,7 +207,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 dto.FlightNumber = swimFlightLeg.AircraftIdentification;
                 dto.DepartureICAO = swimFlightLeg.DepartureICAO;
                 dto.ArrivalICAO = swimFlightLeg.ArrivalICAO;
-                
+
+                AirportWatchLiveData antennaLiveDataRecord =
+                    antennaLiveData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
+                if (antennaLiveDataRecord != null)
+                {
+                    dto.IsAircraftOnGround = antennaLiveDataRecord.IsAircraftOnGround;
+                }
+
                 var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
                 if (aircraftByFlightDepartment != null)
                 {
