@@ -29,6 +29,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             missedQuoteLog.FboId = missedQuoteLogDto.FboId;
             missedQuoteLog.CustomerId = missedQuoteLogDto.CustomerId;
             missedQuoteLog.Emailed = missedQuoteLogDto.Emailed;
+            missedQuoteLog.Debugs = missedQuoteLogDto.Debugs;
             await _context.MissedQuoteLog.AddAsync(missedQuoteLog);
             await _context.SaveChangesAsync();
         }
@@ -39,15 +40,16 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var recentMissedQuotes = await _context.MissedQuoteLog.Where(m => m.FboId == fboId && m.CreatedDate >= daysBefore).OrderByDescending(o => o.CreatedDate).ToListAsync();
 
             var recentMissedQuotedList = new List<MissedQuoteLogDto>();
-            foreach(MissedQuoteLog missedQuoteLog in recentMissedQuotes)
+            var localTimeZone = "";
+            localTimeZone = await _fboService.GetAirportTimeZoneByFboId(fboId);
+
+            foreach (MissedQuoteLog missedQuoteLog in recentMissedQuotes)
             {
                 var localDateTime = DateTime.UtcNow;
-                var localTimeZone = "";
 
                 if (isGridView)
                 {
                     localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(missedQuoteLog.CreatedDate.GetValueOrDefault(), fboId);
-                    localTimeZone = await _fboService.GetAirportTimeZoneByFboId(fboId);
                 }
 
                 var missedQuoteLogDto = new MissedQuoteLogDto();

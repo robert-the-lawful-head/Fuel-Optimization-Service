@@ -15,5 +15,6 @@ namespace FBOLinx.DB.Models
         public DateTime? CreatedDate { get; set; }
         public int? CustomerId { get; set; }
         public bool? Emailed { get; set; }
+        public string Debugs { get; set; }
     }
 }

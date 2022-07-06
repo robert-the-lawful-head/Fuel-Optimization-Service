@@ -150,7 +150,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 .Include(x => x.Customer.CustomCustomerType)
                 .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
                 .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
-                .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
+                //.Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
                 .Include(x => x.Customer.CustomerContacts)
                 .ToListAsync();
 
@@ -168,7 +168,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 .Include(x => x.Customer.CustomCustomerType)
                 .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
                 .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
-                .Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
+                //.Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
                 .Select(x => new CustomerListResponse
                 {
                     CustomerInfoByGroupID = x.Oid,
