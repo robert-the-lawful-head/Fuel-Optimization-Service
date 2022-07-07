@@ -7,27 +7,13 @@
 </div>
 <div>
     <div *ngIf="noMissedQuotes">No Missed Quotes</div>
-    <table *ngIf="!noMissedQuotes" [dataSource]="fbosMissedQuotesDataSource" class="col-md-12 mb-0" mat-table matSort>
-        <ng-container matColumnDef="customerName">
-            <td *matCellDef="let missedQuote" mat-cell>
-                {{ missedQuote.customerName }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="missedQuotesCount">
-            <td *matCellDef="let missedQuote" mat-cell>
-                {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}
-            </td>
-        </ng-container>
-
-        <ng-container matColumnDef="createdDate">
-            <td *matCellDef="let missedQuote" mat-cell>
-                <div>
-                    {{ missedQuote.createdDate }}
-                </div>
-            </td>
-        </ng-container>
-
-        <tr *matRowDef="let row; columns: getTableColumns()" mat-row style="cursor: pointer;"></tr>
-    </table>
+    <div *ngIf="!noMissedQuotes">
+        <div class="container" *ngFor="let missedQuote of fbosMissedQuotesDataSource;">
+            <div class="row">
+                <div class="col-4 border-bottom p-3">{{ missedQuote.customerName }}</div>
+                <div class="col-4 border-bottom p-3"> {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}</div>
+                <div class="col-4 border-bottom p-3"> {{ missedQuote.createdDate }}</div>
+            </div>
+        </div>
+    </div>
 </div>
