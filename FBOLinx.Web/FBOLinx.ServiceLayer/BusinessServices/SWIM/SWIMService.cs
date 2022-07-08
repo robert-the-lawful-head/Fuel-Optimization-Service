@@ -258,7 +258,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     dto.ETALocal = swimFlightLeg.ETA;
                 }
 
-                dto.ETE = dto.ETAZulu - dto.ATDZulu;
+                dto.ETE = dto.ETAZulu - DateTime.UtcNow;
 
                 if (isArrivals)
                 {
