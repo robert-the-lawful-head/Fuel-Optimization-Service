@@ -113,6 +113,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         return this.pricingTemplateForm.controls.customerMargins as FormArray;
     }
 
+    get isMember() {
+        return this.sharedService.currentUser.role === 4;
+    }
+
     ngOnDestroy() {
         if (!this.hasSaved)
             return;
