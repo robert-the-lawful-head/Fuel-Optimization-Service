@@ -12,6 +12,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest } from 'rxjs';
+import {
+    MatDialog,
+} from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
@@ -24,6 +27,7 @@ import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -97,7 +101,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private fboFeeAndTaxOmitsbyPricingTemplateService: FbofeeandtaxomitsbypricingtemplateService,
         private sharedService: SharedService,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        private marginLessThanOneDialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
 
@@ -362,9 +367,41 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     cancelPricingTemplateEdit() {
-        this.router
-            .navigate(['/default-layout/pricing-templates/'])
-            .then(() => {});
+        var isMarginLessThanZero = false;
+        this.customerMarginsFormArray.value.every(
+            (customerMargin: any) => {
+                if (customerMargin.amount <= 0) {
+                    isMarginLessThanZero = true;
+                    return false;
+                }
+            });
+
+        if (!isMarginLessThanZero) {
+            this.router
+                .navigate(['/default-layout/pricing-templates/'])
+                .then(() => { });
+        }
+        else {
+            const dialogRef = this.marginLessThanOneDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes',
+                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+                this.router
+                    .navigate(['/default-layout/pricing-templates/'])
+                    .then(() => { });
+            });
+        }
     }
 
     deleteCustomerMargin(index: number) {
