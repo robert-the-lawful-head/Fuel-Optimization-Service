@@ -7,7 +7,7 @@ using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class AcukwikAirportEntityService : DegaBaseEntityService<AcukwikAirport, AcukwikAirportDTO, int>, IEntityService<AcukwikAirport, AcukwikAirportDTO, int>
+    public class AcukwikAirportEntityService : Repository<AcukwikAirport, DegaContext>
     {
         public AcukwikAirportEntityService(DegaContext context) : base(context)
         {

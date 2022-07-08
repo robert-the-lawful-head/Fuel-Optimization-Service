@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.DatesAndTimes;
+using FBOLinx.DB;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Aircraft;
@@ -158,7 +159,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
                 else if (!string.IsNullOrEmpty(antennaLiveDataRecord.AircraftHexCode))
                 {
-                    List<AircraftHexTailMappingDTO> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(antennaLiveDataRecord.AircraftHexCode));
+                    List<AircraftHexTailMapping> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(antennaLiveDataRecord.AircraftHexCode));
                     if (hexTailMappings != null && hexTailMappings.Any())
                     {
                         swimFlightLegDto.AircraftIdentification = hexTailMappings.First().TailNumber;
@@ -177,7 +178,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     }
                     else if (!string.IsNullOrEmpty(antennaHistoricalDataRecord.AircraftHexCode))
                     {
-                        List<AircraftHexTailMappingDTO> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(antennaHistoricalDataRecord.AircraftHexCode));
+                        List<AircraftHexTailMapping> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(antennaHistoricalDataRecord.AircraftHexCode));
                         if (hexTailMappings != null && hexTailMappings.Any())
                         {
                             swimFlightLegDto.AircraftIdentification = hexTailMappings.First().TailNumber;
@@ -192,24 +193,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<string> airportICAOs = swimFlightLegs.Select(x => x.DepartureICAO).ToList();
             airportICAOs.AddRange(swimFlightLegs.Select(x => x.ArrivalICAO).ToList());
             airportICAOs = airportICAOs.Distinct().ToList();
-            List<AcukwikAirportDTO> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
-            var flightDepartmentsByTailNumbers = 
-                await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(swimFlightLegs.Select(x => x.AircraftIdentification).ToList());
+            List<AcukwikAirport> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
+            List<string> tailNumbers = swimFlightLegs.Select(x => x.AircraftIdentification).ToList();
+            var flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
+            var pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(tailNumbers);
             var aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList()));
-            List<AirportWatchLiveData> antennaLiveData =
-                await _airportWatchLiveDataEntityService.GetListBySpec(
-                    new AirportWatchLiveDataByFlightNumberSpecification(swimFlightLegs.Select(x => x.AircraftIdentification).ToList(), DateTime.UtcNow.AddHours(-1)));
+            List<AirportWatchLiveData> antennaLiveData = await _airportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByFlightNumberSpecification(tailNumbers, DateTime.UtcNow.AddHours(-1)));
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
             foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
             {
                 FlightLegDTO dto = new FlightLegDTO();
                 dto.Id = swimFlightLeg.Oid;
-                dto.FlightNumber = swimFlightLeg.AircraftIdentification;
+                dto.TailNumber = swimFlightLeg.AircraftIdentification;
                 dto.DepartureICAO = swimFlightLeg.DepartureICAO;
                 dto.ArrivalICAO = swimFlightLeg.ArrivalICAO;
 
-                AirportWatchLiveData antennaLiveDataRecord =
-                    antennaLiveData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
+                AirportWatchLiveData antennaLiveDataRecord = antennaLiveData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
                 if (antennaLiveDataRecord != null)
                 {
                     dto.IsAircraftOnGround = antennaLiveDataRecord.IsAircraftOnGround;
@@ -224,11 +223,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     {
                         dto.Make = aircraft.Make;
                         dto.Model = aircraft.Model;
+                        dto.FuelCapacityGal = aircraft.FuelCapacityGal;
                     }
                 }
 
+                dto.ITPMarginTemplate = "Company Pricing";
+                var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
+                if (pricingTemplate != null && !string.IsNullOrWhiteSpace(pricingTemplate.Item3))
+                {
+                    dto.ITPMarginTemplate = pricingTemplate.Item3;
+                }
+
                 dto.ATDZulu = swimFlightLeg.ATD;
-                AcukwikAirportDTO departureAirport = airports.FirstOrDefault(x => x.Icao == dto.DepartureICAO);
+                AcukwikAirport departureAirport = airports.FirstOrDefault(x => x.Icao == dto.DepartureICAO);
                 if (departureAirport != null)
                 {
                     dto.ATDLocal = DateTimeHelper.GetLocalTime(swimFlightLeg.ATD, departureAirport.IntlTimeZone, departureAirport.DaylightSavingsYn?.ToLower() == "y");
@@ -239,8 +246,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     dto.ATDLocal = swimFlightLeg.ATD;
                 }
 
-                dto.ETALocal = swimFlightLeg.ETA;
-                AcukwikAirportDTO arrivalAirport = airports.FirstOrDefault(x => x.Icao == dto.ArrivalICAO);
+                dto.ETAZulu = swimFlightLeg.ETA;
+                AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == dto.ArrivalICAO);
                 if (arrivalAirport != null)
                 {
                     dto.ETALocal = DateTimeHelper.GetLocalTime(swimFlightLeg.ETA, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
@@ -250,6 +257,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 {
                     dto.ETALocal = swimFlightLeg.ETA;
                 }
+
+                dto.ETE = dto.ETAZulu - dto.ATDZulu;
 
                 if (isArrivals)
                 {
