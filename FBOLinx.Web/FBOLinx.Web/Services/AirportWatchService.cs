@@ -508,7 +508,7 @@ namespace FBOLinx.Web.Services
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
             var historicalData = await GetAircraftsHistoricalDataAssociatedWithFboRefactored(groupId, fboId, request);
 
-            if (historicalData == null && historicalData.Count() == 0) return new List<AirportWatchHistoricalDataResponse>();
+            if (historicalData == null || historicalData.Count() == 0) return new List<AirportWatchHistoricalDataResponse>();
 
             var icao = historicalData.FirstOrDefault().AirportICAO;
 
