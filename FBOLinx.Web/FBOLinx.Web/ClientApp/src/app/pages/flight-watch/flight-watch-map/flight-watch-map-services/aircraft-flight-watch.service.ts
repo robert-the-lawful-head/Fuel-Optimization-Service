@@ -7,14 +7,14 @@ import { FlightWatchMapService } from './flight-watch-map.service';
 export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
-    public getFlightFeatureJsonData(data: any,id,focusedMarkerId): any {
+    public getFlightFeatureJsonData(data: any,id,selectedAircraft): any {
         let icon = "aircraft_image_";
         if(data.isInNetwork){
             icon = `${icon}client`;
         }else{
             icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
                 data.aircraftTypeCode
-            )}${id === focusedMarkerId.toString() ? '_reversed' : ''}${
+            )}${id === selectedAircraft.toString() ? '_reversed' : ''}${
                 data.fuelOrder != null
                     ? '_release'
                     : data.isFuelerLinxCustomer
@@ -31,7 +31,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 id: data.oid,
                 // description:
                 //     '<app-flight-watch-aircraft-info-dialog><app-flight-watch-aircraft-info-dialog/>',
-                'icon': icon,
+                'icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
@@ -46,7 +46,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             id : layerId,
             layout: {
                 'icon-allow-overlap': true,
-                'icon-image': ['get', 'icon'],
+                'icon-image': ['get', 'icon-image'],
                 'icon-rotate': ['get', 'rotate'],
                 'icon-size': ['get', 'size']
             },

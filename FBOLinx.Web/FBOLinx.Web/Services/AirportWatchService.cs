@@ -382,7 +382,7 @@ namespace FBOLinx.Web.Services
                                         AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                         AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                         FuelOrder = fo.Adapt<FuelReqDto>(),
-                                        IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
+                                        IsInNetwork = (fr.ca?.Customer?.CustomerInfoByGroup?.Oid > 0),
                                         IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
                                         TailNumber = fr.awhd.TailNumber
                                     })

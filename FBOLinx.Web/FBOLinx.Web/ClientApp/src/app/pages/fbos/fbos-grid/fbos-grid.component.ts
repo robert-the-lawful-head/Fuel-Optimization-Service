@@ -105,7 +105,7 @@ export class FbosGridComponent implements OnInit {
 
             if (
                 remindMeLaterFlag &&
-                moment(new Date(moment().format('L'))) !==
+                moment(new Date(moment().format('L'))) <=
                     moment(new Date(remindMeLaterFlag))
             ) {
                 return;

@@ -6,7 +6,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
-    public class AircraftHexTailMappingEntityService : DegaBaseEntityService<AircraftHexTailMapping, AircraftHexTailMappingDTO, int>, IEntityService<AircraftHexTailMapping, AircraftHexTailMappingDTO, int>
+    public class AircraftHexTailMappingEntityService : Repository<AircraftHexTailMapping, DegaContext>
     {
         public AircraftHexTailMappingEntityService(DegaContext context) : base(context)
         {
