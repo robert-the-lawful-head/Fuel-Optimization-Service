@@ -95,14 +95,16 @@ namespace FBOLinx.Web.Controllers
                 MissedQuoteCount = g.Count(f => f.TailNumber != "")
             }).ToList();
 
+            var customers = await _customerService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+
             foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
             {
                 if (missedOrdersLogList.Count == 5)
                     break;
 
-                var customer = await _customerService.GetCustomerByFuelerLinxId(transaction.CompanyId.GetValueOrDefault());
+                var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
 
-                if (!missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
+                if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
                 {
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
@@ -112,7 +114,8 @@ namespace FBOLinx.Web.Controllers
                     missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
-                    missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedQuotesLogViewModel.CustomerId = customer.Oid;
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
