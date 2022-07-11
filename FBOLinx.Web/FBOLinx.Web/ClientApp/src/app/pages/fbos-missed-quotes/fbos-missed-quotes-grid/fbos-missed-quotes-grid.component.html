@@ -8,11 +8,11 @@
 <div>
     <div *ngIf="noMissedQuotes">No Missed Quotes</div>
     <div *ngIf="!noMissedQuotes">
-        <div class="container" *ngFor="let missedQuote of fbosMissedQuotesDataSource;">
+        <div *ngFor="let missedQuote of fbosMissedQuotesDataSource;">
             <div class="row">
-                <div class="col-4 border-bottom p-3">{{ missedQuote.customerName }}</div>
-                <div class="col-4 border-bottom p-3"> {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}</div>
-                <div class="col-4 border-bottom p-3"> {{ missedQuote.createdDate }}</div>
+                <div class="col-5 border-bottom pt-3 pb-3">{{ missedQuote.customerName }}</div>
+                <div class="col-3 border-bottom pt-3 pb-3"> {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}</div>
+                <div class="col-4 border-bottom pt-3 pb-3"> {{ missedQuote.createdDate }}</div>
             </div>
         </div>
     </div>
