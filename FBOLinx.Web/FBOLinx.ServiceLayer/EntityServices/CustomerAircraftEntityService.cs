@@ -40,18 +40,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var flightDepartmentList = from ca in _context.CustomerAircrafts
                                        join cg in _context.CustomerInfoByGroup on ca.CustomerId equals cg.CustomerId
                                        where tailNumbers.Contains(ca.TailNumber)
-                                       select new { ca.AircraftId, ca.TailNumber, cg.Company};
+                                       select new { ca.AircraftId, ca.TailNumber, cg.Company };
             return (await flightDepartmentList.ToListAsync()).Select(x => new Tuple<int, string, string>(x.AircraftId, x.TailNumber, x.Company));
         }
 
         public async Task<IEnumerable<Tuple<int, string, string>>> GetPricingTemplates(IList<string> tailNumbers)
         {
-            var flightDepartmentList = from ca in _context.CustomerAircrafts
-                join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
-                join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
-                where tailNumbers.Contains(ca.TailNumber)
-                select new { ca.AircraftId, ca.TailNumber, pt.Name };
-            return (await flightDepartmentList.ToListAsync()).Select(x => new Tuple<int, string, string>(x.AircraftId, x.TailNumber, x.Name));
+            var pricingTemplateList = from ca in _context.CustomerAircrafts
+                                      join ap in _context.AircraftPrices on ca.Oid equals ap.CustomerAircraftId
+                                      join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                      where tailNumbers.Contains(ca.TailNumber)
+                                      select new { ca.AircraftId, ca.TailNumber, pt.Name };
+            return (await pricingTemplateList.ToListAsync()).Select(x => new Tuple<int, string, string>(x.AircraftId, x.TailNumber, x.Name));
         }
     }
 }
