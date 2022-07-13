@@ -382,8 +382,8 @@ namespace FBOLinx.Web.Services
                                         AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                         AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                         FuelOrder = fo.Adapt<FuelReqDto>(),
-                                        IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
-                                        IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.Value > 0),
+                                        IsInNetwork = (fr.ca?.Customer?.CustomerInfoByGroup?.Oid > 0),
+                                        IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
                                         TailNumber = fr.awhd.TailNumber
                                     })
                                     .ToList();
@@ -508,7 +508,7 @@ namespace FBOLinx.Web.Services
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
             var historicalData = await GetAircraftsHistoricalDataAssociatedWithFboRefactored(groupId, fboId, request);
 
-            if (historicalData == null && historicalData.Count() == 0) return new List<AirportWatchHistoricalDataResponse>();
+            if (historicalData == null || historicalData.Count() == 0) return new List<AirportWatchHistoricalDataResponse>();
 
             var icao = historicalData.FirstOrDefault().AirportICAO;
 

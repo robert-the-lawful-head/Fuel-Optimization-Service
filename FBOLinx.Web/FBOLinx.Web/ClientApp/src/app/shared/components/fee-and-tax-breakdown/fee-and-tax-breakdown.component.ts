@@ -31,6 +31,8 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
        validFlightTypes: Array<number> = [0, 1, 2, 3];
     @Input()
        discountType : number;
+    @Input()
+        isMember: boolean;
     @Output()
        omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 

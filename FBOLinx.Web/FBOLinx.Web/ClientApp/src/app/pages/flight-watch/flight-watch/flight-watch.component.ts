@@ -49,6 +49,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     flightWatchDataSubject = new BehaviorSubject<FlightWatch[]>([]);
     flightWatchDataObservable$ = this.flightWatchDataSubject.asObservable();
 
+    AircraftLiveDatasubscription: Subscription;
+
     style: any = {};
     isMapShowing = true;
 
@@ -79,7 +81,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
-            this.airportWatchFetchSubscription = this.airportWatchService
+            return this.airportWatchFetchSubscription = this.airportWatchService
                 .getAll(
                     this.sharedService.currentUser.groupId,
                     this.sharedService.currentUser.fboId
@@ -124,7 +126,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             };
             return;
         }
-        this.selectedAircraftData = await this.airportWatchService.getAircraftLiveData(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId, flightWatch.tailNumber).toPromise();
+
+        if ( this.AircraftLiveDatasubscription ) {
+            this.AircraftLiveDatasubscription.unsubscribe();
+        }
+        this.AircraftLiveDatasubscription = this.airportWatchService.getAircraftLiveData(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId, flightWatch.tailNumber)
+        .subscribe((res)=> {
+        console.log("🚀 ~ file: flight-watch.component.ts ~ line 136 ~ FlightWatchComponent ~ .subscribe ~ res", res)
+            this.selectedAircraftData = res;
+        });
     }
     
     onAircraftInfoClose() {

@@ -1,6 +1,6 @@
 :host {
     display: block;
-    border: 1px solid #e5e6e9;
+    border: none;
     margin-bottom: 20px;
     position: relative;
 }
@@ -14,7 +14,7 @@
     }
 
     .prices-board-item {
-        margin: 15px 15px 15px 0;
+        margin: 15px 0px 15px 0;
     }
 
     .prices-board-first-column {

@@ -54,7 +54,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Ok(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }
