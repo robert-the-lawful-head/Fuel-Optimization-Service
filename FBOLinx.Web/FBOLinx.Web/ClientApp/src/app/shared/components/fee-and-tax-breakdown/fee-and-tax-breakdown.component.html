@@ -32,7 +32,7 @@
                 <mat-checkbox (change)="omitChanged(aboveLineTax)"
                               [(ngModel)]="aboveLineTax.isOmitted"
                               type="checkbox"
-                              *ngIf="marginType != 1"></mat-checkbox>
+                              *ngIf="marginType != 1" [disabled] ="isMember"></mat-checkbox>
             </div>
             <div
                  class="col">
@@ -117,7 +117,7 @@
             <div *ngIf="displayMode == 1" class="col-1">
                 <mat-checkbox (change)="omitChanged(belowLineTax)"
                               [(ngModel)]="belowLineTax.isOmitted"
-                              type="checkbox"></mat-checkbox>
+                              type="checkbox" [disabled] ="isMember"></mat-checkbox>
             </div>
             <div class="col">
                 <span [ngClass]="{

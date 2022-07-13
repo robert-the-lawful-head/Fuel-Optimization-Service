@@ -51,6 +51,7 @@ export class PriceBreakdownComponent implements OnInit {
     @Input() tooltipPlacement = 'top-left';
     @Input() priceBreakdownLoader = 'price-breakdown-loader';
     @Input() hideTooltips = false;
+    @Input() isMember: boolean;
     @Output() omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() calculationsComplated: EventEmitter<any> =
         new EventEmitter<any>();

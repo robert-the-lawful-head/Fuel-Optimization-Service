@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class AcukwikAirportEntityService : Repository<AcukwikAirport, DegaContext>
+    public class AircraftEntityService: Repository<AirCrafts, DegaContext>
     {
-        public AcukwikAirportEntityService(DegaContext context) : base(context)
+        public AircraftEntityService(DegaContext context) : base(context)
         {
         }
     }
