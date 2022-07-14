@@ -28,6 +28,7 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -49,6 +50,7 @@ namespace FBOLinx.Web.Controllers
         private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
+        private IServiceScopeFactory _ScopeFactory;
 
         public FbopricesController(
             FboLinxContext context,
@@ -65,8 +67,11 @@ namespace FBOLinx.Web.Controllers
             MissedQuoteLogEntityService missedQuoteLogEntityService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
-            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
+            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings,
+            IServiceScopeFactory scopeFactory
+            )
         {
+            _ScopeFactory = scopeFactory;
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
             _context = context;
@@ -746,6 +751,7 @@ namespace FBOLinx.Web.Controllers
                     await _context.Customers.Where(x =>
                         x.FuelerlinxId == request.FuelerlinxCompanyID
                         ).OrderBy(x => ((!x.GroupId.HasValue) ? 0 : x.GroupId.Value))
+                        .AsNoTracking()
                         .FirstOrDefaultAsync();
                 if (customer == null)
                     return Ok(null);
@@ -765,7 +771,9 @@ namespace FBOLinx.Web.Controllers
                         ct.Fboid,
                         ct.CustomerType,
                         PricingTemplateName = pt.Name
-                    }).ToListAsync();
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 var result = (
                     from p in validPricing
@@ -796,16 +804,17 @@ namespace FBOLinx.Web.Controllers
 
                 if (result.Count() == 0)
                 {
+                    List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
                     var fbos = await _fboService.GetFbosByIcaos(request.ICAO);
 
                     foreach (var fbo in fbos)
                     {
-                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).FirstOrDefaultAsync();
+                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).AsNoTracking().FirstOrDefaultAsync();
 
                         if (customerGroup != null && customerGroup.Oid > 0)
                         {
                             var universalTime = DateTime.UtcNow;
-                            var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).FirstOrDefaultAsync();
+                            var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking().FirstOrDefaultAsync();
                             var customerType = new CustomCustomerTypes();
                             customerType.CustomerType = customCustomerType.CustomerType;
                             customerType.Oid = customCustomerType.Oid;
@@ -841,9 +850,11 @@ namespace FBOLinx.Web.Controllers
                             missedQuote.CustomerId = customer.Oid;
                             missedQuote.Emailed = isEmailed;
                             missedQuote.Debugs = debugging;
-                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                            missedQuotesToLog.Add(missedQuote);
                         }
                     }
+
+                    await SaveMissedQuotes(missedQuotesToLog);
                 }
 
                 return Ok(result);
@@ -1053,6 +1064,21 @@ namespace FBOLinx.Web.Controllers
         private IQueryable<Fbos> GetAllActiveFbos()
         {
             return _context.Fbos.Where(f => f.Active == true).AsQueryable();
+        }
+
+        private async Task SaveMissedQuotes(List<MissedQuoteLogDto> missedQuoteLogs)
+        {
+            if (missedQuoteLogs?.Count == 0)
+                return;
+
+            using (var scope = _ScopeFactory.CreateScope())
+            {
+                var missedQuoteLogEntityService = scope.ServiceProvider.GetRequiredService<MissedQuoteLogEntityService>();
+                foreach(var missedQuoteLog in missedQuoteLogs)
+                {
+                    await missedQuoteLogEntityService.AddMissedQuoteLog(missedQuoteLog);
+                }
+            }
         }
     }
 }
