@@ -802,59 +802,62 @@ namespace FBOLinx.Web.Controllers
                         CopyEmails = p.CopyEmails
                     }).Distinct();
 
-                if (result.Count() == 0)
+                foreach (var icao in request.ICAO.Split(',').Select(x => x.Trim()))
                 {
-                    List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
-                    var fbos = await _fboService.GetFbosByIcaos(request.ICAO);
-
-                    foreach (var fbo in fbos)
+                    if (!result.Any(r => r.Icao == icao))
                     {
-                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).AsNoTracking().FirstOrDefaultAsync();
+                        List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
+                        var fbos = await _fboService.GetFbosByIcaos(icao);
 
-                        if (customerGroup != null && customerGroup.Oid > 0)
+                        foreach (var fbo in fbos)
                         {
-                            var universalTime = DateTime.UtcNow;
-                            var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking().FirstOrDefaultAsync();
-                            var customerType = new CustomCustomerTypes();
-                            customerType.CustomerType = customCustomerType.CustomerType;
-                            customerType.Oid = customCustomerType.Oid;
-                            var fboPrices = await _context.Fboprices.Where(x =>
-                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
-                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                    x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+                            var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).AsNoTracking().FirstOrDefaultAsync();
 
-                            var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
-                            debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
-                            debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
-
-                            var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
-                            var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
-                            var isEmailed = false;
-
-                            if (recentMissedQuote.Count == 0)
+                            if (customerGroup != null && customerGroup.Oid > 0)
                             {
-                                if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                var universalTime = DateTime.UtcNow;
+                                var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking().FirstOrDefaultAsync();
+                                var customerType = new CustomCustomerTypes();
+                                customerType.CustomerType = customCustomerType.CustomerType;
+                                customerType.Oid = customCustomerType.Oid;
+                                var fboPrices = await _context.Fboprices.Where(x =>
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
+                        (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
+                        x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+
+                                var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
+                                debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
+                                debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
+
+                                var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
+                                var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                                var isEmailed = false;
+
+                                if (recentMissedQuote.Count == 0)
                                 {
-                                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                                    if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                    {
+                                        var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
-                                    if (toEmails.Count > 0)
-                                        await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                                        if (toEmails.Count > 0)
+                                            await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
 
-                                    isEmailed = true;
+                                        isEmailed = true;
+                                    }
                                 }
+
+                                var missedQuote = new MissedQuoteLogDto();
+                                missedQuote.CreatedDate = DateTime.UtcNow;
+                                missedQuote.FboId = fbo.Oid;
+                                missedQuote.CustomerId = customer.Oid;
+                                missedQuote.Emailed = isEmailed;
+                                missedQuote.Debugs = debugging;
+                                missedQuotesToLog.Add(missedQuote);
                             }
-
-                            var missedQuote = new MissedQuoteLogDto();
-                            missedQuote.CreatedDate = DateTime.UtcNow;
-                            missedQuote.FboId = fbo.Oid;
-                            missedQuote.CustomerId = customer.Oid;
-                            missedQuote.Emailed = isEmailed;
-                            missedQuote.Debugs = debugging;
-                            missedQuotesToLog.Add(missedQuote);
                         }
-                    }
 
-                    await SaveMissedQuotes(missedQuotesToLog);
+                        await SaveMissedQuotes(missedQuotesToLog);
+                    }
                 }
 
                 return Ok(result);
