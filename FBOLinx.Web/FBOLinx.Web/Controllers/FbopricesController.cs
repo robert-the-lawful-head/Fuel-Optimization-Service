@@ -804,13 +804,13 @@ namespace FBOLinx.Web.Controllers
 
                 foreach (var icao in request.ICAO.Split(',').Select(x => x.Trim()))
                 {
-                    if (!result.Any(r => r.Icao == icao))
-                    {
-                        List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
-                        var fbos = await _fboService.GetFbosByIcaos(icao);
+                    var fbos = await _fboService.GetFbosByIcaos(icao);
 
-                        foreach (var fbo in fbos)
+                    foreach (var fbo in fbos)
+                    {
+                        if (!result.Any(r => r.Icao == icao && r.Fbo == fbo.Fbo))
                         {
+                            List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
                             var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).AsNoTracking().FirstOrDefaultAsync();
 
                             if (customerGroup != null && customerGroup.Oid > 0)
@@ -854,9 +854,8 @@ namespace FBOLinx.Web.Controllers
                                 missedQuote.Debugs = debugging;
                                 missedQuotesToLog.Add(missedQuote);
                             }
+                            await SaveMissedQuotes(missedQuotesToLog);
                         }
-
-                        await SaveMissedQuotes(missedQuotesToLog);
                     }
                 }
 
