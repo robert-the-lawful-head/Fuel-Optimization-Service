@@ -112,5 +112,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             return result;
         }
+
+        public async Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId)
+        {
+            var customerAircraft = await _Context.CustomerAircrafts.Where(a => a.Oid == customerAircraftId).FirstOrDefaultAsync();
+            return customerAircraft.TailNumber;
+        }
     }
 }

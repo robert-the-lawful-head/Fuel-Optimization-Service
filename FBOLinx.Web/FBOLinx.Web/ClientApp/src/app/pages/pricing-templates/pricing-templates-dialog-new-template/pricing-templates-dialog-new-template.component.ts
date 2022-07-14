@@ -224,13 +224,24 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     addTemplateClicked() {
         var isMarginLessThanZero = false;
-        this.customerMarginsFormArray.value.every(
-            (customerMargin: any) => {
-                if (customerMargin.amount <= 0) {
-                    isMarginLessThanZero = true;
-                    return false;
-                }
-            });
+        if (this.form.value.secondStep.marginType == 0) {
+            this.customerMarginsFormArray.value.every(
+                (customerMargin: any) => {
+                    if (customerMargin.amount <= 0) {
+                        isMarginLessThanZero = true;
+                        return false;
+                    }
+                });
+        }
+        else {
+            this.customerMarginsFormArray.value.every(
+                (customerMargin: any) => {
+                    if (customerMargin.itp <= 0) {
+                        isMarginLessThanZero = true;
+                        return false;
+                    }
+                });
+        }
 
         if (!isMarginLessThanZero) {
             this.completeTemplateAdd();

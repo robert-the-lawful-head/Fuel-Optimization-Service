@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
@@ -44,6 +45,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboFeesAndTaxesService, FboFeesAndTaxesService>();
             services.AddTransient<IFboService, FboService>();
             services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
+            services.AddTransient<FuelReqService, FuelReqService>();
 
             return services;
         }
