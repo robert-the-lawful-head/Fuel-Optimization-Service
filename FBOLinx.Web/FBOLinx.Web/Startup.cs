@@ -82,8 +82,13 @@ namespace FBOLinx.Web
                 }
             });
 
-            StackifyLib.Config.ApiKey = "";
-            StackifyLib.Config.Environment = env.EnvironmentName;
+            ConfigureStackifyLogging(Configuration["StackifySettings:StackifyApiKey"], env.EnvironmentName);
+        }
+
+        private void ConfigureStackifyLogging(string stackifyApiKey, string environmentName)
+        {
+            StackifyLib.Config.ApiKey = stackifyApiKey;
+            StackifyLib.Config.Environment = environmentName;
             StackifyLib.Config.AppName = LoggingService.AppName;
         }
     }
