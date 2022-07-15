@@ -143,6 +143,8 @@ export class DefaultLayoutComponent implements OnInit {
         });
 
         this.layoutClasses = this.getClasses();
+
+        this.LogUserForAnalytics();
     }
 
     isPricePanelVisible() {
@@ -349,5 +351,18 @@ export class DefaultLayoutComponent implements OnInit {
             [1, 4].includes(this.sharedService.currentUser.role) ||
             [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
         );
+    }
+
+    private LogUserForAnalytics() {
+        //Log data about the user for Lucky Orange analytics
+        if (!this.sharedService.currentUser || !this.sharedService.currentUser.username || this.sharedService.currentUser.username == '')
+            return;
+        var userData = {
+            "Name": (!this.sharedService.currentUser.firstName ? '' : this.sharedService.currentUser.firstName) + ' ' + (!this.sharedService.currentUser.lastName ? '' : this.sharedService.currentUser.lastName),
+            "UserName": this.sharedService.currentUser.username
+        };
+
+        window._loq = window._loq || []
+        window._loq.push(['custom', userData]);
     }
 }
