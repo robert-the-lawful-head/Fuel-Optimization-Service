@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -19,15 +20,15 @@ namespace FBOLinx.Web.Controllers
     [ApiController]
     public class FboMissedQuotesLogController : Controller
     {
-        private MissedQuoteLogEntityService _missedQuoteService;
+        private MissedQuoteLogService _missedQuoteService;
         private FuelerLinxApiService _fuelerLinxApiService;
         private Services.FboService _fboService;
         private IFboService _iFboService;
         private readonly CustomerService _customerService;
 
-        public FboMissedQuotesLogController(MissedQuoteLogEntityService missedQuoteLogEntityService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService)
+        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService)
         {
-            _missedQuoteService = missedQuoteLogEntityService;
+            _missedQuoteService = missedQuoteLogService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
             _customerService = customerService;

@@ -48,7 +48,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _iFboService; 
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
-        private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
+        private readonly MissedQuoteLogService _missedQuoteLogService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IServiceScopeFactory _ScopeFactory;
@@ -65,7 +65,7 @@ namespace FBOLinx.Web.Controllers
             Services.FboService fboService,
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
-            MissedQuoteLogEntityService missedQuoteLogEntityService,
+            MissedQuoteLogService missedQuoteLogService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
             IOptions<AppPartnerSDKSettings> appPartnerSDKSettings,
@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Controllers
             _dateTimeService = dateTimeService;
             _fboService = fboService;
             _fboPreferencesService = fboPreferencesService;
-            _missedQuoteLogEntityService = missedQuoteLogEntityService;
+            _missedQuoteLogService = missedQuoteLogService;
             _integrationUpdatePricingLogService = integrationUpdatePricingLogService;
             _iFboService = iFboService;
             _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
@@ -828,7 +828,7 @@ namespace FBOLinx.Web.Controllers
                             debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
                             debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
 
-                            var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
+                            var missedQuoteLog = await _missedQuoteLogService.GetRecentMissedQuotes(fbo.Oid);
                             var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
                             var isEmailed = false;
 
