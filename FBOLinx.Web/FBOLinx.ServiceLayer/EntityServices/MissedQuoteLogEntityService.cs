@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class MissedQuoteLogEntityService : Repository<MissedQuoteLogDto, FboLinxContext>
+    public class MissedQuoteLogEntityService : Repository<MissedQuoteLog, FboLinxContext>
     {
         private readonly FboLinxContext _context;
         private readonly IFboService _fboService;
@@ -20,18 +20,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
             _context = context;
             _fboService = fboService;
-        }
-
-        public async Task AddMissedQuoteLog(MissedQuoteLogDto missedQuoteLogDto)
-        {
-            MissedQuoteLog missedQuoteLog = new MissedQuoteLog();
-            missedQuoteLog.CreatedDate = missedQuoteLogDto.CreatedDate;
-            missedQuoteLog.FboId = missedQuoteLogDto.FboId;
-            missedQuoteLog.CustomerId = missedQuoteLogDto.CustomerId;
-            missedQuoteLog.Emailed = missedQuoteLogDto.Emailed;
-            missedQuoteLog.Debugs = missedQuoteLogDto.Debugs;
-            await _context.MissedQuoteLog.AddAsync(missedQuoteLog);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<List<MissedQuoteLogDto>> GetRecentMissedQuotes(int fboId, bool isGridView = false)

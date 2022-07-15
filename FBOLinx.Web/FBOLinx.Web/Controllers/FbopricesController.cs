@@ -26,6 +26,7 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.DB.Specifications;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -1073,10 +1074,10 @@ namespace FBOLinx.Web.Controllers
 
             using (var scope = _ScopeFactory.CreateScope())
             {
-                var missedQuoteLogEntityService = scope.ServiceProvider.GetRequiredService<MissedQuoteLogEntityService>();
+                var missedQuoteLogService = scope.ServiceProvider.GetRequiredService<MissedQuoteLogService>();
                 foreach(var missedQuoteLog in missedQuoteLogs)
                 {
-                    await missedQuoteLogEntityService.AddMissedQuoteLog(missedQuoteLog);
+                    await missedQuoteLogService.AddAsync(missedQuoteLog);
                 }
             }
         }
