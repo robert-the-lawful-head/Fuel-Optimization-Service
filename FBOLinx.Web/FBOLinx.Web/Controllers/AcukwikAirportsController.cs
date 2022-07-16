@@ -27,9 +27,9 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/AcukwikAirports
         [HttpGet]
-        public IEnumerable<AcukwikAirport> GetAcukwikAirports()
+        public async Task<ActionResult<List<AcukwikAirport>>> GetAcukwikAirports()
         {
-            return _context.AcukwikAirports;
+            return Ok(await _context.AcukwikAirports.Where(x => x.Latitude != null && x.Longitude != null).ToListAsync());
         }
 
         // GET: api/AcukwikAirports/5
