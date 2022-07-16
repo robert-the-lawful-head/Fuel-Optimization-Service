@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AcukwikAirport } from '../models/AcukwikAirport';
 
 @Injectable()
 export class AcukwikairportsService {
@@ -13,8 +15,8 @@ export class AcukwikairportsService {
         this.accessPointUrl = baseUrl + 'api/AcukwikAirports';
     }
 
-    public getAllAirports() {
-        return this.http.get(this.accessPointUrl, { headers: this.headers });
+    public getAllAirports(): Observable<AcukwikAirport[]> {
+        return this.http.get<AcukwikAirport[]>(this.accessPointUrl, { headers: this.headers });
     }
 
     public get(payload) {
@@ -50,6 +52,12 @@ export class AcukwikairportsService {
     public getAcukwikFboHandlerDetailByIcao(icao) {
         return this.http.get(
             this.accessPointUrl + '/' + icao + '/fbo-handler-detail',
+            { headers: this.headers }
+        );
+    }
+    public GetAcukwikAirportByICAO(icao): Observable<AcukwikAirport> {
+        return this.http.get<AcukwikAirport>(
+            this.accessPointUrl + '/byicao/' + icao ,
             { headers: this.headers }
         );
     }
