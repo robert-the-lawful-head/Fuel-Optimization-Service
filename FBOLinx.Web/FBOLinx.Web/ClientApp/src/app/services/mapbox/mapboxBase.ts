@@ -42,6 +42,18 @@ export abstract class MapboxglBase {
         this.map.addControl(new mapboxgl.NavigationControl());
         return this;
     }
+    addGeolocationControls(): this{
+        this.map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+            enableHighAccuracy: true
+            },
+            // When active the map will receive updates to the device's location as it changes.
+            trackUserLocation: true,
+            // Draw an arrow next to the location dot to indicate which direction the device is heading.
+            showUserHeading: true
+            }));
+        return this;
+    }
     onZoomAsync(callBack): this{
         this.map.on('zoom', async () => callBack);
         return this;
