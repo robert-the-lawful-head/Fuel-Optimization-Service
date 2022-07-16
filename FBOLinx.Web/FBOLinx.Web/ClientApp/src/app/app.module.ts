@@ -102,6 +102,7 @@ import { AssociationsDialogNewAssociationComponent } from './pages/associations/
 import { AirportFboGeofenceClustersService } from './services/airportfbogeofenceclusters.service';
 import { AirportFboGeofenceClusterCoordinatesService } from './services/airportfbogeofenceclustercoordinates.service';
 import { DateTimeService } from './services/datetime.service';
+import { SwimService } from './services/swim.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -218,7 +219,8 @@ import { DateTimeService } from './services/datetime.service';
         AssociationsService,
         AirportFboGeofenceClustersService,
         AirportFboGeofenceClusterCoordinatesService,
-        DateTimeService
+        DateTimeService,
+        SwimService
     ],
 })
 export class AppModule { }
