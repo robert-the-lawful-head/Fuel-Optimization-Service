@@ -9,7 +9,7 @@ export class AircraftFlightWatchService {
 constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: any,id,selectedAircraft): any {
         let icon = "aircraft_image_";
-        if(data.isInNetwork){
+        if (data.isInNetwork && !data.fuelOrder && !data.isFuelerLinxCustomer){
             icon = `${icon}client`;
         }else{
             icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
