@@ -105,13 +105,13 @@ namespace FBOLinx.Web.Controllers
                 allRecentFboLinxTransactions.AddRange(recentTransactions);
             }
 
-            var groupedAllRecentFboLinxTransactions = allRecentFboLinxTransactions.GroupBy(t => t.CustomerId).Select(g => new
+            var groupedAllRecentFboLinxTransactions = allRecentFboLinxTransactions.Where(a => a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
                 CustomerId = g.Key,
                 MissedQuoteCount = g.Count(f => f.CustomerAircraftId > 0)
             }).ToList();
 
-            foreach (var transaction in allRecentFboLinxTransactions.OrderByDescending(f => f.DateCreated))
+            foreach (var transaction in allRecentFboLinxTransactions.Where(a => a.Cancelled == false).OrderByDescending(f => f.DateCreated))
             {
                 if (missedOrdersLogList.Count == 5)
                     break;
