@@ -56,21 +56,11 @@
                             <app-flight-watch-map #map
                                                   [isStable]="flightWatchData.length > 0"
                                                   [data]="filteredFlightWatchData"
+                                                  [aircraftData]= "selectedAircraftData"
                                                   [center]="center"
                                                   (markerClicked)="onFlightWatchClick($event)"
                                                   style="width: 100%;"></app-flight-watch-map>
 
-                            <!--<div class="flight-watch-settings"
-                         [ngStyle]="style"
-                         mwlResizable
-                         [enableGhostResize]="true"
-                         (resizeEnd)="onResizeEnd($event)"
-                         [validateResize]="validate">
-                        <div class="resize-handle-left"
-                             mwlResizeHandle
-                             [resizeEdges]="{ left: true }"></div>
-
-                    </div>-->
                         </div>
                     </div>
                 </mat-drawer-content>

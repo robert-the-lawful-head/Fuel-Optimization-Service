@@ -1,9 +1,10 @@
 using System;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
-    public partial class AirportWatchHistoricalDataDto
+    public class AirportWatchHistoricalDataDto : BaseEntityModelDTO<DB.Models.AirportWatchHistoricalData>, IEntityModelDTO<DB.Models.AirportWatchHistoricalData, int>
     {
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }

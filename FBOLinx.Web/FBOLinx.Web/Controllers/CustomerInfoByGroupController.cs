@@ -256,7 +256,7 @@ namespace FBOLinx.Web.Controllers
                                    && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
                              select new
                              {
-                                 cg.Oid,
+                                 Oid = cg.Oid,
                                  cg.Company,
                                  cg.CustomerId,
                                  CustomerCompanyType = (cg.CustomerCompanyType ?? 0),
@@ -306,7 +306,7 @@ namespace FBOLinx.Web.Controllers
                                  where cg.GroupId == groupId && !(c.Suspended ?? false)
                                  select new
                                  {
-                                     cg.Oid
+                                     Oid = cg.Oid
                                  }).Count();
 
             return Ok(customerCount);
@@ -894,6 +894,8 @@ namespace FBOLinx.Web.Controllers
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
 
                 PricingTemplateDto defaultPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
+                if (defaultPricingTemplate == null)
+                    defaultPricingTemplate = new PricingTemplateDto();
 
                 await _pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
 

@@ -15,6 +15,7 @@ namespace FBOLinx.Web.Services
         private IServiceScopeFactory _ScopeFactory;
         private readonly AirportWatchService _AirportWatchService;
         private bool _IsDebugging = false;
+        private bool _IsCurrentlyRunning = false;
 
         public AirportWatchScheduledService(IServiceScopeFactory scopeFactory)
         {
@@ -26,13 +27,9 @@ namespace FBOLinx.Web.Services
         {
             if (_IsDebugging)
             {
-                TimeSpan interval = TimeSpan.FromMinutes(1);
-
                 Task.Run(() =>
                 {
-                    var t1 = Task.Delay(interval);
-                    t1.Wait();
-                    _Timer = new Timer(GetAirportWatchLiveTrips, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+                    _Timer = new Timer(GetAirportWatchLiveTrips, null, TimeSpan.Zero, TimeSpan.FromMinutes(2));
                 });
             }
 
@@ -49,12 +46,14 @@ namespace FBOLinx.Web.Services
         private async void GetAirportWatchLiveTrips(object state)
         {
             CheckForDebugMode();
-            if (_IsDebugging)
+            if (_IsDebugging && !_IsCurrentlyRunning)
             {
                 using (var scope = _ScopeFactory.CreateScope())
                 {
+                    _IsCurrentlyRunning = true;
                     var airportWatchService = scope.ServiceProvider.GetRequiredService<AirportWatchService>();
                     await airportWatchService.GetAirportWatchTestData();
+                    _IsCurrentlyRunning = false;
                 }
             }
         }

@@ -26,6 +26,7 @@ using FBOLinx.Service.Mapping.Dto;
 using Microsoft.Extensions.Caching.Memory;
 using Mapster;
 using FBOLinx.ServiceLayer.DTO;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Services
 {
@@ -51,10 +52,15 @@ namespace FBOLinx.Web.Services
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
+        private IServiceProvider _ServiceProvider;
 
         public AirportWatchService(DBSCANService DBSCANService,
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService, IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService, IMemoryCache memoryCache)
+            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService,
+            IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
+            FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
+            IMemoryCache memoryCache, IServiceProvider serviceProvider)
         {
+            _ServiceProvider = serviceProvider;
             _dBSCANService = DBSCANService;
             _demoData = demoData;
             _context = context;
@@ -288,7 +294,7 @@ namespace FBOLinx.Web.Services
                 .FirstOrDefaultAsync();
 
             if (fbo == null) return filteredResult;
-           
+
             CoordinateBoundaries boundaries = new CoordinateBoundaries(coordinate, _distance, DistanceUnit.Miles);
 
             var timelimit = DateTime.UtcNow.AddMinutes(-2);
@@ -324,8 +330,8 @@ namespace FBOLinx.Web.Services
                     TimeStandard = transaction.TimeStandard.ToString() == "0" ? "Z" : "L",
                     Email = "",
                     PhoneNumber = "",
-                    CustomerAircraft = new CustomerAircrafts() { TailNumber = transaction.TailNumber }, 
-                    });
+                    CustomerAircraft = new CustomerAircrafts() { TailNumber = transaction.TailNumber },
+                });
             }
             var customerAircrafts =
                 _context.CustomerAircrafts
@@ -337,10 +343,10 @@ namespace FBOLinx.Web.Services
 
             var airportWatchDataWithCustomers = await
                 (from awhd in _context.AirportWatchLiveData
-                join ca in customerAircrafts on awhd.TailNumber equals ca.TailNumber
-                    into leftJoinedCustomers
-                from ca in leftJoinedCustomers.DefaultIfEmpty()
-                select new { awhd, ca })
+                 join ca in customerAircrafts on awhd.TailNumber equals ca.TailNumber
+                     into leftJoinedCustomers
+                 from ca in leftJoinedCustomers.DefaultIfEmpty()
+                 select new { awhd, ca })
                 .Where(x => x.awhd.AircraftPositionDateTimeUtc >= timelimit)
                 .Where(x =>
                 !(x.awhd.Latitude < boundaries.MinLatitude || x.awhd.Latitude > boundaries.MaxLatitude || x.awhd.Longitude < boundaries.MinLongitude ||
@@ -354,32 +360,32 @@ namespace FBOLinx.Web.Services
 
 
             filteredResult = (from fr in airportWatchDataWithCustomers
-                                    join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
-                                    from fo in fos.DefaultIfEmpty()
-                                    where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
-                                    select new AirportWatchLiveDataDto
-                                    {
-                                        Oid = fr.awhd.Oid,
-                                        Longitude = fr.awhd.Longitude,
-                                        Latitude = fr.awhd.Latitude,
-                                        GpsAltitude = fr.awhd.GpsAltitude,
-                                        GroundSpeedKts = fr.awhd.GroundSpeedKts,
-                                        IsAircraftOnGround = fr.awhd.IsAircraftOnGround,
-                                        TrackingDegree = fr.awhd.TrackingDegree,
-                                        VerticalSpeedKts = fr.awhd.VerticalSpeedKts,
-                                        TransponderCode = fr.awhd.TransponderCode,
-                                        AtcFlightNumber = fr.awhd.AtcFlightNumber,
-                                        AircraftHexCode = fr.awhd.AircraftHexCode,
-                                        BoxName = fr.awhd.BoxName,
-                                        BoxTransmissionDateTimeUtc = fr.awhd.BoxTransmissionDateTimeUtc,
-                                        AircraftPositionDateTimeUtc = fr.awhd.AircraftPositionDateTimeUtc,
-                                        AircraftTypeCode = fr.awhd.AircraftTypeCode,
-                                        AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
-                                        FuelOrder = fo.Adapt<FuelReqDto>(),
-                                        IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
-                                        IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.Value > 0),
-                                        TailNumber = fr.awhd.TailNumber
-                                    })
+                              join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
+                              from fo in fos.DefaultIfEmpty()
+                              where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
+                              select new AirportWatchLiveDataDto
+                              {
+                                  Oid = fr.awhd.Oid,
+                                  Longitude = fr.awhd.Longitude,
+                                  Latitude = fr.awhd.Latitude,
+                                  GpsAltitude = fr.awhd.GpsAltitude,
+                                  GroundSpeedKts = fr.awhd.GroundSpeedKts,
+                                  IsAircraftOnGround = fr.awhd.IsAircraftOnGround,
+                                  TrackingDegree = fr.awhd.TrackingDegree,
+                                  VerticalSpeedKts = fr.awhd.VerticalSpeedKts,
+                                  TransponderCode = fr.awhd.TransponderCode,
+                                  AtcFlightNumber = fr.awhd.AtcFlightNumber,
+                                  AircraftHexCode = fr.awhd.AircraftHexCode,
+                                  BoxName = fr.awhd.BoxName,
+                                  BoxTransmissionDateTimeUtc = fr.awhd.BoxTransmissionDateTimeUtc,
+                                  AircraftPositionDateTimeUtc = fr.awhd.AircraftPositionDateTimeUtc,
+                                  AircraftTypeCode = fr.awhd.AircraftTypeCode,
+                                  AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
+                                  FuelOrder = fo.Adapt<FuelReqDto>(),
+                                  IsInNetwork = (fr.ca?.Customer?.CompanyByGroup?.Oid > 0),
+                                  IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
+                                  TailNumber = fr.awhd.TailNumber
+                              })
                                     .ToList();
 
             AddDemoDataToAirportWatchResult(filteredResult, fboId);
@@ -471,26 +477,26 @@ namespace FBOLinx.Web.Services
                               }).ToList();
 
                 var result2 = (from h in historicalData
-                          join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
-                          into leftJoinedCV
-                          from cv in leftJoinedCV.DefaultIfEmpty()
-                          select new AirportWatchHistoricalDataResponse
-                          {
-                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                              CompanyId = h.CustomerId,
-                              Company = h.Company,
-                              DateTime = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
-                              FlightNumber = h.AtcFlightNumber,
-                              HexCode = h.AircraftHexCode,
-                              AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
-                              Status = h.AircraftStatusDescription,
-                              AirportIcao = h.AirportICAO,
-                              AircraftTypeCode = h.AircraftTypeCode,
-                              PastVisits = cv == null ? null : cv.PastVisits,
-                              VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                              PercentOfVisits = cv == null ? null : cv.PercentOfVisits
-                          }).ToList();
+                               join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
+                               into leftJoinedCV
+                               from cv in leftJoinedCV.DefaultIfEmpty()
+                               select new AirportWatchHistoricalDataResponse
+                               {
+                                   CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                                   CompanyId = h.CustomerId,
+                                   Company = h.Company,
+                                   DateTime = h.AircraftPositionDateTimeUtc,
+                                   TailNumber = h.TailNumber,
+                                   FlightNumber = h.AtcFlightNumber,
+                                   HexCode = h.AircraftHexCode,
+                                   AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
+                                   Status = h.AircraftStatusDescription,
+                                   AirportIcao = h.AirportICAO,
+                                   AircraftTypeCode = h.AircraftTypeCode,
+                                   PastVisits = cv == null ? null : cv.PastVisits,
+                                   VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
+                                   PercentOfVisits = cv == null ? null : cv.PercentOfVisits
+                               }).ToList();
 
                 return result;
             }
@@ -523,65 +529,65 @@ namespace FBOLinx.Web.Services
                 }
             }
             var customerVisitsData = new List<AirportWatchHistoricalDataResponse>();
-    
-                 customerVisitsData = historicalData
-                    .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.AtcFlightNumber })
-                    .Select(g =>
-                    {
-                        var latest = g
-                            .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
-                        var pastVisits = g
-                            .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
+            customerVisitsData = historicalData
+               .GroupBy(ah => new { ah.CustomerId, ah.AirportICAO, ah.AircraftHexCode, ah.AtcFlightNumber })
+               .Select(g =>
+               {
+                   var latest = g
+                       .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
-                        var visitsToMyFboCount = (coordinates.Count > 0) ? pastVisits.Where(p => IsPointInPolygon(new Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).Count() : 0;
+                   var pastVisits = g
+                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
+
+                   var visitsToMyFboCount = (coordinates.Count > 0) ? pastVisits.Where(p => IsPointInPolygon(new Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).Count() : 0;
 
 
-                        return new AirportWatchHistoricalDataResponse
-                        {
-                            CustomerInfoByGroupID = latest.CustomerInfoByGroupID,
-                            CompanyId = latest.CustomerId,
-                            Company = latest.Company,
-                            DateTime = latest.AircraftPositionDateTimeUtc,
-                            TailNumber = latest.TailNumber,
-                            FlightNumber = latest.AtcFlightNumber,
-                            HexCode = latest.AircraftHexCode,
-                            AircraftType = string.IsNullOrEmpty(latest.Make) ? null : latest.Make + " / " + latest.Model,
-                            Status = latest.AircraftStatusDescription,
-                            PastVisits = pastVisits.Count(),
-                            AirportIcao = latest.AirportICAO,
-                            AircraftTypeCode = latest.AircraftTypeCode,
-                            VisitsToMyFbo = visitsToMyFboCount,
-                            PercentOfVisits = visitsToMyFboCount > 0 ? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
-                        };
-                    })
-                    .ToList();
+                   return new AirportWatchHistoricalDataResponse
+                   {
+                       CustomerInfoByGroupID = latest.CustomerInfoByGroupID,
+                       CompanyId = latest.CustomerId,
+                       Company = latest.Company,
+                       DateTime = latest.AircraftPositionDateTimeUtc,
+                       TailNumber = latest.TailNumber,
+                       FlightNumber = latest.AtcFlightNumber,
+                       HexCode = latest.AircraftHexCode,
+                       AircraftType = string.IsNullOrEmpty(latest.Make) ? null : latest.Make + " / " + latest.Model,
+                       Status = latest.AircraftStatusDescription,
+                       PastVisits = pastVisits.Count(),
+                       AirportIcao = latest.AirportICAO,
+                       AircraftTypeCode = latest.AircraftTypeCode,
+                       VisitsToMyFbo = visitsToMyFboCount,
+                       PercentOfVisits = visitsToMyFboCount > 0 ? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
+                   };
+               })
+               .ToList();
 
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
             var result = new List<AirportWatchHistoricalDataResponse>();
-       
-             result = (from h in historicalData
-                          join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
-                          into leftJoinedCV
-                          from cv in leftJoinedCV.DefaultIfEmpty()
-                          select new AirportWatchHistoricalDataResponse
-                          {
-                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                              CompanyId = h.CustomerId,
-                              Company = h.Company,
-                              DateTime = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
-                              FlightNumber = h.AtcFlightNumber,
-                              HexCode = h.AircraftHexCode,
-                              AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
-                              Status = h.AircraftStatusDescription,
-                              AirportIcao = h.AirportICAO,
-                              AircraftTypeCode = h.AircraftTypeCode,
-                              PastVisits = cv == null ? null : cv.PastVisits,
-                              VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                              PercentOfVisits = cv == null ? null : cv.PercentOfVisits
-                          }).ToList();
+
+            result = (from h in historicalData
+                      join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
+                      into leftJoinedCV
+                      from cv in leftJoinedCV.DefaultIfEmpty()
+                      select new AirportWatchHistoricalDataResponse
+                      {
+                          CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                          CompanyId = h.CustomerId,
+                          Company = h.Company,
+                          DateTime = h.AircraftPositionDateTimeUtc,
+                          TailNumber = h.TailNumber,
+                          FlightNumber = h.AtcFlightNumber,
+                          HexCode = h.AircraftHexCode,
+                          AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
+                          Status = h.AircraftStatusDescription,
+                          AirportIcao = h.AirportICAO,
+                          AircraftTypeCode = h.AircraftTypeCode,
+                          PastVisits = cv == null ? null : cv.PastVisits,
+                          VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
+                          PercentOfVisits = cv == null ? null : cv.PercentOfVisits
+                      }).ToList();
 
             return result;
         }
@@ -648,29 +654,26 @@ namespace FBOLinx.Web.Services
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalData>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalData>();
 
-            var airportPositions = await GetAirportPositions();
+            await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
+            await using var degaContext = _ServiceProvider.GetService<DegaContext>();
+
+            var airportPositions = await GetAirportPositions(degaContext);
 
             //Grab distinct aircraft for this set of data
             var distinctAircraftHexCodes =
-                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList().Distinct();
+                data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
-            var oldAirportWatchLiveDataCollection = await _context.AirportWatchLiveData.Where(x =>
-                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-1)).ToListAsync();
+            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-1));
 
-            var oldAirportWatchHistoricalDataCollection = await _context.AirportWatchHistoricalData.Where(x =>
-                distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
-                //&& distinctFlightNumbers.Count() == 0 || distinctFlightNumbers.Any(flightNumber => flightNumber == x.AtcFlightNumber)
-                && x.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddHours(-4)).ToListAsync();
+            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-4));
 
             foreach (var record in data)
             {
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
-                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.Where(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid)).FirstOrDefault();
+                var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
 
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
@@ -716,6 +719,15 @@ namespace FBOLinx.Web.Services
                 }
             }
 
+            await PrepareRecordsForDatabase(degaContext, airportPositions);
+
+            if (!isTesting)
+                await CommitChanges(fboLinxContext);
+        }
+
+        private async Task PrepareRecordsForDatabase(DegaContext degaContext, List<AirportPosition> airportPositions)
+        {
+            //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
             _HistoricalDataToInsert.ForEach(x =>
             {
@@ -735,11 +747,49 @@ namespace FBOLinx.Web.Services
                 return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
             }).ToList();
 
-            await SetTailNumber(_HistoricalDataToInsert);
-            await SetTailNumber(_LiveDataToInsert);
+            await SetTailNumber(degaContext, _HistoricalDataToInsert);
+            await SetTailNumber(degaContext, _LiveDataToInsert);
+            //[#2ht0dek] Commenting out changes made in this branch to see if performance is restored with an upgrade to EFCore and BulkExtensions
 
-            if (!isTesting)
-                await CommitChanges();
+            ////Set the nearest airport for all records that will be recorded for historical statuses
+            //_HistoricalDataToInsert.ForEach(x =>
+            //{
+            //    x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            //});
+            //_HistoricalDataToUpdate.ForEach(x =>
+            //{
+            //    x.AirportICAO = GetNearestICAO(airportPositions, x.Latitude, x.Longitude);
+            //});
+
+            //_LiveDataToUpdate = _LiveDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+            //    .GroupBy(x => x.Id)
+            //    .Select(x => x.First())
+            //    .ToList();
+
+            //_LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Id)
+            //    .Select(x => x.First()).ToList();
+
+            //_HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
+            //    .GroupBy(x => x.Id)
+            //    .Select(x => x.First())
+            //    .Where(x =>
+            //    {
+            //        if (string.IsNullOrEmpty(x?.AirportICAO) || string.IsNullOrEmpty(x?.BoxName)) return false;
+            //        return x.BoxName.ToLower().StartsWith(x.AirportICAO.ToLower());
+            //    })
+            //    .ToList();
+
+            //_HistoricalDataToInsert = _HistoricalDataToInsert.Where(record =>
+            //{
+            //    if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
+            //    return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+            //}).ToList();
+
+            //await SetTailNumber(_HistoricalDataToInsert);
+            //await SetTailNumber(_LiveDataToInsert);
+
+            ////Merge the insert data for historical information into the update collection so we can do a BulkInsertUpdate operation
+            //_HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFbo(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
@@ -753,7 +803,7 @@ namespace FBOLinx.Web.Services
                                          (request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
                                         select new
                                         {
-                                            awhd.Oid,
+                                            Oid = awhd.Oid,
                                             awhd.AircraftHexCode,
                                             awhd.AtcFlightNumber,
                                             awhd.AircraftPositionDateTimeUtc,
@@ -826,15 +876,31 @@ namespace FBOLinx.Web.Services
         {
             var fboIcao = fboId.HasValue ? await _fboService.GetFBOIcaoAsNoTracking(fboId.Value) : null;
 
+            //Only select the indexed columns that are important for historical lookup.  Further data can be isolated by the ID of the historical record.
             var historicalData = await
                 _context.AirportWatchHistoricalData
-                .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
-                .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
-                .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
-                .AsNoTracking()
-                .ToListAsync();
+                    .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
+                    .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
+                    .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
+                    .Select(awhd => new
+                    {
+                        Oid = awhd.Oid,
+                        awhd.AircraftHexCode,
+                        awhd.AtcFlightNumber,
+                        awhd.AircraftPositionDateTimeUtc,
+                        awhd.AircraftStatus,
+                        awhd.AirportICAO,
+                        awhd.AircraftTypeCode,
+                        awhd.Latitude,
+                        awhd.Longitude,
+                        AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
+                        TailNumber = awhd.TailNumber
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
+
             //this is repeated query in  getwatchlivedata
-            var customerAircraftsData = 
+            var customerAircraftsData =
                            _context.CustomerAircrafts
                            .Include(ca => ca.Customer)
                            .Include(ca => ca.Customer.CustomerInfoByGroup)
@@ -957,7 +1023,7 @@ namespace FBOLinx.Web.Services
             return result.ToList();
         }
 
-        public async Task<List<AcukwikAirports>> GetAirportsWithAntennaData()
+        public async Task<List<AcukwikAirport>> GetAirportsWithAntennaData()
         {
             try
             {
@@ -982,7 +1048,7 @@ namespace FBOLinx.Web.Services
             catch (System.Exception exception)
             {
                 Debug.WriteLine("Error in AirportWatchService.GetAirportsWithAntennaData: " + exception.Message);
-                return new List<AcukwikAirports>();
+                return new List<AcukwikAirport>();
             }
         }
 
@@ -993,7 +1059,7 @@ namespace FBOLinx.Web.Services
                 var distinctBoxes = await GetDistinctAntennaBoxes();
 
                 var fbos = await (from f in _context.Fbos where f.GroupId > 1 select new { Fbo = f.Fbo, AntennaName = f.AntennaName }).ToListAsync();
-                foreach(AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
+                foreach (AirportWatchAntennaStatusGrid distinctBox in distinctBoxes)
                 {
                     var fbo = fbos.Where(f => f.AntennaName != null && f.AntennaName.ToLower().Trim() == distinctBox.BoxName.ToLower().Trim()).FirstOrDefault();
                     if (fbo != null && fbo.Fbo != null)
@@ -1001,7 +1067,7 @@ namespace FBOLinx.Web.Services
                 }
 
                 return distinctBoxes;
-               
+
             }
             catch (System.Exception exception)
             {
@@ -1043,7 +1109,7 @@ namespace FBOLinx.Web.Services
 
         public async Task GetAirportWatchTestData()
         {
-            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -10, 0));
+            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -90, 0)); //CHANGE BACK
 
             var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc >= pastTenMinutes).ToListAsync();
             await ProcessAirportWatchData(aircraftWatchLiveData, true);
@@ -1067,16 +1133,16 @@ namespace FBOLinx.Web.Services
             distinctLiveBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
 
             var distinctBoxesHistorical = (from dh in distinctHistoricalBoxes
-                                 join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
-                                 into leftJoinDistinctLiveBoxes
-                                 from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
-                                 select new AirportWatchAntennaStatusGrid
-                                 {
-                                     BoxName = dl == null ? dh.BoxName : dl.BoxName,
-                                     Status = dl == null ? "Not Active" : "Active",
-                                     LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
-                                     LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
-                                 });
+                                           join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
+                                           into leftJoinDistinctLiveBoxes
+                                           from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
+                                           select new AirportWatchAntennaStatusGrid
+                                           {
+                                               BoxName = dl == null ? dh.BoxName : dl.BoxName,
+                                               Status = dl == null ? "Not Active" : "Active",
+                                               LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
+                                               LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
+                                           });
 
             var distinctBoxes = (from dl in distinctLiveBoxes
                                  join db in distinctBoxesHistorical on dl.BoxName equals db.BoxName
@@ -1088,15 +1154,15 @@ namespace FBOLinx.Web.Services
                                      Status = dl == null ? "Not Active" : "Active",
                                      LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
                                      LastUpdateCurated = db == null ? "" : db.LastUpdateCurated
-                                 }).Union(distinctBoxesHistorical).GroupBy(d => d.BoxName) .Select(grouped => grouped.First()).ToList();
+                                 }).Union(distinctBoxesHistorical).GroupBy(d => d.BoxName).Select(grouped => grouped.First()).ToList();
 
             return distinctBoxes;
         }
 
-        private async Task SetTailNumber(IEnumerable<BaseAirportWatchData> airportWatchRecords)
+        private async Task SetTailNumber(DegaContext context, IEnumerable<BaseAirportWatchData> airportWatchRecords)
         {
             IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
-            List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
+            List<AircraftHexTailMapping> hexTailMappings = await context.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).ToListAsync();
             foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
             {
                 airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
@@ -1156,31 +1222,40 @@ namespace FBOLinx.Web.Services
 
         }
 
-        private async Task CommitChanges()
+        private async Task CommitChanges(FboLinxContext context)
         {
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            if (_LiveDataToInsert != null)
-                await _context.BulkInsertAsync(_LiveDataToInsert);
-            if (_LiveDataToUpdate != null)
-                await _context.BulkUpdateAsync(_LiveDataToUpdate);
-            if (_LiveDataToDelete != null)
-                await _context.BulkDeleteAsync(_LiveDataToDelete);
-            if (_HistoricalDataToInsert != null)
-                await _context.BulkInsertAsync(_HistoricalDataToInsert);
-            if (_HistoricalDataToUpdate != null)
-                await _context.BulkUpdateAsync(_HistoricalDataToUpdate);
+            var liveDataToInsertAndUpdate = _LiveDataToInsert;
+            if (liveDataToInsertAndUpdate == null)
+                liveDataToInsertAndUpdate = new List<AirportWatchLiveData>();
+            liveDataToInsertAndUpdate.AddRange(_LiveDataToUpdate == null ? new List<AirportWatchLiveData>() : _LiveDataToUpdate);
+
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            if (liveDataToInsertAndUpdate.Count > 0)
+                await context.BulkInsertOrUpdateAsync(liveDataToInsertAndUpdate, config =>
+                {
+                    config.WithHoldlock = false;
+                    config.BatchSize = 5000;
+                });
+            if (_LiveDataToDelete?.Count > 0)
+                await context.BulkDeleteAsync(_LiveDataToDelete, config => config.WithHoldlock = false);
+            if (_HistoricalDataToInsert?.Count > 0)
+                await context.BulkInsertAsync(_HistoricalDataToInsert, config => config.WithHoldlock = false);
+            if (_HistoricalDataToUpdate?.Count > 0)
+                await context.BulkUpdateAsync(_HistoricalDataToUpdate, config => config.WithHoldlock = false);
             await transaction.CommitAsync();
         }
 
-        private async Task<List<AirportPosition>> GetAirportPositions()
+        private async Task<List<AirportPosition>> GetAirportPositions(DegaContext context)
         {
             var recordsFromCache = LookupAirportRecordsByFromCache();
+
             if (recordsFromCache == null)
             {
-                var airports = (await _degaContext.AcukwikAirports
-                                .ToListAsync()
-                                )
+                var airports = (await (context.AcukwikAirports
+
                             .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .AsNoTracking())
+                                .ToListAsync())
                                 .Select(a =>
                                 {
                                     var (alat, alng) = GetGeoLocationFromGPS(a.Latitude, a.Longitude);
@@ -1218,9 +1293,10 @@ namespace FBOLinx.Web.Services
         {
             double minDistance = -1;
             string nearestICAO = null;
-            foreach (var airport in airportPositions)
+            var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1 && a.Latitude <= latitude + 1 && a.Longitude >= longitude - 1 && a.Longitude <= longitude + 1).ToList();
+            foreach (var airport in closestAirports)
             {
-                double distance = GeoCalculator.GetDistance(latitude, longitude, airport.Latitude, airport.Longitude, 1);
+                double distance = GeoCalculator.GetDistance(latitude, longitude, airport.Latitude, airport.Longitude, 5, DistanceUnit.Miles);
 
                 if (minDistance == -1 || distance < minDistance)
                 {
@@ -1280,6 +1356,28 @@ namespace FBOLinx.Web.Services
                 }
             }
             return inside;
+        }
+
+        private async Task<List<AirportWatchLiveData>> GetAirportWatchLiveDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        {
+            var result = await context.AirportWatchLiveData
+                .Where(x =>
+                    distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                    && x.AircraftPositionDateTimeUtc >= aircraftPositionDateTime)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
+        }
+
+        private async Task<List<AirportWatchHistoricalData>> GetAirportWatchHistoricalDataFromDatabase(FboLinxContext context, List<string> distinctAircraftHexCodes, DateTime aircraftPositionDateTime)
+        {
+            var result = await context.AirportWatchHistoricalData
+                .Where(x =>
+                    distinctAircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+                    && x.AircraftPositionDateTimeUtc >= aircraftPositionDateTime)
+                .AsNoTracking()
+                .ToListAsync();
+            return result;
         }
     }
 

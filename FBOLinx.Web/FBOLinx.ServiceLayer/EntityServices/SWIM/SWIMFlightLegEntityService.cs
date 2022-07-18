@@ -4,7 +4,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
-    public class SWIMFlightLegEntityService : DegaBaseEntityService<SWIMFlightLegs, SWIMFlightLegDTO, int>, IEntityService<SWIMFlightLegs, SWIMFlightLegDTO, int>
+    public class SWIMFlightLegEntityService : Repository<SWIMFlightLeg, DegaContext>
     {
         public SWIMFlightLegEntityService(DegaContext context) : base(context)
         {

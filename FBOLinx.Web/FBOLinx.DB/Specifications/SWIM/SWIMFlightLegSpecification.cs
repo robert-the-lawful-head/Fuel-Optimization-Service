@@ -6,16 +6,16 @@ using FBOLinx.DB.Models;
 
 namespace FBOLinx.DB.Specifications.SWIM
 {
-    public sealed class SWIMFlightLegSpecification : Specification<SWIMFlightLegs>
+    public sealed class SWIMFlightLegSpecification : Specification<SWIMFlightLeg>
     {
-        public SWIMFlightLegSpecification(string aircraftIdentification, string departureICAO, string arrivalICAO, DateTime atd)
-            : base(x => x.AircraftIdentification == aircraftIdentification && x.DepartureICAO == departureICAO && x.ArrivalICAO == arrivalICAO && x.ATD == atd)
+        public SWIMFlightLegSpecification(IList<string> departureICAOs, IList<string> arrivalICAOs, DateTime atdMin, DateTime atdMax)
+            : base(x => departureICAOs.Contains(x.DepartureICAO) && arrivalICAOs.Contains(x.ArrivalICAO) && x.ATD >= atdMin && x.ATD <= atdMax)
         {
             AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(IList<string> aircraftIdentificationNumbers, DateTime atdMin, DateTime atdMax)
-            : base(x => aircraftIdentificationNumbers.Contains(x.AircraftIdentification) && x.ATD >= atdMin && x.ATD <= atdMax)
+        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime currentTime)
+            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > currentTime)
         {
             AddInclude(x => x.SWIMFlightLegDataMessages);
         }

@@ -8,7 +8,7 @@ using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class AirportWatchLiveDataEntityService : FBOLinxBaseEntityService<AirportWatchLiveData, AirportWatchLiveDataDto, int>, IEntityService<AirportWatchLiveData, AirportWatchLiveDataDto, int>
+    public class AirportWatchLiveDataEntityService : Repository<AirportWatchLiveData, FboLinxContext>
     {
         public AirportWatchLiveDataEntityService(FboLinxContext context) : base(context)
         {

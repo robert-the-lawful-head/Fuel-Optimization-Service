@@ -25,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             _pricingTemplateService = pricingTemplateService;
         }
 
-        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0)
+        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0, int customerId = 0)
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
 
@@ -74,11 +74,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                     x.PricingTemplateId = aircraftPricingTemplate?.Oid;
                     x.PricingTemplateName = aircraftPricingTemplate?.Name;
                 }
-                else
+                else if (customerId == 0)
                 {
                     var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
                     x.PricingTemplateId = pricingTemplate?.Oid;
                     x.PricingTemplateName = pricingTemplate?.Name;
+                    x.IsCompanyPricing = true;
                 }
 
                 var aircraft = allAircraft.FirstOrDefault(a => a.AircraftId == x.AircraftId);

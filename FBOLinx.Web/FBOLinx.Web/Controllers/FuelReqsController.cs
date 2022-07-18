@@ -673,7 +673,7 @@ namespace FBOLinx.Web.Controllers
                                                                Size = (ca.Size.HasValue && ca.Size.Value != Core.Enums.AircraftSizes.NotSet
                                                                 ? ca.Size
                                                                 : (Core.Enums.AircraftSizes)ac.Size),
-                                                               ca.Oid
+                                                               Oid = ca.Oid
                                                            }) on (f.CustomerAircraftId ?? 0) equals ca.Oid
                                                       where f.Fboid == fboId
                                                             && (f.Cancelled == null || f.Cancelled == false) 
@@ -1249,7 +1249,7 @@ namespace FBOLinx.Web.Controllers
                                         .Where(x => (x.Customer != null && x.Customer.Suspended != true)&&(x.CustomerId== customeridval
                                         || customeridval == null)).Select(c => new
                                         {
-                                            c.Oid,
+                                            Oid = c.Oid,
                                             c.CustomerId,
                                             Company = c.Company.Trim(),
                                             Customer = c.Customer

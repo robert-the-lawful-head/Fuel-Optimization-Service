@@ -15,6 +15,6 @@ namespace FBOLinx.DB.Models
         public DateTime MessageTimestamp { get; set; }
 
         public int SWIMFlightLegId { get; set; }
-        public virtual SWIMFlightLegs SWIMFlightLeg { get; set; }
+        public virtual SWIMFlightLeg SWIMFlightLeg { get; set; }
     }
 }

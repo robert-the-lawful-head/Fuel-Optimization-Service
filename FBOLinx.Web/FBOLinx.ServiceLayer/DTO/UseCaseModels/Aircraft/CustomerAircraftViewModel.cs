@@ -23,6 +23,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public string Make { get; set; }
         public string Model { get; set; }
         public bool IsFuelerlinxNetwork { get; set; }
+        public bool IsCompanyPricing { get; set; }
 
         public string AircraftSizeDescription
         {

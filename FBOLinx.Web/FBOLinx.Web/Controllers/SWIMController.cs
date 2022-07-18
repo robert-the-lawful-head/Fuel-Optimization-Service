@@ -7,6 +7,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.Web.Auth;
+using FBOLinx.Web.Models.Responses.SWIM;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
@@ -21,6 +22,24 @@ namespace FBOLinx.Web.Controllers
         public SWIMController(ISWIMService swimService)
         {
             _SWIMService = swimService;
+        }
+
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpGet("departures/{icao}")]
+        public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] string icao)
+        {
+            IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
+
+            return Ok(new FlightLegsResponse(result));
+        }
+
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpGet("arrivals/{icao}")]
+        public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] string icao)
+        {
+            IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
+
+            return Ok(new FlightLegsResponse(result));
         }
 
         [APIKey(IntegrationPartnerTypes.Internal)]

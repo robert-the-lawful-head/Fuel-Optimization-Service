@@ -61,7 +61,7 @@ namespace FBOLinx.Web.Controllers
                     break;
 
                 var customerName = customersList.Where(c => c.CompanyId == missedQuoteLogDto.CustomerId).Select(x => x.Company).FirstOrDefault();
-                if (!missedQuotesLogList.Any(x => x.CustomerName == customerName))
+                if (customerName != null && !missedQuotesLogList.Any(x => x.CustomerName == customerName))
                 {
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customerName;
@@ -107,7 +107,7 @@ namespace FBOLinx.Web.Controllers
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(DateTime.Parse(transaction.ArrivalDate), fboId);
+                    var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(transaction.ArrivalDateTime.GetValueOrDefault(), fboId);
                     var localTimeZone = await _iFboService.GetAirportTimeZoneByFboId(fboId);
                     missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
