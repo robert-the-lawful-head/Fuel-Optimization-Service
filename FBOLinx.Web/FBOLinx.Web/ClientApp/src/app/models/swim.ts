@@ -37,3 +37,8 @@ export interface Time {
     totalMinutes: number;
     totalSeconds: number;
 }
+
+export enum SwimType {
+    Arrival ,
+    Departure
+  }
