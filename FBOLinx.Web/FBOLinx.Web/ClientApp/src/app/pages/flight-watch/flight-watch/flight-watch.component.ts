@@ -7,7 +7,8 @@ import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
-import { Swim } from 'src/app/models/swim';
+import { SwimFilter } from 'src/app/models/filter';
+import { Swim, SwimType } from 'src/app/models/swim';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { SwimService } from 'src/app/services/swim.service';
 import { convertDMSToDEG } from 'src/utils/coordinates';
@@ -192,18 +193,37 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.selectedFlightWatch = undefined;
     }
 
-    onFilterChanged(filter: string) {
-        this.filter = filter;
+    onFilterChanged(filter: SwimFilter) {
+        this.filter = filter.filterText;
         this.setFilteredFlightWatchData();
-        this.filterArrivals(this.filter);
+        if(filter.dataType == SwimType.Arrival)
+            this.filterArrivals(this.filter.toLowerCase());
+        else
+        this.filterDepartures(this.filter.toLowerCase());
     }
     filterArrivals(filter){
-        const loweredFilter = filter.toLowerCase();
-        this.swimArrivals = this.swimArrivalsAllRecords.filter(
-            (fw) =>
-                fw.tailNumber.toLowerCase().includes(loweredFilter) ||
-                fw.flightDepartment.toLowerCase().includes(loweredFilter)
-        );
+        if(this.filter && this.filter.trim())
+        {
+            this.swimArrivals = this.swimArrivalsAllRecords.filter(
+                (fw) =>
+                    fw.tailNumber.toLowerCase().includes(filter) ||
+                    fw.flightDepartment.toLowerCase().includes(filter)
+            );
+            return;
+        }
+        this.swimDepartures = this.swimDeparturesAllRecords;
+    }
+    filterDepartures(filter){
+        if(this.filter && this.filter.trim())
+        {
+            this.swimDepartures = this.swimDeparturesAllRecords.filter(
+                (fw) =>
+                    fw.tailNumber.toLowerCase().includes(filter) ||
+                    fw.flightDepartment.toLowerCase().includes(filter)
+            );
+            return;
+        }
+        this.swimArrivals = this.swimArrivalsAllRecords;
     }
     setFilteredFlightWatchData() {
         let originalData: FlightWatch[];

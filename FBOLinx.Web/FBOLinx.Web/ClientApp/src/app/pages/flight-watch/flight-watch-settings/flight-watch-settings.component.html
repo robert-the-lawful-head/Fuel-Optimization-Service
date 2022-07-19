@@ -9,6 +9,6 @@
         </mat-select>
       </mat-form-field>
     <div class="tables-container">
-        <app-flight-watch-setting-table [data]="swimArrivals" [isArrival]="true"></app-flight-watch-setting-table>
-        <app-flight-watch-setting-table [data]="swimDepartures" [isArrival]="false"></app-flight-watch-setting-table>
+        <app-flight-watch-setting-table [data]="swimArrivals" [isArrival]="true" (filterChanged)="applyFilter($event)"></app-flight-watch-setting-table>
+        <app-flight-watch-setting-table [data]="swimDepartures" [isArrival]="false" (filterChanged)="applyFilter($event)"></app-flight-watch-setting-table>
     </div>

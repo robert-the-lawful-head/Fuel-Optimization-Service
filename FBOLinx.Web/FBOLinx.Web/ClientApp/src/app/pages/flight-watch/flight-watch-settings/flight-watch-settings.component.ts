@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable } from 'rxjs';
+import { SwimFilter } from 'src/app/models/filter';
 import { Swim } from 'src/app/models/swim';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -20,7 +21,7 @@ export class FlightWatchSettingsComponent implements OnInit {
 
     @Input() filteredTypes: string[];
     @Output() typesFilterChanged = new EventEmitter<string[]>();
-    @Output() filterChanged = new EventEmitter<string>();
+    @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
    
     searchIcaoTxt: string;
@@ -45,8 +46,8 @@ export class FlightWatchSettingsComponent implements OnInit {
             });
     }
 
-    applyFilter(event: Event) {
-        this.filterChanged.emit((event.target as HTMLInputElement).value);
+    applyFilter(event: SwimFilter) {
+        this.filterChanged.emit(event);
     }
 
     toggleType(type: string) {

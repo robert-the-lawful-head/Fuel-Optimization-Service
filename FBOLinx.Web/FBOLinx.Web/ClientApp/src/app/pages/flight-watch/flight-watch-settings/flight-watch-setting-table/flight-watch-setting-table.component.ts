@@ -3,7 +3,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { Swim } from 'src/app/models/swim';
+import { SwimFilter } from 'src/app/models/filter';
+import { Swim, SwimType } from 'src/app/models/swim';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -18,7 +19,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
 
-    @Output() filterChanged = new EventEmitter<string>();
+    @Output() filterChanged = new EventEmitter<SwimFilter>();
 
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -163,6 +164,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
         )?._setAnimationTransitionState({ toState: 'active' });
     }
     applyFilter(event: Event) {
-      this.filterChanged.emit((event.target as HTMLInputElement).value);
+        let filter: SwimFilter = {
+            filterText: (event.target as HTMLInputElement).value,
+            dataType: this.isArrival ? SwimType.Arrival: SwimType.Departure
+        };
+      this.filterChanged.emit(filter);
     }
 }
