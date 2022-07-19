@@ -28,6 +28,7 @@ export interface AcukwikAirport {
     runwayWidth: number | null;
     lighting: string;
     airportNameShort: string;
+    distanceToSelectedAirport: number;
     acukwikFbohandlerDetailCollection: AcukwikFbohandlerDetail[];
 }
 

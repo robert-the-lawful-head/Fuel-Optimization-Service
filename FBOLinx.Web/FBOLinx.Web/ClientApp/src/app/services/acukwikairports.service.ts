@@ -55,9 +55,15 @@ export class AcukwikairportsService {
             { headers: this.headers }
         );
     }
-    public GetAcukwikAirportByICAO(icao): Observable<AcukwikAirport> {
+    public getAcukwikAirportByICAO(icao:string): Observable<AcukwikAirport> {
         return this.http.get<AcukwikAirport>(
             this.accessPointUrl + '/byicao/' + icao ,
+            { headers: this.headers }
+        );
+    }
+    public getNearByAcukwikAirportsByICAO(icao:string,miles:number): Observable<AcukwikAirport[]> {
+        return this.http.get<AcukwikAirport[]>(
+            this.accessPointUrl + '/' + icao + '/nearby-airports/' + miles + '/nautical-miles',
             { headers: this.headers }
         );
     }

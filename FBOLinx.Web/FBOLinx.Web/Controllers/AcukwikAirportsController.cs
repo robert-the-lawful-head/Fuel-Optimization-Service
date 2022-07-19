@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
@@ -7,12 +6,15 @@ using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Services;
+using FBOLinx.Core.Utilities.Geography;
+using FBOLinx.Service.Mapping.Dto;
+using Mapster;
+using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FBOLinx.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AcukwikAirportsController : ControllerBase
@@ -193,6 +195,31 @@ namespace FBOLinx.Web.Controllers
                 return NotFound("No record found for that handler Id.");
 
             return Ok(results);
+        }
+        //GET: api/AcukwikAirports/KVNY/nearby-airports/50/miles"
+        [HttpGet("{icao}/nearby-airports/{miles}/nautical-miles")]
+        public async Task<ActionResult<List<AcukwikAirportDTO>>> GetNearbyAcukwikAirportsByIcao([FromRoute] string icao, [FromRoute] int miles)
+        {
+
+            var selectedAirport = await _context.AcukwikAirports
+                                            .Where(x => x.Icao.ToLower() == icao.ToLower())
+                                            .FirstOrDefaultAsync();
+
+            if (selectedAirport == null) return NotFound();
+
+            var cityAirports = await _context.AcukwikAirports
+                                           .Where(x => x.StateSubdivision == selectedAirport.StateSubdivision).ToListAsync();
+
+            var airportsResult = cityAirports.Adapt<List<AcukwikAirportDTO>>();
+            foreach (var airport in airportsResult)
+            {
+                airport.DistanceToSelectedAirport = DistanceHelper.MetersToNauticalMiles(DistanceHelper.GetDistanceBetweenTwoPoints(
+                    LocationHelper.ConvertDMSToDEG(selectedAirport.Latitude), LocationHelper.ConvertDMSToDEG(selectedAirport.Longitude),
+                    LocationHelper.ConvertDMSToDEG(airport.Latitude), LocationHelper.ConvertDMSToDEG(airport.Longitude)));
+                
+            }
+
+            return Ok(airportsResult.Where(x => x.DistanceToSelectedAirport < miles).ToList());
         }
 
         private bool AcukwikAirportsExists(int id)
