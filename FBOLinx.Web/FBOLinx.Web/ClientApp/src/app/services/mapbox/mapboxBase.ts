@@ -231,4 +231,10 @@ export abstract class MapboxglBase {
                 currentPopup.isPopUpOpen = false;
             });
     }
+    flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
+        this.map.flyTo({
+            center: center,
+            essential: hasAnimation // this animation is considered essential with respect to prefers-reduced-motion
+        });
+    }
 }
