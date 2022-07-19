@@ -6,6 +6,7 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.SWIM;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Responses.SWIM;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace FBOLinx.Web.Controllers
     public class SWIMController : ControllerBase
     {
         private readonly ISWIMService _SWIMService;
+        private readonly ILoggingService loggingService;
 
-        public SWIMController(ISWIMService swimService)
+        public SWIMController(ISWIMService swimService, ILoggingService loggingService)
         {
             _SWIMService = swimService;
+            this.loggingService = loggingService;
         }
 
         [APIKey(IntegrationPartnerTypes.Internal)]
@@ -54,6 +57,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
+                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                 return BadRequest(ex.Message);
             }
         }

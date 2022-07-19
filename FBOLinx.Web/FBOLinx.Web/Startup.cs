@@ -1,3 +1,4 @@
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -80,6 +81,15 @@ namespace FBOLinx.Web
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
+
+            ConfigureStackifyLogging(Configuration["StackifySettings:StackifyApiKey"], env.EnvironmentName);
+        }
+
+        private void ConfigureStackifyLogging(string stackifyApiKey, string environmentName)
+        {
+            StackifyLib.Config.ApiKey = stackifyApiKey;
+            StackifyLib.Config.Environment = environmentName;
+            StackifyLib.Config.AppName = LoggingService.AppName;
         }
     }
 }

@@ -16,6 +16,7 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.Logging;
 using Mapster;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
@@ -33,11 +34,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly AcukwikAirportEntityService _AcukwikAirportEntityService;
         private readonly ICustomerAircraftEntityService _CustomerAircraftEntityService;
         private readonly AircraftEntityService _AircraftEntityService;
+        private readonly ILoggingService _LoggingService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
-            ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService)
+            ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService)
         {
             _flightLegEntityService = flightLegEntityService;
             _flightLegDataEntityService = flightLegDataEntityService;
@@ -47,6 +49,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _CustomerAircraftEntityService = customerAircraftEntityService;
             _AircraftEntityService = aircraftEntityService;
+            _LoggingService = loggingService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(string icao)
@@ -129,6 +132,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (flightLegsToAdd.Count > 0)
             {
+                LogMissedTailNumbers(flightLegsToAdd);
+
                 await _flightLegEntityService.BulkInsertOrUpdate(flightLegsToAdd);
 
                 foreach (SWIMFlightLeg flightLeg in flightLegsToAdd)
@@ -155,7 +160,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveData> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
-            if (swimFlightLegDto.AircraftIdentification.ToUpperInvariant().StartsWith('N'))
+            if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))
             {
                 return;
             }
@@ -293,6 +298,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
 
             return result;
+        }
+
+        private bool IsCorrectTailNumber(string aircraftIdentification)
+        {
+            if (string.IsNullOrEmpty(aircraftIdentification))
+            {
+                return false;
+            }
+
+            return aircraftIdentification.ToUpperInvariant().StartsWith('N');
         }
     }
 }
