@@ -309,5 +309,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             return aircraftIdentification.ToUpperInvariant().StartsWith('N');
         }
+
+        private void LogMissedTailNumbers(IEnumerable<SWIMFlightLeg> flightLegs)
+        {
+            var missedTailNumbers = flightLegs.Where(x => !IsCorrectTailNumber(x.AircraftIdentification)).Select(x => x.AircraftIdentification).ToList();
+            if (missedTailNumbers.Any())
+            {
+                _LoggingService.LogError("Missed Tail Numbers", string.Join(",", missedTailNumbers), LogLevel.Warning);
+            }
+        }
     }
 }
