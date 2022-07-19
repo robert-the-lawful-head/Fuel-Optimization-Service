@@ -61,3 +61,20 @@ mat-card {
         }
     }
 }
+
+.tables-container{
+    display: flex; 
+    flex-direction:column;
+    height: 100%;
+    overflow:hidden; 
+    margin: 0px;
+    padding: 0px;
+}
+.tables-container > div{
+    height: 50%; background: green; overflow:auto;
+}
+.mat-card-header .mat-card-title{
+    padding: 0px ;
+    margin: 0px ;
+    font-weight: bold ;
+}

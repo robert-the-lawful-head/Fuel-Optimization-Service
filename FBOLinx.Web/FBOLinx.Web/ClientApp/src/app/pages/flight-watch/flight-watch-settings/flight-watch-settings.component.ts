@@ -5,6 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
+import { Swim } from 'src/app/models/swim';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -21,25 +22,35 @@ import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 })
 export class FlightWatchSettingsComponent implements OnInit {
     @Input() tableData: Observable<FlightWatch[]>;
+    @Input() swimArrivals: Swim[];
+    @Input() swimDepartures: Swim[];
+    @Input() icao: string;
+    @Input() icaoList: string[];
+
     @Input() filteredTypes: string[];
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<string>();
+    @Output() icaoChanged = new EventEmitter<string>();
+
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
     displayedColumns: string[] = [
-        'aircraftHexCode',
-        'atcFlightNumber',
-        'aircraftTypeCode',
-        'groundSpeedKts',
-        'trackingDegree',
-        'verticalSpeedKts',
-        'gpsAltitude',
-        'isAircraftOnGround'
+        "flightDepartment",
+        "tailNumber",
+        "make-model",
+        "eta",
+        "ete",
+        "origin-destination",
+        "city",
+        "altitude",
+        "isAircraftOnGround",
     ];
+
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
+    searchIcaoTxt: string;
 
     constructor(private tableSettingsDialog: MatDialog,
         private sharedService: SharedService) {
@@ -79,37 +90,57 @@ export class FlightWatchSettingsComponent implements OnInit {
         } else {
             this.columns = [
                 {
-                    id: 'aircraftHexCode',
-                    name: 'Hex Code',
+                    id: 'tailNumber',
+                    name: 'tailNumber',
                 },
                 {
-                    id: 'atcFlightNumber',
-                    name: 'Flight Number',
+                    id: 'flightDepartment',
+                    name: 'flightDepartment',
                     sort: 'desc',
                 },
                 {
-                    id: 'aircraftTypeCode',
-                    name: 'Type',
+                    id: 'make-model',
+                    name: 'Make/Model',
                 },
                 {
-                    id: 'groundSpeedKts',
-                    name: 'Ground Speed Kts',
+                    id: 'ete',
+                    name: 'ETE',
                 },
                 {
-                    id: 'trackingDegree',
-                    name: `Tracking Degree`,
+                    id: 'eta',
+                    name: 'ETA',
                 },
                 {
-                    id: 'verticalSpeedKts',
-                    name: 'Vertical Speed Kts',
+                    id: 'origin-destination',
+                    name: 'Origin/Destination',
                 },
                 {
-                    id: 'gpsAltitude',
-                    name: 'GPS Altitude'
+                    id: 'city',
+                    name: 'City'
+                },
+                {
+                    id: 'altitude',
+                    name: 'Altitude'
                 },
                 {
                     id: 'isAircraftOnGround',
-                    name: 'Is on Ground',
+                    name: 'On Ground',
+                },
+                {
+                    id: 'eta-atd',
+                    name: 'ETA/ATD',
+                },
+                {
+                    id: 'itpMarginTemplate',
+                    name: 'ITP Margin Template',
+                },
+                {
+                    id: 'ppg',
+                    name: 'PPG',
+                },
+                {
+                    id: 'fuelCapacityGal',
+                    name: 'Fuel Capacity',
                 }
             ];
         }
@@ -205,5 +236,9 @@ export class FlightWatchSettingsComponent implements OnInit {
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    updateIcao(event: any ){
+        console.log("🚀 ~ file: flight-watch-settings.component.ts ~ line 240 ~ FlightWatchSettingsComponent ~ updateIcao ~ event", event);
+        this.icaoChanged.emit(event);
     }
 }
