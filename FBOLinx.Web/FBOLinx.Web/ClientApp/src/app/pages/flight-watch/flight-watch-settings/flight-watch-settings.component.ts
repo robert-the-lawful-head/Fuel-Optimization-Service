@@ -23,6 +23,7 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
+    @Output() openAircraftPopup = new EventEmitter<string>();
    
     searchIcaoTxt: string;
 
@@ -78,5 +79,8 @@ export class FlightWatchSettingsComponent implements OnInit {
     }
     updateIcao(event: any ){
         this.icaoChanged.emit(event);
+    }
+    openPopup(tailnumber: string): void{
+        this.openAircraftPopup.emit(tailnumber);
     }
 }

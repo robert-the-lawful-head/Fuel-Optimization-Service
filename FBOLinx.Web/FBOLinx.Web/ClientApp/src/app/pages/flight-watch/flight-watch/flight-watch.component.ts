@@ -289,4 +289,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.filteredTypes = filteredTypes;
         this.setFilteredFlightWatchData();
     }
+    openAircraftPopup(tailNumber: string){
+        this.map.openAircraftPopUpByTailNumber(tailNumber);
+    }
 }

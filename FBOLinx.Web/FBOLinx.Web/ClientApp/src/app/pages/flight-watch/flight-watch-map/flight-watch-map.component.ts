@@ -423,7 +423,6 @@ export class FlightWatchMapComponent
             self.currentPopup
         );
     }
-
     getFbosAndLoad() {
         if (this.clusters) return;
         this.airportFboGeoFenceClustersService
@@ -530,5 +529,22 @@ export class FlightWatchMapComponent
             lng: convertDMSToDEG(airport.longitude),
         };
         this.flyTo(flyToCenter);
+    }
+    openAircraftPopUpByTailNumber(tailNumber: string): void {
+        let selectedFlight = keys(this.data).find(
+            (key) => this.data[key].tailNumber == tailNumber
+        );
+
+        if (!selectedFlight) return;
+
+        this.currentPopup.coordinates = [
+            this.data[selectedFlight].longitude,
+            this.data[selectedFlight].latitude,
+        ];
+        this.openPopupRenderComponent(
+            this.currentPopup.coordinates,
+            this.aircraftPopupContainerRef,
+            this.currentPopup
+        );
     }
 }
