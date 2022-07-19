@@ -40,9 +40,7 @@ export class AircraftPopupContainerComponent {
     private customerInfoByGroupService: CustomerinfobygroupService,
     private router: Router
   ) { }
-  ngOnChanges(changes) { 
-  console.log("🚀 ~ file: aircraft-popup-container.component.ts ~ line 45 ~ AircraftPopupContainerComponent ~ ngOnChanges ~ changes", changes)
-    
+  ngOnChanges(changes) {     
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;  
     if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue; 
     if(changes.flightData?.currentValue?.company) this.hasAircraft = true;

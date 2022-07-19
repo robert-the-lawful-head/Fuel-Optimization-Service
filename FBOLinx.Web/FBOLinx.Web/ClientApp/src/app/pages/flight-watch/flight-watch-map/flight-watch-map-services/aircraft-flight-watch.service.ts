@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
 
 @Injectable({
@@ -29,13 +30,11 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             properties: {
                 id: data.oid,
-                // description:
-                //     '<app-flight-watch-aircraft-info-dialog><app-flight-watch-aircraft-info-dialog/>',
-                'icon-image': icon,
+               'icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
-            type: 'Feature',
+            type: 'Feature'
         };
     }
     public getFlightLayerJsonData(
@@ -52,6 +51,35 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             source: flightSourceId,
             type: 'symbol',
+        };
+    }
+    public getAirportLayerJsonData(
+        layerId: string,
+        airportSourceId: any,
+    ): mapboxgl.AnyLayer {
+        return {
+            id : layerId,
+            layout: {
+                'icon-allow-overlap': true,
+                'icon-image': ['get', 'icon-image'],
+                'icon-size': ['get', 'size']
+            },
+            source: airportSourceId,
+            type: 'symbol',
+        }
+    }
+    public getAirportFeatureJsonData(data: any): any {
+        return {
+            geometry: {
+                coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
+                type: 'Point',
+            },
+            properties: {
+                id: data.oid,
+                'icon-image': 'airport-icon',
+                'size': 0.5,
+            },
+            type: 'Feature'
         };
     }
 }
