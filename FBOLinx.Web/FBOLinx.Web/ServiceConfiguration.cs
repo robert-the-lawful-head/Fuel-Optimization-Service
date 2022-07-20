@@ -109,6 +109,10 @@ namespace FBOLinx.Web
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
             services.AddTransient<ISWIMService, SWIMService>();
+            services.AddTransient<AirportWatchScheduledService, AirportWatchScheduledService>();
+            services.AddHostedService<AirportWatchScheduledService>();
+
+
 
             //Entity Services
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
