@@ -2,28 +2,28 @@
   <ItemGroup>
 	<PackageReference Include="DBSCAN" Version="2.0.12" />
 	<PackageReference Include="Geolocation" Version="1.2.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.26" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.26" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.26" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.26">
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
-	<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="2.2.0" />
+	<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="3.1.27" />
 	<PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="3.6.6" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.4" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	<PackageReference Include="Sendgrid" Version="9.22.0" />
 	<PackageReference Include="StackifyLib" Version="2.2.10" />
+	<PackageReference Include="Sendgrid" Version="9.28.0" />
 	<PackageReference Include="StackifyMiddleware" Version="3.0.5.2" />
-	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
   </ItemGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -36,9 +36,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="2.3.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="IdentityServer4" Version="4.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -115,6 +115,7 @@
     <None Remove="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
     <None Remove="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
+    <None Remove="Dbscan.RBush" />
   </ItemGroup>
 
   <ItemGroup>
@@ -233,7 +234,7 @@
     <ItemGroup>
       <DistFiles Include="$(SpaRoot)dist\**; $(SpaRoot)dist-server\**" />
       <DistFiles Include="$(SpaRoot)node_modules\**" Condition="'$(BuildServerSideRenderer)' == 'true'" />
-      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+      <ResolvedFileToPublish Include="@(DistFiles-&gt;'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
         <RelativePath>%(DistFiles.Identity)</RelativePath>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       </ResolvedFileToPublish>

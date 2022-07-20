@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
+    <Configurations>Release;Debug</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -10,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
-    <PackageReference Include="Sendgrid" Version="9.22.0" />
+    <PackageReference Include="Sendgrid" Version="9.28.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
 	<PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
