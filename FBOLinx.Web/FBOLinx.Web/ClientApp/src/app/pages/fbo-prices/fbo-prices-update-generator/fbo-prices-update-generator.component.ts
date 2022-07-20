@@ -64,6 +64,7 @@ export interface DefaultTemplateUpdate {
     templateUrl: './fbo-prices-update-generator.component.html',
 })
 export class FboPricesUpdateGeneratorComponent implements OnInit {
+    @Input() isMember?: boolean;
     @Input() isCsr?: boolean;
     @ViewChildren('tooltip') priceTooltips: QueryList<any>;
     @ViewChild('retailFeeAndTaxBreakdown')

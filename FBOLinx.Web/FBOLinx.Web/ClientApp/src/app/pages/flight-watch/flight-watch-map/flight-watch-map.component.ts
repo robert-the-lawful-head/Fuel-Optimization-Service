@@ -38,7 +38,7 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnChanges, OnDestroy {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: FlightWatchDictionary;
-    @Input() aircraftData: FlightWatch;    
+    @Input() aircraftData: Aircraftwatch;    
     @Input() isStable: boolean;
     @Output() markerClicked = new EventEmitter<FlightWatch>();
 
@@ -60,6 +60,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     public isAircraftDataLoading: boolean = true;
     public fboId: any;
     public groupId: any;
+    public selectedAircraft: number = 0;
 
 
     // Map Options
@@ -67,8 +68,6 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
     public isCommercialVisible = true;
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
-    public previousMarkerId: number = 0;
-    public focusedMarkerId: number = 0;
     public showLayers: boolean = false;
     public mapStyle: string = 'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd';
     public mapContainer: string = 'flight-watch-map';
@@ -90,10 +89,6 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         super();
         
     }
-    ngAfterViewInit(){
-        this.fboId = this.sharedService.currentUser.fboId;
-        this.groupId = this.sharedService.currentUser.groupId;
-    }
     ngOnInit(): void {        
         const refreshMapFlight = () => this.updateFlightOnMap();
 
@@ -111,10 +106,20 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
             this.getFbosAndLoad();
         });
     }
+    ngAfterViewInit() {
+        this.fboId = this.sharedService.currentUser.fboId;
+        this.groupId = this.sharedService.currentUser.groupId;
+        this.aircraftPopupContainer.getCustomersList(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId);
+    }
     async loadAircraftIcon(){
         return Promise.all(AIRCRAFT_IMAGES.map( async (image: AircraftImageData,idx:number) => {
             let imageName = `aircraft_image_${image.id}`;
             let img1 = this.loadSVGImageAsync(image.size,image.size,image.url,imageName);
+
+            if(image.id == 'client') {
+                await Promise.all([img1]);
+                return;
+            }
             
             imageName = `aircraft_image_${image.id}_reversed`;
             let img2 = this.loadSVGImageAsync(image.size,image.size,image.reverseUrl,imageName);
@@ -129,25 +134,28 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
             let img5 = this.loadSVGImageAsync(image.size,image.size,image.fuelerlinxUrl,imageName);
 
             imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
+
             let img6 = this.loadSVGImageAsync(image.size,image.size,image.fuelerlinxReverseUrl,imageName);
             await Promise.all([img1,img2,img3,img4,img5,img6]);
   
         }));
     }
-    ngOnChanges(changes: SimpleChanges): void {
-        if(changes.aircraftData) this.setPopUpContainerData(changes);
-
+    ngOnChanges(changes: SimpleChanges): void {        
         const currentData = changes.data?.currentValue;
         const oldData = changes.data?.previousValue;
         if (currentData && !isEqual(currentData, oldData)) {
             this.updateFlightOnMap();
         }
+        else this.setPopUpContainerData(changes);
     }
     ngOnDestroy(): void {
         this.mapRemove();
     }
     setPopUpContainerData(changes){
-        this.popupData = changes.aircraftData.currentValue;
+        if(!changes.aircraftData?.currentValue) return; 
+        let aircraft = changes.aircraftData.currentValue;
+        
+        this.popupData = aircraft;
         this.isAircraftDataLoading = false;
     }
     loadFlightOnMap(){
@@ -164,22 +172,25 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
         const source = this.getSource(this.flightSourceId);
 
-        const deita : any = {
+        const data : any = {
             type: 'FeatureCollection',
             features: this.getFlightSourcerFeatureMarkers(newflightsInMapBounds)
         };
 
-         source.setData(deita);
-         this.closeAllPopUps();
+         source.setData(data);
+         if(this.currentPopup.isPopUpOpen){
+            this.closeAllPopUps();
+            this.setDefaultPopUpOpen(newflightsInMapBounds);
+            this.currentPopup.isPopUpOpen = true;
+         }  
          this.applyMouseFunctions(this.flightLayerId);
-         this.setDefaultPopUpOpen(newflightsInMapBounds);
     }
     setDefaultPopUpOpen(flightsIdsOnMap:string[]):void{
         let selectedFlight = flightsIdsOnMap.find(key => this.data[key].oid == this.currentPopup.popupId);
 
         if (!selectedFlight) return;
 
-        this.popupData = {...this.data[selectedFlight]};
+        // this.popupData = {...this.data[selectedFlight]};
 
         this.currentPopup.coordinates =[this.data[selectedFlight].longitude, this.data[selectedFlight].latitude];
         this.openPopupRenderComponent(this.currentPopup.coordinates,this.aircraftPopupContainerRef,this.currentPopup);
@@ -205,7 +216,7 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         return flights.map((key) => {
             const row = this.data[key];
             const id = this.flightWatchMapService.buildAircraftId(row.oid);
-            return this.aircraftFlightWatchService.getFlightFeatureJsonData(row,id,this.focusedMarkerId);
+            return this.aircraftFlightWatchService.getFlightFeatureJsonData(row,id,this.selectedAircraft);
         });
     }
     applyMouseFunctions(id: string):void{
@@ -219,14 +230,12 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
-        self.markerClicked.emit(self.data[id]);
-
-        this.closeAllPopUps();
+        self.selectedAircraft = id;
         self.currentPopup.isPopUpOpen = true;
         self.currentPopup.coordinates = [this.data[id].longitude, this.data[id].latitude];
         self.currentPopup.popupId = id;
-        this.isAircraftDataLoading = true;
-
+        self.isAircraftDataLoading = true;
+        self.markerClicked.emit(this.data[id]);
         self.openPopupRenderComponent(self.currentPopup.coordinates,self.aircraftPopupContainerRef,self.currentPopup);
 
     }
@@ -309,6 +318,13 @@ export class FlightWatchMapComponent extends MapboxglBase implements OnInit, OnC
 
     toggleCommercial(event: MouseEvent) {
         this.isCommercialVisible = !this.isCommercialVisible;
+        this.updateFlightOnMap();
+    }
+    updateAircraft(event: Aircraftwatch):void{
+        this.data[this.selectedAircraft].isInNetwork = true;
+        this.data[this.selectedAircraft].company = event.company;
+        this.data[this.selectedAircraft].aircraftMakeModel = event.aircraftMakeModel;
+        this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
     }
 }

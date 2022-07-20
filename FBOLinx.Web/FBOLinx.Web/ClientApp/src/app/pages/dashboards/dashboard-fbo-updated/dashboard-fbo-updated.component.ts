@@ -69,6 +69,10 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         return this.sharedService.currentUser.role === 5;
     }
 
+    get isMember() {
+        return this.sharedService.currentUser.role === 4;
+    }
+
     ngAfterViewInit() {
         this.locationChangedSubscription =
             this.sharedService.changeEmitted$.subscribe((message) => {

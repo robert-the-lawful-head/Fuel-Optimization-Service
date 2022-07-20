@@ -260,6 +260,10 @@ export class CustomersEditComponent implements OnInit {
 
     }
 
+    get isMember() {
+        return this.sharedService.currentUser.role === 4;
+    }
+
     // Methods
     cancelCustomerEdit() {
         this.router.navigate(['/default-layout/customers/']).then();
