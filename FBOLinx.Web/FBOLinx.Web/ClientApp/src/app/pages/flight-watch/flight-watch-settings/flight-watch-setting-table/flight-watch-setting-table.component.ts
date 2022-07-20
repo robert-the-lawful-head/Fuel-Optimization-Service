@@ -173,7 +173,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
         };
       this.filterChanged.emit(filter);
     }
-    openAircraftPopUpOnMap(row: any){
-        this.openAircraftPopup.emit(row.tailnumber);
+
+    openPopup(row: any) {
+        this.openAircraftPopup.emit(row.tailNumber);
     }
 }
