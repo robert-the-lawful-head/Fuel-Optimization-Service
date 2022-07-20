@@ -27,6 +27,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Mapster;
 using FBOLinx.ServiceLayer.DTO;
 using Microsoft.Extensions.DependencyInjection;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Services
 {
@@ -53,12 +54,13 @@ namespace FBOLinx.Web.Services
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
         private IServiceProvider _ServiceProvider;
+        private readonly ILoggingService _LoggingService;
 
         public AirportWatchService(DBSCANService DBSCANService,
             FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, FboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IMemoryCache memoryCache, IServiceProvider serviceProvider)
+            IMemoryCache memoryCache, IServiceProvider serviceProvider, ILoggingService loggingService)
         {
             _ServiceProvider = serviceProvider;
             _dBSCANService = DBSCANService;
@@ -73,6 +75,7 @@ namespace FBOLinx.Web.Services
             _customerAircraftsEntityService = customerAircraftsEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _MemoryCache = memoryCache;
+            _LoggingService = loggingService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -685,6 +688,11 @@ namespace FBOLinx.Web.Services
                 //Record historical status
 
                 //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
+
+                if (record.BoxName == "krbk_a01")
+                {
+                    _LoggingService.LogError("krbk_a01", Newtonsoft.Json.JsonConvert.SerializeObject(record), LogLevel.Info, LogColorCode.Blue);
+                }
 
                 //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
                 if (oldAirportWatchLiveData != null &&
