@@ -1103,8 +1103,8 @@ namespace FBOLinx.Web.Services
             {
                 var occurrences = await _context.AirportWatchHistoricalData.Where(x =>
                     x.AircraftStatus == AircraftStatusType.Parking
-                    && x.BoxTransmissionDateTimeUtc >= startDateTimeUtc
-                    && x.BoxTransmissionDateTimeUtc <= endDateTimeUtc
+                    && x.AircraftPositionDateTimeUtc >= startDateTimeUtc
+                    && x.AircraftPositionDateTimeUtc <= endDateTimeUtc
                     && x.AirportICAO == icao).ToListAsync();
                 return occurrences;
             }

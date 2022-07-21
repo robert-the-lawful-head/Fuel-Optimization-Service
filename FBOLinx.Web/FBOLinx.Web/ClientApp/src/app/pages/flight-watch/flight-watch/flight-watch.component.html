@@ -76,6 +76,7 @@
                                 [tableData]="flightWatchDataObservable$"
                                 (filterChanged)="onFilterChanged($event)"
                                 (typesFilterChanged)="onTypesFilterChanged($event)"
+                                (openAircraftPopup)="openAircraftPopup($event)"
                                 (icaoChanged)="updateIcao($event)"></app-flight-watch-settings>
                     </div>
                 </mat-drawer>

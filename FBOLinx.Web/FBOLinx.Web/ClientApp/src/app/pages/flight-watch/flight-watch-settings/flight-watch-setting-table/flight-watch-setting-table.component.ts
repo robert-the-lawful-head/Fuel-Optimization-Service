@@ -1,13 +1,17 @@
-import { OnInit, ViewChild } from '@angular/core';
+import { ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatChipSelectionChange } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { tail } from 'lodash';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { Swim } from 'src/app/models/swim';
+import { SwimFilter } from 'src/app/models/filter';
+import { Swim, SwimType } from 'src/app/models/swim';
 import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
+import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -18,8 +22,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
 
-    @Output() filterChanged = new EventEmitter<string>();
-
+    @Output() filterChanged = new EventEmitter<SwimFilter>();
+    @Output() openAircraftPopup = new EventEmitter<string>();
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -163,6 +167,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
         )?._setAnimationTransitionState({ toState: 'active' });
     }
     applyFilter(event: Event) {
-      this.filterChanged.emit((event.target as HTMLInputElement).value);
+        let filter: SwimFilter = {
+            filterText: (event.target as HTMLInputElement).value,
+            dataType: this.isArrival ? SwimType.Arrival: SwimType.Departure
+        };
+      this.filterChanged.emit(filter);
+    }
+
+    openPopup(row: any) {
+        this.openAircraftPopup.emit(row.tailNumber);
     }
 }
