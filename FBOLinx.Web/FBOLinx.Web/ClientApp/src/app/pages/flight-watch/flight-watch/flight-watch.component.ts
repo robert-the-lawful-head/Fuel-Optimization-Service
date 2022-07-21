@@ -1,10 +1,17 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
+import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
+import { SwimFilter } from 'src/app/models/filter';
+import { Swim, SwimType } from 'src/app/models/swim';
+import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
+import { SwimService } from 'src/app/services/swim.service';
+import { convertDMSToDEG } from 'src/utils/coordinates';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
@@ -29,6 +36,8 @@ const BREADCRUMBS: any[] = [
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('map') map: FlightWatchMapComponent;
+    @ViewChild('mapfilters') public drawer: MatDrawer;
+
 
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
@@ -51,14 +60,25 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     AircraftLiveDatasubscription: Subscription;
 
+    swimArrivals: Swim[];
+    swimDepartures: Swim[];
+    swimArrivalsAllRecords: Swim[];
+    swimDeparturesAllRecords: Swim[];
+    acukwikairport: AcukwikAirport[];
+    airportsICAO: string[];
+    selectedICAO: string;
+
+
     style: any = {};
     isMapShowing = true;
 
     constructor(
         private airportWatchService: AirportWatchService,
+        private swimService: SwimService,
         private sharedService: SharedService,
-        public dialog: MatDialog
-    ) {
+        private acukwikairportsService: AcukwikairportsService,
+        public dialog: MatDialog)
+    {
         this.sharedService.titleChange(this.pageTitle);
     }
 
@@ -67,7 +87,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.loadAirportWatchData()
         );
     }
-
+    ngAfterViewInit(){
+        this.selectedICAO = this.sharedService.currentUser.icao;
+        this.getDrawerData(this.selectedICAO);
+    }
     ngOnDestroy() {
         this.flightWatchDataSubject.unsubscribe();
         if (this.mapLoadSubscription) {
@@ -77,7 +100,37 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.airportWatchFetchSubscription.unsubscribe();
         }
     }
-
+    getDrawerData(icao:string):void{
+        this.swimService.getArrivals(icao).subscribe(
+            arrivals => {
+                this.swimArrivals = arrivals.result;
+                this.swimArrivalsAllRecords = arrivals.result;
+            }
+          );
+          this.swimService.getDepartures(icao).subscribe(
+            departures => {
+                this.swimDepartures = departures.result;
+                this.swimDeparturesAllRecords = departures.result;
+            }
+          );
+    }
+    openDrawer(airportClicked: AcukwikAirport){
+        this.getDrawerData(airportClicked.icao);
+        this.drawer.toggle();
+    }
+    setIcaoList(airportList: AcukwikAirport[]){
+        this.acukwikairport = airportList;
+        let icaoList =  airportList.map((data) => {
+            return data.icao;
+        })
+        this.airportsICAO = icaoList;
+        
+    }
+    updateIcao(icao:string){
+        this.map.goToAirport(icao);
+        this.selectedICAO =  icao;
+        this.getDrawerData(icao);
+    }
     loadAirportWatchData() {
         if (!this.loading) {
             this.loading = true;
@@ -132,7 +185,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         }
         this.AircraftLiveDatasubscription = this.airportWatchService.getAircraftLiveData(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId, flightWatch.tailNumber)
         .subscribe((res)=> {
-        console.log("🚀 ~ file: flight-watch.component.ts ~ line 136 ~ FlightWatchComponent ~ .subscribe ~ res", res)
             this.selectedAircraftData = res;
         });
     }
@@ -141,11 +193,38 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.selectedFlightWatch = undefined;
     }
 
-    onFilterChanged(filter: string) {
-        this.filter = filter;
+    onFilterChanged(filter: SwimFilter) {
+        this.filter = filter.filterText;
         this.setFilteredFlightWatchData();
+        if(filter.dataType == SwimType.Arrival)
+            this.filterArrivals(this.filter.toLowerCase());
+        else
+        this.filterDepartures(this.filter.toLowerCase());
     }
-
+    filterArrivals(filter){
+        if(this.filter && this.filter.trim())
+        {
+            this.swimArrivals = this.swimArrivalsAllRecords.filter(
+                (fw) =>
+                    fw.tailNumber.toLowerCase().includes(filter) ||
+                    fw.flightDepartment.toLowerCase().includes(filter)
+            );
+            return;
+        }
+        this.swimDepartures = this.swimDeparturesAllRecords;
+    }
+    filterDepartures(filter){
+        if(this.filter && this.filter.trim())
+        {
+            this.swimDepartures = this.swimDeparturesAllRecords.filter(
+                (fw) =>
+                    fw.tailNumber.toLowerCase().includes(filter) ||
+                    fw.flightDepartment.toLowerCase().includes(filter)
+            );
+            return;
+        }
+        this.swimArrivals = this.swimArrivalsAllRecords;
+    }
     setFilteredFlightWatchData() {
         let originalData: FlightWatch[];
         if (!this.filter) {
@@ -209,5 +288,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     onTypesFilterChanged(filteredTypes: string[]) {
         this.filteredTypes = filteredTypes;
         this.setFilteredFlightWatchData();
+    }
+    openAircraftPopup(tailNumber: string){
+        this.map.openAircraftPopUpByTailNumber(tailNumber);
     }
 }

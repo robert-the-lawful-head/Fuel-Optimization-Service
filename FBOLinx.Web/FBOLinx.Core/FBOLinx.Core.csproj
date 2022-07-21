@@ -18,6 +18,10 @@
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Text.Encoding.Extensions" Version="4.3.0" />
     <PackageReference Include="TimePeriodLibrary.NET" Version="2.1.1" />
+    <PackageReference Include="GeoCoordinate.NetCore" Version="1.0.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="GeoCoordinate.NetCore" />
+  </ItemGroup>
 </Project>

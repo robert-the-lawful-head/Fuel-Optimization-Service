@@ -98,10 +98,10 @@ import { metaReducers, reducers } from './store/reducers';
 import { UIModule } from './ui/ui.module';
 import { TagsService } from './services/tags.service';
 import { AssociationsService } from './services/associations.service';
-import { AssociationsDialogNewAssociationComponent } from './pages/associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { AirportFboGeofenceClustersService } from './services/airportfbogeofenceclusters.service';
 import { AirportFboGeofenceClusterCoordinatesService } from './services/airportfbogeofenceclustercoordinates.service';
 import { DateTimeService } from './services/datetime.service';
+import { SwimService } from './services/swim.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -218,7 +218,8 @@ import { DateTimeService } from './services/datetime.service';
         AssociationsService,
         AirportFboGeofenceClustersService,
         AirportFboGeofenceClusterCoordinatesService,
-        DateTimeService
+        DateTimeService,
+        SwimService
     ],
 })
 export class AppModule { }
