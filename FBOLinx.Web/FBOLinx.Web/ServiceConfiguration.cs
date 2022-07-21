@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FBOLinx.DB.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -110,6 +111,7 @@ namespace FBOLinx.Web
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
             services.AddTransient<ISWIMService, SWIMService>();
             services.AddTransient<AirportWatchScheduledService, AirportWatchScheduledService>();
+            services.AddTransient<MissedQuoteLogService, MissedQuoteLogService>();
             services.AddHostedService<AirportWatchScheduledService>();
 
 
@@ -127,6 +129,7 @@ namespace FBOLinx.Web
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
+            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
