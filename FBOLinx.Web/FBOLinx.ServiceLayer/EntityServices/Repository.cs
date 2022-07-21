@@ -24,6 +24,13 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
             return entity;
         }
+
+        public async Task DeleteAsync(T entity)
+        {
+            context.Set<T>().Remove(entity);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<T> DeleteAsync(int id)
         {
             var entity = context.Set<T>().Find(id);
