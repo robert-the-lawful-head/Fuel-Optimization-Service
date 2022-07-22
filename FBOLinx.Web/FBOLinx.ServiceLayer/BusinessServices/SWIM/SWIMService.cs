@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(string icao)
         {
-            IEnumerable<SWIMFlightLeg> swimFlightLegs = await _flightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
+            IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, false);
 
             return result;
@@ -64,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(string icao)
         {
-            IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FetchingThresholdMins)));
+            IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, true);
 
             return result;
@@ -89,8 +89,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<AirportWatchHistoricalData> antennaHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
                 new AirportWatchHistoricalDataSpecification(flightNumbers, DateTime.UtcNow.AddDays(-1)));
 
-            List<SWIMFlightLeg> existingFlightLegs = (await _flightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList();
-            var existingFlightLegMessages = await _flightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(existingFlightLegs.Select(x => x.Oid).ToList()));
+            List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList();
+            var existingFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(existingFlightLegs.Select(x => x.Oid).ToList()));
 
             List<SWIMFlightLegData> flightLegDataMessagesToInsert = new List<SWIMFlightLegData>();
             List<SWIMFlightLeg> flightLegsToUpdate = new List<SWIMFlightLeg>();
@@ -136,7 +136,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 LogMissedTailNumbers(flightLegsToAdd);
 
-                await _flightLegEntityService.BulkInsertOrUpdate(flightLegsToAdd);
+                await _FlightLegEntityService.BulkInsertOrUpdate(flightLegsToAdd);
 
                 foreach (SWIMFlightLeg flightLeg in flightLegsToAdd)
                 {
@@ -206,7 +206,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         private async Task<IEnumerable<FlightLegDTO>> GetFlightLegs(IEnumerable<SWIMFlightLeg> swimFlightLegs, bool isArrivals)
         {
-            var swimFlightLegMessages = await _flightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(swimFlightLegs.Select(x => x.Oid).ToList()));
+            List<SWIMFlightLegData> swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(swimFlightLegs.Select(x => x.Oid).ToList()));
 
             List<string> airportICAOs = swimFlightLegs.Select(x => x.DepartureICAO).ToList();
             airportICAOs.AddRange(swimFlightLegs.Select(x => x.ArrivalICAO).ToList());
@@ -290,14 +290,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     flightLegDto.City = flightLegDto.ArrivalCity;
                 }
 
-                flightLegDto.Status = GetFlightStatus(swimFlightLeg, arrivalAirport, departureAirport, latestAntennaLiveDataRecord, antennaHistoricalData);
+                flightLegDto.Status = GetFlightStatus(swimFlightLeg, swimFlightLegMessages, arrivalAirport, departureAirport, latestAntennaLiveDataRecord, antennaHistoricalData);
 
                 SWIMFlightLegData latestSWIMMessage =
                     swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid).OrderByDescending(x => x.Oid).First();
-                dto.ActualSpeed = latestSWIMMessage.ActualSpeed;
-                dto.Altitude = latestSWIMMessage.Altitude;
-                dto.Latitude = latestSWIMMessage.Latitude;
-                dto.Longitude = latestSWIMMessage.Longitude;
+                flightLegDto.ActualSpeed = latestSWIMMessage.ActualSpeed;
+                flightLegDto.Altitude = latestSWIMMessage.Altitude;
+                flightLegDto.Latitude = latestSWIMMessage.Latitude;
+                flightLegDto.Longitude = latestSWIMMessage.Longitude;
 
                 result.Add(flightLegDto);
             }
@@ -324,12 +324,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private FlightLegStatus GetFlightStatus(SWIMFlightLeg swimFlightLeg, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, AirportWatchLiveData latestAntennaLiveDataRecord, List<AirportWatchHistoricalData> antennaHistoricalData)
+        private FlightLegStatus GetFlightStatus(SWIMFlightLeg swimFlightLeg, List<SWIMFlightLegData> swimFlightLegMessages, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, AirportWatchLiveData latestAntennaLiveDataRecord, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             FlightLegStatus flightLegStatus = FlightLegStatus.EnRoute;
 
-            SWIMFlightLegData latestSWIMFlightLegMessage = 
-                swimFlightLeg.SWIMFlightLegDataMessages.Where(x => x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
+            SWIMFlightLegData latestSWIMFlightLegMessage =
+                swimFlightLegMessages.Where(x => x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
             if (arrivalAirport == null || string.IsNullOrEmpty(arrivalAirport.Latitude) || string.IsNullOrEmpty(arrivalAirport.Longitude) || 
                 departureAirport == null || string.IsNullOrEmpty(departureAirport.Latitude) || string.IsNullOrEmpty(departureAirport.Longitude) ||
