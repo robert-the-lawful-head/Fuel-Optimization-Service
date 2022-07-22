@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -22,7 +23,7 @@ namespace FBOLinx.Web.Controllers
     [ApiController]
     public class FboMissedQuotesLogController : Controller
     {
-        private MissedQuoteLogEntityService _missedQuoteService;
+        private MissedQuoteLogService _missedQuoteService;
         private FuelerLinxApiService _fuelerLinxApiService;
         private Services.FboService _fboService;
         private IFboService _iFboService;
@@ -30,15 +31,13 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelReqService _fuelReqService;
         private readonly CustomerAircraftService _customerAircraftService;
 
-        public FboMissedQuotesLogController(MissedQuoteLogEntityService missedQuoteLogEntityService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService, FuelReqService fuelReqService, CustomerAircraftService customerAircraftService)
+        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService)
         {
-            _missedQuoteService = missedQuoteLogEntityService;
+            _missedQuoteService = missedQuoteLogService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
             _customerService = customerService;
             _iFboService = iFboService;
-            _fuelReqService = fuelReqService;
-            _customerAircraftService = customerAircraftService;
         }
 
         // GET: api/FboMissedQuotesLog/recent-missed-quotes/fbo/5
@@ -105,13 +104,13 @@ namespace FBOLinx.Web.Controllers
                 allRecentFboLinxTransactions.AddRange(recentTransactions);
             }
 
-            var groupedAllRecentFboLinxTransactions = allRecentFboLinxTransactions.GroupBy(t => t.CustomerId).Select(g => new
+            var groupedAllRecentFboLinxTransactions = allRecentFboLinxTransactions.Where(a => a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
                 CustomerId = g.Key,
                 MissedQuoteCount = g.Count(f => f.CustomerAircraftId > 0)
             }).ToList();
 
-            foreach (var transaction in allRecentFboLinxTransactions.OrderByDescending(f => f.DateCreated))
+            foreach (var transaction in allRecentFboLinxTransactions.Where(a => a.Cancelled == false).OrderByDescending(f => f.DateCreated))
             {
                 if (missedOrdersLogList.Count == 5)
                     break;
@@ -137,7 +136,7 @@ namespace FBOLinx.Web.Controllers
             if (missedOrdersLogList.Count < 5)
             {
                 FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-                { EndDateTime = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), StartDateTime = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), Icao = fbo.fboAirport.Icao, Fbo = null });
+            { EndDateTime = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), StartDateTime = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), Icao = fbo.fboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
 
                 var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
                 {

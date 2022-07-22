@@ -12,6 +12,7 @@ import { FboairportsService } from '../../services/fboairports.service';
 import { FbopricesService } from '../../services/fboprices.service';
 import { FbopreferencesService } from '../../services/fbopreferences.service';
 import { PricingtemplatesService } from '../../services/pricingtemplates.service';
+import { FbosService } from '../../services/fbos.service';
 // Components
 import { PricingExpiredNotificationComponent } from '../../shared/components/pricing-expired-notification/pricing-expired-notification.component';
 import { customerGridClear } from '../../store/actions';
@@ -57,6 +58,7 @@ export class DefaultLayoutComponent implements OnInit {
         private router: Router,
         private store: Store<State>,
         private clearPricingDialog: MatDialog,
+        private fbosService: FbosService
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -143,6 +145,8 @@ export class DefaultLayoutComponent implements OnInit {
         });
 
         this.layoutClasses = this.getClasses();
+
+        this.LogUserForAnalytics();
     }
 
     isPricePanelVisible() {
@@ -349,5 +353,46 @@ export class DefaultLayoutComponent implements OnInit {
             [1, 4].includes(this.sharedService.currentUser.role) ||
             [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
         );
+    }
+
+    private LogUserForAnalytics() {
+        //Log data about the user for Lucky Orange analytics
+        if (!this.sharedService.currentUser || !this.sharedService.currentUser.username || this.sharedService.currentUser.username == '')
+            return;
+
+        if (this.sharedService.currentUser.fboId > 0) {
+            this.fbosService
+                .getByFboId(
+                    this.sharedService.currentUser.fboId
+                )
+                .subscribe(
+                    (data: any) => {
+                        var fbo = data;
+                        this.fboairportsService
+                            .getForFbo(
+                                fbo
+                            )
+                            .subscribe(
+                                (result: any) => {
+                                    this.LogAnalytics(fbo.fbo, result.icao);
+                                }
+                        );
+                    }
+                );
+        }
+        else
+            this.LogAnalytics("", "");
+    }
+
+    private LogAnalytics(fbo, icao) {
+        var userData = {
+            "Name": (!this.sharedService.currentUser.firstName ? '' : this.sharedService.currentUser.firstName) + ' ' + (!this.sharedService.currentUser.lastName ? '' : this.sharedService.currentUser.lastName),
+            "UserName": this.sharedService.currentUser.username,
+            "FBO": fbo,
+            "ICAO": icao
+        };
+
+        window._loq = window._loq || []
+        window._loq.push(['custom', userData]);
     }
 }
