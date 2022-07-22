@@ -279,7 +279,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     flightLegDto.City = flightLegDto.ArrivalCity;
                 }
 
-                SetFlightStatus(flightLegDto, swimFlightLeg, arrivalAirport, departureAirport, latestAntennaLiveDataRecord, antennaHistoricalData);
+                flightLegDto.Status = GetFlightStatus(swimFlightLeg, arrivalAirport, departureAirport, latestAntennaLiveDataRecord, antennaHistoricalData);
 
                 SWIMFlightLegData latestSWIMMessage =
                     swimFlightLeg.SWIMFlightLegDataMessages.OrderByDescending(x => x.Oid).First();
@@ -294,8 +294,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             return result;
         }
 
-        private void SetFlightStatus(FlightLegDTO flightLegDto, SWIMFlightLeg swimFlightLeg, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, AirportWatchLiveData latestAntennaLiveDataRecord, List<AirportWatchHistoricalData> antennaHistoricalData)
+        private FlightLegStatus GetFlightStatus(SWIMFlightLeg swimFlightLeg, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, AirportWatchLiveData latestAntennaLiveDataRecord, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
+            FlightLegStatus flightLegStatus = FlightLegStatus.EnRoute;
+
             SWIMFlightLegData latestSWIMFlightLegMessage = 
                 swimFlightLeg.SWIMFlightLegDataMessages.Where(x => x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
@@ -303,7 +305,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 departureAirport == null || string.IsNullOrEmpty(departureAirport.Latitude) || string.IsNullOrEmpty(departureAirport.Longitude) ||
                 latestSWIMFlightLegMessage == null || latestAntennaLiveDataRecord == null)
             {
-                return;
+                return flightLegStatus;
             }
 
             double arrivalAirportLatitude = LocationHelper.GetLatitudeGeoLocationFromGPS(arrivalAirport.Latitude);
@@ -320,33 +322,40 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     new Coordinates(latestSWIMFlightLegMessage.Latitude.Value, latestSWIMFlightLegMessage.Longitude.Value),
                     UnitOfLength.Miles
                 );
+            
             if (!latestAntennaLiveDataRecord.IsAircraftOnGround)
             {
                 if (distanceFromArrivalAirport < 5)
                 {
-                    flightLegDto.Status = FlightLegStatus.Landing;
+                    flightLegStatus = FlightLegStatus.Landing;
                 }
                 else if (distanceFromDepartureAirport < 5)
                 {
-                    flightLegDto.Status = FlightLegStatus.Departing;
+                    flightLegStatus = FlightLegStatus.Departing;
                 }
                 else
                 {
-                    flightLegDto.Status = FlightLegStatus.EnRoute;
+                    flightLegStatus = FlightLegStatus.EnRoute;
                 }
             }
             else
             {
                 AirportWatchHistoricalData antennaHistoricalDataRecord = antennaHistoricalData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
-                if (antennaHistoricalDataRecord != null && antennaHistoricalDataRecord.AircraftStatus != AircraftStatusType.Parking)
+                if (antennaHistoricalDataRecord != null && antennaHistoricalDataRecord.AircraftStatus == AircraftStatusType.Parking)
                 {
-                    flightLegDto.Status = FlightLegStatus.Taxiing;
-                }
-                else
-                {
-                    flightLegDto.Status = FlightLegStatus.Arrived;
+                    if (antennaHistoricalDataRecord.AircraftStatus == AircraftStatusType.Parking)
+                    {
+                        flightLegStatus = FlightLegStatus.Arrived;
+                    }
+                    else if (antennaHistoricalDataRecord.AircraftStatus == AircraftStatusType.Landing && antennaHistoricalDataRecord.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-30))
+                    {
+                        flightLegStatus = FlightLegStatus.Taxiing;
+                    }
+
                 }
             }
+
+            return flightLegStatus;
         }
     }
 }
