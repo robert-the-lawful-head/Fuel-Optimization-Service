@@ -75,11 +75,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             IEnumerable<SWIMFlightLeg> swimFlightLegs;
             if (isArrivals)
             {
-                swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
+                swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, historicalETD.AddMinutes(FlightLegsFetchingThresholdMins), historicalETA.AddMinutes(30)));
             }
             else
             {
-                swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
+                swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, historicalETD.AddMinutes(FlightLegsFetchingThresholdMins), historicalETA.AddMinutes(30)));
             }
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, isArrivals, true, historicalETD, historicalETA, historicalAircraftPositionDateTime);
 
