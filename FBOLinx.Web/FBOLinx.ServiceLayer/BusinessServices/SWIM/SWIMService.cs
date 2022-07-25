@@ -101,6 +101,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 if (existingLeg != null)
                 {
                     var exisingLegMessages = existingFlightLegMessages.Where(x => x.SWIMFlightLegId == existingLeg.Oid).ToList();
+                    if (!exisingLegMessages.Any())
+                    {
+                        continue;
+                    }
                     DateTime latestMessageTimestamp = exisingLegMessages.Max(x => x.MessageTimestamp);
                     DateTime latestExistingETA = exisingLegMessages.OrderByDescending(x => x.Oid).First().ETA;
                     foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
@@ -133,28 +137,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             if (flightLegsToAdd.Count > 0)
             {
                 LogMissedTailNumbers(flightLegsToAdd);
-
-                await _flightLegEntityService.BulkInsertOrUpdate(flightLegsToAdd);
-
-                foreach (SWIMFlightLeg flightLeg in flightLegsToAdd)
-                {
-                    foreach (SWIMFlightLegData legDataMessage in flightLeg.SWIMFlightLegDataMessages)
-                    {
-                        legDataMessage.SWIMFlightLegId = flightLeg.Oid;
-                    }
-
-                    flightLegDataMessagesToInsert.AddRange(flightLeg.SWIMFlightLegDataMessages.Select(x => x.Adapt<SWIMFlightLegData>()));
-                }
+                await _flightLegEntityService.BulkInsert(flightLegsToAdd, true);
             }
 
             if (flightLegDataMessagesToInsert.Count > 0)
             {
-                await _flightLegDataEntityService.BulkInsertOrUpdate(flightLegDataMessagesToInsert);
+                await _flightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert);
             }
 
             if (flightLegsToUpdate.Count > 0)
             {
-                await _flightLegEntityService.BulkInsertOrUpdate(flightLegsToUpdate);
+                await _flightLegEntityService.BulkUpdate(flightLegsToUpdate);
             }
         }
 

@@ -59,9 +59,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             await _EntityService.BulkDeleteEntities(dtos.Adapt<List<T>>());
         }
 
-        public async Task BulkInsertOrUpdate(List<TDTO> dtos)
+        public async Task BulkInsert(List<TDTO> dtos)
         {
-            await _EntityService.BulkInsertOrUpdate(dtos.Adapt<List<T>>());
+            await _EntityService.BulkInsert(dtos.Adapt<List<T>>());
+        }
+
+        public async Task BulkUpdate(List<TDTO> dtos)
+        {
+            await _EntityService.BulkUpdate(dtos.Adapt<List<T>>());
         }
     }
 }

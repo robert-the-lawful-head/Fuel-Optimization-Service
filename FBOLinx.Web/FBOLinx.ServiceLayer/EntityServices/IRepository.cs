@@ -24,6 +24,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         IQueryable<T> Where(Expression<Func<T, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
         Task<T> FindAsync(int id);
-        Task BulkInsertOrUpdate(List<T> entities);
+        Task BulkInsert(List<T> entities, bool includeGraph = false);
+        Task BulkUpdate(List<T> entities);
     }
 }

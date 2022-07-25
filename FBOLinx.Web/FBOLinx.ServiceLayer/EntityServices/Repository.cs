@@ -122,25 +122,20 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 //Do nothing... the entities were already deleted
             }
         }
-        public async Task BulkInsertOrUpdate(List<T> entities)
-        {
-            await BulkInsertOrUpdateEntities(entities);
-            //for (int entityIndex = 0; entityIndex < entities.Count; entityIndex++)
-            //{
-            //    try
-            //    {
-            //        entityDTOs[entityIndex].Oid = entities[entityIndex].Oid;
-            //    }
-            //    catch (System.Exception exception)
-            //    {
-            //        //Do nothing - somehow more entities than DTOs?
-            //    }
-            //}
-        }
-        protected virtual async Task BulkInsertOrUpdateEntities(List<T> entities)
+        public async Task BulkInsert(List<T> entities, bool includeGraph = false)
         {
             await using var transaction = await context.Database.BeginTransactionAsync();
-            await context.BulkInsertOrUpdateAsync(entities, config => config.SetOutputIdentity = true);
+            BulkConfig bulkConfig = new BulkConfig();
+            bulkConfig.SetOutputIdentity = true;
+            bulkConfig.IncludeGraph = includeGraph;
+            await context.BulkInsertAsync(entities, bulkConfig);
+            await transaction.CommitAsync();
+        }
+
+        public async Task BulkUpdate(List<T> entities)
+        {
+            await using var transaction = await context.Database.BeginTransactionAsync();
+            await context.BulkUpdateAsync(entities);
             await transaction.CommitAsync();
         }
     }

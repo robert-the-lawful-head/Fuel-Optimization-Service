@@ -84,7 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             coveredAircraft.AddRange(missingCoverage);
 
             //Add them to the CustomerAircrafts table and update covered aircraft with the make/model
-            await _customerAircraftEntityService.BulkInsertOrUpdate(coveredAircraft);
+            await _customerAircraftEntityService.BulkInsert(coveredAircraft);
         }
 
         private async Task PrepareDataForSync()

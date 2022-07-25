@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.Logging;
@@ -8,10 +9,12 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Responses.SWIM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
+    [APIKey]
     [Route("api/[controller]")]
     [ApiController]
     public class SWIMController : ControllerBase
@@ -24,7 +27,7 @@ namespace FBOLinx.Web.Controllers
             _SWIMService = swimService;
             this.loggingService = loggingService;
         }
-
+        
         [HttpGet("departures/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] string icao)
         {
@@ -32,7 +35,7 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(new FlightLegsResponse(result));
         }
-
+        
         [HttpGet("arrivals/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] string icao)
         {
@@ -41,6 +44,8 @@ namespace FBOLinx.Web.Controllers
             return Ok(new FlightLegsResponse(result));
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("flight-legs")]
         public async Task<ActionResult> PostFlightLeg([FromBody] IEnumerable<SWIMFlightLegDTO> flightLegs)
         {
