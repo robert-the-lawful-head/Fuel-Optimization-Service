@@ -30,17 +30,33 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("departures/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] string icao)
         {
-            IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
+            try
+            {
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
 
-            return Ok(new FlightLegsResponse(result));
+                return Ok(new FlightLegsResponse(result));
+            }
+            catch (Exception ex)
+            {
+                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpGet("arrivals/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] string icao)
         {
-            IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
+            try
+            {
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
 
-            return Ok(new FlightLegsResponse(result));
+                return Ok(new FlightLegsResponse(result));
+            }
+            catch (Exception ex)
+            {
+                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return BadRequest(ex.Message);
+            }
         }
 
         [AllowAnonymous]
