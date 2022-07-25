@@ -155,17 +155,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             if (flightLegsToAdd.Count > 0)
             {
                 LogMissedTailNumbers(flightLegsToAdd);
-                await _flightLegEntityService.BulkInsert(flightLegsToAdd, true);
+                await _FlightLegEntityService.BulkInsert(flightLegsToAdd, true);
             }
 
             if (flightLegDataMessagesToInsert.Count > 0)
             {
-                await _flightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert);
+                await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert);
             }
 
             if (flightLegsToUpdate.Count > 0)
             {
-                await _flightLegEntityService.BulkUpdate(flightLegsToUpdate);
+                await _FlightLegEntityService.BulkUpdate(flightLegsToUpdate);
             }
         }
 
