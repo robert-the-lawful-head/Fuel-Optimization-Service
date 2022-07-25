@@ -17,5 +17,10 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
             : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber) && x.AircraftPositionDateTimeUtc >= startDate)
         {
         }
+
+        public AirportWatchHistoricalDataSpecification(IList<string> atcFlightNumbers, DateTime startDate, DateTime endDate)
+            : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber) && x.AircraftPositionDateTimeUtc >= startDate && x.AircraftPositionDateTimeUtc <= endDate)
+        {
+        }
     }
 }

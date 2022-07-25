@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.Logging;
@@ -8,6 +9,7 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Responses.SWIM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using FBOLinx.Web.Auth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -24,23 +26,41 @@ namespace FBOLinx.Web.Controllers
             _SWIMService = swimService;
             this.loggingService = loggingService;
         }
-
+        
         [HttpGet("departures/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] string icao)
         {
-            IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
+            try
+            {
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
 
-            return Ok(new FlightLegsResponse(result));
+                return Ok(new FlightLegsResponse(result));
+            }
+            catch (Exception ex)
+            {
+                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return BadRequest(ex.Message);
+            }
         }
-
+        
         [HttpGet("arrivals/{icao}")]
         public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] string icao)
         {
-            IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
+            try
+            {
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
 
-            return Ok(new FlightLegsResponse(result));
+                return Ok(new FlightLegsResponse(result));
+            }
+            catch (Exception ex)
+            {
+                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return BadRequest(ex.Message);
+            }
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("flight-legs")]
         public async Task<ActionResult> PostFlightLeg([FromBody] IEnumerable<SWIMFlightLegDTO> flightLegs)
         {
