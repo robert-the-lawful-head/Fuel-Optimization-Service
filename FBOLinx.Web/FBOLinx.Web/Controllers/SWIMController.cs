@@ -14,7 +14,6 @@ using FBOLinx.Web.Auth;
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
-    [APIKey]
     [Route("api/[controller]")]
     [ApiController]
     public class SWIMController : ControllerBase
