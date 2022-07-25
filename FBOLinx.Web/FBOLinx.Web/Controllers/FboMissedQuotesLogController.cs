@@ -31,13 +31,14 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelReqService _fuelReqService;
         private readonly CustomerAircraftService _customerAircraftService;
 
-        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService)
+        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService, FuelReqService fuelReqService)
         {
             _missedQuoteService = missedQuoteLogService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
             _customerService = customerService;
             _iFboService = iFboService;
+            _fuelReqService = fuelReqService;
         }
 
         // GET: api/FboMissedQuotesLog/recent-missed-quotes/fbo/5
