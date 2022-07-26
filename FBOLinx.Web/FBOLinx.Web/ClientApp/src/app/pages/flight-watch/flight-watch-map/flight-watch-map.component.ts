@@ -117,7 +117,6 @@ export class FlightWatchMapComponent
 
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
             .addNavigationControls()
-            .addGeolocationControls()
             .onZoomAsync(refreshMapFlight)
             .onDragendAsync(refreshMapFlight)
             .onRotateAsync(refreshMapFlight)
