@@ -96,7 +96,7 @@ namespace FBOLinx.Web
 
         private void ConfigureMapsterDefaults()
         {
-            //TypeAdapterConfig.GlobalSettings.Default.MaxDepth(2);
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
         }
     }
 }

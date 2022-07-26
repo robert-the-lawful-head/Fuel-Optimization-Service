@@ -32,14 +32,6 @@ namespace FBOLinx.ServiceLayer.Mapping
                    cfg.Ignore(poco => poco.ContactInfoByGroup);
                });
 
-            //config.AdaptTo("[name]Dto")
-            //    .ForType<Fbos>(cfg => {
-            //        cfg.Ignore(poco => poco.Group);
-            //        cfg.Ignore(poco => poco.Preferences);
-            //        cfg.Ignore(poco => poco.FboAirport);
-            //    })
-            //    .MaxDepth(1);
-
             // configuration to create automatic mapping extension files
             //config.GenerateMapper("[name]Mapper")
             //.ForAllTypesInNamespace(Assembly.Load("FBOLinx.DB"), "FBOLinx.DB.Models")

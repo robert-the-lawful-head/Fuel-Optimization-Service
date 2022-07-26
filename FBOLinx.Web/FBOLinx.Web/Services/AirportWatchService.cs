@@ -243,7 +243,7 @@ namespace FBOLinx.Web.Services
                                   AircraftPositionDateTimeUtc = fr.awhd.AircraftPositionDateTimeUtc,
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
-                                  FuelOrder = fo.Adapt<FuelReqDto>(),
+                                  FuelOrder = fo,
                                         IsInNetwork = (fr.ca?.Oid > 0),
                                   IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
                                   TailNumber = fr.awhd.TailNumber
