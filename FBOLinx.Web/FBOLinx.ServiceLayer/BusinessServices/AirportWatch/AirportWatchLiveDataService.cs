@@ -8,7 +8,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 
-namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatchLiveData
+namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
     public interface
         IAirportWatchLiveDataService : IBaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData>
