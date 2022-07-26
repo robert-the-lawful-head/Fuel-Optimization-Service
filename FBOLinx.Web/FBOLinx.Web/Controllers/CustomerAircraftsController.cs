@@ -27,10 +27,10 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly AircraftService _aircraftService;
-        private CustomerAircraftService _CustomerAircraftService;
+        private ICustomerAircraftService _CustomerAircraftService;
         private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, CustomerAircraftService customerAircraftService, IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService)
         {
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
@@ -96,7 +96,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId, customerId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId, fboId, customerId);
             
             if (result == null)
                 return Ok(result);
@@ -115,7 +115,7 @@ namespace FBOLinx.Web.Controllers
             if (groupId != JwtManager.GetClaimedGroupId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId);
 
             return Ok(result);
         }
@@ -123,7 +123,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomerAircraftsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
         {
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId, fboId);
             
             return Ok(result);
         }
@@ -144,7 +144,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId);
 
             return Ok(result?.Count);
         }

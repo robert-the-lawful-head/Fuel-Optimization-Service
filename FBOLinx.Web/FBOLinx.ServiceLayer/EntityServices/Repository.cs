@@ -122,6 +122,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 //Do nothing... the entities were already deleted
             }
         }
+
         public async Task BulkInsert(List<T> entities, bool includeGraph = false)
         {
             await using var transaction = await context.Database.BeginTransactionAsync();
