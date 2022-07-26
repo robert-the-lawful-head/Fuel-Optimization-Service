@@ -48,36 +48,36 @@ export abstract class MapboxglBase {
             }));
         return this;
     }
-    onZoomStartAsync(callBack): this{
+    onZoomStart(callBack): this{
         this.map.on('zoomstart',  async() => callBack);
         return this;
     }
-    onZoomEndAsync(callBack): this{
-        this.map.on('zoomend', async () => callBack);
+    onZoomEnd(callBack): this{
+        this.map.on('zoomend', callBack);
         return this;
     }
-    onZoomAsync(callBack): this{
-        this.map.on('zoom', async () => callBack);
+    onZoom(callBack): this{
+        this.map.on('zoom', callBack);
         return this;
     }
-    onDragendAsync(callBack): this{
-        this.map.on('dragend', async () => callBack);
+    onDragend(callBack): this{
+        this.map.on('dragend', callBack);
         return this;
     }
-    onRotateAsync(callBack): this{
-        this.map.on('rotate', async () => callBack);
+    onRotate(callBack): this{
+        this.map.on('rotate', callBack);
         return this;
     }
-    onResizeAsync(callBack): this{
-        this.map.on('resize', async () => callBack);
+    onResize(callBack): this{
+        this.map.on('resize', callBack);
         return this;
     }
-    onIdleAsync(callBack): this{
-        this.map.on('idle', async () => callBack);
+    onIdle(callBack): this{
+        this.map.on('idle', callBack);
         return this;
     }
-    onStyleDataAsync(callBack): this{
-        this.map.on('styledata', async () => callBack);
+    onStyleData(callBack): this{
+        this.map.on('styledata', callBack);
         return this;
     }
     onLoad(callBack): this{

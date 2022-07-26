@@ -110,20 +110,19 @@ export class FlightWatchMapComponent
         super();
     }
     ngOnInit(): void {
-        const refreshMapFlight = () => {
+        const refreshMapFlight = async () => {
             this.updateFlightOnMap();
-            this.loadICAOIconOnMap();
-        }
+            this.updateICAOIconOnMap();
+            this.getFbosAndLoad();
+        };
 
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
             .addNavigationControls()
-            .onZoomAsync(refreshMapFlight)
-            .onDragendAsync(refreshMapFlight)
-            .onRotateAsync(refreshMapFlight)
-            .onResizeAsync(refreshMapFlight)
-            .onStyleDataAsync(this.mapStyleLoaded())
-            .onZoomEndAsync((e) => this.updateICAOIconOnMap())
-            .onZoomStartAsync((e) => this.geolocationZoomAction(e))
+            .onZoom(refreshMapFlight)
+            .onDragend(refreshMapFlight)
+            .onRotate(refreshMapFlight)
+            .onResize(refreshMapFlight)
+            .onStyleData(this.mapStyleLoaded)
             .onLoad(async () => {
                 await this.loadMapIcons();
                 this.loadICAOIconOnMap();
@@ -131,13 +130,7 @@ export class FlightWatchMapComponent
                 this.getFbosAndLoad();
             });
     }
-    geolocationZoomAction(e){
-        if (e.geolocateSource) {
-            var airport = this.getAirportsWithinMapBounds(this.getBounds());
-            this.airportClick.emit(airport[0]);
-            this.updateFlightOnMap();
-        }
-    }
+
     ngAfterViewInit() {
         this.fboId = this.sharedService.currentUser.fboId;
         this.groupId = this.sharedService.currentUser.groupId;
@@ -189,6 +182,7 @@ export class FlightWatchMapComponent
                 type: 'Feature'
             };
         });
+        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 191 ~ varmarkers:any[]=this.getAirportsWithinMapBounds ~ markers", markers)
 
         const data: any = {
             type: 'FeatureCollection',
