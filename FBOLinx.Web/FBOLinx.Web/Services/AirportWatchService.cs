@@ -659,16 +659,16 @@ namespace FBOLinx.Web.Services
             await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
             await using var degaContext = _ServiceProvider.GetService<DegaContext>();
 
-            data.Clear();
+            //data.Clear();
            
-            var testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":0,\"GroundSpeedKts\":7,\"TrackingDegree\":17.0,\"Latitude\":33.57487,\"Longitude\":-117.12913,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":-75,\"IsAircraftOnGround\":true,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-            var newAircraftWatchLiveData = new AirportWatchLiveData();
-            newAircraftWatchLiveData = (AirportWatchLiveData)testData;
-            data.Add(newAircraftWatchLiveData);
-            testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":2100,\"GroundSpeedKts\":89,\"TrackingDegree\":195.0,\"Latitude\":33.56058,\"Longitude\":-117.13237,\"VerticalSpeedKts\":1664,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":2100,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-            newAircraftWatchLiveData = new AirportWatchLiveData();
-            newAircraftWatchLiveData = (AirportWatchLiveData)testData;
-            data.Add(newAircraftWatchLiveData);
+            //var testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":0,\"GroundSpeedKts\":7,\"TrackingDegree\":17.0,\"Latitude\":33.57487,\"Longitude\":-117.12913,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":-75,\"IsAircraftOnGround\":true,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
+            //var newAircraftWatchLiveData = new AirportWatchLiveData();
+            //newAircraftWatchLiveData = (AirportWatchLiveData)testData;
+            //data.Add(newAircraftWatchLiveData);
+            //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":2100,\"GroundSpeedKts\":89,\"TrackingDegree\":195.0,\"Latitude\":33.56058,\"Longitude\":-117.13237,\"VerticalSpeedKts\":1664,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":2100,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
+            //newAircraftWatchLiveData = new AirportWatchLiveData();
+            //newAircraftWatchLiveData = (AirportWatchLiveData)testData;
+            //data.Add(newAircraftWatchLiveData);
 
             var airportPositions = await GetAirportPositions(degaContext);
 
@@ -678,10 +678,10 @@ namespace FBOLinx.Web.Services
 
             //Preload the collection of past records from the last 7 days to use in the loop
             var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-1));
-            testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":1300,\"GroundSpeedKts\":2,\"TrackingDegree\":298.0,\"Latitude\":33.57458,\"Longitude\":-117.12912,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":1225,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":\"N118AT\",\"Oid\":29998562}");
-            newAircraftWatchLiveData = new AirportWatchLiveData();
-            newAircraftWatchLiveData = (AirportWatchLiveData)testData;
-            oldAirportWatchLiveDataCollection.Add(newAircraftWatchLiveData);
+            //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":1300,\"GroundSpeedKts\":2,\"TrackingDegree\":298.0,\"Latitude\":33.57458,\"Longitude\":-117.12912,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":1225,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":\"N118AT\",\"Oid\":29998562}");
+            //newAircraftWatchLiveData = new AirportWatchLiveData();
+            //newAircraftWatchLiveData = (AirportWatchLiveData)testData;
+            //oldAirportWatchLiveDataCollection.Add(newAircraftWatchLiveData);
 
             var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(fboLinxContext, distinctAircraftHexCodes, DateTime.UtcNow.AddHours(-4));
 
@@ -710,7 +710,7 @@ namespace FBOLinx.Web.Services
 
                 //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
                 if (oldAirportWatchLiveData != null &&
-                    oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround) //ADD BACK  && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5)
+                    oldAirportWatchLiveData.IsAircraftOnGround != record.IsAircraftOnGround && oldAirportWatchLiveData.AircraftPositionDateTimeUtc > DateTime.UtcNow.AddMinutes(-5))
                 {
                     _HistoricalDataToInsert.Add(airportWatchHistoricalData);
                 }
