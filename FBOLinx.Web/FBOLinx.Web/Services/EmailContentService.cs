@@ -36,16 +36,16 @@ namespace FBOLinx.Web.Services
 
         public async Task<EmailContent> AddDefaultEmailContentForFbo(int fboId)
         {
-            var fbo = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.fboAirport).FirstOrDefaultAsync();
+            var fbo = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.FboAirport).FirstOrDefaultAsync();
             if (fbo == null)
                 return null;
             var emailContent = new EmailContent()
                 {
-                    EmailContentHtml = "Greeting from " + fbo.Fbo + " / " + fbo.fboAirport?.Icao + ". Attached please see your custom pricing from our FBO!",
+                    EmailContentHtml = "Greeting from " + fbo.Fbo + " / " + fbo.FboAirport?.Icao + ". Attached please see your custom pricing from our FBO!",
                     EmailContentType = EmailContentTypes.Body,
                     FboId = fboId,
                     Name = "Default Email Template",
-                    Subject = "Pricing from " + fbo.Fbo + " / " + fbo.fboAirport?.Icao
+                    Subject = "Pricing from " + fbo.Fbo + " / " + fbo.FboAirport?.Icao
                 };
             await _context.EmailContent.AddAsync(emailContent);
             await _context.SaveChangesAsync();

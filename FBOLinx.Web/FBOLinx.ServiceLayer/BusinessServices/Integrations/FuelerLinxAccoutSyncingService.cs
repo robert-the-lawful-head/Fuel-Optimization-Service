@@ -118,7 +118,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //Update/Insert all records from above
             var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
-            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords);
+            await _customerInfoByGroupEntityService.BulkUpdate(customerInfoByGroupRecords.Where(x => x.Oid > 0).ToList());
+            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList());
         }
 
         private async Task UpdateFleetStatus()
