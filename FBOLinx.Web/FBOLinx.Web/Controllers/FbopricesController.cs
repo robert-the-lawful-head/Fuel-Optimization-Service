@@ -824,14 +824,21 @@ namespace FBOLinx.Web.Controllers
 
                             if (recentMissedQuote.Count == 0)
                             {
-                                if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                try
                                 {
-                                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                                    if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                    {
+                                        var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
-                                    if (toEmails.Count > 0)
-                                        await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                                        if (toEmails.Count > 0)
+                                            await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
 
-                                    isEmailed = true;
+                                        isEmailed = true;
+                                    }
+                                }
+                                catch(Exception ex)
+                                {
+
                                 }
                             }
 

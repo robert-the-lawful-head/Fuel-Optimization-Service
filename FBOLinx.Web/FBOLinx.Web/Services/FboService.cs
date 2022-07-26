@@ -154,7 +154,7 @@ public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
             //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
             //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
 
-            if (fboInfo.FuelDeskEmail != "")
+            if (string.IsNullOrEmpty(fboInfo.FuelDeskEmail))
                 toEmails.Add(fboInfo.FuelDeskEmail);
 
             var fboContacts = await _context.Fbocontacts
@@ -177,7 +177,7 @@ public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
 
             foreach (Contacts fboContact in fboContacts)
             {
-                if (fboContact.CopyAlerts.GetValueOrDefault())
+                if (fboContact.CopyAlerts.GetValueOrDefault() && string.IsNullOrEmpty(fboContact.Email))
                     toEmails.Add(fboContact.Email);
             }
 
