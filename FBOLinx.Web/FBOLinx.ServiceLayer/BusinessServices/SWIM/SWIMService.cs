@@ -37,6 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly ICustomerAircraftEntityService _CustomerAircraftEntityService;
         private readonly AircraftEntityService _AircraftEntityService;
         private readonly ILoggingService _LoggingService;
+        //private readonly AirportWatchService _AirportWatchService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -54,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _LoggingService = loggingService;
         }
 
-        public async Task<IEnumerable<FlightLegDTO>> GetDepartures(string icao)
+        public async Task<IEnumerable<FlightLegDTO>> GetDepartures(int groupId, int fboId, string icao)
         {
             IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, false);
@@ -62,7 +63,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             return result;
         }
 
-        public async Task<IEnumerable<FlightLegDTO>> GetArrivals(string icao)
+        public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
         {
             IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, true);
@@ -268,6 +269,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 if (aircraftByFlightDepartment != null)
                 {
                     flightLegDto.FlightDepartment = aircraftByFlightDepartment.Item3;
+                    flightLegDto.Phone = aircraftByFlightDepartment.Item4;
                     var aircraft = aircrafts.FirstOrDefault(x => x.AircraftId == aircraftByFlightDepartment.Item1);
                     if (aircraft != null)
                     {
