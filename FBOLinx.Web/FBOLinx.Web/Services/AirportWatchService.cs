@@ -538,10 +538,10 @@ namespace FBOLinx.Web.Services
 
                 //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
 
-                if (record.BoxName == "krbk_a01")
-                {
-                    _LoggingService.LogError("krbk_a01", Newtonsoft.Json.JsonConvert.SerializeObject(record), LogLevel.Info, LogColorCode.Blue);
-                }
+                //if (record.BoxName == "krbk_a01")
+                //{
+                    //_LoggingService.LogError("krbk_a01", Newtonsoft.Json.JsonConvert.SerializeObject(record), LogLevel.Info, LogColorCode.Blue);
+                //}
 
                 //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now
                 if (oldAirportWatchLiveData != null &&
