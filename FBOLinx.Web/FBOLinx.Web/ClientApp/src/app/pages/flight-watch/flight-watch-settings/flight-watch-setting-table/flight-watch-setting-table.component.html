@@ -1,43 +1,14 @@
 <mat-card class="flight-watch-settings-container">
     <mat-card-header>
         <mat-card-title>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="float-left">{{getSwimDataTypeString()}}</div>
-                    <div class="flight-list-settings-button">
-                        <div class="actions">
-                            <button
-                                [matMenuTriggerFor]="gridActions"
-                                mat-icon-button
-                            >
-                                <mat-icon
-                                    aria-hidden="true"
-                                    class="mat-icon material-icons"
-                                    role="img"
-                                    >more_vert</mat-icon
-                                >
-                            </button>
-                            <mat-menu #gridActions="matMenu" xPosition="before">
-                                <button (click)="openSettings()" mat-menu-item>
-                                    Settings
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <mat-form-field>
-            <mat-label>Filter</mat-label>
-            <input #input matInput (keyup)="applyFilter($event)" />
-        </mat-form-field>
         <div class="flight-watch-container">
             <mat-table [dataSource]="data" matSort>
                 <ng-container matColumnDef="flightDepartment">
                     <mat-header-cell *matHeaderCellDef>Flight Department</mat-header-cell>
-                    <mat-cell *matCellDef="let element" >
+                    <mat-cell *matCellDef="let element" matTooltip="{{ element.flightDepartment }}">
                         {{ element.flightDepartment }}
                     </mat-cell>
                 </ng-container>
@@ -58,21 +29,25 @@
 
                 <ng-container matColumnDef="eta">
                     <mat-header-cell *matHeaderCellDef>ETA (Local)</mat-header-cell>
-                    <mat-cell *matCellDef="let element" >
-                        {{ element.etaLocal }}
+                    <mat-cell *matCellDef="let element" matTooltip="{{ element.etaLocal }}">
+                        {{ element.etaLocal |  ToReadableDateTime }}
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="ete">
                     <mat-header-cell *matHeaderCellDef>ETE</mat-header-cell>
                     <mat-cell *matCellDef="let element" >
-                        {{ element.ete }}
+                        {{ element.ete |  ToReadableTime}}
                     </mat-cell>
                 </ng-container>
 
                 <ng-container matColumnDef="origin-destination">
                     <mat-header-cell *matHeaderCellDef>
-                        Origin/Destination
+                        {{
+                            isArrival
+                                ? 'Origin'
+                                : 'Destination'
+                        }}
                     </mat-header-cell>
                     <mat-cell *matCellDef="let element" >
                         {{

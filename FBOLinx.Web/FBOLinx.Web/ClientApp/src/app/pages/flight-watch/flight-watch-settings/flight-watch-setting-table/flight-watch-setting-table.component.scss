@@ -15,3 +15,8 @@
     margin: 0px ;
     font-weight: bold ;
 }
+.mat-cell{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
