@@ -1186,7 +1186,7 @@ namespace FBOLinx.Web.Controllers
         {
             var airports = await _context.Fbos
                 .Where(x => x.GroupId == groupId && x.Active == true)
-                .Include(x => x.fboAirport)
+                .Include(x => x.FboAirport)
                 .ToListAsync();
 
             var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.CustomerId == customerId && c.GroupId == groupId);
@@ -1194,7 +1194,7 @@ namespace FBOLinx.Web.Controllers
                 return new List<GroupCustomerAnalyticsResponse>();
 
             List<string> icaos = new List<string>();
-            icaos.AddRange(airports.Select(x => x.fboAirport?.Icao).Where(x => !string.IsNullOrEmpty(x)));
+            icaos.AddRange(airports.Select(x => x.FboAirport?.Icao).Where(x => !string.IsNullOrEmpty(x)));
 
             Dictionary<FlightTypeClassifications, List<CustomerWithPricing>> priceResults =
                 new Dictionary<FlightTypeClassifications, List<CustomerWithPricing>>();

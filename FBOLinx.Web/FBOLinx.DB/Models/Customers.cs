@@ -59,7 +59,7 @@ namespace FBOLinx.DB.Models
         public virtual CompaniesByGroup CompanyByGroup { get; set; }
 
         [InverseProperty("Customer")]
-        public virtual CustomerInfoByGroup CustomerInfoByGroup { get; set; }
+        public virtual ICollection<CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
 
         [InverseProperty("Customer")]
         public virtual CustomCustomerTypes CustomCustomerType { get; set; }

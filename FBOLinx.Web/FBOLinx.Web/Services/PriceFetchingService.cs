@@ -273,8 +273,8 @@ namespace FBOLinx.Web.Services
                                                   IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
                                                                                      pt.MarginType != MarginTypes.FlatFee)),
                                                   ExpirationDate = fp?.EffectiveTo,
-                                                  Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
-                                                  Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
+                                                  Icao = (fbo.FboAirport == null ? "" : fbo.FboAirport.Icao),
+                                                  Iata = (fbo.FboAirport == null ? "" : fbo.FboAirport.Iata),
                                                   Notes = (pt == null ? "" : pt.Notes),
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
@@ -443,7 +443,7 @@ namespace FBOLinx.Web.Services
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users
