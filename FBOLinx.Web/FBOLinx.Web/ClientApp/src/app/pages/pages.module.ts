@@ -206,7 +206,6 @@ import { FboGeofencingMapComponent } from './fbo-geofencing/fbo-geofencing-map/f
 import { FboGeofencingDialogNewClusterComponent } from
     './fbo-geofencing/fbo-geofencing-dialog-new-cluster/fbo-geofencing-dialog-new-cluster.component';
 import { FboGeofencingDialogNewAirportComponent } from './fbo-geofencing/fbo-geofencing-dialog-new-airport/fbo-geofencing-dialog-new-airport.component';
-import { FlightWatchAircraftInfoDialogComponent } from './flight-watch/flight-watch-aircraft-info-dialog/flight-watch-aircraft-info-dialog.component';
 import { AntennaStatusHomeComponent } from './antenna-status/antenna-status-home/antenna-status-home.component';
 import { AntennaStatusGridComponent } from './antenna-status/antenna-status-grid/antenna-status-grid.component';
 import { FbosMissedOrdersGridComponent } from './fbos-missed-orders/fbos-missed-orders-grid/fbos-missed-orders-grid.component';
@@ -346,7 +345,6 @@ import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-se
         FboGeofencingMapComponent,
         FboGeofencingDialogNewClusterComponent,
         FboGeofencingDialogNewAirportComponent,
-        FlightWatchAircraftInfoDialogComponent,
         AntennaStatusHomeComponent,
         AntennaStatusGridComponent,
         FbosMissedOrdersGridComponent,
@@ -428,6 +426,5 @@ import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-se
         ToolbarService,
         DetailRowService
     ],
-    entryComponents: [FlightWatchAircraftInfoDialogComponent]
 })
 export class PagesModule { }
