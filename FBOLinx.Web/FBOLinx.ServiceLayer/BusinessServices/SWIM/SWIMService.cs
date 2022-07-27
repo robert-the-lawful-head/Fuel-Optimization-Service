@@ -407,7 +407,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 AirportWatchHistoricalData antennaHistoricalDataRecord = antennaHistoricalData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
                 
-                if (antennaHistoricalDataRecord != null && antennaHistoricalDataRecord.AircraftStatus == AircraftStatusType.Parking)
+                if (antennaHistoricalDataRecord != null)
                 {
                     if (antennaHistoricalDataRecord.AircraftStatus == AircraftStatusType.Parking)
                     {
