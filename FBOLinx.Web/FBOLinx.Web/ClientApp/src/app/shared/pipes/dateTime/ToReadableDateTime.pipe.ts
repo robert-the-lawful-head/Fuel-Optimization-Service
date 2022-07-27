@@ -6,9 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class ToReadableDateTimePipe implements PipeTransform {
 
   transform(dateObject: any, args?: any): string {
-    console.log("🚀 ~ file: ToReadableDateTime.pipe.ts ~ line 9 ~ ToReadableDateTimePipe ~ transform ~ dateObject", dateObject)
     dateObject =  new Date(dateObject);
-    console.log("🚀 ~ file: ToReadableDateTime.pipe.ts ~ line 9 ~ ToReadableDateTimePipe ~ transform ~ dateObject", dateObject)
 
     if(dateObject == null) return "";
     var dmy:string[] = [
