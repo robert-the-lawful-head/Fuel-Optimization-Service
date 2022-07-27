@@ -16,7 +16,11 @@
     font-weight: bold ;
 }
 .mat-cell{
+    width: 100px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
 }
+
