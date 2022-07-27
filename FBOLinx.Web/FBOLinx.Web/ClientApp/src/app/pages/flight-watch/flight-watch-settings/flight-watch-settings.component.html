@@ -43,12 +43,14 @@
       </div>
       <mat-tab-group>
         <mat-tab label="Arrivals">
-          <div class="tables-container">
+          <mat-spinner *ngIf="!swimArrivals"></mat-spinner>
+          <div class="tables-container" *ngIf="swimArrivals">
               <app-flight-watch-setting-table [data]="swimArrivals" [isArrival]="true" [columns]="columns" (openAircraftPopup)="openPopup($event)"></app-flight-watch-setting-table>
           </div>
         </mat-tab>
         <mat-tab label="Departures">
-          <div class="tables-container">
+          <mat-spinner *ngIf="!swimDepartures"></mat-spinner>
+          <div class="tables-container" *ngIf="swimDepartures">
             <app-flight-watch-setting-table [data]="swimDepartures" [isArrival]="false" [columns]="columns" (openAircraftPopup)="openPopup($event)"></app-flight-watch-setting-table>
         </div>
         </mat-tab>
