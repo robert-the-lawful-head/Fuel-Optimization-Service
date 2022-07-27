@@ -49,9 +49,6 @@
                                 <mat-icon *ngIf="mapfilters.opened">chevron_right</mat-icon>
                             </button>
                         </div>
-                        <div class="location-button" (click)="goToCurrentIcao()">
-                            <img src="/assets/img/my_location.png" alt="my location"/>
-                        </div>
                         <div class="flight-watch-container" *ngIf="flightWatchData">
                             <app-flight-watch-map #map
                                                   [isStable]="flightWatchData.length > 0"

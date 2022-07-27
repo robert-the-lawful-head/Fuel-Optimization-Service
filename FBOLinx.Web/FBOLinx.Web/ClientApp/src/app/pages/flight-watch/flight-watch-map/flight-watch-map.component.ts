@@ -182,7 +182,6 @@ export class FlightWatchMapComponent
                 type: 'Feature'
             };
         });
-        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 191 ~ varmarkers:any[]=this.getAirportsWithinMapBounds ~ markers", markers)
 
         const data: any = {
             type: 'FeatureCollection',
@@ -539,5 +538,8 @@ export class FlightWatchMapComponent
             this.aircraftPopupContainerRef,
             this.currentPopup
         );
+    }
+    goToCurrentIcao(){
+        this.goToAirport(this.sharedService.currentUser.icao);
     }
 }
