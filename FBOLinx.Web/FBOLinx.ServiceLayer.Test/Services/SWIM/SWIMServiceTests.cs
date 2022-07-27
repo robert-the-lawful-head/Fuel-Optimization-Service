@@ -23,6 +23,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.SWIM
             });
             
             IEnumerable<FlightLegDTO> historicalFlightLegs = await subject.GetHistoricalFlightLegs("KVNY", true, DateTime.Parse("2022-07-25 00:00:00"), DateTime.Parse("2022-07-26 23:30:00"), DateTime.Parse("2022-07-25 20:30:00"));
+            //IEnumerable<FlightLegDTO> historicalFlightLegs = await subject.GetArrivals("KBFI");
 
             Assert.IsNotEmpty(historicalFlightLegs);
         }

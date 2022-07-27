@@ -92,7 +92,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 return;
             }
-
+            
             DateTime atdMin = flightLegs.Min(x => x.ATD);
             DateTime atdMax = flightLegs.Max(x => x.ATD);
             IList<string> departureICAOs = flightLegs.Select(x => x.DepartureICAO).Distinct().ToList();
@@ -118,13 +118,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
                 if (existingLeg != null)
                 {
-                    var exisingLegMessages = existingFlightLegMessages.Where(x => x.SWIMFlightLegId == existingLeg.Oid).ToList();
-                    if (!exisingLegMessages.Any())
+                    var existingLegMessages = existingFlightLegMessages.Where(x => x.SWIMFlightLegId == existingLeg.Oid).ToList();
+                    if (!existingLegMessages.Any())
                     {
                         continue;
                     }
-                    DateTime latestMessageTimestamp = exisingLegMessages.Max(x => x.MessageTimestamp);
-                    DateTime latestExistingETA = exisingLegMessages.OrderByDescending(x => x.Oid).First().ETA;
+                    DateTime latestMessageTimestamp = existingLegMessages.Max(x => x.MessageTimestamp);
+                    DateTime latestExistingETA = existingLegMessages.OrderByDescending(x => x.Oid).First().ETA;
                     foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
                     {
                         double messageTimestampThreshold = Math.Abs((flightLegDataMessageDto.MessageTimestamp - latestMessageTimestamp).TotalSeconds);
@@ -330,7 +330,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.Latitude = latestSWIMMessage.Latitude;
                 flightLegDto.Longitude = latestSWIMMessage.Longitude;
 
-                result.Add(flightLegDto);
+                if (!result.Any(x => x.DepartureICAO == flightLegDto.DepartureICAO && x.ArrivalICAO == flightLegDto.ArrivalICAO && x.ATDZulu == flightLegDto.ATDZulu))
+                {
+                    result.Add(flightLegDto);
+                }
             }
 
             return result;
