@@ -33,7 +33,7 @@ export abstract class MapboxglBase {
         return this;
     }
     addNavigationControls(): this{
-        this.map.addControl(new mapboxgl.NavigationControl());
+        this.map.addControl(new mapboxgl.NavigationControl(), 'top-left');
         return this;
     }
     addGeolocationControls(): this{
