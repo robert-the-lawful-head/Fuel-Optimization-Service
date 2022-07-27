@@ -24,10 +24,25 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() columns: ColumnType[];  
 
     @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() saveSettings = new EventEmitter();
+
+    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     constructor() { }
 
-    ngOnInit() { }
+    ngOnInit() { 
+         this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map((column) =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
+            );
+            this.saveSettings.emit();        });
+    }
 
     openPopup(row: any) {
         this.openAircraftPopup.emit(row.tailNumber);
@@ -38,5 +53,35 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 .filter((column) => !column.hidden)
                 .map((column) => column.id) || []
         );
+    }
+    geMakeModelDisplayString(element: any){
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 43 ~ FlightWatchSettingTableComponent ~ geMakeModelDisplayString ~ element", element)
+        let str = element.Make;
+        str += (element.Make && element.Model) ? '/':'';
+        str += element.Model;
+        return str;
+    }
+    getOriginDestinationString(element: any){
+        return this.isArrival
+                ? element.departureCity
+                : element.arrivalCity
+    }
+    refreshSort() {
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
 }

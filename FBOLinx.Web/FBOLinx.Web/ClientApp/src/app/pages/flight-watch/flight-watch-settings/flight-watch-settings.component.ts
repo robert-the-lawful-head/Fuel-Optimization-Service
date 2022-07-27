@@ -9,6 +9,7 @@ import { Swim } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
+import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,8 +30,8 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() openAircraftPopup = new EventEmitter<string>();
    
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+    @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
+    
     searchIcaoTxt: string;
 
     columns: ColumnType[] = [];
@@ -41,18 +42,7 @@ export class FlightWatchSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.sort.sortChange.subscribe(() => {
-            this.columns = this.columns.map((column) =>
-                column.id === this.sort.active
-                    ? { ...column, sort: this.sort.direction }
-                    : {
-                          hidden: column.hidden,
-                          id: column.id,
-                          name: column.name,
-                      }
-            );
-            this.saveSettings();
-        });
+       
     }
 
     get aircraftTypes() {
@@ -124,7 +114,7 @@ export class FlightWatchSettingsComponent implements OnInit {
 
             this.columns = [...result];
 
-            this.refreshSort();
+            this.settingsTable.refreshSort();
             this.saveSettings();
         });
     }
@@ -198,22 +188,7 @@ export class FlightWatchSettingsComponent implements OnInit {
             JSON.stringify(this.columns)
         );
     }
-    refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
+    sortChangeSaveSettings(){
+        this.saveSettings();
     }
 }
