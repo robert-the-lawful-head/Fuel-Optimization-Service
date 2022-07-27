@@ -283,7 +283,7 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users

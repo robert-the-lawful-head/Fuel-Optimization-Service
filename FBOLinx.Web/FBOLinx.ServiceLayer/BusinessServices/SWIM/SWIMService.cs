@@ -169,14 +169,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveData> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
+        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<FBOLinx.DB.Models.AirportWatchLiveData> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))
             {
                 return;
             }
 
-            AirportWatchLiveData antennaLiveDataRecord = antennaLiveData.OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
+            FBOLinx.DB.Models.AirportWatchLiveData antennaLiveDataRecord = antennaLiveData.OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
             if (antennaLiveDataRecord != null)
             {
                 if (!string.IsNullOrEmpty(antennaLiveDataRecord.TailNumber))

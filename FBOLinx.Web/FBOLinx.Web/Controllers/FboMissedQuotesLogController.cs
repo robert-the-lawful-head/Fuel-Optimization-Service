@@ -28,11 +28,12 @@ namespace FBOLinx.Web.Controllers
         private Services.FboService _fboService;
         private IFboService _iFboService;
         private readonly CustomerService _customerService;
-        private readonly FuelReqService _fuelReqService;
-        private readonly CustomerAircraftService _customerAircraftService;
+        private readonly IFuelReqService _fuelReqService;
+        private readonly ICustomerAircraftService _customerAircraftService;
 
-        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService, FuelReqService fuelReqService)
+        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService, IFuelReqService fuelReqService, ICustomerAircraftService customerAircraftService)
         {
+            _customerAircraftService = customerAircraftService;
             _missedQuoteService = missedQuoteLogService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
@@ -92,7 +93,7 @@ namespace FBOLinx.Web.Controllers
 
             var fbo = await _fboService.GetFbo(fboId);
 
-            var fbos = await _fboService.GetFbosByIcaos(fbo.fboAirport.Icao);
+            var fbos = await _fboService.GetFbosByIcaos(fbo.FboAirport.Icao);
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
@@ -137,7 +138,7 @@ namespace FBOLinx.Web.Controllers
             if (missedOrdersLogList.Count < 5)
             {
                 FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), StartDateTime = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), Icao = fbo.fboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
+            { EndDateTime = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), StartDateTime = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
 
                 var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
                 {
