@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FBOLinx.Web.Extensions;
+using Mapster;
 
 namespace FBOLinx.Web
 {
@@ -83,6 +84,7 @@ namespace FBOLinx.Web
             });
 
             ConfigureStackifyLogging(Configuration["StackifySettings:StackifyApiKey"], env.EnvironmentName);
+            ConfigureMapsterDefaults();
         }
 
         private void ConfigureStackifyLogging(string stackifyApiKey, string environmentName)
@@ -90,6 +92,11 @@ namespace FBOLinx.Web
             StackifyLib.Config.ApiKey = stackifyApiKey;
             StackifyLib.Config.Environment = environmentName;
             StackifyLib.Config.AppName = LoggingService.AppName;
+        }
+
+        private void ConfigureMapsterDefaults()
+        {
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
         }
     }
 }

@@ -5,20 +5,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 {
-    public interface IFboService
+    public interface IFboService : IBaseDTOService<FbosDto, Fbos>
     {
         Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId);
         Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId);
         Task<string> GetAirportTimeZoneByFboId(int fboId);
     }
-    public class FboService : IFboService
+    public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        public FboService(FboLinxContext context, DegaContext degaContext)
+        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext) : base(fboEntityService)
         {
             _context = context;
             _degaContext = degaContext;

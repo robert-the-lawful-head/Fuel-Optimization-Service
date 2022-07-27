@@ -283,7 +283,7 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users
@@ -836,6 +836,8 @@ namespace FBOLinx.Web.Controllers
 
                                 if (recentMissedQuote.Count == 0)
                                 {
+                                try
+                                {
                                     if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
                                     {
                                         var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
@@ -844,6 +846,11 @@ namespace FBOLinx.Web.Controllers
                                             await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
 
                                         isEmailed = true;
+                                    }
+                                }
+                                catch(Exception ex)
+                                {
+
                                     }
                                 }
 

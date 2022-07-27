@@ -45,6 +45,10 @@ namespace FBOLinx.Web.Services
 
         private async void GetAirportWatchLiveTrips(object state)
         {
+            return;
+            //From Mike: something looks to be wrong with this and is causing crashes on the application.
+            //Preventing this from running as of 7/26/2022.
+
             CheckForDebugMode();
             if (_IsDebugging && !_IsCurrentlyRunning)
             {

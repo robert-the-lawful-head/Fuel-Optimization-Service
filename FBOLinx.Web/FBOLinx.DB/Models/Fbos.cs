@@ -105,7 +105,7 @@ namespace FBOLinx.DB.Models
         public Group Group { get; set; }
         
         [InverseProperty("Fbo")]
-        public Fboairports fboAirport { get; set; }
+        public Fboairports FboAirport { get; set; }
 
         [InverseProperty("Fbo")]
         public ICollection<FuelReq> FuelReqs { get; set; }

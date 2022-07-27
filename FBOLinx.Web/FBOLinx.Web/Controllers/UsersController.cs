@@ -417,7 +417,7 @@ namespace FBOLinx.Web.Controllers
 
             if (fbo != null)
             {
-                fbo.fboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
+                fbo.FboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
                 fbo.LastLogin = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }

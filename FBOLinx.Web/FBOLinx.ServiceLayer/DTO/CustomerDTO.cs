@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using FBOLinx.DB.Models;
 using System.ComponentModel.DataAnnotations;
 using FBOLinx.Core.Enums;
@@ -51,6 +52,8 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool? Suspended { get; set; }
         public CertificateTypes? CertificateType { get; set; }
 
-        
+        public virtual ICollection<CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
+
+
     }
 }
