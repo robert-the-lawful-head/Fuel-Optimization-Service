@@ -1,10 +1,12 @@
 <mat-card class="flight-watch-settings-container">
     <mat-card-header>
         <mat-card-title>
+            {{getSwimDataTypeString()}}
         </mat-card-title>
     </mat-card-header>
     <mat-card-content>
-        <div class="flight-watch-container">
+        <mat-spinner *ngIf="!data"></mat-spinner>
+        <div class="flight-watch-container" *ngIf="data">
             <mat-table [dataSource]="data" matSort>
                 <ng-container matColumnDef="flightDepartment">
                     <mat-header-cell *matHeaderCellDef>Flight Department</mat-header-cell>

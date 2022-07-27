@@ -55,7 +55,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
     }
     geMakeModelDisplayString(element: any){
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 43 ~ FlightWatchSettingTableComponent ~ geMakeModelDisplayString ~ element", element)
         let str = element.Make;
         str += (element.Make && element.Model) ? '/':'';
         str += element.Model;
@@ -83,5 +82,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
         (
             this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
         )?._setAnimationTransitionState({ toState: 'active' });
+    }
+    getSwimDataTypeString(){
+        return (this.isArrival)? 'Arrivals': 'Departures';
     }
 }

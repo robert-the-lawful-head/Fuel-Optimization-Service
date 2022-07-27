@@ -1,57 +1,54 @@
-
-    
-    <div class="icao-select-container">
-        <mat-form-field appearance="fill">
-            <mat-label>Choose an ICAO</mat-label>
-            <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
+<div class="icao-select-container">
+    <mat-form-field appearance="fill">
+        <mat-label>Choose an ICAO</mat-label>
+        <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
             <ng-container *ngFor="let icao of icaoList">
-              <mat-option value="{{icao}}">{{icao}}</mat-option>
-              </ng-container>
-            </mat-select>
-          </mat-form-field>
-    </div>
+                <mat-option value="{{ icao }}">{{ icao }}</mat-option>
+            </ng-container>
+        </mat-select>
+    </mat-form-field>
+</div>
 
-      <div class="filter-container">
-        <mat-form-field>
-            <mat-label>Filter</mat-label>
-              <input #input matInput (keyup)="applyFilter($event)" />
-            </mat-form-field>
-            <div>
-                <div class="row">
-                    <div class="flight-list-settings-button">
-                        <div class="actions">
-                            <button
-                                [matMenuTriggerFor]="gridActions"
-                                mat-icon-button
-                            >
-                                <mat-icon
-                                    aria-hidden="true"
-                                    class="mat-icon material-icons"
-                                    role="img"
-                                    >more_vert</mat-icon
-                                >
-                            </button>
-                            <mat-menu #gridActions="matMenu" xPosition="before">
-                                <button (click)="openSettings()" mat-menu-item>
-                                    Settings
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </div>
+<div class="filter-container">
+    <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input #input matInput (keyup)="applyFilter($event)" />
+    </mat-form-field>
+    <div>
+        <div class="row">
+            <div class="flight-list-settings-button">
+                <div class="actions">
+                    <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                        <mat-icon
+                            aria-hidden="true"
+                            class="mat-icon material-icons"
+                            role="img"
+                            >more_vert</mat-icon
+                        >
+                    </button>
+                    <mat-menu #gridActions="matMenu" xPosition="before">
+                        <button (click)="openSettings()" mat-menu-item>
+                            Settings
+                        </button>
+                    </mat-menu>
                 </div>
             </div>
-      </div>
-      <mat-tab-group>
-        <mat-tab label="Arrivals">
-          <mat-spinner *ngIf="!swimArrivals"></mat-spinner>
-          <div class="tables-container" *ngIf="swimArrivals">
-              <app-flight-watch-setting-table [data]="swimArrivals" [isArrival]="true" [columns]="columns" (saveSettings)="sortChangeSaveSettings()" (openAircraftPopup)="openPopup($event)"></app-flight-watch-setting-table>
-          </div>
-        </mat-tab>
-        <mat-tab label="Departures">
-          <mat-spinner *ngIf="!swimDepartures"></mat-spinner>
-          <div class="tables-container" *ngIf="swimDepartures">
-            <app-flight-watch-setting-table [data]="swimDepartures" [isArrival]="false" [columns]="columns" (saveSettings)="sortChangeSaveSettings()" (openAircraftPopup)="openPopup($event)"></app-flight-watch-setting-table>
         </div>
-        </mat-tab>
-      </mat-tab-group>
+    </div>
+</div>
+<div class="tables-container">
+    <app-flight-watch-setting-table
+        [data]="swimArrivals"
+        [isArrival]="true"
+        [columns]="columns"
+        (saveSettings)="sortChangeSaveSettings()"
+        (openAircraftPopup)="openPopup($event)"
+    ></app-flight-watch-setting-table>
+    <app-flight-watch-setting-table
+        [data]="swimDepartures"
+        [isArrival]="false"
+        [columns]="columns"
+        (saveSettings)="sortChangeSaveSettings()"
+        (openAircraftPopup)="openPopup($event)"
+    ></app-flight-watch-setting-table>
+</div>
