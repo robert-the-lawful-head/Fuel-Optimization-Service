@@ -1,10 +1,15 @@
 ﻿using System.Text;
 using FBOLinx.DB.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
@@ -33,7 +38,7 @@ namespace FBOLinx.Web
 
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-
+            
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -73,7 +78,7 @@ namespace FBOLinx.Web
                 options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:5001").AllowAnyMethod().AllowAnyHeader());
             }
             );
-
+            
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             var appParnterSDKSettings = configuration.GetSection("AppPartnerSDKSettings");
             services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
@@ -85,6 +90,8 @@ namespace FBOLinx.Web
 
             //Business Services
             services.RegisterServices();
+
+            services.AddScoped<ILoggingService, LoggingService>();
 
             services.AddScoped<RampFeesService, RampFeesService>();
             services.AddScoped<IPriceDistributionService, PriceDistributionService>();
@@ -106,6 +113,16 @@ namespace FBOLinx.Web
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
             services.AddTransient<ISWIMService, SWIMService>();
+            services.AddTransient<AirportWatchScheduledService, AirportWatchScheduledService>();
+            services.AddTransient<MissedQuoteLogService, MissedQuoteLogService>();
+            services.AddTransient<IFuelReqService, FuelReqService>();
+            services.AddTransient<IAirportWatchLiveDataService, AirportWatchLiveDataService>();
+            services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
+            
+            
+            services.AddHostedService<AirportWatchScheduledService>();
+
+
 
             //Entity Services
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
@@ -120,6 +137,9 @@ namespace FBOLinx.Web
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
+            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
+            services.AddTransient<FuelReqEntityService, FuelReqEntityService>();
+            services.AddTransient<IFboEntityService, FboEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

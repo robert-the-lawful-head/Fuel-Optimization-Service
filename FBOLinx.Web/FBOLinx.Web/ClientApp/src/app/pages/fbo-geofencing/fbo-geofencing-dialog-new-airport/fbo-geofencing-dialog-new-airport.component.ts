@@ -22,7 +22,7 @@ export class FboGeofencingDialogNewAirportComponent {
 
     airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
-        this.data.acukwikAirportId = airport.airportId;
+        this.data.acukwikAirportId = airport.oid;
     }
 
     onCancelClick(): void {

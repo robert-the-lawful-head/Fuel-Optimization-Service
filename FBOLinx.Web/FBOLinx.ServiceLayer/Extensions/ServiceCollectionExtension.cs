@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
@@ -25,7 +26,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
-            services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
+            services.AddTransient<ICustomerAircraftService, CustomerAircraftService>();
             services.AddTransient<IAirportService, AirportService>();
             services.AddTransient<IFuelPriceAdjustmentCleanUpService, FuelPriceAdjustmentCleanUpService>();
             services.AddTransient<IFuelerLinxAccoutSyncingService, FuelerLinxAccoutSyncingService>();
@@ -44,6 +45,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboFeesAndTaxesService, FboFeesAndTaxesService>();
             services.AddTransient<IFboService, FboService>();
             services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
+            services.AddTransient<IFuelReqService, FuelReqService>();
 
             return services;
         }

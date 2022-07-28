@@ -1,11 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { timeStamp } from 'console';
 import * as mapboxgl from 'mapbox-gl';
-import { stringify } from 'querystring';
-import { FlightWatch } from 'src/app/models/flight-watch';
-import { AircraftPopupContainerComponent } from 'src/app/pages/flight-watch/aircraft-popup-container/aircraft-popup-container.component';
-import { AircraftImageData } from 'src/app/pages/flight-watch/flight-watch-map/aircraft-images';
-import { FlightWatchMapComponent } from 'src/app/pages/flight-watch/flight-watch-map/flight-watch-map.component';
 import { environment } from 'src/environments/environment';
 export interface PopUpProps{
     isPopUpOpen: boolean;
@@ -40,6 +34,26 @@ export abstract class MapboxglBase {
     }
     addNavigationControls(): this{
         this.map.addControl(new mapboxgl.NavigationControl());
+        return this;
+    }
+    addGeolocationControls(): this{
+        this.map.addControl(new mapboxgl.GeolocateControl({
+            positionOptions: {
+            enableHighAccuracy: true
+            },
+            // When active the map will receive updates to the device's location as it changes.
+            trackUserLocation: true,
+            // Draw an arrow next to the location dot to indicate which direction the device is heading.
+            showUserHeading: true
+            }));
+        return this;
+    }
+    onZoomStartAsync(callBack): this{
+        this.map.on('zoomstart',  async() => callBack);
+        return this;
+    }
+    onZoomEndAsync(callBack): this{
+        this.map.on('zoomend', async () => callBack);
         return this;
     }
     onZoomAsync(callBack): this{
@@ -218,5 +232,11 @@ export abstract class MapboxglBase {
             .on('close', function(e) {
                 currentPopup.isPopUpOpen = false;
             });
+    }
+    flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
+        this.map.flyTo({
+            center: center,
+            essential: hasAnimation // this animation is considered essential with respect to prefers-reduced-motion
+        });
     }
 }

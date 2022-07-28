@@ -73,9 +73,11 @@ namespace FBOLinx.Web.Services
                 Fbos fbo = await _context.Fbos
                                             .Include(x => x.Group)
                                             .Where(x => x.Oid == fboAirport.Fboid)
+                                            .AsNoTracking()
                                             .FirstOrDefaultAsync();
                 CustomerInfoByGroup customerInfoByGroup = await _context.CustomerInfoByGroup
                                                                             .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId)
+                                                                            .AsNoTracking()
                                                                             .FirstOrDefaultAsync();
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
@@ -87,9 +89,9 @@ namespace FBOLinx.Web.Services
                 List<CustomerWithPricing> pricing =
                     await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
-                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).ToListAsync();
+                List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).AsNoTracking().ToListAsync();
 
-                List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyAlerts.HasValue && x.CopyOrders.Value).Select(x => x.Username).ToListAsync();
+                List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyAlerts.HasValue && x.CopyOrders.Value).Select(x => x.Username).AsNoTracking().ToListAsync();
 
                 foreach (var price in pricing)
                 {
@@ -156,19 +158,30 @@ namespace FBOLinx.Web.Services
                 var fboPrices = await _context.Fboprices.Where(x =>
                     (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
                     (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                    x.Expired != true && x.Fboid == fboId).ToListAsync();
+                    x.Expired != true && x.Fboid == fboId)
+                    .AsNoTracking()
+                    .ToListAsync();
                 var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Contains(x.Oid))
-                    .Include(x => x.CustomerMargins).ToListAsync();
+                    .Include(x => x.CustomerMargins)
+                    .AsNoTracking()
+                    .ToListAsync();
                 var customerMargins = await _context.CustomerMargins.Include(x => x.PricingTemplate)
                     .Where(x => x.PricingTemplate != null && x.PricingTemplate.Fboid == fboId).Include(x => x.PriceTier)
+                    .AsNoTracking()
                     .ToListAsync();
                 var tempAddonMargin = await _context.TempAddOnMargin.Where((x =>
                     x.EffectiveFrom < universalTime &&
-                    x.EffectiveTo > universalTime)).ToListAsync();
+                    x.EffectiveTo > universalTime))
+                    .AsNoTracking()
+                    .ToListAsync();
                 var customersViewedByFbo =
-                    await _context.CustomersViewedByFbo.Where(x => x.Fboid == fboId).ToListAsync();
+                    await _context.CustomersViewedByFbo.Where(x => x.Fboid == fboId)
+                    .AsNoTracking()
+                    .ToListAsync();
                 var customerCompanyTypes = await _context.CustomerCompanyTypes
-                    .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
+                    .Where(x => x.GroupId == groupId && x.Fboid == fboId)
+                    .AsNoTracking()
+                    .ToListAsync();
                 var fbo = await _FboService.GetFbo(fboId);
                 var priceBreakdownDisplayType = await GetPriceBreakdownDisplayType(fboId);
 
@@ -178,7 +191,9 @@ namespace FBOLinx.Web.Services
                     feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Include(x => x.OmitsByPricingTemplate).Where(x =>
                         x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All ||
                                              x.FlightTypeClassification == flightTypeClassifications ||
-                                             flightTypeClassifications == FlightTypeClassifications.All)).ToListAsync();
+                                             flightTypeClassifications == FlightTypeClassifications.All))
+                        .AsNoTracking()
+                        .ToListAsync();
                     if (departureType != ApplicableTaxFlights.All)
                         feesAndTaxes = feesAndTaxes.Where(x =>
                             x.DepartureType == departureType || x.DepartureType == ApplicableTaxFlights.All).ToList();
@@ -258,8 +273,8 @@ namespace FBOLinx.Web.Services
                                                   IsPricingExpired = (fp == null && (pt == null || pt.MarginType == null ||
                                                                                      pt.MarginType != MarginTypes.FlatFee)),
                                                   ExpirationDate = fp?.EffectiveTo,
-                                                  Icao = (fbo.fboAirport == null ? "" : fbo.fboAirport.Icao),
-                                                  Iata = (fbo.fboAirport == null ? "" : fbo.fboAirport.Iata),
+                                                  Icao = (fbo.FboAirport == null ? "" : fbo.FboAirport.Icao),
+                                                  Iata = (fbo.FboAirport == null ? "" : fbo.FboAirport.Iata),
                                                   Notes = (pt == null ? "" : pt.Notes),
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
@@ -428,7 +443,7 @@ namespace FBOLinx.Web.Services
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users

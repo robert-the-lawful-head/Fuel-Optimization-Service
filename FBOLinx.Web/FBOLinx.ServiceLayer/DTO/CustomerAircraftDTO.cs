@@ -17,6 +17,7 @@ namespace FBOLinx.ServiceLayer.DTO
         [StringLength(50)]
         public string NetworkCode { get; set; }
         public int? AddedFrom { get; set; }
+        public CustomerDTO Customer { get; set; }
         
     }
 }

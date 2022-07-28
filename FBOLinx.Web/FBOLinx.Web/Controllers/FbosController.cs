@@ -119,7 +119,7 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users
@@ -389,7 +389,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).Include(x => x.Group).Include(x => x.fboAirport).Include(x => x.Contacts).ThenInclude(c => c.Contact).FirstOrDefaultAsync();
+            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).Include(x => x.Group).Include(x => x.FboAirport).Include(x => x.Contacts).ThenInclude(c => c.Contact).FirstOrDefaultAsync();
 
             return Ok(fbo);
         }
@@ -402,7 +402,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).Include(x => x.Group).Include(x => x.fboAirport).Include(x => x.Contacts).ThenInclude(c => c.Contact).FirstOrDefaultAsync();
+            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).Include(x => x.Group).Include(x => x.FboAirport).Include(x => x.Contacts).ThenInclude(c => c.Contact).FirstOrDefaultAsync();
 
             return Ok(fbo);
         }
@@ -522,7 +522,7 @@ namespace FBOLinx.Web.Controllers
                         //if not, find the latest pull history record from fuelerlinx and send email
                         if (noRampFees)
                         {
-                            var fuelerLinxCustomerId = await _fuelerLinxApiService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.fboAirport.Icao });
+                            var fuelerLinxCustomerId = await _fuelerLinxApiService.GetLatestFlightDeptPullHistoryForIcao(new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.FboAirport.Icao });
                             //var fuelerLinxCustomerId = 0;
                             //var fuelerLinxCustomerIdResponse = await _apiClient.PostAsync("fboprices/get-latest-flight-dept-pullhistory-for-icao/", new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest() { Icao = fbo.Icao }, conductorUser.Token);
                             //if (fuelerLinxCustomerIdResponse != "" && int.TryParse(fuelerLinxCustomerIdResponse, out fuelerLinxCustomerId))
@@ -537,7 +537,7 @@ namespace FBOLinx.Web.Controllers
                                 var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
                                 if (toEmails.Count > 0)
-                                    await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.fboAirport.Icao);
+                                    await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.FboAirport.Icao);
                             }
                         }
                     }

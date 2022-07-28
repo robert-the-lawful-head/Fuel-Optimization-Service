@@ -36,6 +36,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public double? RunwayWidth { get; set; }
         public string Lighting { get; set; }
         public string AirportNameShort { get; set; }
+        public double? DistanceToSelectedAirport { get; set; }
         public ICollection<AcukwikFbohandlerDetailDto> AcukwikFbohandlerDetailCollection { get; set; }
     }
 }

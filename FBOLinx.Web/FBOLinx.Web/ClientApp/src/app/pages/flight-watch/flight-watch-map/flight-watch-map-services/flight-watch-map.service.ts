@@ -21,7 +21,7 @@ export class FlightWatchMapService {
             data: {
                 type: 'FeatureCollection',
                 features: features,
-            },
+            }
         };
     }
     public buildAircraftId(aircraftId: number): string {

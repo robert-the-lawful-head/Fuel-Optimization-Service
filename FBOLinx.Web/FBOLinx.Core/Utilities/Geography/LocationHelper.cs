@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FBOLinx.Core.Utilities.Geography
 {
@@ -29,6 +30,22 @@ namespace FBOLinx.Core.Utilities.Geography
             if (lngDirection != "E") longitude = -longitude;
 
             return longitude;
+        }
+
+        public static double ConvertDMSToDEG(string dms)
+        {
+            string[] dms_Array = Regex.Split(dms, @"[^\d]+");
+            var degrees = double.Parse(dms_Array[1]);
+            var minutes = double.Parse(dms_Array[2]);
+            var seconds = double.Parse(dms_Array[3]);
+            var direction = dms[0];
+
+            var deg = degrees + (minutes / 60) + (seconds / 3600);
+
+            if (direction == 'S' || direction == 'W')
+                deg = deg * -1;
+
+            return deg;
         }
     }
 }

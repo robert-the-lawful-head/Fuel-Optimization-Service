@@ -26,8 +26,10 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.DB.Specifications;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -46,9 +48,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _iFboService; 
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
-        private readonly MissedQuoteLogEntityService _missedQuoteLogEntityService;
+        private readonly MissedQuoteLogService _missedQuoteLogService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
+        private IServiceScopeFactory _ScopeFactory;
 
         public FbopricesController(
             FboLinxContext context,
@@ -62,11 +65,14 @@ namespace FBOLinx.Web.Controllers
             Services.FboService fboService,
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
-            MissedQuoteLogEntityService missedQuoteLogEntityService,
+            MissedQuoteLogService missedQuoteLogService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
-            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
+            IOptions<AppPartnerSDKSettings> appPartnerSDKSettings,
+            IServiceScopeFactory scopeFactory
+            )
         {
+            _ScopeFactory = scopeFactory;
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
             _context = context;
@@ -76,7 +82,7 @@ namespace FBOLinx.Web.Controllers
             _dateTimeService = dateTimeService;
             _fboService = fboService;
             _fboPreferencesService = fboPreferencesService;
-            _missedQuoteLogEntityService = missedQuoteLogEntityService;
+            _missedQuoteLogService = missedQuoteLogService;
             _integrationUpdatePricingLogService = integrationUpdatePricingLogService;
             _iFboService = iFboService;
             _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
@@ -277,7 +283,7 @@ namespace FBOLinx.Web.Controllers
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.fboAirport?.Icao,
+                Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId ?? 0,
                 Users = f.Users
@@ -746,6 +752,7 @@ namespace FBOLinx.Web.Controllers
                     await _context.Customers.Where(x =>
                         x.FuelerlinxId == request.FuelerlinxCompanyID
                         ).OrderBy(x => ((!x.GroupId.HasValue) ? 0 : x.GroupId.Value))
+                        .AsNoTracking()
                         .FirstOrDefaultAsync();
                 if (customer == null)
                     return Ok(null);
@@ -765,7 +772,9 @@ namespace FBOLinx.Web.Controllers
                         ct.Fboid,
                         ct.CustomerType,
                         PricingTemplateName = pt.Name
-                    }).ToListAsync();
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 var result = (
                     from p in validPricing
@@ -794,54 +803,66 @@ namespace FBOLinx.Web.Controllers
                         CopyEmails = p.CopyEmails
                     }).Distinct();
 
-                if (result.Count() == 0)
+                foreach (var icao in request.ICAO.Split(',').Select(x => x.Trim()))
                 {
-                    var fbos = await _fboService.GetFbosByIcaos(request.ICAO);
+                    var fbos = await _fboService.GetFbosByIcaos(icao);
 
                     foreach (var fbo in fbos)
                     {
-                        var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).FirstOrDefaultAsync();
-
-                        if (customerGroup != null && customerGroup.Oid > 0)
+                        if (!result.Any(r => r.Icao == icao && r.Fbo == fbo.Fbo))
                         {
-                            var universalTime = DateTime.UtcNow;
-                            var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).FirstOrDefaultAsync();
-                            var customerType = new CustomCustomerTypes();
-                            customerType.CustomerType = customCustomerType.CustomerType;
-                            customerType.Oid = customCustomerType.Oid;
-                            var fboPrices = await _context.Fboprices.Where(x =>
-                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
-                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                    x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+                            List<MissedQuoteLogDto> missedQuotesToLog = new List<MissedQuoteLogDto>();
+                            var customerGroup = await _context.CustomerInfoByGroup.Where(c => c.CustomerId == customer.Oid && c.GroupId == fbo.GroupId).AsNoTracking().FirstOrDefaultAsync();
 
-                            var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
-                            debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
-                            debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
-
-                            var missedQuoteLog = await _missedQuoteLogEntityService.GetRecentMissedQuotes(fbo.Oid);
-                            var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
-                            var isEmailed = false;
-
-                            if (recentMissedQuote.Count == 0)
+                            if (customerGroup != null && customerGroup.Oid > 0)
                             {
-                                if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                var universalTime = DateTime.UtcNow;
+                                var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking().FirstOrDefaultAsync();
+                                var customerType = new CustomCustomerTypes();
+                                customerType.CustomerType = customCustomerType.CustomerType;
+                                customerType.Oid = customCustomerType.Oid;
+                                var fboPrices = await _context.Fboprices.Where(x =>
+                        (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
+                        (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
+                        x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+
+                                var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
+                                debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
+                                debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
+
+                            var missedQuoteLog = await _missedQuoteLogService.GetRecentMissedQuotes(fbo.Oid);
+                                var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
+                                var isEmailed = false;
+
+                                if (recentMissedQuote.Count == 0)
                                 {
-                                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                                try
+                                {
+                                    if (!_fuelerlinxSdkSettings.APIEndpoint.Contains("-"))
+                                    {
+                                        var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
-                                    if (toEmails.Count > 0)
-                                        await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
+                                        if (toEmails.Count > 0)
+                                            await _fbopricesService.NotifyFboNoPrices(toEmails, fbo.Fbo, customer.Company);
 
-                                    isEmailed = true;
+                                        isEmailed = true;
+                                    }
                                 }
-                            }
+                                catch(Exception ex)
+                                {
 
-                            var missedQuote = new MissedQuoteLogDto();
-                            missedQuote.CreatedDate = DateTime.UtcNow;
-                            missedQuote.FboId = fbo.Oid;
-                            missedQuote.CustomerId = customer.Oid;
-                            missedQuote.Emailed = isEmailed;
-                            missedQuote.Debugs = debugging;
-                            await _missedQuoteLogEntityService.AddMissedQuoteLog(missedQuote);
+                                    }
+                                }
+
+                                var missedQuote = new MissedQuoteLogDto();
+                                missedQuote.CreatedDate = DateTime.UtcNow;
+                                missedQuote.FboId = fbo.Oid;
+                                missedQuote.CustomerId = customer.Oid;
+                                missedQuote.Emailed = isEmailed;
+                                missedQuote.Debugs = debugging;
+                                missedQuotesToLog.Add(missedQuote);
+                            }
+                            await SaveMissedQuotes(missedQuotesToLog);
                         }
                     }
                 }
@@ -1053,6 +1074,21 @@ namespace FBOLinx.Web.Controllers
         private IQueryable<Fbos> GetAllActiveFbos()
         {
             return _context.Fbos.Where(f => f.Active == true).AsQueryable();
+        }
+
+        private async Task SaveMissedQuotes(List<MissedQuoteLogDto> missedQuoteLogs)
+        {
+            if (missedQuoteLogs?.Count == 0)
+                return;
+
+            using (var scope = _ScopeFactory.CreateScope())
+            {
+                var missedQuoteLogService = scope.ServiceProvider.GetRequiredService<MissedQuoteLogService>();
+                foreach(var missedQuoteLog in missedQuoteLogs)
+                {
+                    await missedQuoteLogService.AddAsync(missedQuoteLog);
+                }
+            }
         }
     }
 }
