@@ -15,12 +15,16 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<T> GetAsync(int id);
         Task<T> AddAsync(T entity);
         Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
         Task<T> DeleteAsync(int id);
         Task<T> GetSingleBySpec(ISpecification<T> spec);
         Task<List<T>> GetListBySpec(ISpecification<T> spec);
+        Task BulkDeleteEntities(List<T> entities);
         Task BulkDeleteEntities(ISpecification<T> spec);
         IQueryable<T> Where(Expression<Func<T, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
         Task<T> FindAsync(int id);
+        Task BulkInsert(List<T> entities, bool includeGraph = false);
+        Task BulkUpdate(List<T> entities);
     }
 }

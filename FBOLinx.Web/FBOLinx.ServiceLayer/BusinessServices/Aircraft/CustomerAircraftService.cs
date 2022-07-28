@@ -6,26 +6,36 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
+using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
-    public class CustomerAircraftService
+    public interface ICustomerAircraftService : IBaseDTOService<CustomerAircraftDTO, CustomerAircrafts>
+    {
+        Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0);
+        Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId);
+        Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId);
+    }
+
+    public class CustomerAircraftService : BaseDTOService<CustomerAircraftDTO, DB.Models.CustomerAircrafts, FboLinxContext>, ICustomerAircraftService
     {
         private FboLinxContext _Context;
         private AircraftService _AircraftService;
         private readonly IPricingTemplateService _pricingTemplateService;
 
-        public CustomerAircraftService(FboLinxContext context, AircraftService aircraftService, IPricingTemplateService pricingTemplateService)
+        public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, FboLinxContext context, AircraftService aircraftService, IPricingTemplateService pricingTemplateService) : base(customerAircraftEntityService)
         {
             _AircraftService = aircraftService;
             _Context = context;
             _pricingTemplateService = pricingTemplateService;
         }
 
-        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0, int customerId = 0)
+        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0)
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
 
@@ -111,6 +121,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                .ToListAsync();
 
             return result;
+        }
+
+        public async Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId)
+        {
+            var customerAircraft = await _Context.CustomerAircrafts.Where(a => a.Oid == customerAircraftId).FirstOrDefaultAsync();
+            return customerAircraft.TailNumber;
         }
     }
 }

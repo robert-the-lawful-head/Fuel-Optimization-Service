@@ -29,5 +29,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public double? Longitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
         public string ITPMarginTemplate { get; set; }
+        public FlightLegStatus Status { get; set; }
     }
 }

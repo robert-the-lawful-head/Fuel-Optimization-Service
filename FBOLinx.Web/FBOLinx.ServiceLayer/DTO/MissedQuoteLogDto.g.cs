@@ -6,7 +6,6 @@ namespace FBOLinx.Service.Mapping.Dto
 {
     public partial class MissedQuoteLogDto : FBOLinxBaseEntityModel<int>
     {
-        public int Oid { get; set; }
         public int? FboId { get; set; }
         public DateTime? CreatedDate { get; set; }
         public int CustomerId { get; set; }

@@ -1,9 +1,11 @@
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using FBOLinx.Web.Extensions;
+using Mapster;
 
 namespace FBOLinx.Web
 {
@@ -80,6 +82,21 @@ namespace FBOLinx.Web
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
+
+            ConfigureStackifyLogging(Configuration["StackifySettings:StackifyApiKey"], env.EnvironmentName);
+            ConfigureMapsterDefaults();
+        }
+
+        private void ConfigureStackifyLogging(string stackifyApiKey, string environmentName)
+        {
+            StackifyLib.Config.ApiKey = stackifyApiKey;
+            StackifyLib.Config.Environment = environmentName;
+            StackifyLib.Config.AppName = LoggingService.AppName;
+        }
+
+        private void ConfigureMapsterDefaults()
+        {
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
         }
     }
 }

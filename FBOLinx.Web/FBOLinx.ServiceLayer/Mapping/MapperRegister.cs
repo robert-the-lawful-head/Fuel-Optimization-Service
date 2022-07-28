@@ -32,10 +32,10 @@ namespace FBOLinx.ServiceLayer.Mapping
                    cfg.Ignore(poco => poco.ContactInfoByGroup);
                });
 
-        // configuration to create automatic mapping extension files
-        //config.GenerateMapper("[name]Mapper")
-        //.ForAllTypesInNamespace(Assembly.Load("FBOLinx.DB"), "FBOLinx.DB.Models")
-        //.ExcludeTypes(typeof(FBOLinxBaseEntityModel<>));
-    }
+            // configuration to create automatic mapping extension files
+            //config.GenerateMapper("[name]Mapper")
+            //.ForAllTypesInNamespace(Assembly.Load("FBOLinx.DB"), "FBOLinx.DB.Models")
+            //.ExcludeTypes(typeof(FBOLinxBaseEntityModel<>));
+        }
     }
 }

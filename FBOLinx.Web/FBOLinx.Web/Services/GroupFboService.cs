@@ -5,12 +5,7 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.ViewModels;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -49,7 +44,7 @@ namespace FBOLinx.Web.Services
                 {
                     try
                     {
-                        await _fuelerLinxContext.Database.ExecuteSqlCommandAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
+                        await _fuelerLinxContext.Database.ExecuteSqlRawAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
                     }
                     catch (Exception ex)
                     {

@@ -53,13 +53,13 @@ namespace FBOLinx.Web.Services
         public async Task<FBOLinx.DB.Models.Fbos> GetFbo(int fboId)
         {
             var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
-                .Include(x => x.fboAirport).FirstOrDefaultAsync();
+                .Include(x => x.FboAirport).FirstOrDefaultAsync();
             return result;
         }
         public async Task<Fbos> GetFboAsNoTracing(int fboId)
         {
             var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
-                .Include(x => x.fboAirport).AsNoTracking().FirstOrDefaultAsync();
+                .Include(x => x.FboAirport).AsNoTracking().FirstOrDefaultAsync();
             return result;
         }
 
@@ -154,7 +154,7 @@ public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
             //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
             //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
 
-            if (fboInfo.FuelDeskEmail != "")
+            if (!string.IsNullOrEmpty(fboInfo.FuelDeskEmail))
                 toEmails.Add(fboInfo.FuelDeskEmail);
 
             var fboContacts = await _context.Fbocontacts
@@ -177,7 +177,7 @@ public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
 
             foreach (Contacts fboContact in fboContacts)
             {
-                if (fboContact.CopyAlerts.GetValueOrDefault())
+                if (fboContact.CopyAlerts.GetValueOrDefault() && !string.IsNullOrEmpty(fboContact.Email))
                     toEmails.Add(fboContact.Email);
             }
 
