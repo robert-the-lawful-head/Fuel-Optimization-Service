@@ -11,7 +11,20 @@ using NetTopologySuite.IO;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Common
 {
-    public class BaseDTOService<TDTO, T, TContext>
+    public interface IBaseDTOService<TDTO, T>
+    {
+        Task<TDTO> FindAsync(int id);
+        Task<TDTO> GetSingleBySpec(ISpecification<T> spec);
+        Task<List<TDTO>> GetListbySpec(ISpecification<T> spec);
+        Task<TDTO> AddAsync(TDTO dto);
+        Task UpdateAsync(TDTO dto);
+        Task DeleteAsync(TDTO dto);
+        Task BulkDeleteAsync(List<TDTO> dtos);
+        Task BulkInsert(List<TDTO> dtos);
+        Task BulkUpdate(List<TDTO> dtos);
+    }
+
+    public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T>
     {
         protected IRepository<T, TContext> _EntityService;
 
@@ -29,7 +42,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
         public async Task<TDTO> GetSingleBySpec(ISpecification<T> spec)
         {
             var result = await _EntityService.GetSingleBySpec(spec);
-            return result == null ? default(TDTO) : result.Adapt<TDTO>();
+            try
+            {
+                return result == null ? default(TDTO) : result.Adapt<TDTO>();
+            }
+            catch (Exception ex)
+            {
+                return default(TDTO);
+            }
+            
         }
 
         public async Task<List<TDTO>> GetListbySpec(ISpecification<T> spec)

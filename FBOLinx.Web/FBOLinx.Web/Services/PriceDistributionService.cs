@@ -268,7 +268,7 @@ namespace FBOLinx.Web.Services
                     templateEmailBodyMessage = HttpUtility.HtmlDecode(_EmailContent.EmailContentHtml ?? ""),
                     templateNotesMessage = HttpUtility.HtmlDecode(_DistributePricingRequest.PricingTemplate.Notes),
                     fboName = _Fbo.Fbo,
-                    fboICAOCode = _Fbo.fboAirport.Icao,
+                    fboICAOCode = _Fbo.FboAirport.Icao,
                     fboAddress = _Fbo.Address,
                     fboCity = _Fbo.City,
                     fboState = _Fbo.State,
