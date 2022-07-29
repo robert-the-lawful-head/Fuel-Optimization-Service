@@ -2,8 +2,6 @@
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
-using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Models.Responses.AirportWatch;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -35,8 +33,14 @@ using Mapster;
 using FBOLinx.ServiceLayer.DTO;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
+using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
+using NetTopologySuite.Geometries;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
     public class AirportWatchService
     {
@@ -54,7 +58,6 @@ namespace FBOLinx.Web.Services
         private List<AirportWatchHistoricalData> _HistoricalDataToInsert;
         private FuelerLinxApiService _fuelerLinxApiService;
         private IOptions<DemoData> _demoData;
-        private DBSCANService _dBSCANService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly FbopricesService _fboPricesService;
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
@@ -66,10 +69,11 @@ namespace FBOLinx.Web.Services
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private ICustomerAircraftService _CustomerAircraftService;
 
-        public AirportWatchService(DBSCANService DBSCANService,
-            FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
+            IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
-            FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
+            FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
+            ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IMemoryCache memoryCache, IServiceProvider serviceProvider, ILoggingService loggingService,
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
@@ -79,7 +83,6 @@ namespace FBOLinx.Web.Services
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
             _ServiceProvider = serviceProvider;
-            _dBSCANService = DBSCANService;
             _demoData = demoData;
             _context = context;
             _degaContext = degaContext;
@@ -124,7 +127,7 @@ namespace FBOLinx.Web.Services
                     .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
             }
 
-            Models.Responses.PriceLookupResponse customerPricing = null;
+            PriceLookupResponse customerPricing = null;
             if (customerInfoByGroup?.Oid > 0 && customerAircrafts?.Oid > 0)
             {
                 customerPricing = await _fboPricesService.GetFuelPricesForCustomer(
@@ -154,7 +157,7 @@ namespace FBOLinx.Web.Services
             };
         }
         
-        public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRefactored(int groupId, int fboId, Coordinate coordinate)
+        public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRefactored(int groupId, int fboId, Geolocation.Coordinate coordinate)
         {
             List<AirportWatchLiveDataDto> filteredResult = new List<AirportWatchLiveDataDto>();
 
@@ -263,7 +266,7 @@ namespace FBOLinx.Web.Services
             {
                 var icao = historicalData.FirstOrDefault().AirportICAO;
 
-                List<Coordinate> coordinates = new List<Coordinate>();
+                List<Geolocation.Coordinate> coordinates = new List<Geolocation.Coordinate>();
                 var allFboGeoFenceClusters = await _airportFboGeofenceClustersService.GetAllClusters();
                 var fbo = await _FboService.GetSingleBySpec(new FboByIdSpecification(fboId));
                 var fboGeoFenceCluster = allFboGeoFenceClusters.Where(a => a.Icao == icao && a.AcukwikFBOHandlerID == fbo.AcukwikFBOHandlerId).FirstOrDefault();
@@ -273,7 +276,7 @@ namespace FBOLinx.Web.Services
                     var fboClusterCoordinates = await _airportFboGeofenceClustersService.GetClusterCoordinatesByClusterId(fboGeoFenceCluster.Oid);
                     foreach (var clusterCoordinate in fboClusterCoordinates)
                     {
-                        Coordinate coordinate = new Coordinate();
+                        Geolocation.Coordinate coordinate = new Geolocation.Coordinate();
                         coordinate.Latitude = clusterCoordinate.Latitude;
                         coordinate.Longitude = clusterCoordinate.Longitude;
                         coordinates.Add(coordinate);
@@ -292,7 +295,7 @@ namespace FBOLinx.Web.Services
 
                         var visitsToMyFbo = new List<FboHistoricalDataModel>();
                         if (coordinates.Count > 0)
-                            visitsToMyFbo = pastVisits.Where(p => IsPointInPolygon(new Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).ToList();
+                            visitsToMyFbo = pastVisits.Where(p => IsPointInPolygon(new Geolocation.Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).ToList();
 
                         return new AirportWatchHistoricalDataResponse
                         {
@@ -352,7 +355,7 @@ namespace FBOLinx.Web.Services
 
             var icao = historicalData.FirstOrDefault().AirportICAO;
 
-            List<Coordinate> coordinates = new List<Coordinate>();
+            List<Geolocation.Coordinate> coordinates = new List<Geolocation.Coordinate>();
             var allFboGeoFenceClusters = await _airportFboGeofenceClustersService.GetAllClusters();
             var fbo = await _FboService.GetSingleBySpec(new FboByIdSpecification(fboId));
             var fboGeoFenceCluster = allFboGeoFenceClusters.Where(a => a.Icao == icao && a.AcukwikFBOHandlerID == fbo.AcukwikFBOHandlerId).FirstOrDefault();
@@ -362,7 +365,7 @@ namespace FBOLinx.Web.Services
                 var fboClusterCoordinates = await _airportFboGeofenceClustersService.GetClusterCoordinatesByClusterIdIQueryable(fboGeoFenceCluster.Oid);
                 foreach (var clusterCoordinate in fboClusterCoordinates)
                 {
-                    Coordinate coordinate = new Coordinate();
+                    Geolocation.Coordinate coordinate = new Geolocation.Coordinate();
                     coordinate.Latitude = clusterCoordinate.Latitude;
                     coordinate.Longitude = clusterCoordinate.Longitude;
                     coordinates.Add(coordinate);
@@ -380,7 +383,7 @@ namespace FBOLinx.Web.Services
                    var pastVisits = g
                        .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
 
-                   var visitsToMyFboCount = (coordinates.Count > 0) ? pastVisits.Where(p => IsPointInPolygon(new Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).Count() : 0;
+                   var visitsToMyFboCount = (coordinates.Count > 0) ? pastVisits.Where(p => IsPointInPolygon(new Geolocation.Coordinate(p.Latitude, p.Longitude), coordinates.ToArray())).Count() : 0;
 
 
                    return new AirportWatchHistoricalDataResponse
@@ -1063,7 +1066,7 @@ namespace FBOLinx.Web.Services
             return new Tuple<double, double>(latitude, longitude);
         }
 
-        public bool IsPointInPolygon(Coordinate p, Coordinate[] polygon)
+        public bool IsPointInPolygon(Geolocation.Coordinate p, Geolocation.Coordinate[] polygon)
         {
             double minX = polygon[0].Latitude;
             double maxX = polygon[0].Latitude;
@@ -1071,7 +1074,7 @@ namespace FBOLinx.Web.Services
             double maxY = polygon[0].Longitude;
             for (int i = 1; i < polygon.Length; i++)
             {
-                Coordinate q = polygon[i];
+                Geolocation.Coordinate q = polygon[i];
                 minX = Math.Min(q.Latitude, minX);
                 maxX = Math.Max(q.Latitude, maxX);
                 minY = Math.Min(q.Longitude, minY);

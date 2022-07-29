@@ -16,11 +16,13 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
-using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Services
 {
@@ -32,14 +34,6 @@ namespace FBOLinx.Web.Services
 
     public class PriceDistributionService : IPriceDistributionService
     {
-        public enum PriceBreakdownDisplayTypes : short
-        {
-            SingleColumnAllFlights = 0,
-            TwoColumnsDomesticInternationalOnly = 1,
-            TwoColumnsApplicableFlightTypesOnly = 2,
-            FourColumnsAllRules = 3
-        }
-
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
         private bool _IsPreview = false;
@@ -365,7 +359,7 @@ namespace FBOLinx.Web.Services
             StringBuilder rowsHTML = new StringBuilder();
             int loopIndex = 0;
 
-            foreach (DTO.CustomerWithPricing model in privateDomesticPricingResults)
+            foreach (CustomerWithPricing model in privateDomesticPricingResults)
             {
                 string row = rowHTMLTemplate;
 

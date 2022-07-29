@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.DTO;
 
-namespace FBOLinx.Web.Models.Responses
+namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
 {
     public class PriceLookupResponse
     {

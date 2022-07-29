@@ -11,6 +11,8 @@ using FBOLinx.Web.Models.Requests;
 using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.Dto.Responses;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

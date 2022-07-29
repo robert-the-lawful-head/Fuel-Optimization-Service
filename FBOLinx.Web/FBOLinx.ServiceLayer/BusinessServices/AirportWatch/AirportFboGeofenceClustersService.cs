@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
     public class AirportFboGeofenceClustersService
     {

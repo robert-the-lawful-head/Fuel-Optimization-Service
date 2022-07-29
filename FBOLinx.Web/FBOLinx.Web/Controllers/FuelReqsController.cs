@@ -20,10 +20,10 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.Auth;
 using Newtonsoft.Json;
 using Fuelerlinx.SDK;
-using Geolocation;
 using FBOLinx.Web.Services;
-using FBOLinx.Core.Enums;
-using FBOLinx.Web.Models.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 
 namespace FBOLinx.Web.Controllers
 {

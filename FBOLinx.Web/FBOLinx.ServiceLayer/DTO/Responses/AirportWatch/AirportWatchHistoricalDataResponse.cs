@@ -1,7 +1,6 @@
 ﻿using System;
-using static FBOLinx.DB.Models.AirportWatchHistoricalData;
 
-namespace FBOLinx.Web.Models.Responses.AirportWatch
+namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
 {
     public class AirportWatchHistoricalDataResponse
     {

@@ -13,7 +13,6 @@ using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +20,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 
 namespace FBOLinx.Web
 {

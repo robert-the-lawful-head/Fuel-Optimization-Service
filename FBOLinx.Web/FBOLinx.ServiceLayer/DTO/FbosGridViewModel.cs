@@ -1,11 +1,8 @@
-﻿using FBOLinx.Web.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using FBOLinx.DB.Models;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.DTO
 {
     public class FbosGridViewModel
     {

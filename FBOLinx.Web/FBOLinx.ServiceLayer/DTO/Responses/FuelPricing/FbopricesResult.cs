@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FBOLinx.Web.DTO
+namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
 {
     public class FbopricesResult
     {

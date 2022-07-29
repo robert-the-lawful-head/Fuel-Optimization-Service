@@ -6,9 +6,6 @@ using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.Services.Interfaces;
-using FBOLinx.Web.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
@@ -18,8 +15,11 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.DTO;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
     public class PriceFetchingService: IPriceFetchingService
     {
@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Services
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
-                List<PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault(), 0, isAnalytics);
+                List<DB.Models.PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault(), 0, isAnalytics);
                 if (templates == null)
                     continue;
 
@@ -152,7 +152,7 @@ namespace FBOLinx.Web.Services
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {
-                    List<PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
+                    List<DB.Models.PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
                     pricingTemplateIds = templates.Select(x => x.Oid).ToList();
                 }
                 var fboPrices = await _context.Fboprices.Where(x =>
@@ -380,11 +380,11 @@ namespace FBOLinx.Web.Services
             }
         }
 
-        public async Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)
+        public async Task<PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)
         {
             bool hasDepartureTypeRule = false;
             bool hasFlightTypeRule = false;
-            var priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+            var priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
 
             var taxesAndFees = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
             foreach (FboFeesAndTaxes fee in taxesAndFees)
@@ -401,19 +401,19 @@ namespace FBOLinx.Web.Services
 
             if (!hasDepartureTypeRule && !hasFlightTypeRule)
             {
-                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.SingleColumnAllFlights;
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.SingleColumnAllFlights;
             }
             else if (!hasDepartureTypeRule && hasFlightTypeRule)
             {
-                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly;
             }
             else if (hasDepartureTypeRule && !hasFlightTypeRule)
             {
-                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly;
             }
             else if (hasDepartureTypeRule && hasFlightTypeRule)
             {
-                priceBreakdownDisplayType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+                priceBreakdownDisplayType = PriceBreakdownDisplayTypes.FourColumnsAllRules;
             }
 
             return priceBreakdownDisplayType;

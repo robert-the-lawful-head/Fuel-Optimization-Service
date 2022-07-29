@@ -45,6 +45,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             return result;
         }
 
+        public async Task<FBOLinx.DB.Models.Fbos> GetFbo(int fboId)
+        {
+            var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
+                .Include(x => x.FboAirport).FirstOrDefaultAsync();
+            return result;
+        }
+
         public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
         {
             var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();

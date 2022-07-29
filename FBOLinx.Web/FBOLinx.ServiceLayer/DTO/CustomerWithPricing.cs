@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Services;
 
-namespace FBOLinx.Web.DTO
+namespace FBOLinx.ServiceLayer.DTO
 {
     public class CustomerWithPricing
     {
@@ -47,7 +46,7 @@ namespace FBOLinx.Web.DTO
         public string FuelDeskEmail { get; set; }
         public string CopyEmails { get; set; }
         public string Product { get; set; }
-        public PriceDistributionService.PriceBreakdownDisplayTypes? PriceBreakdownDisplayType { get; set; }
+        public PriceBreakdownDisplayTypes? PriceBreakdownDisplayType { get; set; }
         
         public double? BasePrice
         {

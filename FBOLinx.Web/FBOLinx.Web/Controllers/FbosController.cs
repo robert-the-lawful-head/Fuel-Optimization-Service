@@ -6,6 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using System.Web;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,10 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.Services.Interfaces;
 using Fuelerlinx.SDK;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
 {

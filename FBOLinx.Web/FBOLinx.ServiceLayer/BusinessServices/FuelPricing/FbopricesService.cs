@@ -2,18 +2,18 @@
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Models.Responses;
-using FBOLinx.Web.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
+using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
     public class FbopricesService
     {

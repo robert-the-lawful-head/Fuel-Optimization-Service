@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 
-namespace FBOLinx.Web.ViewModels
+namespace FBOLinx.ServiceLayer.DTO
 {
     public class RampFeesGridViewModel
     {

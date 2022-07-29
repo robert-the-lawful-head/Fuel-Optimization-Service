@@ -3,7 +3,7 @@ using FBOLinx.DB.Models;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FBOLinx.Web.Models.Requests
+namespace FBOLinx.ServiceLayer.DTO.Requests.FuelPricing
 {
     public class PriceLookupRequest
     {

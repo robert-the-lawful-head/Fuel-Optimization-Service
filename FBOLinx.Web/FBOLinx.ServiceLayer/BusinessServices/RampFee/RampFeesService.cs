@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Web.ViewModels;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.DTO;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
 {
     public class RampFeesService
     {
@@ -28,7 +29,7 @@ namespace FBOLinx.Web.Services
             _MailService = mailService;
         }
 
-        public async Task<RampFees> GetRampFeeForAircraft(int fboId, string tailNumber)
+        public async Task<DB.Models.RampFees> GetRampFeeForAircraft(int fboId, string tailNumber)
         {
             var fbo = await _context.Fbos.Where(x => x.Oid == fboId).FirstOrDefaultAsync();
 
@@ -54,7 +55,7 @@ namespace FBOLinx.Web.Services
 
         }
 
-        public async Task<List<RampFees>> GetRampFeesForFbo(int fboId, int groupId)
+        public async Task<List<DB.Models.RampFees>> GetRampFeesForFbo(int fboId, int groupId)
         {
             var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId && (!x.ExpirationDate.HasValue || x.ExpirationDate >= DateTime.Today)).ToListAsync();
             if (rampFees == null)
@@ -166,10 +167,10 @@ namespace FBOLinx.Web.Services
             //Send email
             var result = await _MailService.SendAsync(mailMessage);
         }
-        private List<RampFees> GetRampFeesThatApplyToCustomerAircraft(CustomerAircrafts customerAircraft, List<RampFees> validRampFees, AircraftSpecifications specifications)
+        private List<DB.Models.RampFees> GetRampFeesThatApplyToCustomerAircraft(CustomerAircrafts customerAircraft, List<DB.Models.RampFees> validRampFees, AircraftSpecifications specifications)
         {
             if (validRampFees == null)
-                return new List<RampFees>();
+                return new List<DB.Models.RampFees>();
 
             var result = validRampFees.Where(servicesAndFeesByCompany => 
             (servicesAndFeesByCompany.CategoryType == RampFeeCategories.AircraftType && customerAircraft.AircraftId == servicesAndFeesByCompany.CategoryMinValue) ||

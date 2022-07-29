@@ -10,12 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using OfficeOpenXml;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Services.Interfaces;
 using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -25,6 +23,9 @@ using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -1247,8 +1248,8 @@ namespace FBOLinx.Web.Controllers
                     );
 
                     var maxPriceType = result.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType));
-                    if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                        maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+                    if (maxPriceType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                        maxPriceType = PriceBreakdownDisplayTypes.FourColumnsAllRules;
 
                     result.GroupCustomerFbos?.ForEach(g =>
                     {

@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.DTO;
-using FBOLinx.Web.ViewModels;
+using FBOLinx.ServiceLayer.DTO;
 
-namespace FBOLinx.Web.Services.Interfaces
+namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
     public interface IPriceFetchingService
     {
@@ -24,7 +23,7 @@ namespace FBOLinx.Web.Services.Interfaces
             FBOLinx.Core.Enums.FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null);
 
-        public Task<PriceDistributionService.PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
+        public Task<PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId);
 
         public Task<double> GetCurrentPostedRetail(int fboId);
 
