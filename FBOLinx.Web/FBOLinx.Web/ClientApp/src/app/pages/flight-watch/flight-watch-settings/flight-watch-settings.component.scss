@@ -61,3 +61,12 @@ mat-card {
         }
     }
 }
+
+.filter-container{
+    display: flex;
+    padding: 0px 10px 0px 10px;
+    justify-content: space-around;
+}
+.icao-select-container{
+    display: flex;
+}

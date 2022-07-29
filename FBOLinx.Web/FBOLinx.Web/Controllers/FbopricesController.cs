@@ -816,21 +816,9 @@ namespace FBOLinx.Web.Controllers
 
                             if (customerGroup != null && customerGroup.Oid > 0)
                             {
-                                var universalTime = DateTime.UtcNow;
-                                var customCustomerType = await _context.CustomCustomerTypes.Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking().FirstOrDefaultAsync();
-                                var customerType = new CustomCustomerTypes();
-                                customerType.CustomerType = customCustomerType.CustomerType;
-                                customerType.Oid = customCustomerType.Oid;
-                                var fboPrices = await _context.Fboprices.Where(x =>
-                        (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
-                        (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                        x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+                                var debugging = await GetMissedQuotesDebuggingInformation(customer, fbo, validPricing);
 
-                                var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
-                                debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
-                                debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
-
-                            var missedQuoteLog = await _missedQuoteLogService.GetRecentMissedQuotes(fbo.Oid);
+                                var missedQuoteLog = await _missedQuoteLogService.GetRecentMissedQuotes(fbo.Oid);
                                 var recentMissedQuote = missedQuoteLog.Where(m => m.Emailed.GetValueOrDefault() == true).ToList();
                                 var isEmailed = false;
 
@@ -872,6 +860,34 @@ namespace FBOLinx.Web.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        private async Task<string> GetMissedQuotesDebuggingInformation(Customers customer, Fbos fbo,
+            List<CustomerWithPricing> validPricing)
+        {
+            try
+            {
+                var universalTime = DateTime.UtcNow;
+                var customCustomerType = await _context.CustomCustomerTypes
+                    .Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking()
+                    .FirstOrDefaultAsync();
+                var customerType = new CustomCustomerTypes();
+                customerType.CustomerType = (customCustomerType?.CustomerType).GetValueOrDefault();
+                customerType.Oid = (customCustomerType?.Oid).GetValueOrDefault();
+                var fboPrices = await _context.Fboprices.Where(x =>
+                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
+                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
+                    x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
+
+                var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
+                debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
+                debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
+                return debugging;
+            }
+            catch (System.Exception exception)
+            {
+                return "";
             }
         }
 
