@@ -22,8 +22,10 @@ using Newtonsoft.Json;
 using Fuelerlinx.SDK;
 using FBOLinx.Web.Services;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -39,7 +41,10 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly FboService _fboService;
         private readonly AirportWatchService _airportWatchService;
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, FboService fboService, AirportWatchService airportWatchService)
+        private readonly IFuelReqService _fuelReqService;
+
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
+            AirportFboGeofenceClustersService airportFboGeofenceClustersService, FboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -48,6 +53,7 @@ namespace FBOLinx.Web.Controllers
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _fboService = fboService;
             _airportWatchService = airportWatchService;
+            _fuelReqService = fuelReqService;
         }
 
         // GET: api/FuelReqs/5
@@ -162,75 +168,10 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
+            
+            var result = await _fuelReqService.GetFuelReqsByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
 
-            Fboairports airport = _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefault();
-            string fbo = _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefault();
-
-            var customers = await (from c in _context.Customers
-                                   join ci in _context.CustomerInfoByGroup on c.Oid equals ci.CustomerId
-                                   where c.FuelerlinxId > 0 && ci.GroupId == groupId
-                                   select new
-                                   {
-                                       c.FuelerlinxId,
-                                       ci.Company
-                                   }).ToListAsync();
-
-            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = request.EndDateTime, StartDateTime = request.StartDateTime, Icao = airport.Icao, Fbo = fbo });
-
-            List<FuelReqsGridViewModel> fuelReqsFromFuelerLinx = new List<FuelReqsGridViewModel>();
-
-
-            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
-            {
-                transaction.CustomerName = customers.Where(x => x.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault();
-                fuelReqsFromFuelerLinx.Add(FuelReqsGridViewModel.Cast(transaction));
-                
-            }
-
-            List<FuelReqsGridViewModel> fuelReqVM = await
-                (from fr in _context.FuelReq
-                 join c in _context.CustomerInfoByGroup on new { GroupId = groupId, CustomerId = (fr.CustomerId ?? 0) } equals new { c.GroupId, c.CustomerId }
-                 join ca in _context.CustomerAircrafts on fr.CustomerAircraftId equals ca.Oid
-                 join f in _context.Fbos on fr.Fboid equals f.Oid
-                 join frp in _context.FuelReqPricingTemplate on fr.Oid equals frp.FuelReqId
-                 into leftJoinedFRP
-                 from frp in leftJoinedFRP.DefaultIfEmpty()
-                 where fr.Fboid == fboId && fr.Eta > request.StartDateTime && fr.Eta < request.EndDateTime
-                 select new FuelReqsGridViewModel
-                 {
-                     Oid = fr.Oid,
-                     ActualPpg = fr.ActualPpg,
-                     ActualVolume = fr.ActualVolume,
-                     Archived = fr.Archived,
-                     Cancelled = fr.Cancelled,
-                     CustomerId = fr.CustomerId,
-                     DateCreated = fr.DateCreated,
-                     DispatchNotes = fr.DispatchNotes,
-                     Eta = fr.Eta,
-                     Etd = fr.Etd,
-                     Icao = fr.Icao,
-                     Notes = fr.Notes,
-                     QuotedPpg = fr.QuotedPpg,
-                     QuotedVolume = fr.QuotedVolume,
-                     Source = fr.Source,
-                     SourceId = fr.SourceId,
-                     TimeStandard = fr.TimeStandard,
-                     CustomerName = c == null ? "" : c.Company,
-                     TailNumber = ca == null ? "" : ca.TailNumber,
-                     FboName = f == null ? "" : f.Fbo,
-                     Email = fr.Email,
-                     PhoneNumber = fr.PhoneNumber,
-                     PricingTemplateName = frp == null ? "" : frp.PricingTemplateName,
-                     FuelOn = fr.FuelOn
-                 }
-                )
-                .OrderByDescending(f => f.Oid)
-                .ToListAsync();
-
-            fuelReqVM.AddRange(fuelReqsFromFuelerLinx);
-
-            return Ok(fuelReqVM);
+            return Ok(result);
         }
 
 
