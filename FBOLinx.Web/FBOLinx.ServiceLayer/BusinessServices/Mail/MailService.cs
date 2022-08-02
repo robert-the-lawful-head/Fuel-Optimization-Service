@@ -1,17 +1,18 @@
-﻿using System;
+﻿using FBOLinx.Core.Utilities.Extensions;
+using Microsoft.Extensions.Options;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 using System.Threading.Tasks;
-using FBOLinx.Core.Utilities.Extensions;
-using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 {
     public interface IMailService
     {
@@ -114,7 +115,7 @@ namespace FBOLinx.Web.Services
             pricesAttachment.ContentId = "Prices";
             sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
 
-            foreach(var attachment in message.AttachmentsCollection)
+            foreach (var attachment in message.AttachmentsCollection)
             {
                 var sendGridAttachment = new SendGrid.Helpers.Mail.Attachment();
                 sendGridAttachment.Filename = attachment.FileName;

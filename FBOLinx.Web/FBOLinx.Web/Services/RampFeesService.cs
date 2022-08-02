@@ -10,6 +10,7 @@ using FBOLinx.Web.ViewModels;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 
 namespace FBOLinx.Web.Services
 {

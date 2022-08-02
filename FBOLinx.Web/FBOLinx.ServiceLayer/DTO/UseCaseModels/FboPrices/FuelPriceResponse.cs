@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOLinx.Web.Models.Responses
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices
 {
     public class FuelPriceResponse
     {
@@ -15,7 +16,7 @@ namespace FBOLinx.Web.Models.Responses
         public string Group { get; set; }
         public string Product { get; set; }
         public double MinVolume { get; set; }
-        public string Notes { get;set;}
+        public string Notes { get; set; }
         public bool Default { get; set; }
         public double Price { get; set; }
         public DateTime? ExpirationDate { get; set; }

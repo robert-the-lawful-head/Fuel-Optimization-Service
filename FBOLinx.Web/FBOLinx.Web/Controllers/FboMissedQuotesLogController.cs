@@ -93,7 +93,7 @@ namespace FBOLinx.Web.Controllers
 
             var fbo = await _fboService.GetFbo(fboId);
 
-            var fbos = await _fboService.GetFbosByIcaos(fbo.FboAirport.Icao);
+            var fbos = await _iFboService.GetFbosByIcaos(fbo.FboAirport.Icao);
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 

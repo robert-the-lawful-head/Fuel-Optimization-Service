@@ -16,6 +16,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 
 namespace FBOLinx.Web.Controllers
 {
