@@ -45,7 +45,7 @@ namespace FBOLinx.Web.Controllers
         private IPriceFetchingService _PriceFetchingService;
         private readonly FbopricesService _fbopricesService;
         private readonly DateTimeService _dateTimeService;
-        private readonly Services.FboService _fboService;
+        private readonly IFboService _fboService;
         private readonly IFboService _iFboService; 
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
@@ -63,7 +63,7 @@ namespace FBOLinx.Web.Controllers
             IPriceFetchingService priceFetchingService,
             FbopricesService fbopricesService,
             DateTimeService dateTimeService,
-            Services.FboService fboService,
+            IFboService fboService,
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             FboPreferencesService fboPreferencesService,
             MissedQuoteLogService missedQuoteLogService,

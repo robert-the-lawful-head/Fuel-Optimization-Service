@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FBOLinx.Web.Models.Requests
+namespace FBOLinx.ServiceLayer.DTO.Requests.FBO
 {
     public class FboLogoRequest
     {

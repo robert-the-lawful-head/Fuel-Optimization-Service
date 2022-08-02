@@ -363,32 +363,47 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         private async Task SetOrderInfo(int groupId, int fboId, IList<FlightLegDTO> flightLegs)
         {
-            DateTime atdMin = flightLegs.Min(x => x.ATDZulu);
-            DateTime etaMax = flightLegs.Max(x => x.ETAZulu);
-            var fuelOrders = (await _FuelReqService.GetFuelReqsByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
-            foreach (FlightLegDTO flightLeg in flightLegs)
+            try
             {
-                var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.AddHours(2));
-                if (existingFuelOrder != null)
+                DateTime atdMin = flightLegs.Min(x => x.ATDZulu);
+                DateTime etaMax = flightLegs.Max(x => x.ETAZulu);
+                var fuelOrders = (await _FuelReqService.GetFuelReqsByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
+                foreach (FlightLegDTO flightLeg in flightLegs)
                 {
-                    flightLeg.ID = existingFuelOrder.Oid;
-                    flightLeg.FuelerlinxID = existingFuelOrder.SourceId;
-                    flightLeg.Vendor = existingFuelOrder.Source;
-                    flightLeg.TransactionStatus = existingFuelOrder.Cancelled != null && existingFuelOrder.Cancelled.Value ? "Cancelled" : "Live";
+                    var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.AddHours(2));
+                    if (existingFuelOrder != null)
+                    {
+                        flightLeg.ID = existingFuelOrder.Oid;
+                        flightLeg.FuelerlinxID = existingFuelOrder.SourceId;
+                        flightLeg.Vendor = existingFuelOrder.Source;
+                        flightLeg.TransactionStatus = existingFuelOrder.Cancelled != null && existingFuelOrder.Cancelled.Value ? "Cancelled" : "Live";
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
             }
         }
 
         private async Task SetVisitsToMyFBO(int groupId, int fboId, IList<FlightLegDTO> flightLegs)
         {
-            List<AirportWatchHistoricalDataResponse> historicalData = await _AirportWatchService.GetArrivalsDeparturesRefactored(
-                groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = DateTime.UtcNow.AddMonths(-1), EndDateTime = DateTime.UtcNow });
-            foreach (FlightLegDTO flightLeg in flightLegs)
+            try
             {
-                flightLeg.VisitsToMyFBO = historicalData.Where(x => x.TailNumber == flightLeg.TailNumber && x.VisitsToMyFbo != null).Sum(x => x.VisitsToMyFbo.Value);
-                flightLeg.Arrivals = historicalData.Count(x => x.TailNumber == flightLeg.TailNumber && x.Status == "Arrival");
-                flightLeg.Departures = historicalData.Count(x => x.TailNumber == flightLeg.TailNumber && x.Status == "Departure");
+                List<AirportWatchHistoricalDataResponse> historicalData = await _AirportWatchService.GetArrivalsDeparturesRefactored(
+                    groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = DateTime.UtcNow.AddMonths(-1), EndDateTime = DateTime.UtcNow });
+                foreach (FlightLegDTO flightLeg in flightLegs)
+                {
+                    flightLeg.VisitsToMyFBO = historicalData.Where(x => x.TailNumber == flightLeg.TailNumber && x.VisitsToMyFbo != null).Sum(x => x.VisitsToMyFbo.Value);
+                    flightLeg.Arrivals = historicalData.Count(x => x.TailNumber == flightLeg.TailNumber && x.Status == "Arrival");
+                    flightLeg.Departures = historicalData.Count(x => x.TailNumber == flightLeg.TailNumber && x.Status == "Departure");
+                }
             }
+            catch (Exception ex)
+            {
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+            }
+            
         }
 
         private bool IsCorrectTailNumber(string aircraftIdentification)

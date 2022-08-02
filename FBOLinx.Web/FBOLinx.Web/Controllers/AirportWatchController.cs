@@ -12,6 +12,7 @@ using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -23,11 +24,11 @@ namespace FBOLinx.Web.Controllers
     public class AirportWatchController : ControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, FboService fboService, FboLinxContext context , DBSCANService dBSCANService)
+        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;

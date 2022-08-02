@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
-using FBOLinx.Web.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 {
     public class GroupTransitionService
     {

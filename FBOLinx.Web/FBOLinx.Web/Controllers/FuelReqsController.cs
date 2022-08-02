@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using Fuelerlinx.SDK;
 using FBOLinx.Web.Services;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
@@ -39,12 +40,12 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly AircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IFuelReqService _fuelReqService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
-            AirportFboGeofenceClustersService airportFboGeofenceClustersService, FboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService)
+            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;

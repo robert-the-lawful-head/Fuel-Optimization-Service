@@ -25,20 +25,19 @@ namespace FBOLinx.Web.Controllers
     {
         private MissedQuoteLogService _missedQuoteService;
         private FuelerLinxApiService _fuelerLinxApiService;
-        private Services.FboService _fboService;
-        private IFboService _iFboService;
+        private IFboService _fboService;
         private readonly CustomerService _customerService;
         private readonly IFuelReqService _fuelReqService;
         private readonly ICustomerAircraftService _customerAircraftService;
 
-        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, Services.FboService fboService, CustomerService customerService, IFboService iFboService, IFuelReqService fuelReqService, ICustomerAircraftService customerAircraftService)
+        public FboMissedQuotesLogController(MissedQuoteLogService missedQuoteLogService, FuelerLinxApiService fuelerLinxApiService, IFboService fboService, 
+            CustomerService customerService, IFuelReqService fuelReqService, ICustomerAircraftService customerAircraftService)
         {
             _customerAircraftService = customerAircraftService;
             _missedQuoteService = missedQuoteLogService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
             _customerService = customerService;
-            _iFboService = iFboService;
             _fuelReqService = fuelReqService;
         }
 
@@ -124,8 +123,8 @@ namespace FBOLinx.Web.Controllers
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(transaction.Eta.GetValueOrDefault(), fboId);
-                    var localTimeZone = await _iFboService.GetAirportTimeZoneByFboId(fboId);
+                    var localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(transaction.Eta.GetValueOrDefault(), fboId);
+                    var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(fboId);
                     missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.TailNumber = await _customerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
@@ -158,8 +157,8 @@ namespace FBOLinx.Web.Controllers
                         MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                         missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                        var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(transaction.ArrivalDateTime.GetValueOrDefault(), fboId);
-                        var localTimeZone = await _iFboService.GetAirportTimeZoneByFboId(fboId);
+                        var localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(transaction.ArrivalDateTime.GetValueOrDefault(), fboId);
+                        var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(fboId);
                         missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                         missedQuotesLogViewModel.TailNumber = transaction.TailNumber;

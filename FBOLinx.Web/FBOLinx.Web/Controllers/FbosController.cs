@@ -6,6 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
 using System.Web;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +20,7 @@ using Fuelerlinx.SDK;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -30,7 +32,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
         private GroupFboService _groupFboService;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private IHttpContextAccessor _httpContextAccessor;
         private readonly OAuthService _oAuthService;
         private readonly IPriceFetchingService _priceFetchingService;
@@ -42,8 +44,8 @@ namespace FBOLinx.Web.Controllers
         public FbosController(
             FboLinxContext context,
             DegaContext degaContext, 
-            GroupFboService groupFboService, 
-            FboService fboService, 
+            GroupFboService groupFboService,
+            IFboService fboService, 
             IHttpContextAccessor httpContextAccessor, 
             OAuthService oAuthService, 
             IPriceFetchingService priceFetchingService, 

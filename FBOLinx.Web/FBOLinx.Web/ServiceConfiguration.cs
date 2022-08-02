@@ -2,6 +2,7 @@
 using FBOLinx.DB.Extensions;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
@@ -23,6 +24,7 @@ using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 
 namespace FBOLinx.Web
 {
@@ -101,7 +103,6 @@ namespace FBOLinx.Web
             services.AddScoped<UserRoleAttribute>();
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
             services.AddTransient<GroupFboService, GroupFboService>();
-            services.AddTransient<FboService, FboService>();
             services.AddTransient<FboPreferencesService, FboPreferencesService>();
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();

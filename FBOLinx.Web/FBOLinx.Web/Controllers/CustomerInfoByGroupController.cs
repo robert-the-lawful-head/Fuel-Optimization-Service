@@ -25,6 +25,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
@@ -38,7 +39,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IPriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxApiService _fuelerLinxService;
@@ -48,7 +49,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FbopricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, FbopricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, FbopricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;

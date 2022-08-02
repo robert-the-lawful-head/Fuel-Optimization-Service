@@ -27,11 +27,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private int _FboId;
         private int _GroupId;
         private CustomerService _CustomerService;
-        private FboService _FboService;
+        private IFboService _FboService;
         private IMailService _MailService;
         private IPricingTemplateService _PricingTemplateService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, FboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
