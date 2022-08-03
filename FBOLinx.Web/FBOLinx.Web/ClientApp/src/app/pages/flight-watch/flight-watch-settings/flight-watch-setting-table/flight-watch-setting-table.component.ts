@@ -31,7 +31,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
     constructor() { }
 
     ngOnInit() { 
-         this.sort.sortChange.subscribe(() => {
+         
+    }
+    ngAfterViewInit() {
+        this.sort?.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -41,9 +44,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
                           name: column.name,
                       }
             );
-            this.saveSettings.emit();        });
+            this.saveSettings.emit();        
+        });
     }
-
     openPopup(row: any) {
         this.openAircraftPopup.emit(row.tailNumber);
     }
@@ -69,12 +72,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         const sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
         );
-        this.sort.sort({
+        this.sort?.sort({
             disableClear: false,
             id: null,
             start: sortedColumn?.sort || 'asc',
         });
-        this.sort.sort({
+        this.sort?.sort({
             disableClear: false,
             id: sortedColumn?.id,
             start: sortedColumn?.sort || 'asc',

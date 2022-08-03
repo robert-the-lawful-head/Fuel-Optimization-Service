@@ -841,12 +841,6 @@ body .flight-watch-settings-container .mat-header-row {
 .flight-watch-settings-container .mat-cell {
     font-size: 12px;
 }
-
-.flight-watch-settings-container mat-card-content {
-    max-height: 200px !important;
-    overflow: auto;
-}
-
 /*End Flight watch settings container*/
 /*Map Plane Key*/
 div.custom-key-tab {
@@ -956,6 +950,11 @@ div.fees-taxes-button {
 
 .distribution-toggle {
     margin-left: 217px;
+}
+
+html,body{
+    width: 100%;
+    height: 100%;
 }
 
 /*Mobile Devices*/
