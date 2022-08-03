@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FBOLinx.DB.Models
+namespace FBOLinx.ServiceLayer.DTO
 {
-    public partial class Contacts : FBOLinxBaseEntityModel<int>
+    public class ContactsDTO : BaseEntityModelDTO<DB.Models.Contacts>, IEntityModelDTO<DB.Models.Contacts, int>
     {
+        public int Oid { get; set; }
         [StringLength(255)]
         public string Email { get; set; }
         [StringLength(50)]
@@ -33,14 +37,5 @@ namespace FBOLinx.DB.Models
         [StringLength(50)]
         public string Extension { get; set; }
         public bool? CopyOrders { get; set; }
-
-        [InverseProperty("Contact")]
-        public Fbocontacts FboContact { get; set; }
-
-        [InverseProperty("Contact")]
-        public ICollection<CustomerContacts> CustomerContacts { get; set; }
-
-        [InverseProperty("Contact")]
-        public ICollection<ContactInfoByGroup> ContactInfoByGroups { get; set; }
     }
 }

@@ -12,7 +12,10 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class MissedQuoteLogEntityService : Repository<MissedQuoteLog, FboLinxContext>
+    public interface IMissedQuoteLogEntityService : IRepository<MissedQuoteLog, FboLinxContext>
+    {
+    }
+    public class MissedQuoteLogEntityService : Repository<MissedQuoteLog, FboLinxContext>, IMissedQuoteLogEntityService
     {
         public MissedQuoteLogEntityService(FboLinxContext context) : base(context)
         {
