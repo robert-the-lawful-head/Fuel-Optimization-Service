@@ -40,6 +40,12 @@
     }
 }
 .drawer-container{
-    border: 4px solid #1D497F !important;
+    border: 1px solid #1D497F !important;
 }
 
+.drawer-button{
+    position: absolute; 
+    top: 150px; 
+    right: 0px; 
+    z-index: 10000;
+}

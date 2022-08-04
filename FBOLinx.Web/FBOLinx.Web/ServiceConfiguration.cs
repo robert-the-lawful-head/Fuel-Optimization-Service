@@ -4,6 +4,8 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
@@ -114,14 +116,15 @@ namespace FBOLinx.Web
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<AirportWatchService, AirportWatchService>();
             services.AddTransient<IMailService, MailService>();
-            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
+            services.AddTransient<IMissedQuoteLogEntityService, MissedQuoteLogEntityService>();
             services.AddTransient<ISWIMService, SWIMService>();
             services.AddTransient<AirportWatchScheduledService, AirportWatchScheduledService>();
-            services.AddTransient<MissedQuoteLogService, MissedQuoteLogService>();
+            services.AddTransient<IMissedQuoteLogService, MissedQuoteLogService>();
             services.AddTransient<IFuelReqService, FuelReqService>();
             services.AddTransient<IAirportWatchLiveDataService, AirportWatchLiveDataService>();
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
-            
+            services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
+            services.AddTransient<IFboAirportsService, FboAirportsService>();
             
             services.AddHostedService<AirportWatchScheduledService>();
 
@@ -143,6 +146,10 @@ namespace FBOLinx.Web
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
             services.AddTransient<FuelReqEntityService, FuelReqEntityService>();
             services.AddTransient<IFboEntityService, FboEntityService>();
+            services.AddTransient<IFboContactsEntityService, FboContactsEntityService>();
+            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
+            services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
+            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

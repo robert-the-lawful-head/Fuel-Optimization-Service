@@ -21,15 +21,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private readonly AircraftService _aircraftService;
         private IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeesService;
-        private IMailService _MailService;
 
-        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IMailService mailService)
+        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService)
         {
             _context = context;
             _aircraftService = aircraftService;
             _priceFetchingService = priceFetchingService;
             _rampFeesService = rampFeesService;
-            _MailService = mailService;
         }
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
@@ -166,29 +164,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             validPricing.Company = validPricing.PricingList[0].Company;
 
             return validPricing;
-        }
-
-        public async Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName)
-        {
-            FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress("donotreply@fbolinx.com");
-            foreach (string email in toEmails)
-            {
-                if (_MailService.IsValidEmailRecipient(email))
-                    mailMessage.To.Add(email);
-            }
-
-            var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridMissedQuoteTemplateData
-            {
-                fboName = fbo,
-                customerName = customerName,
-                subject = "Missed opportunity for " + customerName
-            };
-
-            mailMessage.SendGridMissedQuoteTemplateData = dynamicTemplateData;
-
-            //Send email
-            var result = await _MailService.SendAsync(mailMessage);
         }
     }
 }

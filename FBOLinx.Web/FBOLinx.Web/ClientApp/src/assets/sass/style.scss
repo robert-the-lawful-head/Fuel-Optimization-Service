@@ -574,10 +574,6 @@ div.customer-aircraft-table {
 
 /*Flight Watch map controls*/
 
-.map-controls-button button {
-
-}
-
 .map-controls-button .mat-button-wrapper .mat-icon {
     font-size: 30px;
 }
@@ -829,16 +825,28 @@ body .mat-card.flight-watch-settings-container .mat-card-header {
     margin-bottom: 0px;
 }
 
-.flight-list-settings-button {
-    position: absolute;
-    right: 0px;
-    top: 10px;
-}
-
-
 .flight-list-settings-button .mat-button-wrapper .mat-icon {
     font-size: 25px;
 }
+
+.flight-watch-settings-container mat-row {
+    min-height: 0px;
+    padding: 5px 0 5px 0 !important;
+}
+
+body .flight-watch-settings-container .mat-header-row {
+    padding: 0px;
+}
+
+.flight-watch-settings-container .mat-cell {
+    font-size: 12px;
+}
+
+.flight-watch-settings-container mat-card-content {
+    max-height: 200px !important;
+    overflow: auto;
+}
+
 /*End Flight watch settings container*/
 /*Map Plane Key*/
 div.custom-key-tab {

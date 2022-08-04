@@ -43,7 +43,7 @@
                 <mat-drawer-content>
                     <div>
                         <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
-                        <div style="position: absolute; top: 150px; right: 0px; z-index: 10000;" (click)="mapfilters.toggle()">
+                        <div class="drawer-button" (click)="mapfilters.toggle()">
                             <button class="mat-dark-blue" mat-flat-button >
                                 <mat-icon *ngIf="!mapfilters.opened">chevron_left</mat-icon>
                                 <mat-icon *ngIf="mapfilters.opened">chevron_right</mat-icon>

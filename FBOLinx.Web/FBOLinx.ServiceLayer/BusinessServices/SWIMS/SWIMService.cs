@@ -340,15 +340,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     flightLegDto.City = flightLegDto.ArrivalCity;
                 }
 
-                flightLegDto.Status = GetFlightStatus(swimFlightLeg, swimFlightLegMessages, arrivalAirport, departureAirport, isAircraftOnGround, antennaHistoricalData);
-
                 SWIMFlightLegData latestSWIMMessage =
-                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid).OrderByDescending(x => x.Oid).First();
-                flightLegDto.ActualSpeed = latestSWIMMessage.ActualSpeed;
-                flightLegDto.Altitude = latestSWIMMessage.Altitude;
-                flightLegDto.Latitude = latestSWIMMessage.Latitude;
-                flightLegDto.Longitude = latestSWIMMessage.Longitude;
+                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.Oid).FirstOrDefault();
+                if (latestSWIMMessage != null)
+                {
+                    flightLegDto.ActualSpeed = latestSWIMMessage.ActualSpeed;
+                    flightLegDto.Altitude = latestSWIMMessage.Altitude;
+                    flightLegDto.Latitude = latestSWIMMessage.Latitude;
+                    flightLegDto.Longitude = latestSWIMMessage.Longitude;
 
+                    flightLegDto.Status = GetFlightStatus(swimFlightLeg, latestSWIMMessage, arrivalAirport, departureAirport, isAircraftOnGround, antennaHistoricalData);
+                }
+                
                 if (!result.Any(x => x.DepartureICAO == flightLegDto.DepartureICAO && x.ArrivalICAO == flightLegDto.ArrivalICAO && x.ATDZulu == flightLegDto.ATDZulu))
                 {
                     result.Add(flightLegDto);
@@ -425,14 +428,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private FlightLegStatus GetFlightStatus(SWIMFlightLeg swimFlightLeg, List<SWIMFlightLegData> swimFlightLegMessages, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, 
+        private FlightLegStatus GetFlightStatus(SWIMFlightLeg swimFlightLeg, SWIMFlightLegData latestSWIMFlightLegMessage, AcukwikAirport arrivalAirport, AcukwikAirport departureAirport, 
             bool isAircraftOnGround, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             FlightLegStatus flightLegStatus = FlightLegStatus.EnRoute;
-
-            SWIMFlightLegData latestSWIMFlightLegMessage =
-                swimFlightLegMessages.Where(x => x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
-
+            
             if (arrivalAirport == null || string.IsNullOrEmpty(arrivalAirport.Latitude) || string.IsNullOrEmpty(arrivalAirport.Longitude) || 
                 departureAirport == null || string.IsNullOrEmpty(departureAirport.Latitude) || string.IsNullOrEmpty(departureAirport.Longitude) ||
                 latestSWIMFlightLegMessage == null)

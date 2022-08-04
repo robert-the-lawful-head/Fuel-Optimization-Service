@@ -1,6 +1,7 @@
 ﻿using System.Net.Mail;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
