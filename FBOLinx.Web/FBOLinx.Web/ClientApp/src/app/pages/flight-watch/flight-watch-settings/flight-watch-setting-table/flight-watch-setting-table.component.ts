@@ -21,7 +21,7 @@ import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map
 export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
-    @Input() columns: ColumnType[];  
+    @Input() columns: ColumnType[];
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() saveSettings = new EventEmitter();
@@ -30,8 +30,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit() { 
-         
+    ngOnInit() {
+
     }
     ngAfterViewInit() {
         this.sort?.sortChange.subscribe(() => {
@@ -44,7 +44,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                           name: column.name,
                       }
             );
-            this.saveSettings.emit();        
+            this.saveSettings.emit();
         });
     }
     openPopup(row: any) {
@@ -58,9 +58,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
     }
     geMakeModelDisplayString(element: any){
-        let str = element.Make;
-        str += (element.Make && element.Model) ? '/':'';
-        str += element.Model;
+        let str = (element.Make)?element.Make:"Check";
+        str += '/';
+        str += (element.Model)?element.Model:"Fix";
         return str;
     }
     getOriginDestinationString(element: any){
