@@ -40,7 +40,6 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelerLinxApiService _fuelerLinxApiService;
         private readonly FbopricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly IFboService _iFboService;
 
         public FbosController(
             FboLinxContext context,
@@ -53,8 +52,7 @@ namespace FBOLinx.Web.Controllers
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
             FbopricesService fbopricesService,
-            IPricingTemplateService pricingTemplateService,
-            IFboService iFboService)
+            IPricingTemplateService pricingTemplateService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -67,7 +65,6 @@ namespace FBOLinx.Web.Controllers
             _fuelerLinxApiService = fuelerLinxApiService;
             _fbopricesService = fbopricesService;
             _pricingTemplateService = pricingTemplateService;
-            _iFboService = iFboService;
         }
 
         // GET: api/Fbos/group/5
@@ -480,7 +477,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (airportDateTime.Hour == 9)
                 {
-                    var toEmails = await _iFboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                    var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
                     if (toEmails.Count > 0)
                         await GenerateExpiredPricesEmail(toEmails, fbo.Fbo);
@@ -541,7 +538,7 @@ namespace FBOLinx.Web.Controllers
                                 //var customerResponse = await _apiClient.GetAsync("customers/getbyfuelerlinxid/" + fuelerLinxCustomerId, conductorUser.Token);
                                 //var customer = Newtonsoft.Json.JsonConvert.DeserializeObject<Customers>(customerResponse);
 
-                                var toEmails = await _iFboService.GetToEmailsForEngagementEmails(fbo.Oid);
+                                var toEmails = await _fboService.GetToEmailsForEngagementEmails(fbo.Oid);
 
                                 if (toEmails.Count > 0)
                                     await GenerateNoRampFeesEmail(toEmails, fbo.Fbo, customer.Company, fbo.FboAirport.Icao);

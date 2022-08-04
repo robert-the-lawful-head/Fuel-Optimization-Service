@@ -34,9 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task DeleteLogo(int fboId);
         Task<string> GetFBOIcao(int fboId);
         Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
-        Task<List<Fbos>> GetFbosByIcaos(string icaos);
         Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
-        Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
         Task<FbosDTO> GetFboByFboId(int fboId);
     }
@@ -48,13 +46,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         private IFboEntityService _fboEntityService;
         private IFboContactsEntityService _fboContactsEntityService;
         private readonly IAcukwikFbohandlerDetailEntityService _AcukwikFbohandlerDetailEntityService;
-
-        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService, IFboContactsEntityService fboContactsEntityService,
-            IAcukwikFbohandlerDetailEntityService acukwikFbohandlerDetailEntityService) : base(fboEntityService)
         private readonly FilestorageContext _fileStorageContext;
         private readonly IServiceProvider _services;
 
-        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IServiceProvider services, FilestorageContext fileStorageContext) : base(fboEntityService)
+        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService, 
+            IFboContactsEntityService fboContactsEntityService,
+            IAcukwikFbohandlerDetailEntityService acukwikFbohandlerDetailEntityService, IServiceProvider services,
+            FilestorageContext fileStorageContext) : base(fboEntityService)
         {
             _fboEntityService = fboEntityService;
             _context = context;
@@ -280,53 +278,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
 
             return fboAirport.Icao;
-        }
-        
-        public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
-        {
-            List<string> toEmails = new List<string>();
-
-            var fboInfo = await _context.Fbos.FindAsync(fboId);
-            //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
-            //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
-
-            if (!string.IsNullOrEmpty(fboInfo.FuelDeskEmail))
-                toEmails.Add(fboInfo.FuelDeskEmail);
-
-            var fboContacts = await _context.Fbocontacts
-                                .Include("Contact")
-                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
-                                .Select(f => new Contacts
-                                {
-                                    FirstName = f.Contact.FirstName,
-                                    LastName = f.Contact.LastName,
-                                    Title = f.Contact.Title,
-                                    Oid = f.Oid,
-                                    Email = f.Contact.Email,
-                                    Primary = f.Contact.Primary,
-                                    CopyAlerts = f.Contact.CopyAlerts,
-                                    CopyOrders = f.Contact.CopyOrders
-                                })
-                                .ToListAsync();
-            //var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
-            //var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
-
-            foreach (Contacts fboContact in fboContacts)
-            {
-                if (fboContact.CopyAlerts.GetValueOrDefault() && !string.IsNullOrEmpty(fboContact.Email))
-                    toEmails.Add(fboContact.Email);
-            }
-
-            return toEmails;
-        }
-
-        public async Task<List<Fbos>> GetFbosByIcaos(string icaos)
-        {
-            var fbos = await (from f in _context.Fbos
-                              join fa in _context.Fboairports on f.Oid equals fa.Fboid
-                              where icaos.Contains(fa.Icao) && f.GroupId > 1 && f.Active == true
-                              select f).ToListAsync();
-            return fbos;
         }
     }
 }
