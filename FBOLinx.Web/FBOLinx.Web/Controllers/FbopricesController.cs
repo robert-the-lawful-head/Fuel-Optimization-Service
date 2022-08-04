@@ -46,7 +46,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FbopricesService _fbopricesService;
         private readonly DateTimeService _dateTimeService;
         private readonly IFboService _iFboService;
-        private readonly MissedQuoteLogService _missedQuoteLogService;
+        private readonly IMissedQuoteLogService _missedQuoteLogService;
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly FboPreferencesService _fboPreferencesService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
@@ -65,7 +65,7 @@ namespace FBOLinx.Web.Controllers
             FboPreferencesService fboPreferencesService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
-            MissedQuoteLogService missedQuoteLogService
+            IMissedQuoteLogService missedQuoteLogService
             )
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;

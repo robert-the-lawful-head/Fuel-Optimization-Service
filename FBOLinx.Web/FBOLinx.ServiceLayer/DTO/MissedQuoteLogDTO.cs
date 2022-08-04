@@ -4,7 +4,7 @@ using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
-    public partial class MissedQuoteLogDto : FBOLinxBaseEntityModel<int>
+    public partial class MissedQuoteLogDTO : FBOLinxBaseEntityModel<int>
     {
         public int? FboId { get; set; }
         public DateTime? CreatedDate { get; set; }

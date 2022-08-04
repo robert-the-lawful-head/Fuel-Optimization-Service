@@ -13,6 +13,7 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.DB.Specifications.Fbo;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 {
@@ -21,29 +22,36 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId);
         Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId);
         Task<string> GetAirportTimeZoneByFboId(int fboId);
-        Task<List<Fbos>> GetFbosByIcaos(string icaos);
+        Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
         Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
+        Task<FbosDTO> GetFboByFboId(int fboId);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
         private IMailService _MailService;
-        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService) : base(fboEntityService)
+        private IFboEntityService _fboEntityService;
+        private IFboContactsEntityService _fboContactsEntityService;
+        private readonly IAcukwikFbohandlerDetailEntityService _AcukwikFbohandlerDetailEntityService;
+
+        public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService, IFboContactsEntityService fboContactsEntityService,
+            IAcukwikFbohandlerDetailEntityService acukwikFbohandlerDetailEntityService) : base(fboEntityService)
         {
+            _fboEntityService = fboEntityService;
             _context = context;
             _degaContext = degaContext;
             _MailService = mailService;
+            _fboContactsEntityService = fboContactsEntityService;
+            _AcukwikFbohandlerDetailEntityService = acukwikFbohandlerDetailEntityService;
         }
+        
         public async Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId)
         {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
 
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
+            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
 
             if (acukwikAirport == null)
                 return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
@@ -55,12 +63,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
         public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
         {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
 
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
+            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
 
             if (acukwikAirport == null)
                 return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
@@ -72,12 +77,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
         public async Task<string> GetAirportTimeZoneByFboId(int fboId)
         {
-            var fboAcukwikId = await (from f in _context.Fbos.Where(f => f.Oid == fboId) select f.AcukwikFBOHandlerId).FirstOrDefaultAsync();
+            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
 
-            var acukwikAirport = await (from afh in _degaContext.AcukwikFbohandlerDetail
-                                        join aa in _degaContext.AcukwikAirports on afh.AirportId equals aa.Oid
-                                        where afh.HandlerId == fboAcukwikId
-                                        select aa).FirstOrDefaultAsync();
+            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
 
             if (acukwikAirport == null)
                 return "";
@@ -90,12 +92,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             return timeZone;
         }
 
-        public async Task<List<Fbos>> GetFbosByIcaos(string icaos)
+        public async Task<List<FbosDTO>> GetFbosByIcaos(string icaos)
         {
-            var fbos = await (from f in _context.Fbos
-                              join fa in _context.Fboairports on f.Oid equals fa.Fboid
-                              where icaos.Contains(fa.Icao) && f.GroupId > 1 && f.Active == true
-                              select f).ToListAsync();
+            var fbos = await _fboEntityService.GetFbosByIcaos(icaos);
+
             return fbos;
         }
 
@@ -103,34 +103,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         {
             List<string> toEmails = new List<string>();
 
-            var fboInfo = await _context.Fbos.FindAsync(fboId);
-            //var responseFbo = await _apiClient.GetAsync("fbos/" + fbo.Oid, conductorUser.Token);
-            //var fboInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<Fbos>(responseFbo);
+            var fboInfo = await _fboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
 
             if (!string.IsNullOrEmpty(fboInfo.FuelDeskEmail))
                 toEmails.Add(fboInfo.FuelDeskEmail);
 
-            var fboContacts = await _context.Fbocontacts
-                                .Include("Contact")
-                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
-                                .Select(f => new Contacts
-                                {
-                                    FirstName = f.Contact.FirstName,
-                                    LastName = f.Contact.LastName,
-                                    Title = f.Contact.Title,
-                                    Oid = f.Oid,
-                                    Email = f.Contact.Email,
-                                    Primary = f.Contact.Primary,
-                                    CopyAlerts = f.Contact.CopyAlerts,
-                                    CopyOrders = f.Contact.CopyOrders
-                                })
-                                .ToListAsync();
-            //var responseFboContacts = await _apiClient.GetAsync("fbocontacts/fbo/" + fbo.Oid, conductorUser.Token);
-            //var fboContacts = Newtonsoft.Json.JsonConvert.DeserializeObject<List<FboContactsViewModel>>(responseFboContacts);
+            var fboContacts = await _fboContactsEntityService.GetFboContactsByFboId(fboId);
 
-            foreach (Contacts fboContact in fboContacts)
+            foreach (ContactsDTO fboContact in fboContacts)
             {
-                if (fboContact.CopyAlerts.GetValueOrDefault() && !string.IsNullOrEmpty(fboContact.Email))
+                if (fboContact.CopyAlerts.HasValue && fboContact.CopyAlerts.Value && !string.IsNullOrEmpty(fboContact.Email))
                     toEmails.Add(fboContact.Email);
             }
 
@@ -158,6 +140,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
             //Send email
             var result = await _MailService.SendAsync(mailMessage);
+        }
+
+        public async Task<FbosDTO> GetFboByFboId(int fboId)
+        {
+            var fbo = await _fboEntityService.GetFboByFboId(fboId);
+            return fbo;
         }
     }
 }
