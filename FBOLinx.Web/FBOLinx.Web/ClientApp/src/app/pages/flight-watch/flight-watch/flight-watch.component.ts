@@ -87,10 +87,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>
-            this.loadAirportWatchData()
-        );
-        this.getDrawerData(this.selectedICAO);
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+            this.loadAirportWatchData();
+            this.getDrawerData(this.selectedICAO);
+    });
     }
     ngOnDestroy() {
         this.flightWatchDataSubject.unsubscribe();
@@ -106,14 +106,14 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             arrivals => {
                 this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
-                this.updateButtonOnDrawerResize();
+                if(!this.drawer.opened && !this.swimArrivals) this.updateButtonOnDrawerResize();
             }
           );
           this.swimService.getDepartures(icao).subscribe(
             departures => {
                 this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
-                this.updateButtonOnDrawerResize();
+                if(!this.drawer.opened && !this.swimDepartures) this.updateButtonOnDrawerResize();
             }
           );
     }
@@ -127,7 +127,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             return data.icao;
         });
         this.airportsICAO = icaoList;
-        
+
     }
     updateIcao(icao:string){
         this.map.goToAirport(icao);
@@ -191,7 +191,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.selectedAircraftData = res;
         });
     }
-    
+
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;
     }
