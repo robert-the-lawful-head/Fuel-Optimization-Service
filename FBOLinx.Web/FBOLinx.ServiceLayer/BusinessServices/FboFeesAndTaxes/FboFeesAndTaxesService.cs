@@ -18,7 +18,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService
     public class FboFeesAndTaxesService : IFboFeesAndTaxesService
     {
         private readonly FboLinxContext _context;
-        private int _fboId;
 
         public FboFeesAndTaxesService(FboLinxContext context)
         {
@@ -27,8 +26,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService
 
         public async Task<List<FboFeesAndTaxes>> GetFboFeesAndTaxes(int fboId)
         {
-            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
-            return result;
+            var feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Include(x => x.OmitsByPricingTemplate).Where(x =>
+                       x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All ||
+                                            x.FlightTypeClassification == FlightTypeClassifications.Private))
+                       .AsNoTracking()
+                       .ToListAsync();
+            return feesAndTaxes;
         }
     }
 }
