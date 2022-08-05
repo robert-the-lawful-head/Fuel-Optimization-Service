@@ -31,8 +31,8 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
-    
-   
+
+
     @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
 
     searchIcaoTxt: string;
@@ -172,10 +172,6 @@ export class FlightWatchSettingsComponent implements OnInit {
                 {
                     id: 'itpMarginTemplate',
                     name: 'ITP Margin Template',
-                },
-                {
-                    id: 'ppg',
-                    name: 'PPG',
                 },
                 {
                     id: 'fuelCapacityGal',
