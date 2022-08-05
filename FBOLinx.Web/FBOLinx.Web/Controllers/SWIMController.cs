@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
@@ -9,7 +10,10 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Responses.SWIM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using FBOLinx.Web.Auth;
+using Geolocation;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -19,46 +23,46 @@ namespace FBOLinx.Web.Controllers
     public class SWIMController : ControllerBase
     {
         private readonly ISWIMService _SWIMService;
-        private readonly ILoggingService loggingService;
+        private readonly ILoggingService _LoggingService;
 
         public SWIMController(ISWIMService swimService, ILoggingService loggingService)
         {
             _SWIMService = swimService;
-            this.loggingService = loggingService;
+            _LoggingService = loggingService;
         }
         
-        [HttpGet("departures/{icao}")]
-        public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] string icao)
+        [HttpGet("departures/{icao}/group/{groupId}/fbo/{fboId}")]
+        public async Task<ActionResult<FlightLegsResponse>> GetDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] string icao)
         {
             try
             {
-                IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(icao);
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetDepartures(groupId, fboId, icao);
 
                 return Ok(new FlightLegsResponse(result));
             }
             catch (Exception ex)
             {
-                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                 return BadRequest(ex.Message);
             }
         }
         
-        [HttpGet("arrivals/{icao}")]
-        public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] string icao)
+        [HttpGet("arrivals/{icao}/group/{groupId}/fbo/{fboId}")]
+        public async Task<ActionResult<FlightLegsResponse>> GetArrivals([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] string icao)
         {
             try
             {
-                IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(icao);
+                IEnumerable<FlightLegDTO> result = await _SWIMService.GetArrivals(groupId, fboId, icao);
 
                 return Ok(new FlightLegsResponse(result));
             }
             catch (Exception ex)
             {
-                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                 return BadRequest(ex.Message);
             }
         }
-
+        
         [AllowAnonymous]
         [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("flight-legs")]
@@ -72,7 +76,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                loggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
                 return BadRequest(ex.Message);
             }
         }

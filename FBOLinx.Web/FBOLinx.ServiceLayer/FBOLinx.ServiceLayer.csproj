@@ -9,6 +9,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Geolocation" Version="1.2.1" />
       <PackageReference Include="Mapster" Version="7.3.0" />
       <PackageReference Include="Mapster.Core" Version="1.2.0" />
       <PackageReference Include="StackifyLib" Version="2.2.10" />
@@ -29,7 +30,6 @@
 	<ItemGroup>
 	  <Generated Remove="Dto\AuditDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
-	  <Generated Remove="DTO\MissedQuoteLogDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">

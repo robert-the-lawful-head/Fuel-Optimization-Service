@@ -6,7 +6,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
 {
     public class FlightLegDTO
     {
-        public int Id { get; set; }
         public string TailNumber { get; set; }
         public string FlightDepartment { get; set; }
         public string Make { get; set; }
@@ -30,5 +29,13 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public bool IsAircraftOnGround { get; set; }
         public string ITPMarginTemplate { get; set; }
         public FlightLegStatus Status { get; set; }
+        public string Phone { get; set; }
+        public int VisitsToMyFBO { get; set; }
+        public int Arrivals { get; set; }
+        public int Departures { get; set; }
+        public int? ID { get; set; } //fuelreq.oid
+        public int? FuelerlinxID { get; set; } //fuelreq.sourceId
+        public string Vendor { get; set; }
+        public string TransactionStatus { get; set; }
     }
 }

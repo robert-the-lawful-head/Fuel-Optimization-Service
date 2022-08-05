@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
