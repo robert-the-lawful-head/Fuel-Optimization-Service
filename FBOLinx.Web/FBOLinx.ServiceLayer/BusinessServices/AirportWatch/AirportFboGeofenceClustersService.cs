@@ -97,6 +97,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     return;
                 x.AcukwikFBOHandlerID = fbo.HandlerId;
                 x.FboName = fbo.HandlerLongName;
+                if (x.ClusterCoordinatesCollection?.Count == 0)
+                    return;
+                x.ClusterCoordinatesCollection = x.ClusterCoordinatesCollection.OrderBy(x => x.Oid).ToList();
             });
 
             return allFboGeoClusters;
