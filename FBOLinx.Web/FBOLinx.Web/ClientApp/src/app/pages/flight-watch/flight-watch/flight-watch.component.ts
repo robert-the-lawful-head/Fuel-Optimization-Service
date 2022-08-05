@@ -89,7 +89,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             this.loadAirportWatchData();
-            this.getDrawerData(this.selectedICAO);
+            this.getDrawerData(this.selectedICAO, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     });
     }
     ngOnDestroy() {
@@ -101,24 +101,24 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.airportWatchFetchSubscription.unsubscribe();
         }
     }
-    getDrawerData(icao:string):void{
-        this.swimService.getArrivals(icao).subscribe(
+    getDrawerData(icao:string, groupId: number, fboId: number):void{
+        this.swimService.getArrivals(icao, groupId, fboId).subscribe(
             arrivals => {
                 this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
-                if(!this.drawer.opened && !this.swimArrivals) this.updateButtonOnDrawerResize();
+                if(!this.drawer.opened ) this.updateButtonOnDrawerResize();
             }
           );
-          this.swimService.getDepartures(icao).subscribe(
+          this.swimService.getDepartures(icao, groupId, fboId).subscribe(
             departures => {
                 this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
-                if(!this.drawer.opened && !this.swimDepartures) this.updateButtonOnDrawerResize();
+                if(!this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
     }
     openDrawer(airportClicked: AcukwikAirport){
-        this.getDrawerData(airportClicked.icao);
+        this.getDrawerData(airportClicked.icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
         this.drawer.toggle();
     }
     setIcaoList(airportList: AcukwikAirport[]){
@@ -132,7 +132,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     updateIcao(icao:string){
         this.map.goToAirport(icao);
         this.selectedICAO =  icao;
-        this.getDrawerData(icao);
+        this.getDrawerData(icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     }
     loadAirportWatchData() {
         if (!this.loading) {
