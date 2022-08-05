@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOContacts")]
-    public partial class Fbocontacts
+    public partial class Fbocontacts : FBOLinxBaseEntityModel<int>
     {
         [Column("FBOID")]
         public int Fboid { get; set; }
