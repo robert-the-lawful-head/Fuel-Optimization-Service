@@ -921,6 +921,7 @@ namespace FBOLinx.Web.Controllers
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroupCollection = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
+                customerInfoByGroupCollection = customerInfoByGroupCollection.OrderBy(c => c.Company).ToList();
 
                 var contactInfoByFboForAlerts =
                     await (from cibg in _context.ContactInfoByGroup
@@ -1022,7 +1023,7 @@ namespace FBOLinx.Web.Controllers
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())
-                    .OrderByDescending(s => (s.FleetSize ?? 0))
+                    //.OrderByDescending(s => (s.FleetSize ?? 0))
                     .ToList();
 
 
@@ -1094,7 +1095,8 @@ namespace FBOLinx.Web.Controllers
                                                           : (ppt == null ? 0 : ppt.Amount)),
                                                       amount = ppt == null ? 0 : ppt.Amount,
                                                       CustomerCompanyType = cg.CustomerCompanyType,
-                                                      PriceBreakdownDisplayType = priceBreakdownDisplayType
+                                                      PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                                                      PricingTemplateId = x.PricingTemplateId,
                                                   }).OrderBy(y => y.Company).ThenBy(y => y.PricingTemplateId).ThenBy(y => y.Product).ThenBy(y => y.MinGallons).ToList();
 
                     if (feesAndTaxes.Count > 0 && customerPricingResults[0].FboPrice > 0)
@@ -1161,7 +1163,30 @@ namespace FBOLinx.Web.Controllers
                         resultsWithFees.AddRange(internationalOptions);
                         resultsWithFees.AddRange(allDepartureOptions);
 
-                        x.AllInPrice = resultsWithFees.Count > 0 ? resultsWithFees.FirstOrDefault().AllInPrice : 0;
+                        //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
+                        //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                        resultsWithFees.ForEach(y =>
+                        {
+                            y.FeesAndTaxes.ForEach(fee =>
+                            {
+                                if (fee.OmitsByPricingTemplate != null &&
+                                    fee.OmitsByPricingTemplate.Any(o =>
+                                        o.PricingTemplateId == y.PricingTemplateId))
+                                {
+                                    fee.IsOmitted = true;
+                                    fee.OmittedFor = "P";
+                                }
+
+                                if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
+                                    o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                                {
+                                    fee.IsOmitted = true;
+                                    fee.OmittedFor = "C";
+                                }
+                            });
+                        });
+
+                        x.AllInPrice = resultsWithFees.Count > 0 ? resultsWithFees[0].AllInPrice : 0;
                     }
                     else
                     {
