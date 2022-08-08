@@ -16,10 +16,13 @@
             <mat-option
                 *ngFor="let acukwikFbo of dataSources.acukwikFbos"
                 [value]="acukwikFbo"
-                >{{ acukwikFbo.handlerLongName }}</mat-option
+            >{{ acukwikFbo.handlerLongName }}</mat-option
             >
         </mat-select>
     </mat-form-field>
+</div>
+<div *ngIf="errorMessage != ''" class="mt-2 text-center" style="color: red">
+    <p>{{errorMessage}}</p>
 </div>
 <div class="mt-2 text-center">
     <button

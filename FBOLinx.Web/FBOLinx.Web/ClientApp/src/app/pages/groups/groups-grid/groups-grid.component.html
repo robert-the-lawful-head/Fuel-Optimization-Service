@@ -9,8 +9,18 @@
         </mat-form-field>
 
         <mat-form-field class="account-filter">
-            <mat-label>Account</mat-label>
-            <mat-select [(ngModel)]="accountType"
+            <mat-label>Group Status</mat-label>
+            <mat-select [(ngModel)]="groupAccountType"
+                        (selectionChange)="filterChanged()">
+                <mat-option value="all">All</mat-option>
+                <mat-option value="active">Active</mat-option>
+                <mat-option value="inactive">Inactive</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="account-filter">
+            <mat-label>FBO Status</mat-label>
+            <mat-select [(ngModel)]="fboAccountType"
                         (selectionChange)="filterChanged()">
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
