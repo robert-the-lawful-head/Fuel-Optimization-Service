@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.Dto.Requests;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
 {
@@ -10,7 +11,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
     {
         Task FixCustomCustomerTypes(int groupId, int fboId);
         Task FixDefaultPricingTemplate(int fboId);
-        public Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false);
+        Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false);
         Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate);
@@ -20,5 +21,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task<PricingTemplateDto> DeletePricingTemplate(PricingTemplateDto pricingTemplate, int oid, int fboId);
         Task<PricingTemplateDto> GetPricingTemplateById(int oid);
         Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForAllCustomers(int fboId, int groupId);
+        Task<List<CustomerAircraftsPricingTemplatesModel>> GetCustomerAircraftTemplates(int fboId, int groupId);
     }
 }

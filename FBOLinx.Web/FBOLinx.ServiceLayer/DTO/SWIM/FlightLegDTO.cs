@@ -37,5 +37,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public int? FuelerlinxID { get; set; } //fuelreq.sourceId
         public string Vendor { get; set; }
         public string TransactionStatus { get; set; }
+        public string ICAOAircraftCode { get; set; }
     }
 }
