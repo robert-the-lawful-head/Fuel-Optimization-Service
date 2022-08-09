@@ -520,7 +520,8 @@ namespace FBOLinx.Web.Controllers
                         oldCustomer.ShowJetA = customerInfoByGroup.ShowJetA;
                         oldCustomer.State = customerInfoByGroup.State;
                         oldCustomer.Website = customerInfoByGroup.Website;
-                        oldCustomer.Website = customerInfoByGroup.Website;
+                        
+                        _context.CustomerInfoByGroup.Update(oldCustomer);
 
                         await _context.SaveChangesAsync(userId, customerInfoByGroup.CustomerId, customerInfoByGroup.GroupId);
                     }
