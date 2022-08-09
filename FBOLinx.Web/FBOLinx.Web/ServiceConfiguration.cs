@@ -150,6 +150,7 @@ namespace FBOLinx.Web
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
+            services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

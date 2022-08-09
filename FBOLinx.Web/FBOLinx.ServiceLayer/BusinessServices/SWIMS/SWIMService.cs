@@ -44,12 +44,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly AirportWatchService _AirportWatchService;
         private readonly IFuelReqService _FuelReqService;
         private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly AFSAircraftEntityService _AFSAircraftEntityService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
             ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
-            AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService)
+            AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
+            AFSAircraftEntityService afsAircraftEntityService)
         {
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -63,6 +65,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _AirportWatchService = airportWatchService;
             _FuelReqService = fuelReqService;
             _pricingTemplateService = pricingTemplateService;
+            _AFSAircraftEntityService = afsAircraftEntityService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(int groupId, int fboId, string icao)
@@ -246,7 +249,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<string> tailNumbers = swimFlightLegs.Select(x => x.AircraftIdentification).ToList();
             var flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
             IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(tailNumbers);
-            var aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList()));
+            var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
+            List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
+            var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
             List<AirportWatchLiveData> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByFlightNumberSpecification(tailNumbers, DateTime.UtcNow.AddHours(-1)));
             List<AirportWatchHistoricalData> antennaHistoricalData;
             if (useHistoricalData)
@@ -301,7 +306,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         flightLegDto.Model = aircraft.Model;
                         flightLegDto.FuelCapacityGal = aircraft.FuelCapacityGal;
                     }
-                    
+
+                    var afsAircraft = afsAircrafts.FirstOrDefault(x => x.DegaAircraftID == aircraftByFlightDepartment.Item1);
+                    if (afsAircraft != null)
+                    {
+                        flightLegDto.ICAOAircraftCode = afsAircraft.Icao;
+                    }
+
                     SetPricingTemplate(flightLegDto, defaultCompanyPricingTemplate, swimFlightLeg.AircraftIdentification, pricingTemplates);
                 }
                 
@@ -329,7 +340,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     flightLegDto.ETALocal = swimFlightLeg.ETA;
                 }
                 
-                flightLegDto.ETE = flightLegDto.ETAZulu - DateTime.UtcNow;
+                flightLegDto.ETE = (flightLegDto.ETAZulu - DateTime.UtcNow).Duration();
 
                 if (isArrivals)
                 {
