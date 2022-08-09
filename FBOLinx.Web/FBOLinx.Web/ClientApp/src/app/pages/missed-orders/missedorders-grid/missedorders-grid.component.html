@@ -1,0 +1,134 @@
+<div class="paddingTop">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-md-4">
+                <mat-form-field>
+                    <input (keyup)="applyFilter($event.target.value)"
+                           matInput
+                           placeholder="Search by Customer, TailNumber, FBO, etc." />
+                    <span matPrefix><i class="fa fa-search"></i></span>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input (dateChange)="refreshTable()"
+                           (focus)="dashboardSettingsStartDateFilter.open()"
+                           [(ngModel)]="filterStartDate"
+                           [matDatepicker]="dashboardSettingsStartDateFilter"
+                           [max]="filterEndDate"
+                           matInput
+                           placeholder="Start Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsStartDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input (dateChange)="refreshTable()"
+                           (focus)="dashboardSettingsEndDateFilter.open()"
+                           [(ngModel)]="filterEndDate"
+                           [matDatepicker]="dashboardSettingsEndDateFilter"
+                           [min]="filterStartDate"
+                           matInput
+                           placeholder="End Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsEndDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="actions col-6 col-md-2">
+                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">more_vert</mat-icon>
+                </button>
+                <mat-menu #gridActions="matMenu"
+                          class="switch-nested-menu-left-arrows"
+                          xPosition="before">
+                    <button (click)="openSettings()" mat-menu-item>
+                        Settings
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-100 table-container" style="overflow-x: auto" *ngIf="missedOrdersData">
+        <table [dataSource]="missedOrdersDataSource"
+               class="col-12 mb-0"
+               mat-table
+               matSort>
+            <ng-container matColumnDef="customerName">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Flight Dept.
+                </th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.customerName }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="pricingTemplateName">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    ITP Margin Template
+                </th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.pricingTemplateName }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="eta">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.eta | date: "MMM d, yyyy, HH:mm" }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="etd">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.etd | date: "MMM d, yyyy, HH:mm" }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="quotedVolume">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Volume (gal.)
+                </th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.quotedVolume }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="tailNumber">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Tail #
+                </th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.tailNumber }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dateCreated">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
+                <td *matCellDef="let missedorder" mat-cell>
+                    {{ missedorder.dateCreated | date: "MMM d, yyyy, HH:mm" }}
+                </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="getTableColumns(); sticky: true"
+                mat-header-row></tr>
+            <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+        </table>
+        <mat-paginator (page)="(pageIndex); onPageChanged($event)"
+                       [length]="resultsLength"
+                       [pageSizeOptions]="[10, 25, 50, 100]"
+                       [pageSize]="pageSize"></mat-paginator>
+    </div>
+
+    <div *ngIf="!missedOrdersData">
+        <mat-spinner></mat-spinner>
+    </div>
+</div>

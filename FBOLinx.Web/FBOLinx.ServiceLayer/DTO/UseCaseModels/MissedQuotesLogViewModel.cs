@@ -14,5 +14,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels
         public bool Emailed { get; set; }
         public int MissedQuotesCount { get; set; }
         public int CustomerId { get; set; }
+        public string ItpMarginTemplate { get; set; }
+        public string Eta { get; set; }
+        public string Etd { get; set; }
+        public double Volume { get; set; }
     }
 }

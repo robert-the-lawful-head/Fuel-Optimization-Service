@@ -32,6 +32,8 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public filterStartDate: Date;
     public filterEndDate: Date;
     public timer: Subscription;
+    public isFuelOrdersShowing: boolean = true;
+    public missedOrdersData: any[];
 
     constructor(
         private fuelReqService: FuelreqsService,
@@ -110,6 +112,13 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
                 /* save to file */
                 XLSX.writeFile(wb, 'FuelOrders.xlsx');
             });
+    }
+
+    onTabClick(event) {
+        if (event.tab.textLabel == "Fuel Orders")
+            this.isFuelOrdersShowing = true;
+        else
+            this.isFuelOrdersShowing = false;
     }
 
     // PRIVATE METHODS

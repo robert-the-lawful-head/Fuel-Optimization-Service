@@ -24,4 +24,10 @@ export class FbomissedquoteslogService {
             headers: this.headers,
         });
     }
+
+    public getMissedOrders(payload) {
+        return this.http.get(this.accessPointUrl + '/missed-orders/fbo/' + payload.fboId, {
+            headers: this.headers,
+        });
+    }
 }
