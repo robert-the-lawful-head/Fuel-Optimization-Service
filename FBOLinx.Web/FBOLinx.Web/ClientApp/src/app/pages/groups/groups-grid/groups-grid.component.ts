@@ -119,7 +119,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
-    accountType: 'all' | 'active' | 'inactive' = 'active';
+    groupAccountType: 'all' | 'active' | 'inactive' = 'active';
+    fboAccountType: 'all' | 'active' | 'inactive' = 'active';
     pageSettings: any = {
         pageSize: 25,
         pageSizes: [25, 50, 100, 'All'],
@@ -568,17 +569,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         const filteredFbos = this.groupsFbosData.fbos.filter(
             (fbo) =>
-                this.accountType === 'all' ||
-                (this.accountType === 'active' && !fbo.accountExpired) ||
-                (this.accountType === 'inactive' && fbo.accountExpired)
+                this.fboAccountType === 'all' ||
+                (this.fboAccountType === 'active' && !fbo.accountExpired) ||
+                (this.fboAccountType === 'inactive' && fbo.accountExpired)
         );
         const filteredGroups = this.groupsFbosData.groups.filter(
             (group) =>
-                this.accountType === 'all' ||
-                (this.accountType === 'active' &&
-                    (!group.expiredFboAccountCount ||
-                        group.fboCount !== group.expiredFboAccountCount)) ||
-                filteredFbos.find((fbo) => fbo.groupId === group.oid)
+                this.groupAccountType === 'all' ||
+                (this.groupAccountType === 'active' && group.active) ||
+                (this.groupAccountType == 'inactive' && !group.active)
         );
 
         if (!filterValue) {

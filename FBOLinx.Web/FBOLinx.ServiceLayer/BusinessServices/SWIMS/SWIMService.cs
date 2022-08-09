@@ -15,8 +15,10 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.DB.Specifications.AirportWatchData;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.Logging;
@@ -41,12 +43,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly ILoggingService _LoggingService;
         private readonly AirportWatchService _AirportWatchService;
         private readonly IFuelReqService _FuelReqService;
+        private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly AFSAircraftEntityService _AFSAircraftEntityService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
             ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
-            AirportWatchService airportWatchService, IFuelReqService fuelReqService)
+            AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
+            AFSAircraftEntityService afsAircraftEntityService)
         {
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -59,6 +64,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _LoggingService = loggingService;
             _AirportWatchService = airportWatchService;
             _FuelReqService = fuelReqService;
+            _pricingTemplateService = pricingTemplateService;
+            _AFSAircraftEntityService = afsAircraftEntityService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(int groupId, int fboId, string icao)
@@ -241,8 +248,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<AcukwikAirport> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
             List<string> tailNumbers = swimFlightLegs.Select(x => x.AircraftIdentification).ToList();
             var flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
-            var pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(tailNumbers);
-            var aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList()));
+            IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(tailNumbers);
+            var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
+            List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
+            var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
             List<AirportWatchLiveData> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByFlightNumberSpecification(tailNumbers, DateTime.UtcNow.AddHours(-1)));
             List<AirportWatchHistoricalData> antennaHistoricalData;
             if (useHistoricalData)
@@ -253,6 +262,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 antennaHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(new AirportWatchHistoricalDataSpecification(tailNumbers, DateTime.UtcNow.AddDays(-1)));
             }
+
+            PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
+
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
             foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
             {
@@ -265,8 +277,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 bool isAircraftOnGround = false;
                 if (useHistoricalData)
                 {
-                    AirportWatchHistoricalData airportWatchHistoricalData = antennaHistoricalData.Where(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification && 
-                        x.AircraftPositionDateTimeUtc >= historicalAircraftPositionDateTime.Value.AddMinutes(-5) && x.AircraftPositionDateTimeUtc <= historicalAircraftPositionDateTime.Value.AddMinutes(5)).FirstOrDefault();
+                    AirportWatchHistoricalData airportWatchHistoricalData = antennaHistoricalData.FirstOrDefault(x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification && 
+                        x.AircraftPositionDateTimeUtc >= historicalAircraftPositionDateTime.Value.AddMinutes(-5) && x.AircraftPositionDateTimeUtc <= historicalAircraftPositionDateTime.Value.AddMinutes(5));
                     if (airportWatchHistoricalData != null)
                     {
                         isAircraftOnGround = airportWatchHistoricalData.IsAircraftOnGround;
@@ -294,15 +306,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         flightLegDto.Model = aircraft.Model;
                         flightLegDto.FuelCapacityGal = aircraft.FuelCapacityGal;
                     }
-                }
 
-                flightLegDto.ITPMarginTemplate = "Company Pricing";
-                var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
-                if (pricingTemplate != null && !string.IsNullOrWhiteSpace(pricingTemplate.Item3))
-                {
-                    flightLegDto.ITPMarginTemplate = pricingTemplate.Item3;
-                }
+                    var afsAircraft = afsAircrafts.FirstOrDefault(x => x.DegaAircraftID == aircraftByFlightDepartment.Item1);
+                    if (afsAircraft != null)
+                    {
+                        flightLegDto.ICAOAircraftCode = afsAircraft.Icao;
+                    }
 
+                    SetPricingTemplate(flightLegDto, defaultCompanyPricingTemplate, swimFlightLeg.AircraftIdentification, pricingTemplates);
+                }
+                
                 flightLegDto.ATDZulu = swimFlightLeg.ATD;
                 AcukwikAirport departureAirport = airports.FirstOrDefault(x => x.Icao == flightLegDto.DepartureICAO);
                 if (departureAirport != null)
@@ -327,7 +340,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     flightLegDto.ETALocal = swimFlightLeg.ETA;
                 }
                 
-                flightLegDto.ETE = flightLegDto.ETAZulu - DateTime.UtcNow;
+                flightLegDto.ETE = (flightLegDto.ETAZulu - DateTime.UtcNow).Duration();
 
                 if (isArrivals)
                 {
@@ -362,6 +375,27 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             await SetOrderInfo(groupId, fboId, result);
 
             return result;
+        }
+
+        private void SetPricingTemplate(FlightLegDTO flightLegDto, PricingTemplateDto defaultCompanyPricingTemplate, string tailNumber, IEnumerable<Tuple<int, string, string>> pricingTemplates)
+        {
+            // no flight department ( not a fuelerlinx aircraft) - leave blank/empty
+            // if assigned flight department, but no aircraft specific - then show the company's itp margin template
+            if (string.IsNullOrWhiteSpace(flightLegDto.FlightDepartment))
+            {
+                return;
+            }
+
+            //flightLegDto.ITPMarginTemplate = "Company Pricing";
+            var pricingTemplate = pricingTemplates.FirstOrDefault(x => x.Item2 == tailNumber);
+            if (pricingTemplate != null && !string.IsNullOrWhiteSpace(pricingTemplate.Item3))
+            {
+                flightLegDto.ITPMarginTemplate = pricingTemplate.Item3;
+            }
+            else if(defaultCompanyPricingTemplate != null)
+            {
+                flightLegDto.ITPMarginTemplate = defaultCompanyPricingTemplate.Name;
+            }
         }
 
         private async Task SetOrderInfo(int groupId, int fboId, IList<FlightLegDTO> flightLegs)
