@@ -2,9 +2,12 @@
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.Dto.UseCaseModels;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -28,6 +31,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService
     {
         private readonly FboLinxContext _context;
+        private readonly CustomerAircraftService _customerAircraftService;
+
         public PricingTemplateEntityService(FboLinxContext context,
             ICustomerMarginsEntityService customerMarginEntityService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(context)
@@ -144,6 +149,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                              where cct.Fboid == fboId && cibg.GroupId == groupId && (c.Suspended == null || c.Suspended == false)
                                              select new
                                              { CustomerType = cct.CustomerType }).ToListAsync();
+
+            //Load customer aircrafts assignments
+            var customerAircraftAssignments = await GetCustomerAircrafts(groupId, fboId);
 
             //Separate inner queries first for FBO Prices and Margin Tiers
             var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
@@ -357,6 +365,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                         DiscountType = p.DiscountType,
                                         AllInPrice = c.AllInPrice,
                                         CustomersAssigned = customerAssignments.Sum(x => x.CustomerType == p.Oid ? 1 : 0),
+                                        AircraftsAssigned = customerAircraftAssignments.Sum(y => y.PricingTemplateId == p.Oid ? 1 : 0),
                                         PricingFormula = (p.MarginType == MarginTypes.CostPlus ? "Cost + " : "Retail - ") + (p.DiscountType == DiscountTypes.Percentage ?
                                                     (cm != null ? cm.Amount.ToString() : "0") + "%"
                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))
@@ -578,6 +587,89 @@ namespace FBOLinx.ServiceLayer.EntityServices
             {
                 result += feeAndTax.GetCalculatedValue(subTotalWithMargin, result);
             }
+
+            return result;
+        }
+
+        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0)
+        {
+            var pricingTemplates = await GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
+
+            var aircraftPricingTemplates = await GetCustomerAircraftTemplates(fboId, groupId);
+
+            var result = await GetCustomerAircrafts(groupId);
+
+            result.ForEach(x =>
+            {
+                var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
+                if (aircraftPricingTemplate != null)
+                {
+                    x.PricingTemplateId = aircraftPricingTemplate?.Oid;
+                    x.PricingTemplateName = aircraftPricingTemplate?.Name;
+                }
+                else
+                {
+                    var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
+                    x.PricingTemplateId = pricingTemplate?.Oid;
+                    x.PricingTemplateName = pricingTemplate?.Name;
+                    x.IsCompanyPricing = true;
+                }
+            });
+
+            return result;
+        }
+
+        private async Task<List<CustomerAircraftsPricingTemplatesModel>> GetCustomerAircraftTemplates(int fboId, int groupId)
+        {
+            var aircraftPricingTemplates = await (
+                                    from ap in _context.AircraftPrices
+                                    join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
+                                    join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                    into leftJoinPt
+                                    from pt in leftJoinPt.DefaultIfEmpty()
+                                    where ca.GroupId == groupId && pt.Fboid == fboId && fboId > 0
+                                    select new CustomerAircraftsPricingTemplatesModel
+                                    {
+                                        Oid = ap == null ? 0 : pt.Oid,
+                                        Name = ap == null ? "" : pt.Name,
+                                        CustomerAircraftId = ap == null ? 0 : ap.CustomerAircraftId
+                                    }).ToListAsync();
+
+            return aircraftPricingTemplates;
+        }
+
+        public async Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForAllCustomers(int fboId, int groupId)
+        {
+            List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
+
+            var standardTemplates = await GetStandardTemplatesForAllCustomers(fboId, groupId);
+            result.AddRange(standardTemplates);
+            return result;
+        }
+
+        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId)
+        {
+            List<CustomerAircraftsViewModel> result = await (
+               from ca in _context.CustomerAircrafts
+               join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+               join c in _context.Customers on cg.CustomerId equals c.Oid
+               where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
+               select new CustomerAircraftsViewModel
+               {
+                   Oid = ca.Oid,
+                   GroupId = ca.GroupId,
+                   CustomerId = ca.CustomerId,
+                   Company = cg.Company,
+                   AircraftId = ca.AircraftId,
+                   TailNumber = ca.TailNumber,
+                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
+                   BasedPaglocation = ca.BasedPaglocation,
+                   NetworkCode = ca.NetworkCode,
+                   AddedFrom = ca.AddedFrom ?? 0,
+                   IsFuelerlinxNetwork = c.FuelerlinxId > 0
+               })
+               .OrderBy(x => x.TailNumber)
+               .ToListAsync();
 
             return result;
         }

@@ -6,6 +6,7 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.Dto.Requests;
 using FBOLinx.ServiceLayer.Dto.Responses;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Mapping;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         private ICustomCustomerTypeService _customCustomerTypeService;
         private ICustomerMarginService _customerMarginService;
         private IFbolinxPricingTemplateAttachmentsEntityService _fbolinxPricingTemplateAttachmentsEntityService;
+        private FboLinxContext _context;
         public PricingTemplateService(
             IPricingTemplateEntityService pricingTemplateEntityService,
             ICustomerTypesEntityService customerTypesEntityService,
@@ -32,7 +34,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             ICustomerAircraftEntityService customerAircraftEntityService,
             ICustomCustomerTypeService customCustomerTypeService,
             ICustomerMarginService customerMarginService,
-            IFbolinxPricingTemplateAttachmentsEntityService fbolinxPricingTemplateAttachmentsEntityService)
+            IFbolinxPricingTemplateAttachmentsEntityService fbolinxPricingTemplateAttachmentsEntityService,
+            FboLinxContext context)
         {
             _pricingTemplateEntityService = pricingTemplateEntityService;
             _customerTypesEntityService = customerTypesEntityService;
@@ -41,6 +44,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             _customCustomerTypeService = customCustomerTypeService;
             _customerMarginService = customerMarginService;
             _fbolinxPricingTemplateAttachmentsEntityService = fbolinxPricingTemplateAttachmentsEntityService;
+            _context = context;
         }
         public async Task FixCustomCustomerTypes(int groupId, int fboId)
         {
@@ -305,6 +309,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             if (result == null) return false;
 
             return true;
+        }
+
+        public async Task<List<CustomerAircraftsPricingTemplatesModel>> GetCustomerAircraftTemplates(int fboId, int groupId)
+        {
+            var aircraftPricingTemplates = await (
+                                    from ap in _context.AircraftPrices
+                                    join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
+                                    join pt in _context.PricingTemplate on ap.PriceTemplateId equals pt.Oid
+                                    into leftJoinPt
+                                    from pt in leftJoinPt.DefaultIfEmpty()
+                                    where ca.GroupId == groupId && pt.Fboid == fboId && fboId > 0
+                                    select new CustomerAircraftsPricingTemplatesModel
+                                    {
+                                        Oid = ap == null ? 0 : pt.Oid,
+                                        Name = ap == null ? "" : pt.Name,
+                                        CustomerAircraftId = ap == null ? 0 : ap.CustomerAircraftId
+                                    }).ToListAsync();
+            return aircraftPricingTemplates;
         }
     }
 }
