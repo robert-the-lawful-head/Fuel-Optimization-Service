@@ -26,6 +26,7 @@ export class FbosDialogNewFboComponent {
 
     // Public Members
     public dataSources: any = {};
+    public errorMessage: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
@@ -49,8 +50,17 @@ export class FbosDialogNewFboComponent {
     }
 
     public fboSelectionChange() {
-        this.data.fbo = this.data.acukwikFbo.handlerLongName;
-        this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+        this.fbosService.getByAcukwikHandlerId(this.data.acukwikFbo.handlerId).subscribe((result: any) => {
+            //No pre-existing record exists for that FBO in another group - allow adding
+            if (!result || result.oid == 0) {
+                this.errorMessage = '';
+                this.data.fbo = this.data.acukwikFbo.handlerLongName;
+                this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+            } else {
+                this.errorMessage = 'That FBO is already part of a group.';
+            }
+
+        });
     }
 
     public onCancelClick(): void {

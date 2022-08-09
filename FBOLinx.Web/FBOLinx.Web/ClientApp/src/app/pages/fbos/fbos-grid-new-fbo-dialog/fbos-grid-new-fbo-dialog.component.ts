@@ -24,6 +24,7 @@ export interface NewFboModel {
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();
     public errorHappened = false;
+    public errorMessage: string = '';
     // Public Members
     public dataSources: any = {};
 
@@ -51,9 +52,18 @@ export class FbosGridNewFboDialogComponent {
     }
 
     public fboSelectionChange() {
-        this.data.fbo = this.data.acukwikFbo.handlerLongName;
-        this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+        this.fboService.getByAcukwikHandlerId(this.data.acukwikFbo.handlerId).subscribe((result: any) => {
+            //No pre-existing record exists for that FBO in another group - allow adding
+            if (!result || result.oid == 0) {
+                this.errorMessage = '';
+                this.data.fbo = this.data.acukwikFbo.handlerLongName;
+                this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+                this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+            } else {
+                this.errorMessage = 'That FBO is already part of a group.';
+            }
+
+        });
     }
 
     public onCancelClick(): void {

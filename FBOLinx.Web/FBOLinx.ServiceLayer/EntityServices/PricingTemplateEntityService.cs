@@ -194,7 +194,11 @@ namespace FBOLinx.ServiceLayer.EntityServices
                            select s).ToListAsync();
 
             //Prepare fees/taxes based on the provided departure type and flight type
-            List<FboFeesAndTaxes> feesAndTaxes = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId).ToListAsync();
+            var feesAndTaxes = await _context.FbofeesAndTaxes.Include(x => x.OmitsByCustomer).Include(x => x.OmitsByPricingTemplate).Where(x =>
+                      x.Fboid == fboId && (x.FlightTypeClassification == FlightTypeClassifications.All ||
+                                           x.FlightTypeClassification == FlightTypeClassifications.Private))
+                      .AsNoTracking()
+                      .ToListAsync();
             feesAndTaxes = feesAndTaxes.Where(x =>
                     (x.FlightTypeClassification == FlightTypeClassifications.All ||
                      x.FlightTypeClassification == flightTypeClassifications) &&
@@ -230,7 +234,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                                   ? (ppt == null ? 0 : ppt.Amount) + (am == null || am.MarginJet == null ? 0 : (double)am.MarginJet)
                                                   : (ppt == null ? 0 : ppt.Amount)),
                                               amount = ppt == null ? 0 : ppt.Amount,
-                                              PricingTemplateName=pt.Name
+                                              PricingTemplateName = pt.Name
                                           }).ToList();
 
             customerPricingResults.ForEach(x =>
@@ -302,6 +306,22 @@ namespace FBOLinx.ServiceLayer.EntityServices
                         resultsWithFees.AddRange(domesticOptions);
                         resultsWithFees.AddRange(internationalOptions);
                         resultsWithFees.AddRange(allDepartureOptions);
+
+                        //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
+                        //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                        resultsWithFees.ForEach(y =>
+                        {
+                            y.FeesAndTaxes.ForEach(fee =>
+                            {
+                                if (fee.OmitsByPricingTemplate != null &&
+                                    fee.OmitsByPricingTemplate.Any(o =>
+                                        o.PricingTemplateId == y.PricingTemplateId))
+                                {
+                                    fee.IsOmitted = true;
+                                    fee.OmittedFor = "P";
+                                }
+                            });
+                        });
 
                         x.AllInPrice = GetAllInPrice(resultsWithFees.FirstOrDefault());
                     }
