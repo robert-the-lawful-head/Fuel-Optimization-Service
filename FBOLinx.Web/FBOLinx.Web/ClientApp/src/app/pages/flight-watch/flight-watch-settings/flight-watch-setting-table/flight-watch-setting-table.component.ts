@@ -63,10 +63,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
         str += (element.Model)?element.Model:"Fix";
         return str;
     }
-    getOriginDestinationString(element: any){
+    getOriginDestinationString(element: Swim){
         return this.isArrival
-                ? element.departureCity
-                : element.arrivalCity
+                ? element.origin
+                : element.city
     }
     refreshSort() {
         const sortedColumn = this.columns.find(
@@ -88,5 +88,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getSwimDataTypeString(){
         return (this.isArrival)? 'Arrivals': 'Departures';
+    }
+    getDateObject(dateString: string){
+        return new Date(dateString);
     }
 }
