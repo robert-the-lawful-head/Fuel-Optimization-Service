@@ -4,6 +4,7 @@ import {
     OnChanges,
     OnInit,
     Output,
+    Input,
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
@@ -65,6 +66,8 @@ export class MissedOrdersGridComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     chartName = 'missed-orders-table';
+
+
 
     searchText: string = '';
     filterStartDate: Date;
