@@ -117,7 +117,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                 MissedQuoteCount = g.Count(f => f.TailNumber != "")
             }).ToList();
 
-            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
+            foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
             {
                 var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
 
@@ -133,7 +133,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     var localDateTimeEtd = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.DepartureDateTime.GetValueOrDefault(), fboId);
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
+                    missedQuotesLogViewModel.Volume = transaction.DispatchedVolume.Amount;
                     missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
+                    var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
+                    if (customerAircraftPricingTemplate != null)
+                        missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
+                    else
+                    {
+                        var test = "";
+                    }
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
