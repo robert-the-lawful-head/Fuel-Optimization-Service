@@ -33,25 +33,29 @@ const initialColumns: ColumnType[] = [
         name: 'Flight Dept.',
     },
     {
-        id: 'pricingTemplateName',
+        id: 'itpMarginTemplate',
         name: 'ITP Margin Template',
     },
     {
         id: 'eta',
-        name: 'ETA',
-        sort: 'desc',
+        name: 'ETA'
     },
     {
         id: 'etd',
         name: 'ETD',
     },
     {
-        id: 'quotedVolume',
+        id: 'volume',
         name: 'Volume (gal.)',
     },
     {
-        id: 'dateCreated',
+        id: 'tailNumber',
+        name: 'Tail #',
+    },
+    {
+        id: 'creationDate',
         name: 'Created',
+    sort: 'desc',
     },
 ];
 
@@ -169,6 +173,7 @@ export class MissedOrdersGridComponent implements OnInit {
     }
 
     refreshTable() {
+        this.missedOrdersData = null;
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData().subscribe(
             (data: any[]) => {
