@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
                     missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
-                    missedQuotesLogViewModel.CustomerId = customer.Oid;
+                    missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
@@ -119,7 +119,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
-                    missedQuotesLogViewModel.CustomerId = customer.Oid;
+                    missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
@@ -169,7 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
                     missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
                     missedQuotesLogViewModel.MissedQuotesCount = groupedAllRecentFboLinxTransactions.Where(g => g.CustomerId == customer.Customer.Oid).Select(m => m.MissedQuoteCount).FirstOrDefault();
-                    missedQuotesLogViewModel.CustomerId = customer.Oid;
+                    missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
@@ -203,7 +203,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
                         missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
                         missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
-                        missedQuotesLogViewModel.CustomerId = customer.Oid;
+                        missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                         missedOrdersLogList.Add(missedQuotesLogViewModel);
                     }
                 }                

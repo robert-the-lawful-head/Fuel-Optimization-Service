@@ -13,7 +13,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels
         public string TailNumber { get; set; }
         public bool Emailed { get; set; }
         public int MissedQuotesCount { get; set; }
-        public int CustomerId { get; set; }
+        public int CustomerInfoByGroupId { get; set; }
         public string ItpMarginTemplate { get; set; }
         public string Eta { get; set; }
         public string Etd { get; set; }
