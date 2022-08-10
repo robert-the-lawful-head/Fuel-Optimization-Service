@@ -42,12 +42,12 @@
 
 .drawer-container{
     border: 1px solid #1D497F !important;
-    max-width: calc(94.5%);
+    max-width: calc(60%);
 }
 
 .drawer-button{
-    position: absolute; 
-    right: 0px; 
+    position: absolute;
+    right: 0px;
     z-index: 10000;
     top: calc(50%);
 }
