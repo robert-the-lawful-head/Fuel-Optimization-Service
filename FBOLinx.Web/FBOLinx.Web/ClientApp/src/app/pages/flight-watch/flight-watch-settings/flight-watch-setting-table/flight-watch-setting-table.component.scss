@@ -6,20 +6,16 @@
     font-weight: bold ;
 }
 .mat-cell{
-    min-width: 100px;
+    min-width: 80px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
     overflow: hidden;
+    font-size: 12px;
 }
 .mat-header-row .mat-header-cell {
-    min-width: 100px;
-}
-
-.flight-watch-settings-container  .mat-row  .mat-cell  {
-    font-size: 12px;
-    min-width: 100px;
+    min-width: 80px;
 }
 .mat-table{
     overflow: auto;
