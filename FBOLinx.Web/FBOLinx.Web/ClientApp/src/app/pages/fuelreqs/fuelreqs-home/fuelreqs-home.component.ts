@@ -7,6 +7,7 @@ import * as XLSX from 'xlsx';
 import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { ActivatedRoute } from '@angular/router';
 
 const BREADCRUMBS: any[] = [
     {
@@ -34,10 +35,12 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public timer: Subscription;
     public isFuelOrdersShowing: boolean = true;
     public missedOrdersData: any[];
+    public selectedTabIndex: number = 0;
 
     constructor(
         private fuelReqService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private route: ActivatedRoute
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
@@ -46,6 +49,13 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterEndDate = new Date(
             moment().add(30, 'd').format('MM/DD/YYYY')
         );
+
+        this.route.queryParams.subscribe((params) => {
+            if (params.tab && params.tab) {
+                this.selectedTabIndex = parseInt(params.tab);
+            }
+        });
+
         this.startFuelReqDataServe();
     }
 

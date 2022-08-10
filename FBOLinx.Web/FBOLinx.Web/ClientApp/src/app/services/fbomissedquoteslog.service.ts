@@ -25,8 +25,8 @@ export class FbomissedquoteslogService {
         });
     }
 
-    public getMissedOrders(payload) {
-        return this.http.get(this.accessPointUrl + '/missed-orders/fbo/' + payload.fboId, {
+    public getMissedOrders(fboId, startDate, endDate) {
+        return this.http.get(this.accessPointUrl + '/missed-orders/fbo/' + fboId + "?startDate=" + encodeURIComponent(startDate) + "&endDate=" + encodeURIComponent(endDate), {
             headers: this.headers,
         });
     }

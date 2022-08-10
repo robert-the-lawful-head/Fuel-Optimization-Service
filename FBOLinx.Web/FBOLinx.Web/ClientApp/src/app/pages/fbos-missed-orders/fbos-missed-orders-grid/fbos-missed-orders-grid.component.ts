@@ -25,8 +25,8 @@ export class FbosMissedOrdersGridComponent implements OnInit {
         this.refreshMissedOrdersDataSource();
     }
 
-    goToCustomerManager(customerInfoByGroupId: number): void {
-        this.router.navigate(['default-layout', 'customers', customerInfoByGroupId])
+    goToCustomerManager(missedOrder: any): void {
+        this.router.navigate(['/default-layout/fuelreqs'], {queryParams: {search: missedOrder.customerName, tab: 1}});
     }
 
     private refreshMissedOrdersDataSource() {

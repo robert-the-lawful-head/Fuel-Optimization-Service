@@ -4,6 +4,7 @@
             <div class="col col-md-4">
                 <mat-form-field>
                     <input (keyup)="applyFilter($event.target.value)"
+                           [(ngModel)]="searchText"
                            matInput
                            placeholder="Search by Customer, TailNumber, FBO, etc." />
                     <span matPrefix><i class="fa fa-search"></i></span>
@@ -56,7 +57,7 @@
         </div>
     </div>
 
-    <div class="w-100 table-container" style="overflow-x: auto" *ngIf="missedOrdersData">
+    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource}">
         <table [dataSource]="missedOrdersDataSource"
                class="col-12 mb-0"
                mat-table
