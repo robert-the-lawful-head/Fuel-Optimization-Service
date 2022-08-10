@@ -64,7 +64,7 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/FboMissedQuotesLog/get-missed-orders/fbo/5
         [HttpGet("missed-orders/fbo/{fboId}")]
-        public async Task<IActionResult> GetMissedOrders([FromRoute] int fboId, [FromBody] FboMissedOrdersLogRequest fboMissedOrdersLogRequest)
+        public async Task<IActionResult> GetMissedOrders([FromRoute] int fboId, DateTime startDate, DateTime endDate)
         {
             if (!ModelState.IsValid)
             {
@@ -73,7 +73,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var missedOrdersLogList = await _MissedOrderLogService.GetMissedOrders(fboId, fboMissedOrdersLogRequest.StartDateTime, fboMissedOrdersLogRequest.EndDateTime);
+                var missedOrdersLogList = await _MissedOrderLogService.GetMissedOrders(fboId, startDate, endDate);
 
                 return Ok(missedOrdersLogList);
             }

@@ -18,6 +18,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { FbomissedquoteslogService } from '../../../services/fbomissedquoteslog.service';
+import { ActivatedRoute } from '@angular/router';
 
 // Shared components
 import {
@@ -65,6 +66,7 @@ export class MissedOrdersGridComponent implements OnInit {
 
     chartName = 'missed-orders-table';
 
+    searchText: string = '';
     filterStartDate: Date;
     filterEndDate: Date;
     filtersChanged: Subject<any> = new Subject<any>();
@@ -85,9 +87,16 @@ export class MissedOrdersGridComponent implements OnInit {
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
         private ngxLoader: NgxUiLoaderService,
-        private fboMissedQuotesLogService: FbomissedquoteslogService
+        private fboMissedQuotesLogService: FbomissedquoteslogService,
+        private route: ActivatedRoute
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
+
+        this.route.queryParams.subscribe((params) => {
+            if (params.search && params.search) {
+                this.searchText = params.search;
+            }
+        });
     }
 
     ngOnInit() {
@@ -142,6 +151,8 @@ export class MissedOrdersGridComponent implements OnInit {
         } else {
             this.columns = initialColumns;
         }
+
+        this.refreshTable();
     }
 
     getTableColumns() {
@@ -156,7 +167,7 @@ export class MissedOrdersGridComponent implements OnInit {
 
     refreshTable() {
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+        this.fetchData().subscribe(
             (data: any[]) => {
                 this.missedOrdersData = data;
 
@@ -169,13 +180,8 @@ export class MissedOrdersGridComponent implements OnInit {
         );
     }
 
-    fetchData(startDate: Date, endDate: Date) {
-        return this.fboMissedQuotesLogService.getMissedOrders({
-            endDateTime: this.filterEndDate,
-            fboId: this.sharedService.currentUser.fboId,
-            startDateTime: this.filterStartDate,
-        }
-        );
+    fetchData() {
+        return this.fboMissedQuotesLogService.getMissedOrders(this.sharedService.currentUser.fboId, moment(this.filterStartDate).format('MM/DD/YYYY HH:ss'), moment(this.filterEndDate).format('MM/DD/YYYY HH:ss'));
     }
 
     refreshDataSource() {
@@ -191,6 +197,8 @@ export class MissedOrdersGridComponent implements OnInit {
         this.resultsLength = this.missedOrdersData.length;
 
         this.refreshSort();
+
+        this.applyFilter(this.searchText);
     }
 
     refreshSort() {

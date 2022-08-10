@@ -9,7 +9,7 @@
     <div *ngIf="noMissedOrders">No Missed Orders</div>
     <div *ngIf="!noMissedOrders">
         <div *ngFor="let missedOrder of fbosMissedOrdersDataSource;">
-                <div class="row" (click)="goToCustomerManager(missedOrder.customerId)">
+                <div class="row" (click)="goToCustomerManager(missedOrder)">
                     <div class="col-3 border-bottom pt-3 pb-3">{{ missedOrder.customerName }}</div>
                     <div class="col-2 border-bottom pt-3 pb-3">  {{missedOrder.tailNumber}}</div>
                     <div class="col-3 border-bottom pt-3 pb-3"> {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}</div>
@@ -18,6 +18,3 @@
         </div>
     </div>
 </div>
-
-
-
