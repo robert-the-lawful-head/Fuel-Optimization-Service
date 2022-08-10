@@ -6,6 +6,7 @@
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
 <div>
+    <div class="subtitle">Lost To Competition: Flight Departments that requested quotes but dispatched fuel at another FBO</div>
     <div *ngIf="noMissedOrders">No Missed Orders</div>
     <div *ngIf="!noMissedOrders">
         <div *ngFor="let missedOrder of fbosMissedOrdersDataSource;">

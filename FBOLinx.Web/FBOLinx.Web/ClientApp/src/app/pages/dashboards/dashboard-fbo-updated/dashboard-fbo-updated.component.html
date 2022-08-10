@@ -10,18 +10,18 @@
     <app-fbo-prices-update-generator [isCsr]="isCsr" [isMember]="isMember"></app-fbo-prices-update-generator>
 
     <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <ni-card [collapsible]="false"
-                         [opened]="true"
-                         bgColor="dead"
-                         class=""
-                         headerBgColor="dead"
-                         outline="true"
-                         theme="small"
-                         title="Expired Pricing Lost Opportunities: These flights departments requested a quote and your pricing was expired">
-                    <app-fbos-missed-quotes-grid #missedQuotes></app-fbos-missed-quotes-grid>
-                </ni-card>
-            </div>
+        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <ni-card [collapsible]="false"
+                     [opened]="true"
+                     bgColor="dead"
+                     class=""
+                     headerBgColor="dead"
+                     outline="true"
+                     theme="small"
+                     title="Missed Quotes">
+                <app-fbos-missed-quotes-grid #missedQuotes></app-fbos-missed-quotes-grid>
+            </ni-card>
+        </div>
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <ni-card [collapsible]="false"
                          [opened]="true"
@@ -33,7 +33,7 @@
                          headerBgColor="dead"
                          outline="true"
                          theme="small"
-                         title="Lost To Competition: Flight Departments that requested quotes but dispatched fuel at another FBO">
+                         title="Missed Orders">
                     <app-fbos-missed-orders-grid #missedOrders></app-fbos-missed-orders-grid>
                 </ni-card>
             </div>

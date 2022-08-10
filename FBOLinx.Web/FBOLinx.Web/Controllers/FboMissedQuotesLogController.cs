@@ -52,7 +52,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var missedOrdersLogList = await _MissedOrderLogService.GetRecentMissedOrders(fboId);
+                var missedOrdersLogList = await _MissedOrderLogService.GetMissedOrders(fboId, DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), true);
 
                 return Ok(missedOrdersLogList);
             }
