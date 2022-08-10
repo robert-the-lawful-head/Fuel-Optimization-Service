@@ -132,9 +132,9 @@ export class MissedOrdersGridComponent implements OnInit {
         }
 
         this.filterStartDate = new Date(
-            moment().add(-1, 'M').format('MM/DD/YYYY')
+            moment().add(-1, 'week').format('MM/DD/YYYY')
         );
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
