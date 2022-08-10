@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource}">
+    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource || !missedOrdersData}">
         <table [dataSource]="missedOrdersDataSource"
                class="col-12 mb-0"
                mat-table
@@ -76,21 +76,21 @@
                     ITP Margin Template
                 </th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.pricingTemplateName }}
+                    {{ missedorder.itpMarginTemplate }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="eta">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.eta | date: "MMM d, yyyy, HH:mm" }}
+                    {{ missedorder.eta  }}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="etd">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.etd | date: "MMM d, yyyy, HH:mm" }}
+                    {{ missedorder.etd }}
                 </td>
             </ng-container>
 
@@ -99,7 +99,7 @@
                     Volume (gal.)
                 </th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.quotedVolume }}
+                    {{ missedorder.volume }}
                 </td>
             </ng-container>
 
@@ -115,7 +115,7 @@
             <ng-container matColumnDef="dateCreated">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.dateCreated | date: "MMM d, yyyy, HH:mm" }}
+                    {{ missedorder.createdDate }}
                 </td>
             </ng-container>
 
