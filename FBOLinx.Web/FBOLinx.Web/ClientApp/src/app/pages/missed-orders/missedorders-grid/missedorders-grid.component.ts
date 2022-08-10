@@ -85,6 +85,7 @@ export class MissedOrdersGridComponent implements OnInit {
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
         private ngxLoader: NgxUiLoaderService,
+        private fboMissedQuotesLogService: FbomissedquoteslogService
     ) {
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
@@ -169,11 +170,10 @@ export class MissedOrdersGridComponent implements OnInit {
     }
 
     fetchData(startDate: Date, endDate: Date) {
-        return this.airportWatchService.getArrivalsDepartures({
-            endDateTime: this.endDate,
+        return this.fboMissedQuotesLogService.getMissedOrders({
+            endDateTime: this.filterEndDate,
             fboId: this.sharedService.currentUser.fboId,
-            icao: '',
-            startDateTime: this.startDate,
+            startDateTime: this.filterStartDate,
         }
         );
     }

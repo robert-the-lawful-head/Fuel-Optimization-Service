@@ -73,7 +73,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                var missedOrdersLogList = await _MissedOrderLogService.GetRecentMissedOrders(fboId);
+                var missedOrdersLogList = await _MissedOrderLogService.GetMissedOrders(fboId, fboMissedOrdersLogRequest.StartDateTime, fboMissedOrdersLogRequest.EndDateTime);
 
                 return Ok(missedOrdersLogList);
             }
