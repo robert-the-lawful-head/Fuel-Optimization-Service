@@ -5,19 +5,17 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ToReadableDateTimePipe implements PipeTransform {
 
-  transform(dateObject: any, args?: any): string {
-    dateObject =  new Date(dateObject);
-
+  transform(dateObject: Date, args?: any): string {
     if(dateObject == null) return "";
     var dmy:string[] = [
         dateObject.getDate().toString(),
         (dateObject.getMonth() + 1).toString(),
-        dateObject.getFullYear().toString() 
+        dateObject.getFullYear().toString()
     ];
     var hms:string[] = [
         dateObject.getHours().toString(),
-        dateObject.getMinutes().toString(), 
-        dateObject.getSeconds().toString()   
+        dateObject.getMinutes().toString(),
+        dateObject.getSeconds().toString()
     ];
 
     dmy[0] = ('0' + dmy[0]).slice(-2);
