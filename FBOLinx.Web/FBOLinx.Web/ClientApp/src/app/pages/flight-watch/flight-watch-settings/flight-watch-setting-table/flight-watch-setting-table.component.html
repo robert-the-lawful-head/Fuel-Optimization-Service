@@ -82,7 +82,7 @@
                 <ng-container matColumnDef="eta-atd">
                     <mat-header-cell *matHeaderCellDef>ETA/ATD</mat-header-cell>
                     <mat-cell *matCellDef="let element" matTooltip="{{ element.etaZulu }}">
-                        {{ element.etaZulu }}
+                        {{ getDateObject(element.etaLocal) | getTime }}
                     </mat-cell>
                 </ng-container>
 
