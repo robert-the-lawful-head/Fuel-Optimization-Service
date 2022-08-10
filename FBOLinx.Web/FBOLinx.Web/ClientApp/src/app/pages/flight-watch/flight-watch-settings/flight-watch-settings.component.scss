@@ -62,11 +62,49 @@ mat-card {
     }
 }
 
-.filter-container{
+.filter-container {
     display: flex;
     padding: 0px 10px 0px 10px;
     justify-content: space-around;
+    margin-top: -15px;
 }
-.icao-select-container{
+.icao-select-container {
     display: flex;
+}
+
+.tables-container {
+    height: 100%;
+}
+.data-container {
+    overflow: auto;
+}
+@media only screen and (max-width: 1365px) {
+    .data-container {
+        height: 200px;
+    }
+}
+@media only screen and (min-width: 1366px) {
+    .data-container {
+        height: calc(26.6vh);
+    }
+}
+@media only screen and (min-width: 1440px) {
+    .data-container {
+        height: calc(30vh);
+    }
+}
+@media only screen and (min-width: 1680px) {
+    .data-container {
+        height: calc(32.9vh);
+    }
+}
+@media only screen and (min-width: 1920px) {
+    .data-container {
+        height: calc(35vh);
+    }
+}
+@media only screen and (min-width: 2560px) {
+    .data-container {
+        height: calc(38.8vh);
+    }
 }

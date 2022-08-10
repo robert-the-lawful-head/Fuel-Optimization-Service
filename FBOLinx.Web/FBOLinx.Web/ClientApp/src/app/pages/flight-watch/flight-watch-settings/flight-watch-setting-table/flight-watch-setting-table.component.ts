@@ -21,7 +21,7 @@ import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map
 export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
-    @Input() columns: ColumnType[];  
+    @Input() columns: ColumnType[];
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() saveSettings = new EventEmitter();
@@ -30,8 +30,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     constructor() { }
 
-    ngOnInit() { 
-         this.sort.sortChange.subscribe(() => {
+    ngOnInit() {
+
+    }
+    ngAfterViewInit() {
+        this.sort?.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -41,9 +44,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
                           name: column.name,
                       }
             );
-            this.saveSettings.emit();        });
+            this.saveSettings.emit();
+        });
     }
-
     openPopup(row: any) {
         this.openAircraftPopup.emit(row.tailNumber);
     }
@@ -55,26 +58,26 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
     }
     geMakeModelDisplayString(element: any){
-        let str = element.Make;
-        str += (element.Make && element.Model) ? '/':'';
-        str += element.Model;
+        let str = (element.Make)?element.Make:"Check";
+        str += '/';
+        str += (element.Model)?element.Model:"Fix";
         return str;
     }
-    getOriginDestinationString(element: any){
+    getOriginDestinationString(element: Swim){
         return this.isArrival
-                ? element.departureCity
-                : element.arrivalCity
+                ? element.origin
+                : element.city
     }
     refreshSort() {
         const sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
         );
-        this.sort.sort({
+        this.sort?.sort({
             disableClear: false,
             id: null,
             start: sortedColumn?.sort || 'asc',
         });
-        this.sort.sort({
+        this.sort?.sort({
             disableClear: false,
             id: sortedColumn?.id,
             start: sortedColumn?.sort || 'asc',
@@ -85,5 +88,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getSwimDataTypeString(){
         return (this.isArrival)? 'Arrivals': 'Departures';
+    }
+    getDateObject(dateString: string){
+        return new Date(dateString);
     }
 }

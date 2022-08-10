@@ -61,7 +61,7 @@ export class FlightWatchMapComponent
 
     public acukwikairports: AcukwikAirport[];
     public icao: any;
-    nearbyMiles: number = 30;
+    nearbyMiles: number = 150;
     //popup
     public popupData: Aircraftwatch = {
         customerInfoBygGroupId: 0,

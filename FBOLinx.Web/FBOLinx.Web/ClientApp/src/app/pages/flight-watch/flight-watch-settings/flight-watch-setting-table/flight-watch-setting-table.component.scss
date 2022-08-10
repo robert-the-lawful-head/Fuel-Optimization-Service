@@ -1,26 +1,26 @@
 
-.tables-container{
-    display: flex; 
-    flex-direction:column;
-    height: 100%;
-    overflow:hidden; 
-    margin: 0px;
-    padding: 0px;
-}
-.tables-container > div{
-    height: 50%; overflow:auto;
-}
+
 .mat-card-header .mat-card-title{
     padding: 0px ;
     margin: 0px ;
     font-weight: bold ;
 }
 .mat-cell{
-    width: 100px;
+    min-width: 80px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
     overflow: hidden;
+    font-size: 12px;
 }
-
+.mat-header-row .mat-header-cell {
+    min-width: 80px;
+}
+.mat-table{
+    overflow: auto;
+}
+.mat-card {
+    padding-top: 0px;
+    overflow: hidden;
+}

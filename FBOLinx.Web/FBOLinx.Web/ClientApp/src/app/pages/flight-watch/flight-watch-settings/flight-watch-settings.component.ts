@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
@@ -9,6 +8,7 @@ import { Swim } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
+import { FlightWatchComponent } from '../flight-watch/flight-watch.component';
 import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
 @Component({
@@ -23,15 +23,18 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Input() swimDepartures: Swim[];
     @Input() icao: string;
     @Input() icaoList: string[];
-
     @Input() filteredTypes: string[];
+
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() openAircraftPopup = new EventEmitter<string>();
-   
+    @Output() updateDrawerButtonPosition = new EventEmitter<any>();
+
+
+
     @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
-    
+
     searchIcaoTxt: string;
 
     columns: ColumnType[] = [];
@@ -42,7 +45,6 @@ export class FlightWatchSettingsComponent implements OnInit {
     }
 
     ngOnInit() {
-       
     }
 
     get aircraftTypes() {
@@ -113,7 +115,7 @@ export class FlightWatchSettingsComponent implements OnInit {
             }
 
             this.columns = [...result];
-
+            this.updateDrawerButtonPosition.emit();
             this.settingsTable.refreshSort();
             this.saveSettings();
         });
@@ -170,10 +172,6 @@ export class FlightWatchSettingsComponent implements OnInit {
                 {
                     id: 'itpMarginTemplate',
                     name: 'ITP Margin Template',
-                },
-                {
-                    id: 'ppg',
-                    name: 'PPG',
                 },
                 {
                     id: 'fuelCapacityGal',

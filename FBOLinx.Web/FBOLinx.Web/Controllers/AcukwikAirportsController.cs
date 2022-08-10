@@ -11,6 +11,8 @@ using FBOLinx.Service.Mapping.Dto;
 using Mapster;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Core.Enums;
+using FBOLinx.Core.Utilities.Enums;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -200,15 +202,20 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("{icao}/nearby-airports/{miles}/nautical-miles")]
         public async Task<ActionResult<List<AcukwikAirportDTO>>> GetNearbyAcukwikAirportsByIcao([FromRoute] string icao, [FromRoute] int miles)
         {
-
             var selectedAirport = await _context.AcukwikAirports
                                             .Where(x => x.Icao.ToLower() == icao.ToLower())
                                             .FirstOrDefaultAsync();
 
             if (selectedAirport == null) return NotFound();
 
+            var airportTypeFilter = new string[] { EnumHelper.GetDescription(AirportTypeEnum.JointCivilMilitary)  , EnumHelper.GetDescription(AirportTypeEnum.Civil) };
+            var fuelTypeFilter = new string[] { EnumHelper.GetDescription(FuelTypeEnum.AvgasOnly), EnumHelper.GetDescription(FuelTypeEnum.Avgas), EnumHelper.GetDescription(FuelTypeEnum.NoFuel) };
+
             var cityAirports = await _context.AcukwikAirports
-                                           .Where(x => x.StateSubdivision == selectedAirport.StateSubdivision).ToListAsync();
+                                           .Where(x => x.StateSubdivision == selectedAirport.StateSubdivision)
+                                           .Where(x => airportTypeFilter.Contains(x.AirportType))
+                                           .Where(x => !fuelTypeFilter.Contains(x.FuelType))
+                                           .ToListAsync();
 
             var airportsResult = cityAirports.Adapt<List<AcukwikAirportDTO>>();
             foreach (var airport in airportsResult)
