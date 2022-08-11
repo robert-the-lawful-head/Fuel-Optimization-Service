@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 {
@@ -27,7 +28,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
     public class MissedOrderLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedOrderLogService
     {
-        private IFboService _FboService; 
         private IFboEntityService _FboEntityService;
         private IFboAirportsService _FboAirportsService;
         private readonly ICustomerAircraftService _CustomerAircraftService;
@@ -35,12 +35,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
         private readonly IFuelReqService _FuelReqService;
         private FuelerLinxApiService _FuelerLinxApiService;
         private IPricingTemplateEntityService _PricingTemplateEntityService;
+        private IAirportTimeService _AirportTimeService;
 
-        public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboService fboService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
-            ICustomerAircraftService customerAircraftService, CustomerService customerService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService) : base(entityService)
+        public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
+            ICustomerAircraftService customerAircraftService, CustomerService customerService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService,
+            IAirportTimeService airportTimeService) : base(entityService)
         {
+            _AirportTimeService = airportTimeService;
             _EntityService = entityService;
-            _FboService = fboService;
             _FboEntityService = fboEntityService;
             _FboAirportsService = iFboAirportsService;
             _CustomerAircraftService = customerAircraftService;
@@ -71,7 +73,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                 allFboLinxTransactions.AddRange(recentTransactions);
             }
 
-            var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
+            var localTimeZone = await _AirportTimeService.GetAirportTimeZone(fboAirport.Icao);
 
             var groupedAllFboLinxTransactions = allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
@@ -88,11 +90,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTimeCreatedDate = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.DateCreated.GetValueOrDefault(), fboId);
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DateCreated.GetValueOrDefault());
                     missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-                    var localDateTimeEta = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.Eta.GetValueOrDefault(), fboId);
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Eta.GetValueOrDefault());
                     missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
-                    var localDateTimeEtd = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.Etd.GetValueOrDefault(), fboId);
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Etd.GetValueOrDefault());
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.Volume = transaction.QuotedVolume.GetValueOrDefault();
@@ -126,11 +128,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTimeCreatedDate = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.CreationDate.GetValueOrDefault(), fboId);
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.CreationDate.GetValueOrDefault());
                     missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-                    var localDateTimeEta = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.CreationDate.GetValueOrDefault(), fboId);
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.ArrivalDateTime.GetValueOrDefault());
                     missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
-                    var localDateTimeEtd = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.DepartureDateTime.GetValueOrDefault(), fboId);
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DepartureDateTime.GetValueOrDefault());
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.Volume = transaction.DispatchedVolume.Amount;
