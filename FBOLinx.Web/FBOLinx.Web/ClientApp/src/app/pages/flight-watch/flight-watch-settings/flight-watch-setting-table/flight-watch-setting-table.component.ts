@@ -58,9 +58,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
     }
     geMakeModelDisplayString(element: any){
-        let str = (element.Make)?element.Make:"Check";
-        str += '/';
-        str += (element.Model)?element.Model:"Fix";
+        let str = (element.Make)?element.Make:"";
+        str += (element.Make && element.Make)?"/":"";
+        str += (element.Model)?element.Model:"";
         return str;
     }
     getOriginDestinationString(element: Swim){
