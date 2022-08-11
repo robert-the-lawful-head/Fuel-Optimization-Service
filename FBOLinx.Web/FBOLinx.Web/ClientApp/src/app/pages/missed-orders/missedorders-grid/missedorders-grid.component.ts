@@ -53,7 +53,7 @@ const initialColumns: ColumnType[] = [
         name: 'Tail #',
     },
     {
-        id: 'creationDate',
+        id: 'createdDate',
         name: 'Created',
     sort: 'desc',
     },
@@ -146,15 +146,9 @@ export class MissedOrdersGridComponent implements OnInit {
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
         if (localStorage.getItem(this.tableLocalStorageKey)) {
-            if (this.columns.length === 13) {
-                this.columns = initialColumns;
-            }
-            else {
-                this.columns = JSON.parse(
-                    localStorage.getItem(this.tableLocalStorageKey)
-                );
-            }
-
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
         } else {
             this.columns = initialColumns;
         }

@@ -140,10 +140,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
                     if (customerAircraftPricingTemplate != null)
                         missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
-                    else
-                    {
-                        var test = "";
-                    }
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
