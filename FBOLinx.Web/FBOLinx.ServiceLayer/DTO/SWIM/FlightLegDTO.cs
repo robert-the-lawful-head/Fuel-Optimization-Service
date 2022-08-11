@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.ServiceLayer.DTO.SWIM
 {

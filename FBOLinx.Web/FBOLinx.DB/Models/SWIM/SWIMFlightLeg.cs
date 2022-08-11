@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using FBOLinx.Core.BaseModels.Entities;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
@@ -27,6 +28,10 @@ namespace FBOLinx.DB.Models
 
         [Required]
         public DateTime ETA { get; set; }
+
+        // public bool IsPlaceholder { get; set; }
+        // public bool IsAircraftOnGround { get; set; }
+        // public FlightLegStatus Status { get; set; }
 
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }
