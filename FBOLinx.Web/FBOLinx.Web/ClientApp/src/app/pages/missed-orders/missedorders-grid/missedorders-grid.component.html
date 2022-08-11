@@ -71,7 +71,7 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="pricingTemplateName">
+            <ng-container matColumnDef="itpMarginTemplate">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     ITP Margin Template
                 </th>
@@ -94,12 +94,12 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="quotedVolume">
+            <ng-container matColumnDef="volume">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Volume (gal.)
                 </th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.volume }}
+                    {{ missedorder.volume }} gal.
                 </td>
             </ng-container>
 
@@ -112,7 +112,7 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="dateCreated">
+            <ng-container matColumnDef="createdDate">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
                 <td *matCellDef="let missedorder" mat-cell>
                     {{ missedorder.createdDate }}
