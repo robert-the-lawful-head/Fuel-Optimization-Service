@@ -34,7 +34,7 @@ export class FbosMissedOrdersGridComponent implements OnInit {
     }
 
     goToCustomerDetails(missedOrder: any): void {
-        this.router.navigate(['/default-layout/customers/' + missedOrder.customerInfoByGroupId]);
+        this.router.navigate(['/default-layout/customers/' + missedOrder.customerInfoByGroupId], { queryParams: { tab: 2 } });
     }
 
     private refreshMissedOrdersDataSource() {
