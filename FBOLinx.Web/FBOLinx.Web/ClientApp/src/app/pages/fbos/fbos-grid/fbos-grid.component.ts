@@ -156,12 +156,17 @@ export class FbosGridComponent implements OnInit {
     }
 
     public newRecord() {
-        if (this.groupInfo) {
+        var groupId = 0;
+        if (this.sharedService.isManagingGroup())
+            groupId = this.sharedService.currentUser.groupId;
+        else if (this.groupInfo)
+            groupId = this.groupInfo.oid;
+        if (groupId > 0) {
             const dialogRef = this.newFboDialog.open(
                 FbosDialogNewFboComponent,
                 {
                     data: {
-                        groupId: this.groupInfo.oid,
+                        groupId: groupId,
                         initialSetupPhase: true,
                     },
                     width: '450px',

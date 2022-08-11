@@ -7,11 +7,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOs")]
-    public partial class Fbos
+    public partial class Fbos : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         [StringLength(255)]
         public string Fbo { get; set; }
         [Column("GroupID")]

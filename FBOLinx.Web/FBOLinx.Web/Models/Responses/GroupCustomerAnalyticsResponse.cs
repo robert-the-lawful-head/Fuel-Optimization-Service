@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Models.Responses
 {
@@ -77,7 +78,7 @@ namespace FBOLinx.Web.Models.Responses
         public double? DomComm { get; set; }
         public double? DomPrivate { get; set; }
         public double MinGallons { get; set; }
-        public PriceDistributionService.PriceBreakdownDisplayTypes PriceBreakdownDisplayType { get; set; }
+        public PriceBreakdownDisplayTypes PriceBreakdownDisplayType { get; set; }
 
         public void SetPrice(double price, string product, FlightTypeClassifications flightTypeClassification)
         {

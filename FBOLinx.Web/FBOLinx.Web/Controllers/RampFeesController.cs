@@ -4,18 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
-using static FBOLinx.DB.Models.RampFees;
 using System.Text.RegularExpressions;
-using System.Globalization;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 
 namespace FBOLinx.Web.Controllers
 {

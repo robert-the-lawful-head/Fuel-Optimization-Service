@@ -225,6 +225,7 @@ namespace FBOLinx.Web.Controllers
                 if (customerMargin != null)
                 {
                     customerMargin.CustomerType = customerMarginObject.Oid;
+                    _context.CustomCustomerTypes.Update(customerMargin);
                 }
                 else
                 {

@@ -12,7 +12,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public interface ICustomerAircraftEntityService : IRepository<CustomerAircrafts, FboLinxContext>
     {
         Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId);
-        Task<IEnumerable<Tuple<int, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers);
+        Task<IEnumerable<Tuple<int, string, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers);
         Task<IEnumerable<Tuple<int, string, string>>> GetPricingTemplates(IList<string> tailNumbers);
     }
     public class CustomerAircraftEntityService : Repository<CustomerAircrafts, FboLinxContext>, ICustomerAircraftEntityService
@@ -35,13 +35,13 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return await tailNumberList.ToListAsync();
         }
 
-        public async Task<IEnumerable<Tuple<int, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers)
+        public async Task<IEnumerable<Tuple<int, string, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers)
         {
             var flightDepartmentList = from ca in _context.CustomerAircrafts
                                        join cg in _context.CustomerInfoByGroup on ca.CustomerId equals cg.CustomerId
                                        where tailNumbers.Contains(ca.TailNumber)
-                                       select new { ca.AircraftId, ca.TailNumber, cg.Company };
-            return (await flightDepartmentList.ToListAsync()).Select(x => new Tuple<int, string, string>(x.AircraftId, x.TailNumber, x.Company));
+                                       select new { ca.AircraftId, ca.TailNumber, cg.Company, cg.MainPhone };
+            return (await flightDepartmentList.ToListAsync()).Select(x => new Tuple<int, string, string, string>(x.AircraftId, x.TailNumber, x.Company, x.MainPhone));
         }
 
         public async Task<IEnumerable<Tuple<int, string, string>>> GetPricingTemplates(IList<string> tailNumbers)

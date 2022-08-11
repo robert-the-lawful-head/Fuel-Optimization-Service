@@ -16,6 +16,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 
 namespace FBOLinx.Web.Controllers
@@ -30,13 +31,13 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileProvider _fileProvider;
         private readonly MailSettings _MailSettings;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private IServiceProvider _Services;
         private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, FboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService)
+        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;

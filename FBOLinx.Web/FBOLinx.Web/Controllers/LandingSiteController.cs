@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
+﻿using System.Net.Mail;
 using System.Threading.Tasks;
-using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
-using FBOLinx.Web.Data;
 using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using SendGrid.Helpers.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+
 
 namespace FBOLinx.Web.Controllers
 {

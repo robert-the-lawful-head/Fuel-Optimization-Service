@@ -393,6 +393,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
                     this.sharedService.currentUser.icao = this.fboAirport.icao;
+                    localStorage.setItem('icao',this.fboAirport.icao);
                     this.sharedService.emitChange(
                         SharedEvents.icaoChangedEvent
                     );

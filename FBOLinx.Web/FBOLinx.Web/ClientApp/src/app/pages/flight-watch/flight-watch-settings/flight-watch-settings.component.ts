@@ -1,10 +1,15 @@
-import { ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
+import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
 import { Swim } from 'src/app/models/swim';
+import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
+import { FlightWatchComponent } from '../flight-watch/flight-watch.component';
+import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,18 +23,29 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Input() swimDepartures: Swim[];
     @Input() icao: string;
     @Input() icaoList: string[];
-
     @Input() filteredTypes: string[];
+
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() openAircraftPopup = new EventEmitter<string>();
-   
+    @Output() updateDrawerButtonPosition = new EventEmitter<any>();
+
+
+
+    @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
+
     searchIcaoTxt: string;
 
-    constructor() {   }
+    columns: ColumnType[] = [];
+    tableLocalStorageKey: string;
 
-    ngOnInit() {}
+    constructor(private tableSettingsDialog: MatDialog,private sharedService: SharedService) {
+        this.initColumns();
+    }
+
+    ngOnInit() {
+    }
 
     get aircraftTypes() {
         return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')
@@ -46,9 +62,12 @@ export class FlightWatchSettingsComponent implements OnInit {
                 label: 'Other',
             });
     }
-
-    applyFilter(event: SwimFilter) {
-        this.filterChanged.emit(event);
+    applyFilter(event: Event) {
+        let filter: SwimFilter = {
+            filterText: (event.target as HTMLInputElement).value,
+            dataType: null
+        };
+      this.filterChanged.emit(filter);
     }
 
     toggleType(type: string) {
@@ -82,5 +101,92 @@ export class FlightWatchSettingsComponent implements OnInit {
     }
     openPopup(tailnumber: string): void{
         this.openAircraftPopup.emit(tailnumber);
+    }
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: this.columns,
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.columns = [...result];
+            this.updateDrawerButtonPosition.emit();
+            this.settingsTable.refreshSort();
+            this.saveSettings();
+        });
+    }
+    initColumns() {
+        this.tableLocalStorageKey = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+        if (localStorage.getItem(this.tableLocalStorageKey)) {
+            this.columns = JSON.parse(
+                localStorage.getItem(this.tableLocalStorageKey)
+            );
+        } else {
+            this.columns = [
+                {
+                    id: 'tailNumber',
+                    name: 'tailNumber',
+                },
+                {
+                    id: 'flightDepartment',
+                    name: 'flightDepartment',
+                    sort: 'desc',
+                },
+                {
+                    id: 'make-model',
+                    name: 'Make/Model',
+                },
+                {
+                    id: 'ete',
+                    name: 'ETE',
+                },
+                {
+                    id: 'eta',
+                    name: 'ETA',
+                },
+                {
+                    id: 'origin-destination',
+                    name: 'Origin/Destination',
+                },
+                {
+                    id: 'city',
+                    name: 'City',
+                },
+                {
+                    id: 'altitude',
+                    name: 'Altitude',
+                },
+                {
+                    id: 'isAircraftOnGround',
+                    name: 'On Ground',
+                },
+                {
+                    id: 'eta-atd',
+                    name: 'ETA/ATD',
+                },
+                {
+                    id: 'itpMarginTemplate',
+                    name: 'ITP Margin Template',
+                },
+                {
+                    id: 'fuelCapacityGal',
+                    name: 'Fuel Capacity',
+                },
+            ];
+        }
+    }
+    saveSettings() {
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
+    }
+    sortChangeSaveSettings(){
+        this.saveSettings();
     }
 }

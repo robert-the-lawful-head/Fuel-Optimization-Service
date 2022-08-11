@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOAirports")]
-    public partial class Fboairports
+    public partial class Fboairports : FBOLinxBaseEntityModel<int>
     {
         [Key]
         [Column("OID")]

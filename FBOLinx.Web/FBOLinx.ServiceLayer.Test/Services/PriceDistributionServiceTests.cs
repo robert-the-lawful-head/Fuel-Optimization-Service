@@ -7,18 +7,19 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.Web.Services;
 using Moq;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.ServiceLayer.Test.Services
 {

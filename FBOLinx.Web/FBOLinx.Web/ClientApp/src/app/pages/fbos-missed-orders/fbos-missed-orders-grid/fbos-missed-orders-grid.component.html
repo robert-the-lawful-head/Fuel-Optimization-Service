@@ -5,19 +5,45 @@
                    bgsType="ball-spin"
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
+
+<div class="d-none d-md-block" style="position: absolute; right: 10px; top: -30px">
+    <i class="fa fa-external-link mr-1 text-white cursor-pointer"
+        (click)="goToMissedOrdersAll()">
+        
+    </i>
+</div>
+
 <div>
+    <div class="subtitle">Lost To Competition: Flight Departments that requested quotes but dispatched fuel at another FBO</div>
     <div *ngIf="noMissedOrders">No Missed Orders</div>
     <div *ngIf="!noMissedOrders">
+        <div>
+            <div class="row border-bottom pb-2 mb-1 font-weight-bold">
+                <div class="col">Company</div>
+                <div class="col">Aircraft</div>
+                <div class="col">Quantity</div>
+                <div class="col">Time of Dispatch</div>
+                <div class="col"></div>
+                <div class="col"></div>
+            </div>
+        </div>
         <div *ngFor="let missedOrder of fbosMissedOrdersDataSource;">
-                <div class="row" (click)="goToCustomerManager(missedOrder.customerId)">
-                    <div class="col-3 border-bottom pt-3 pb-3">{{ missedOrder.customerName }}</div>
-                    <div class="col-2 border-bottom pt-3 pb-3">  {{missedOrder.tailNumber}}</div>
-                    <div class="col-3 border-bottom pt-3 pb-3"> {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}</div>
-                    <div class="col-4 border-bottom pt-3 pb-3"> {{ missedOrder.createdDate }}</div>
+            <div class="row pt-1">
+                <div class="col">{{ missedOrder.customerName }}</div>
+                <div class="col"> {{missedOrder.tailNumber}}</div>
+                <div class="col"> {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}</div>
+                <div class="col"> {{ missedOrder.createdDate }}</div>
+                <div class="col">
+                    <button (click)="goToMissedOrders(missedOrder)" [view]="'accent'" size="small" ni-button>
+                        Missed Orders
+                    </button>
                 </div>
+                <div class="col">
+                    <button (click)="goToCustomerDetails(missedOrder)" [view]="'accent'" size="small" ni-button>
+                        Adjust ITP Margin
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
-
-

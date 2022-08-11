@@ -54,6 +54,7 @@ export class PricingTemplatesGridComponent implements OnInit {
         'pricingFormula',
         'allInPrice',
         'customersAssigned',
+        'aircraftsAssigned',
         'copy',
         'delete',
     ];
