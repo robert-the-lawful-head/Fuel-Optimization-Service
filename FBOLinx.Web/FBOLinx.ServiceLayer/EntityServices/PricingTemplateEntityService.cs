@@ -26,6 +26,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
+        Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
     }
     
     public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService

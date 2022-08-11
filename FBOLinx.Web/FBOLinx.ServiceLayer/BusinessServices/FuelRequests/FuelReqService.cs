@@ -19,7 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
     public interface IFuelReqService : IBaseDTOService<FuelReqDto, FuelReq>
     {
-        Task<List<FuelReq>> GetRecentFuelRequestsForFbo(int fboId);
+        Task<List<FuelReq>> GetFuelOrdersForFbo(int fboId, DateTime? startDateTime = null, DateTime? endDateTime = null);
         Task<List<FuelReqsGridViewModel>> GetFuelReqsByGroupAndFbo(int groupId, int fboId, DateTime startDateTime, DateTime endDateTime);
     }
 
@@ -36,12 +36,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _context = context;
         }
 
-        public async Task<List<FuelReq>> GetRecentFuelRequestsForFbo(int fboId)
+        public async Task<List<FuelReq>> GetFuelOrdersForFbo(int fboId, DateTime? startDateTime = null, DateTime? endDateTime = null)
         {
-            var startDate = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0));
-            var endDate = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0));
+            var startDate = startDateTime == null ? DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)) : startDateTime;
+            var endDate = endDateTime == null ? DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)) : endDateTime;
             var requests =
-                await _FuelReqEntityService.GetListBySpec(new FuelReqByFboAndDateSpecification(fboId, startDate, endDate));
+                await _FuelReqEntityService.GetListBySpec(new FuelReqByFboAndDateSpecification(fboId, startDate.Value, endDate.Value));
 
             return requests;
         }
