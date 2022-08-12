@@ -8,8 +8,8 @@ namespace FBOLinx.DB.Specifications.SWIM
 {
     public sealed class SWIMFlightLegDataSpecification : Specification<SWIMFlightLegData>
     {
-        public SWIMFlightLegDataSpecification(IList<int> flightLegIds)
-            : base(x => flightLegIds.Contains(x.SWIMFlightLegId))
+        public SWIMFlightLegDataSpecification(IList<int> flightLegIds, DateTime startDate)
+            : base(x => flightLegIds.Contains(x.SWIMFlightLegId) && x.MessageTimestamp > startDate)
         {
         }
     }

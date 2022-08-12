@@ -103,6 +103,11 @@ export class CustomersEditComponent implements OnInit {
         this.router.routeReuseStrategy.shouldReuseRoute = () => false;
         this.sharedService.titleChange(this.pageTitle);
 
+        this.route.queryParams.subscribe((params) => {
+            if (params.tab && params.tab) {
+                this.selectedIndex = parseInt(params.tab);
+            }
+        });
     }
 
     async ngOnInit() {

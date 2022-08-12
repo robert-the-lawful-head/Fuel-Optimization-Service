@@ -17,38 +17,42 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 {
     public interface IMissedOrderLogService : IBaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog>
     {
-        Task<List<MissedQuotesLogViewModel>> GetRecentMissedOrders(int fboId);
+        Task<List<MissedQuotesLogViewModel>> GetMissedOrders(int fboId, DateTime startDateTime, DateTime endDateTime, bool isRecent = false);
     }
 
     public class MissedOrderLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedOrderLogService
     {
-        private IFboService _FboService; 
         private IFboEntityService _FboEntityService;
         private IFboAirportsService _FboAirportsService;
         private readonly ICustomerAircraftService _CustomerAircraftService;
         private readonly CustomerService _CustomerService;
         private readonly IFuelReqService _FuelReqService;
         private FuelerLinxApiService _FuelerLinxApiService;
+        private IPricingTemplateEntityService _PricingTemplateEntityService;
+        private IAirportTimeService _AirportTimeService;
 
-        public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboService fboService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
-            ICustomerAircraftService customerAircraftService, CustomerService customerService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService) : base(entityService)
+        public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
+            ICustomerAircraftService customerAircraftService, CustomerService customerService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService,
+            IAirportTimeService airportTimeService) : base(entityService)
         {
+            _AirportTimeService = airportTimeService;
             _EntityService = entityService;
-            _FboService = fboService;
             _FboEntityService = fboEntityService;
             _FboAirportsService = iFboAirportsService;
             _CustomerAircraftService = customerAircraftService;
             _CustomerService = customerService;
             _FuelReqService = fuelReqService;
             _FuelerLinxApiService = fuelerLinxApiService;
+            _PricingTemplateEntityService = pricingTemplateEntityService;
         }
 
-        public async Task<List<MissedQuotesLogViewModel>> GetRecentMissedOrders(int fboId)
+        public async Task<List<MissedQuotesLogViewModel>> GetMissedOrders(int fboId, DateTime startDateTime, DateTime endDateTime, bool isRecent = false)
         {
             var fbo = await _FboEntityService.GetFboByFboId(fboId);
 
@@ -60,24 +64,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var customers = await _CustomerService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
 
-            var allRecentFboLinxTransactions = new List<FuelReq>();
+            var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId.GetValueOrDefault(), fboId);
+
+            var allFboLinxTransactions = new List<FuelReq>();
             foreach (var otherFbo in fbos.Where(f => f.Oid != fboId))
             {
-                var recentTransactions = await _FuelReqService.GetRecentFuelRequestsForFbo(otherFbo.Oid);
-                allRecentFboLinxTransactions.AddRange(recentTransactions);
+                var recentTransactions = await _FuelReqService.GetFuelOrdersForFbo(otherFbo.Oid, startDateTime, endDateTime);
+                allFboLinxTransactions.AddRange(recentTransactions);
             }
 
-            var groupedAllRecentFboLinxTransactions = allRecentFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
+            var localTimeZone = await _AirportTimeService.GetAirportTimeZone(fboAirport.Icao);
+
+            var groupedAllFboLinxTransactions = allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
                 CustomerId = g.Key,
                 MissedQuoteCount = g.Count(f => f.CustomerAircraftId > 0)
             }).ToList();
 
-            foreach (var transaction in allRecentFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).OrderByDescending(f => f.DateCreated))
+            foreach (var transaction in allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).OrderByDescending(f => f.DateCreated))
             {
-                if (missedOrdersLogList.Count == 5)
-                    break;
-
                 var customer = customers.Where(c => c.Customer.Oid == transaction.CustomerId).FirstOrDefault();
 
                 if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
@@ -85,51 +90,67 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTime = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.Eta.GetValueOrDefault(), fboId);
-                    var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
-                    missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DateCreated.GetValueOrDefault());
+                    missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Eta.GetValueOrDefault());
+                    missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Etd.GetValueOrDefault());
+                    missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
+                    missedQuotesLogViewModel.Volume = transaction.QuotedVolume.GetValueOrDefault();
                     missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
-                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllRecentFboLinxTransactions.Where(g => g.CustomerId == customer.Customer.Oid).Select(m => m.MissedQuoteCount).FirstOrDefault();
-                    missedQuotesLogViewModel.CustomerId = customer.Oid;
+                    var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
+                    missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
+                    missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.Customer.Oid).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
 
-            if (missedOrdersLogList.Count < 5)
+            if (isRecent && missedOrdersLogList.Count >= 5)
+                return missedOrdersLogList.OrderByDescending(m => m.CreatedDate).Take(5).ToList();
+
+            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _FuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
+
+            var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
             {
-                FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _FuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-                { EndDateTime = DateTime.UtcNow.Add(new TimeSpan(3, 0, 0, 0)), StartDateTime = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0)), Icao = fboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
+                CompanyId = g.Key,
+                MissedQuoteCount = g.Count(f => f.TailNumber != "")
+            }).ToList();
 
-                var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
+            foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
+            {
+                var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
+
+                if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
                 {
-                    CompanyId = g.Key,
-                    MissedQuoteCount = g.Count(f => f.TailNumber != "")
-                }).ToList();
+                    MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
+                    missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
-                {
-                    if (missedOrdersLogList.Count == 5)
-                        break;
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.CreationDate.GetValueOrDefault());
+                    missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.ArrivalDateTime.GetValueOrDefault());
+                    missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DepartureDateTime.GetValueOrDefault());
+                    missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
-                    var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
-
-                    if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
-                    {
-                        MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
-                        missedQuotesLogViewModel.CustomerName = customer.Company;
-
-                        var localDateTime = await _FboService.GetAirportLocalDateTimeByUtcFboId(transaction.ArrivalDateTime.GetValueOrDefault(), fboId);
-                        var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
-                        missedQuotesLogViewModel.CreatedDate = localDateTime.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-
-                        missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
-                        missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
-                        missedQuotesLogViewModel.CustomerId = customer.Oid;
-                        missedOrdersLogList.Add(missedQuotesLogViewModel);
-                    }
-                }                
+                    missedQuotesLogViewModel.Volume = transaction.DispatchedVolume.Amount;
+                    missedQuotesLogViewModel.TailNumber = transaction.TailNumber;
+                    var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
+                    if (customerAircraftPricingTemplate != null)
+                        missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
+                    missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedOrdersLogList.Add(missedQuotesLogViewModel);
+                }
             }
+
+            missedOrdersLogList = missedOrdersLogList.OrderByDescending(m => m.CreatedDate).ToList();
+
+            if (isRecent)
+                return missedOrdersLogList.Take(5).ToList();
+
             return missedOrdersLogList;
         }
     }
