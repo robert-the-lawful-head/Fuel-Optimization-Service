@@ -64,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             if (_AirportGeneralInformationList == null)
                 _AirportGeneralInformationList = await _FuelerLinxApiService.GetAllAirportGeneralInformation();
 
-            return _AirportGeneralInformationList.FirstOrDefault(x => x.ProperAirportIdentifier.ToUpper() == icao);
+            return _AirportGeneralInformationList.FirstOrDefault(x => x.ProperAirportIdentifier != null && x.ProperAirportIdentifier.ToUpper() == icao);
         }
     }
 }
