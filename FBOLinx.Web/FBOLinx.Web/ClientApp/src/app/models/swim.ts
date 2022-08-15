@@ -21,7 +21,7 @@ export interface Swim {
     longitude: number | null;
     isAircraftOnGround: boolean;
     itpMarginTemplate: string;
-    status: FlightLegStatus;
+    status: FlightLegStatusEnum;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
@@ -30,13 +30,14 @@ export interface Swim {
     fuelerlinxID: number | null;
     vendor: string;
     transactionStatus: string;
+    icaoAircraftCode: string;
 }
-export enum FlightLegStatus {
-    EnRoute,
-    Landing,
-    Taxiing,
-    Arrived,
-    Departing
+export enum FlightLegStatusEnum {
+    EnRoute = "In Route",
+    Landing = "Landing",
+    Taxiing = "Taxiing",
+    Arrived = "Arrived",
+    Departing = "Departing"
 }
 
 export interface Time {

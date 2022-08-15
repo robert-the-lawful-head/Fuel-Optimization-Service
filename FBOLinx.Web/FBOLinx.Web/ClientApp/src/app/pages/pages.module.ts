@@ -213,6 +213,9 @@ import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-
 import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/missedorders-grid.component';
+import { GetTimePipe } from '../shared/pipes/dateTime/getTime.pipe';
+import { ToReadableDateTimePipe } from '../shared/pipes/dateTime/ToReadableDateTime.pipe';
+import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
 
 @NgModule({
     declarations: [
@@ -426,7 +429,10 @@ import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/mis
         FilterService,
         GroupService,
         ToolbarService,
-        DetailRowService
+        DetailRowService,
+        GetTimePipe,
+        ToReadableDateTimePipe,
+        ToReadableTimePipe
     ],
 })
 export class PagesModule { }
