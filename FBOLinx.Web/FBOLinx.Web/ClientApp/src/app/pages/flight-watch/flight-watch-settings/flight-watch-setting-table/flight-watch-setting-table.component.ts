@@ -116,8 +116,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(column == "ETA/ATD") return this.getTime.transform(this.getDateObject(row.etaLocal));
         if(column == "ETE") return this.toReadableTime.transform(row.ete);
         if(column == "ETA") return this.toReadableDateTime.transform(this.getDateObject(row.etaLocal));
-        if(column == "Status") return  FlightLegStatusEnum[row.status];
-
+        if(column == "Status") {
+            if(row.status == FlightLegStatusEnum.EnRoute)
+                return "In Route";
+            return  FlightLegStatusEnum[row.status];
+        }
         let col = this.columns.find( c => c.name == column)
         return row[col.id];
     }

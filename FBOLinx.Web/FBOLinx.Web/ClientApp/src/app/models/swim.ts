@@ -33,11 +33,11 @@ export interface Swim {
     icaoAircraftCode: string;
 }
 export enum FlightLegStatusEnum {
-    EnRoute = "In Route",
-    Landing = "Landing",
-    Taxiing = "Taxiing",
-    Arrived = "Arrived",
-    Departing = "Departing"
+    EnRoute,
+    Landing,
+    Taxiing,
+    Arrived,
+    Departing
 }
 
 export interface Time {
