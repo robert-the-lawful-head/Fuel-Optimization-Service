@@ -34,26 +34,5 @@
                 </div>
             </ni-card>
         </div>
-
-        <div class="prices-board-row">
-            <ni-card [collapsible]="false"
-                     [opened]="true"
-                     bgColor="dead"
-                     class="
-                    prices-board-item prices-board-second-column
-                    price-checker
-                    d-none d-md-block
-                "
-                     headerBgColor="dead"
-                     outline="true"
-                     theme="small"
-                     title="Price Lookup">
-                <price-checker #priceChecker
-                               [hideFeeAndTaxGeneralBreakdown]="isCsr"
-                               [hideTooltips]="isCsr"></price-checker>
-            </ni-card>
-        </div>
-
-
     </div>
 </div>
