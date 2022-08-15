@@ -1,22 +1,27 @@
-import { ElementRef, OnInit, ViewChild } from '@angular/core';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { OnInit, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatChipSelectionChange } from '@angular/material/chips';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { tail } from 'lodash';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { SwimFilter } from 'src/app/models/filter';
-import { Swim, SwimType } from 'src/app/models/swim';
+import { FlightLegStatusEnum, Swim } from 'src/app/models/swim';
 import {
     ColumnType,
-    TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
-import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
+import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
+import { ToReadableDateTimePipe } from 'src/app/shared/pipes/dateTime/ToReadableDateTime.pipe';
+import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
     templateUrl: './flight-watch-setting-table.component.html',
     styleUrls: ['./flight-watch-setting-table.component.scss'],
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed', style({height: '0px', minHeight: '0'})),
+            state('expanded', style({height: '*'})),
+            transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ],
 })
 export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
@@ -28,10 +33,28 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    constructor() { }
+    columnsToDisplay : string[];
+
+    columnsToDisplayWithExpand : any[];
+    expandedElement: Swim | null;
+
+    fbo: string;
+    icao: string
+
+    constructor(private getTime : GetTimePipe,
+                private toReadableDateTime: ToReadableDateTimePipe,
+                private toReadableTime: ToReadableTimePipe,
+                private sharedService: SharedService) { }
 
     ngOnInit() {
+        this.fbo = localStorage.getItem('fbo');
+        this.icao = this.sharedService.currentUser.icao;
 
+        this.columnsToDisplay = this.columns.map((element) => {
+            return element.name;
+        });
+
+        this.columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
     }
     ngAfterViewInit() {
         this.sort?.sortChange.subscribe(() => {
@@ -57,10 +80,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 .map((column) => column.id) || []
         );
     }
-    geMakeModelDisplayString(element: any){
-        let str = (element.Make)?element.Make:"Check";
-        str += '/';
-        str += (element.Model)?element.Model:"Fix";
+    getMakeModelDisplayString(element: any){
+        let str = (element.Make)?element.Make:"";
+        str += (element.Make && element.Make)?"/":"";
+        str += (element.Model)?element.Model:"";
         return str;
     }
     getOriginDestinationString(element: Swim){
@@ -92,4 +115,32 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getDateObject(dateString: string){
         return new Date(dateString);
     }
+    getColumnData(row: Swim, column:string){
+        if(column == "Make/Model") return this.getMakeModelDisplayString(row);
+        if(column == "Origin/Destination") return this.getOriginDestinationString(row);
+        if(column == "ETA/ATD") return this.getTime.transform(this.getDateObject(row.etaLocal));
+        if(column == "ETE") return this.toReadableTime.transform(row.ete);
+        if(column == "ETA") return this.toReadableDateTime.transform(this.getDateObject(row.etaLocal));
+        if(column == "Status") {
+            if(row.status == FlightLegStatusEnum.EnRoute)
+                return "In Route";
+            return  FlightLegStatusEnum[row.status];
+        }
+        let col = this.columns.find( c => c.name == column)
+        return row[col.id];
+    }
+    getPastArrivalsValue(row: Swim){
+
+            return this.isArrival
+                ? row.arrivals
+                : row.departures;
+
+    }
+    getColumnHeader(column: string){
+            if( column != "origin-destination") return column;
+            return this.isArrival
+                ? 'Origin'
+                : 'Destination';
+    }
 }
+

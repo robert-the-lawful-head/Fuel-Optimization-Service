@@ -8,7 +8,6 @@ import { Swim } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
-import { FlightWatchComponent } from '../flight-watch/flight-watch.component';
 import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
 @Component({
@@ -31,9 +30,7 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
-
-
-    @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
+    @ViewChild(FlightWatchSettingTableComponent, { static: true }) private settingsTable: FlightWatchSettingTableComponent;
 
     searchIcaoTxt: string;
 
@@ -129,17 +126,21 @@ export class FlightWatchSettingsComponent implements OnInit {
         } else {
             this.columns = [
                 {
+                    id: 'status',
+                    name: 'Status',
+                },
+                {
                     id: 'tailNumber',
-                    name: 'tailNumber',
+                    name: 'Tail Number',
                 },
                 {
                     id: 'flightDepartment',
-                    name: 'flightDepartment',
+                    name: 'Flight Department',
                     sort: 'desc',
                 },
                 {
-                    id: 'make-model',
-                    name: 'Make/Model',
+                    id: 'icaoAircraftCode',
+                    name: 'Aircraft Type',
                 },
                 {
                     id: 'ete',
@@ -154,29 +155,13 @@ export class FlightWatchSettingsComponent implements OnInit {
                     name: 'Origin/Destination',
                 },
                 {
-                    id: 'city',
-                    name: 'City',
-                },
-                {
-                    id: 'altitude',
-                    name: 'Altitude',
-                },
-                {
                     id: 'isAircraftOnGround',
                     name: 'On Ground',
                 },
                 {
-                    id: 'eta-atd',
-                    name: 'ETA/ATD',
-                },
-                {
                     id: 'itpMarginTemplate',
                     name: 'ITP Margin Template',
-                },
-                {
-                    id: 'fuelCapacityGal',
-                    name: 'Fuel Capacity',
-                },
+                }
             ];
         }
     }

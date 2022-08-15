@@ -106,14 +106,14 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             arrivals => {
                 this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
-                if(!this.drawer.opened ) this.updateButtonOnDrawerResize();
+                if(this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
           this.swimService.getDepartures(icao, groupId, fboId).subscribe(
             departures => {
                 this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
-                if(!this.drawer.opened) this.updateButtonOnDrawerResize();
+                if(this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
     }
