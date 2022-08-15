@@ -77,7 +77,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private airportWatchService: AirportWatchService,
         private swimService: SwimService,
         private sharedService: SharedService,
-        private acukwikairportsService: AcukwikairportsService,
         public dialog: MatDialog)
     {
         this.sharedService.titleChange(this.pageTitle);
@@ -106,14 +105,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             arrivals => {
                 this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
-                if(this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
           this.swimService.getDepartures(icao, groupId, fboId).subscribe(
             departures => {
                 this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
-                if(this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
     }
