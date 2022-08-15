@@ -30,9 +30,7 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
-
-
-    @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
+    @ViewChild(FlightWatchSettingTableComponent, { static: true }) private settingsTable: FlightWatchSettingTableComponent;
 
     searchIcaoTxt: string;
 

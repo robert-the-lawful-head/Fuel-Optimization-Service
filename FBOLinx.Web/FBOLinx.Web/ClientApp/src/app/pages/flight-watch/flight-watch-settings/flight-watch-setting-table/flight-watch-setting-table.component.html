@@ -54,7 +54,10 @@
                     <div class="example-element-description">
                         <table class="description-table">
                             <tr>
-                                <td>{{ element.status }}</td>
+                            <td>      {{
+                                    this.getMakeModelDisplayString(element)
+                                }}
+                            </td>
                                 <td>Altitude: {{ element.altitude }}</td>
                                 <td>
                                     ETA/ATD:
@@ -66,17 +69,13 @@
                                 <td>Origin City: {{ element.city }}</td>
                             </tr>
                             <tr>
-                                <td>{{ element.status }}</td>
+                                <td>Visit to {{fbo}} (30 days): {{ element.VisitsToMyFBO }} </td>
                                 <td>
                                     Past Arrvals at
-                                    {{ element.arrivalICAO }} (30 days):
-                                    {{ element.visitsToMyFBO }}
+                                    {{ icao }} (30 days):
+                                    {{ getPastArrivalsValue(element) }}
                                 </td>
                                 <td>
-                                    Make/Model:
-                                    {{
-                                        this.getMakeModelDisplayString(element)
-                                    }}
                                 </td>
                                 <td></td>
                             </tr>
