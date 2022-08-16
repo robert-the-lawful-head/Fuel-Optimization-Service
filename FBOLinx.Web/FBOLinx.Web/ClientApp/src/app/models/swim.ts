@@ -26,7 +26,7 @@ export interface Swim {
     visitsToMyFBO: number;
     arrivals: number;
     departures: number;
-    iD: number | null;
+    id: number | null;
     fuelerlinxID: number | null;
     vendor: string;
     transactionStatus: string;

@@ -1,7 +1,7 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FlightLegStatusEnum, Swim } from 'src/app/models/swim';
 import {
@@ -37,7 +37,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     columnsToDisplay : string[];
 
     columnsToDisplayWithExpand : any[];
-    expandedElement: Swim | null;
+    expandedElement: string | null;
 
     fbo: string;
     icao: string
@@ -83,9 +83,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
     }
     getMakeModelDisplayString(element: any){
-        let str = (element.Make)?element.Make:"";
-        str += (element.Make && element.Make)?"/":"";
-        str += (element.Model)?element.Model:"";
+        let str = (element.make)?element.make:"";
+        str += (element.make && element.make)?"/":"";
+        str += (element.model)?element.model:"";
         return str;
     }
     getOriginDestinationString(element: Swim){

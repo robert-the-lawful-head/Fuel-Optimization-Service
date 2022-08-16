@@ -97,6 +97,9 @@ export class FlightWatchSettingsComponent {
         }
     }
     updateIcao(event: any ){
+        this.swimArrivals = null;
+        this.swimDepartures = null;
+        this.updateDrawerButtonPosition.emit();
         this.icaoChanged.emit(event);
     }
     openPopup(tailnumber: string): void{

@@ -81,15 +81,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     {
         this.sharedService.titleChange(this.pageTitle);
         this.selectedICAO = (this.sharedService.currentUser.icao)?this.sharedService.currentUser.icao:localStorage.getItem('icao');
-
-
     }
 
     ngOnInit() {
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             this.loadAirportWatchData();
+        });
+        this.mapLoadSubscription = timer(60000).subscribe(() =>{
             this.getDrawerData(this.selectedICAO, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
-    });
+        });
     }
     ngOnDestroy() {
         this.flightWatchDataSubject.unsubscribe();
@@ -101,16 +101,20 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         }
     }
     getDrawerData(icao:string, groupId: number, fboId: number):void{
+        let currentFilter: SwimFilter = { filterText : this.filter, dataType: null };
+
         this.swimService.getArrivals(icao, groupId, fboId).subscribe(
             arrivals => {
-                this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
+                if(this.filter) this.onFilterChanged(currentFilter);
+                else this.swimArrivals = arrivals.result;
             }
           );
           this.swimService.getDepartures(icao, groupId, fboId).subscribe(
             departures => {
-                this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
+                if(this.filter) this.onFilterChanged(currentFilter);
+                else this.swimDepartures = departures.result;
             }
           );
     }
@@ -196,8 +200,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     onFilterChanged(filter: SwimFilter) {
         this.filter = filter.filterText;
         this.setFilteredFlightWatchData();
-        this.filterArrivals(this.filter.toLowerCase());
-        this.filterDepartures(this.filter.toLowerCase());
+        this.filterArrivals(this.filter?.toLowerCase());
+        this.filterDepartures(this.filter?.toLowerCase());
     }
     filterArrivals(filter){
         if(filter && filter.trim())
