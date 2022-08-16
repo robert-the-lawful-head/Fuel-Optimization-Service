@@ -216,6 +216,7 @@ import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/mis
 import { GetTimePipe } from '../shared/pipes/dateTime/getTime.pipe';
 import { ToReadableDateTimePipe } from '../shared/pipes/dateTime/ToReadableDateTime.pipe';
 import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
+import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
 
 @NgModule({
     declarations: [
@@ -432,7 +433,8 @@ import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
         DetailRowService,
         GetTimePipe,
         ToReadableDateTimePipe,
-        ToReadableTimePipe
+        ToReadableTimePipe,
+        BooleanToTextPipe
     ],
 })
 export class PagesModule { }

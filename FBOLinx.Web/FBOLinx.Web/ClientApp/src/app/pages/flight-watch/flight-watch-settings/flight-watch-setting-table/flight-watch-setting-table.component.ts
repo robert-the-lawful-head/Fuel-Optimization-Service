@@ -7,6 +7,7 @@ import { FlightLegStatusEnum, Swim } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
+import { BooleanToTextPipe } from 'src/app/shared/pipes/boolean/booleanToText.pipe';
 import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableDateTimePipe } from 'src/app/shared/pipes/dateTime/ToReadableDateTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
@@ -44,7 +45,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     constructor(private getTime : GetTimePipe,
                 private toReadableDateTime: ToReadableDateTimePipe,
                 private toReadableTime: ToReadableTimePipe,
-                private sharedService: SharedService) { }
+                private sharedService: SharedService,
+                private booleanToText: BooleanToTextPipe) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
@@ -67,7 +69,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges) {
         if(changes.columns){
             this.columnsToDisplay = this.getVisibleColumns();
-            // this.columnsToDisplay.push('expandedDetail')
             this.columnsToDisplayWithExpand = [...this.getVisibleColumns(), 'expand'];
         }
     }
@@ -117,11 +118,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return new Date(dateString);
     }
     getColumnData(row: Swim, column:string){
+        if(column == "expandedDetail") return;
         if(column == "Make/Model") return this.getMakeModelDisplayString(row);
         if(column == "Origin/Destination") return this.getOriginDestinationString(row);
         if(column == "ETA/ATD") return this.getTime.transform(this.getDateObject(row.etaLocal));
         if(column == "ETE") return this.toReadableTime.transform(row.ete);
         if(column == "ETA") return this.toReadableDateTime.transform(this.getDateObject(row.etaLocal));
+        if(column == "On Ground") return this.booleanToText.transform(row.isAircraftOnGround);
         if(column == "Status") {
             if(row.status == FlightLegStatusEnum.EnRoute)
                 return "In Route";
