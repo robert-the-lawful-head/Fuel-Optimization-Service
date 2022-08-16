@@ -27,11 +27,11 @@ namespace FBOLinx.DB.Models
         public DateTime ATD { get; set; }
 
         [Required]
-        public DateTime ETA { get; set; }
+        public DateTime? ETA { get; set; }
 
-        // public bool IsPlaceholder { get; set; }
-        // public bool IsAircraftOnGround { get; set; }
-        // public FlightLegStatus Status { get; set; }
+        public bool IsPlaceholder { get; set; }
+        public bool IsAircraftOnGround { get; set; }
+        public FlightLegStatus Status { get; set; }
 
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }

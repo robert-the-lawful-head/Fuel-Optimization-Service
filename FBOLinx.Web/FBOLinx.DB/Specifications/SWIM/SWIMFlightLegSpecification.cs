@@ -24,5 +24,20 @@ namespace FBOLinx.DB.Specifications.SWIM
             : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA >= startDate && x.ETA <= endDate)
         {
         }
+
+        public SWIMFlightLegSpecification(IList<string> tailNumbers, IList<string> atcFlightNumbers, DateTime minATD)
+            : base(x => (tailNumbers.Contains(x.AircraftIdentification) || atcFlightNumbers.Contains(x.AircraftIdentification)) && x.ATD > minATD)
+        {
+        }
+
+        public SWIMFlightLegSpecification(IList<string> tailNumbers, DateTime minATD, bool isPlaceholder)
+            : base(x => tailNumbers.Contains(x.AircraftIdentification) && x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
+        {
+        }
+
+        public SWIMFlightLegSpecification(DateTime minATD, bool isPlaceholder)
+            : base(x => x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
+        {
+        }
     }
 }
