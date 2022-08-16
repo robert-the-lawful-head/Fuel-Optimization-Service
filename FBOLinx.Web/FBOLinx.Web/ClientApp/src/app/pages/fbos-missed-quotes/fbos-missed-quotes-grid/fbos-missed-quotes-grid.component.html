@@ -6,7 +6,7 @@
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
 
-<div class="price-checker-button">
+<div *ngIf="!isCsr" class="price-checker-button">
     <button (click)="openPriceChecker()" view="'default'" size="small" ni-button>
         Price Checker
     </button>

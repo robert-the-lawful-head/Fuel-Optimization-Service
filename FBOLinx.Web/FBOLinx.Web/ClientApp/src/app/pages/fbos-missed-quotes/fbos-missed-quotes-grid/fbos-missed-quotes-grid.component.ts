@@ -4,7 +4,7 @@ import { forEach } from 'lodash';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatDialog } from '@angular/material/dialog';
 
-import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
+import { PriceCheckerDialogComponent } from '../../fbo-prices/price-checker-dialog/price-checker-dialog.component';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -29,6 +29,10 @@ export class FbosMissedQuotesGridComponent implements OnInit {
 
     }
 
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
+    }
+
     ngOnInit() {
         this.refreshMissedQuotesDataSource();
     }
@@ -36,7 +40,7 @@ export class FbosMissedQuotesGridComponent implements OnInit {
 
     openPriceChecker(): void {
         const dialogRef = this.priceCheckerDialog.open(
-            PriceCheckerComponent,
+            PriceCheckerDialogComponent,
             {
                 width: '650px',
                 height: '600px'
