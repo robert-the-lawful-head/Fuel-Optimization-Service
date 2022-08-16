@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { OnInit, ViewChild } from '@angular/core';
+import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -49,15 +49,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
         this.icao = this.sharedService.currentUser.icao;
-
-        this.columnsToDisplay = this.columns.map((element) => {
-            return element.name;
-        });
-
-        this.columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
     }
     ngAfterViewInit() {
-        this.sort?.sortChange.subscribe(() => {
+        this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -70,14 +64,21 @@ export class FlightWatchSettingTableComponent implements OnInit {
             this.saveSettings.emit();
         });
     }
+    ngOnChanges(changes: SimpleChanges) {
+        if(changes.columns){
+            this.columnsToDisplay = this.getVisibleColumns();
+            // this.columnsToDisplay.push('expandedDetail')
+            this.columnsToDisplayWithExpand = [...this.getVisibleColumns(), 'expand'];
+        }
+    }
     openPopup(row: any) {
         this.openAircraftPopup.emit(row.tailNumber);
     }
-    get visibleColumns() {
+    getVisibleColumns() {
         return (
             this.columns
                 .filter((column) => !column.hidden)
-                .map((column) => column.id) || []
+                .map((column) => column.name) || []
         );
     }
     getMakeModelDisplayString(element: any){
@@ -95,12 +96,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         const sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
         );
-        this.sort?.sort({
+        this.sort.sort({
             disableClear: false,
             id: null,
             start: sortedColumn?.sort || 'asc',
         });
-        this.sort?.sort({
+        this.sort.sort({
             disableClear: false,
             id: sortedColumn?.id,
             start: sortedColumn?.sort || 'asc',

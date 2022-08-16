@@ -41,15 +41,15 @@
             <mat-drawer-container>
 
                 <mat-drawer-content>
-                    <div>
-                        <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+                    <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+                    <div *ngIf="flightWatchData">
                         <div class="drawer-button" (click)="mapfilters.toggle()">
                             <button class="mat-dark-blue" mat-flat-button >
                                 <mat-icon *ngIf="!mapfilters.opened">chevron_left</mat-icon>
                                 <mat-icon *ngIf="mapfilters.opened">chevron_right</mat-icon>
                             </button>
                         </div>
-                        <div class="flight-watch-container" *ngIf="flightWatchData">
+                        <div class="flight-watch-container">
                             <app-flight-watch-map #map
                                                   [isStable]="flightWatchData.length > 0"
                                                   [data]="filteredFlightWatchData"
@@ -67,13 +67,12 @@
 
                 <mat-drawer mode="side" #mapfilters position='end' class="drawer-container">
                     <div *ngIf="flightWatchData">
-                        <app-flight-watch-settings 
+                        <app-flight-watch-settings
                                 [swimArrivals]="swimArrivals"
                                 [swimDepartures]="swimDepartures"
                                 [icaoList]="airportsICAO"
                                 [icao]="selectedICAO"
                                 [filteredTypes]="filteredTypes"
-                                [tableData]="flightWatchDataObservable$"
                                 (filterChanged)="onFilterChanged($event)"
                                 (typesFilterChanged)="onTypesFilterChanged($event)"
                                 (openAircraftPopup)="openAircraftPopup($event)"
@@ -91,7 +90,7 @@
                 </div>
             </div>
         </mat-tab>
-        
+
     </mat-tab-group>
 
 
