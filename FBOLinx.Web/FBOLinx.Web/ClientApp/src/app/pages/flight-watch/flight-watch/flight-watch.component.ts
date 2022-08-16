@@ -77,7 +77,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private airportWatchService: AirportWatchService,
         private swimService: SwimService,
         private sharedService: SharedService,
-        private acukwikairportsService: AcukwikairportsService,
         public dialog: MatDialog)
     {
         this.sharedService.titleChange(this.pageTitle);

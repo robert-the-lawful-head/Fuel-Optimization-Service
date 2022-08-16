@@ -1,5 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { OnInit, ViewChild } from '@angular/core';
+import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -7,6 +7,7 @@ import { FlightLegStatusEnum, Swim } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
+import { BooleanToTextPipe } from 'src/app/shared/pipes/boolean/booleanToText.pipe';
 import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableDateTimePipe } from 'src/app/shared/pipes/dateTime/ToReadableDateTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
@@ -44,20 +45,15 @@ export class FlightWatchSettingTableComponent implements OnInit {
     constructor(private getTime : GetTimePipe,
                 private toReadableDateTime: ToReadableDateTimePipe,
                 private toReadableTime: ToReadableTimePipe,
-                private sharedService: SharedService) { }
+                private sharedService: SharedService,
+                private booleanToText: BooleanToTextPipe) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
         this.icao = this.sharedService.currentUser.icao;
-
-        this.columnsToDisplay = this.columns.map((element) => {
-            return element.name;
-        });
-
-        this.columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
     }
     ngAfterViewInit() {
-        this.sort?.sortChange.subscribe(() => {
+        this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -70,14 +66,20 @@ export class FlightWatchSettingTableComponent implements OnInit {
             this.saveSettings.emit();
         });
     }
+    ngOnChanges(changes: SimpleChanges) {
+        if(changes.columns){
+            this.columnsToDisplay = this.getVisibleColumns();
+            this.columnsToDisplayWithExpand = [...this.getVisibleColumns(), 'expand'];
+        }
+    }
     openPopup(row: any) {
         this.openAircraftPopup.emit(row.tailNumber);
     }
-    get visibleColumns() {
+    getVisibleColumns() {
         return (
             this.columns
                 .filter((column) => !column.hidden)
-                .map((column) => column.id) || []
+                .map((column) => column.name) || []
         );
     }
     getMakeModelDisplayString(element: any){
@@ -95,12 +97,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         const sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
         );
-        this.sort?.sort({
+        this.sort.sort({
             disableClear: false,
             id: null,
             start: sortedColumn?.sort || 'asc',
         });
-        this.sort?.sort({
+        this.sort.sort({
             disableClear: false,
             id: sortedColumn?.id,
             start: sortedColumn?.sort || 'asc',
@@ -116,11 +118,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return new Date(dateString);
     }
     getColumnData(row: Swim, column:string){
+        if(column == "expandedDetail") return;
         if(column == "Make/Model") return this.getMakeModelDisplayString(row);
         if(column == "Origin/Destination") return this.getOriginDestinationString(row);
         if(column == "ETA/ATD") return this.getTime.transform(this.getDateObject(row.etaLocal));
         if(column == "ETE") return this.toReadableTime.transform(row.ete);
         if(column == "ETA") return this.toReadableDateTime.transform(this.getDateObject(row.etaLocal));
+        if(column == "On Ground") return this.booleanToText.transform(row.isAircraftOnGround);
         if(column == "Status") {
             if(row.status == FlightLegStatusEnum.EnRoute)
                 return "In Route";

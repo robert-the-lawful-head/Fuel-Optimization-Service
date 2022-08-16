@@ -16,8 +16,7 @@ import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/f
     styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
-export class FlightWatchSettingsComponent implements OnInit {
-    @Input() tableData: Observable<FlightWatch[]>;
+export class FlightWatchSettingsComponent {
     @Input() swimArrivals: Swim[];
     @Input() swimDepartures: Swim[];
     @Input() icao: string;
@@ -41,7 +40,11 @@ export class FlightWatchSettingsComponent implements OnInit {
         this.initColumns();
     }
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges) {
+        if((changes.swimArrivals && !changes.swimArrivals.previousValue)
+        || (changes.swimDepartures && !changes.swimDepartures.previousValue)){
+            this.updateDrawerButtonPosition.emit();
+        }
     }
 
     get aircraftTypes() {

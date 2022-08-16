@@ -1,15 +1,18 @@
 <div class="table-container">
     <p class="table-header">{{ getSwimDataTypeString() }}</p>
+    <mat-spinner *ngIf="!data"></mat-spinner>
     <table
         mat-table
         [dataSource]="data"
         multiTemplateDataRows
+        matSort
+        [class.hide]="!data"
     >
         <ng-container
             matColumnDef="{{ column }}"
             *ngFor="let column of columnsToDisplay"
         >
-            <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="{{ column }}">{{ column }}</th>
             <td mat-cell *matCellDef="let element">
                 {{ getColumnData(element, column) }}
             </td>
@@ -99,7 +102,7 @@
             </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"></tr>
         <tr
             mat-row
             *matRowDef="let element; columns: columnsToDisplayWithExpand"
@@ -114,5 +117,6 @@
             *matRowDef="let row; columns: ['expandedDetail']"
             class="example-detail-row"
         ></tr>
+
     </table>
 </div>
