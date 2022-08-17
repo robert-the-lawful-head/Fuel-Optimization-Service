@@ -29,10 +29,6 @@ export class FbosMissedQuotesGridComponent implements OnInit {
 
     }
 
-    get isCsr() {
-        return this.sharedService.currentUser.role === 5;
-    }
-
     ngOnInit() {
         this.refreshMissedQuotesDataSource();
     }

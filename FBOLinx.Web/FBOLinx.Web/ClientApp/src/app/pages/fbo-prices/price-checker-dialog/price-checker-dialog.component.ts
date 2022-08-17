@@ -5,7 +5,8 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 
-
+// Services
+import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-price-checker-dialog',
@@ -19,6 +20,10 @@ export class PriceCheckerDialogComponent {
         public dialogRef: MatDialogRef<PriceCheckerComponent>,
     ) {
 
+    }
+
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
     }
 
     public onCancelClick(): void {

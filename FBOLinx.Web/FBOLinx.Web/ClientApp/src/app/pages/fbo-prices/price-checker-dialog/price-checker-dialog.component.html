@@ -9,6 +9,6 @@
 
     <div mat-dialog-content>
         <div>
-            <price-checker #priceChecker></price-checker>
+            <price-checker #priceChecker [hideFeeAndTaxGeneralBreakdown]="isCsr" [hideTooltips]="isCsr"></price-checker>
         </div>
  </div>
