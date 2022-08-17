@@ -32,7 +32,7 @@
                 <ng-container matColumnDef="eta">
                     <mat-header-cell *matHeaderCellDef>ETA (Local)</mat-header-cell>
                     <mat-cell *matCellDef="let element" matTooltip="{{ element.etaLocal }}">
-                        {{ element.etaLocal |  ToReadableDateTime }}
+                        {{ getDateObject(element.etaLocal) |  ToReadableDateTime }}
                     </mat-cell>
                 </ng-container>
 

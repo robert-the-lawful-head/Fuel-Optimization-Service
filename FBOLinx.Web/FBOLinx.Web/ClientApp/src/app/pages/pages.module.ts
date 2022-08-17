@@ -213,6 +213,7 @@ import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-
 import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/missedorders-grid.component';
+import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
 
 @NgModule({
     declarations: [
@@ -352,7 +353,8 @@ import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/mis
         FbosMissedQuotesGridComponent,
         AircraftPopupContainerComponent,
         FlightWatchSettingTableComponent,
-        MissedOrdersGridComponent
+        MissedOrdersGridComponent,
+        PriceCheckerDialogComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

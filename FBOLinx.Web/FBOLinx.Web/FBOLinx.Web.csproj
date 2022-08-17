@@ -86,6 +86,7 @@
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-home\fbo-prices-pricing-update-generator.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-prices\price-checker-dialog\price-checker-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbos-missed-orders\fbos-missed-orders-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-home.component.ts" />
@@ -168,6 +169,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-update-generator\fbo-prices-update-generator.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\price-checker-dialog\price-checker-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbos-missed-orders\fbos-missed-orders-grid\fbos-missed-orders-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts">
       <SubType>Code</SubType>
