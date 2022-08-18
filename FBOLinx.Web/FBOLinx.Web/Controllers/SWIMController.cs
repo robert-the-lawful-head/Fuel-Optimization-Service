@@ -17,7 +17,7 @@ using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 
 namespace FBOLinx.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SWIMController : ControllerBase

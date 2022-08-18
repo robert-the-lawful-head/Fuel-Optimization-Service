@@ -14,8 +14,8 @@ namespace FBOLinx.DB.Specifications.SWIM
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startDate)
-            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > startDate)
+        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate)
+            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > startETADate)
         {
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
@@ -37,6 +37,11 @@ namespace FBOLinx.DB.Specifications.SWIM
 
         public SWIMFlightLegSpecification(DateTime minATD, bool isPlaceholder)
             : base(x => x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
+        {
+        }
+
+        public SWIMFlightLegSpecification(DateTime startETADate)
+            : base(x => x.ETA > startETADate)
         {
         }
     }

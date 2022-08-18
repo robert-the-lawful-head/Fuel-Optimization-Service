@@ -35,12 +35,13 @@ namespace FBOLinx.Functions
             // services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             // services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             // services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
-            // services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
+
             // services.AddTransient<AircraftEntityService, AircraftEntityService>();
             // services.AddTransient<ILoggingService, LoggingService>();
             // services.AddTransient<AirportWatchService, AirportWatchService>();
             // services.AddTransient<ISWIMService, SWIMService>();
 
+            services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
             services.AddTransient<GroupEntityService, GroupEntityService>();
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
