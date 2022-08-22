@@ -384,7 +384,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 antennaHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
                     new AirportWatchHistoricalDataSpecification(tailNumbers, historicalETD.Value, historicalETA.Value));
                 airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
-                swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(swimFlightLegs.Select(x => x.Oid).ToList()));
+                swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(swimFlightLegs.Select(x => x.Oid).ToList(), historicalAircraftPositionDateTime.Value.AddHours(-12)));
             }
 
             PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
