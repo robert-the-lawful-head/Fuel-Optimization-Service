@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FBOLinx.ServiceLayer.DTO.SWIM
+namespace FBOLinx.Core.Enums
 {
-    public enum FlightLegStatus
+    public enum FlightLegStatus : short
     {
-        EnRoute,
+        EnRoute = 0,
         Landing,
         Taxiing,
         Arrived,
