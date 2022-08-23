@@ -18,7 +18,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             _context = context;
         }
 
-        public async Task<IEnumerable<Tuple<string, string, double, double, double, double>>> GetTailNumbersByLiveAndParkingCoordinates(DateTime liveStartDate, DateTime historicalStartDate)
+        public async Task<IEnumerable<Tuple<string, string, double, double, double, double>>> GetTailNumbersByLiveAndHistoricalParkingCoordinates(DateTime liveStartDate, DateTime historicalStartDate)
         {
             var result = (await _context.AirportWatchLiveData.Join(
                 _context.AirportWatchHistoricalData,
