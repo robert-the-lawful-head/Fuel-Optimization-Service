@@ -18,6 +18,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
+import { FlightWatchMapOnlyComponent } from '../flight-watch-map-only/flight-watch-map-only.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -37,6 +38,7 @@ const BREADCRUMBS: any[] = [
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('map') map: FlightWatchMapComponent;
+    @ViewChild('mapOnly') mapOnly: FlightWatchMapOnlyComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
 
     pageTitle = 'Flight Watch';
@@ -280,7 +282,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         };
 
         setTimeout(() => {
-            this.map.mapResize();
+            //this.map.mapResize();
         });
     }
 
@@ -296,7 +298,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.setFilteredFlightWatchData();
     }
     openAircraftPopup(tailNumber: string){
-        this.map.openAircraftPopUpByTailNumber(tailNumber);
+        this.mapOnly.openAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize(){
         if(!this.drawer.opened) return;

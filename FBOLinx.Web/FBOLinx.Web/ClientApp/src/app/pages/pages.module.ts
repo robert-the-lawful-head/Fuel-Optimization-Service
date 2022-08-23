@@ -217,6 +217,7 @@ import { GetTimePipe } from '../shared/pipes/dateTime/getTime.pipe';
 import { ToReadableDateTimePipe } from '../shared/pipes/dateTime/ToReadableDateTime.pipe';
 import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
 import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
+import { FlightWatchMapOnlyComponent } from './flight-watch/flight-watch-map-only/flight-watch-map-only.component';
 
 @NgModule({
     declarations: [
@@ -356,7 +357,8 @@ import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
         FbosMissedQuotesGridComponent,
         AircraftPopupContainerComponent,
         FlightWatchSettingTableComponent,
-        MissedOrdersGridComponent
+        MissedOrdersGridComponent,
+        FlightWatchMapOnlyComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

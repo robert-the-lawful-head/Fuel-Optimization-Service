@@ -13,16 +13,11 @@
         >Commercial Flights</a
     >
 </nav>-->
-<div hidden="true" >
-    <app-aircraft-popup-container #aircraftPopupContainer  [flightData]="popupData" [fboId]="fboId" [groupId]="groupId" [isLoading]="isAircraftDataLoading" (refreshAircraftProperties)="updateAircraft($event)"></app-aircraft-popup-container>
+<div hidden="true">
+    <app-aircraft-popup-container #aircraftPopupContainer [flightData]="popupData" [fboId]="fboId" [groupId]="groupId" [isLoading]="isAircraftDataLoading"></app-aircraft-popup-container><!--(refreshAircraftProperties)="updateAircraft($event)"-->
 </div>
 
-<div id="flight-watch-map"></div>
-
-<div *ngIf="!isStable" class="map-error-msg">
-    <mat-icon aria-hidden="false" aria-label="Server Error">wifi_tethering_off</mat-icon>
-    <span>Server Error!!!</span>
-</div>
+<app-flight-watch-map-only [center]="center" [aircraftData]="aircraftData"  [data]="data" [isStable]="isStable"></app-flight-watch-map-only>
 
 <div class="location-button" (click)="goToCurrentIcao()">
     <img src="/assets/img/my_location.png" alt="my location"/>
