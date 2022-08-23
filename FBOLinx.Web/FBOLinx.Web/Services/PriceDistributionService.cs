@@ -16,11 +16,13 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
-using FBOLinx.Web.Services.Interfaces;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Services
 {
@@ -32,14 +34,6 @@ namespace FBOLinx.Web.Services
 
     public class PriceDistributionService : IPriceDistributionService
     {
-        public enum PriceBreakdownDisplayTypes : short
-        {
-            SingleColumnAllFlights = 0,
-            TwoColumnsDomesticInternationalOnly = 1,
-            TwoColumnsApplicableFlightTypesOnly = 2,
-            FourColumnsAllRules = 3
-        }
-
         private DistributePricingRequest _DistributePricingRequest;
         private FboLinxContext _context;
         private bool _IsPreview = false;
@@ -59,12 +53,13 @@ namespace FBOLinx.Web.Services
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
-        private IFboService _iFboService;
-        private FboService _fboService;
+        private IFboService _fboService;
         private readonly FbopricesService _fbopricesService;
 
         #region Constructors
-        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, IFboService iFboService, FboService fboService, FbopricesService fbopricesService)
+        public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
+            FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
+            IFboService fboService, FbopricesService fbopricesService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -75,7 +70,6 @@ namespace FBOLinx.Web.Services
             _PricingTemplateService = pricingTemplateService;
             _EmailContentService = emailContentService;
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
-            _iFboService = iFboService;
             _fboService = fboService;
             _fbopricesService = fbopricesService;
         }
@@ -365,7 +359,7 @@ namespace FBOLinx.Web.Services
             StringBuilder rowsHTML = new StringBuilder();
             int loopIndex = 0;
 
-            foreach (DTO.CustomerWithPricing model in privateDomesticPricingResults)
+            foreach (CustomerWithPricing model in privateDomesticPricingResults)
             {
                 string row = rowHTMLTemplate;
 
@@ -640,8 +634,8 @@ namespace FBOLinx.Web.Services
 
             if (priceDate != null)
             {
-                var localDateTime = await _iFboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
-                var localTimeZone = await _iFboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
+                var localDateTime = await _fboService.GetAirportLocalDateTimeByUtcFboId(priceDate, _DistributePricingRequest.FboId);
+                var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(_DistributePricingRequest.FboId);
                 _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
             }
 

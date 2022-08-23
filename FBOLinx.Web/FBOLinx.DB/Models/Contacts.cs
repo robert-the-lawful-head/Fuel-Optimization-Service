@@ -4,11 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class Contacts
+    public partial class Contacts : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         [StringLength(255)]
         public string Email { get; set; }
         [StringLength(50)]

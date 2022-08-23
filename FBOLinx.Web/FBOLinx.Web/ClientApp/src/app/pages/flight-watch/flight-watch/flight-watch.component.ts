@@ -9,6 +9,7 @@ import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import { Swim, SwimType } from 'src/app/models/swim';
+import { User } from 'src/app/models/User';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { SwimService } from 'src/app/services/swim.service';
 import { convertDMSToDEG } from 'src/utils/coordinates';
@@ -37,7 +38,6 @@ const BREADCRUMBS: any[] = [
 export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('map') map: FlightWatchMapComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
-
 
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
@@ -68,9 +68,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     airportsICAO: string[];
     selectedICAO: string;
 
-
     style: any = {};
     isMapShowing = true;
+
+    arrivalsDeparturesProps = { initial: 0, currentWidth: 0 };
 
     constructor(
         private airportWatchService: AirportWatchService,
@@ -80,16 +81,16 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         public dialog: MatDialog)
     {
         this.sharedService.titleChange(this.pageTitle);
+        this.selectedICAO = (this.sharedService.currentUser.icao)?this.sharedService.currentUser.icao:localStorage.getItem('icao');
+
+
     }
 
     ngOnInit() {
-        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>
-            this.loadAirportWatchData()
-        );
-    }
-    ngAfterViewInit(){
-        this.selectedICAO = this.sharedService.currentUser.icao;
-        this.getDrawerData(this.selectedICAO);
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+            this.loadAirportWatchData();
+            this.getDrawerData(this.selectedICAO, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
+    });
     }
     ngOnDestroy() {
         this.flightWatchDataSubject.unsubscribe();
@@ -100,36 +101,38 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.airportWatchFetchSubscription.unsubscribe();
         }
     }
-    getDrawerData(icao:string):void{
-        this.swimService.getArrivals(icao).subscribe(
+    getDrawerData(icao:string, groupId: number, fboId: number):void{
+        this.swimService.getArrivals(icao, groupId, fboId).subscribe(
             arrivals => {
                 this.swimArrivals = arrivals.result;
                 this.swimArrivalsAllRecords = arrivals.result;
+                if(!this.drawer.opened ) this.updateButtonOnDrawerResize();
             }
           );
-          this.swimService.getDepartures(icao).subscribe(
+          this.swimService.getDepartures(icao, groupId, fboId).subscribe(
             departures => {
                 this.swimDepartures = departures.result;
                 this.swimDeparturesAllRecords = departures.result;
+                if(!this.drawer.opened) this.updateButtonOnDrawerResize();
             }
           );
     }
     openDrawer(airportClicked: AcukwikAirport){
-        this.getDrawerData(airportClicked.icao);
+        this.getDrawerData(airportClicked.icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
         this.drawer.toggle();
     }
     setIcaoList(airportList: AcukwikAirport[]){
         this.acukwikairport = airportList;
         let icaoList =  airportList.map((data) => {
             return data.icao;
-        })
+        });
         this.airportsICAO = icaoList;
-        
+
     }
     updateIcao(icao:string){
         this.map.goToAirport(icao);
         this.selectedICAO =  icao;
-        this.getDrawerData(icao);
+        this.getDrawerData(icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     }
     loadAirportWatchData() {
         if (!this.loading) {
@@ -188,7 +191,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.selectedAircraftData = res;
         });
     }
-    
+
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;
     }
@@ -196,30 +199,32 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     onFilterChanged(filter: SwimFilter) {
         this.filter = filter.filterText;
         this.setFilteredFlightWatchData();
-        if(filter.dataType == SwimType.Arrival)
-            this.filterArrivals(this.filter.toLowerCase());
-        else
+        this.filterArrivals(this.filter.toLowerCase());
         this.filterDepartures(this.filter.toLowerCase());
     }
     filterArrivals(filter){
-        if(this.filter && this.filter.trim())
+        if(filter && filter.trim())
         {
             this.swimArrivals = this.swimArrivalsAllRecords.filter(
                 (fw) =>
-                    fw.tailNumber.toLowerCase().includes(filter) ||
-                    fw.flightDepartment.toLowerCase().includes(filter)
+                    fw.tailNumber?.toLowerCase().includes(filter) ||
+                    fw.flightDepartment?.toLowerCase().includes(filter) ||
+                    fw.departureCity?.toLowerCase().includes(filter)||
+                    fw.arrivalCity?.toLowerCase().includes(filter)
             );
             return;
         }
         this.swimDepartures = this.swimDeparturesAllRecords;
     }
     filterDepartures(filter){
-        if(this.filter && this.filter.trim())
+        if(filter && filter.trim())
         {
             this.swimDepartures = this.swimDeparturesAllRecords.filter(
                 (fw) =>
-                    fw.tailNumber.toLowerCase().includes(filter) ||
-                    fw.flightDepartment.toLowerCase().includes(filter)
+                fw.tailNumber?.toLowerCase().includes(filter) ||
+                fw.flightDepartment?.toLowerCase().includes(filter) ||
+                fw.departureCity?.toLowerCase().includes(filter)||
+                fw.arrivalCity?.toLowerCase().includes(filter)
             );
             return;
         }
@@ -291,5 +296,14 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     openAircraftPopup(tailNumber: string){
         this.map.openAircraftPopUpByTailNumber(tailNumber);
+    }
+    async updateButtonOnDrawerResize(){
+        if(!this.drawer.opened) return;
+          this.drawer.toggle();
+        await this.delay(50);
+        this.drawer.toggle();
+    }
+    delay(time) {
+        return new Promise(resolve => setTimeout(resolve, time));
     }
 }

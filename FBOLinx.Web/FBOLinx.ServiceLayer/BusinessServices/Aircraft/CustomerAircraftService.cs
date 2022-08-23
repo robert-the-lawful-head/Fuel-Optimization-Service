@@ -39,46 +39,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
 
-            var aircraftPricingTemplates = await (
-                                   from pt in _Context.PricingTemplate
-                                   join ap in _Context.AircraftPrices on pt.Oid equals ap.PriceTemplateId
-                                   into leftJoinAp
-                                   from ap in leftJoinAp.DefaultIfEmpty()
-                                   where pt.Fboid == fboId && fboId > 0
-                                   select new
-                                   {
-                                       Oid = pt == null ? 0 : pt.Oid,
-                                       Name = pt == null ? "" : pt.Name,
-                                       CustomerAircraftId = ap == null ? 0 : ap.CustomerAircraftId
-                                   }).ToListAsync();
+            var aircraftPricingTemplates = await _pricingTemplateService.GetCustomerAircraftTemplates(fboId, groupId);
 
             var allAircraft = await _AircraftService.GetAllAircrafts();
 
-            List<CustomerAircraftsViewModel> result = await (
-               from ca in _Context.CustomerAircrafts
-               join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-               join c in _Context.Customers on cg.CustomerId equals c.Oid
-               where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
-               select new CustomerAircraftsViewModel
-               {
-                   Oid = ca.Oid,
-                   GroupId = ca.GroupId,
-                   CustomerId = ca.CustomerId,
-                   Company = cg.Company,
-                   AircraftId = ca.AircraftId,
-                   TailNumber = ca.TailNumber,
-                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
-                   BasedPaglocation = ca.BasedPaglocation,
-                   NetworkCode = ca.NetworkCode,
-                   AddedFrom = ca.AddedFrom ?? 0,
-                   IsFuelerlinxNetwork = c.FuelerlinxId > 0
-               })
-               .OrderBy(x => x.TailNumber)
-               .ToListAsync();
+            var result = await GetCustomerAircrafts(groupId);
 
             result.ForEach(x =>
             {
-                var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.AircraftId);
+                var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
                 if (aircraftPricingTemplate != null)
                 {
                     x.PricingTemplateId = aircraftPricingTemplate?.Oid;
@@ -117,6 +86,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                    TailNumber = ca.TailNumber,
                })
                .Distinct()
+               .OrderBy(x => x.TailNumber)
+               .ToListAsync();
+
+            return result;
+        }
+
+        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId)
+        {
+            List<CustomerAircraftsViewModel> result = await (
+               from ca in _Context.CustomerAircrafts
+               join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
+               join c in _Context.Customers on cg.CustomerId equals c.Oid
+               where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
+               select new CustomerAircraftsViewModel
+               {
+                   Oid = ca.Oid,
+                   GroupId = ca.GroupId,
+                   CustomerId = ca.CustomerId,
+                   Company = cg.Company,
+                   AircraftId = ca.AircraftId,
+                   TailNumber = ca.TailNumber,
+                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
+                   BasedPaglocation = ca.BasedPaglocation,
+                   NetworkCode = ca.NetworkCode,
+                   AddedFrom = ca.AddedFrom ?? 0,
+                   IsFuelerlinxNetwork = c.FuelerlinxId > 0
+               })
                .OrderBy(x => x.TailNumber)
                .ToListAsync();
 

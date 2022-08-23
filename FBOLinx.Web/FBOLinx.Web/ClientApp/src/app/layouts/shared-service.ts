@@ -125,4 +125,10 @@ export class SharedService {
     valueChange(change: any) {
         this.valueChangeSource.next(change);
     }
+
+    isManagingGroup(): boolean {
+        return (this.currentUser.groupId > 0 &&
+            this.currentUser.managerGroupId > 0 &&
+            this.currentUser.groupId != this.currentUser.managerGroupId);
+    }
 }

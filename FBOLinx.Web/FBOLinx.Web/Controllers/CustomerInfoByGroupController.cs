@@ -10,12 +10,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using OfficeOpenXml;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.DTO;
 using FBOLinx.Web.Models.Responses;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Services.Interfaces;
 using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -25,6 +23,10 @@ using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -37,7 +39,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IPriceFetchingService _priceFetchingService;
         private readonly CustomerService _customerService;
-        private readonly FboService _fboService;
+        private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxApiService _fuelerLinxService;
@@ -47,7 +49,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FbopricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, FboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, FbopricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, FbopricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -518,7 +520,8 @@ namespace FBOLinx.Web.Controllers
                         oldCustomer.ShowJetA = customerInfoByGroup.ShowJetA;
                         oldCustomer.State = customerInfoByGroup.State;
                         oldCustomer.Website = customerInfoByGroup.Website;
-                        oldCustomer.Website = customerInfoByGroup.Website;
+                        
+                        _context.CustomerInfoByGroup.Update(oldCustomer);
 
                         await _context.SaveChangesAsync(userId, customerInfoByGroup.CustomerId, customerInfoByGroup.GroupId);
                     }
@@ -919,6 +922,7 @@ namespace FBOLinx.Web.Controllers
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroupCollection = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
+                customerInfoByGroupCollection = customerInfoByGroupCollection.OrderBy(c => c.Company).ToList();
 
                 var contactInfoByFboForAlerts =
                     await (from cibg in _context.ContactInfoByGroup
@@ -1020,7 +1024,7 @@ namespace FBOLinx.Web.Controllers
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())
-                    .OrderByDescending(s => (s.FleetSize ?? 0))
+                    //.OrderByDescending(s => (s.FleetSize ?? 0))
                     .ToList();
 
 
@@ -1092,7 +1096,8 @@ namespace FBOLinx.Web.Controllers
                                                           : (ppt == null ? 0 : ppt.Amount)),
                                                       amount = ppt == null ? 0 : ppt.Amount,
                                                       CustomerCompanyType = cg.CustomerCompanyType,
-                                                      PriceBreakdownDisplayType = priceBreakdownDisplayType
+                                                      PriceBreakdownDisplayType = priceBreakdownDisplayType,
+                                                      PricingTemplateId = x.PricingTemplateId,
                                                   }).OrderBy(y => y.Company).ThenBy(y => y.PricingTemplateId).ThenBy(y => y.Product).ThenBy(y => y.MinGallons).ToList();
 
                     if (feesAndTaxes.Count > 0 && customerPricingResults[0].FboPrice > 0)
@@ -1159,7 +1164,30 @@ namespace FBOLinx.Web.Controllers
                         resultsWithFees.AddRange(internationalOptions);
                         resultsWithFees.AddRange(allDepartureOptions);
 
-                        x.AllInPrice = resultsWithFees.Count > 0 ? resultsWithFees.FirstOrDefault().AllInPrice : 0;
+                        //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
+                        //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
+                        resultsWithFees.ForEach(y =>
+                        {
+                            y.FeesAndTaxes.ForEach(fee =>
+                            {
+                                if (fee.OmitsByPricingTemplate != null &&
+                                    fee.OmitsByPricingTemplate.Any(o =>
+                                        o.PricingTemplateId == y.PricingTemplateId))
+                                {
+                                    fee.IsOmitted = true;
+                                    fee.OmittedFor = "P";
+                                }
+
+                                if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
+                                    o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                                {
+                                    fee.IsOmitted = true;
+                                    fee.OmittedFor = "C";
+                                }
+                            });
+                        });
+
+                        x.AllInPrice = resultsWithFees.Count > 0 ? resultsWithFees[0].AllInPrice : 0;
                     }
                     else
                     {
@@ -1247,8 +1275,8 @@ namespace FBOLinx.Web.Controllers
                     );
 
                     var maxPriceType = result.GroupCustomerFbos.Max(y => y.Prices.Max(z => z.PriceBreakdownDisplayType));
-                    if (maxPriceType == PriceDistributionService.PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
-                        maxPriceType = PriceDistributionService.PriceBreakdownDisplayTypes.FourColumnsAllRules;
+                    if (maxPriceType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+                        maxPriceType = PriceBreakdownDisplayTypes.FourColumnsAllRules;
 
                     result.GroupCustomerFbos?.ForEach(g =>
                     {

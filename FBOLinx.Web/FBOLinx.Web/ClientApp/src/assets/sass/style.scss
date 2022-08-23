@@ -466,7 +466,7 @@ div.mat-tab-labels .mat-tab-label.mat-tab-label-active {
     border-top: 1px solid #dadada;
     border-left: 1px solid #dadada;
     border-right: 1px solid #dadada;
- 
+
 }
 
 .mat-tab-label .mat-tab-label-content {
@@ -573,10 +573,6 @@ div.customer-aircraft-table {
 
 
 /*Flight Watch map controls*/
-
-.map-controls-button button {
-
-}
 
 .map-controls-button .mat-button-wrapper .mat-icon {
     font-size: 30px;
@@ -829,15 +825,17 @@ body .mat-card.flight-watch-settings-container .mat-card-header {
     margin-bottom: 0px;
 }
 
-.flight-list-settings-button {
-    position: absolute;
-    right: 0px;
-    top: 10px;
-}
-
-
 .flight-list-settings-button .mat-button-wrapper .mat-icon {
     font-size: 25px;
+}
+
+.flight-watch-settings-container mat-row {
+    min-height: 0px;
+    padding: 5px 0 5px 0 !important;
+}
+
+body .flight-watch-settings-container .mat-header-row {
+    padding: 0px;
 }
 /*End Flight watch settings container*/
 /*Map Plane Key*/

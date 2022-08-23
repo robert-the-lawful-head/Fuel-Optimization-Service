@@ -24,13 +24,15 @@
     <span>Server Error!!!</span>
 </div>
 
-
-<div class="map-controls-button" style="position: absolute; top: 100px">
+<div class="location-button" (click)="goToCurrentIcao()">
+    <img src="/assets/img/my_location.png" alt="my location"/>
+</div>
+<div class="map-controls-button layout-setting-button">
     <button class="mat-black" mat-flat-button (click)="showLayers = !showLayers">
         <mat-icon>layers</mat-icon>
     </button>
 </div>
-<div class="map-controls-container" style="position: absolute; top: 20px;" *ngIf="showLayers">
+<div class="map-controls-container" *ngIf="showLayers">
     <mat-card>
         <mat-card-title>
             <div>Layout Settings</div>

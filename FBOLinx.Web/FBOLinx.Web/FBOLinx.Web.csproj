@@ -89,6 +89,7 @@
     <None Remove="ClientApp\src\app\pages\fbos-missed-orders\fbos-missed-orders-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\missed-orders\missedorders-grid\missedorders-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
@@ -171,6 +172,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts">
       <SubType>Code</SubType>
     </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\pages\missed-orders\missedorders-grid\missedorders-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />

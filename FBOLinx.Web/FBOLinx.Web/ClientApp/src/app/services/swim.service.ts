@@ -16,13 +16,13 @@ export class SwimService {
         this.accessPointUrl = baseUrl + 'api/SWIM';
     }
 
-    public getArrivals(icao: string): Observable<ApiResponseWraper<Swim[]>> {
-        return this.http.get<ApiResponseWraper<Swim[]>>(this.accessPointUrl + '/arrivals/'+icao, {
+    public getArrivals(icao: string,groupId: number,fboId: number): Observable<ApiResponseWraper<Swim[]>> {
+        return this.http.get<ApiResponseWraper<Swim[]>>(`${this.accessPointUrl}/arrivals/${icao}/group/${groupId}/fbo/${fboId}`, {
             headers: this.headers,
         });
     }
-    public getDepartures(icao: string): Observable<ApiResponseWraper<Swim[]>> {
-        return this.http.get<ApiResponseWraper<Swim[]>>(this.accessPointUrl + '/departures/'+icao, {
+    public getDepartures(icao: string,groupId: number,fboId: number): Observable<ApiResponseWraper<Swim[]>> {
+        return this.http.get<ApiResponseWraper<Swim[]>>(`${this.accessPointUrl}/departures/${icao}/group/${groupId}/fbo/${fboId}`, {
             headers: this.headers,
         });
     }

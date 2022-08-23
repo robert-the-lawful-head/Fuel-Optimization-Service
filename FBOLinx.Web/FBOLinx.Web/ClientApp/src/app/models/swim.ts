@@ -1,28 +1,43 @@
-export interface Swim  {
-    id:                 number;
-    tailNumber:         string;
-    flightDepartment:   string;
-    make:               string;
-    model:              string;
-    fuelCapacityGal:    number;
-    origin:             string;
-    city:               string;
-    departureICAO:      string;
-    departureCity:      string;
-    arrivalICAO:        string;
-    arrivalCity:        string;
-    atdLocal:           Date;
-    atdZulu:            Date;
-    etaLocal:           Date;
-    etaZulu:            Date;
-    ete:                Time;
-    actualSpeed:        number;
-    altitude:           number;
-    latitude:           number;
-    longitude:          number;
+export interface Swim {
+    tailNumber: string;
+    flightDepartment: string;
+    make: string;
+    model: string;
+    fuelCapacityGal: number | null;
+    origin: string;
+    city: string;
+    departureICAO: string;
+    departureCity: string;
+    arrivalICAO: string;
+    arrivalCity: string;
+    atdLocal: string;
+    atdZulu: string;
+    etaLocal: string;
+    etaZulu: string;
+    ete: string;
+    actualSpeed: number | null;
+    altitude: number | null;
+    latitude: number | null;
+    longitude: number | null;
     isAircraftOnGround: boolean;
-    itpMarginTemplate:  string;
-};
+    itpMarginTemplate: string;
+    status: FlightLegStatus;
+    phone: string;
+    visitsToMyFBO: number;
+    arrivals: number;
+    departures: number;
+    iD: number | null;
+    fuelerlinxID: number | null;
+    vendor: string;
+    transactionStatus: string;
+}
+export enum FlightLegStatus {
+    EnRoute,
+    Landing,
+    Taxiing,
+    Arrived,
+    Departing
+}
 
 export interface Time {
     ticks: number;
