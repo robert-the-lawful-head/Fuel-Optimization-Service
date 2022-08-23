@@ -23,7 +23,7 @@ namespace FBOLinx.Functions
 
         //[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req
         [FunctionName("SWIMSyncFunction")]
-        public async Task Run([TimerTrigger("0 */5 * * * *", RunOnStartup = true)] TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("0 */10 * * * *", RunOnStartup = true)] TimerInfo timer, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 

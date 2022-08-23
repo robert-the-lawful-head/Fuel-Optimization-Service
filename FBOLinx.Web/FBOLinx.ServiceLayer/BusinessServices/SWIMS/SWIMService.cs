@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.DatesAndTimes;
+using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB;
 using FBOLinx.DB.Models;
@@ -294,8 +295,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<AirportWatchLiveData> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(
                 new AirportWatchLiveDataByFlightNumberSpecification(tailNumbers, DateTime.UtcNow.AddHours(-1)));
 
-            var flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
-            IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(tailNumbers);
+            List<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = new List<Tuple<int, string, string, string>>();
+            foreach (var tailNumbersBatch in tailNumbers.Batch(500))
+            {
+                var flightDepartmentsByTailNumbersBatch = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbersBatch.ToList());
+                flightDepartmentsByTailNumbers.AddRange(flightDepartmentsByTailNumbersBatch);
+            }
             var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
             List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
             var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
