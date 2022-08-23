@@ -275,13 +275,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             airportICAOs.AddRange(swimFlightLegs.Where(x => !string.IsNullOrEmpty(x.ArrivalICAO)).Select(x => x.ArrivalICAO).ToList());
             airportICAOs = airportICAOs.Distinct().ToList();
             List<AcukwikAirport> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
-            List<string> tailNumbers = swimFlightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
-            var antennaHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(new AirportWatchHistoricalDataSpecification(tailNumbers, DateTime.UtcNow.AddDays(-1)));
+            List<string> aircraftIdentifications = swimFlightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
+            var antennaHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(new AirportWatchHistoricalDataSpecification(aircraftIdentifications, DateTime.UtcNow.AddDays(-1)));
             List<AirportWatchLiveData> antennaLiveData = await _AirportWatchLiveDataEntityService.GetListBySpec(
-                new AirportWatchLiveDataByFlightNumberSpecification(tailNumbers, DateTime.UtcNow.AddHours(-1)));
+                new AirportWatchLiveDataByFlightNumberSpecification(aircraftIdentifications, aircraftIdentifications, DateTime.UtcNow.AddHours(-1)));
 
             List<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = new List<Tuple<int, string, string, string>>();
-            foreach (var tailNumbersBatch in tailNumbers.Batch(500))
+            foreach (var tailNumbersBatch in aircraftIdentifications.Batch(500))
             {
                 var flightDepartmentsByTailNumbersBatch = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbersBatch.ToList());
                 flightDepartmentsByTailNumbers.AddRange(flightDepartmentsByTailNumbersBatch);

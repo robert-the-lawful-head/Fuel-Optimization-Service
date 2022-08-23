@@ -13,8 +13,13 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
         {
         }
 
-        public AirportWatchLiveDataByFlightNumberSpecification(IList<string> tailNumbers, DateTime startDate)
-            : base(x => tailNumbers.Contains(x.AtcFlightNumber) && x.TailNumber != null && x.AircraftPositionDateTimeUtc >= startDate) // || tailNumbers.Contains(x.TailNumber)
+        public AirportWatchLiveDataByFlightNumberSpecification(IList<string> atcFlightNumbers, DateTime startDate)
+            : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber) && x.TailNumber != null && x.AircraftPositionDateTimeUtc >= startDate)
+        {
+        }
+
+        public AirportWatchLiveDataByFlightNumberSpecification(IList<string> atcFlightNumbers, IList<string> tailNumbers, DateTime startDate)
+            : base(x => (atcFlightNumbers.Contains(x.AtcFlightNumber) || tailNumbers.Contains(x.TailNumber)) && x.AircraftPositionDateTimeUtc >= startDate)
         {
         }
     }
