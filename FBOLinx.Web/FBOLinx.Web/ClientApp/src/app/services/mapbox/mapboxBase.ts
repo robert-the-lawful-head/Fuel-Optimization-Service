@@ -48,6 +48,7 @@ export abstract class MapboxglBase {
             }));
         return this;
     }
+    /* start on functions */
     onZoomStart(callBack): this{
         this.map.on('zoomstart',  async() => callBack);
         return this;
@@ -84,31 +85,52 @@ export abstract class MapboxglBase {
         this.map.on('load', callBack);
         return this;
     }
-    mapResize(): this{
-        this.map.resize();
+    onClick(elementId:string,callBack): this{
+        this.map.on('click', elementId, callBack);
         return this;
+    }
+    onMapClick(callBack): this{
+        this.map.on('click', callBack);
+        return this;
+    }
+    /* end on functions */
+
+    /* start get functions */
+    getBounds(): mapboxgl.LngLatBounds {
+        return this.map.getBounds();
     }
     getStyle(): mapboxgl.Style{
         return this.map.getStyle();
     }
-    mapRemove(): void{
-        this.map.remove();
-    }
-    getBounds() {
-        return this.map.getBounds()
-    }
-
-    onClick(elementId:string,callBack): void{
-        this.map.on('click', elementId, callBack);
-    }
-    setLayoutProperty(layer: string, name: string, value: any): void{
-        this.map.setLayoutProperty(layer, name, value);
-    }
-    getLayoutProperty(layer: string, name: string){
+    getLayoutProperty(layer: string, name: string): any{
         return this.map.getLayoutProperty(layer, name);
     }
     getSource(sourceId: string): mapboxgl.GeoJSONSource {
         return this.map.getSource(sourceId) as mapboxgl.GeoJSONSource
+    }
+    getLayer(layerId: string): mapboxgl.AnyLayer{
+        return this.map.getLayer(layerId);
+    }
+    /* ends get functions */
+
+    /* start set functions */
+    setStyle(style: string): void {
+        this.map.setStyle(style);
+    }
+    setLayoutProperty(layer: string, name: string, value: any): void{
+        this.map.setLayoutProperty(layer, name, value);
+    }
+    setPaintProperty(layerId: string, name: string,  value: string): void{
+        this.map.setPaintProperty(layerId, name, value);
+    }
+    /* end set functions */
+
+    mapResize(): this{
+        this.map.resize();
+        return this;
+    }
+    mapRemove(): void{
+        this.map.remove();
     }
     addSource(id: string, sourceData: mapboxgl.AnySourceData): void {
         this.map.addSource(id, sourceData);
@@ -116,11 +138,11 @@ export abstract class MapboxglBase {
     addLayer(layerData: mapboxgl.AnyLayer): void {
         this.map.addLayer(layerData);
     }
-    removeLayer(id: string): void {
-        this.map.removeLayer(id);
+    removeLayer(layerId: string): void {
+        this.map.removeLayer(layerId);
     }
-    removeSource(id: string): void {
-        this.map.removeSource(id);
+    removeSource(sourceId: string): void {
+        this.map.removeSource(sourceId);
     }
     removeMouseHoverActions(id: string): void{
         this.map.off('mouseenter', id, () => this.cursorPointer('pointer'));
@@ -215,7 +237,7 @@ export abstract class MapboxglBase {
     loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
         return new Promise((resolve, reject) => {
             let img = new Image(width, height);
-            img.onload = () => { 
+            img.onload = () => {
               this.map.addImage(imageName, img);
               resolve(imageName);
             };
@@ -228,7 +250,7 @@ export abstract class MapboxglBase {
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
-            .addTo(this.map)  
+            .addTo(this.map)
             .on('close', function(e) {
                 currentPopup.isPopUpOpen = false;
             });
