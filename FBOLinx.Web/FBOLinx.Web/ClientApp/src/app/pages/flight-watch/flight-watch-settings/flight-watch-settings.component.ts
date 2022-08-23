@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim } from 'src/app/models/swim';
+import { Swim, swimTableColumns } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -29,7 +29,9 @@ export class FlightWatchSettingsComponent {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
-    @ViewChild(FlightWatchSettingTableComponent, { static: true }) private settingsTable: FlightWatchSettingTableComponent;
+    @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
+    @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;
+
 
     searchIcaoTxt: string;
 
@@ -119,7 +121,8 @@ export class FlightWatchSettingsComponent {
 
             this.columns = [...result];
             this.updateDrawerButtonPosition.emit();
-            this.settingsTable.refreshSort();
+            this.arrivalsTable.refreshSort();
+            this.departuresTable.refreshSort();
             this.saveSettings();
         });
     }
@@ -133,40 +136,40 @@ export class FlightWatchSettingsComponent {
             this.columns = [
                 {
                     id: 'status',
-                    name: 'Status',
+                    name: swimTableColumns.status,
                 },
                 {
                     id: 'tailNumber',
-                    name: 'Tail Number',
+                    name: swimTableColumns.tailNumber,
                 },
                 {
                     id: 'flightDepartment',
-                    name: 'Flight Department',
+                    name: swimTableColumns.flightDepartment,
                     sort: 'desc',
                 },
                 {
                     id: 'icaoAircraftCode',
-                    name: 'Aircraft Type',
+                    name: swimTableColumns.icaoAircraftCode,
                 },
                 {
                     id: 'ete',
-                    name: 'ETE',
+                    name: swimTableColumns.ete,
                 },
                 {
                     id: 'eta',
-                    name: 'ETA',
+                    name: swimTableColumns.eta,
                 },
                 {
                     id: 'origin-destination',
-                    name: 'Origin/Destination',
+                    name: swimTableColumns.originDestination,
                 },
                 {
                     id: 'isAircraftOnGround',
-                    name: 'On Ground',
+                    name: swimTableColumns.isAircraftOnGround,
                 },
                 {
                     id: 'itpMarginTemplate',
-                    name: 'ITP Margin Template',
+                    name: swimTableColumns.itpMarginTemplate,
                 }
             ];
         }
