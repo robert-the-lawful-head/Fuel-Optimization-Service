@@ -153,6 +153,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         {
             var daysBefore = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0));
             var recentMissedQuotes = await GetListbySpec(new MissedQuoteLogSpecification(fboId, daysBefore));
+            var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
 
             foreach (MissedQuoteLogDTO missedQuoteLog in recentMissedQuotes)
             {
@@ -161,6 +162,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                 if (isGridView)
                 {
                     localDateTime = await _FboService.GetAirportLocalDateTimeByUtcFboId(missedQuoteLog.CreatedDate.Value, fboId);
+                    missedQuoteLog.CreatedDateString = localDateTime + " " + localTimeZone;
                 }
             }
 
