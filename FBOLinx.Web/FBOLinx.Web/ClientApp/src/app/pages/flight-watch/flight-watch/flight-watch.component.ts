@@ -276,7 +276,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         };
 
         setTimeout(() => {
-            //this.map.mapResize();
+            this.map.mapResize();
         });
     }
 
