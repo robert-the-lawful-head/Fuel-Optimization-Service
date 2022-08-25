@@ -358,7 +358,8 @@ import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flig
         AircraftPopupContainerComponent,
         FlightWatchSettingTableComponent,
         MissedOrdersGridComponent,
-        FlightWatchMapWrapperComponent
+        FlightWatchMapWrapperComponent,
+        PriceCheckerDialogComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
