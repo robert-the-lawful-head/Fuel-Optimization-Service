@@ -1,12 +1,9 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { forEach } from 'lodash';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { SharedService } from 'src/app/layouts/shared-service';
 import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 
 // Services
-import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-price-checker-dialog',
@@ -17,6 +14,7 @@ export class PriceCheckerDialogComponent {
     @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
 
     constructor(
+        private sharedService: SharedService,
         public dialogRef: MatDialogRef<PriceCheckerComponent>,
     ) {
 
