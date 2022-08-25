@@ -81,10 +81,6 @@ export class FlightWatchMapComponent
 
     // Map Options
     public styleLoaded = false;
-    public isCommercialVisible = true;
-    public isShowAirportCodesEnabled = true;
-    public isShowTaxiwaysEnabled = true;
-    public showLayers: boolean = false;
     public mapStyle: string =
         'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd';
     public mapContainer: string = 'flight-watch-map';
@@ -143,7 +139,7 @@ export class FlightWatchMapComponent
     async loadICAOIconOnMap() {
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
         this.setIcaoList.emit(this.acukwikairports);
-        
+
         var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
             this.aircraftFlightWatchService.getAirportFeatureJsonData(data)
             return {
@@ -162,11 +158,11 @@ export class FlightWatchMapComponent
         this.map.addSource(this.airportSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
 
         this.map.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.airportLayerId, this.airportSourceId));
-        
+
         this.addHoverPointerActions(this.airportLayerId);
         this.onClick(this.airportLayerId, (e) => this.clickActionOnAirportICon(e) );
     }
-    updateICAOIconOnMap() {        
+    updateICAOIconOnMap() {
         var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
             this.aircraftFlightWatchService.getAirportFeatureJsonData(data)
             return {
@@ -359,13 +355,13 @@ export class FlightWatchMapComponent
                 lat: flightWatch.latitude,
                 lng: flightWatch.longitude,
             };
-            return (
-                bound.contains(flightWatchPosition) &&
-                (this.isCommercialVisible ||
-                    !isCommercialAircraft(
-                        flightWatch.aircraftTypeCode,
-                        flightWatch.atcFlightNumber
-                    ))
+            return ( true
+                // bound.contains(flightWatchPosition) &&
+                // (this.isCommercialVisible ||
+                //     !isCommercialAircraft(
+                //         flightWatch.aircraftTypeCode,
+                //         flightWatch.atcFlightNumber
+                //     ))
             );
         });
     }
@@ -481,31 +477,6 @@ export class FlightWatchMapComponent
         return [];
     }
 
-    toggleLayer(type: LayerType, event: MouseEvent) {
-        const layers = this.getLayersFromType(type);
-
-        const visibility = this.getLayoutProperty(layers[0], 'visibility');
-
-        // Toggle layer visibility by changing the layout object's visibility property.
-        if (visibility === 'visible' || visibility === undefined) {
-            layers.forEach((layer) => {
-                this.setLayoutProperty(layer, 'visibility', 'none');
-            });
-        } else {
-            layers.forEach((layer) => {
-                this.setLayoutProperty(layer, 'visibility', 'visible');
-            });
-        }
-        if (type == 'icao')
-            this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
-        else if (type == 'taxiway')
-            this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
-    }
-
-    toggleCommercial(event: MouseEvent) {
-        this.isCommercialVisible = !this.isCommercialVisible;
-        this.updateFlightOnMap();
-    }
     updateAircraft(event: Aircraftwatch): void {
         this.data[this.selectedAircraft].isInNetwork = true;
         this.data[this.selectedAircraft].company = event.company;
@@ -541,5 +512,21 @@ export class FlightWatchMapComponent
     }
     goToCurrentIcao(){
         this.goToAirport(this.sharedService.currentUser.icao);
+    }
+    toggleLayer(type: LayerType) {
+        const layers = this.getLayersFromType(type);
+
+        const visibility = this.getLayoutProperty(layers[0], 'visibility');
+
+        // Toggle layer visibility by changing the layout object's visibility property.
+        if (visibility === 'visible' || visibility === undefined) {
+            layers.forEach((layer) => {
+                this.setLayoutProperty(layer, 'visibility', 'none');
+            });
+        } else {
+            layers.forEach((layer) => {
+                this.setLayoutProperty(layer, 'visibility', 'visible');
+            });
+        }
     }
 }

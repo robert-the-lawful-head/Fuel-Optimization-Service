@@ -1,19 +1,15 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
-import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim, SwimType } from 'src/app/models/swim';
-import { User } from 'src/app/models/User';
-import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
+import { Swim } from 'src/app/models/swim';
 import { SwimService } from 'src/app/services/swim.service';
-import { convertDMSToDEG } from 'src/utils/coordinates';
-
 import { SharedService } from '../../../layouts/shared-service';
 import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
@@ -280,7 +276,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         };
 
         setTimeout(() => {
-            this.map.mapResize();
+            //this.map.mapResize();
         });
     }
 

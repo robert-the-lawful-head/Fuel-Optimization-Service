@@ -37,7 +37,6 @@ import { TemporaryAddOnMarginService } from '../../../services/temporaryaddonmar
 import { FboPricesSelectDefaultTemplateComponent } from '../fbo-prices-select-default-template/fbo-prices-select-default-template.component';
 import { FeeAndTaxSettingsDialogComponent } from '../fee-and-tax-settings-dialog/fee-and-tax-settings-dialog.component';
 import { FeeAndTaxBreakdownComponent } from '../../../shared/components/fee-and-tax-breakdown/fee-and-tax-breakdown.component';
-import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 //Models
@@ -71,7 +70,6 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     private retailFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
     @ViewChild('costFeeAndTaxBreakdown')
     private costFeeAndTaxBreakdown: FeeAndTaxBreakdownComponent;
-    @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
 
     public fboPricesUpdateData: any[];
     public fboPricesUpdateGridData: any[];
@@ -330,10 +328,6 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         );
 
         dialogRef.afterClosed().subscribe((result) => {
-            this.loadFeesAndTaxes();
-            if (this.priceChecker) {
-                this.priceChecker.refresh();
-            }
             if (!result) {
                 return;
             }
