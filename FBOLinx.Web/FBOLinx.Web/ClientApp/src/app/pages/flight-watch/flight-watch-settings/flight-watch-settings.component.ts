@@ -4,11 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim } from 'src/app/models/swim';
+import { Swim, swimTableColumns } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatch } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
-import { FlightWatchComponent } from '../flight-watch/flight-watch.component';
 import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
 @Component({
@@ -17,8 +16,7 @@ import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/f
     styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
-export class FlightWatchSettingsComponent implements OnInit {
-    @Input() tableData: Observable<FlightWatch[]>;
+export class FlightWatchSettingsComponent {
     @Input() swimArrivals: Swim[];
     @Input() swimDepartures: Swim[];
     @Input() icao: string;
@@ -31,9 +29,9 @@ export class FlightWatchSettingsComponent implements OnInit {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
+    @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
+    @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;
 
-
-    @ViewChild(FlightWatchSettingTableComponent) settingsTable: FlightWatchSettingTableComponent;
 
     searchIcaoTxt: string;
 
@@ -44,7 +42,11 @@ export class FlightWatchSettingsComponent implements OnInit {
         this.initColumns();
     }
 
-    ngOnInit() {
+    ngOnChanges(changes: SimpleChanges) {
+        if((changes.swimArrivals && !changes.swimArrivals.previousValue)
+        || (changes.swimDepartures && !changes.swimDepartures.previousValue)){
+            this.updateDrawerButtonPosition.emit();
+        }
     }
 
     get aircraftTypes() {
@@ -97,6 +99,9 @@ export class FlightWatchSettingsComponent implements OnInit {
         }
     }
     updateIcao(event: any ){
+        this.swimArrivals = null;
+        this.swimDepartures = null;
+        this.updateDrawerButtonPosition.emit();
         this.icaoChanged.emit(event);
     }
     openPopup(tailnumber: string): void{
@@ -116,7 +121,8 @@ export class FlightWatchSettingsComponent implements OnInit {
 
             this.columns = [...result];
             this.updateDrawerButtonPosition.emit();
-            this.settingsTable.refreshSort();
+            this.arrivalsTable.refreshSort();
+            this.departuresTable.refreshSort();
             this.saveSettings();
         });
     }
@@ -129,54 +135,42 @@ export class FlightWatchSettingsComponent implements OnInit {
         } else {
             this.columns = [
                 {
+                    id: 'status',
+                    name: swimTableColumns.status,
+                },
+                {
                     id: 'tailNumber',
-                    name: 'tailNumber',
+                    name: swimTableColumns.tailNumber,
                 },
                 {
                     id: 'flightDepartment',
-                    name: 'flightDepartment',
+                    name: swimTableColumns.flightDepartment,
                     sort: 'desc',
                 },
                 {
-                    id: 'make-model',
-                    name: 'Make/Model',
+                    id: 'icaoAircraftCode',
+                    name: swimTableColumns.icaoAircraftCode,
                 },
                 {
                     id: 'ete',
-                    name: 'ETE',
+                    name: swimTableColumns.ete,
                 },
                 {
                     id: 'eta',
-                    name: 'ETA',
+                    name: swimTableColumns.eta,
                 },
                 {
                     id: 'origin-destination',
-                    name: 'Origin/Destination',
-                },
-                {
-                    id: 'city',
-                    name: 'City',
-                },
-                {
-                    id: 'altitude',
-                    name: 'Altitude',
+                    name: swimTableColumns.originDestination,
                 },
                 {
                     id: 'isAircraftOnGround',
-                    name: 'On Ground',
-                },
-                {
-                    id: 'eta-atd',
-                    name: 'ETA/ATD',
+                    name: swimTableColumns.isAircraftOnGround,
                 },
                 {
                     id: 'itpMarginTemplate',
-                    name: 'ITP Margin Template',
-                },
-                {
-                    id: 'fuelCapacityGal',
-                    name: 'Fuel Capacity',
-                },
+                    name: swimTableColumns.itpMarginTemplate,
+                }
             ];
         }
     }

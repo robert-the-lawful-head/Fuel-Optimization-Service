@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -206,6 +207,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var apiClient = await GetApiClient();
             await apiClient.FBOLinx_ClearQuoteCacheForLocationsAsync(new FboLinxClearQuoteCacheRequest()
             { AirportIdentifiers = airportIdentifiers });
+        }
+
+        public async Task<List<GeneralAirportInformation>> GetAllAirportGeneralInformation()
+        {
+            var apiClient = await GetApiClient();
+            var result = await apiClient.Airport_GetGeneralAirportInfoListAsync();
+            return result?.ToList();
         }
 
         public async Task<IClient> GetApiClient()

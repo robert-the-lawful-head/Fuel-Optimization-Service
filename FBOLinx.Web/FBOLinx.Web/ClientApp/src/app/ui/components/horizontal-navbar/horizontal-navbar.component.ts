@@ -409,6 +409,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fbo = _.assign({}, data);
+                    localStorage.setItem('fbo',this.fbo.fbo);
                 },
                 (error: any) => {
                     console.log(error);
@@ -493,7 +494,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     });
                 }
             }, (error: any) => {
-                
+
             });
 
         //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.

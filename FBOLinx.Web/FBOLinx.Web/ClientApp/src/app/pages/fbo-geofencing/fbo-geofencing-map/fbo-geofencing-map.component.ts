@@ -31,34 +31,35 @@ import { AirportFboGeoFenceGridViewmodel } from '../../../models/fbo-geofencing/
 import { DeleteConfirmationComponent, DeleteConfirmationData } from
     "../../../shared/components/delete-confirmation/delete-confirmation.component";
 import { SaveConfirmationData } from "../../../shared/components/save-confirmation/save-confirmation.component";
+import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
 
 @Component({
     selector: 'app-fbo-geofencing-map',
     styleUrls: ['./fbo-geofencing-map.component.scss'],
     templateUrl: './fbo-geofencing-map.component.html',
 })
-export class FboGeofencingMapComponent implements OnInit, OnDestroy {
-    //@Input() center: mapboxgl.LngLatLike;
-    //@Input() isStable: boolean;
+export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, OnDestroy {
     @Input() airportFboGeofenceGridItem: AirportFboGeoFenceGridViewmodel;
     @Output() onCloseEditing = new EventEmitter<AirportFboGeoFenceGridViewmodel>();
 
     // Map Options
-    map: mapboxgl.Map;
-    zoom = 13;
-    keys: string[] = [];
+    public styleLoaded : boolean = false;
+    public mapStyle : string =
+        'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd';
+    public mapContainer: string = 'fbo-geofencing-map';
+    public center: mapboxgl.LngLatLike;
+    public zoom = 13;
 
     public acukwikFbos: any[];
     public clusters: AirportFboGeoFenceCluster[];
     public clustersFiltered: AirportFboGeoFenceCluster[];
     public parkingOccurrences: FlightWatch[];
-    
+
     public loaderName: string = 'fbo-geofence-map-loader';
     public isEditing: boolean = false;
     public activeCluster: AirportFboGeoFenceCluster = null;
-    public styleLoaded: boolean = false;
     public initialViewRefreshed: boolean = false;
-    
+
 
     //Map items
     public parkingOccurenceMarkers: mapboxgl.Marker[] = [];
@@ -71,28 +72,27 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
         private airportWatchService: AirportWatchService,
         private newClusterDialog: MatDialog,
         private deleteConfirmDialog: MatDialog,
-        private airportFboGeofenceClusterCoordinatesService: AirportFboGeofenceClusterCoordinatesService) { }
+        private airportFboGeofenceClusterCoordinatesService: AirportFboGeofenceClusterCoordinatesService) {
+            super();
+        }
 
     ngOnInit(): void {
+        this.center = {
+            lat: this.airportFboGeofenceGridItem.latitude,
+            lng: this.airportFboGeofenceGridItem.longitude,
+        };
 
-        this.map = new mapboxgl.Map({
-            accessToken:
-                'pk.eyJ1IjoiZnVlbGVybGlueCIsImEiOiJja3NzODNqcG4wdHVrMm9rdHU3OGRpb2dmIn0.LvSvlGG0ej3PEDJOBpOoMQ',
-            center: {
-                lat: this.airportFboGeofenceGridItem.latitude,
-                lng: this.airportFboGeofenceGridItem.longitude,
-            },
-            container: 'fbo-geofencing-map',
-            //style: 'mapbox://styles/fuelerlinx/ckwb6l72y1c5m14p1nocmcjpc',
-            style: 'mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd',
-            zoom: this.zoom,
-        });
         const eventHandler = () => this.refreshMap();
-        this.map.on('load', () => eventHandler());
-        this.map.on('styledata', () => this.mapStyleLoaded());
-        this.map.on('click', (e) => this.mapClicked(e));
+
+        this.buildMap(this.center, this.mapContainer, this.mapStyle, this.zoom)
+            .onStyleData(() => this.mapStyleLoaded())
+            .onMapClick((e) => this.mapClicked(e))
+            .onLoad(async () => {
+                eventHandler();
+            });
 
         this.ngxLoader.startLoader(this.loaderName);
+
         this.loadAvailableFbos();
         this.loadParkingOccurrences();
         this.loadClusters();
@@ -109,7 +109,6 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
     public refreshMap(): void {
         if (!this.map)
             return;
-
         this.refreshParkingOccurrencesOnMap();
     }
 
@@ -120,10 +119,6 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
             this.refreshParkingOccurrencesOnMap();
             this.refreshClustersOnMap();
         }
-    }
-
-    public mapResize(): void {
-        this.map.resize();
     }
 
     public newClusterClicked(): void {
@@ -215,25 +210,25 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
 
     public layerToggleClicked(styleId: string): void {
         if (styleId.indexOf('default') == -1)
-            this.map.setStyle('mapbox://styles/mapbox/' + styleId);
+            this.setStyle('mapbox://styles/mapbox/' + styleId);
         else
-            this.map.setStyle('mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd');
+            this.setStyle('mapbox://styles/fuelerlinx/ckszkcycz080718l7oaqoszvd');
     }
 
     public onMouseEnterFbo(cluster: AirportFboGeoFenceCluster): void {
         var layerId = 'fbo-cluster-layer-' + cluster.oid;
-        var layer = this.map.getLayer(layerId);
+        var layer = this.getLayer(layerId);
         if (!layer)
             return;
-        this.map.setPaintProperty(layerId, 'fill-color', '#FFEC14');
+        this.setPaintProperty(layerId, 'fill-color', '#FFEC14');
     }
 
     public onMouseLeaveFbo(cluster: AirportFboGeoFenceCluster): void {
         var layerId = 'fbo-cluster-layer-' + cluster.oid;
-        var layer = this.map.getLayer(layerId);
+        var layer = this.getLayer(layerId);
         if (!layer)
             return;
-        this.map.setPaintProperty(layerId, 'fill-color', '#0080ff');
+        this.setPaintProperty(layerId, 'fill-color', '#0080ff');
     }
 
     public onClusterFilterChanged(value: string) {
@@ -275,13 +270,13 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
             return;
 
         this.fboClusterLayerIds.forEach((id) => {
-            this.map.removeLayer(id);
+            this.removeLayer(id);
         });
 
         this.fboClusterLayerIds = [];
 
         this.fboClusterSourceIds.forEach((id) => {
-            this.map.removeSource(id);
+            this.removeSource(id);
         });
 
         this.fboClusterSourceIds = [];
@@ -292,12 +287,13 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
 
             const clusterPolygonSourceId: string = 'fbo-cluster-source-' + cluster.oid;
             const clusterPolygonLayerId: string = 'fbo-cluster-layer-' + cluster.oid;
-            this.map.addSource(clusterPolygonSourceId,
+
+
+            this.addSource(clusterPolygonSourceId,
                 {
                     data: {
                         geometry: {
                             coordinates: [ cluster.clusterCoordinatesCollection.map(coords => coords.longitudeLatitudeAsList)],
-                            //coordinates: cluster.clusterCoordinatesCollection.map(coords => new mapboxgl.LngLat(coords.longitude, coords.latitude)),
                             type: 'Polygon',
                         },
                         properties: {
@@ -307,8 +303,8 @@ export class FboGeofencingMapComponent implements OnInit, OnDestroy {
                     },
                     type: 'geojson',
                 });
-            
-            this.map.addLayer({
+
+            this.addLayer({
                 id: clusterPolygonLayerId,
                 layout: {},
                 source: clusterPolygonSourceId,
