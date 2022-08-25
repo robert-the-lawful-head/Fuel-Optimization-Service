@@ -21,17 +21,18 @@ export interface Swim {
     longitude: number | null;
     isAircraftOnGround: boolean;
     itpMarginTemplate: string;
-    status: FlightLegStatus;
+    status: FlightLegStatusEnum;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
     departures: number;
-    iD: number | null;
+    id: number | null;
     fuelerlinxID: number | null;
     vendor: string;
     transactionStatus: string;
+    icaoAircraftCode: string;
 }
-export enum FlightLegStatus {
+export enum FlightLegStatusEnum {
     EnRoute,
     Landing,
     Taxiing,
@@ -57,3 +58,25 @@ export enum SwimType {
     Arrival ,
     Departure
   }
+
+export const swimTableColumns = {
+       status:
+       'Status',
+        tailNumber:
+       'Tail Number',
+        flightDepartment:
+       'Flight Department',
+        icaoAircraftCode:
+       'Aircraft Type',
+        ete:
+       'ETE',
+        eta:
+       'ETA',
+        originDestination:
+       'Origin / Destination',
+        isAircraftOnGround:
+       'On Ground',
+        itpMarginTemplate:
+       'ITP Margin Template',
+       expandedDetail: "expandedDetail"
+    };

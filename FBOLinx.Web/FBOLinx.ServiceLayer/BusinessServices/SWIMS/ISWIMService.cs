@@ -14,5 +14,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
         Task<IEnumerable<FlightLegDTO>> GetHistoricalFlightLegs(string icao, bool isArrivals, DateTime historicalETD,
             DateTime historicalETA, DateTime historicalAircraftPositionDateTime);
+
+        Task CreatePlaceholderRecordsAndUpdateFlightStatus();
+
+        Task UpdateFlightLegs();
     }
 }

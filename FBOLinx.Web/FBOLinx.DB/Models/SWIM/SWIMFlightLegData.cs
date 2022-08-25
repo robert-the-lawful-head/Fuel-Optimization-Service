@@ -12,7 +12,7 @@ namespace FBOLinx.DB.Models
         public double? Altitude { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
-        public DateTime MessageTimestamp { get; set; }
+        public DateTime MessageTimestamp { get; set; } // PST Time
 
         public int SWIMFlightLegId { get; set; }
         public virtual SWIMFlightLeg SWIMFlightLeg { get; set; }

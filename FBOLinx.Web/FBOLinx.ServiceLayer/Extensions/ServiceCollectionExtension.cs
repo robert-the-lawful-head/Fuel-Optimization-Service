@@ -46,6 +46,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboService, FboService>();
             services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
             services.AddTransient<IFuelReqService, FuelReqService>();
+            services.AddTransient<IAirportTimeService, AirportTimeService>();
 
             return services;
         }
