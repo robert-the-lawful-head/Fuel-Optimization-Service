@@ -83,7 +83,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             this.loadAirportWatchData();
         });
-        this.mapLoadSubscription = timer(60000).subscribe(() =>{
+        this.mapLoadSubscription = timer(0,60000).subscribe(() =>{
             this.getDrawerData(this.selectedICAO, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
         });
     }
