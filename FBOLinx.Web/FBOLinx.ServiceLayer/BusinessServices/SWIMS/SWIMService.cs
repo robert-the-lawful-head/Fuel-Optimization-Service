@@ -9,6 +9,7 @@ using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Projections.AirportWatch;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AircraftHexTailMapping;
@@ -131,8 +132,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             
             List<string> flightNumbers = swimFlightLegDTOs.Where(x => !x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).ToList();
 
-            List<AirportWatchLiveData> antennaLiveData = (await _AirportWatchLiveDataEntityService.GetListBySpec(
-                new AirportWatchLiveDataByFlightNumberSpecification(flightNumbers, DateTime.UtcNow.AddHours(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
+            List<AirportWatchLiveHexTailMapping> antennaLiveData = (await _AirportWatchLiveDataEntityService.GetListBySpec<AirportWatchLiveHexTailMapping>(
+                new AirportWatchLiveHexTailMappingSpecification(flightNumbers, DateTime.UtcNow.AddHours(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
             
             List<AirportWatchHistoricalData> antennaHistoricalData = (await _AirportWatchHistoricalDataEntityService.GetListBySpec(
                 new AirportWatchHistoricalDataSpecification(flightNumbers, DateTime.UtcNow.AddDays(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
@@ -471,14 +472,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<FBOLinx.DB.Models.AirportWatchLiveData> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
+        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveHexTailMapping> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))
             {
                 return;
             }
 
-            FBOLinx.DB.Models.AirportWatchLiveData antennaLiveDataRecord = antennaLiveData.FirstOrDefault(x => x.AtcFlightNumber == swimFlightLegDto.AircraftIdentification);
+            AirportWatchLiveHexTailMapping antennaLiveDataRecord = antennaLiveData.FirstOrDefault(x => x.AtcFlightNumber == swimFlightLegDto.AircraftIdentification);
             if (antennaLiveDataRecord != null)
             {
                 if (!string.IsNullOrEmpty(antennaLiveDataRecord.TailNumber))

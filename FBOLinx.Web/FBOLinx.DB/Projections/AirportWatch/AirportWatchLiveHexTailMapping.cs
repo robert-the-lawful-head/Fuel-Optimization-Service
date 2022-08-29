@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.DB.Projections.AirportWatch
 {
-    public class AirportWatchHexTailMapping
+    public class AirportWatchLiveHexTailMapping
     {
         public string AircraftHexCode { get; set; }
         public string TailNumber { get; set; }
+        public string AtcFlightNumber { get; set; }
+        public DateTime AircraftPositionDateTimeUtc { get; set; }
     }
 }

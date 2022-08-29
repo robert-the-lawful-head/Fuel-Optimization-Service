@@ -95,28 +95,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
         protected IQueryable<TEntity> GetEntityListQueryable(ISpecification<TEntity> spec)
         {
             // fetch a Queryable that includes all expression-based includes
-            IQueryable<TEntity> queryable = spec.Includes
+            IQueryable<TEntity> queryableResult = spec.Includes
                 .Aggregate(context.Set<TEntity>().AsQueryable(),
                     (current, include) => current.Include(include));
 
             // modify the IQueryable to include any string-based include statements
-            queryable = spec.IncludeStrings
-                .Aggregate(queryable,
+            queryableResult = spec.IncludeStrings
+                .Aggregate(queryableResult,
                     (current, include) => current.Include(include));
 
-            queryable = queryable.AsNoTracking().Where(spec.Criteria);
+            queryableResult = queryableResult.AsNoTracking().Where(spec.Criteria);
 
-            return queryable;
-
-            var projection = spec.GetSelectExpression<AirCrafts>();
-            if (projection != null)
-            {
-                return await queryable.Select(spec.GetSelectExpression<AirCrafts>()).ToListAsync();
-            }
-            else
-            {
-                return await queryable.ToListAsync();
-            }
+            return queryableResult;
         }
         
         public async Task BulkDeleteEntities(List<TEntity> entities)
