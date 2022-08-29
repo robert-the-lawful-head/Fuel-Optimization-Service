@@ -75,7 +75,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(changes.columns){
             this.columnsToDisplay = this.getVisibleColumns();
         }
-        if(changes.data){
+        if (changes.data && this.dataSource){
             this.dataSource.data = changes.data.currentValue;
         }
     }
@@ -130,7 +130,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.originDestination) return this.getOriginDestinationString(row);
-        if(column == swimTableColumns.ete) return this.toReadableTime.transform(row.ete);
+        if (column == swimTableColumns.ete) { return !row.ete ? '' : this.toReadableTime.transform(row.ete);}
         if(column == swimTableColumns.eta) return this.getTime.transform(this.getDateObject(row.etaLocal));
         if(column == swimTableColumns.isAircraftOnGround) return this.booleanToText.transform(row.isAircraftOnGround);
         if(column == swimTableColumns.status) {
