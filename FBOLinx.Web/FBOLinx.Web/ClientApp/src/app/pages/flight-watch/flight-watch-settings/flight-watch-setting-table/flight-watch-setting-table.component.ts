@@ -86,10 +86,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 .map((column) => column.name) || []
         );
     }
-    getMakeModelDisplayString(element: any){
-        let str = (element.make)?element.make:"";
-        str += (element.make && element.make)?"/":"";
-        str += (element.model)?element.model:"";
+    getSlashSeparationDisplayString(e1: any,e2: any){
+        let str = (e1)?e1:"";
+        str += (e1 && e2)?"/":"";
+        str += (e2)?e2:"";
         return str;
     }
     getOriginDestinationString(element: Swim){
@@ -120,6 +120,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getDateObject(dateString: string){
         return new Date(dateString);
+    }
+    getEtaAtdDisplayString(row: Swim): string{
+        return this.getSlashSeparationDisplayString(
+            this.getTime.transform(this.getDateObject(row.etaZulu)),
+            this.getTime.transform(this.getDateObject(row.atdZulu))
+        );
     }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
