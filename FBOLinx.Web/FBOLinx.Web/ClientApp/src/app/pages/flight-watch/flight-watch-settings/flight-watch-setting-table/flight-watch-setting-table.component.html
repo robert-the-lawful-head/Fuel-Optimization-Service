@@ -32,15 +32,14 @@
               <table class="description-table">
                   <tr>
                   <td>      {{
-                          this.getMakeModelDisplayString(element)
+                        this.getSlashSeparationDisplayString(element.make,element.model)
                       }}
                   </td>
                       <td>Altitude: {{ element.altitude }}</td>
                       <td>
                           ETA/ATD:
                           {{
-                              element.etaLocal
-                                  | ToReadableDateTime
+                            this.getEtaAtdDisplayString(element)
                           }}
                       </td>
                       <td>Origin City: {{ element.city }}</td>
