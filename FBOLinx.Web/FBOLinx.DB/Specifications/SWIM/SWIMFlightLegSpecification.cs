@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using FBOLinx.Core.BaseModels.Specifications;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 
 namespace FBOLinx.DB.Specifications.SWIM
@@ -14,8 +15,8 @@ namespace FBOLinx.DB.Specifications.SWIM
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate)
-            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > startETADate)
+        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate, FlightLegStatus statusToExclude)
+            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > startETADate && x.Status != statusToExclude)
         {
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
