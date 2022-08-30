@@ -35,8 +35,8 @@ namespace FBOLinx.DB.Specifications.SWIM
         {
         }
 
-        public SWIMFlightLegSpecification(DateTime minATD, bool isPlaceholder)
-            : base(x => x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
+        public SWIMFlightLegSpecification(string departureIcao, DateTime minATD, bool isPlaceholder)
+            : base(x => x.DepartureICAO == departureIcao &&  x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
         {
         }
 

@@ -75,7 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         {
             List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins)));
             List<SWIMFlightLeg> placeholderRecords = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(DateTime.UtcNow.AddMinutes(PlaceholderRecordsFetchingThresholdMins), true));
+                new SWIMFlightLegSpecification(icao, DateTime.UtcNow.AddMinutes(PlaceholderRecordsFetchingThresholdMins), true));
             if (placeholderRecords != null && placeholderRecords.Any())
             {
                 swimFlightLegs.AddRange(placeholderRecords);
@@ -242,6 +242,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                                 placeholderRecord.DepartureICAO = airport.Icao;
                                 placeholderRecord.AircraftIdentification = tailNumberByCoordinates.Item1;
                                 placeholderRecord.ATD = DateTime.UtcNow;
+                                placeholderRecord.ATDLocal = DateTimeHelper.GetLocalTime(placeholderRecord.ATD, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
                                 placeholderRecord.IsPlaceholder = true;
                                 placeholderRecord.Status = FlightLegStatus.Taxiing;
                                 placeholderRecord.IsAircraftOnGround = true;
