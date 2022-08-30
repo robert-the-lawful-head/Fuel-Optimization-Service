@@ -22,6 +22,8 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool IsAircraftOnGround { get; set; }
         public string AircraftHexCode { get; set; }
         public string TailNumber { get; set; }
+        public int? AircraftId { get; set; }
+        public string AircraftICAO { get; set; }
         public bool IsInNetwork { get; set; }
         public bool IsFuelerLinxCustomer { get; set; }
         public FuelReqDto? FuelOrder { get; set; }

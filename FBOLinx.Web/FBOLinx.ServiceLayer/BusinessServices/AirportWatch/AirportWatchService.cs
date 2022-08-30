@@ -14,6 +14,7 @@ using FBOLinx.DB;
 using System.Collections;
 using System.Diagnostics;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.Fbo;
@@ -68,6 +69,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFuelReqService _FuelReqService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private ICustomerAircraftService _CustomerAircraftService;
+        private readonly AFSAircraftEntityService _AFSAircraftEntityService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -77,7 +79,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IMemoryCache memoryCache, IServiceProvider serviceProvider, ILoggingService loggingService,
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
-            ICustomerAircraftService customerAircraftService)
+            ICustomerAircraftService customerAircraftService,
+            AFSAircraftEntityService afsAircraftEntityService)
         {
             _CustomerAircraftService = customerAircraftService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
@@ -95,6 +98,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _MemoryCache = memoryCache;
             _LoggingService = loggingService;
+            _AFSAircraftEntityService = afsAircraftEntityService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -247,16 +251,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                   FuelOrder = fo,
-                                        IsInNetwork = (fr.ca?.Oid > 0),
+                                  IsInNetwork = (fr.ca?.Oid > 0),
                                   IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
+                                  AircraftId = fr.ca?.AircraftId,
                                   TailNumber = fr.awhd.TailNumber
                               })
-                                    .ToList();
+                              .ToList();
 
             AddDemoDataToAirportWatchResult(filteredResult, fboId);
+            await SetAircraftICAO(filteredResult);
 
             return filteredResult;
         }
+
+        private async Task SetAircraftICAO(List<AirportWatchLiveDataDto> result)
+        {
+            List<int> aircraftIds = result.Where(x => x.AircraftId != null).Select(x => x.AircraftId.Value).Distinct().ToList();
+            List<AFSAircraft> afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
+            foreach (var airportWatchLiveData in result)
+            {
+                AFSAircraft afsAircraft = afsAircrafts.FirstOrDefault(x => x.DegaAircraftID == airportWatchLiveData.AircraftId);
+                if (afsAircraft != null)
+                {
+                    airportWatchLiveData.AircraftICAO = afsAircraft.Icao;
+                }
+            }
+        }
+
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDepartures(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
