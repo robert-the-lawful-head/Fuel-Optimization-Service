@@ -35,9 +35,10 @@ export interface Swim {
 export enum FlightLegStatusEnum {
     EnRoute,
     Landing,
-    Taxiing,
+    TaxiingDestination,
     Arrived,
-    Departing
+    Departing,
+    TaxiingOrigin
 }
 
 export interface Time {

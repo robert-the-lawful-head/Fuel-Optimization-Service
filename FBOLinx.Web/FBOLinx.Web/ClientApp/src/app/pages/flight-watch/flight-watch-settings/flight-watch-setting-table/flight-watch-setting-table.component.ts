@@ -119,6 +119,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return (this.isArrival)? 'Arrivals': 'Departures';
     }
     getDateObject(dateString: string){
+        if (dateString === null || dateString.trim() === "") return null;
         return new Date(dateString);
     }
     getEtaAtdDisplayString(row: Swim): string{
@@ -136,10 +137,35 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(column == swimTableColumns.status) {
             if(row.status == FlightLegStatusEnum.EnRoute)
                 return "En Route";
+            else if(row.status == FlightLegStatusEnum.TaxiingOrigin || row.status == FlightLegStatusEnum.TaxiingDestination)
+                return "Taxiing";
             return  FlightLegStatusEnum[row.status];
         }
         let col = this.columns.find( c => c.name == column)
         return row[col.id];
+    }
+    getColumnDisplayString(column:string){
+        if(column != swimTableColumns.originDestination.replace(/\s+/g, '')) return column;
+
+        return this.isArrival
+        ? column
+        : "Destination";
+
+    }
+    getOriginCityLabel(){
+        return this.isArrival
+        ? "Origin City"
+        : "Destination City";
+    }
+    getMakeModelDisplayString(element: Swim){
+
+        var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model) == ""  ? "" : "" ;
+
+        return makemodelstr == ""  ? "NA" : makemodelstr ;
+    }
+    getTextColor(row: Swim, column:string){
+        if(column != swimTableColumns.tailNumber) return "";
+        return "";
     }
     getPastArrivalsValue(row: Swim){
             return this.isArrival
@@ -186,3 +212,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     }
 }
+// const airflightColors = [
+
+// ]
