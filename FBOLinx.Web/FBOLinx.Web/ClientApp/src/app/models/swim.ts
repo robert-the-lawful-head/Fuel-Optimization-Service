@@ -71,10 +71,10 @@ export const swimTableColumns = {
        'Aircraft Type',
         ete:
        'ETE',
-        eta:
-       'ETA',
+        etaAtd:
+       'ETA/ATD',
         originDestination:
-       'Origin / Destination',
+       'Origin/Destination',
         isAircraftOnGround:
        'On Ground',
         itpMarginTemplate:
