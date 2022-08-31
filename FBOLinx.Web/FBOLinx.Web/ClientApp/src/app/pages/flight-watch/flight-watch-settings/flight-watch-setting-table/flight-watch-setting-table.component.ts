@@ -122,12 +122,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if (dateString === null || dateString.trim() === "") return null;
         return new Date(dateString);
     }
-    getEtaAtdDisplayString(row: Swim): string{
-        return this.getSlashSeparationDisplayString(
-            this.getTime.transform(this.getDateObject(row.etaZulu)),
-            this.getTime.transform(this.getDateObject(row.atdZulu))
-        );
-    }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.originDestination) return this.getOriginDestinationString(row);

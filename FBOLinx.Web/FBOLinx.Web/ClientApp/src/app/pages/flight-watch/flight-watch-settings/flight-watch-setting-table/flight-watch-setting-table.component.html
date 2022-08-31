@@ -35,7 +35,7 @@
                   </td>
                       <td>Altitude: {{ element.altitude }}</td>
                       <td>
-                          ETA/ATD: {{ getEtaAtdDisplayString(element) }}
+                        ETA: {{ getDateObject(element.etaZulu) | getTime }}
                       </td>
                       <td>{{ getOriginCityLabel() }}: {{ element.city }}</td>
                   </tr>
@@ -47,7 +47,8 @@
                           {{ getPastArrivalsValue(element) }}
                       </td>
                       <td>
-                      </td>
+                        ATD: {{ getDateObject(element.atdZulu) | getTime }}
+                    </td>
                       <td></td>
                   </tr>
                   <tr>
