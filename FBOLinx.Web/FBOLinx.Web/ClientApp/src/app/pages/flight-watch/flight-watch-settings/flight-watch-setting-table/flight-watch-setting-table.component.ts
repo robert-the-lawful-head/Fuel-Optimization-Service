@@ -93,6 +93,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return str;
     }
     getOriginDestinationString(element: Swim){
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 96 ~ FlightWatchSettingTableComponent ~ getOriginDestinationString ~ element", element)
         return this.isArrival
                 ? element.origin
                 : element.city
@@ -165,7 +166,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model) == ""  ? "" : "" ;
 
-        return makemodelstr == ""  ? "NA" : makemodelstr ;
+        return makemodelstr == ""  ? "Unknown" : makemodelstr ;
     }
     getTextColor(row: Swim, column:string){
         if(column != swimTableColumns.tailNumber) return "";
