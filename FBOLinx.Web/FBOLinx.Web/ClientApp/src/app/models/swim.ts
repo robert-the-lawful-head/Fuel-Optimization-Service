@@ -35,9 +35,10 @@ export interface Swim {
 export enum FlightLegStatusEnum {
     EnRoute,
     Landing,
-    Taxiing,
+    TaxiingDestination,
     Arrived,
-    Departing
+    Departing,
+    TaxiingOrigin
 }
 
 export interface Time {
@@ -70,10 +71,10 @@ export const swimTableColumns = {
        'Aircraft Type',
         ete:
        'ETE',
-        eta:
-       'ETA',
+        etaAtd:
+       'ETA/ATD',
         originDestination:
-       'Origin / Destination',
+       'Origin/Destination',
         isAircraftOnGround:
        'On Ground',
         itpMarginTemplate:

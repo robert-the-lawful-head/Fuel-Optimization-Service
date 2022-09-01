@@ -13,7 +13,7 @@ import { SwimService } from 'src/app/services/swim.service';
 import { SharedService } from '../../../layouts/shared-service';
 import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
+import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -32,7 +32,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: './flight-watch.component.html',
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
-    @ViewChild('map') map: FlightWatchMapComponent;
+    @ViewChild(FlightWatchMapWrapperComponent) private mapWrapper:FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
 
     pageTitle = 'Flight Watch';
@@ -127,7 +127,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     }
     updateIcao(icao:string){
-        this.map.goToAirport(icao);
+        this.mapWrapper.map.goToAirport(icao);
         this.selectedICAO =  icao;
         this.getDrawerData(icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     }
@@ -276,7 +276,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         };
 
         setTimeout(() => {
-            this.map.mapResize();
+            this.mapWrapper.map.mapResize();
         });
     }
 
@@ -292,7 +292,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.setFilteredFlightWatchData();
     }
     openAircraftPopup(tailNumber: string){
-        this.map.openAircraftPopUpByTailNumber(tailNumber);
+        this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize(){
         if(!this.drawer.opened) return;

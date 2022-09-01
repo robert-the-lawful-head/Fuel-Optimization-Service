@@ -119,34 +119,63 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return (this.isArrival)? 'Arrivals': 'Departures';
     }
     getDateObject(dateString: string){
+        if (dateString === null || dateString.trim() === "") return null;
         return new Date(dateString);
-    }
-    getEtaAtdDisplayString(row: Swim): string{
-        return this.getSlashSeparationDisplayString(
-            this.getTime.transform(this.getDateObject(row.etaZulu)),
-            this.getTime.transform(this.getDateObject(row.atdZulu))
-        );
     }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.originDestination) return this.getOriginDestinationString(row);
         if (column == swimTableColumns.ete) { return !row.ete ? '' : this.toReadableTime.transform(row.ete);}
-        if(column == swimTableColumns.eta) return this.getTime.transform(this.getDateObject(row.etaLocal));
         if(column == swimTableColumns.isAircraftOnGround) return this.booleanToText.transform(row.isAircraftOnGround);
         if(column == swimTableColumns.status) {
             if(row.status == FlightLegStatusEnum.EnRoute)
                 return "En Route";
+            else if(row.status == FlightLegStatusEnum.TaxiingOrigin || row.status == FlightLegStatusEnum.TaxiingDestination)
+                return "Taxiing";
             return  FlightLegStatusEnum[row.status];
+        }
+        if(column == swimTableColumns.etaAtd){
+            return this.isArrival
+            ? this.getTime.transform(this.getDateObject(row.etaLocal))
+            : this.getTime.transform(this.getDateObject(row.atdLocal));
         }
         let col = this.columns.find( c => c.name == column)
         return row[col.id];
     }
-    getPastArrivalsValue(row: Swim){
+    getColumnDisplayString(column:string){
+        if(column != swimTableColumns.originDestination) return column;
+
+        if(column != swimTableColumns.etaAtd){
             return this.isArrival
-                ? row.arrivals
-                : row.departures;
+            ? "ETA"
+            : "ATD";
+        }
+
+        return this.isArrival
+        ? "Origin"
+        : "Destination";
 
     }
+    getOriginCityLabel(){
+        return this.isArrival
+        ? "Origin City"
+        : "Destination City";
+    }
+    getMakeModelDisplayString(element: Swim){
+
+        var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model) == ""  ? "" : "" ;
+
+        return makemodelstr == ""  ? "NA" : makemodelstr ;
+    }
+    getTextColor(row: Swim, column:string){
+        if(column != swimTableColumns.tailNumber) return "";
+        return "";
+    }
+    getPastArrivalsValue(row: Swim){
+        return this.isArrival
+            ? row.arrivals
+            : row.departures;
+}
     getColumnHeader(column: string){
             if( column != swimTableColumns.originDestination) return column;
             return this.isArrival
@@ -167,8 +196,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
               return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, isAsc);
             case swimTableColumns.ete:
               return this.compare(a.ete, b.ete, isAsc);
-              case swimTableColumns.eta:
-              return this.compare(a.etaZulu, b.etaZulu, isAsc);
+              case swimTableColumns.etaAtd:
+              return (this.isArrival) ? this.compare(a.etaZulu, b.etaZulu, isAsc) : this.compare(a.atdZulu, b.atdZulu, isAsc);
               case swimTableColumns.originDestination:
                 return (this.isArrival)? this.compare(a.arrivals, b.arrivals, isAsc): this.compare(a.departures, b.departures, isAsc);
               case swimTableColumns.isAircraftOnGround:
@@ -186,3 +215,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     }
 }
+// const airflightColors = [
+
+// ]

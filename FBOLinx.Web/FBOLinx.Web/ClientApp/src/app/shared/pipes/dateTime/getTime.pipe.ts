@@ -5,7 +5,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class GetTimePipe implements PipeTransform {
 
-  transform(dateObject: Date, args?: any): any {
+  transform(dateObject?: any, args?: any): any {
     if(dateObject == null) return "";
     var hms:string[] = [
         dateObject.getHours().toString(),
