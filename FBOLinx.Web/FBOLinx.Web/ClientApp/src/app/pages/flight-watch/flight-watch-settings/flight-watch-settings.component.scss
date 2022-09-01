@@ -37,39 +37,37 @@
     display: flex;
 }
 
-.tables-container {
-    height: 100%;
-}
 .data-container {
-    overflow: auto;
+    padding: 0 0 40px 0;
 }
+
 @media only screen and (max-width: 1365px) {
     .data-container {
-        height: 200px;
+        height: calc(27.5vh);
     }
 }
 @media only screen and (min-width: 1366px) {
     .data-container {
-        height: calc(26.6vh);
+        height: calc(29.2vh);
     }
 }
 @media only screen and (min-width: 1440px) {
     .data-container {
-        height: calc(30vh);
+        height: calc(32.6vh);
     }
 }
 @media only screen and (min-width: 1680px) {
     .data-container {
-        height: calc(32.9vh);
+        height: calc(35.5vh);
     }
 }
 @media only screen and (min-width: 1920px) {
     .data-container {
-        height: calc(35vh);
+        height: calc(37.6vh);
     }
 }
 @media only screen and (min-width: 2560px) {
     .data-container {
-        height: calc(38.8vh);
+        height: calc(41.4vh);
     }
 }

@@ -73,12 +73,7 @@ table.description-table {
       }
 
   }
-  p.table-header{
-    font-weight: bold;
-    font-size: 20px;
-    padding: 20px 0px 0px 0px;
-    margin: 0px;
-  }
+
   .table-container{
     padding: 0px 20px 0px 20px;
   }
@@ -86,3 +81,46 @@ table.description-table {
   .hide {
     display: none;
 }
+.table-header-container{
+    p.table-header{
+        font-weight: bold;
+        font-size: 20px;
+        padding: 20px 0px 0px 20px;
+        margin: 0px;
+      }
+  }
+
+.table-container {
+    overflow: auto;
+    height: 100%;
+}
+// @media only screen and (max-width: 1365px) {
+//     .table-container {
+//         height: 200px;
+//     }
+// }
+// @media only screen and (min-width: 1366px) {
+//     .table-container {
+//         height: calc(26.6vh);
+//     }
+// }
+// @media only screen and (min-width: 1440px) {
+//     .table-container {
+//         height: calc(30vh);
+//     }
+// }
+// @media only screen and (min-width: 1680px) {
+//     .table-container {
+//         height: calc(32.9vh);
+//     }
+// }
+// @media only screen and (min-width: 1920px) {
+//     .table-container {
+//         height: calc(35vh);
+//     }
+// }
+// @media only screen and (min-width: 2560px) {
+//     .table-container {
+//         height: calc(38.8vh);
+//     }
+// }
