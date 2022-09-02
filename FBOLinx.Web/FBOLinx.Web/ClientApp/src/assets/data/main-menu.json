@@ -15,6 +15,17 @@
         "roles": [ 1, 4, 6 ]
     },
     {
+        "title": "Flight Watch",
+        "icon": {
+            "class": "fa fa-eye",
+            "bg": "#7fadd4",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Flight Watch",
+        "routing": "/default-layout/flight-watch",
+        "roles": [ 1, 4, 5 ]
+    },
+    {
         "title": "CSR Dashboard",
         "icon": {
             "class": "fa fa-home",
@@ -140,17 +151,6 @@
         "tooltip": "Enter and manage your fees.",
         "routing": "/default-layout/rampfees",
         "roles": [ 1, 4, 6 ]
-    },
-    {
-        "title": "Flight Watch",
-        "icon": {
-            "class": "fa fa-eye",
-            "bg": "#7fadd4",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "tooltip": "Flight Watch",
-        "routing": "/default-layout/flight-watch",
-        "roles": [ 1, 4, 5 ]
     },
     {
         "title": "Analytics",
