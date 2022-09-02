@@ -15,8 +15,9 @@ namespace FBOLinx.DB.Specifications.SWIM
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate, FlightLegStatus statusToExclude)
-            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA > startETADate && x.Status != statusToExclude)
+        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate, List<FlightLegStatus> statusesToExclude)
+            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) &&
+                        x.ETA != null && x.ETA > startETADate && x.Status != null && !statusesToExclude.Contains(x.Status.Value))
         {
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
@@ -41,8 +42,13 @@ namespace FBOLinx.DB.Specifications.SWIM
         {
         }
 
-        public SWIMFlightLegSpecification(DateTime startETADate)
-            : base(x => x.ETA > startETADate)
+        public SWIMFlightLegSpecification(DateTime startETADate) 
+            : base(x => x.ETA > startETADate && x.ArrivalICAO != null) // x.ArrivalICAO != null - skip placeholder records
+        {
+        }
+
+        public SWIMFlightLegSpecification(DateTime startETADate, bool includeOnlyNewRecords)
+            : base(x => x.ETA > startETADate && x.ArrivalICAO != null && !x.IsProcessed) // x.ArrivalICAO != null - skip placeholder records
         {
         }
     }
