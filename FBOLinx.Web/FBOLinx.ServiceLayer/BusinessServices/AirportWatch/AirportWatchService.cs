@@ -156,8 +156,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 IsAircraftOnGround = (aircraftWatchLiveData?.IsAircraftOnGround).GetValueOrDefault(),
                 Company = customerInfoByGroup?.Customer?.Company,
                 AircraftMakeModel = aircaft?.Make + " " + aircaft?.Model,
-                LastQuote = pricingLogs == null ? "N/A" : pricingLogs.CreatedDate.ToString(),
-                CurrentPricing = customerPricing?.PricingList?.FirstOrDefault()?.AllInPrice.GetValueOrDefault().ToString()
+                LastQuote = pricingLogs?.CreatedDate.ToString(),
+                CurrentPricing = customerPricing?.PricingList?.FirstOrDefault()?.AllInPrice.GetValueOrDefault().ToString(),
+                AircraftICAO = aircaft?.AFSAircraft?.FirstOrDefault()?.Icao
             };
         }
         
