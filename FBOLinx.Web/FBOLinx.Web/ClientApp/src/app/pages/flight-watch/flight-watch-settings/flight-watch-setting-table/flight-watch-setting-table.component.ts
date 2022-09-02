@@ -96,7 +96,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 96 ~ FlightWatchSettingTableComponent ~ getOriginDestinationString ~ element", element)
         return this.isArrival
                 ? element.origin
-                : element.city
+                : element.arrivalICAO
     }
     refreshSort() {
         let sortedColumn = this.columns.find(
