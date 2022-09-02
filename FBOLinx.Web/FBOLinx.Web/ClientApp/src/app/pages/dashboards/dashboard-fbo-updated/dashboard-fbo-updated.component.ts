@@ -46,19 +46,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     mapLoadSubscription: Subscription;
     isMapLoading: boolean = true;
 
-        aircraftwatch = {
-            customerInfoBygGroupId: 0,
-            tailNumber: '',
-            atcFlightNumber: '',
-            aircraftTypeCode: '',
-            isAircraftOnGround: false,
-            company: '',
-            aircraftMakeModel: '',
-            lastQuote: '',
-            currentPricing: '',
-        };
-
-
     constructor(private sharedService: SharedService,
         private router: Router,
         private airportWatchService: AirportWatchService) {

@@ -2,91 +2,118 @@
     <p class="table-header">{{ getSwimDataTypeString() }}</p>
     <mat-spinner *ngIf="!data"></mat-spinner>
     <table
-    mat-table
-    [dataSource]="dataSource"
-    multiTemplateDataRows
-    matSort
-    (matSortChange)="sortData($event)"
-    [class.hide]="!data"
-  >
-    <ng-container
-      matColumnDef="{{column}}"
-      *ngFor="let column of columnsToDisplay"
+        mat-table
+        [dataSource]="dataSource"
+        multiTemplateDataRows
+        matSort
+        (matSortChange)="sortData($event)"
+        [class.hide]="!data"
     >
-      <th mat-header-cell *matHeaderCellDef mat-sort-header="{{column}}">
-        {{column}}
-      </th>
-      <td mat-cell *matCellDef="let element">{{getColumnData(element,column)}}</td>
-    </ng-container>
-    <ng-container matColumnDef="expandedDetail">
-      <td
-        mat-cell
-        *matCellDef="let element"
-        [attr.colspan]="columnsToDisplay.length"
-      >
-        <div
-          class="example-element-detail"
-          [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
+        <ng-container
+            matColumnDef="{{ column }}"
+            *ngFor="let column of columnsToDisplay"
         >
-          <div class="example-element-description">
-              <table class="description-table">
-                  <tr>
-                  <td>      {{
-                        this.getSlashSeparationDisplayString(element.make,element.model)
-                      }}
-                  </td>
-                      <td>Altitude: {{ element.altitude }}</td>
-                      <td>
-                          ETA/ATD:
-                          {{
-                            this.getEtaAtdDisplayString(element)
-                          }}
-                      </td>
-                      <td>Origin City: {{ element.city }}</td>
-                  </tr>
-                  <tr>
-                      <td>Visit to {{fbo}} (30 days): {{ element.VisitsToMyFBO }} </td>
-                      <td>
-                          Past Arrvals at
-                          {{ icao }} (30 days):
-                          {{ getPastArrivalsValue(element) }}
-                      </td>
-                      <td>
-                      </td>
-                      <td></td>
-                  </tr>
-                  <tr>
-                      <td>
-                          Fuel Capacity (gal):
-                          {{ element.fuelCapacityGal }}
-                      </td>
-                      <td>
-                          FuelerLinx ID: {{ element.fuelerlinxID }}
-                      </td>
-                      <td>
-                          Transaction Status:
-                          {{ element.transactionStatus }}
-                      </td>
-                      <td>{{ element.phone }}</td>
-                  </tr>
-              </table>
-          </div>
-        </div>
-      </td>
-    </ng-container>
+            <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header="{{ column }}"
+            >
+                {{ getColumnDisplayString(column) }}
+            </th>
+            <td
+                mat-cell
+                *matCellDef="let element"
+                [ngStyle]="{ color: getTextColor(element, column) }"
+            >
+                {{ getColumnData(element, column) }}
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="expandedDetail">
+            <td
+                mat-cell
+                *matCellDef="let element"
+                [attr.colspan]="columnsToDisplay.length"
+            >
+                <div
+                    class="example-element-detail"
+                    [@detailExpand]="
+                        element == expandedElement ? 'expanded' : 'collapsed'
+                    "
+                >
+                    <div class="example-element-description">
+                        <table class="description-table">
+                            <tr>
+                                <td>
+                                    Make/Model:
+                                    {{ getMakeModelDisplayString(element) }}
+                                </td>
+                                <td>Altitude: {{ element.altitude }}</td>
+                                <td>
+                                    ETA:
+                                    {{
+                                        getDateObject(element.etaZulu) | getTime
+                                    }}
+                                </td>
+                                <td>
+                                    {{ getOriginCityLabel() }}:
+                                    {{ element.city }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Visit to {{ fbo }} (30 days):
+                                    {{ element.visitsToMyFBO }}
+                                </td>
+                                <td>
+                                    Past Arrvals at
+                                    {{ icao }} (30 days):
+                                    {{ getPastArrivalsValue(element) }}
+                                </td>
+                                <td>
+                                    ATD:
+                                    {{
+                                        getDateObject(element.atdZulu) | getTime
+                                    }}
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Fuel Capacity (gal):
+                                    {{ element.fuelCapacityGal }}
+                                </td>
+                                <td>
+                                    FuelerLinx ID: {{ element.fuelerlinxID }}
+                                </td>
+                                <td>
+                                    Transaction Status:
+                                    {{ element.transactionStatus }}
+                                </td>
+                                <td>{{ element.phone }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay sticky:true"></tr>
-    <tr
-      mat-row
-      *matRowDef="let element; columns: columnsToDisplay;"
-      class="example-element-row"
-      [class.example-expanded-row]="expandedElement === element"
-      (click)="expandedElement = expandedElement === element? null : element"
-    ></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: ['expandedDetail']"
-      class="example-detail-row"
-    ></tr>
-  </table>
+        <tr
+            mat-header-row
+            *matHeaderRowDef="columnsToDisplay; sticky: true"
+        ></tr>
+        <tr
+            mat-row
+            *matRowDef="let element; columns: columnsToDisplay"
+            class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="
+                expandedElement = expandedElement === element ? null : element
+            "
+        ></tr>
+        <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+        ></tr>
+    </table>
 </div>

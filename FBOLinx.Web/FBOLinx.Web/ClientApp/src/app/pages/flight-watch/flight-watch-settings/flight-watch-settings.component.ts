@@ -156,8 +156,8 @@ export class FlightWatchSettingsComponent {
                     name: swimTableColumns.ete,
                 },
                 {
-                    id: 'eta',
-                    name: swimTableColumns.eta,
+                    id: 'eta-atd',
+                    name: swimTableColumns.etaAtd,
                 },
                 {
                     id: 'origin-destination',
