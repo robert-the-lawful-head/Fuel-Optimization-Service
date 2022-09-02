@@ -175,7 +175,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                 company: flightWatch?.company,
                 aircraftMakeModel: flightWatch?.aircraftMakeModel,
                 lastQuote: flightWatch?.lastQuote,
-                currentPricing: flightWatch?.currentPricing
+                currentPricing: flightWatch?.currentPricing,
+                aircraftICAO: flightWatch?.aircraftICAO
             };
             return;
         }

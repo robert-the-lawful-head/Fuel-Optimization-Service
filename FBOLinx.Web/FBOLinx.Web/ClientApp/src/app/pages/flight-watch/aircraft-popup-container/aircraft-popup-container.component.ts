@@ -28,7 +28,8 @@ export class AircraftPopupContainerComponent {
       company: '',
       aircraftMakeModel: '',
       lastQuote: '',
-      currentPricing: ''
+      currentPricing: '',
+      aircraftICAO: ''
   };
   public hasAircraft = false;
   public customers: CustomersListType[] = []
@@ -40,11 +41,11 @@ export class AircraftPopupContainerComponent {
     private customerInfoByGroupService: CustomerinfobygroupService,
     private router: Router
   ) { }
-  ngOnChanges(changes) {     
-    if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;  
-    if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue; 
+  ngOnChanges(changes) {
+    if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;
+    if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue;
     if(changes.flightData?.currentValue?.company) this.hasAircraft = true;
-    else this.hasAircraft = false;   
+    else this.hasAircraft = false;
   }
   ngOnInit(){
     if(this.fboId && this.groupId)
@@ -86,5 +87,5 @@ export class AircraftPopupContainerComponent {
   goToCustomerManager(customerInfoBygGroupId: number):void{
     console.log(customerInfoBygGroupId);
     this.router.navigate(['default-layout','customers',customerInfoBygGroupId])
-  } 
+  }
 }

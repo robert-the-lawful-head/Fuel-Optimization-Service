@@ -73,6 +73,7 @@ export class FlightWatchMapComponent
         aircraftMakeModel: '',
         lastQuote: '',
         currentPricing: '',
+        aircraftICAO: '',
     };
     public isAircraftDataLoading: boolean = true;
     public fboId: any;

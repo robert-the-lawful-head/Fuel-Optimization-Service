@@ -26,6 +26,7 @@ export type FlightWatch = {
     aircraftMakeModel : string;
     lastQuote : string;
     currentPricing : string;
+    aircraftICAO : string;
 };
 
 export type Aircraftwatch = {
@@ -38,4 +39,5 @@ export type Aircraftwatch = {
     aircraftMakeModel : string;
     lastQuote : string;
     currentPricing : string;
+    aircraftICAO : string;
 };
