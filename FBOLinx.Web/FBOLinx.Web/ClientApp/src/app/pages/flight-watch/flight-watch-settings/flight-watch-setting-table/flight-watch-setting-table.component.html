@@ -1,5 +1,8 @@
-<div class="table-container">
+
+<div class="table-header-container">
     <p class="table-header">{{ getSwimDataTypeString() }}</p>
+</div>
+<div class="table-container">
     <mat-spinner *ngIf="!data"></mat-spinner>
     <table
         mat-table

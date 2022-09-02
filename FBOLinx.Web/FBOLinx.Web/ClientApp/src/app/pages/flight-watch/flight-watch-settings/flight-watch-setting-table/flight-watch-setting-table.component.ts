@@ -93,6 +93,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return str;
     }
     getOriginDestinationString(element: Swim){
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 96 ~ FlightWatchSettingTableComponent ~ getOriginDestinationString ~ element", element)
         return this.isArrival
                 ? element.origin
                 : element.city
@@ -143,18 +144,18 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return row[col.id];
     }
     getColumnDisplayString(column:string){
-        if(column != swimTableColumns.originDestination) return column;
-
-        if(column != swimTableColumns.etaAtd){
+        if(column == swimTableColumns.etaAtd){
             return this.isArrival
             ? "ETA"
             : "ATD";
         }
 
-        return this.isArrival
-        ? "Origin"
-        : "Destination";
-
+        if(column == swimTableColumns.originDestination){
+            return this.isArrival
+            ? "Origin"
+            : "Destination";
+        }
+        return column;
     }
     getOriginCityLabel(){
         return this.isArrival
@@ -165,7 +166,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model) == ""  ? "" : "" ;
 
-        return makemodelstr == ""  ? "NA" : makemodelstr ;
+        return makemodelstr == ""  ? "Unknown" : makemodelstr ;
     }
     getTextColor(row: Swim, column:string){
         if(column != swimTableColumns.tailNumber) return "";
@@ -176,12 +177,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
             ? row.arrivals
             : row.departures;
 }
-    getColumnHeader(column: string){
-            if( column != swimTableColumns.originDestination) return column;
-            return this.isArrival
-                ? 'Origin'
-                : 'Destination';
-    }
     sortData(sort: Sort) {
         this.dataSource.data.sort((a, b) => {
           const isAsc = sort.direction === 'asc';
@@ -215,6 +210,3 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     }
 }
-// const airflightColors = [
-
-// ]
