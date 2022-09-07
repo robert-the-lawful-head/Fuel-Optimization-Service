@@ -181,7 +181,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     .ToList();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
+            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo, IsEtaOnly = true });
 
             foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
