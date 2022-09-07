@@ -131,8 +131,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             
             List<string> atcFlightNumbers = swimFlightLegDTOs.Where(x => !x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).ToList();
 
-            List<AirportWatchLiveData> antennaLiveData = (await _AirportWatchLiveDataEntityService.GetListBySpec(
-                new AirportWatchLiveDataByFlightNumberSpecification(atcFlightNumbers, DateTime.UtcNow.AddHours(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
+            List<AirportWatchLiveHexTailMapping> antennaLiveData = (await _AirportWatchLiveDataEntityService.GetListBySpec<AirportWatchLiveHexTailMapping>(
+                new AirportWatchLiveHexTailMappingSpecification(atcFlightNumbers, DateTime.UtcNow.AddHours(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
             
             List<AirportWatchHistoricalData> antennaHistoricalData = (await _AirportWatchHistoricalDataEntityService.GetListBySpec(
                 new AirportWatchHistoricalDataSpecification(atcFlightNumbers, DateTime.UtcNow.AddDays(-1)))).OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
