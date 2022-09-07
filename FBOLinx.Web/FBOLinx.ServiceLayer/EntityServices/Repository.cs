@@ -7,48 +7,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class Repository<T,TContext> : IRepository<T,TContext>
-    where T : class where TContext : DbContext
+    public class Repository<TEntity,TContext> : IRepository<TEntity,TContext>
+    where TEntity : class where TContext : DbContext
     {
         private readonly TContext context;
         public Repository(TContext context)
         {
             this.context = context;
         }
-        public async Task<T> AddAsync(T entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
-            context.Set<T>().Add(entity);
+            context.Set<TEntity>().Add(entity);
             await context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task DeleteAsync(T entity)
+        public async Task DeleteAsync(TEntity entity)
         {
-            context.Set<T>().Remove(entity);
+            context.Set<TEntity>().Remove(entity);
             await context.SaveChangesAsync();
         }
 
-        public async Task<T> DeleteAsync(int id)
+        public async Task<TEntity> DeleteAsync(int id)
         {
-            var entity = context.Set<T>().Find(id);
+            var entity = context.Set<TEntity>().Find(id);
             if (entity == null)
             {
                 return null;
             }
-            context.Set<T>().Remove(entity);
+            context.Set<TEntity>().Remove(entity);
             await context.SaveChangesAsync();
             return entity;
         }
-        public async Task<T> GetAsync(int id) => await context.Set<T>().FindAsync(id);
+        public async Task<TEntity> GetAsync(int id) => await context.Set<TEntity>().FindAsync(id);
         
-        public async Task UpdateAsync(T entity)
+        public async Task UpdateAsync(TEntity entity)
         {
             try
             {
-                context.Set<T>().Attach(entity);
+                context.Set<TEntity>().Attach(entity);
             }
             catch (System.Exception exception)
             {
@@ -58,47 +59,57 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            var query = context.Set<T>().AsQueryable();
+            var query = context.Set<TEntity>().AsQueryable();
             return await query.Where(predicate).ToListAsync();
         }
-        public async Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate)
-        => await context.Set<T>().FirstOrDefaultAsync(predicate);
-        public IQueryable<T> Where(Expression<Func<T, bool>> predicate)
-        => context.Set<T>().Where(predicate);
-        public async Task<bool> AnyAsync(Expression<Func<T, bool>> predicate)
-        => await context.Set<T>().AnyAsync(predicate);
-        public async Task<T> FindAsync(int id)
-        => await context.Set<T>().FindAsync(id);
-        public virtual async Task<T> GetSingleBySpec(ISpecification<T> spec) => await GetEntitySingleBySpec(spec);
-
-        protected async Task<T> GetEntitySingleBySpec(ISpecification<T> spec)
+        public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        => await context.Set<TEntity>().FirstOrDefaultAsync(predicate);
+        public IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate)
+        => context.Set<TEntity>().Where(predicate);
+        public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
+        => await context.Set<TEntity>().AnyAsync(predicate);
+        public async Task<TEntity> FindAsync(int id)
+        => await context.Set<TEntity>().FindAsync(id);
+        public virtual async Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec) => await GetEntitySingleBySpec(spec);
+        
+        public async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
         {
-            var result = await GetEntityListBySpec(spec);
-            return result.FirstOrDefault();
+            var queryable = GetEntityListQueryable(spec);
+            return await queryable.ToListAsync();
         }
 
-        public async Task<List<T>> GetListBySpec(ISpecification<T> spec) => await GetEntityListBySpec(spec);
+        public async Task<List<TProjection>> GetListBySpec<TProjection>(ISpecification<TEntity, TProjection> spec)
+        {
+            var queryable = GetEntityListQueryable((Specification<TEntity>)spec);
+            return await queryable.Select(spec.Projection).ToListAsync();
+        }
 
-        protected async Task<List<T>> GetEntityListBySpec(ISpecification<T> spec)
+        protected async Task<TEntity> GetEntitySingleBySpec(ISpecification<TEntity> spec)
+        {
+            var queryable = GetEntityListQueryable(spec);
+            return await queryable.FirstOrDefaultAsync();
+        }
+
+        protected IQueryable<TEntity> GetEntityListQueryable(ISpecification<TEntity> spec)
         {
             // fetch a Queryable that includes all expression-based includes
-            var queryableResultWithIncludes = spec.Includes
-                .Aggregate(context.Set<T>().AsQueryable(),
+            IQueryable<TEntity> queryableResult = spec.Includes
+                .Aggregate(context.Set<TEntity>().AsQueryable(),
                     (current, include) => current.Include(include));
 
             // modify the IQueryable to include any string-based include statements
-            var secondaryResult = spec.IncludeStrings
-                .Aggregate(queryableResultWithIncludes,
+            queryableResult = spec.IncludeStrings
+                .Aggregate(queryableResult,
                     (current, include) => current.Include(include));
 
-            // return the result of the query using the specification's criteria expression
-            return await secondaryResult.AsNoTracking()
-                .Where(spec.Criteria)
-                .ToListAsync();
+            queryableResult = queryableResult.AsNoTracking().Where(spec.Criteria);
+
+            return queryableResult;
         }
-        public async Task BulkDeleteEntities(List<T> entities)
+        
+        public async Task BulkDeleteEntities(List<TEntity> entities)
         {
             try
             {
@@ -110,11 +121,11 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 //Do nothing... the entities were already deleted
             }
         }
-        public async Task BulkDeleteEntities(ISpecification<T> spec)
+        public async Task BulkDeleteEntities(ISpecification<TEntity> spec)
         {
             try
             {
-                await context.Set<T>().Where(spec.Criteria).BatchDeleteAsync();
+                await context.Set<TEntity>().Where(spec.Criteria).BatchDeleteAsync();
                 await context.SaveChangesAsync();
             }
             catch (System.Exception exception)
@@ -123,7 +134,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             }
         }
 
-        public async Task BulkInsert(List<T> entities, bool includeGraph = false)
+        public async Task BulkInsert(List<TEntity> entities, bool includeGraph = false)
         {
             await using var transaction = await context.Database.BeginTransactionAsync();
             BulkConfig bulkConfig = new BulkConfig();
@@ -133,7 +144,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await transaction.CommitAsync();
         }
 
-        public async Task BulkUpdate(List<T> entities)
+        public async Task BulkUpdate(List<TEntity> entities)
         {
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkUpdateAsync(entities);

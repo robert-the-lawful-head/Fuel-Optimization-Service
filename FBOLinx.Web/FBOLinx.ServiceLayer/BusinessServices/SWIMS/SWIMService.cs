@@ -9,6 +9,7 @@ using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Projections.AirportWatch;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AircraftHexTailMapping;
@@ -511,14 +512,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<FBOLinx.DB.Models.AirportWatchLiveData> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
+        private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveHexTailMapping> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))
             {
                 return;
             }
 
-            FBOLinx.DB.Models.AirportWatchLiveData antennaLiveDataRecord = antennaLiveData.FirstOrDefault(x => x.AtcFlightNumber == swimFlightLegDto.AircraftIdentification);
+            AirportWatchLiveHexTailMapping antennaLiveDataRecord = antennaLiveData.FirstOrDefault(x => x.AtcFlightNumber == swimFlightLegDto.AircraftIdentification);
             if (antennaLiveDataRecord != null)
             {
                 if (!string.IsNullOrEmpty(antennaLiveDataRecord.TailNumber))
