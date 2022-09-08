@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.DatesAndTimes;
-using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB;
 using FBOLinx.DB.Models;
@@ -25,8 +24,12 @@ using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.Logging;
-using Geolocation;
 using Mapster;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.DB.Specifications.FuelRequests;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.ServiceLayer.Extensions.Aircraft;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 {
@@ -49,13 +52,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly IFuelReqService _FuelReqService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
+        private FuelerLinxApiService _fuelerLinxApiService;
+        private IFboEntityService _fboService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
             ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
-            AFSAircraftEntityService afsAircraftEntityService)
+            AFSAircraftEntityService afsAircraftEntityService,
+             FuelerLinxApiService fuelerLinxApiService,
+             IFboEntityService fboService)
         {
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -70,6 +77,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _FuelReqService = fuelReqService;
             _pricingTemplateService = pricingTemplateService;
             _AFSAircraftEntityService = afsAircraftEntityService;
+            _fuelerLinxApiService = fuelerLinxApiService;
+            _fboService = fboService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
@@ -415,11 +424,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
 
+            var fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
+
+            // Repeated Code need to be refactored 
+            var fuelOrders = (await _FuelReqService.GetListbySpec(new FuelReqByFboAndDateSpecification(fboId, DateTime.UtcNow, DateTime.UtcNow.AddHours(12))))
+                            .Where(x => x.Cancelled != true)
+                                .ToList();
+
+            Fuelerlinx.SDK.FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new Fuelerlinx.SDK.FBOLinxOrdersRequest()
+            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
+
+            foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            { 
+                fuelOrders.Add(transaction.Adapt<FuelReqDto>());
+            }
+
+            var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
+
+            var caSwimFlightLegs = swimFlightLegs.Join(
+            customerAircrafts.ToList(),
+            sfl => sfl.AircraftIdentification,
+            ca => ca.TailNumber,
+            (sfl,ca) => ca).ToList();
+
+            var caFuelOrders = customerAircrafts.Join(
+             fuelOrders,
+            ca => ca.TailNumber,
+            fo => fo.CustomerAircraft.TailNumber,
+            (sflJoin, fo) => fo ).ToList();
+
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
-            foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
+            foreach (var swimFlightLeg in swimFlightLegs)
             {
                 FlightLegDTO flightLegDto = new FlightLegDTO();
-                //flightLegDto.Id = swimFlightLeg.Oid;
                 flightLegDto.TailNumber = swimFlightLeg.AircraftIdentification;
                 flightLegDto.DepartureICAO = swimFlightLeg.DepartureICAO;
                 flightLegDto.DepartureCity = swimFlightLeg.DepartureCity;
@@ -437,6 +474,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.FuelCapacityGal = swimFlightLeg.FuelCapacityGal;
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
+
+                flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsInNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsOutOfNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                flightLegDto.IsActiveFuelRelease = GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification).IsActiveFuelRelease();
+                flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
 
                 if (!swimFlightLeg.IsPlaceholder)
                 {
@@ -481,7 +523,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             return result;
         }
-
+        private FuelReqDto? GetSwimLegsFuelOrder(List<FuelReqDto> fo,string tailNumber )
+        {
+            return fo.Where(x => x.CustomerAircraft.TailNumber == tailNumber).FirstOrDefault();
+        }
+        private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
+        {
+            return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
+        }
         private void ApplyHistoricalFlightData(
             SWIMFlightLeg swimFlightLeg, FlightLegDTO flightLegDto, List<AirportWatchHistoricalData> antennaHistoricalData,
             DateTime historicalAircraftPositionDateTime, List<SWIMFlightLegData> swimFlightLegMessages, List<AcukwikAirport> airports)
