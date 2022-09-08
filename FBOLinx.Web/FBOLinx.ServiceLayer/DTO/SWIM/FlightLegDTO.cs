@@ -12,6 +12,7 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string Make { get; set; }
         public string Model { get; set; }
         public double? FuelCapacityGal { get; set; }
+        //Origin/Destination
         public string Origin { get; set; }
         public string City { get; set; }
         public string DepartureICAO { get; set; }
@@ -39,5 +40,9 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string Vendor { get; set; }
         public string TransactionStatus { get; set; }
         public string ICAOAircraftCode { get; set; }
+        public bool IsInNetwork { get; set; }
+        public bool IsOutOfNetwork { get; set; }
+        public bool IsActiveFuelRelease { get; set; }
+        public bool IsFuelerLinxClient { get; set; }
     }
 }

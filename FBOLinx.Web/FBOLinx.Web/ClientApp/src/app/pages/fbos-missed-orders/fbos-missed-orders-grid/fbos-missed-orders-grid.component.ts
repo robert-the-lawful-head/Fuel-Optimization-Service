@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { forEach } from 'lodash';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { MatDialog } from '@angular/material/dialog';
+
+import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -17,7 +20,11 @@ export class FbosMissedOrdersGridComponent implements OnInit {
     missedOrdersLoader = 'missed-orders-loader';
     noMissedOrders = false;
 
-    constructor(private router: Router, private sharedService: SharedService, private fboMissedQuotesLogService: FbomissedquoteslogService, private NgxUiLoader: NgxUiLoaderService) {
+    constructor(private router: Router,
+        private sharedService: SharedService,
+        private fboMissedQuotesLogService: FbomissedquoteslogService,
+        private NgxUiLoader: NgxUiLoaderService,
+        private priceCheckerDialog: MatDialog    ) {
 
     }
 
@@ -35,6 +42,23 @@ export class FbosMissedOrdersGridComponent implements OnInit {
 
     goToCustomerDetails(missedOrder: any): void {
         this.router.navigate(['/default-layout/customers/' + missedOrder.customerInfoByGroupId], { queryParams: { tab: 2 } });
+    }
+
+    openPriceChecker(): void {
+        const dialogRef = this.priceCheckerDialog.open(
+            PriceCheckerComponent,
+            {
+                width: '650px',
+                height: '600px'
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+
+            if (!result) {
+                return;
+            }
+        });
     }
 
     private refreshMissedOrdersDataSource() {

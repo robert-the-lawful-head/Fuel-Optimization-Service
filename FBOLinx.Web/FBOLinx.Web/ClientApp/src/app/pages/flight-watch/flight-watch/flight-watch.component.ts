@@ -1,23 +1,19 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
-import { BehaviorSubject, Observable, Subscription, timer } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim, SwimType } from 'src/app/models/swim';
-import { User } from 'src/app/models/User';
-import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
+import { Swim } from 'src/app/models/swim';
 import { SwimService } from 'src/app/services/swim.service';
-import { convertDMSToDEG } from 'src/utils/coordinates';
-
 import { SharedService } from '../../../layouts/shared-service';
 import { Aircraftwatch, FlightWatch, FlightWatchDictionary } from '../../../models/flight-watch';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
+import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,7 +32,7 @@ const BREADCRUMBS: any[] = [
     templateUrl: './flight-watch.component.html',
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
-    @ViewChild('map') map: FlightWatchMapComponent;
+    @ViewChild(FlightWatchMapWrapperComponent) private mapWrapper:FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
 
     pageTitle = 'Flight Watch';
@@ -87,7 +83,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             this.loadAirportWatchData();
         });
-        this.mapLoadSubscription = timer(60000).subscribe(() =>{
+        this.mapLoadSubscription = timer(0,60000).subscribe(() =>{
             this.getDrawerData(this.selectedICAO, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
         });
     }
@@ -131,7 +127,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     }
     updateIcao(icao:string){
-        this.map.goToAirport(icao);
+        this.mapWrapper.map.goToAirport(icao);
         this.selectedICAO =  icao;
         this.getDrawerData(icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     }
@@ -179,7 +175,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                 company: flightWatch?.company,
                 aircraftMakeModel: flightWatch?.aircraftMakeModel,
                 lastQuote: flightWatch?.lastQuote,
-                currentPricing: flightWatch?.currentPricing
+                currentPricing: flightWatch?.currentPricing,
+                aircraftICAO: flightWatch?.aircraftICAO
             };
             return;
         }
@@ -280,7 +277,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         };
 
         setTimeout(() => {
-            this.map.mapResize();
+            this.mapWrapper.map.mapResize();
         });
     }
 
@@ -296,7 +293,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.setFilteredFlightWatchData();
     }
     openAircraftPopup(tailNumber: string){
-        this.map.openAircraftPopUpByTailNumber(tailNumber);
+        this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize(){
         if(!this.drawer.opened) return;

@@ -6,6 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class ToReadableTimePipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
+    if(value == null) return "";
     value = value.split(/[^*\d]+/);
     return value[0]+':'+value[1];
   }

@@ -5,6 +5,13 @@
                    bgsType="ball-spin"
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
+
+<div class="price-checker-button">
+    <button (click)="openPriceChecker()" view="'default'" size="small" ni-button>
+        Price Checker
+    </button>
+</div>
+
 <div>
     <div class="subtitle">These flights departments requested a quote and your pricing was expired</div>
     <div *ngIf="noMissedQuotes">No Missed Quotes</div>

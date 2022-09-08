@@ -5,17 +5,17 @@ using System.Text;
 
 namespace FBOLinx.Core.BaseModels.Specifications
 {
-    public abstract class Specification<T> : ISpecification<T>
+    public abstract class Specification<TEntity> : ISpecification<TEntity>
     {
-        protected Specification(Expression<Func<T, bool>> criteria)
+        protected Specification(Expression<Func<TEntity, bool>> criteria)
         {
             Criteria = criteria;
         }
-        public Expression<Func<T, bool>> Criteria { get; }
-        public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
+        public Expression<Func<TEntity, bool>> Criteria { get; }
+        public List<Expression<Func<TEntity, object>>> Includes { get; } = new List<Expression<Func<TEntity, object>>>();
         public List<string> IncludeStrings { get; } = new List<string>();
-
-        protected virtual void AddInclude(Expression<Func<T, object>> includeExpression)
+        
+        protected virtual void AddInclude(Expression<Func<TEntity, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
@@ -23,5 +23,15 @@ namespace FBOLinx.Core.BaseModels.Specifications
         {
             IncludeStrings.Add(includeString);
         }
+    }
+
+    public abstract class Specification<TEntity, TProjection> : Specification<TEntity>, ISpecification<TEntity, TProjection>
+    {
+        protected Specification(Expression<Func<TEntity, bool>> criteria, Expression<Func<TEntity, TProjection>> projection) : base(criteria)
+        {
+            Projection = projection;
+        }
+        
+        public Expression<Func<TEntity, TProjection>> Projection { get; }
     }
 }

@@ -47,6 +47,7 @@ namespace FBOLinx.DB.Models
         public double? FuelCapacityGal { get; set; }
         public string Phone { get; set; }
         public string ICAOAircraftCode { get; set; }
+        public bool IsProcessed { get; set; }
 
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }

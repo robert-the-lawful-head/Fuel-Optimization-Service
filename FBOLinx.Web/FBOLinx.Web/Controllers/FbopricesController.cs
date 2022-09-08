@@ -1004,6 +1004,14 @@ namespace FBOLinx.Web.Controllers
 
             await _context.SaveChangesAsync();
 
+            var fboPrices = await _fbopricesService.GetPrices(fboId);
+            var fboPrice = fboPrices.Where(f => f.Oid > 0 && f.Product.Contains(product)).ToList();
+            if (fboPrice.Count > 0)
+            {
+                _context.Fboprices.RemoveRange((IEnumerable<Fboprices>)fboPrice);
+                await _context.SaveChangesAsync();
+            }
+
             return Ok();
         }
 

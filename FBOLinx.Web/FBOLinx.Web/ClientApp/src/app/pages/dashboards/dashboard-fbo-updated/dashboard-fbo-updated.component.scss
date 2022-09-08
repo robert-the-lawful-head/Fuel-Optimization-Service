@@ -14,5 +14,16 @@
         padding-top: 10px;
         padding-left: 15px;
     }
-
 }
+@media (min-width: 800px) {
+    .app-fbos-missed-quotes-grid{
+        min-height: 400px;
+    }
+}
+.map-container {
+    height: 400px;
+}
+.app-flight-watch-map{
+    width: 100%;
+}
+

@@ -14,7 +14,7 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
         }
 
         public AirportWatchLiveDataByFlightNumberSpecification(IList<string> atcFlightNumbers, DateTime startDate)
-            : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber) && x.TailNumber != null && x.AircraftPositionDateTimeUtc >= startDate)
+            : base(x => atcFlightNumbers.Contains(x.AtcFlightNumber) && (x.TailNumber != null || x.AircraftHexCode != null) && x.AircraftPositionDateTimeUtc >= startDate)
         {
         }
 

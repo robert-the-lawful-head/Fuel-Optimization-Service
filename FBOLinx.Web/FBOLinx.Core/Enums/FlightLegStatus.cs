@@ -8,8 +8,9 @@ namespace FBOLinx.Core.Enums
     {
         EnRoute = 0,
         Landing,
-        Taxiing,
+        TaxiingDestination,
         Arrived,
         Departing,
+        TaxiingOrigin,
     }
 }

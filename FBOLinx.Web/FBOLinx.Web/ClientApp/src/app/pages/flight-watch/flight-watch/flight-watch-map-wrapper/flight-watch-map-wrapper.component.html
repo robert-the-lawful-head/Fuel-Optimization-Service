@@ -1,0 +1,65 @@
+<app-flight-watch-map #map
+    (markerClicked)="markerClicked.emit($event)"
+    (airportClick)="airportClick.emit($event)"
+    (setIcaoList)="setIcaoList.emit($event)"
+    style="width: 100%;"
+    [aircraftData]="aircraftData"
+    [center]="center"
+    [data]="data"
+    [isStable]="isStable"></app-flight-watch-map>
+
+<div class="map-controls-button layout-setting-button">
+    <button class="mat-black" mat-flat-button (click)="showLayers = !showLayers">
+        <mat-icon>layers</mat-icon>
+    </button>
+</div>
+<div class="map-controls-container" *ngIf="showLayers">
+    <mat-card>
+        <mat-card-title>
+            <div>Layout Settings</div>
+            <div style="position: absolute; top: 5px; right: 9px; cursor: pointer;" (click)="showLayers = !showLayers">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="map-control-content">
+                <div class="font-weight-bold">App Layout</div>
+                <div>
+                    <div class="slide-toggle-label" [ngClass]="isCommercialVisible ? 'slide-toggle-label-on' : '' ">Show Commercial Aircraft</div>
+                    <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content"  style="margin-left: 6px;" *ngIf="isCommercialVisible">ON</span>
+                        <mat-slide-toggle [checked]="isCommercialVisible" (toggleChange)="toggleCommercial($event)"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="!isCommercialVisible">OFF</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="slide-toggle-label"[ngClass]="isShowAirportCodesEnabled ? 'slide-toggle-label-on' : ''">Show Airport Identifier</div>
+                    <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content" style="margin-left: 6px;" *ngIf="isShowAirportCodesEnabled">ON</span>
+                        <mat-slide-toggle [checked]="isShowAirportCodesEnabled" (toggleChange)="toggleLayer('icao')"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="!isShowAirportCodesEnabled">OFF</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="slide-toggle-label" [ngClass]="isShowTaxiwaysEnabled ? 'slide-toggle-label-on' : ''">Show Taxiways</div>
+                    <div class="slide-toggle">
+                        <span class="mat-slide-toggle-content" style="margin-left: 6px;" *ngIf="isShowTaxiwaysEnabled">ON</span>
+                        <mat-slide-toggle [checked]="isShowTaxiwaysEnabled" (toggleChange)="toggleLayer('taxiway')"></mat-slide-toggle>
+                        <span class="mat-slide-toggle-content" style="margin-left: -20px;" *ngIf="!isShowTaxiwaysEnabled">OFF</span>
+                    </div>
+                </div>
+            </div>
+            <mat-divider inset></mat-divider>
+            <div class="map-control-actions">
+                <div class="d-inline-block" style="padding-right: 5px;">
+                    <button mat-flat-button class="mat-cancel" (click)="showLayers = !showLayers">Cancel</button>
+                </div>
+                <div class="d-inline-block" style="padding-left: 5px;">
+                    <button mat-flat-button class="mat-blue" (click)="showLayers = !showLayers">Save Changes</button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>
+
+

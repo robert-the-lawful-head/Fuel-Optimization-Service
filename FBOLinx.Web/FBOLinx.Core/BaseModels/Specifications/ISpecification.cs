@@ -4,10 +4,18 @@ using System.Linq.Expressions;
 
 namespace FBOLinx.Core.BaseModels.Specifications
 {
-    public interface ISpecification<T>
+    public interface ISpecification<TEntity>
     {
-        Expression<Func<T, bool>> Criteria { get; }
-        List<Expression<Func<T, object>>> Includes { get; }
+        Expression<Func<TEntity, bool>> Criteria { get; }
+        List<Expression<Func<TEntity, object>>> Includes { get; }
         List<string> IncludeStrings { get; }
+    }
+
+    public interface ISpecification<TEntity, TProjection>
+    {
+        Expression<Func<TEntity, bool>> Criteria { get; }
+        List<Expression<Func<TEntity, object>>> Includes { get; }
+        List<string> IncludeStrings { get; }
+        Expression<Func<TEntity, TProjection>> Projection { get; }
     }
 }
