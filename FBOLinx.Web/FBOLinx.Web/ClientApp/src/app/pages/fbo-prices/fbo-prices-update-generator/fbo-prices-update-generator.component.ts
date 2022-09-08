@@ -599,8 +599,11 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     private showTooltips() {
         setTimeout(() => {
             const tooltipsArr = this.priceTooltips.toArray();
-            tooltipsArr[this.tooltipIndex].open();
-            this.tooltipIndex--;
+            var toolTip = tooltipsArr[this.tooltipIndex];
+            if (toolTip != undefined) {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }
         }, 400);
     }
 
