@@ -8,23 +8,24 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface IRepository<T,TContext>
+    public interface IRepository<TEntity, TContext>
     {
-        Task<IEnumerable<T>> GetAsync(Expression<Func<T, bool>> predicate);
-        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-        Task<T> GetAsync(int id);
-        Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
-        Task<T> DeleteAsync(int id);
-        Task<T> GetSingleBySpec(ISpecification<T> spec);
-        Task<List<T>> GetListBySpec(ISpecification<T> spec);
-        Task BulkDeleteEntities(List<T> entities);
-        Task BulkDeleteEntities(ISpecification<T> spec);
-        IQueryable<T> Where(Expression<Func<T, bool>> predicate);
-        Task<bool> AnyAsync(Expression<Func<T, bool>> predicate);
-        Task<T> FindAsync(int id);
-        Task BulkInsert(List<T> entities, bool includeGraph = false);
-        Task BulkUpdate(List<T> entities);
+        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> GetAsync(int id);
+        Task<TEntity> AddAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
+        Task DeleteAsync(TEntity entity);
+        Task<TEntity> DeleteAsync(int id);
+        Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec);
+        Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec);
+        Task<List<TProjection>> GetListBySpec<TProjection>(ISpecification<TEntity, TProjection> spec);
+        Task BulkDeleteEntities(List<TEntity> entities);
+        Task BulkDeleteEntities(ISpecification<TEntity> spec);
+        IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
+        Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<TEntity> FindAsync(int id);
+        Task BulkInsert(List<TEntity> entities, bool includeGraph = false);
+        Task BulkUpdate(List<TEntity> entities);
     }
 }

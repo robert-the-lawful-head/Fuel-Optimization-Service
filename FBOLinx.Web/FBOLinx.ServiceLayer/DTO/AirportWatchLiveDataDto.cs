@@ -26,6 +26,9 @@ namespace FBOLinx.ServiceLayer.DTO
         public string AircraftICAO { get; set; }
         public bool IsInNetwork { get; set; }
         public bool IsFuelerLinxCustomer { get; set; }
+        public bool IsOutOfNetwork { get; set; }
+        public bool IsActiveFuelRelease { get; set; }
+        public bool IsFuelerLinxClient { get; set; }
         public FuelReqDto? FuelOrder { get; set; }
 
     }

@@ -40,5 +40,9 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string Vendor { get; set; }
         public string TransactionStatus { get; set; }
         public string ICAOAircraftCode { get; set; }
+        public bool IsInNetwork { get; set; }
+        public bool IsOutOfNetwork { get; set; }
+        public bool IsActiveFuelRelease { get; set; }
+        public bool IsFuelerLinxClient { get; set; }
     }
 }
