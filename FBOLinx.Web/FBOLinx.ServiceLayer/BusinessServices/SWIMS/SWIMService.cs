@@ -424,34 +424,36 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
 
-            var fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
+            //[#2xrec66] Problem with loading Network and Order status of each aircraft to properly color-code it.
 
-            // Repeated Code need to be refactored 
-            var fuelOrders = (await _FuelReqService.GetListbySpec(new FuelReqByFboAndDateSpecification(fboId, DateTime.UtcNow, DateTime.UtcNow.AddHours(12))))
-                            .Where(x => x.Cancelled != true)
-                                .ToList();
+            //var fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
 
-            Fuelerlinx.SDK.FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new Fuelerlinx.SDK.FBOLinxOrdersRequest()
-            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
+            //// Repeated Code need to be refactored 
+            //var fuelOrders = (await _FuelReqService.GetListbySpec(new FuelReqByFboAndDateSpecification(fboId, DateTime.UtcNow, DateTime.UtcNow.AddHours(12))))
+            //                .Where(x => x.Cancelled != true)
+            //                    .ToList();
 
-            foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
-            { 
-                fuelOrders.Add(transaction.Adapt<FuelReqDto>());
-            }
+            //Fuelerlinx.SDK.FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new Fuelerlinx.SDK.FBOLinxOrdersRequest()
+            //{ EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
 
-            var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            //foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            //{ 
+            //    fuelOrders.Add(transaction.Adapt<FuelReqDto>());
+            //}
 
-            var caSwimFlightLegs = swimFlightLegs.Join(
-            customerAircrafts.ToList(),
-            sfl => sfl.AircraftIdentification,
-            ca => ca.TailNumber,
-            (sfl,ca) => ca).ToList();
+            //var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
 
-            var caFuelOrders = customerAircrafts.Join(
-             fuelOrders,
-            ca => ca.TailNumber,
-            fo => fo.CustomerAircraft.TailNumber,
-            (sflJoin, fo) => fo ).ToList();
+            //var caSwimFlightLegs = swimFlightLegs.Join(
+            //customerAircrafts.ToList(),
+            //sfl => sfl.AircraftIdentification,
+            //ca => ca.TailNumber,
+            //(sfl,ca) => ca).ToList();
+
+            //var caFuelOrders = customerAircrafts.Join(
+            // fuelOrders,
+            //ca => ca.TailNumber,
+            //fo => fo.CustomerAircraft.TailNumber,
+            //(sflJoin, fo) => fo ).ToList();
 
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
             foreach (var swimFlightLeg in swimFlightLegs)
@@ -475,10 +477,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
 
-                flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsInNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
-                flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsOutOfNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
-                flightLegDto.IsActiveFuelRelease = GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification).IsActiveFuelRelease();
-                flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                //flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsInNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                //flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsOutOfNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                //flightLegDto.IsActiveFuelRelease = GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification).IsActiveFuelRelease();
+                //flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
 
                 if (!swimFlightLeg.IsPlaceholder)
                 {
@@ -518,7 +520,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
             }
 
+            //[#2xrec66] Problem with the speed of checking past visits.
             await SetVisitsToMyFBO(groupId, fboId, result);
+
+            //[#2xrec66] This only checks for direct orders.  Should this be checking for contract orders as well?
             await SetOrderInfo(groupId, fboId, result);
 
             return result;
@@ -660,8 +665,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         {
             try
             {
+                List<string> distinctTailNumbers = flightLegs.Select(x => x.TailNumber).Distinct().ToList();
                 List<AirportWatchHistoricalDataResponse> historicalData = await _AirportWatchService.GetArrivalsDeparturesRefactored(
-                    groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = DateTime.UtcNow.AddMonths(-1), EndDateTime = DateTime.UtcNow });
+                    groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = DateTime.UtcNow.AddMonths(-1), EndDateTime = DateTime.UtcNow, FlightOrTailNumbers = distinctTailNumbers });
                 foreach (FlightLegDTO flightLeg in flightLegs)
                 {
                     flightLeg.VisitsToMyFBO = historicalData.Where(x => x.TailNumber == flightLeg.TailNumber && x.VisitsToMyFbo != null).Sum(x => x.VisitsToMyFbo.Value);
