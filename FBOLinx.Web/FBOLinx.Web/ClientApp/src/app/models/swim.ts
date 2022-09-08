@@ -31,6 +31,10 @@ export interface Swim {
     vendor: string;
     transactionStatus: string;
     icaoAircraftCode: string;
+    isInNetwork: boolean;
+    isOutOfNetwork: boolean;
+    isActiveFuelRelease: boolean;
+    isFuelerLinxClient: boolean;
 }
 export enum FlightLegStatusEnum {
     EnRoute,
@@ -79,5 +83,18 @@ export const swimTableColumns = {
        'On Ground',
         itpMarginTemplate:
        'ITP Margin Template',
+       etaAtdZulu:
+       'etaAtdZulu',
        expandedDetail: "expandedDetail"
     };
+
+    export const tailNumberTextColor = {
+        fuelerLinx:
+        '#1D497F',
+        activeFuelRelease:
+        '#0DC520',
+        outOfNetwork:
+        '#FF7F00',
+        inNetwork:
+        '#C9CEEA'
+     };
