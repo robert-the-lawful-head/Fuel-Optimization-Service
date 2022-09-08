@@ -169,14 +169,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return makemodelstr == ""  ? "Unknown" : makemodelstr ;
     }
     getTextColor(row: Swim, column:string){
-
         if(column != swimTableColumns.tailNumber) return "black";
 
+        if(row.isInNetwork)return tailNumberTextColor.inNetwork;
         if(row.isOutOfNetwork) return tailNumberTextColor.outOfNetwork;
         if(row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
-        if(row.isFuelerLinxClient) return tailNumberTextColor.outOfNetwork;
 
-        return  tailNumberTextColor.inNetwork;
+        return tailNumberTextColor.fuelerLinx;
     }
     getPastArrivalsValue(row: Swim){
         return this.isArrival
