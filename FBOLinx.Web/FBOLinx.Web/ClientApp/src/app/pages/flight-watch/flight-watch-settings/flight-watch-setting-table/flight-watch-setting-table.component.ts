@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { FlightLegStatusEnum, Swim, swimTableColumns } from 'src/app/models/swim';
+import { FlightLegStatusEnum, Swim, swimTableColumns, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -169,8 +169,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return makemodelstr == ""  ? "Unknown" : makemodelstr ;
     }
     getTextColor(row: Swim, column:string){
-        if(column != swimTableColumns.tailNumber) return "";
-        return "";
+
+        if(column != swimTableColumns.tailNumber) return "black";
+
+        if(row.isOutOfNetwork) return tailNumberTextColor.outOfNetwork;
+        if(row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
+        if(row.isFuelerLinxClient) return tailNumberTextColor.outOfNetwork;
+
+        return  tailNumberTextColor.inNetwork;
     }
     getPastArrivalsValue(row: Swim){
         return this.isArrival

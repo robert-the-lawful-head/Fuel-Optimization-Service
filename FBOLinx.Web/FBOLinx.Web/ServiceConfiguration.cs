@@ -96,6 +96,8 @@ namespace FBOLinx.Web
 
             //Business Services
             services.RegisterServices();
+            services.RegisterMappingConfiguration();
+
 
             services.AddScoped<ILoggingService, LoggingService>();
 
