@@ -8,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 using EFCore.BulkExtensions;
 using FBOLinx.DB;
-using System.Collections;
 using System.Diagnostics;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.Fbo;
@@ -25,11 +24,9 @@ using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using Microsoft.Extensions.Caching.Memory;
-using Mapster;
 using FBOLinx.ServiceLayer.DTO;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.ServiceLayer.Logging;
@@ -38,7 +35,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
-using NetTopologySuite.Geometries;
+using FBOLinx.ServiceLayer.Extensions.Aircraft;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -67,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly ILoggingService _LoggingService;
         private IFuelReqService _FuelReqService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
-        private ICustomerAircraftService _CustomerAircraftService;
+        private readonly AFSAircraftEntityService _AFSAircraftEntityService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -77,9 +74,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IMemoryCache memoryCache, IServiceProvider serviceProvider, ILoggingService loggingService,
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
-            ICustomerAircraftService customerAircraftService)
+            AFSAircraftEntityService afsAircraftEntityService)
         {
-            _CustomerAircraftService = customerAircraftService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
             _ServiceProvider = serviceProvider;
@@ -95,6 +91,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _MemoryCache = memoryCache;
             _LoggingService = loggingService;
+            _AFSAircraftEntityService = afsAircraftEntityService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -152,8 +149,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 IsAircraftOnGround = (aircraftWatchLiveData?.IsAircraftOnGround).GetValueOrDefault(),
                 Company = customerInfoByGroup?.Customer?.Company,
                 AircraftMakeModel = aircaft?.Make + " " + aircaft?.Model,
-                LastQuote = pricingLogs == null ? "N/A" : pricingLogs.CreatedDate.ToString(),
-                CurrentPricing = customerPricing?.PricingList?.FirstOrDefault()?.AllInPrice.GetValueOrDefault().ToString()
+                LastQuote = pricingLogs?.CreatedDate.ToString(),
+                CurrentPricing = customerPricing?.PricingList?.FirstOrDefault()?.AllInPrice.GetValueOrDefault().ToString(),
+                AircraftICAO = aircaft?.AFSAircraft?.FirstOrDefault()?.Icao
             };
         }
         
@@ -176,7 +174,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     .ToList();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
+            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo, IsEtaOnly = true });
 
             foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
@@ -203,7 +201,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 });
             }
 
-            var customerAircrafts = await _CustomerAircraftService.GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
 
             var airportWatchLiveData =
                 await _AirportWatchLiveDataService.GetListbySpec(
@@ -247,16 +245,35 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                   FuelOrder = fo,
-                                        IsInNetwork = (fr.ca?.Oid > 0),
-                                  IsFuelerLinxCustomer = (fr.ca?.Customer?.FuelerlinxId.GetValueOrDefault() > 0),
+                                  IsInNetwork = fr.ca.IsInNetwork(fo),
+                                  IsOutOfNetwork = fr.ca.IsOutOfNetwork(fo),
+                                  IsActiveFuelRelease = fo.IsActiveFuelRelease(),
+                                  IsFuelerLinxClient = fr.ca.IsFuelerLinxClient(fo),
+                                  IsFuelerLinxCustomer = fr.ca.isFuelerLinxCustomer(),
                                   TailNumber = fr.awhd.TailNumber
                               })
-                                    .ToList();
+                              .ToList();
 
             AddDemoDataToAirportWatchResult(filteredResult, fboId);
+            await SetAircraftICAO(filteredResult);
 
             return filteredResult;
         }
+
+        private async Task SetAircraftICAO(List<AirportWatchLiveDataDto> result)
+        {
+            List<int> aircraftIds = result.Where(x => x.AircraftId != null).Select(x => x.AircraftId.Value).Distinct().ToList();
+            List<AFSAircraft> afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
+            foreach (var airportWatchLiveData in result)
+            {
+                AFSAircraft afsAircraft = afsAircrafts.FirstOrDefault(x => x.DegaAircraftID == airportWatchLiveData.AircraftId);
+                if (afsAircraft != null)
+                {
+                    airportWatchLiveData.AircraftICAO = afsAircraft.Icao;
+                }
+            }
+        }
+
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDepartures(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
@@ -684,7 +701,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             //this is repeated query in  getwatchlivedata
             var customerAircraftsData =
-                await _CustomerAircraftService.GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
+                await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
             
                            
 

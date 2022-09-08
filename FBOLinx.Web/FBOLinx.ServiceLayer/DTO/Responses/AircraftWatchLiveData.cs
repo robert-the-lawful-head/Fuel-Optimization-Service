@@ -11,6 +11,7 @@
         public string AircraftMakeModel { get; set; }
         public string LastQuote { get; set; }
         public string CurrentPricing { get; set; }
+        public string AircraftICAO { get; set; }
     }
 }
 

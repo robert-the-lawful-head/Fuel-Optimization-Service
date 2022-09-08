@@ -82,22 +82,13 @@
 }
 
 .location-button{
-    position: absolute; 
-    top: 110px; 
-    margin-right: -10px; 
-    left: 10px; 
+    position: absolute;
+    top: 110px;
+    margin-right: -10px;
+    left: 10px;
     cursor: pointer;
     img{
-        width: 60%; 
+        width: 60%;
         height: 60%;
     }
-}
-.layout-setting-button{
-    position: absolute; 
-    top: 150px;
-}
-.map-controls-container{
-    position: absolute; 
-    top: 20px;
-    z-index: 100;
 }

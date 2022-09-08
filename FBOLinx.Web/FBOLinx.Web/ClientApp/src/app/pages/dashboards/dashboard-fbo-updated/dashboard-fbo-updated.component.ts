@@ -1,5 +1,10 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { LngLatLike } from 'mapbox-gl';
 import * as moment from 'moment';
+import { Subscription, timer } from 'rxjs';
+import { FlightWatch } from 'src/app/models/flight-watch';
+import { AirportWatchService } from 'src/app/services/airportwatch.service';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -34,7 +39,16 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     @ViewChild('statisticsOrdersByLocation')
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
-    constructor(private sharedService: SharedService) {
+    //flghtWatch
+    center: LngLatLike;
+    flightWatchData: FlightWatch[];
+    airportWatchFetchSubscription: Subscription;
+    mapLoadSubscription: Subscription;
+    isMapLoading: boolean = true;
+
+    constructor(private sharedService: SharedService,
+        private router: Router,
+        private airportWatchService: AirportWatchService) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
         );
@@ -72,6 +86,11 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     get isMember() {
         return this.sharedService.currentUser.role === 4;
     }
+    ngOnInit() {
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+            this.loadAirportWatchData();
+        });
+    }
 
     ngAfterViewInit() {
         this.locationChangedSubscription =
@@ -86,6 +105,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         if (this.locationChangedSubscription) {
             this.locationChangedSubscription.unsubscribe();
         }
+        if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
     }
 
     applyDateFilterChange() {
@@ -93,5 +113,25 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.statisticsTotalCustomers.refreshData();
         this.statisticsTotalAircraft.refreshData();
         this.statisticsOrdersByLocation.refreshData();
+    }
+    loadAirportWatchData() {
+        return this.airportWatchFetchSubscription = this.airportWatchService
+            .getAll(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId
+            )
+            .subscribe((data: any) => {
+                this.isMapLoading = false;
+                this.center = {
+                    lat: data.fboLocation.latitude,
+                    lng: data.fboLocation.longitude,
+                };
+                this.flightWatchData = data.flightWatchData;
+            }, (error: any) => {
+                this.isMapLoading = false;
+            });
+    }
+    gotoFlightWatch(){
+        this.router.navigate(['/default-layout/flight-watch']);
     }
 }

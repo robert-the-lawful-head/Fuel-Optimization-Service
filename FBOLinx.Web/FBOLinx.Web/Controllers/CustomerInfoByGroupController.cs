@@ -139,30 +139,50 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group/{groupId}")]
         public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
         {
+            var customerAircraft =
+                    (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())
+                     where aircraftByCustomer.GroupId == groupId
+                     group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                     into results
+                     select new
+                     {
+                         results.Key.CustomerId,
+                         Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                         Count = results.Count()
+                     }
+                     ).ToList();
+
             List<CustomersGridViewModel> customerGridVM = await (
-                    from cg in _context.CustomerInfoByGroup
-                    join c in _context.Customers on cg.CustomerId equals c.Oid
-                    join cct in _context.CustomCustomerTypes on c.Oid equals cct.CustomerId
-                    where cg.GroupId == groupId && c.Suspended != true
-                    group cg by new
-                    {
-                        cg.CustomerId,
-                        CustomerInfoByGroupId = cg.Oid,
-                        cg.Company,
-                        FuelerLinxId = c.FuelerlinxId,
-                        CertificateType = cg.CertificateType,
-                        Active = cg.Active,
-                    }
-                    into resultsGroup
-                    select new CustomersGridViewModel()
-                    {
-                        CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
-                        Active = resultsGroup.Key.Active,
-                        CertificateType = resultsGroup.Key.CertificateType,
-                        CustomerId = resultsGroup.Key.CustomerId,
-                        Company = resultsGroup.Key.Company,
-                        IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
-                    }).ToListAsync();
+                        from cg in _context.CustomerInfoByGroup
+                        join c in _context.Customers on cg.CustomerId equals c.Oid
+                        join cct in _context.CustomCustomerTypes on c.Oid equals cct.CustomerId
+                        where cg.GroupId == groupId && c.Suspended != true
+                        group cg by new
+                        {
+                            cg.CustomerId,
+                            CustomerInfoByGroupId = cg.Oid,
+                            cg.Company,
+                            FuelerLinxId = c.FuelerlinxId,
+                            CertificateType = cg.CertificateType,
+                            Active = cg.Active,
+                            TailNumbers = ""
+                        }
+                        into resultsGroup
+                        select new CustomersGridViewModel()
+                        {
+                            CustomerInfoByGroupId = resultsGroup.Key.CustomerInfoByGroupId,
+                            Active = resultsGroup.Key.Active,
+                            CertificateType = resultsGroup.Key.CertificateType,
+                            CustomerId = resultsGroup.Key.CustomerId,
+                            Company = resultsGroup.Key.Company,
+                            IsFuelerLinxCustomer = resultsGroup.Key.FuelerLinxId > 0,
+                            TailNumbers = resultsGroup.Key.TailNumbers
+                        }).ToListAsync();
+
+            foreach (var customer in customerGridVM)
+            {
+                customer.TailNumbers = customerAircraft.FirstOrDefault(x => x.CustomerId == customer.CustomerId)?.Tails;
+            }
 
             return Ok(customerGridVM);
         }
