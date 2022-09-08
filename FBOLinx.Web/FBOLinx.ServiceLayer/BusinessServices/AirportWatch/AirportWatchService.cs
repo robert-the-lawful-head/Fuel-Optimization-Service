@@ -677,19 +677,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var fboIcao = !string.IsNullOrEmpty(fbo?.FboAirport?.Icao) ? fbo.FboAirport.Icao : null;
 
             //Only select the indexed columns that are important for historical lookup.  Further data can be isolated by the ID of the historical record.
-            var joinedHistoricalData = await (from hd in _context.AirportWatchHistoricalData
-                                              join cad in _context.CustomerAircrafts on hd.TailNumber equals cad.TailNumber
+            var joinedHistoricalData = await (from hd in
+                        (_context.AirportWatchHistoricalData
+                            .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
+                            .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
+                            .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
+                            .Select(awhd => new
+                            {
+                                Oid = awhd.Oid,
+                                awhd.AircraftHexCode,
+                                awhd.AtcFlightNumber,
+                                awhd.AircraftPositionDateTimeUtc,
+                                awhd.AircraftStatus,
+                                awhd.AirportICAO,
+                                awhd.AircraftTypeCode,
+                                awhd.Latitude,
+                                awhd.Longitude,
+                                AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
+                                TailNumber = awhd.TailNumber
+                            }))
+                                              join cad in _context.CustomerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId } equals new { cad.TailNumber, GroupId = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) }
                                                   into leftJoinedCustomerAircrafts
                                               from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
                                               join cig in _context.CustomerInfoByGroup on new {CustomerId = cad.CustomerId, GroupID = (cad.GroupId.HasValue ? cad.GroupId.Value : 0)} equals new { CustomerId = cig.CustomerId, GroupID = cig.GroupId }
                                                   into leftJoinCustomerInfoByGroup
                                               from cig in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
-                where (!fboId.HasValue || hd.AirportICAO == fboIcao)
-                                                    && (request.StartDateTime == null || hd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
-                                                    && (request.EndDateTime == null || hd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
-                                                    && cad.GroupId.HasValue && cad.GroupId.Value == groupId
-                                                    && (request.FlightOrTailNumbers == null || request.FlightOrTailNumbers.Count == 0 || request.FlightOrTailNumbers.Contains(hd.TailNumber) )
-                group hd by new
+                                              where (request.FlightOrTailNumbers == null || request.FlightOrTailNumbers.Count == 0 || request.FlightOrTailNumbers.Contains(hd.TailNumber))
+                                              group hd by new
                 {
                     AirportWatchHistoricalDataID = hd.Oid,
                     hd.AircraftHexCode,
