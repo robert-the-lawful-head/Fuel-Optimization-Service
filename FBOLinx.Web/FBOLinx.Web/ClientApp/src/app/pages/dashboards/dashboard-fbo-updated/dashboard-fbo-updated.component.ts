@@ -97,6 +97,9 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
             this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.applyDateFilterChange();
+
+                    this.isMapLoading = true;
+                    this.loadAirportWatchData();
                 }
             });
     }
