@@ -160,6 +160,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.stagedPrices = undefined;
         this.loadAllPrices();
         this.loadFeesAndTaxes();
+        this.fixCustomCustomerTypes();
         this.checkDefaultTemplate();
     }
 
@@ -708,5 +709,13 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                     }))
             }));
         });
+    }
+
+    private fixCustomCustomerTypes() {
+        this.pricingTemplateService
+            .fixCustomCustomerTypes(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
+             
+            });
     }
 }
