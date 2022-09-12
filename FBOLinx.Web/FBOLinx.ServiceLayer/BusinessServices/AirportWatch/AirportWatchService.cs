@@ -35,6 +35,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
@@ -65,6 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFuelReqService _FuelReqService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
+        private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -74,8 +76,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IMemoryCache memoryCache, IServiceProvider serviceProvider, ILoggingService loggingService,
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
-            AFSAircraftEntityService afsAircraftEntityService)
+            AFSAircraftEntityService afsAircraftEntityService,
+            IAirportWatchHistoricalDataService airportWatchHistoricalDataService)
         {
+            _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
             _ServiceProvider = serviceProvider;
@@ -673,106 +677,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFboRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
         {
-            var fbo = await _FboService.GetSingleBySpec(new FboByIdSpecification(fboId.GetValueOrDefault()));
-            var fboIcao = !string.IsNullOrEmpty(fbo?.FboAirport?.Icao) ? fbo.FboAirport.Icao : null;
+            var result = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,
+                fboId, request.StartDateTime, request.EndDateTime, request.FlightOrTailNumbers);
 
-            //Only select the indexed columns that are important for historical lookup.  Further data can be isolated by the ID of the historical record.
-            var joinedHistoricalData = await (from hd in
-                        (_context.AirportWatchHistoricalData
-                            .Where(awhd => !fboId.HasValue || awhd.AirportICAO == fboIcao)
-                            .Where(awhd => request.StartDateTime == null || awhd.AircraftPositionDateTimeUtc >= request.StartDateTime.Value.ToUniversalTime())
-                            .Where(awhd => request.EndDateTime == null || awhd.AircraftPositionDateTimeUtc <= request.EndDateTime.Value.ToUniversalTime().AddDays(1))
-                            .Select(awhd => new
-                            {
-                                Oid = awhd.Oid,
-                                awhd.AircraftHexCode,
-                                awhd.AtcFlightNumber,
-                                awhd.AircraftPositionDateTimeUtc,
-                                awhd.AircraftStatus,
-                                awhd.AirportICAO,
-                                awhd.AircraftTypeCode,
-                                awhd.Latitude,
-                                awhd.Longitude,
-                                AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
-                                TailNumber = awhd.TailNumber
-                            }))
-                                              join cad in _context.CustomerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId } equals new { cad.TailNumber, GroupId = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) }
-                                                  into leftJoinedCustomerAircrafts
-                                              from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
-                                              join cig in _context.CustomerInfoByGroup on new {CustomerId = cad.CustomerId, GroupID = (cad.GroupId.HasValue ? cad.GroupId.Value : 0)} equals new { CustomerId = cig.CustomerId, GroupID = cig.GroupId }
-                                                  into leftJoinCustomerInfoByGroup
-                                              from cig in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
-                                              where (request.FlightOrTailNumbers == null || request.FlightOrTailNumbers.Count == 0 || request.FlightOrTailNumbers.Contains(hd.TailNumber))
-                                              group hd by new
-                {
-                    AirportWatchHistoricalDataID = hd.Oid,
-                    hd.AircraftHexCode,
-                    hd.AtcFlightNumber,
-                    hd.AircraftPositionDateTimeUtc,
-                    hd.AircraftStatus,
-                    hd.AirportICAO,
-                    hd.AircraftTypeCode,
-                    hd.Latitude,
-                    hd.Longitude,
-                    Company = cad == null ? "" : cad.Customer.Company,
-                    CustomerId = cad == null ? 0 : cad.CustomerId,
-                    TailNumber = cad == null ? hd.TailNumber : cad.TailNumber,
-                    AircraftId = cad == null ? 0 : cad.AircraftId,
-                    CustomerInfoByGroupID =
-                        (cig == null ? 0 : cig.Oid),
-                }
-                into groupedResult
-                select new FboHistoricalDataModel
-                {
-                    AirportWatchHistoricalDataID = groupedResult.Key.AirportWatchHistoricalDataID,
-                    AircraftHexCode = groupedResult.Key.AircraftHexCode,
-                    AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
-                    AircraftPositionDateTimeUtc = groupedResult.Key.AircraftPositionDateTimeUtc,
-                    AircraftStatus = groupedResult.Key.AircraftStatus,
-                    AircraftTypeCode = groupedResult.Key.AircraftTypeCode,
-                    Company = groupedResult.Key.Company,
-                    CustomerId = groupedResult.Key.CustomerId,
-                    TailNumber = groupedResult.Key.TailNumber,
-                    AircraftId = groupedResult.Key.AircraftId,
-                    AirportICAO = groupedResult.Key.AirportICAO,
-                    CustomerInfoByGroupID = groupedResult.Key.CustomerInfoByGroupID,
-                    Latitude = groupedResult.Key.Latitude,
-                    Longitude = groupedResult.Key.Longitude
-                })
-                .AsNoTracking()
-                .ToListAsync();
-            
-
-            return joinedHistoricalData;
+            return result;
         }
         
         public async Task<List<FboHistoricalDataModel>> GetAircraftsHistoricalDataAssociatedWithFboRefactored(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             var historicalData = await GetHistoricalDataAssociatedWithGroupOrFboRefactored(groupId, fboId, request);
-
-            var result = (from h in historicalData
-                          join a in _aircraftService.GetAllAircraftsOnlyAsQueryable().AsNoTracking() on h.AircraftId equals a.AircraftId
-                          into leftJoinedAircrafts
-                          from a in leftJoinedAircrafts.DefaultIfEmpty()
-                          orderby h.AircraftPositionDateTimeUtc descending
-                          select new FboHistoricalDataModel
-                          {
-                              CustomerId = h.CustomerId,
-                              Company = h.Company,
-                              AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,
-                              TailNumber = h.TailNumber,
-                              AtcFlightNumber = h.AtcFlightNumber,
-                              AircraftHexCode = h.AircraftHexCode,
-                              AircraftTypeCode = h.AircraftTypeCode,
-                              Make = a?.Make,
-                              Model = a?.Model,
-                              AircraftStatus = h.AircraftStatus,
-                              AirportICAO = h.AirportICAO,
-                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                              Latitude = h.Latitude,
-                              Longitude = h.Longitude
-                          });
-            return result.ToList();
+            return historicalData;
         }
 
         public async Task<List<AcukwikAirport>> GetAirportsWithAntennaData()
@@ -1132,34 +1046,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             return result;
         }
     }
-
-    public class FboHistoricalDataModel
-    {
-        public int AirportWatchHistoricalDataID { get; set; }
-        public string AircraftHexCode { get; set; }
-        public string AtcFlightNumber { get; set; }
-        public DateTime AircraftPositionDateTimeUtc { get; set; }
-        public AircraftStatusType AircraftStatus { get; set; }
-        public string AircraftTypeCode { get; set; }
-        public string Company { get; set; }
-        public int CustomerId { get; set; }
-        public string TailNumber { get; set; }
-        public int AircraftId { get; set; }
-        public string AirportICAO { get; set; }
-        public int CustomerInfoByGroupID { get; set; }
-        public string Make { get; set; }
-        public string Model { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-
-        public string AircraftStatusDescription
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(AtcFlightNumber))
-                    return "";
-                return FBOLinx.Core.Utilities.Enum.GetDescription(AircraftStatus);
-            }
-        }
-    }
+    
 }

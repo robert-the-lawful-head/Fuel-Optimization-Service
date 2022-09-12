@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public class Repository<TEntity,TContext> : IRepository<TEntity,TContext>
     where TEntity : class where TContext : DbContext
     {
-        private readonly TContext context;
+        protected readonly TContext context;
         public Repository(TContext context)
         {
             this.context = context;
