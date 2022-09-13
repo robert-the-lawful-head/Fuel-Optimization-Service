@@ -91,7 +91,6 @@ namespace FBOLinx.Functions
             services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
             services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
-            services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
@@ -102,6 +101,7 @@ namespace FBOLinx.Functions
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
         }
     }
 }
