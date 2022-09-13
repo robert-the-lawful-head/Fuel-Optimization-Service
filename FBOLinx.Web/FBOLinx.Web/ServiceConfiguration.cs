@@ -27,6 +27,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using GroupCustomersService = FBOLinx.ServiceLayer.BusinessServices.Groups.GroupCustomersService;
 
 namespace FBOLinx.Web
 {
@@ -127,6 +128,7 @@ namespace FBOLinx.Web
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
             
             services.AddHostedService<AirportWatchScheduledService>();
 

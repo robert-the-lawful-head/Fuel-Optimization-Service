@@ -80,6 +80,7 @@ namespace FBOLinx.Functions
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
 
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
             services.AddTransient<GroupEntityService, GroupEntityService>();

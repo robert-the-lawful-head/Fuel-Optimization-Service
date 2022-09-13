@@ -135,13 +135,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
-                    new CustomerAircraftByGroupAndTailSpecification(groupIds, tailNumbers));
+                    new CustomerAircraftByGroupAndTailSpecification(groupIds, tailNumbers, _customerRecord.Oid));
 
             //Find any missing customer aircraft records that need to be added
             var aircraftToAdd = (from t in tailNumbers
                 join g in groupIds on 1 equals 1
-                join ca in customerAircraftList on new { TailNumber = t, GroupId = g } equals new
-                        { TailNumber = ca.TailNumber, GroupId = ca.GroupId.GetValueOrDefault() }
+                join ca in customerAircraftList on new { TailNumber = t, GroupId = g, CustomerId = _customerRecord.Oid } equals new
+                        { TailNumber = ca.TailNumber, GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                 where (ca?.Oid).GetValueOrDefault() == 0
