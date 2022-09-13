@@ -11,6 +11,8 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string FlightDepartment { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
+        public string FAAMake { get; set; }
+        public string FAAModel { get; set; }
         public double? FuelCapacityGal { get; set; }
         //Origin/Destination
         public string Origin { get; set; }

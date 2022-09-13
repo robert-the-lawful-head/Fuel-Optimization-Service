@@ -49,13 +49,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly IFuelReqService _FuelReqService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
+        private readonly IFboEntityService _fboService;
+        private readonly FAAAircraftMakeModelEntityService _FAAAircraftMakeModelEntityService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
             ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
-            AFSAircraftEntityService afsAircraftEntityService)
+            AFSAircraftEntityService afsAircraftEntityService, IFboEntityService fboService,
+            FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService)
         {
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -70,6 +73,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _FuelReqService = fuelReqService;
             _pricingTemplateService = pricingTemplateService;
             _AFSAircraftEntityService = afsAircraftEntityService;
+            _fboService = fboService;
+            _FAAAircraftMakeModelEntityService = faaAircraftMakeModelEntityService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
@@ -351,11 +356,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins), true));
 
             //List<AirportWatchLiveData> antennaLiveData = new List<AirportWatchLiveData>();
-            List<string> aircraftIdentifications = swimFlightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
-            IList<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(aircraftIdentifications);
+            List<string> tailNumbers = swimFlightLegs.Where(x => x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).Distinct().ToList();
+            IList<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
             var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
             List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
             var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
+
+            List<AircraftHexTailMapping> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(tailNumbers));
+            var aircraftMakeModels = await _FAAAircraftMakeModelEntityService.GetListBySpec(new AircraftMakeModelSpecification(hexTailMappings.Select(x => x.FAAAircraftMakeModelCode).Distinct().ToList()));
 
             Parallel.ForEach(swimFlightLegs, swimFlightLeg =>
             {
@@ -365,6 +373,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 //{
                 //    swimFlightLeg.IsAircraftOnGround = latestAntennaLiveDataRecord.IsAircraftOnGround;
                 //}
+
+                //List<string> atcFlightNumbers = swimFlightLegDTOs.Where(x => !x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).ToList();
 
                 var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
                 if (aircraftByFlightDepartment != null)
@@ -384,6 +394,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     {
                         swimFlightLeg.ICAOAircraftCode = afsAircraft.Icao;
                     }
+                }
+
+                if (swimFlightLeg.AircraftIdentification.ToUpper().StartsWith('N'))
+                {
+                    var tailMapping = hexTailMappings.FirstOrDefault(x => x.TailNumber == swimFlightLeg.AircraftIdentification);
+                    if (tailMapping != null)
+                    {
+                        FAAAircraftMakeModelReference aircraftMakeModelReference = aircraftMakeModels.FirstOrDefault(x => x.CODE == tailMapping.FAAAircraftMakeModelCode);
+                        if (aircraftMakeModelReference != null)
+                        {
+                            swimFlightLeg.FAAMake = aircraftMakeModelReference.MFR;
+                            swimFlightLeg.FAAModel = aircraftMakeModelReference.MODEL;
+                        }
+                    }
+                }
+                
+                if (string.IsNullOrWhiteSpace(swimFlightLeg.Make))
+                {
+                    swimFlightLeg.Make = swimFlightLeg.FAAMake;
+                }
+
+                if (string.IsNullOrWhiteSpace(swimFlightLeg.Model))
+                {
+                    swimFlightLeg.Model = swimFlightLeg.FAAModel;
                 }
 
                 swimFlightLeg.IsProcessed = true;
@@ -433,7 +467,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.ActualSpeed = swimFlightLeg.ActualSpeed;
                 flightLegDto.FlightDepartment = swimFlightLeg.FlightDepartment;
                 flightLegDto.Make = swimFlightLeg.Make;
+                flightLegDto.FAAMake = swimFlightLeg.FAAMake;
                 flightLegDto.Model = swimFlightLeg.Model;
+                flightLegDto.FAAModel = swimFlightLeg.FAAModel;
                 flightLegDto.FuelCapacityGal = swimFlightLeg.FuelCapacityGal;
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
