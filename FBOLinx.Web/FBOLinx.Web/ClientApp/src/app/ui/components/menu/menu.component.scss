@@ -53,6 +53,9 @@
                         flex-grow: 2;
                         flex-shrink: 1;
                         margin: 0 ($module-rem / 2);
+                        @media only screen and (max-width: 991px) {
+                            display: none;
+                        }
                     }
 
                     .item-badge {

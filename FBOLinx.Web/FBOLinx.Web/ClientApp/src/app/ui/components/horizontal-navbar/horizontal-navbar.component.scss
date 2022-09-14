@@ -6,10 +6,7 @@
     color: $navbar-color;
     display: block;
     height: $navbar-height;
-    left: $vertical-navbar-width;
-    position: absolute;
-    right: 0;
-    top: 0;
+    position: relative;
     z-index: 99999;
 
     @media only screen and (max-width: 991px) {

@@ -12,14 +12,14 @@
     height: 100%;
     left: 0;
     position: absolute;
-    top: 0;
+    top: 55px;
     transform: translate3d(0, 0, 0);
     transition: left 0.2s $animation, right 0.2s $animation;
     width: $vertical-navbar-width;
     will-change: left, right, width;
     z-index: 99999;
     @media only screen and (max-width: 991px) {
-        left: -($vertical-navbar-width);
+        width: auto;
     }
 
     .rtl & {
@@ -39,6 +39,7 @@
         @media only screen and (max-width: 991px) {
             position: relative;
             z-index: 99999;
+            width: auto;
         }
     }
 
