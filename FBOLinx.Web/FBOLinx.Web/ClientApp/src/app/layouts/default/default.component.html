@@ -5,7 +5,8 @@
     ></app-horizontal-navbar>
 
     <app-vertical-navbar
-        [ngClass]="{ hideSidebar: isSidebarInvisible() }"
+        [ngClass]="{ hideSidebar: !openedSidebar }"
+        [isMenuVisible]="openedSidebar"
     ></app-vertical-navbar>
     <div *ngIf="pricingTemplatesData">
         <app-addition-navbar
@@ -28,7 +29,7 @@
         class="sticky-panel d-none d-md-block"
     ></app-fbo-prices-panel>
 
-    <main [ngClass]="{ 'full-width': isSidebarInvisible() }"
+    <main [ngClass]="{ 'full-width': !openedSidebar }"
           class="main-content">
 
         <app-fbo-prices-panel *ngIf="isPricePanelVisible()"

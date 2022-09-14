@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { SharedService } from '../../../layouts/shared-service';
 
@@ -7,15 +7,6 @@ import { SharedService } from '../../../layouts/shared-service';
     styleUrls: ['vertical-navbar.component.scss'],
     templateUrl: 'vertical-navbar.component.html',
 })
-export class VerticalNavbarComponent implements OnInit {
-    constructor(private sharedService: SharedService) {}
-
-    menuVisible() {
-        return (
-            this.sharedService.currentUser.role ||
-            this.sharedService.currentUser.impersonatedRole
-        ); //this.sharedService.currentUser.role !== 3 ||
-    }
-
-    ngOnInit() {}
+export class VerticalNavbarComponent {
+    @Input() isMenuVisible: boolean;
 }

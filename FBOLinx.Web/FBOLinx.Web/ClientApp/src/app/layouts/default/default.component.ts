@@ -147,6 +147,8 @@ export class DefaultLayoutComponent implements OnInit {
         this.layoutClasses = this.getClasses();
 
         this.LogUserForAnalytics();
+
+        if(!this.isSidebarInvisible()) this.sidebarState();
     }
 
     isPricePanelVisible() {
@@ -226,7 +228,6 @@ export class DefaultLayoutComponent implements OnInit {
                     ))
         });
     }
-
     isSidebarInvisible() {
         return (
             !this.sharedService.currentUser.role &&
