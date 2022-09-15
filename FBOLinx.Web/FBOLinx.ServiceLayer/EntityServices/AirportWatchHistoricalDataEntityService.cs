@@ -18,14 +18,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
         }
 
-        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId, int? fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
+            string airportIcao, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
         {
-            string fboIcao =
-                (await context.Fboairports.FirstOrDefaultAsync(x => fboId.HasValue && x.Fboid == fboId.Value))?.Icao;
-
             //Create an inner query on the AirportWatchHistoricalData table to make use of the index on AircraftPositionDateTimeUTC and AirportICAO.
             var innerQuery = (base.context.AirportWatchHistoricalData
-                .Where(awhd => !string.IsNullOrEmpty(fboIcao) || awhd.AirportICAO == fboIcao)
+                .Where(awhd => !string.IsNullOrEmpty(airportIcao) || awhd.AirportICAO == airportIcao)
                 .Where(awhd =>
                     startDateTimeUtc == null ||
                     awhd.AircraftPositionDateTimeUtc >= startDateTimeUtc.Value.ToUniversalTime())
@@ -96,6 +94,15 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 .ToListAsync();
 
             return result;
+        }
+
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId, int? fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
+        {
+            string airportIcao =
+                (await context.Fboairports.FirstOrDefaultAsync(x => fboId.HasValue && x.Fboid == fboId.Value))?.Icao;
+
+            return await GetHistoricalDataWithCustomerAndAircraftInfo(groupId, airportIcao, startDateTimeUtc, endDateTimeUtc,
+                tailNumbers);
         }
     }
 }

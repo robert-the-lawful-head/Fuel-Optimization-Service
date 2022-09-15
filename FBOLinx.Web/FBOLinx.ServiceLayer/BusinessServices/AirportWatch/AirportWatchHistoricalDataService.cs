@@ -21,6 +21,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         IAirportWatchHistoricalDataService : IBaseDTOService<AirportWatchHistoricalDataDto,
             DB.Models.AirportWatchHistoricalData>
     {
+        Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
+            string airportIcao, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
             int? fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null);
     }
@@ -30,45 +32,56 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
         private AircraftService _AircraftService;
 
-        public AirportWatchHistoricalDataService(IRepository<AirportWatchHistoricalData, FboLinxContext> entityService 
-            //AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
-            //AircraftService aircraftService
+        public AirportWatchHistoricalDataService(IRepository<AirportWatchHistoricalData, FboLinxContext> entityService, 
+            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
+            AircraftService aircraftService
             ) : base(entityService)
         {
-            //_AircraftService = aircraftService;
-            //_AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+            _AircraftService = aircraftService;
+            _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+        }
+
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
+            string airportIcao, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
+        {
+            var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId.GetValueOrDefault(), airportIcao, startDateTimeUtc, endDateTimeUtc, tailNumbers);
+            return await PopulateHistoricalDataWithAircraftFactoryData(historicalData);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
             int? fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
         {
-            return null;
-            //var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId, fboId, startDateTimeUtc, endDateTimeUtc, tailNumbers);
-            //var aircraftFactoryData = await (_AircraftService.GetAllAircraftsOnlyAsQueryable()).ToListAsync();
+            var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId, fboId, startDateTimeUtc, endDateTimeUtc, tailNumbers);
+            return await PopulateHistoricalDataWithAircraftFactoryData(historicalData);
+        }
 
-            //var result = (from h in historicalData
-            //    join a in aircraftFactoryData on h.AircraftId equals a.AircraftId
-            //        into leftJoinedAircrafts
-            //    from a in leftJoinedAircrafts.DefaultIfEmpty()
-            //    orderby h.AircraftPositionDateTimeUtc descending
-            //    select new FboHistoricalDataModel
-            //    {
-            //        CustomerId = h.CustomerId,
-            //        Company = h.Company,
-            //        AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,
-            //        TailNumber = h.TailNumber,
-            //        AtcFlightNumber = h.AtcFlightNumber,
-            //        AircraftHexCode = h.AircraftHexCode,
-            //        AircraftTypeCode = h.AircraftTypeCode,
-            //        Make = a?.Make,
-            //        Model = a?.Model,
-            //        AircraftStatus = h.AircraftStatus,
-            //        AirportICAO = h.AirportICAO,
-            //        CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-            //        Latitude = h.Latitude,
-            //        Longitude = h.Longitude
-            //    });
-            //return result.ToList();
+        private async Task<List<FboHistoricalDataModel>> PopulateHistoricalDataWithAircraftFactoryData(List<FboHistoricalDataModel> historicalData)
+        {
+            var aircraftFactoryData = await (_AircraftService.GetAllAircraftsOnlyAsQueryable()).ToListAsync();
+
+            var result = (from h in historicalData
+                join a in aircraftFactoryData on h.AircraftId equals a.AircraftId
+                    into leftJoinedAircrafts
+                from a in leftJoinedAircrafts.DefaultIfEmpty()
+                orderby h.AircraftPositionDateTimeUtc descending
+                select new FboHistoricalDataModel
+                {
+                    CustomerId = h.CustomerId,
+                    Company = h.Company,
+                    AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,
+                    TailNumber = h.TailNumber,
+                    AtcFlightNumber = h.AtcFlightNumber,
+                    AircraftHexCode = h.AircraftHexCode,
+                    AircraftTypeCode = h.AircraftTypeCode,
+                    Make = a?.Make,
+                    Model = a?.Model,
+                    AircraftStatus = h.AircraftStatus,
+                    AirportICAO = h.AirportICAO,
+                    CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                    Latitude = h.Latitude,
+                    Longitude = h.Longitude
+                });
+            return result.ToList();
         }
     }
 }

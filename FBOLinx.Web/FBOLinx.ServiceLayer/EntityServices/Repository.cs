@@ -109,24 +109,31 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return queryableResult;
         }
         
-        public async Task BulkDeleteEntities(List<TEntity> entities)
+        public async Task BulkDeleteEntities(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
             try
             {
-                await context.BulkDeleteAsync(entities);
-                await context.SaveChangesAsync();
+                if (bulkConfig == null)
+                {
+                    bulkConfig = new BulkConfig();
+                    bulkConfig.SetOutputIdentity = true;
+                }
+                await using var transaction = await context.Database.BeginTransactionAsync();
+                await context.BulkDeleteAsync(entities, bulkConfig);
+                await transaction.CommitAsync();
+
             }
             catch (System.Exception exception)
             {
                 //Do nothing... the entities were already deleted
             }
         }
-        public async Task BulkDeleteEntities(ISpecification<TEntity> spec)
+        public async Task BulkDeleteEntities(ISpecification<TEntity> spec, BulkConfig? bulkConfig = null)
         {
             try
             {
-                await context.Set<TEntity>().Where(spec.Criteria).BatchDeleteAsync();
-                await context.SaveChangesAsync();
+                var entities = await GetListBySpec(spec);
+                await BulkDeleteEntities(entities, bulkConfig);
             }
             catch (System.Exception exception)
             {
@@ -134,18 +141,25 @@ namespace FBOLinx.ServiceLayer.EntityServices
             }
         }
 
-        public async Task BulkInsert(List<TEntity> entities, bool includeGraph = false)
+        public async Task BulkInsert(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
+            if (bulkConfig == null)
+            {
+                bulkConfig = new BulkConfig();
+                bulkConfig.SetOutputIdentity = true;
+            }
             await using var transaction = await context.Database.BeginTransactionAsync();
-            BulkConfig bulkConfig = new BulkConfig();
-            bulkConfig.SetOutputIdentity = true;
-            bulkConfig.IncludeGraph = includeGraph;
             await context.BulkInsertAsync(entities, bulkConfig);
             await transaction.CommitAsync();
         }
 
-        public async Task BulkUpdate(List<TEntity> entities)
+        public async Task BulkUpdate(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
+            if (bulkConfig == null)
+            {
+                bulkConfig = new BulkConfig();
+                bulkConfig.SetOutputIdentity = true;
+            }
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkUpdateAsync(entities);
             await transaction.CommitAsync();

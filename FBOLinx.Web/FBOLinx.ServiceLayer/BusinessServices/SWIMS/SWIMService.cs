@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.Core.Utilities.Geography;
@@ -231,7 +232,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             if (flightLegsToInsert.Count > 0)
             {
                 LogMissedTailNumbers(flightLegsToInsert);
-                await _FlightLegEntityService.BulkInsert(flightLegsToInsert, true);
+                await _FlightLegEntityService.BulkInsert(flightLegsToInsert, new BulkConfig()
+                {
+                    SetOutputIdentity = true,
+                    IncludeGraph = true
+                });
             }
             
             if (flightLegDataMessagesToInsert.Count > 0)

@@ -1,10 +1,11 @@
 using System;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
-    public class AirportWatchHistoricalDataDto : BaseEntityModelDTO<DB.Models.AirportWatchHistoricalData>, IEntityModelDTO<DB.Models.AirportWatchHistoricalData, int>
+    public class AirportWatchHistoricalDataDto : BaseEntityModelDTO<DB.Models.AirportWatchHistoricalData>, IBaseAirportWatchModel, IEntityModelDTO<DB.Models.AirportWatchHistoricalData, int>
     {
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
@@ -25,5 +26,29 @@ namespace FBOLinx.Service.Mapping.Dto
         public string AirportICAO { get; set; }
         public string AircraftHexCode { get; set; }
         public string TailNumber { get; set; }
+
+        public static AirportWatchHistoricalDataDto Cast(AirportWatchLiveDataDto liveDataRecord)
+        {
+            return new AirportWatchHistoricalDataDto
+            {
+                BoxTransmissionDateTimeUtc = liveDataRecord.BoxTransmissionDateTimeUtc,
+                AircraftHexCode = liveDataRecord.AircraftHexCode,
+                AtcFlightNumber = liveDataRecord.AtcFlightNumber,
+                AltitudeInStandardPressure = liveDataRecord.AltitudeInStandardPressure,
+                GroundSpeedKts = liveDataRecord.GroundSpeedKts,
+                TrackingDegree = liveDataRecord.TrackingDegree,
+                Latitude = liveDataRecord.Latitude,
+                Longitude = liveDataRecord.Longitude,
+                VerticalSpeedKts = liveDataRecord.VerticalSpeedKts,
+                TransponderCode = liveDataRecord.TransponderCode,
+                BoxName = liveDataRecord.BoxName,
+                AircraftPositionDateTimeUtc = liveDataRecord.AircraftPositionDateTimeUtc,
+                AircraftTypeCode = liveDataRecord.AircraftTypeCode,
+                GpsAltitude = liveDataRecord.GpsAltitude,
+                IsAircraftOnGround = liveDataRecord.IsAircraftOnGround,
+                TailNumber = liveDataRecord.TailNumber,
+                AircraftStatus = liveDataRecord.IsAircraftOnGround == true ? AircraftStatusType.Landing : AircraftStatusType.Takeoff,
+            };
+        }
     }
 }

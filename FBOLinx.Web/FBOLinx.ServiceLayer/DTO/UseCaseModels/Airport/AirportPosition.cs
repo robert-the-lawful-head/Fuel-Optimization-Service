@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
+namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
 {
     public class AirportPosition
     {
