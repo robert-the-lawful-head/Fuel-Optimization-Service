@@ -129,7 +129,8 @@ namespace FBOLinx.Web
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
             services.AddTransient<IGroupCustomersService, GroupCustomersService>();
-            
+            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
+
             services.AddHostedService<AirportWatchScheduledService>();
 
 
@@ -156,6 +157,7 @@ namespace FBOLinx.Web
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

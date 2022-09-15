@@ -1,5 +1,6 @@
 ﻿using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
@@ -47,6 +48,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
             services.AddTransient<IFuelReqService, FuelReqService>();
             services.AddTransient<IAirportTimeService, AirportTimeService>();
+            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
 
             return services;
         }
