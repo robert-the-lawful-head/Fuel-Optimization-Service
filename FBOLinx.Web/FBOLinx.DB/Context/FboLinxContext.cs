@@ -154,6 +154,7 @@ namespace FBOLinx.DB.Context
 
         public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
         public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
+        public virtual DbSet<AirportWatchDistinctBoxes> AirportWatchDistinctBoxes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1040,6 +1041,11 @@ namespace FBOLinx.DB.Context
             modelBuilder.Entity<MissedQuoteLog>(entity =>
             {
                 entity.HasKey(e => e.Oid);
+            });
+
+            modelBuilder.Entity<AirportWatchDistinctBoxes>(entity =>
+            {
+                entity.Property(e => e.Oid).ValueGeneratedOnAdd();
             });
         }
     }

@@ -100,6 +100,9 @@ namespace FBOLinx.Web
             services.AddTransient<AssociationsService, AssociationsService>();
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
+            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
+
+            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

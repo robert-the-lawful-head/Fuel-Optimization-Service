@@ -68,6 +68,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
         private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
+        private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
@@ -80,6 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
+            IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService)
         {
             _AirportService = airportService;
@@ -99,6 +101,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _LoggingService = loggingService;
             _AFSAircraftEntityService = afsAircraftEntityService;
+            _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -736,7 +739,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         distinctBox.FbolinxAccount = fbo.Fbo;
                 }
 
-                return distinctBoxes;
+                return distinctBoxes.OrderBy(d => d.BoxName).ToList();
 
             }
             catch (System.Exception exception)
@@ -777,47 +780,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return new List<AirportWatchHistoricalDataDto>();
             }
         }
+        
+        public async Task GetAirportWatchTestData()
+        {
+            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -10, 0)); //CHANGE BACK
+
+            var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc >= pastTenMinutes).ToListAsync();
+            await ProcessAirportWatchData(aircraftWatchLiveData, true);
+        }
 
         private async Task<List<AirportWatchAntennaStatusGrid>> GetDistinctAntennaBoxes()
         {
-            var distinctHistoricalBoxes = await _context.AirportWatchHistoricalData.GroupBy(a => a.BoxName).Select(ah => new
-            {
-                BoxName = ah.Key,
-                AircraftPositionDateTimeUtc = ah.Max(row => row.AircraftPositionDateTimeUtc)
-            }).ToListAsync();
-            distinctHistoricalBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
+            var allDistinctBoxes = await _AirportWatchDistinctBoxesService.GetAllAirportWatchDistinctBoxes();
+            var distinctBoxes = new List<AirportWatchAntennaStatusGrid>();
 
             var pastHalfHour = DateTime.UtcNow.Add(new TimeSpan(0, -30, 0));
-            var distinctLiveBoxes = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc > pastHalfHour).GroupBy(a => a.BoxName).Select(al => new
+
+            foreach (var distinctBox in allDistinctBoxes)
             {
-                BoxName = al.Key,
-                AircraftPositionDateTimeUtc = al.Max(row => row.AircraftPositionDateTimeUtc)
-            }).OrderBy(b => b.BoxName).ToListAsync();
-            distinctLiveBoxes.RemoveAll(x => string.IsNullOrEmpty(x.BoxName));
-
-            var distinctBoxesHistorical = (from dh in distinctHistoricalBoxes
-                                           join dl in distinctLiveBoxes on dh.BoxName equals dl.BoxName
-                                           into leftJoinDistinctLiveBoxes
-                                           from dl in leftJoinDistinctLiveBoxes.DefaultIfEmpty()
-                                           select new AirportWatchAntennaStatusGrid
-                                           {
-                                               BoxName = dl == null ? dh.BoxName : dl.BoxName,
-                                               Status = dl == null ? "Not Active" : "Active",
-                                               LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
-                                               LastUpdateCurated = dh == null ? "" : dh.AircraftPositionDateTimeUtc.ToString()
-                                           });
-
-            var distinctBoxes = (from dl in distinctLiveBoxes
-                                 join db in distinctBoxesHistorical on dl.BoxName equals db.BoxName
-                                 into leftJoinDistinctBoxes
-                                 from db in leftJoinDistinctBoxes.DefaultIfEmpty()
-                                 select new AirportWatchAntennaStatusGrid
-                                 {
-                                     BoxName = dl == null ? db.BoxName : dl.BoxName,
-                                     Status = dl == null ? "Not Active" : "Active",
-                                     LastUpdateRaw = dl == null ? "" : dl.AircraftPositionDateTimeUtc.ToString(),
-                                     LastUpdateCurated = db == null ? "" : db.LastUpdateCurated
-                                 }).Union(distinctBoxesHistorical).GroupBy(d => d.BoxName).Select(grouped => grouped.First()).ToList();
+                var box = new AirportWatchAntennaStatusGrid()
+                {
+                    BoxName = distinctBox.BoxName,
+                    Status = distinctBox.LastLiveDateTime == null || distinctBox.LastLiveDateTime < pastHalfHour ? "Not Active" : "Active",
+                    LastUpdateRaw = distinctBox.LastLiveDateTime == null || distinctBox.LastLiveDateTime < pastHalfHour ? "" : distinctBox.LastLiveDateTime.ToString(),
+                    LastUpdateCurated = distinctBox.LastHistoricDateTime == null ? "" : distinctBox.LastHistoricDateTime.ToString()
+                };
+                distinctBoxes.Add(box);
+            }
 
             return distinctBoxes;
         }
