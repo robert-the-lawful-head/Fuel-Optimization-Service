@@ -5,12 +5,8 @@ import {
     EventEmitter,
     OnDestroy,
     OnInit,
-    Inject,
 } from '@angular/core';
-import { difference, isEqual, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { RequestDemoModalComponent } from "../../../shared/components/request-demo-modal/request-demo-modal.component";
 import { NgxUiLoaderService } from "ngx-ui-loader";
 import { MatDialog } from '@angular/material/dialog';
 import { FboGeofencingDialogNewClusterComponent } from
@@ -30,7 +26,6 @@ import { AirportFboGeoFenceClusterCoordinates } from '../../../models/fbo-geofen
 import { AirportFboGeoFenceGridViewmodel } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-grid-viewmodel';
 import { DeleteConfirmationComponent, DeleteConfirmationData } from
     "../../../shared/components/delete-confirmation/delete-confirmation.component";
-import { SaveConfirmationData } from "../../../shared/components/save-confirmation/save-confirmation.component";
 import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
 
 @Component({
@@ -87,6 +82,7 @@ export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, O
         this.buildMap(this.center, this.mapContainer, this.mapStyle, this.zoom)
             .onStyleData(() => this.mapStyleLoaded())
             .onMapClick((e) => this.mapClicked(e))
+            .onStyleLoad(() => this.refreshClustersOnMap())
             .onLoad(async () => {
                 eventHandler();
             });
@@ -270,24 +266,22 @@ export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, O
             return;
 
         this.fboClusterLayerIds.forEach((id) => {
-            this.removeLayer(id);
+            let layer = this.getLayer(id);
+            if (layer)  this.removeLayer(id);
         });
 
         this.fboClusterLayerIds = [];
 
         this.fboClusterSourceIds.forEach((id) => {
-            this.removeSource(id);
+            let source = this.getSource(id);
+            if (source) this.removeSource(id);
         });
 
         this.fboClusterSourceIds = [];
 
         this.clusters.forEach((cluster: AirportFboGeoFenceCluster) => {
-            //if (this.activeCluster != null && this.activeCluster != cluster)
-            //    return;
-
             const clusterPolygonSourceId: string = 'fbo-cluster-source-' + cluster.oid;
             const clusterPolygonLayerId: string = 'fbo-cluster-layer-' + cluster.oid;
-
 
             this.addSource(clusterPolygonSourceId,
                 {

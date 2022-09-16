@@ -140,4 +140,13 @@ export class PricingtemplatesService {
             }
         );
     }
+
+    public fixCustomCustomerTypes(groupId, fboId) {
+        return this.http.get(
+            this.accessPointUrl + '/fix-custom-customer-types/group/' + groupId + '/fbo/' + fboId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

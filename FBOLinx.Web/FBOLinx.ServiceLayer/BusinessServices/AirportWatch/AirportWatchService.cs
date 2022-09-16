@@ -18,6 +18,7 @@ using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.FuelRequests;
+using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Fuelerlinx.SDK;
@@ -37,6 +38,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
+using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
@@ -68,6 +70,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
         private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
+        private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
+        private readonly SWIMFlightLegEntityService _SWIMFlightLegEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
 
@@ -80,6 +84,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
+            AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
+            SWIMFlightLegEntityService swimFlightLegEntityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService)
@@ -101,6 +107,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _LoggingService = loggingService;
             _AFSAircraftEntityService = afsAircraftEntityService;
+            _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
+            _SWIMFlightLegEntityService = swimFlightLegEntityService;
             _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
@@ -773,6 +781,49 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 Debug.WriteLine("Error in AirportWatchService.GetParkingOccurencesByAirport: " + exception.Message);
                 return new List<AirportWatchHistoricalDataDto>();
             }
+        }
+
+        public async Task<List<AircraftLocation>> GetAircraftLocations(int fuelerlinxCustomerId)
+        {
+            var aircrafts = await _customerAircraftsEntityService.GetAircraftLocations(fuelerlinxCustomerId);
+            var aircraftCoordinates = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByTailNumberSpecification(aircrafts.Select(x => x.TailNumber).ToList(), DateTime.UtcNow.AddDays(-7)));
+            foreach (IGrouping<string, AirportWatchLiveData> grouping in aircraftCoordinates.GroupBy(x => x.TailNumber))
+            {
+                var latestAircraftCoordinate = grouping.OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
+                if (latestAircraftCoordinate != null)
+                {
+                    var aircraft = aircrafts.FirstOrDefault(x => x.TailNumber == latestAircraftCoordinate.TailNumber);
+                    if (aircraft != null)
+                    {
+                        aircraft.Latitude = latestAircraftCoordinate.Latitude;
+                        aircraft.Longitude = latestAircraftCoordinate.Longitude;
+                    }
+                }
+            }
+
+            var missingAircrafts = aircrafts.Where(x => x.Latitude == null && x.Longitude == null).ToList();
+            if (missingAircrafts.Any())
+            {
+                var latestSWIMRecords = await _SWIMFlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(missingAircrafts.Select(x => x.TailNumber).ToList(), DateTime.UtcNow.AddDays(-7), false));
+                if (latestSWIMRecords.Any())
+                {
+                    foreach (IGrouping<string, SWIMFlightLeg> grouping in latestSWIMRecords.GroupBy(x => x.AircraftIdentification))
+                    {
+                        var latestSWIMFlightRecord = grouping.OrderByDescending(x => x.Oid).FirstOrDefault();
+                        if (latestSWIMFlightRecord != null)
+                        {
+                            var aircraft = aircrafts.FirstOrDefault(x => x.TailNumber == latestSWIMFlightRecord.AircraftIdentification);
+                            if (aircraft != null)
+                            {
+                                aircraft.Latitude = latestSWIMFlightRecord.Latitude;
+                                aircraft.Longitude = latestSWIMFlightRecord.Longitude;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return aircrafts;
         }
         
         public async Task GetAirportWatchTestData()

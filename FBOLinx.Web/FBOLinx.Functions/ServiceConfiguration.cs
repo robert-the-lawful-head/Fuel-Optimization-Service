@@ -27,7 +27,9 @@ namespace FBOLinx.Functions
             services.RegisterDBConnections(degaDbConnectionString, fbolinxDbConnectionString);
             services.RegisterEntityServices();
             services.RegisterBusinessServices();
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
             
+            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
         }
     }
 }

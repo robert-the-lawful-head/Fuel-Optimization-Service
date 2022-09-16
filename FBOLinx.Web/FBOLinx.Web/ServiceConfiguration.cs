@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using GroupCustomersService = FBOLinx.ServiceLayer.BusinessServices.Groups.GroupCustomersService;
 
 namespace FBOLinx.Web
 {
@@ -100,8 +101,10 @@ namespace FBOLinx.Web
             services.AddTransient<AssociationsService, AssociationsService>();
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
             services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
 
+            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
             services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

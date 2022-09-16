@@ -160,6 +160,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.stagedPrices = undefined;
         this.loadAllPrices();
         this.loadFeesAndTaxes();
+        this.fixCustomCustomerTypes();
         this.checkDefaultTemplate();
     }
 
@@ -599,8 +600,11 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     private showTooltips() {
         setTimeout(() => {
             const tooltipsArr = this.priceTooltips.toArray();
-            tooltipsArr[this.tooltipIndex].open();
-            this.tooltipIndex--;
+            var toolTip = tooltipsArr[this.tooltipIndex];
+            if (toolTip != undefined) {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }
         }, 400);
     }
 
@@ -705,5 +709,13 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                     }))
             }));
         });
+    }
+
+    private fixCustomCustomerTypes() {
+        this.pricingTemplateService
+            .fixCustomCustomerTypes(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
+             
+            });
     }
 }

@@ -81,6 +81,10 @@ export abstract class MapboxglBase {
         this.map.on('styledata', callBack);
         return this;
     }
+    onStyleLoad(callBack): this{
+        this.map.on('style.load', callBack);
+        return this;
+    }
     onLoad(callBack): this{
         this.map.on('load', callBack);
         return this;
