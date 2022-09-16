@@ -67,7 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFuelReqService _FuelReqService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
-        private readonly AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
+        private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private readonly SWIMFlightLegEntityService _SWIMFlightLegEntityService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
@@ -79,7 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
-            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
+            AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
             SWIMFlightLegEntityService swimFlightLegEntityService)
         {
             _AirportWatchLiveDataService = airportWatchLiveDataService;
@@ -98,7 +98,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _MemoryCache = memoryCache;
             _LoggingService = loggingService;
             _AFSAircraftEntityService = afsAircraftEntityService;
-            _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+            _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
             _SWIMFlightLegEntityService = swimFlightLegEntityService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
@@ -870,8 +870,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         public async Task<List<AircraftLocation>> GetAircraftLocations(int fuelerlinxCustomerId)
         {
             var aircrafts = await _customerAircraftsEntityService.GetAircraftLocations(fuelerlinxCustomerId);
-            var aircraftCoordinates = await _AirportWatchHistoricalDataEntityService.GetListBySpec(new AirportWatchHistoricalDataByTailNumberSpecification(aircrafts.Select(x => x.TailNumber).ToList(), DateTime.UtcNow.AddDays(-7)));
-            foreach (IGrouping<string, AirportWatchHistoricalData> grouping in aircraftCoordinates.GroupBy(x => x.TailNumber))
+            var aircraftCoordinates = await _AirportWatchLiveDataEntityService.GetListBySpec(new AirportWatchLiveDataByTailNumberSpecification(aircrafts.Select(x => x.TailNumber).ToList(), DateTime.UtcNow.AddDays(-7)));
+            foreach (IGrouping<string, AirportWatchLiveData> grouping in aircraftCoordinates.GroupBy(x => x.TailNumber))
             {
                 var latestAircraftCoordinate = grouping.OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
                 if (latestAircraftCoordinate != null)

@@ -505,7 +505,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [AllowAnonymous]
-        //[APIKey(IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpGet("aircraft-locations/{fuelerlinxCustomerId}")]
         public async Task<IActionResult> GetAircraftLocations([FromRoute] int fuelerlinxCustomerId)
         {
