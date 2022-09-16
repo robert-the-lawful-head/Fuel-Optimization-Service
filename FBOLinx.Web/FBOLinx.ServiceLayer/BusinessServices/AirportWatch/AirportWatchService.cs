@@ -81,8 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
-            SWIMFlightLegEntityService swimFlightLegEntityService)
-            AFSAircraftEntityService afsAircraftEntityService,
+            SWIMFlightLegEntityService swimFlightLegEntityService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService)
         {
             _AirportWatchLiveDataService = airportWatchLiveDataService;
