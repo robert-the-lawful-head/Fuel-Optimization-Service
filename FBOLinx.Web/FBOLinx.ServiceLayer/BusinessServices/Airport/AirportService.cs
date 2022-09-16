@@ -17,10 +17,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<Fboairports> GetAirportForFboId(int fboId);
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
         Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds);
-        Task<string> GetNearestICAO(double latitude, double longitude);
+        Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
+        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
         Task<List<AirportPosition>> GetAirportPositions();
     }
 
+    //TODO: Convert this to a DTO and Entity Service!
     public class AirportService : IAirportService
     {
         private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
@@ -42,7 +44,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return airport;
         }
 
-        //TODO: Move these to entity service when Irving is ready
         public async Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId)
         {
             var airport = await _degaContext.AcukwikAirports.FirstOrDefaultAsync(x => x.Oid == acukwikAirportId);
@@ -55,11 +56,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return airports;
         }
 
-        public async Task<string> GetNearestICAO(double latitude, double longitude)
+        public async Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers)
+        {
+            var airports = await _degaContext.AcukwikAirports.Where(x =>
+                ((x.Icao != null && airportIdentifiers.Contains(x.Icao))
+                 || (x.Iata != null && airportIdentifiers.Contains(x.Icao))
+                 || (x.Faa != null && airportIdentifiers.Contains(x.Faa))))
+                .Include(x => x.AcukwikFbohandlerDetailCollection)
+                .AsNoTracking()
+                .ToListAsync();
+            return airports;
+        }
+
+        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
         {
             List<AirportPosition> airportPositions = await GetAirportPositions();
             double minDistance = -1;
-            string nearestICAO = null;
+            AirportPosition nearestAirportPosition = null;
             var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1 && a.Latitude <= latitude + 1 && a.Longitude >= longitude - 1 && a.Longitude <= longitude + 1).ToList();
             foreach (var airport in closestAirports)
             {
@@ -68,14 +81,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                 if (minDistance == -1 || distance < minDistance)
                 {
                     minDistance = distance;
-                    var airportIcao = airport.Icao;
-                    if (airportIcao == "")
-                        airportIcao = airport.Faa == "" ? airport.Iata : airport.Faa;
-                    nearestICAO = airportIcao;
+                    nearestAirportPosition = airport;
                 }
             }
 
-            return nearestICAO;
+            return nearestAirportPosition;
         }
 
         public async Task<List<AirportPosition>> GetAirportPositions()

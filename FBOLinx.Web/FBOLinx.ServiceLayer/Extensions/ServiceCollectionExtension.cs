@@ -85,6 +85,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
+            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
+            services.AddTransient<IAirportWatchDepartingService, AirportWatchDepartingService>();
 
             return services;
         }

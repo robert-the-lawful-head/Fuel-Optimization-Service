@@ -534,9 +534,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //newAircraftWatchLiveData = new AirportWatchLiveData();
             //newAircraftWatchLiveData = (AirportWatchLiveData)testData;
             //data.Add(newAircraftWatchLiveData);
-
-            var airportPositions = await _AirportService.GetAirportPositions();
-
+            
             //Grab distinct aircraft for this set of data
             //var distinctAircraftHexCodes =
             //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
@@ -607,23 +605,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 }
             }
 
-            await PrepareRecordsForDatabase(airportPositions);
+            await PrepareRecordsForDatabase();
 
             if (!isTesting)
                 await CommitChanges();
         }
 
-        private async Task PrepareRecordsForDatabase(List<AirportPosition> airportPositions)
+        private async Task PrepareRecordsForDatabase()
         {
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
             _HistoricalDataToInsert.ForEach(async x =>
             {
-                x.AirportICAO = await _AirportService.GetNearestICAO(x.Latitude, x.Longitude);
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(x.Latitude, x.Longitude);
+                x.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             });
             _HistoricalDataToUpdate.ForEach(async x =>
             {
-                x.AirportICAO = await _AirportService.GetNearestICAO(x.Latitude, x.Longitude);
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(x.Latitude, x.Longitude);
+                x.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             });
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
@@ -702,20 +702,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             {
                 //Fetch all airports with antenna data from the last two hours
                 var pastWeekDateTime = DateTime.UtcNow.Add(new TimeSpan(-1, 0, 0, 0));
-                var distinctBoxes = await _context.AirportWatchHistoricalData
-                    .Where(x => x.AircraftPositionDateTimeUtc > pastWeekDateTime && !string.IsNullOrEmpty(x.AirportICAO))
-                    .Select(x => x.AirportICAO)
-                    .Distinct()
-                    .ToListAsync();
-                distinctBoxes.RemoveAll(x => string.IsNullOrEmpty(x));
-                distinctBoxes = distinctBoxes.Select(x => x.ToUpper()).ToList();
+                var allAirportWatchDistinctBoxes = await _AirportWatchDistinctBoxesService.GetAllAirportWatchDistinctBoxes();
+                var distinctBoxAirports = allAirportWatchDistinctBoxes.Where(x => !string.IsNullOrEmpty(x.AirportICAO)).Select(x => x.AirportICAO.ToUpper()).ToList();
 
                 //Fetch distinct airports from clusters or that were added manually
                 var distinctAirportIdentifiersWithClusters = await _airportFboGeofenceClustersService.GetDistinctAirportIdentifiersWithClusters();
-                distinctBoxes.AddRange(distinctAirportIdentifiersWithClusters);
+                distinctBoxAirports.AddRange(distinctAirportIdentifiersWithClusters);
 
-                var airports = await _degaContext.AcukwikAirports.Where(x => distinctBoxes.Contains(x.Icao))
-                    .Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
+                var airports = await _AirportService.GetAirportsByAirportIdentifier(distinctBoxAirports);
                 return airports;
             }
             catch (System.Exception exception)
@@ -785,7 +779,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -10, 0)); //CHANGE BACK
 
-            var aircraftWatchLiveData = await _context.AirportWatchLiveData.Where(x => x.AircraftPositionDateTimeUtc >= pastTenMinutes).ToListAsync();
+            var aircraftWatchLiveData = await _AirportWatchLiveDataService.GetListbySpec(new AirportWatchLiveDataSpecification(pastTenMinutes, DateTime.UtcNow));
             await ProcessAirportWatchData(aircraftWatchLiveData, true);
         }
 

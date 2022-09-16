@@ -55,6 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
         private FuelerLinxApiService _fuelerLinxApiService;
         private IFboEntityService _fboService;
+        private IAirportWatchDepartingService _AirportWatchDepartingService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -63,8 +64,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
             AFSAircraftEntityService afsAircraftEntityService,
              FuelerLinxApiService fuelerLinxApiService,
-             IFboEntityService fboService)
+             IFboEntityService fboService,
+            IAirportWatchDepartingService airportWatchDepartingService)
         {
+            _AirportWatchDepartingService = airportWatchDepartingService;
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
@@ -253,10 +256,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public async Task CreatePlaceholderRecords()
         {
             var tailNumbersByLiveAndParkingCoordinates =
-                await _AirportWatchLiveDataEntityService.GetTailNumbersByLiveAndHistoricalParkingCoordinates(DateTime.UtcNow.AddHours(-1), DateTime.UtcNow.AddHours(-24));
+                await _AirportWatchDepartingService.GetAirportWatchLiveDataWithHistoricalStatuses(DateTime.UtcNow.AddHours(-5), DateTime.UtcNow.AddHours(-24));
 
             List<SWIMFlightLeg> existingFlightLegs = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(tailNumbersByLiveAndParkingCoordinates.Select(x => x.Item1).ToList(), tailNumbersByLiveAndParkingCoordinates.Select(x => x.Item2).ToList(), DateTime.UtcNow.AddHours(-1)));
+                new SWIMFlightLegSpecification(tailNumbersByLiveAndParkingCoordinates.Select(x => x.TailNumber).ToList(), tailNumbersByLiveAndParkingCoordinates.Select(x => x.AtcFlightNumber).ToList(), DateTime.UtcNow.AddHours(-1)));
             List<AcukwikAirport> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification());
 
             List<SWIMFlightLeg> placeholderRecordsToInsert = new List<SWIMFlightLeg>();
@@ -265,11 +268,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             foreach (var tailNumberByCoordinates in tailNumbersByLiveAndParkingCoordinates)
             {
                 SWIMFlightLeg existingFlightLeg = existingFlightLegs.FirstOrDefault(
-                    x => x.AircraftIdentification == tailNumberByCoordinates.Item1 || x.AircraftIdentification == tailNumberByCoordinates.Item2);
+                    x => x.AircraftIdentification == tailNumberByCoordinates.TailNumber || x.AircraftIdentification == tailNumberByCoordinates.AtcFlightNumber);
                 
-                var distanceFromParkingOccurrence = new Coordinates(tailNumberByCoordinates.Item3, tailNumberByCoordinates.Item4)
+                var distanceFromParkingOccurrence = new Coordinates(tailNumberByCoordinates.Latitude, tailNumberByCoordinates.Longitude)
                     .DistanceTo(
-                        new Coordinates(tailNumberByCoordinates.Item5, tailNumberByCoordinates.Item6),
+                        new Coordinates(tailNumberByCoordinates.HistoricalLatitude, tailNumberByCoordinates.HistoricalLongitude),
                         UnitOfLength.Miles
                     );
                 if (distanceFromParkingOccurrence > 0.2)
@@ -287,14 +290,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                             double airportLongitude = LocationHelper.GetLongitudeGeoLocationFromGPS(airport.Longitude);
                             var distanceFromAirport = new Coordinates(airportLatitude, airportLongitude)
                                 .DistanceTo(
-                                    new Coordinates(tailNumberByCoordinates.Item5, tailNumberByCoordinates.Item6),
+                                    new Coordinates(tailNumberByCoordinates.HistoricalLatitude, tailNumberByCoordinates.HistoricalLongitude),
                                     UnitOfLength.Miles
                                 );
                             if (distanceFromAirport < 5)
                             {
                                 SWIMFlightLeg placeholderRecord = new SWIMFlightLeg();
                                 placeholderRecord.DepartureICAO = airport.Icao;
-                                placeholderRecord.AircraftIdentification = tailNumberByCoordinates.Item1;
+                                placeholderRecord.AircraftIdentification = tailNumberByCoordinates.TailNumber;
                                 placeholderRecord.ATD = DateTime.UtcNow;
                                 placeholderRecord.ATDLocal = DateTimeHelper.GetLocalTime(placeholderRecord.ATD, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
                                 placeholderRecord.IsPlaceholder = true;
