@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
 {
@@ -24,6 +26,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
         //public AircraftStatusType HistoicalAircraftStatus { get; set; }
         //public DateTime? HistoricalAircraftPositionDateTimeUtc { get; set; }
         public FlightLegStatus? FlightLegStatus { get; set; }
+        public AirportPosition AirportPosition { get; set; }
+        public SWIMFlightLeg SWIMFlightLeg { get; set; }
 
         public AirportWatchHistoricalDataDto GetMostRecentHistoricalRecord()
         {

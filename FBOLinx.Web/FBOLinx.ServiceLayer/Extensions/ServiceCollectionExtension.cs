@@ -86,7 +86,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
             services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
-            services.AddTransient<IAirportWatchDepartingService, AirportWatchDepartingService>();
+            services.AddTransient<IAirportWatchFlightLegStatusService, AirportWatchFlightLegStatusService>();
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
 
             return services;
         }
@@ -115,6 +116,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
+            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
 
             return services;
         }

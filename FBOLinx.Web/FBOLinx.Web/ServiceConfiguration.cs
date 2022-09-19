@@ -4,6 +4,7 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -101,12 +102,7 @@ namespace FBOLinx.Web
             services.AddTransient<AssociationsService, AssociationsService>();
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
-            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
-            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
-
-            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
-            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
-
+            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services

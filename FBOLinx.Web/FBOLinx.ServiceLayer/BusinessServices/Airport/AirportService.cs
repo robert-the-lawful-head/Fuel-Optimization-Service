@@ -112,7 +112,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                             Longitude = alng,
                             Icao = a.Icao,
                             Iata = a.Iata,
-                            Faa = a.Faa
+                            Faa = a.Faa,
+                            DaylightSavingsYn = a.DaylightSavingsYn,
+                            IntlTimeZone = a.IntlTimeZone
                         };
                     })
                     .ToList();

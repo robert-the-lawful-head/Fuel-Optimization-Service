@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using FBOLinx.Core.Utilities.Geography;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
 {
@@ -25,6 +26,16 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
                 if (!string.IsNullOrEmpty(Faa))
                     return Faa;
                 return Iata;
+        }
+
+        public double GetDistanceInMilesFromAirportPosition(double otherLatitude, double otherLongitude)
+        {
+            var distanceFromAirport = new Coordinates(Latitude, Longitude)
+                .DistanceTo(
+                    new Coordinates(otherLatitude, otherLongitude),
+                    UnitOfLength.Miles
+                );
+            return distanceFromAirport;
         }
     }
 }
