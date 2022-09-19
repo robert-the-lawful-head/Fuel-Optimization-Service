@@ -187,37 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             var airportWatchLiveDataMinimumDateTime = DateTime.UtcNow.AddMinutes(-2);
 
-            var fuelOrders = (await _FuelReqService.GetListbySpec(new FuelReqByFboAndDateSpecification(fboId, DateTime.UtcNow, DateTime.UtcNow.AddHours(12))))
-                .Where(x => x.Cancelled != true)
-                    .ToList();
-
-            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo, IsEtaOnly = true });
-
-            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
-            {
-                fuelOrders.Add(new FuelReqDto() {
-                    Oid = 0,
-                    ActualPpg = 0,
-                    ActualVolume = transaction.InvoicedVolume.Amount,
-                    Archived = transaction.Archived,
-                    Cancelled = false,
-                    DateCreated = transaction.CreationDate,
-                    DispatchNotes = "",
-                    Eta = transaction.ArrivalDateTime,
-                    Etd = transaction.DepartureDateTime,
-                    Icao = transaction.Icao,
-                    Notes = "",
-                    QuotedPpg = 0,
-                    QuotedVolume = transaction.DispatchedVolume.Amount,
-                    Source = transaction.FuelVendor,
-                    SourceId = transaction.Id,
-                    TimeStandard = transaction.TimeStandard.ToString() == "0" ? "Z" : "L",
-                    Email = "",
-                    PhoneNumber = "",
-                    CustomerAircraft = new CustomerAircraftsDto() { TailNumber = transaction.TailNumber },
-                });
-            }
+            var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
 
             var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
 
@@ -241,7 +211,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
 
             filteredResult = (from fr in airportWatchDataWithCustomers
-                              join fo in fuelOrders on fr.awhd.AtcFlightNumber equals (fo.CustomerAircraft == null ? "" : fo.CustomerAircraft.TailNumber) into fos
+                              join fo in fuelOrders on fr.awhd.TailNumber equals (fo.TailNumber) into fos
                               from fo in fos.DefaultIfEmpty()
                               where GeoCalculator.GetDistance(coordinate.Latitude, coordinate.Longitude, fr.awhd.Latitude, fr.awhd.Longitude, 1, DistanceUnit.Miles) <= _distance
                               select new AirportWatchLiveDataDto
@@ -263,10 +233,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                   FuelOrder = fo,
-                                  IsInNetwork = fr.ca.IsInNetwork(fo),
-                                  IsOutOfNetwork = fr.ca.IsOutOfNetwork(fo),
+                                  IsInNetwork = fr.ca.IsInNetwork(),
+                                  IsOutOfNetwork = fr.ca.IsOutOfNetwork(),
                                   IsActiveFuelRelease = fo.IsActiveFuelRelease(),
-                                  IsFuelerLinxClient = fr.ca.IsFuelerLinxClient(fo),
+                                  IsFuelerLinxClient = fr.ca.IsFuelerLinxClient(),
                                   IsFuelerLinxCustomer = fr.ca.isFuelerLinxCustomer(),
                                   TailNumber = fr.awhd.TailNumber
                               })

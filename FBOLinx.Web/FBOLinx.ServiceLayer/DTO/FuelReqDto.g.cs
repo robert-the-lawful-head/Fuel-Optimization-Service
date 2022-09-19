@@ -1,10 +1,15 @@
 using System;
 using FBOLinx.Service.Mapping.Dto;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
     public partial class FuelReqDto
     {
+        private string _TailNumber;
+        private string _FboName;
+        private string _PricingTemplateName;
+
         public int Oid { get; set; }
         public int? CustomerId { get; set; }
         public string Icao { get; set; }
@@ -26,9 +31,85 @@ namespace FBOLinx.Service.Mapping.Dto
         public bool? Archived { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string FuelOn { get; set; } = "Departure";
+        public string CustomerName { get; set; }
+
+        public string TailNumber
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_TailNumber))
+                    return _TailNumber;
+                return CustomerAircraft?.TailNumber;
+            }
+            set => _TailNumber = value;
+        }
+
+        public string FboName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_FboName))
+                    return _FboName;
+                return Fbo?.Fbo;
+            }
+            set
+            {
+                _FboName = value;
+            }
+        }
+
+        public string PricingTemplateName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_PricingTemplateName))
+                    return _PricingTemplateName;
+                return FuelReqPricingTemplate?.PricingTemplateName;
+            }
+            set
+            {
+                _PricingTemplateName = value;
+            }
+        }
+
         public CustomersDto Customer { get; set; }
         public CustomerAircraftsDto CustomerAircraft { get; set; }
         public FbosDto Fbo { get; set; }
         public FuelReqPricingTemplateDto FuelReqPricingTemplate { get; set; }
+
+        public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
+        {
+            Oid = 0;
+            ActualPpg = 0;
+            ActualVolume = item.InvoicedVolume.Amount;
+            Archived = item.Archived;
+            Cancelled = false;
+            CustomerId = item.CompanyId;
+            DateCreated = item.CreationDate;
+            DispatchNotes = "";
+            Eta = item.ArrivalDateTime;
+            Etd = item.DepartureDateTime;
+            Icao = item.Icao;
+            Notes = "";
+            QuotedPpg = 0;
+            QuotedVolume = item.DispatchedVolume.Amount;
+            Source = item.FuelVendor;
+            SourceId = item.Id;
+            TimeStandard = item.TimeStandard.ToString() == "0" ? "Z" : "L";
+            TailNumber = item.TailNumber;
+            FboName = item.Fbo;
+            Email = "";
+            PhoneNumber = "";
+            FuelOn = item.TransactionDetails.FuelOn;
+            CustomerName = companyName;
+        }
+
+        public static FuelReqDto Cast(TransactionDTO fuelerlinxTransaction, string companyName)
+        {
+            FuelReqDto result = new FuelReqDto();
+            result.CastFromFuelerLinxTransaction(fuelerlinxTransaction, companyName);
+            return result;
+        }
     }
 }

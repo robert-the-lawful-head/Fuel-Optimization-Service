@@ -114,7 +114,6 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboContactsEntityService, FboContactsEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
-            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
             services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
             services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();

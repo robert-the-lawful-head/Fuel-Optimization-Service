@@ -480,6 +480,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
 
+            var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
+
             //[#2xrec66] Problem with loading Network and Order status of each aircraft to properly color-code it.
 
             //var fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
@@ -697,7 +699,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 DateTime atdMin = flightLegs.Min(x => x.ATDZulu);
                 DateTime etaMax = flightLegs.Where(x => x.ETAZulu != null).Max(x => x.ETAZulu.Value);
-                var fuelOrders = (await _FuelReqService.GetFuelReqsByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
+                var fuelOrders = (await _FuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
                 foreach (FlightLegDTO flightLeg in flightLegs)
                 {
                     if (flightLeg.ETAZulu == null)
