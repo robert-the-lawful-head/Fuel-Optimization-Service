@@ -219,6 +219,7 @@ import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
 import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
 import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
+import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 
 @NgModule({
     declarations: [
@@ -360,7 +361,8 @@ import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/p
         FlightWatchSettingTableComponent,
         MissedOrdersGridComponent,
         FlightWatchMapWrapperComponent,
-        PriceCheckerDialogComponent
+        PriceCheckerDialogComponent,
+        AircraftLegendComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

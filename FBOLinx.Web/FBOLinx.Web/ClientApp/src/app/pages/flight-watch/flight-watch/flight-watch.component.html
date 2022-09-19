@@ -1,51 +1,5 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div class="custom-key-tab" *ngIf="isMapShowing">
-    <div class="custom-key-content" style="padding-left: 25px">
-        <div class="d-inline-block">
-            <img
-                src="/assets/img/airplane_FUELERLINX.png"
-                style="width: 75%; height: 75%"
-            />
-        </div>
-        <div class="d-inline-block">
-            <span>FuelerLinx Client</span>
-        </div>
-    </div>
-    <div class="custom-key-content">
-        <div class="d-inline-block">
-            <img
-                src="/assets/img/airplane-FUEL_RELEASE.png"
-                style="width: 75%; height: 75%"
-            />
-        </div>
-        <div class="d-inline-block">
-            <span>Active Fuel Release</span>
-        </div>
-    </div>
-    <div class="custom-key-content">
-        <div class="d-inline-block">
-            <img
-                src="/assets/img/airplane_ACTIVE.png"
-                style="width: 75%; height: 75%"
-            />
-        </div>
-        <div class="d-inline-block">
-            <span>Out of Network</span>
-        </div>
-    </div>
-    <div class="custom-key-content">
-        <div class="d-inline-block">
-            <img
-                src="/assets/img/airplane_CLIENT.png"
-                style="width: 75%; height: 75%"
-            />
-        </div>
-        <div class="d-inline-block">
-            <span>In Network</span>
-        </div>
-    </div>
-</div>
 
 <div class="after-breadcrumb flight-watch-tabs">
     <mat-tab-group (selectedTabChange)="onTabClick($event)">
@@ -56,8 +10,7 @@
                     <div *ngIf="flightWatchData">
                         <div
                             class="drawer-button"
-                            (click)="mapfilters.toggle()"
-                        >
+                            (click)="mapfilters.toggle()">
                             <button class="mat-dark-blue" mat-flat-button>
                                 <mat-icon *ngIf="!mapfilters.opened"
                                     >chevron_left</mat-icon
@@ -67,6 +20,10 @@
                                 >
                             </button>
                         </div>
+                        <div class="aircraft-legend">
+                            <app-aircraft-legend></app-aircraft-legend>
+                        </div>
+                        <app-aircraft-legend></app-aircraft-legend>
                         <div class="flight-watch-container">
                             <app-flight-watch-map-wrapper
                                 #map
