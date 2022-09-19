@@ -42,6 +42,8 @@
                                 *ngIf="item.icon && item.icon.class"
                                 [ngStyle]="getStyles(item.icon)"
                                 class="icon-wrap {{ item.icon.class }}"
+                                matTooltip="{{ item.title }}"
+                                matTooltipPosition="right"
                             ></i>
                         </span>
                     </a>
@@ -67,6 +69,8 @@
                                 *ngIf="item.icon && item.icon.class"
                                 [ngStyle]="getStyles(item.icon)"
                                 class="icon-wrap {{ item.icon.class }}"
+                                matTooltip="{{ item.title }}"
+                                matTooltipPosition="right"
                             ></i>
                         </span>
                     </a>

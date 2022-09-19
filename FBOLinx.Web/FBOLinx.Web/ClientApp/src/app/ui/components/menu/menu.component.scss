@@ -48,6 +48,9 @@
                     text-decoration: none;
                     transition: background 0.2s $animation,
                         color 0.2s $animation;
+                    @media only screen and (max-width: 991px) {
+                        justify-content: center;
+                    }
 
                     .text {
                         flex-grow: 2;
