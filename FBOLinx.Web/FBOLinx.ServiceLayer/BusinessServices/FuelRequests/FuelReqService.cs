@@ -67,7 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
 
             if (result == null)
-                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, DateTime.UtcNow,
+                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, DateTime.UtcNow.AddHours(-1),
                     DateTime.UtcNow.AddHours(12));
             if (result != null)
             {

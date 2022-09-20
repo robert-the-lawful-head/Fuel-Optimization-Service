@@ -19,6 +19,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.DB.Specifications.AirportWatchData;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
@@ -26,6 +27,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
 using Mapster;
@@ -51,8 +53,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly IFuelReqService _FuelReqService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
-        private readonly FuelerLinxApiService _fuelerLinxApiService;
-        private readonly IFboEntityService _fboService;
         private readonly FAAAircraftMakeModelEntityService _FAAAircraftMakeModelEntityService;
         private IAirportWatchFlightLegStatusService _AirportWatchFlightLegStatusService;
 
@@ -63,8 +63,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
             AFSAircraftEntityService afsAircraftEntityService,
             FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService,
-            FuelerLinxApiService fuelerLinxApiService,
-            IFboEntityService fboService,
             IAirportWatchFlightLegStatusService airportWatchFlightLegStatusService)
         {
             _AirportWatchFlightLegStatusService = airportWatchFlightLegStatusService;
@@ -81,8 +79,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _FuelReqService = fuelReqService;
             _pricingTemplateService = pricingTemplateService;
             _AFSAircraftEntityService = afsAircraftEntityService;
-            _fuelerLinxApiService = fuelerLinxApiService;
-            _fboService = fboService;
             _FAAAircraftMakeModelEntityService = faaAircraftMakeModelEntityService;
         }
 
@@ -457,11 +453,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             await _FlightLegEntityService.BulkUpdate(swimFlightLegs);
         }
         
+        //TODO: Refactor this.  Get a lot of this code into it's own set of services.
         private async Task<IEnumerable<FlightLegDTO>> GetFlightLegs(IEnumerable<SWIMFlightLeg> swimFlightLegs, bool isArrivals, int groupId, int fboId,
             bool useHistoricalData = false, DateTime? historicalETD = null, DateTime? historicalETA = null, DateTime? historicalAircraftPositionDateTime = null)
         {
-            List<string> aircraftIdentifications = swimFlightLegs.Select(x => x.AircraftIdentification).ToList();
+            List<string> aircraftIdentifications = swimFlightLegs.Where(x => !string.IsNullOrEmpty(x.AircraftIdentification)).Select(x => x.AircraftIdentification).Distinct().ToList();
             IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(aircraftIdentifications);
+            var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId, aircraftIdentifications));
 
             List<AirportWatchHistoricalData> antennaHistoricalData = null;
             List<AcukwikAirport> airports = null;
@@ -479,40 +477,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
 
             PricingTemplateDto defaultCompanyPricingTemplate = await _pricingTemplateService.GetDefaultTemplate(fboId);
-
-            var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
-
-            //[#2xrec66] Problem with loading Network and Order status of each aircraft to properly color-code it.
-
-            //var fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
-
-            //// Repeated Code need to be refactored 
-            //var fuelOrders = (await _FuelReqService.GetListbySpec(new FuelReqByFboAndDateSpecification(fboId, DateTime.UtcNow, DateTime.UtcNow.AddHours(12))))
-            //                .Where(x => x.Cancelled != true)
-            //                    .ToList();
-
-            //Fuelerlinx.SDK.FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxApiService.GetContractFuelRequests(new Fuelerlinx.SDK.FBOLinxOrdersRequest()
-            //{ EndDateTime = DateTime.UtcNow.AddHours(12), StartDateTime = DateTime.UtcNow, Icao = fbo.FboAirport.Icao, Fbo = fbo.Fbo });
-
-            //foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
-            //{ 
-            //    fuelOrders.Add(transaction.Adapt<FuelReqDto>());
-            //}
-
-            //var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
-
-            //var caSwimFlightLegs = swimFlightLegs.Join(
-            //customerAircrafts.ToList(),
-            //sfl => sfl.AircraftIdentification,
-            //ca => ca.TailNumber,
-            //(sfl,ca) => ca).ToList();
-
-            //var caFuelOrders = customerAircrafts.Join(
-            // fuelOrders,
-            //ca => ca.TailNumber,
-            //fo => fo.CustomerAircraft.TailNumber,
-            //(sflJoin, fo) => fo ).ToList();
-
+            
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
             foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
             {
@@ -537,10 +502,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
 
-                //flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsInNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
-                //flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsOutOfNetwork(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
-                //flightLegDto.IsActiveFuelRelease = GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification).IsActiveFuelRelease();
-                //flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(caSwimFlightLegs, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient(GetSwimLegsFuelOrder(caFuelOrders, swimFlightLeg.AircraftIdentification));
+                flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsInNetwork();
+                flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsOutOfNetwork();
+                flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient();
 
                 if (!swimFlightLeg.IsPlaceholder)
                 {
@@ -583,7 +547,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //[#2xrec66] Problem with the speed of checking past visits.
             await SetVisitsToMyFBO(groupId, fboId, result);
 
-            //[#2xrec66] This only checks for direct orders.  Should this be checking for contract orders as well?
             await SetOrderInfo(groupId, fboId, result);
 
             return result;
@@ -593,10 +556,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         // {
         //     return fo.Where(x => x.CustomerAircraft.TailNumber == tailNumber).FirstOrDefault();
         // }
-        // private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
-        // {
-        //     return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
-        // }
+        private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
+        {
+            return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
+        }
 
         private void ApplyHistoricalFlightData(
             SWIMFlightLeg swimFlightLeg, FlightLegDTO flightLegDto, List<AirportWatchHistoricalData> antennaHistoricalData,
@@ -697,9 +660,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         {
             try
             {
-                DateTime atdMin = flightLegs.Min(x => x.ATDZulu);
-                DateTime etaMax = flightLegs.Where(x => x.ETAZulu != null).Max(x => x.ETAZulu.Value);
-                var fuelOrders = (await _FuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
+                //DateTime atdMin = flightLegs.Min(x => x.ATDZulu);
+                //DateTime etaMax = flightLegs.Where(x => x.ETAZulu != null).Max(x => x.ETAZulu.Value);
+                var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
+                //var fuelOrders = (await _FuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, atdMin.AddHours(-2), etaMax.AddHours(2))).OrderByDescending(x => x.DateCreated).ToList();
                 foreach (FlightLegDTO flightLeg in flightLegs)
                 {
                     if (flightLeg.ETAZulu == null)
@@ -714,6 +678,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         flightLeg.FuelerlinxID = existingFuelOrder.SourceId;
                         flightLeg.Vendor = existingFuelOrder.Source;
                         flightLeg.TransactionStatus = existingFuelOrder.Cancelled != null && existingFuelOrder.Cancelled.Value ? "Cancelled" : "Live";
+                        flightLeg.IsActiveFuelRelease = true;
                     }
                 }
             }

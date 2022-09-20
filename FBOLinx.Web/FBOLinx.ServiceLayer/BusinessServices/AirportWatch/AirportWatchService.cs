@@ -663,7 +663,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFboRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
         {
             var result = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,
-                fboId, request.StartDateTime, request.EndDateTime, request.FlightOrTailNumbers);
+                fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault(), request.FlightOrTailNumbers);
 
             return result;
         }

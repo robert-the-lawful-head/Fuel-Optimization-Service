@@ -19,41 +19,19 @@ namespace FBOLinx.ServiceLayer.EntityServices
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
-            string airportIcao, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
+            string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
-            //Create an inner query on the AirportWatchHistoricalData table to make use of the index on AircraftPositionDateTimeUTC and AirportICAO.
-            var innerQuery = (base.context.AirportWatchHistoricalData
-                .Where(awhd => !string.IsNullOrEmpty(airportIcao) || awhd.AirportICAO == airportIcao)
-                .Where(awhd =>
-                    startDateTimeUtc == null ||
-                    awhd.AircraftPositionDateTimeUtc >= startDateTimeUtc.Value.ToUniversalTime())
-                .Where(awhd =>
-                    endDateTimeUtc == null || awhd.AircraftPositionDateTimeUtc <=
-                    endDateTimeUtc.Value.ToUniversalTime().AddDays(1))
-                .Select(awhd => new
-                {
-                    Oid = awhd.Oid,
-                    awhd.AircraftHexCode,
-                    awhd.AtcFlightNumber,
-                    awhd.AircraftPositionDateTimeUtc,
-                    awhd.AircraftStatus,
-                    awhd.AirportICAO,
-                    awhd.AircraftTypeCode,
-                    awhd.Latitude,
-                    awhd.Longitude,
-                    AirportWatchAircraftTailNumberFlightNumber = awhd.TailNumber,
-                    TailNumber = awhd.TailNumber
-                }));
-
-            //Join the inner query on relevant data for the customer and aircraft that were in the record.
-            var result = await (from hd in innerQuery
+            var result = await (from hd in context.AirportWatchHistoricalData
                                 join cad in context.CustomerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId } equals new { cad.TailNumber, GroupId = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) }
                                                                   into leftJoinedCustomerAircrafts
                                 from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
                                 join cig in context.CustomerInfoByGroup on new { CustomerId = cad.CustomerId, GroupID = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) } equals new { CustomerId = cig.CustomerId, GroupID = cig.GroupId }
                                     into leftJoinCustomerInfoByGroup
                                 from cig in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
-                                where (tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(hd.TailNumber))
+                                where hd.AirportICAO == airportIcao
+                                    && hd.AircraftPositionDateTimeUtc >= startDateTimeUtc
+                                        && hd.AircraftPositionDateTimeUtc <= endDateTimeUtc
+                                    && (tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(hd.TailNumber))
                                 group hd by new
                                 {
                                     AirportWatchHistoricalDataID = hd.Oid,
@@ -96,7 +74,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return result;
         }
 
-        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId, int? fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc, List<string> tailNumbers = null)
+        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId, int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
             string airportIcao =
                 (await context.Fboairports.FirstOrDefaultAsync(x => fboId.HasValue && x.Fboid == fboId.Value))?.Icao;
