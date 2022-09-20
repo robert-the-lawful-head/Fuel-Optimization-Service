@@ -27,6 +27,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using GroupCustomersService = FBOLinx.ServiceLayer.BusinessServices.Groups.GroupCustomersService;
 
 namespace FBOLinx.Web
 {
@@ -127,7 +128,9 @@ namespace FBOLinx.Web
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
-            
+            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
+            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
+
             services.AddHostedService<AirportWatchScheduledService>();
 
 
@@ -143,6 +146,7 @@ namespace FBOLinx.Web
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
             services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
+            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
             services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
@@ -153,6 +157,7 @@ namespace FBOLinx.Web
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

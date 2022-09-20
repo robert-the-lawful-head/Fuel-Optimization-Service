@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using FBOLinx.ServiceLayer.DTO;
 
 
 namespace FBOLinx.ServiceLayer.EntityServices
@@ -14,6 +15,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<string>> GetTailNumbers(int aircraftPricingTemplateId, int customerId, int groupId);
         Task<IList<Tuple<int, string, string, string>>> GetAircraftsByFlightDepartments(IList<string> tailNumbers);
         Task<IEnumerable<Tuple<int, string, string>>> GetPricingTemplates(IList<string> tailNumbers);
+        Task<List<AircraftLocation>> GetAircraftLocations(int fuelerlinxCustomerId);
     }
     public class CustomerAircraftEntityService : Repository<CustomerAircrafts, FboLinxContext>, ICustomerAircraftEntityService
     {
@@ -62,6 +64,15 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                       where tailNumbers.Contains(ca.TailNumber)
                                       select new { ca.AircraftId, ca.TailNumber, pt.Name };
             return (await pricingTemplateList.ToListAsync()).Select(x => new Tuple<int, string, string>(x.AircraftId, x.TailNumber, x.Name));
+        }
+
+        public async Task<List<AircraftLocation>> GetAircraftLocations(int fuelerlinxCustomerId)
+        {
+            var aircraftLocationsQueryable = from c in _context.Customers
+                join ca in _context.CustomerAircrafts on c.Oid equals ca.CustomerId
+                where c.FuelerlinxId == fuelerlinxCustomerId
+                select new AircraftLocation { AircraftId = ca.AircraftId, TailNumber = ca.TailNumber };
+            return (await aircraftLocationsQueryable.ToListAsync()).DistinctBy(x => x.TailNumber).ToList();
         }
     }
 }

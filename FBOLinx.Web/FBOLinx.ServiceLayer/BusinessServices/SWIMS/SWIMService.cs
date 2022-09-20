@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.DatesAndTimes;
+using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB;
 using FBOLinx.DB.Models;
@@ -20,16 +21,13 @@ using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.Logging;
+using Geolocation;
 using Mapster;
-using FBOLinx.ServiceLayer.BusinessServices.Integrations;
-using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.DB.Specifications.FuelRequests;
-using FBOLinx.DB.Specifications.CustomerAircrafts;
-using FBOLinx.ServiceLayer.Extensions.Aircraft;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 {
@@ -52,17 +50,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly IFuelReqService _FuelReqService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
-        private FuelerLinxApiService _fuelerLinxApiService;
-        private IFboEntityService _fboService;
+        private readonly FuelerLinxApiService _fuelerLinxApiService;
+        private readonly IFboEntityService _fboService;
+        private readonly FAAAircraftMakeModelEntityService _FAAAircraftMakeModelEntityService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
             ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
-            AFSAircraftEntityService afsAircraftEntityService,
-             FuelerLinxApiService fuelerLinxApiService,
-             IFboEntityService fboService)
+            AFSAircraftEntityService afsAircraftEntityService, FuelerLinxApiService fuelerLinxApiService, IFboEntityService fboService,
+            FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService)
         {
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -79,6 +77,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _AFSAircraftEntityService = afsAircraftEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fboService = fboService;
+            _FAAAircraftMakeModelEntityService = faaAircraftMakeModelEntityService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
@@ -360,11 +359,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins), true));
 
             //List<AirportWatchLiveData> antennaLiveData = new List<AirportWatchLiveData>();
-            List<string> aircraftIdentifications = swimFlightLegs.Select(x => x.AircraftIdentification).Distinct().ToList();
-            IList<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(aircraftIdentifications);
+            List<string> tailNumbers = swimFlightLegs.Where(x => x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).Distinct().ToList();
+            IList<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
             var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
             List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
             var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
+
+            List<AircraftHexTailMapping> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(tailNumbers));
+            var aircraftMakeModels = await _FAAAircraftMakeModelEntityService.GetListBySpec(new AircraftMakeModelSpecification(hexTailMappings.Select(x => x.FAAAircraftMakeModelCode).Distinct().ToList()));
 
             Parallel.ForEach(swimFlightLegs, swimFlightLeg =>
             {
@@ -374,6 +376,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 //{
                 //    swimFlightLeg.IsAircraftOnGround = latestAntennaLiveDataRecord.IsAircraftOnGround;
                 //}
+
+                //List<string> atcFlightNumbers = swimFlightLegDTOs.Where(x => !x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).ToList();
 
                 var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
                 if (aircraftByFlightDepartment != null)
@@ -393,6 +397,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     {
                         swimFlightLeg.ICAOAircraftCode = afsAircraft.Icao;
                     }
+                }
+
+                if (swimFlightLeg.AircraftIdentification.ToUpper().StartsWith('N'))
+                {
+                    var tailMapping = hexTailMappings.FirstOrDefault(x => x.TailNumber == swimFlightLeg.AircraftIdentification);
+                    if (tailMapping != null)
+                    {
+                        FAAAircraftMakeModelReference aircraftMakeModelReference = aircraftMakeModels.FirstOrDefault(x => x.CODE == tailMapping.FAAAircraftMakeModelCode);
+                        if (aircraftMakeModelReference != null)
+                        {
+                            swimFlightLeg.FAAMake = aircraftMakeModelReference.MFR;
+                            swimFlightLeg.FAAModel = aircraftMakeModelReference.MODEL;
+                        }
+                    }
+                }
+                
+                if (string.IsNullOrWhiteSpace(swimFlightLeg.Make))
+                {
+                    swimFlightLeg.Make = swimFlightLeg.FAAMake;
+                }
+
+                if (string.IsNullOrWhiteSpace(swimFlightLeg.Model))
+                {
+                    swimFlightLeg.Model = swimFlightLeg.FAAModel;
                 }
 
                 swimFlightLeg.IsProcessed = true;
@@ -456,7 +484,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //(sflJoin, fo) => fo ).ToList();
 
             IList<FlightLegDTO> result = new List<FlightLegDTO>();
-            foreach (var swimFlightLeg in swimFlightLegs)
+            foreach (SWIMFlightLeg swimFlightLeg in swimFlightLegs)
             {
                 FlightLegDTO flightLegDto = new FlightLegDTO();
                 flightLegDto.TailNumber = swimFlightLeg.AircraftIdentification;
@@ -472,7 +500,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.ActualSpeed = swimFlightLeg.ActualSpeed;
                 flightLegDto.FlightDepartment = swimFlightLeg.FlightDepartment;
                 flightLegDto.Make = swimFlightLeg.Make;
+                flightLegDto.FAAMake = swimFlightLeg.FAAMake;
                 flightLegDto.Model = swimFlightLeg.Model;
+                flightLegDto.FAAModel = swimFlightLeg.FAAModel;
                 flightLegDto.FuelCapacityGal = swimFlightLeg.FuelCapacityGal;
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
@@ -508,7 +538,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
 
                 SetPricingTemplate(flightLegDto, defaultCompanyPricingTemplate, swimFlightLeg.AircraftIdentification, pricingTemplates);
-
+                
                 if (useHistoricalData)
                 {
                     ApplyHistoricalFlightData(swimFlightLeg, flightLegDto, antennaHistoricalData, historicalAircraftPositionDateTime.Value, swimFlightLegMessages, airports);
@@ -528,14 +558,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             return result;
         }
-        private FuelReqDto? GetSwimLegsFuelOrder(List<FuelReqDto> fo,string tailNumber )
-        {
-            return fo.Where(x => x.CustomerAircraft.TailNumber == tailNumber).FirstOrDefault();
-        }
-        private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
-        {
-            return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
-        }
+
+        // private FuelReqDto? GetSwimLegsFuelOrder(List<FuelReqDto> fo, string tailNumber)
+        // {
+        //     return fo.Where(x => x.CustomerAircraft.TailNumber == tailNumber).FirstOrDefault();
+        // }
+        // private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
+        // {
+        //     return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
+        // }
+
         private void ApplyHistoricalFlightData(
             SWIMFlightLeg swimFlightLeg, FlightLegDTO flightLegDto, List<AirportWatchHistoricalData> antennaHistoricalData,
             DateTime historicalAircraftPositionDateTime, List<SWIMFlightLegData> swimFlightLegMessages, List<AcukwikAirport> airports)

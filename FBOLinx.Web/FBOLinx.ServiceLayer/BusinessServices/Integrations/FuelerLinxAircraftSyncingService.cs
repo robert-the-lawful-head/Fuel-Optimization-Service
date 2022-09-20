@@ -59,7 +59,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Find all aircraft currently covering the FuelerLinx company fleet
             var coveredAircraft = await _customerAircraftEntityService.GetListBySpec(
                 new CustomerAircraftByGroupAndTailSpecification(_existingGroupRecords.Select(x => x.Oid).ToList(),
-                    new List<string>() {_tailNumber}));
+                    new List<string>() {_tailNumber}, _customerRecord.Oid));
 
             //Create a list of what full coverage should look like
             var fullCoverage = _existingGroupRecords.Select(x => new DB.Models.CustomerAircrafts()
@@ -74,8 +74,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //Find the aircraft/groups missing records within FBOLinx
             var missingCoverage = (from f in fullCoverage
-                join c in coveredAircraft on new { GroupId = f.GroupId.GetValueOrDefault(), f.TailNumber } equals new
-                    { GroupId = c.GroupId.GetValueOrDefault(), TailNumber = c.TailNumber }
+                join c in coveredAircraft on new { GroupId = f.GroupId.GetValueOrDefault(), f.TailNumber, CustomerId = f.CustomerId } equals new
+                    { GroupId = c.GroupId.GetValueOrDefault(), TailNumber = c.TailNumber, CustomerId = c.CustomerId }
                 into leftJoinCoveredAircraft from c in leftJoinCoveredAircraft.DefaultIfEmpty()
                 where (c?.Oid).GetValueOrDefault() == 0
                 select f).ToList();
