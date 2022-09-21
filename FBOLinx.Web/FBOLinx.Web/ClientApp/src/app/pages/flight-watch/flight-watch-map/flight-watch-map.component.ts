@@ -105,11 +105,14 @@ export class FlightWatchMapComponent
         private acukwikairportsService: AcukwikairportsService
     ) {
         super();
+        this.fboId = this.sharedService.currentUser.fboId;
+        this.groupId = this.sharedService.currentUser.groupId;
+        this.icao = this.sharedService.currentUser.icao;
     }
     ngOnInit(): void {
         const refreshMapFlight = async () => {
             this.updateFlightOnMap();
-            this.updateICAOIconOnMap();
+            this.updateICAOIconOnMap(this.icao);
             this.getFbosAndLoad();
         };
 
@@ -122,27 +125,24 @@ export class FlightWatchMapComponent
             .onStyleData(this.mapStyleLoaded)
             .onLoad(async () => {
                 await this.loadMapIcons();
-                this.loadICAOIconOnMap();
+                this.loadICAOIconOnMap(this.icao);
                 this.loadFlightOnMap();
                 this.getFbosAndLoad();
             });
     }
 
     ngAfterViewInit() {
-        this.fboId = this.sharedService.currentUser.fboId;
-        this.groupId = this.sharedService.currentUser.groupId;
-        this.icao = this.sharedService.currentUser.icao;
         this.aircraftPopupContainer.getCustomersList(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId
         );
     }
-    async loadICAOIconOnMap() {
+    async loadICAOIconOnMap(currentIcao: string) {
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
         this.setIcaoList.emit(this.acukwikairports);
 
         var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
-            this.aircraftFlightWatchService.getAirportFeatureJsonData(data)
+            this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
             return {
                 geometry: {
                     coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
@@ -150,7 +150,7 @@ export class FlightWatchMapComponent
                 },
                 properties: {
                     id: data.oid,
-                    'icon-image': 'airport-icon',
+                    'icon-image': (data.icao == this.icao)?'airport-icon-active':'airport-icon',
                     'size': 0.5,
                 },
                 type: 'Feature'
@@ -163,9 +163,9 @@ export class FlightWatchMapComponent
         this.addHoverPointerActions(this.airportLayerId);
         this.onClick(this.airportLayerId, (e) => this.clickActionOnAirportICon(e) );
     }
-    updateICAOIconOnMap() {
+    updateICAOIconOnMap(currentIcao: string) {
         var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
-            this.aircraftFlightWatchService.getAirportFeatureJsonData(data)
+            this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
             return {
                 geometry: {
                     coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
@@ -173,7 +173,7 @@ export class FlightWatchMapComponent
                 },
                 properties: {
                     id: data.oid,
-                    'icon-image': 'airport-icon',
+                    'icon-image': (data.icao == this.icao)?'airport-icon-active':'airport-icon',
                     'size': 0.5,
                 },
                 type: 'Feature'
@@ -200,6 +200,7 @@ export class FlightWatchMapComponent
     async loadMapIcons(): Promise<unknown> {
         var promisesArray = []
         promisesArray.push(this.loadICAOIcon());
+        promisesArray.push(this.loadActiveICAOIcon());
         promisesArray.concat(this.loadAircraftIcon());
 
         return Promise.all(promisesArray);
@@ -207,6 +208,11 @@ export class FlightWatchMapComponent
     async loadICAOIcon(): Promise<unknown>{
         let imageName = `airport-icon`;
         let imageUrl = `/assets/img/swim-airport.png`;
+        return this.loadPNGImageAsync(imageUrl, imageName);
+    }
+    async loadActiveICAOIcon(): Promise<unknown>{
+        let imageName = `airport-icon-active`;
+        let imageUrl = `/assets/img/swim-airport-active.png`;
         return this.loadPNGImageAsync(imageUrl, imageName);
     }
     async loadAircraftIcon(): Promise<unknown> {
