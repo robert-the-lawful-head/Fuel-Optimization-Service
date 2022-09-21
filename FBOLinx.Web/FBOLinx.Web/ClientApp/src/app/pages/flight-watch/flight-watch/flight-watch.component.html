@@ -23,7 +23,6 @@
                         <div class="aircraft-legend">
                             <app-aircraft-legend></app-aircraft-legend>
                         </div>
-                        <app-aircraft-legend></app-aircraft-legend>
                         <div class="flight-watch-container">
                             <app-flight-watch-map-wrapper
                                 #map
@@ -35,6 +34,8 @@
                                 [center]="center"
                                 [data]="filteredFlightWatchData"
                                 [isStable]="flightWatchData.length > 0"
+                                [icaoList]="airportsICAO"
+                                [icao]="selectedICAO"
                             ></app-flight-watch-map-wrapper>
                         </div>
                     </div>

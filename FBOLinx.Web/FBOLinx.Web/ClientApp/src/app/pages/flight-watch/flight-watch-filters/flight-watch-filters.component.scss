@@ -1,0 +1,24 @@
+
+.filter-container {
+    display: flex;
+    flex-direction: row;
+    // padding: 0px 10px 0px 10px;
+    justify-content: space-around;
+    // margin-top: -15px;
+}
+.icao-select-container {
+    background-color: white;
+    display: flex;
+    padding: 0 10px 0 10px;
+}
+.settings-filter {
+    display: flex;
+    .mat-form-field{
+        margin: 0 10px 0 10px;
+        padding: 0px !important;
+        background-color: white;
+        .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+            margin-bottom: -20px !important;
+        }
+    }
+}

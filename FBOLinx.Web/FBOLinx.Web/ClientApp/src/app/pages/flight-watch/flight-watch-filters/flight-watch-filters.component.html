@@ -1,0 +1,14 @@
+<div class="settings-filter">
+    <mat-form-field>
+        <mat-label>Choose an ICAO</mat-label>
+        <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
+            <ng-container *ngFor="let icao of icaoList">
+                <mat-option value="{{ icao }}">{{ icao }}</mat-option>
+            </ng-container>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input #input matInput (keyup)="applyFilter($event)" />
+    </mat-form-field>
+</div>

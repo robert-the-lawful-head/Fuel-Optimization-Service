@@ -149,3 +149,12 @@
         </mat-card-content>
     </mat-card>
 </div>
+<div class="map-filters-container">
+    <app-flight-watch-filters
+    [icaoList]="icaoList"
+    [icao]="icao"
+    (filterChanged)="filterChanged.emit($event)"
+    (icaoChanged)="icaoChanged.emit($event)"
+    (updateDrawerButtonPosition)="updateDrawerButtonPosition.emit()"
+    ></app-flight-watch-filters>
+</div>
