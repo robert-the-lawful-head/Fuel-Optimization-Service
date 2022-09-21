@@ -593,16 +593,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
-            _HistoricalDataToInsert.ForEach(async x =>
+            foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(x.Latitude, x.Longitude);
-                x.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
-            });
-            _HistoricalDataToUpdate.ForEach(async x =>
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
+                airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+            }
+
+            foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(x.Latitude, x.Longitude);
-                x.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
-            });
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
+                airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+            }
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
                 if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
@@ -829,9 +830,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private async Task SetTailNumber(IEnumerable<IBaseAirportWatchModel> airportWatchRecords)
         {
             //TODO: Setup an AircraftHexTailMappingService to handle this
-            IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
+            List<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct().ToList();
             List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).AsNoTracking().ToListAsync();
-            foreach (IBaseAirportWatchModel airportWatchRecord in airportWatchRecords)
+            foreach (IBaseAirportWatchModel airportWatchRecord in airportWatchRecords.ToList())
             {
                 airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
             }
