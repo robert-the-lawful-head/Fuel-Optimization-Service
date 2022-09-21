@@ -100,6 +100,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                 var airports = (await (_degaContext.AcukwikAirports
 
                             .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .Select(x => new 
+                            {
+                                Latitude = x.Latitude,
+                                Longitude = x.Longitude,
+                                Icao = x.Icao,
+                                Iata = x.Iata,
+                                Faa = x.Faa,
+                                DaylightSavingsYn = x.DaylightSavingsYn,
+                                IntlTimeZone = x.IntlTimeZone
+                            })
                             .AsNoTracking())
                         .ToListAsync())
                     .Select(a =>

@@ -47,7 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var liveAircraftDataWithHistoricalStatuses =
                 await GetAirportWatchLiveDataWithHistoricalStatuses();
             var aircraftIdentifiers = liveAircraftDataWithHistoricalStatuses
-                .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).ToList();
+                .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).Distinct().ToList();
             aircraftIdentifiers.AddRange(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList());
 
             //Then load all SWIM flight legs that we have from the last hour.
