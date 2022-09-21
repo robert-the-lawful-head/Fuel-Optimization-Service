@@ -987,11 +987,13 @@ div.price-checker-button {
     }
 }
 
-
 /* width */
 ::-webkit-scrollbar {
     width: 15px;
 }
+::-webkit-scrollbar:horizontal{
+    height: 15px;
+  }
 
 /* Track */
 ::-webkit-scrollbar-track {
@@ -1001,6 +1003,10 @@ div.price-checker-button {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
+    background:#252D47;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:horizontal{
     background:#252D47;
     border-radius: 10px;
 }
