@@ -15,10 +15,11 @@
         </div>
     </div>
     <app-flight-watch-filters
+        [icaoList]="icaoList"
         [icao]="icao"
-        [isSelectAirportHidden]="true"
-        (filterChanged)="filterChanged.emit($event)"
-    ></app-flight-watch-filters>
+        [isSearchAirportHidden]="true"
+        (icaoChanged)="icaoChanged.emit($event)"
+        ></app-flight-watch-filters>
 </div>
 <div id="arrivals-departures-container" class="tables-container">
     <div class="data-container">

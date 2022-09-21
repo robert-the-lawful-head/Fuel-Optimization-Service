@@ -1,5 +1,5 @@
 <div class="settings-filter">
-    <mat-form-field *ngIf="!isSelectAirportHidden">
+    <mat-form-field >
         <mat-label>Select Airport</mat-label>
         <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
             <ng-container *ngFor="let icao of icaoList">
@@ -7,7 +7,7 @@
             </ng-container>
         </mat-select>
     </mat-form-field>
-    <mat-form-field>
+    <mat-form-field *ngIf="!isSearchAirportHidden">
         <mat-label>Search Aircraft</mat-label>
         <mat-icon matPrefix>search</mat-icon>
         <input placeholder="Search Aircraft" matInput (keyup)="applyFilter($event)" />
