@@ -173,7 +173,7 @@ export class FlightWatchMapComponent
                 },
                 properties: {
                     id: data.oid,
-                    'icon-image': (data.icao == this.icao)?'airport-icon-active':'airport-icon',
+                    'icon-image': (data.icao == currentIcao)?'airport-icon-active':'airport-icon',
                     'size': 0.5,
                 },
                 type: 'Feature'
@@ -195,7 +195,8 @@ export class FlightWatchMapComponent
         var clickedAirport = this.acukwikairports.filter((airport) => {
             return airport.oid == id;
         });
-        this.airportClick.emit(clickedAirport[0]);
+        let icaoClicked = clickedAirport[0];
+        this.airportClick.emit(icaoClicked);
     }
     async loadMapIcons(): Promise<unknown> {
         var promisesArray = []

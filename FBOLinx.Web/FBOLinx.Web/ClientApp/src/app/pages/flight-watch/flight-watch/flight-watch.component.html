@@ -22,8 +22,10 @@
                     <app-flight-watch-map-wrapper
                         #map
                         (markerClicked)="onFlightWatchClick($event)"
-                        (airportClick)="openDrawer($event)"
+                        (airportClick)="updateIcao($event.icao)"
                         (setIcaoList)="setIcaoList($event)"
+                        (filterChanged)="onFilterChanged($event)"
+                        (icaoChanged)="updateIcao($event)"
                         style="width: 100%"
                         [aircraftData]="selectedAircraftData"
                         [center]="center"
@@ -50,9 +52,7 @@
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
                     [filteredTypes]="filteredTypes"
-                    (filterChanged)="onFilterChanged($event)"
                     (typesFilterChanged)="onTypesFilterChanged($event)"
-                    (openAircraftPopup)="openAircraftPopup($event)"
                     (icaoChanged)="updateIcao($event)"
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                 ></app-flight-watch-settings>
