@@ -149,11 +149,10 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
         public virtual DbSet<CustomerTag> CustomerTag { get; set; }
-
         public virtual DbSet<MissedQuoteLog> MissedQuoteLog { get; set; }
-
         public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
         public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
+        public virtual DbSet<IntegrationStatus> IntegrationStatus { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

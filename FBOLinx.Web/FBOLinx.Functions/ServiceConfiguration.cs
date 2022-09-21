@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -43,7 +44,7 @@ namespace FBOLinx.Functions
 
             services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
-            services.AddTransient<GroupEntityService, GroupEntityService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
@@ -62,6 +63,7 @@ namespace FBOLinx.Functions
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
 
             services.AddScoped<ILoggingService, LoggingService>();
 
@@ -80,27 +82,7 @@ namespace FBOLinx.Functions
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
-
-            services.AddTransient<CustomerEntityService, CustomerEntityService>();
-            services.AddTransient<GroupEntityService, GroupEntityService>();
-            services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
-            services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
-            services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
-            services.AddTransient<SWIMFlightLegEntityService, SWIMFlightLegEntityService>();
-            services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
-            services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
-            services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
-            services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
-            services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
-            services.AddTransient<AircraftEntityService, AircraftEntityService>();
-            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
-            services.AddTransient<FuelReqEntityService, FuelReqEntityService>();
-            services.AddTransient<IFboEntityService, FboEntityService>();
-            services.AddTransient<IFboContactsEntityService, FboContactsEntityService>();
-            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
-            services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
-            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
-            services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
         }
     }
 }

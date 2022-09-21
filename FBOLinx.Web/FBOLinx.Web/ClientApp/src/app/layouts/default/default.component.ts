@@ -305,7 +305,7 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                                 if (price.product === 'SAF Retail') {
                                     _this.retailSaf = price.price;
-                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99" || price.source == "1")
                                         _this.effectiveToSaf = "Updated by X1 POS"
                                     else
                                         _this.effectiveToSaf = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;
@@ -315,7 +315,7 @@ export class DefaultLayoutComponent implements OnInit {
                                 }
                                 if (price.product === 'JetA Retail') {
                                     _this.retailJetA = price.price;
-                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99")
+                                    if (moment(price.effectiveTo).format("M/D/YY") == "12/31/99" || price.source == "1")
                                         _this.effectiveToJetA = "Updated by X1 POS"
                                     else
                                         _this.effectiveToJetA = "Expires " + moment(price.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone;

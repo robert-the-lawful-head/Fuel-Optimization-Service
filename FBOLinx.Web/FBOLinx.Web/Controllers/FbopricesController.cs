@@ -175,19 +175,26 @@ namespace FBOLinx.Web.Controllers
                 {
                     fboPricesUpdateGenerator.Product = product.ToString();
                     fboPricesUpdateGenerator.Fboid = fboId;
-                    if (currentRetailResult.Oid > 0 && !currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
+                    if (currentRetailResult != null)
                     {
-                        fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1);
-                        fboPricesUpdateGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesUpdateGenerator.EffectiveFrom.ToShortDateString()));
-                    }
-                    else if (currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
-                    {
-                        fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.TimeStamp == null ? DateTime.UtcNow : currentRetailResult.TimeStamp.GetValueOrDefault();
-                        fboPricesUpdateGenerator.EffectiveTo = DateTime.Parse("12/31/9999");
-                        fboPricesUpdateGenerator.PricePap = currentRetailResult.Price;
+                        if (currentRetailResult.Oid > 0 && !currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
+                        {
+                            fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1);
+                            fboPricesUpdateGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesUpdateGenerator.EffectiveFrom.ToShortDateString()));
 
-                        var currentCostResult = result.Where(f => f.Product == product.ToString() + " Cost" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-                        fboPricesUpdateGenerator.PriceCost = currentCostResult.Price;
+                            if (currentRetailResult.Source == FboPricesSource.X1)
+                                fboPricesUpdateGenerator.Source = 1;
+                        }
+                        else if (currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
+                        {
+                            fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.TimeStamp == null ? DateTime.UtcNow : currentRetailResult.TimeStamp.GetValueOrDefault();
+                            fboPricesUpdateGenerator.EffectiveTo = DateTime.Parse("12/31/9999");
+                            fboPricesUpdateGenerator.PricePap = currentRetailResult.Price;
+                            fboPricesUpdateGenerator.Source = 1;
+
+                            var currentCostResult = result.Where(f => f.Product == product.ToString() + " Cost" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
+                            fboPricesUpdateGenerator.PriceCost = currentCostResult.Price;
+                        }
                     }
                 }
                 else
@@ -446,7 +453,8 @@ namespace FBOLinx.Web.Controllers
                             Product = "JetA Retail",
                             Price = request.Retail,
                             Fboid = user.FboId,
-                            Timestamp = DateTime.UtcNow
+                            Timestamp = DateTime.UtcNow,
+                            Source = FboPricesSource.X1
                         };
                         List<Fboprices> oldPrices = await _context.Fboprices
                                                        .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Retail"))
@@ -471,7 +479,8 @@ namespace FBOLinx.Web.Controllers
                             Product = "JetA Cost",
                             Price = request.Cost,
                             Fboid = user.FboId,
-                            Timestamp = DateTime.UtcNow
+                            Timestamp = DateTime.UtcNow,
+                            Source = FboPricesSource.X1
                         };
                         List<Fboprices> oldPrices = await _context.Fboprices
                                                        .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Cost"))
@@ -541,7 +550,8 @@ namespace FBOLinx.Web.Controllers
                         EffectiveTo = effectiveTo,
                         Product = "JetA Retail",
                         Price = request.Retail,
-                        Fboid = user.FboId
+                        Fboid = user.FboId,
+                        Source = FboPricesSource.X1
                     };
 
                     _context.Fboprices.Add(retailPrice);
@@ -554,7 +564,8 @@ namespace FBOLinx.Web.Controllers
                         EffectiveTo = effectiveTo,
                         Product = "JetA Cost",
                         Price = request.Cost,
-                        Fboid = user.FboId
+                        Fboid = user.FboId,
+                        Source = FboPricesSource.X1
                     };
                     _context.Fboprices.Add(costPrice);
                 }

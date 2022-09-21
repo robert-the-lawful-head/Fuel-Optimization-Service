@@ -8,6 +8,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
@@ -26,7 +27,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private int _fuelerLinxCompanyId;
         private AircraftDataDTO _fuelerlinxAircraft;
         private CustomerEntityService _customerEntityService;
-        private GroupEntityService _groupEntityService;
+        private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
         private CustomerDTO _customerRecord;
         private CustomerAircraftEntityService _customerAircraftEntityService;
@@ -34,11 +35,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
         public FuelerLinxAircraftSyncingService(FuelerLinxApiService fuelerLinxApiService,
             CustomerEntityService customerEntityService,
-            GroupEntityService groupEntityService,
+            IGroupService groupService,
             CustomerAircraftEntityService customerAircraftEntityService)
         {
             _customerAircraftEntityService = customerAircraftEntityService;
-            _groupEntityService = groupEntityService;
+            _groupService = groupService;
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
         }
@@ -95,7 +96,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             if ((aircraftResponse?.Success).GetValueOrDefault() && aircraftResponse.Result != null)
                 _fuelerlinxAircraft = aircraftResponse.Result;
 
-            _existingGroupRecords = await _groupEntityService.GetListBySpec(new AllGroupsSpecification(false));
+            _existingGroupRecords = await _groupService.GetListbySpec(new AllGroupsSpecification(false));
 
             _customerRecord = await _customerEntityService.GetSingleBySpec(
                 new CustomerByFuelerLinxIdSpecification(_fuelerLinxCompanyId));

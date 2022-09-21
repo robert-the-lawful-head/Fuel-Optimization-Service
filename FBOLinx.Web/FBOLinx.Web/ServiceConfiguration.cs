@@ -27,6 +27,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web
 {
@@ -127,6 +128,7 @@ namespace FBOLinx.Web
             services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
             services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
             services.AddTransient<IFboAirportsService, FboAirportsService>();
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
             
             services.AddHostedService<AirportWatchScheduledService>();
 
@@ -134,7 +136,7 @@ namespace FBOLinx.Web
 
             //Entity Services
             services.AddTransient<CustomerEntityService, CustomerEntityService>();
-            services.AddTransient<GroupEntityService, GroupEntityService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
             services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
@@ -153,6 +155,7 @@ namespace FBOLinx.Web
             services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
             services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
+            services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

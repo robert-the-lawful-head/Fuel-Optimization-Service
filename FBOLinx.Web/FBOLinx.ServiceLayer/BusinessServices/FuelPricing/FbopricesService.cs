@@ -80,41 +80,47 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
             fboprices = fboprices.Where(f => f.Price != null).ToList();
 
-            var addOnMargins = await (
-                            from s in _context.TempAddOnMargin
-                            where s.FboId == fboId && s.EffectiveTo >= universalTime
-                            select s).ToListAsync();
+            if (fboprices.Count > 0)
+            {
+                var addOnMargins = await (
+                                from s in _context.TempAddOnMargin
+                                where s.FboId == fboId && s.EffectiveTo >= universalTime
+                                select s).ToListAsync();
 
-            var result = (from p in products
-                          join f in fboprices on
-                                new { Product = p.Description, FboId = fboId }
-                                equals
-                                new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
-                          into leftJoinFBOPrices
-                          from f in leftJoinFBOPrices.DefaultIfEmpty()
-                          join s in addOnMargins on new { FboId = fboId } equals new { s.FboId }
-                          into tmpJoin
-                          from s in tmpJoin.DefaultIfEmpty()
-                          where p.Description.StartsWith("JetA") || p.Description.StartsWith("SAF")
-                          select new FbopricesResult
-                          {
-                              Oid = f?.Oid ?? 0,
-                              Fboid = fboId,
-                              Product = p.Description,
-                              Price = f?.Price,
-                              EffectiveFrom = f?.EffectiveFrom ?? DateTime.UtcNow,
-                              EffectiveTo = f?.EffectiveTo ?? null,
-                              TimeStamp = f?.Timestamp,
-                              SalesTax = f?.SalesTax,
-                              Currency = f?.Currency,
-                              TempJet = s?.MarginJet,
-                              TempAvg = s?.MarginAvgas,
-                              TempId = s?.Id,
-                              TempDateFrom = s?.EffectiveFrom,
-                              TempDateTo = s?.EffectiveTo
-                          }).ToList();
+                var result = (from p in products
+                              join f in fboprices on
+                                    new { Product = p.Description, FboId = fboId }
+                                    equals
+                                    new { f.Product, FboId = f.Fboid.GetValueOrDefault() }
+                              into leftJoinFBOPrices
+                              from f in leftJoinFBOPrices.DefaultIfEmpty()
+                              join s in addOnMargins on new { FboId = fboId } equals new { s.FboId }
+                              into tmpJoin
+                              from s in tmpJoin.DefaultIfEmpty()
+                              where p.Description.StartsWith("JetA") || p.Description.StartsWith("SAF")
+                              select new FbopricesResult
+                              {
+                                  Oid = f?.Oid ?? 0,
+                                  Fboid = fboId,
+                                  Product = p.Description,
+                                  Price = f?.Price,
+                                  EffectiveFrom = f?.EffectiveFrom ?? DateTime.UtcNow,
+                                  EffectiveTo = f?.EffectiveTo ?? null,
+                                  TimeStamp = f?.Timestamp,
+                                  SalesTax = f?.SalesTax,
+                                  Currency = f?.Currency,
+                                  TempJet = s?.MarginJet,
+                                  TempAvg = s?.MarginAvgas,
+                                  TempId = s?.Id,
+                                  TempDateFrom = s?.EffectiveFrom,
+                                  TempDateTo = s?.EffectiveTo,
+                                  Source = f == null ? FboPricesSource.FboLinx : f.Source
+                              }).ToList();
 
-            return result;
+                return result;
+            }
+            else
+                return new List<FbopricesResult>();
         }
         public async Task<PriceLookupResponse> GetFuelPricesForCustomer(PriceLookupRequest request)
         {
@@ -164,6 +170,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             validPricing.Company = validPricing.PricingList[0].Company;
 
             return validPricing;
+        }
+
+        public async Task ExpirePricingForFbo(int fboId)
+        {
+            var fboprices = await (
+                            from f in _context.Fboprices
+                            where f.Fboid == fboId && f.Expired != true
+                            orderby f.Oid
+                            select f).ToListAsync();
+
+            foreach (var fboPrice in fboprices)
+            {
+                fboPrice.Expired = true;
+                _context.Fboprices.Update(fboPrice);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

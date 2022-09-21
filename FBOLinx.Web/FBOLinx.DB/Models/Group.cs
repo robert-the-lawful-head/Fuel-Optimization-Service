@@ -10,7 +10,7 @@ namespace FBOLinx.DB.Models
         {
             Fbos = new HashSet<Fbos>();
         }
-        
+
         [Column("Group")]
         [StringLength(50)]
         public string GroupName { get; set; }

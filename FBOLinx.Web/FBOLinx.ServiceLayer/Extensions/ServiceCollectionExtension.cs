@@ -21,7 +21,7 @@ namespace FBOLinx.ServiceLayer.Extensions
         {
             services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
             services.AddTransient<CustomerService, CustomerService>();
-            services.AddTransient<GroupService, GroupService>();
+            services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
@@ -47,6 +47,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IntegrationUpdatePricingLogService, IntegrationUpdatePricingLogService>();
             services.AddTransient<IFuelReqService, FuelReqService>();
             services.AddTransient<IAirportTimeService, AirportTimeService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
 
             return services;
         }
