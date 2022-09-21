@@ -6,9 +6,11 @@ import { SwimFilter } from 'src/app/models/filter';
   templateUrl: './flight-watch-filters.component.html',
   styleUrls: ['./flight-watch-filters.component.scss']
 })
+
 export class FlightWatchFiltersComponent implements OnInit {
     @Input() icao: string;
     @Input() icaoList: string[];
+    @Input() isSelectAirportHidden: boolean = false;
 
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();

@@ -1,7 +1,7 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb flight-watch-tabs">
-    <mat-drawer-container>
+    <mat-drawer-container autosize>
         <mat-drawer-content>
             <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
             <div *ngIf="flightWatchData">
@@ -52,6 +52,7 @@
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
                     [filteredTypes]="filteredTypes"
+                    (filterChanged)="onFilterChanged($event)"
                     (typesFilterChanged)="onTypesFilterChanged($event)"
                     (icaoChanged)="updateIcao($event)"
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"

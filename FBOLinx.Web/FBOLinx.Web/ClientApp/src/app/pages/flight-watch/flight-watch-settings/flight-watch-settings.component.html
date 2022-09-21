@@ -1,23 +1,29 @@
-<div class="flight-list-settings-button">
-    <div class="actions">
-        <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-            <mat-icon
-                aria-hidden="true"
-                class="mat-icon material-icons"
-                role="img"
-                >more_vert</mat-icon
-            >
-        </button>
-        <mat-menu #gridActions="matMenu" xPosition="before">
-            <button (click)="openSettings()" mat-menu-item>
-                Settings
+<div class="filter-container">
+    <div class="flight-list-settings-button">
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >more_vert</mat-icon
+                >
             </button>
-        </mat-menu>
+            <mat-menu #gridActions="matMenu" xPosition="before">
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
+        </div>
     </div>
+    <app-flight-watch-filters
+        [icao]="icao"
+        [isSelectAirportHidden]="true"
+        (filterChanged)="filterChanged.emit($event)"
+    ></app-flight-watch-filters>
 </div>
 <div id="arrivals-departures-container" class="tables-container">
     <div class="data-container">
-        <app-flight-watch-setting-table #arrivalsTable
+        <app-flight-watch-setting-table
+            #arrivalsTable
             [data]="swimArrivals"
             [isArrival]="true"
             [columns]="columns"
@@ -26,7 +32,8 @@
         ></app-flight-watch-setting-table>
     </div>
     <div class="data-container">
-        <app-flight-watch-setting-table #departuresTable
+        <app-flight-watch-setting-table
+            #departuresTable
             [data]="swimDepartures"
             [isArrival]="false"
             [columns]="columns"
