@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -19,9 +20,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
         Task<TDTO> AddAsync(TDTO dto);
         Task UpdateAsync(TDTO dto);
         Task DeleteAsync(TDTO dto);
-        Task BulkDeleteAsync(List<TDTO> dtos);
-        Task BulkInsert(List<TDTO> dtos);
-        Task BulkUpdate(List<TDTO> dtos);
+        Task BulkDeleteAsync(List<TDTO> dtos, BulkConfig? bulkConfig = null);
+        Task BulkInsert(List<TDTO> dtos, BulkConfig? bulkConfig = null);
+        Task BulkUpdate(List<TDTO> dtos, BulkConfig? bulkConfig = null);
     }
 
     public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T>
@@ -75,19 +76,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             await _EntityService.DeleteAsync(dto.Adapt<T>());
         }
 
-        public async Task BulkDeleteAsync(List<TDTO> dtos)
+        public async Task BulkDeleteAsync(List<TDTO> dtos, BulkConfig? bulkConfig = null)
         {
-            await _EntityService.BulkDeleteEntities(dtos.Adapt<List<T>>());
+            if (dtos?.Count == 0)
+                return;
+            await _EntityService.BulkDeleteEntities(dtos.Adapt<List<T>>(), bulkConfig);
         }
 
-        public async Task BulkInsert(List<TDTO> dtos)
+        public async Task BulkInsert(List<TDTO> dtos, BulkConfig? bulkConfig = null)
         {
-            await _EntityService.BulkInsert(dtos.Adapt<List<T>>());
+            if (dtos?.Count == 0)
+                return;
+            await _EntityService.BulkInsert(dtos.Adapt<List<T>>(), bulkConfig);
         }
 
-        public async Task BulkUpdate(List<TDTO> dtos)
+        public async Task BulkUpdate(List<TDTO> dtos, BulkConfig? bulkConfig = null)
         {
-            await _EntityService.BulkUpdate(dtos.Adapt<List<T>>());
+            if (dtos?.Count == 0)
+                return;
+            await _EntityService.BulkUpdate(dtos.Adapt<List<T>>(), bulkConfig);
         }
     }
 }

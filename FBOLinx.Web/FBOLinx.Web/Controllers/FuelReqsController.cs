@@ -170,7 +170,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
             
-            var result = await _fuelReqService.GetFuelReqsByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
+            var result = await _fuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
 
             return Ok(result);
         }

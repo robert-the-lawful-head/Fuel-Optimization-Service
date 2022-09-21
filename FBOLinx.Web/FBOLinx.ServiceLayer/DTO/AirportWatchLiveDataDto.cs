@@ -1,9 +1,10 @@
 using System;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
-    public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
+    public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IBaseAirportWatchModel, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
     {
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }

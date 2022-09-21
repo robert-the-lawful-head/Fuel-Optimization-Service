@@ -11,10 +11,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         Task<IEnumerable<FlightLegDTO>> GetDepartures(int groupId, int fboId, string icao);
         Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao);
         Task SaveFlightLegData(IEnumerable<SWIMFlightLegDTO> flightLegs);
-
-        Task<IEnumerable<FlightLegDTO>> GetHistoricalFlightLegs(string icao, bool isArrivals, DateTime historicalETD,
-            DateTime historicalETA, DateTime historicalAircraftPositionDateTime);
-
         Task UpdateFlightStatusAndOtherDynamicData();
         Task CreatePlaceholderRecords();
         Task SetFlightLegsStaticData();

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -20,12 +21,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec);
         Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec);
         Task<List<TProjection>> GetListBySpec<TProjection>(ISpecification<TEntity, TProjection> spec);
-        Task BulkDeleteEntities(List<TEntity> entities);
-        Task BulkDeleteEntities(ISpecification<TEntity> spec);
+        Task BulkDeleteEntities(List<TEntity> entities, BulkConfig? bulkConfig = null);
+        Task BulkDeleteEntities(ISpecification<TEntity> spec, BulkConfig? bulkConfig = null);
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FindAsync(int id);
-        Task BulkInsert(List<TEntity> entities, bool includeGraph = false);
-        Task BulkUpdate(List<TEntity> entities);
+        Task BulkInsert(List<TEntity> entities, BulkConfig? bulkConfig = null);
+        Task BulkUpdate(List<TEntity> entities, BulkConfig? bulkConfig = null);
     }
 }

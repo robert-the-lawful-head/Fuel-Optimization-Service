@@ -18,5 +18,7 @@ namespace FBOLinx.DB.Models
         public DateTime? LastLiveDateTime { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? LastHistoricDateTime { get; set; }
+        [StringLength(10)]
+        public string AirportICAO { get; set; }
     }
 }

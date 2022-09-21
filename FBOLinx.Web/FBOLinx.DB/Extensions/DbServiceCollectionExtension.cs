@@ -9,25 +9,40 @@ namespace FBOLinx.DB.Extensions
     {
         public static IServiceCollection RegisterDbConnections(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<FboLinxContext>(options =>{
-                options.UseSqlServer(configuration.GetConnectionString("FboLinxContext"));
-                // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
+            return services.RegisterDBConnections(configuration.GetConnectionString("DegaContext"),
+                configuration.GetConnectionString("FboLinxContext"),
+                configuration.GetConnectionString("FuelerLinxContext"),
+                configuration.GetConnectionString("FilestorageContext"));
+        }
 
-            services.AddDbContext<DegaContext>(options =>{
-                options.UseSqlServer(configuration.GetConnectionString("DegaContext"));
-                // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
+        public static IServiceCollection RegisterDBConnections(this IServiceCollection services,
+            string degaDbConnectionString = "", string fbolinxDbConnectionString = "",
+            string fuelerlinxDbConnectionString = "", string fileStorageDbConnectionString = "")
+        {
+            if (!string.IsNullOrEmpty(degaDbConnectionString))
+                services.AddDbContext<DegaContext>(options => {
+                    options.UseSqlServer(degaDbConnectionString);
+                    // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
 
-            services.AddDbContext<FuelerLinxContext>(options =>{
-                options.UseSqlServer(configuration.GetConnectionString("FuelerLinxContext"));
-                // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
+            if (!string.IsNullOrEmpty(fbolinxDbConnectionString))
+                services.AddDbContext<FboLinxContext>(options => {
+                    options.UseSqlServer(fbolinxDbConnectionString);
+                    // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
 
-            services.AddDbContext<FilestorageContext>(options =>{
-                options.UseSqlServer(configuration.GetConnectionString("FilestorageContext"));
-                options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            });
+            if (!string.IsNullOrEmpty(fuelerlinxDbConnectionString))
+                services.AddDbContext<FuelerLinxContext>(options => {
+                    options.UseSqlServer(fuelerlinxDbConnectionString);
+                    // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
+
+            if (!string.IsNullOrEmpty(fileStorageDbConnectionString))
+                services.AddDbContext<FilestorageContext>(options => {
+                    options.UseSqlServer(fileStorageDbConnectionString);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
+
             return services;
         }
     }
