@@ -831,7 +831,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //TODO: Setup an AircraftHexTailMappingService to handle this
             IEnumerable<string> aircraftHexCodesToInsert = airportWatchRecords.Select(x => x.AircraftHexCode).Distinct();
             List<AircraftHexTailMapping> hexTailMappings = await _degaContext.AircraftHexTailMapping.Where(x => aircraftHexCodesToInsert.Contains(x.AircraftHexCode)).AsNoTracking().ToListAsync();
-            foreach (BaseAirportWatchData airportWatchRecord in airportWatchRecords)
+            foreach (IBaseAirportWatchModel airportWatchRecord in airportWatchRecords)
             {
                 airportWatchRecord.TailNumber = hexTailMappings.FirstOrDefault(mapping => mapping.AircraftHexCode == airportWatchRecord.AircraftHexCode)?.TailNumber;
             }
