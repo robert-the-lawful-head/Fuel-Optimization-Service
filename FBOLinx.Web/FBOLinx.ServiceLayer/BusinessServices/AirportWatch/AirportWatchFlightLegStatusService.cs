@@ -14,6 +14,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
+using Mapster;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -27,11 +28,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private IAirportService _AirportService;
         private SWIMFlightLegEntityService _FlightLegEntityService;
+        private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
 
         public AirportWatchFlightLegStatusService(AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
             IAirportService airportService,
-            SWIMFlightLegEntityService flightLegEntityService)
+            SWIMFlightLegEntityService flightLegEntityService,
+            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService)
         {
+            _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
             _FlightLegEntityService = flightLegEntityService;
             _AirportService = airportService;
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
@@ -41,50 +45,92 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             //First load all live records from our FlightWatch antenna from the last 5 minutes with their associated historical records from the past 24 hours.
             var liveAircraftDataWithHistoricalStatuses =
-                await _AirportWatchLiveDataEntityService.GetLiveDataWithRecentHistoryStatuses(DateTime.UtcNow.AddHours(-5),
-                    DateTime.UtcNow.AddHours(-24));
+                await GetAirportWatchLiveDataWithHistoricalStatuses();
+            var aircraftIdentifiers = liveAircraftDataWithHistoricalStatuses
+                .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).ToList();
+            aircraftIdentifiers.AddRange(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList());
 
             //Then load all SWIM flight legs that we have from the last hour.
-            List<SWIMFlightLeg> existingFlightLegs = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).ToList(), 
-                    liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList(), 
-                    DateTime.UtcNow.AddHours(-1), DateTime.UtcNow.AddHours(-1)));
+            List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(
+                new SWIMFlightLegByAircraftSpecification(aircraftIdentifiers, DateTime.UtcNow.AddHours(-1))));
 
+            //For each live antenna record we will determine the current flight status
             foreach (var liveAircraftData in liveAircraftDataWithHistoricalStatuses)
             {
-                //Prepare our airport position and SWIM flight leg association for the live data
-                liveAircraftData.AirportPosition =
-                    await _AirportService.GetNearestAirportPosition(liveAircraftData.Latitude,
-                        liveAircraftData.Longitude);
-
-                liveAircraftData.SWIMFlightLeg = existingFlightLegs.FirstOrDefault(x =>
+                //Get the latest matching leg from SWIM data if available
+                liveAircraftData.SWIMFlightLeg = existingFlightLegs.Where(x =>
                     x.AircraftIdentification == liveAircraftData.TailNumber ||
-                    x.AircraftIdentification == liveAircraftData.AtcFlightNumber);
-
-
-                //Finally, determine the proper FlightLegStatus of each result based on all of the data we have
-                var mostRecentHistoricalRecord = liveAircraftData.GetMostRecentHistoricalRecord();
-
-                if (IsTaxiingForDeparture(liveAircraftData, mostRecentHistoricalRecord))
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.TaxiingOrigin;
-
-                else if (IsTaxiingToDestination(liveAircraftData, mostRecentHistoricalRecord))
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.TaxiingDestination;
-
-                else if (IsLandingAtDestination(liveAircraftData, mostRecentHistoricalRecord))
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.Landing;
-
-                else if (IsDepartingFromOrigin(liveAircraftData, mostRecentHistoricalRecord))
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.Departing;
-
-                else if (HasArrivedAtDestination(liveAircraftData, mostRecentHistoricalRecord))
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.Arrived;
-
-                else
-                    liveAircraftData.FlightLegStatus = FlightLegStatus.EnRoute;
+                    x.AircraftIdentification == liveAircraftData.AtcFlightNumber).OrderByDescending(x => x.Oid).FirstOrDefault();
+                await SetFlightLegStatus(liveAircraftData);
             }
 
             return liveAircraftDataWithHistoricalStatuses;
+        }
+
+        private async Task SetFlightLegStatus(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData)
+        {
+            //Prepare our airport position and SWIM flight leg association for the live data
+            liveAircraftData.AirportPosition =
+                await _AirportService.GetNearestAirportPosition(liveAircraftData.Latitude,
+                    liveAircraftData.Longitude);
+            
+            //Finally, determine the proper FlightLegStatus of each result based on all of the data we have
+            var mostRecentHistoricalRecord = liveAircraftData.GetMostRecentHistoricalRecord();
+            FlightLegStatus flightLegStatus = FlightLegStatus.EnRoute;
+
+            if (IsTaxiingForDeparture(liveAircraftData, mostRecentHistoricalRecord))
+                flightLegStatus = FlightLegStatus.TaxiingOrigin;
+
+            else if (IsTaxiingToDestination(liveAircraftData, mostRecentHistoricalRecord))
+                flightLegStatus = FlightLegStatus.TaxiingDestination;
+
+            else if (IsLandingAtDestination(liveAircraftData, mostRecentHistoricalRecord))
+                flightLegStatus = FlightLegStatus.Landing;
+
+            else if (IsDepartingFromOrigin(liveAircraftData, mostRecentHistoricalRecord))
+                flightLegStatus = FlightLegStatus.Departing;
+
+            else if (HasArrivedAtDestination(liveAircraftData, mostRecentHistoricalRecord))
+                flightLegStatus = FlightLegStatus.Arrived;
+
+            liveAircraftData.FlightLegStatus = flightLegStatus;
+            if (liveAircraftData.SWIMFlightLeg != null &&
+                liveAircraftData.FlightLegStatus != liveAircraftData.SWIMFlightLeg.Status)
+            {
+                liveAircraftData.SWIMFlightLeg.Status = flightLegStatus;
+                liveAircraftData.SWIMFlightLegStatusNeedsUpdate = true;
+            }
+        }
+
+
+        private async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses()
+        {
+            var liveData = await _AirportWatchLiveDataEntityService.GetListBySpec(
+                new AirportWatchLiveDataSpecification(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow));
+            var flightNumbers = liveData.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList();
+            var historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
+                new AirportWatchHistoricalDataSpecification(flightNumbers, DateTime.UtcNow.AddDays(-1)));
+
+            var result = (from live in liveData
+                    join historical in historicalData on new { live.AtcFlightNumber, live.AircraftHexCode } equals new { historical.AtcFlightNumber, historical.AircraftHexCode }
+                        into leftJoinHistoricalData
+                    from historical in leftJoinHistoricalData.DefaultIfEmpty()
+                    group new { live, historical } by new { live.AtcFlightNumber, live.TailNumber, live.AircraftHexCode } into groupedResult
+                    select new AirportWatchLiveDataWithHistoricalStatusDto
+                    {
+                        Oid = groupedResult.Max(x => x.live.Oid),
+                        TailNumber = groupedResult.Key.TailNumber,
+                        AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
+                        Latitude = groupedResult.FirstOrDefault().live.Latitude,
+                        Longitude = groupedResult.FirstOrDefault().live.Longitude,
+                        AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                        IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
+                        RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical.Adapt<AirportWatchHistoricalDataDto>()).ToList()
+                    }
+                )
+                .ToList();
+
+            return result;
         }
 
         private bool IsTaxiingForDeparture(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData, AirportWatchHistoricalDataDto mostRecentHistoricalRecord)

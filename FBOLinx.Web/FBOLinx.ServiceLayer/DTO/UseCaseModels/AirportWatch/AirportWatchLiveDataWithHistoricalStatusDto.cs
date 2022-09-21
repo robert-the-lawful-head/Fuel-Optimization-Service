@@ -19,6 +19,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
         public double Longitude { get; set; }
         public DateTime AircraftPositionDateTimeUtc { get; set; }
         public bool IsAircraftOnGround { get; set; }
+        public bool SWIMFlightLegStatusNeedsUpdate { get; set; }
         public List<AirportWatchHistoricalDataDto> RecentAirportWatchHistoricalDataCollection { get; set; }
         //public int? HistoricalOid { get; set; }
         //public double? HistoricalLatitude { get; set; }

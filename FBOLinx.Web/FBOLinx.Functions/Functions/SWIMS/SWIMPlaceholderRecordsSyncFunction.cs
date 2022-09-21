@@ -22,7 +22,7 @@ namespace FBOLinx.Functions
         }
         
         [FunctionName("SWIMPlaceholderRecordsSyncFunction")]
-        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("15 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 

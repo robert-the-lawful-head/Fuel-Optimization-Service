@@ -14,6 +14,7 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.ScheduledService;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
@@ -114,6 +115,9 @@ namespace FBOLinx.Web
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());
 
             services.AddSingleton<IFileProvider>(physicalProvider);
+
+            //Scheduled service just for testing.  Will remove soon.
+            //services.AddHostedService<SWIMPlaceholderSyncFunctionScheduledService>();
         }
     }
 }
