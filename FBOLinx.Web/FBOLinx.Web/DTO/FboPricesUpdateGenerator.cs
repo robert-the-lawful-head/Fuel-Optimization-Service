@@ -16,5 +16,6 @@ namespace FBOLinx.Web.DTO
         public DateTime EffectiveFrom { get; set; }
         public DateTime EffectiveFromUtc { get; set; }
         public DateTime? EffectiveTo { get; set; }
+        public int Source { get; set; }
     }
 }

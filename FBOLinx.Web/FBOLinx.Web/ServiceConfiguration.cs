@@ -26,6 +26,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using GroupCustomersService = FBOLinx.ServiceLayer.BusinessServices.Groups.GroupCustomersService;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web
 {
@@ -103,6 +104,9 @@ namespace FBOLinx.Web
             services.AddTransient<AssociationsService, AssociationsService>();
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
+            services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

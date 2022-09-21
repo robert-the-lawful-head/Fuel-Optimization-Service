@@ -46,7 +46,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
             services.AddScoped<ILoggingService, LoggingService>();
             services.AddTransient<CustomerService, CustomerService>();
-            services.AddTransient<GroupService, GroupService>();
+            services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
@@ -73,6 +73,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFuelReqService, FuelReqService>();
             services.AddTransient<IAirportTimeService, AirportTimeService>();
             services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<FbopricesService, FbopricesService>();
             services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();

@@ -6,6 +6,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -27,6 +28,7 @@ namespace FBOLinx.Functions
             services.RegisterDBConnections(degaDbConnectionString, fbolinxDbConnectionString);
             services.RegisterEntityServices();
             services.RegisterBusinessServices();
+           
         }
     }
 }
