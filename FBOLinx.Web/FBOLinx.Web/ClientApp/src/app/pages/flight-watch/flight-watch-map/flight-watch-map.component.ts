@@ -50,6 +50,8 @@ export class FlightWatchMapComponent
     @Input() data: FlightWatchDictionary;
     @Input() aircraftData: Aircraftwatch;
     @Input() isStable: boolean;
+    @Input() icao: string;
+
     @Output() markerClicked = new EventEmitter<FlightWatch>();
     @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
@@ -60,7 +62,6 @@ export class FlightWatchMapComponent
     aircraftPopupContainerRef!: ElementRef;
 
     public acukwikairports: AcukwikAirport[];
-    public icao: any;
     nearbyMiles: number = 150;
     //popup
     public popupData: Aircraftwatch = {
@@ -107,7 +108,6 @@ export class FlightWatchMapComponent
         super();
         this.fboId = this.sharedService.currentUser.fboId;
         this.groupId = this.sharedService.currentUser.groupId;
-        this.icao = this.sharedService.currentUser.icao;
     }
     ngOnInit(): void {
         const refreshMapFlight = async () => {
