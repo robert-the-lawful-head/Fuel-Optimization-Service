@@ -516,7 +516,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Grab distinct aircraft for this set of data
             //var distinctAircraftHexCodes =
             //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
-            var distinctHexCodes = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
+            var distinctHexCodes = data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode))
                 .Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
@@ -894,7 +894,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private async Task CommitChanges()
         {
             var bulkConfig = new BulkConfig() {WithHoldlock = false, BatchSize = 5000};
-
+            
             await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert, bulkConfig);
             await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate, bulkConfig);
             await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete, bulkConfig);
