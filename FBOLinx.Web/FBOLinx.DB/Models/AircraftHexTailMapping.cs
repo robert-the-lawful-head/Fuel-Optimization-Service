@@ -10,7 +10,11 @@ namespace FBOLinx.DB
         [Required]
         [StringLength(25)]
         public string AircraftHexCode { get; set; }
+
         [StringLength(25)]
         public string TailNumber { get; set; }
+
+        [StringLength(50)]
+        public string FAAAircraftMakeModelCode { get; set; }
     }
 }

@@ -160,6 +160,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.stagedPrices = undefined;
         this.loadAllPrices();
         this.loadFeesAndTaxes();
+        this.fixCustomCustomerTypes();
         this.checkDefaultTemplate();
     }
 
@@ -407,8 +408,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                                     this.currentFboPriceJetARetail.price,
                                 SafCost: this.currentFboPriceSafCost.price,
                                 SafRetail: this.currentFboPriceSafRetail.price,
-                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY") == "12/31/99" ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
-                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY") == "12/31/99" ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceSafRetail.source == "1" ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceJetARetail.source == "1"  ? "Updated by X1 POS" : "Expires " + moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
@@ -440,7 +441,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
                     this.fboPricesUpdateGridData.forEach(function (fboPrice) {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
-                            if (moment(fboPrice.effectiveTo).format("YYYY") == "9999") {
+                            if (moment(fboPrice.effectiveTo).format("YYYY") == "9999" || fboPrice.source == "1") {
                                 fboPrice.effectiveFrom = moment(fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm");
                                 fboPrice.effectiveTo = "Updated by X1 POS";
                                 fboPrice.submitStatus = "Automated";
@@ -599,8 +600,11 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
     private showTooltips() {
         setTimeout(() => {
             const tooltipsArr = this.priceTooltips.toArray();
-            tooltipsArr[this.tooltipIndex].open();
-            this.tooltipIndex--;
+            var toolTip = tooltipsArr[this.tooltipIndex];
+            if (toolTip != undefined) {
+                tooltipsArr[this.tooltipIndex].open();
+                this.tooltipIndex--;
+            }
         }, 400);
     }
 
@@ -705,5 +709,13 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                     }))
             }));
         });
+    }
+
+    private fixCustomCustomerTypes() {
+        this.pricingTemplateService
+            .fixCustomCustomerTypes(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
+             
+            });
     }
 }

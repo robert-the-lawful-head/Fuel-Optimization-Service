@@ -8,5 +8,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.AirportWatch
     {
         public DateTime? StartDateTime { get; set; }
         public DateTime? EndDateTime { get; set; }
+        public List<string> FlightOrTailNumbers { get; set; }
     }
 }

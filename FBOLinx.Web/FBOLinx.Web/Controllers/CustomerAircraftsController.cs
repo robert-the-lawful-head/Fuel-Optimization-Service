@@ -6,6 +6,7 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.Requests.Integrations.FuelerLinx;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
@@ -29,14 +30,17 @@ namespace FBOLinx.Web.Controllers
         private readonly AircraftService _aircraftService;
         private ICustomerAircraftService _CustomerAircraftService;
         private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
+        private AirportWatchService _AirportWatchService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, 
+            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService)
         {
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
             _aircraftService = aircraftService;
+            _AirportWatchService = airportWatchService;
         }
 
         [HttpGet]
@@ -499,11 +503,30 @@ namespace FBOLinx.Web.Controllers
 
             return Ok();
         }
+
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpGet("aircraft-locations/{fuelerlinxCustomerId}")]
+        public async Task<IActionResult> GetAircraftLocations([FromRoute] int fuelerlinxCustomerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var result = await _AirportWatchService.GetAircraftLocations(fuelerlinxCustomerId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         #endregion
-
-
-
-
+        
         private bool CustomerAircraftsExists(int id)
         {
             return _context.CustomerAircrafts.Any(e => e.Oid == id);

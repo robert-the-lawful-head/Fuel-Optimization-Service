@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -44,5 +45,7 @@ namespace FBOLinx.DB.Models
         [ForeignKey("Fboid")]
         [InverseProperty("Fboprices")]
         public Fbos Fbo { get; set; }
+
+        public FboPricesSource Source { get; set; } = FboPricesSource.FboLinx;
     }
 }

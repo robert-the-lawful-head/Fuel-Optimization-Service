@@ -32,7 +32,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         public IQueryable<AirCrafts> GetAllAircraftsOnlyAsQueryable()
         {
-            return _degaContext.AirCrafts;
+            return _degaContext.AirCrafts.AsNoTracking();
         }
 
         public async Task<AirCrafts> GetAircrafts(int oid)

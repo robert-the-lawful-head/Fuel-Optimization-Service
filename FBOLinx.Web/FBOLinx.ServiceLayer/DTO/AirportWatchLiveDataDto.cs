@@ -1,9 +1,10 @@
 using System;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
-    public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
+    public class AirportWatchLiveDataDto: BaseEntityModelDTO<DB.Models.AirportWatchLiveData>, IBaseAirportWatchModel, IEntityModelDTO<DB.Models.AirportWatchLiveData, int>
     {
         public int Oid { get; set; }
         public DateTime BoxTransmissionDateTimeUtc { get; set; }
@@ -24,12 +25,12 @@ namespace FBOLinx.ServiceLayer.DTO
         public string TailNumber { get; set; }
         public int? AircraftId { get; set; }
         public string AircraftICAO { get; set; }
-        public bool IsInNetwork { get; set; }
-        public bool IsFuelerLinxCustomer { get; set; }
-        public bool IsOutOfNetwork { get; set; }
-        public bool IsActiveFuelRelease { get; set; }
-        public bool IsFuelerLinxClient { get; set; }
-        public FuelReqDto? FuelOrder { get; set; }
+        public bool? IsInNetwork { get; set; }
+        public bool? IsFuelerLinxCustomer { get; set; }
+        public bool? IsOutOfNetwork { get; set; }
+        public bool? IsActiveFuelRelease { get; set; }
+        public bool? IsFuelerLinxClient { get; set; }
+        public FuelReqDto FuelOrder { get; set; }
 
     }
 }

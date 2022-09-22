@@ -43,7 +43,9 @@ namespace FBOLinx.DB.Models
 
         public string FlightDepartment { get; set; }
         public string Make { get; set; }
+        public string FAAMake { get; set; }
         public string Model { get; set; }
+        public string FAAModel { get; set; }
         public double? FuelCapacityGal { get; set; }
         public string Phone { get; set; }
         public string ICAOAircraftCode { get; set; }

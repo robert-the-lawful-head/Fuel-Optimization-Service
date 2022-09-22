@@ -1,0 +1,14 @@
+.settings-filter {
+    display: flex;
+    .mat-form-field{
+        margin: 0 10px 0 10px;
+        padding: 0px !important;
+        background-color: transparent;
+    }
+}
+
+::ng-deep .mat-form-field-wrapper > .mat-form-field-flex{
+    background-color: white;
+    border-radius: 1px;
+    padding-left: 5px;
+  }

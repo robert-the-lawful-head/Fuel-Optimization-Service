@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
+    <PackageReference Include="Geolocation" Version="1.2.1" />
     <PackageReference Include="Sendgrid" Version="9.28.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />

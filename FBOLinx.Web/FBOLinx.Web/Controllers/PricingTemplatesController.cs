@@ -206,5 +206,12 @@ namespace FBOLinx.Web.Controllers
             }
 
         }
+
+        [HttpGet("fix-custom-customer-types/group/{groupId}/fbo/{fboId}")]
+        public async Task<ActionResult> FixCustomCustomerTypes([FromRoute] int groupId, [FromRoute] int fboId)
+        {
+            await _pricingTemplateService.FixCustomCustomerTypes(groupId, fboId);
+            return Ok();
+        }
     }
 }

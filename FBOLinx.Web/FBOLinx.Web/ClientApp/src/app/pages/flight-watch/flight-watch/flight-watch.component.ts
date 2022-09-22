@@ -114,10 +114,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             }
           );
     }
-    openDrawer(airportClicked: AcukwikAirport){
-        this.getDrawerData(airportClicked.icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
-        this.drawer.toggle();
-    }
     setIcaoList(airportList: AcukwikAirport[]){
         this.acukwikairport = airportList;
         let icaoList =  airportList.map((data) => {
@@ -128,6 +124,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     updateIcao(icao:string){
         this.mapWrapper.map.goToAirport(icao);
+        this.mapWrapper.map.updateICAOIconOnMap(icao);
         this.selectedICAO =  icao;
         this.getDrawerData(icao, this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId);
     }
