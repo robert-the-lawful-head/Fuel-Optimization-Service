@@ -4,18 +4,29 @@ using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.Groups;
+using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 {
-    public class GroupService
+    public interface IGroupService : IBaseDTOService<GroupDTO, DB.Models.Group>
+    {
+        Task<string> UploadLogo(GroupLogoRequest groupLogoRequest);
+        Task<string> GetLogo(int groupId);
+        Task DeleteLogo(int groupId);
+        Task MergeGroups(MergeGroupRequest request);
+    }
+
+    public class GroupService : BaseDTOService<GroupDTO, DB.Models.Group, FboLinxContext>, IGroupService
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
         private readonly FilestorageContext _fileStorageContext;
         private readonly IServiceProvider _services;
-        public GroupService(FboLinxContext context, DegaContext degaContext, IServiceProvider services, FilestorageContext fileStorageContext)
+        public GroupService(IGroupEntityService entityService, FboLinxContext context, DegaContext degaContext, IServiceProvider services, FilestorageContext fileStorageContext) : base(entityService)
         {
             _context = context;
             _degaContext = degaContext;
@@ -218,7 +229,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
             {
             }
         }
-
-        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.ServiceLayer.Extensions.Aircraft
 {
@@ -9,17 +10,21 @@ namespace FBOLinx.ServiceLayer.Extensions.Aircraft
         {
             return (fo != null);
         }
-        public static bool IsOutOfNetwork(this CustomerAircrafts? ca, FuelReqDto? fo)
+        public static bool IsActiveFuelRelease(this FuelReqsGridViewModel? fo)
         {
-            return !IsActiveFuelRelease(fo) && !IsInNetwork(ca, fo);
+            return fo != null;
         }
-        public static bool IsFuelerLinxClient(this CustomerAircrafts? ca, FuelReqDto? fo)
+        public static bool IsOutOfNetwork(this CustomerAircrafts? ca)
         {
-            return IsInNetwork(ca, fo) && isFuelerLinxCustomer(ca);
+            return !IsInNetwork(ca);
         }
-        public static bool IsInNetwork(this CustomerAircrafts? ca, FuelReqDto? fo)
+        public static bool IsFuelerLinxClient(this CustomerAircrafts? ca)
         {
-            return ((ca?.Oid > 0) && (fo == null) && (isFuelerLinxCustomer(ca)));
+            return IsInNetwork(ca) && isFuelerLinxCustomer(ca);
+        }
+        public static bool IsInNetwork(this CustomerAircrafts? ca)
+        {
+            return ((ca?.Oid > 0));
         }
         public static bool isFuelerLinxCustomer(this CustomerAircrafts? ca)
         {

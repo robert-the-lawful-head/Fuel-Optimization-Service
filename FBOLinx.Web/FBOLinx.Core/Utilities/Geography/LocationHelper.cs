@@ -47,5 +47,36 @@ namespace FBOLinx.Core.Utilities.Geography
 
             return deg;
         }
+
+        public static bool IsPointInPolygon(Geolocation.Coordinate p, Geolocation.Coordinate[] polygon)
+        {
+            double minX = polygon[0].Latitude;
+            double maxX = polygon[0].Latitude;
+            double minY = polygon[0].Longitude;
+            double maxY = polygon[0].Longitude;
+            for (int i = 1; i < polygon.Length; i++)
+            {
+                Geolocation.Coordinate q = polygon[i];
+                minX = Math.Min(q.Latitude, minX);
+                maxX = Math.Max(q.Latitude, maxX);
+                minY = Math.Min(q.Longitude, minY);
+                maxY = Math.Max(q.Longitude, maxY);
+            }
+            if (p.Latitude < minX || p.Latitude > maxX || p.Longitude < minY || p.Longitude > maxY)
+            {
+                return false;
+            }
+            // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+            bool inside = false;
+            for (int i = 0, j = polygon.Length - 1; i < polygon.Length; j = i++)
+            {
+                if ((polygon[i].Longitude > p.Longitude) != (polygon[j].Longitude > p.Longitude) &&
+                    p.Latitude < (polygon[j].Latitude - polygon[i].Latitude) * (p.Longitude - polygon[i].Longitude) / (polygon[j].Longitude - polygon[i].Longitude) + polygon[i].Latitude)
+                {
+                    inside = !inside;
+                }
+            }
+            return inside;
+        }
     }
 }

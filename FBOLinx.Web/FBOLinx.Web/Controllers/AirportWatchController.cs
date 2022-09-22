@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.DB.Context;
+using FBOLinx.Service.Mapping.Dto;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -65,7 +67,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("list")]
-        public async Task<ActionResult<AirportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveData> data)
+        public async Task<ActionResult<AirportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveDataDto> data)
         {
             try
             {
@@ -90,7 +92,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet(("parking-occurrences/{icao}"))]
-        public async Task<ActionResult<List<AirportWatchHistoricalData>>> GetParkingOccurrencesByAirportIcao(
+        public async Task<ActionResult<List<AirportWatchHistoricalDataDto>>> GetParkingOccurrencesByAirportIcao(
             [FromRoute] string icao, DateTime? startDateTime, DateTime? endDateTime)
         {
             try

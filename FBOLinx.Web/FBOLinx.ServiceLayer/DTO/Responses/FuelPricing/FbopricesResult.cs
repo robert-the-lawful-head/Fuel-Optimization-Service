@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using System;
 
 namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
 {
@@ -29,5 +30,6 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
                 return "";
             }
         }
+        public FboPricesSource Source { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -57,8 +58,8 @@ namespace FBOLinx.Web.Services
                         {
                             using (var scope = _serviceScopeFactory.CreateScope())
                             {
-                                var db = scope.ServiceProvider.GetService<FboLinxContext>();
-                                await GroupCustomersService.BeginCustomerAircraftsImport(db, group.Oid, _fuelerLinxApiService);
+                                var groupCustomersService = scope.ServiceProvider.GetRequiredService<IGroupCustomersService>();
+                                await groupCustomersService.StartAircraftTransfer(group.Oid);
                             }
 
                         });

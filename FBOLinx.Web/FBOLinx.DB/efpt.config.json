@@ -1,5 +1,5 @@
 ﻿{
-   "CodeGenerationMode": 0,
+   "CodeGenerationMode": 2,
    "ContextClassName": "FboLinxContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
@@ -8,13 +8,18 @@
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": null,
+   "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "FBOLinx.DB",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[MissedQuoteLog]",
+         "Name": "[dbo].[AirportWatchDistinctBoxes]",
+         "ObjectType": 0
+      },
+      {
+      "Name": "[dbo].[MissedQuoteLog]",
          "ObjectType": 0
       }
    ],
@@ -35,5 +40,6 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
-   "UseSpatial": false
+   "UseSpatial": false,
+   "UseT4": false
 }

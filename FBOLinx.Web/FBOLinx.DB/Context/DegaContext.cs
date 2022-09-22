@@ -21,6 +21,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AircraftSpecifications> AircraftSpecifications { get; set; }
         public virtual DbSet<ImportedFboEmails> ImportedFboEmails { get; set; }
         public virtual DbSet<AircraftHexTailMapping> AircraftHexTailMapping { get; set; }
+        public virtual DbSet<FAAAircraftMakeModelReference> FAAAircraftMakeModelReference { get; set; }
         public virtual DbSet<SWIMFlightLeg> SWIMFlightLegs { get; set; }
         public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
 

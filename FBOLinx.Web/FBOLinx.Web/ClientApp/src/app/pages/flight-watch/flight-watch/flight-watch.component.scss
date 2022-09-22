@@ -51,3 +51,9 @@
     z-index: 10000;
     top: calc(50%);
 }
+.aircraft-legend{
+    position: absolute;
+    right: calc(50% - 295px);
+    z-index: 10000;
+    bottom: 0px;
+}

@@ -68,7 +68,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             type: 'symbol',
         }
     }
-    public getAirportFeatureJsonData(data: any): any {
+    public getAirportFeatureJsonData(data: any, currentIcao: string): any {
         return {
             geometry: {
                 coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
@@ -76,7 +76,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             properties: {
                 id: data.oid,
-                'icon-image': 'airport-icon',
+                'icon-image': (data.icao == currentIcao)?'airport-icon-active':'airport-icon',
                 'size': 0.5,
             },
             type: 'Feature'

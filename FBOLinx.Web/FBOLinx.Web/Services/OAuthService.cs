@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using System.Security.Claims;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.DB.Specifications.Group;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.Web.Services
 {
@@ -19,10 +22,15 @@ namespace FBOLinx.Web.Services
     {
         private readonly FboLinxContext _context;
         private readonly JwtManager _jwtManager;
-        public OAuthService(FboLinxContext context, JwtManager jwtManager)
+        private readonly IGroupService _groupService;
+        private readonly IFboService _fboService;
+
+        public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService)
         {
             _context = context;
             _jwtManager = jwtManager;
+            _groupService = groupService;
+            _fboService = fboService;
         }
 
         public async Task<AccessTokens> GenerateAccessToken(User user, int expireMinutes = 60)
@@ -57,7 +65,10 @@ namespace FBOLinx.Web.Services
 
             var refreshToken = await GenerateRefreshToken(user, token);
 
-            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, user.Username, user.FboId);
+            var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(user.GroupId.Value));
+            var fbo = await _fboService.GetFbo(user.FboId);
+
+            return new AuthTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, user.Username, user.FboId, group.GroupName, user.GroupId.Value, user.Role, fbo.FboAirport.Icao, fbo.Fbo);
         }
 
         public async Task<ExchangeRefreshTokenResponse> ExchangeRefreshToken(ExchangeRefreshTokenRequest request)
@@ -92,7 +103,10 @@ namespace FBOLinx.Web.Services
             _context.RefreshTokens.Remove(oldRefreshToken);
             await _context.SaveChangesAsync();
 
-            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, true);
+            var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(user.GroupId.Value));
+            var fbo = await _fboService.GetFbo(user.FboId);
+
+            return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo.FboAirport.Icao, fbo.Fbo, true);
         }
 
         public async Task<RefreshTokens> GenerateRefreshToken(User user, AccessTokens token)

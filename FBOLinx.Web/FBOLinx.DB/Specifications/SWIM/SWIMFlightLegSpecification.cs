@@ -27,11 +27,6 @@ namespace FBOLinx.DB.Specifications.SWIM
         {
         }
 
-        public SWIMFlightLegSpecification(IList<string> tailNumbers, IList<string> atcFlightNumbers, DateTime minATD)
-            : base(x => (tailNumbers.Contains(x.AircraftIdentification) || atcFlightNumbers.Contains(x.AircraftIdentification)) && x.ATD > minATD)
-        {
-        }
-
         public SWIMFlightLegSpecification(IList<string> tailNumbers, DateTime minATD, bool isPlaceholder)
             : base(x => tailNumbers.Contains(x.AircraftIdentification) && x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
         {

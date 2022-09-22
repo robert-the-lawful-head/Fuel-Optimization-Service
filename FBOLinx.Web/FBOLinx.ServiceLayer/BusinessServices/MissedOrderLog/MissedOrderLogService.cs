@@ -66,10 +66,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId.GetValueOrDefault(), fboId);
 
-            var allFboLinxTransactions = new List<FuelReq>();
+            var allFboLinxTransactions = new List<FuelReqDto>();
             foreach (var otherFbo in fbos.Where(f => f.Oid != fboId))
             {
-                var recentTransactions = await _FuelReqService.GetFuelOrdersForFbo(otherFbo.Oid, startDateTime, endDateTime);
+                var recentTransactions = await _FuelReqService.GetDirectOrdersForFbo(otherFbo.Oid, startDateTime, endDateTime);
                 allFboLinxTransactions.AddRange(recentTransactions);
             }
 

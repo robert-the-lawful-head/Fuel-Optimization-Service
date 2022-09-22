@@ -14,6 +14,8 @@ namespace FBOLinx.DB.Specifications.FuelRequests
                                                                                                                     && x.Eta >= startDateTime && x.Eta <= endDateTime)
         {
             AddInclude(x => x.CustomerAircraft);
+            AddInclude(x => x.FuelReqPricingTemplate);
+            AddInclude(x => x.Fbo);
         }
     }
 }
