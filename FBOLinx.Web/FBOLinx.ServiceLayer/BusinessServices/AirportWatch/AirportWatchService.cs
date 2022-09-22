@@ -516,17 +516,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Grab distinct aircraft for this set of data
             //var distinctAircraftHexCodes =
             //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
-            var distinctFlightNumbers = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
-                .Select(x => x.AtcFlightNumber).Distinct().ToList();
+            var distinctHexCodes = data.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber))
+                .Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
-            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(distinctFlightNumbers, DateTime.UtcNow.AddHours(-1));
+            var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(distinctHexCodes, DateTime.UtcNow.AddHours(-1));
             //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveData>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":1300,\"GroundSpeedKts\":2,\"TrackingDegree\":298.0,\"Latitude\":33.57458,\"Longitude\":-117.12912,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":1225,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":\"N118AT\",\"Oid\":29998562}");
             //newAircraftWatchLiveData = new AirportWatchLiveData();
             //newAircraftWatchLiveData = (AirportWatchLiveData)testData;
             //oldAirportWatchLiveDataCollection.Add(newAircraftWatchLiveData);
 
-            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(distinctFlightNumbers, DateTime.UtcNow.AddHours(-4));
+            var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(distinctHexCodes, DateTime.UtcNow.AddHours(-4));
 
             foreach (var record in data)
             {
@@ -574,10 +574,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     record.TailNumber = oldAirportWatchLiveData.TailNumber;
                     record.Oid = oldAirportWatchLiveData.Oid;
                     _LiveDataToUpdate.Add(record);
+                    aircraftOldAirportWatchLiveDataCollection.Remove(oldAirportWatchLiveData);
 
                     if (aircraftOldAirportWatchLiveDataCollection.Count > 1)
                     {
-                        aircraftOldAirportWatchLiveDataCollection.Remove(oldAirportWatchLiveData);
                         _LiveDataToDelete.AddRange(aircraftOldAirportWatchLiveDataCollection);
                     }
                 }
@@ -902,17 +902,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate, bulkConfig);
         }
 
-        private async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataFromDatabase(List<string> distinctFlightNumbers, DateTime aircraftPositionDateTime)
+        private async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataFromDatabase(List<string> aircraftHexCodes, DateTime aircraftPositionDateTime)
         {
             var result = await _AirportWatchLiveDataService.GetListbySpec(
-                new AirportWatchLiveDataByFlightNumberSpecification(distinctFlightNumbers, aircraftPositionDateTime));
+                new AirportWatchLiveDataByHexCodeSpecification(aircraftHexCodes, aircraftPositionDateTime));
             return result;
         }
 
-        private async Task<List<AirportWatchHistoricalDataDto>> GetAirportWatchHistoricalDataFromDatabase(List<string> distinctAtcFlightNumbers, DateTime aircraftPositionDateTime)
+        private async Task<List<AirportWatchHistoricalDataDto>> GetAirportWatchHistoricalDataFromDatabase(List<string> aircraftHexCodes, DateTime aircraftPositionDateTime)
         {
-            var result = await _AirportWatchHistoricalDataService.GetListbySpec(
-                new AirportWatchHistoricalDataSpecification(distinctAtcFlightNumbers, aircraftPositionDateTime));
+            var result = await _AirportWatchHistoricalDataService.GetListbySpec(new AirportWatchHistoricalDataByHexCodeSpecification(aircraftHexCodes, aircraftPositionDateTime));
 
             return result;
         }
