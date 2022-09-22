@@ -152,7 +152,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 liveAircraftData.AirportPosition?.GetProperAirportIdentifier())
                 return false;
 
-            //Ensure the parking occurrence has happened 10 minutes ago
+            //Ensure the parking occurrence was registered within the past 10 minutes so it's still possibly moving
             if (Math.Abs((liveAircraftData.AircraftPositionDateTimeUtc -
                           mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 10)
                 return false;
@@ -223,7 +223,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             //The takeoff must have occurred in the last 5 minutes to be considered "departing" before turning into an "enroute" status.
             if (Math.Abs((liveAircraftData.AircraftPositionDateTimeUtc -
-                          mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) > 5)
+                          mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 5)
                 return false;
             
             return true;
