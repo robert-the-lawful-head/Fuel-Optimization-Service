@@ -26,9 +26,6 @@ CREATE TABLE [dbo].[IntegrationStatus](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-ALTER TABLE AirportWatchDistinctBoxes
-ADD AirportICAO varchar(10) null
-GO
 CREATE NONCLUSTERED INDEX [INX_CustomerAircrafts_GroupAndTail]
 ON [dbo].[CustomerAircrafts] ([GroupID],[TailNumber])
 INCLUDE ([CustomerID],[AircraftID],[Size],[BasedPAGLocation],[NetworkCode],[AddedFrom])
@@ -50,6 +47,9 @@ CREATE TABLE [dbo].[AirportWatchDistinctBoxes](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+ALTER TABLE AirportWatchDistinctBoxes
+ADD AirportICAO varchar(10) null
+GO
 INSERT INTO AirportWatchDistinctBoxes (BoxName, LastHistoricDateTime)
 SELECT [a].[BoxName], MAX([a].[AircraftPositionDateTimeUtc]) AS [AircraftPositionDateTimeUtc]
 FROM [AirportWatchHistoricalData] AS [a]
@@ -61,7 +61,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE [dbo].[up_AirportWatchDistinctBoxes_Update]
+CREATE PROCEDURE [dbo].[up_AirportWatchDistinctBoxes_Update]
 AS
 
 DECLARE @pastHalfHour datetime = DATEADD(minute, -30, GETUTCDATE());
