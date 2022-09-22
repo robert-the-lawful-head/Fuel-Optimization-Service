@@ -7,6 +7,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
+import { SwimFilter } from 'src/app/models/filter';
 import {
     Aircraftwatch,
     FlightWatch,
@@ -26,9 +27,17 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     @Input() data: FlightWatchDictionary;
     @Input() aircraftData: Aircraftwatch;
     @Input() isStable: boolean;
+    @Input() icao: string;
+    @Input() icaoList: string[];
+
+
     @Output() markerClicked = new EventEmitter<FlightWatch>();
     @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
+
+    @Output() updateDrawerButtonPosition = new EventEmitter<any>();
+    @Output() filterChanged = new EventEmitter<SwimFilter>();
+    @Output() icaoChanged = new EventEmitter<string>();
 
     @ViewChild('map') map: FlightWatchMapComponent;
 

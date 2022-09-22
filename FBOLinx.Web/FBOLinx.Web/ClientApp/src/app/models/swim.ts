@@ -3,6 +3,8 @@ export interface Swim {
     flightDepartment: string;
     make: string;
     model: string;
+    fAAMake: string;
+    fAAModel: string;
     fuelCapacityGal: number | null;
     origin: string;
     city: string;
@@ -12,9 +14,9 @@ export interface Swim {
     arrivalCity: string;
     atdLocal: string;
     atdZulu: string;
-    etaLocal: string;
-    etaZulu: string;
-    ete: string;
+    etaLocal: string | null;
+    etaZulu: string | null;
+    ete: string | null;
     actualSpeed: number | null;
     altitude: number | null;
     latitude: number | null;
@@ -44,7 +46,6 @@ export enum FlightLegStatusEnum {
     Departing,
     TaxiingOrigin
 }
-
 export interface Time {
     ticks: number;
     days: number;

@@ -1,40 +1,9 @@
-
-.settings-filter {
-    margin-bottom: -20px;
-}
-.aircraft-types {
-    mat-label {
-        margin-bottom: 5px;
-        display: flex;
-    }
-
-    &-filter {
-        display: flex;
-        flex-wrap: wrap;
-        margin: -5px;
-        padding-bottom: 5px;
-    }
-
-    &-toggle {
-        cursor: pointer;
-        padding: 5px 10px;
-        margin: 5px;
-        border: 1px solid black;
-
-        &.active {
-            outline: 2px solid #7b00ff;
-        }
-    }
-}
-
 .filter-container {
     display: flex;
-    padding: 0px 10px 0px 10px;
-    justify-content: space-around;
-    margin-top: -15px;
-}
-.icao-select-container {
-    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    position: absolute;
+    right: 0px;
 }
 
 .data-container {
