@@ -64,13 +64,6 @@ export class FlightWatchSettingsComponent {
                 label: 'Other',
             });
     }
-    applyFilter(event: Event) {
-        let filter: SwimFilter = {
-            filterText: (event.target as HTMLInputElement).value,
-            dataType: null
-        };
-      this.filterChanged.emit(filter);
-    }
 
     toggleType(type: string) {
         if (this.filteredTypes.includes(type)) {
