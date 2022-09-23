@@ -25,6 +25,8 @@ namespace FBOLinx.DB.Models
         public int? GpsAltitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
         public AircraftStatusType AircraftStatus { get; set; }
+        [StringLength(255)]
+        [Column(TypeName = "varchar")]
         public string AirportICAO { get; set; }
 
         public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)

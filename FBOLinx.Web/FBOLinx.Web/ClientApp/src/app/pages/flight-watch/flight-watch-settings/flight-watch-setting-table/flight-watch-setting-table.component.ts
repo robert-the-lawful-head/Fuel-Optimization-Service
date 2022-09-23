@@ -93,7 +93,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return str;
     }
     getOriginDestinationString(element: Swim){
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 96 ~ FlightWatchSettingTableComponent ~ getOriginDestinationString ~ element", element)
         return this.isArrival
                 ? element.origin
                 : element.arrivalICAO
@@ -199,7 +198,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
               case swimTableColumns.etaAtd:
               return (this.isArrival) ? this.compare(a.etaZulu, b.etaZulu, isAsc) : this.compare(a.atdZulu, b.atdZulu, isAsc);
               case swimTableColumns.originDestination:
-                return (this.isArrival)? this.compare(a.arrivals, b.arrivals, isAsc): this.compare(a.departures, b.departures, isAsc);
+                return (this.isArrival)? this.compare(a.origin, b.origin, isAsc): this.compare(a.arrivalICAO, b.arrivalICAO, isAsc);
               case swimTableColumns.isAircraftOnGround:
               return this.compare(a.isAircraftOnGround.toString(), b.isAircraftOnGround.toString(), isAsc);
               case swimTableColumns.itpMarginTemplate:

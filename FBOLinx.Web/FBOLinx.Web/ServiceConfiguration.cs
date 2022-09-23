@@ -4,6 +4,7 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -13,6 +14,7 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.ScheduledService;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
@@ -23,11 +25,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
-using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using FBOLinx.ServiceLayer.BusinessServices.RampFee;
-using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using GroupCustomersService = FBOLinx.ServiceLayer.BusinessServices.Groups.GroupCustomersService;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.Web
 {
@@ -86,79 +85,29 @@ namespace FBOLinx.Web
             }
             );
             
-            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
-            var appParnterSDKSettings = configuration.GetSection("AppPartnerSDKSettings");
-            services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
-            var demoDataSection = configuration.GetSection("DemoData");
-            services.Configure<DemoData>(demoDataSection);
-            var demoData = demoDataSection.Get<DemoData>();
-
             // configure DI for application services
 
-            //Business Services
-            services.RegisterServices();
+            services.RegisterConfigurationSections(configuration);
+            services.RegisterEntityServices();
+            services.RegisterBusinessServices();
             services.RegisterMappingConfiguration();
+            
 
-
-            services.AddScoped<ILoggingService, LoggingService>();
-
-            services.AddScoped<RampFeesService, RampFeesService>();
+            //Services to be migrated to the ServiceLayer and moved into services.RegisterBusinessServices().
             services.AddScoped<IPriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
-            services.AddScoped<GroupTransitionService, GroupTransitionService>();
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<FboPreferencesService, FboPreferencesService>();
-            services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
-            services.AddTransient<FbopricesService, FbopricesService>();
             services.AddTransient<EmailContentService, EmailContentService>();
             services.AddTransient<AssociationsService, AssociationsService>();
-            services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
-            services.AddTransient<AirportWatchService, AirportWatchService>();
-            services.AddTransient<IMailService, MailService>();
-            services.AddTransient<IMissedQuoteLogEntityService, MissedQuoteLogEntityService>();
-            services.AddTransient<ISWIMService, SWIMService>();
-            services.AddTransient<AirportWatchScheduledService, AirportWatchScheduledService>();
-            services.AddTransient<IMissedQuoteLogService, MissedQuoteLogService>();
-            services.AddTransient<IFuelReqService, FuelReqService>();
-            services.AddTransient<IAirportWatchLiveDataService, AirportWatchLiveDataService>();
-            services.AddTransient<ICustomerInfoByGroupService, CustomerInfoByGroupService>();
-            services.AddTransient<IMissedOrderLogService, MissedOrderLogService>();
-            services.AddTransient<IFboAirportsService, FboAirportsService>();
-            services.AddTransient<IGroupCustomersService, GroupCustomersService>();
-            services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
-
-            services.AddHostedService<AirportWatchScheduledService>();
-
-
-
-            //Entity Services
-            services.AddTransient<CustomerEntityService, CustomerEntityService>();
-            services.AddTransient<GroupEntityService, GroupEntityService>();
-            services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
-            services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
-            services.AddTransient<IntegrationUpdatePricingLogEntityService, IntegrationUpdatePricingLogEntityService>();
-            services.AddTransient<SWIMFlightLegEntityService, SWIMFlightLegEntityService>();
-            services.AddTransient<SWIMFlightLegDataEntityService, SWIMFlightLegDataEntityService>();
-            services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
-            services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
-            services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
-            services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
-            services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
-            services.AddTransient<AircraftEntityService, AircraftEntityService>();
-            services.AddTransient<MissedQuoteLogEntityService, MissedQuoteLogEntityService>();
-            services.AddTransient<FuelReqEntityService, FuelReqEntityService>();
-            services.AddTransient<IFboEntityService, FboEntityService>();
-            services.AddTransient<IFboContactsEntityService, FboContactsEntityService>();
-            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
-            services.AddTransient<IAcukwikFbohandlerDetailEntityService, AcukwikFbohandlerDetailEntityService>();
-            services.AddTransient<IFboAirportsEntityService, FboAirportsEntityService>();
-            services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
-            services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
-
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
+            services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
+            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services
@@ -170,6 +119,9 @@ namespace FBOLinx.Web
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());
 
             services.AddSingleton<IFileProvider>(physicalProvider);
+
+            //Scheduled service just for testing.  Will remove soon.
+            //services.AddHostedService<SWIMPlaceholderSyncFunctionScheduledService>();
         }
     }
 }

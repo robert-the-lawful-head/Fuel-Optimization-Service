@@ -8,6 +8,7 @@
    "ModelNamespace": null,
    "OutputContextPath": null,
    "OutputPath": null,
+   "PreserveCasingWithRegex": true,
    "ProjectRootNamespace": "FBOLinx.DB",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
@@ -15,6 +16,10 @@
    "Tables": [
       {
          "Name": "[dbo].[AirportWatchDistinctBoxes]",
+         "ObjectType": 0
+      },
+      {
+      "Name": "[dbo].[MissedQuoteLog]",
          "ObjectType": 0
       }
    ],
@@ -35,5 +40,6 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
-   "UseSpatial": false
+   "UseSpatial": false,
+   "UseT4": false
 }
