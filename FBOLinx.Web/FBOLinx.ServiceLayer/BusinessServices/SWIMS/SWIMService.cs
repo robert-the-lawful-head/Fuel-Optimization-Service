@@ -240,7 +240,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _AirportWatchFlightLegStatusService.GetAirportWatchLiveDataWithFlightLegStatuses();
 
             List<SWIMFlightLeg> existingFlightLegsToUpdate = tailNumbersByLiveAndParkingCoordinates.Where(x => x.SWIMFlightLeg != null && x.SWIMFlightLegStatusNeedsUpdate)
-                .Select(x => x.SWIMFlightLeg).ToList();
+                .Select(x => x.SWIMFlightLeg).Distinct().ToList();
             List<SWIMFlightLeg> placeholderRecordsToInsert = tailNumbersByLiveAndParkingCoordinates.Where(x =>
                     x.SWIMFlightLeg == null && x.AirportPosition != null && (x.FlightLegStatus == FlightLegStatus.TaxiingOrigin || x.FlightLegStatus == FlightLegStatus.Departing))
                 .Select(x => new SWIMFlightLeg()
