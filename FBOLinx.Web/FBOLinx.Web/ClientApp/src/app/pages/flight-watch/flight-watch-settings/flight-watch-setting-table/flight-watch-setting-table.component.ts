@@ -164,7 +164,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getMakeModelDisplayString(element: Swim){
 
-        var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model) == ""  ? "" : "" ;
+        var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model);
 
         return makemodelstr == ""  ? "Unknown" : makemodelstr ;
     }
