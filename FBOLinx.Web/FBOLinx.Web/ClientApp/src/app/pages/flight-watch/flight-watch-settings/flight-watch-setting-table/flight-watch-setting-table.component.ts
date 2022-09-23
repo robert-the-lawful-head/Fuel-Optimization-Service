@@ -38,6 +38,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     dataSource: MatTableDataSource<Swim>;
 
     columnsToDisplay : string[];
+    columnsToDisplayDic = new Object();
 
     columnsToDisplayWithExpand : any[];
     expandedElement: any | null;
@@ -74,6 +75,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges) {
         if(changes.columns){
             this.columnsToDisplay = this.getVisibleColumns();
+            this.setVisibleColumnsName();
         }
         if (changes.data && this.dataSource){
             this.dataSource.data = changes.data.currentValue;
@@ -83,8 +85,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return (
             this.columns
                 .filter((column) => !column.hidden)
-                .map((column) => column.name) || []
+                .map((column) => column.id) || []
         );
+    }
+    setVisibleColumnsName() {
+        this.columns.filter((column) => !column.hidden).forEach((col) => {
+            this.columnsToDisplayDic[col.id] = col.name;
+        });
     }
     getSlashSeparationDisplayString(e1: any,e2: any){
         let str = (e1)?e1:"";
@@ -139,7 +146,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
             ? this.getTime.transform(this.getDateObject(row.etaLocal))
             : this.getTime.transform(this.getDateObject(row.atdLocal));
         }
-        let col = this.columns.find( c => c.name == column)
+
+        let col = this.columns.find( c => {
+            return c.id == column
+        });
         return row[col.id];
     }
     getColumnDisplayString(column:string){
@@ -154,7 +164,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
             ? "Origin"
             : "Destination";
         }
-        return column;
+
+        return this.columnsToDisplayDic[column];
     }
     getOriginCityLabel(){
         return this.isArrival
