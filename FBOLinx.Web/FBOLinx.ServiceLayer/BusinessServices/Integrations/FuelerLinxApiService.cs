@@ -31,8 +31,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         {
             _airportService = airportService;
             _appSettings = appSettings;
-            _fuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
-            _APIKey = _fuelerlinxSdkSettings.APIKey;
+            _fuelerlinxSdkSettings = appPartnerSDKSettings?.Value?.FuelerLinx;
+            _APIKey = _fuelerlinxSdkSettings?.APIKey;
         }
 
         #region Public Methods
