@@ -25,27 +25,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
     public class AirportWatchFlightLegStatusService : IAirportWatchFlightLegStatusService
     {
-        private AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private IAirportService _AirportService;
         private SWIMFlightLegEntityService _FlightLegEntityService;
-        private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
+        private IAirportWatchLiveDataService _AirportWatchLiveDataService;
 
-        public AirportWatchFlightLegStatusService(AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
-            IAirportService airportService,
+        public AirportWatchFlightLegStatusService(IAirportService airportService,
             SWIMFlightLegEntityService flightLegEntityService,
-            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService)
+            IAirportWatchLiveDataService airportWatchLiveDataService)
         {
-            _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+            _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FlightLegEntityService = flightLegEntityService;
             _AirportService = airportService;
-            _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
         }
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithFlightLegStatuses()
         {
             //First load all live records from our FlightWatch antenna from the last 5 minutes with their associated historical records from the past 24 hours.
             var liveAircraftDataWithHistoricalStatuses =
-                await GetAirportWatchLiveDataWithHistoricalStatuses();
+                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses();
             var aircraftIdentifiers = liveAircraftDataWithHistoricalStatuses
                 .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).Distinct().ToList();
             aircraftIdentifiers.AddRange(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList());
@@ -100,37 +97,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 liveAircraftData.SWIMFlightLeg.Status = flightLegStatus;
                 liveAircraftData.SWIMFlightLegStatusNeedsUpdate = true;
             }
-        }
-
-
-        private async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses()
-        {
-            var liveData = await _AirportWatchLiveDataEntityService.GetListBySpec(
-                new AirportWatchLiveDataSpecification(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow));
-            var flightNumbers = liveData.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList();
-            var historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
-                new AirportWatchHistoricalDataSpecification(flightNumbers, DateTime.UtcNow.AddDays(-1)));
-
-            var result = (from live in liveData
-                    join historical in historicalData on new { live.AtcFlightNumber, live.AircraftHexCode } equals new { historical.AtcFlightNumber, historical.AircraftHexCode }
-                        into leftJoinHistoricalData
-                    from historical in leftJoinHistoricalData.DefaultIfEmpty()
-                    group new { live, historical } by new { live.AtcFlightNumber, live.TailNumber, live.AircraftHexCode } into groupedResult
-                    select new AirportWatchLiveDataWithHistoricalStatusDto
-                    {
-                        Oid = groupedResult.Max(x => x.live.Oid),
-                        TailNumber = groupedResult.Key.TailNumber,
-                        AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
-                        Latitude = groupedResult.FirstOrDefault().live.Latitude,
-                        Longitude = groupedResult.FirstOrDefault().live.Longitude,
-                        AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
-                        IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
-                        RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical.Adapt<AirportWatchHistoricalDataDto>()).ToList()
-                    }
-                )
-                .ToList();
-
-            return result;
         }
 
         private bool IsTaxiingForDeparture(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData, AirportWatchHistoricalDataDto mostRecentHistoricalRecord)

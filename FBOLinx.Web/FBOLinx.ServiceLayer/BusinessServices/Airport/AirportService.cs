@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
+using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,6 +20,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
         Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds);
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
+        Task<AirportPosition> GetAirportPositionForFbo(int fboId);
+        Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
         Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
         Task<List<AirportPosition>> GetAirportPositions();
     }
@@ -30,9 +34,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         private DegaContext _degaContext;
         private IMemoryCache _MemoryCache;
         private List<AirportPosition> _AirportPositions;
+        private IFboEntityService _FboEntityService;
 
-        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache)
+        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService)
         {
+            _FboEntityService = fboEntityService;
             _MemoryCache = memoryCache;
             _degaContext = degaContext;
             _fboLinxContext = fboLinxContext;
@@ -66,6 +72,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                 .AsNoTracking()
                 .ToListAsync();
             return airports;
+        }
+
+        public async Task<AirportPosition> GetAirportPositionForFbo(int fboId)
+        {
+            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
+            if (fbo == null || fbo.FboAirport == null)
+                return null;
+            return await GetAirportPositionByAirportIdentifier(fbo.FboAirport.Icao);
+        }
+
+        public async Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier)
+        {
+            var positions = await GetAirportPositions();
+            airportIdentifier = airportIdentifier.ToUpper();
+            return positions?.Where(x => x.GetProperAirportIdentifier() == airportIdentifier).FirstOrDefault();
         }
 
         public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)

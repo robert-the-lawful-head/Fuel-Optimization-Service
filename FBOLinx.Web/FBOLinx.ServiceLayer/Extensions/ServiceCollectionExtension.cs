@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
+using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
@@ -15,6 +16,7 @@ using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
@@ -88,6 +90,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAirportWatchDistinctBoxesService, AirportWatchDistinctBoxesService>();
             services.AddTransient<IAirportWatchFlightLegStatusService, AirportWatchFlightLegStatusService>();
             services.AddTransient<IGroupCustomersService, GroupCustomersService>();
+            services.AddTransient<ISWIMFlightLegService, SWIMFlightLegService>();
+            services.AddTransient<IFlightWatchService, FlightWatchService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

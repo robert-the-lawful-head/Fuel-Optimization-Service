@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
@@ -94,6 +95,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId)
         {
+            var result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
+
             List<CustomerAircraftsViewModel> result = await (
                from ca in _Context.CustomerAircrafts
                join cg in _Context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
