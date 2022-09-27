@@ -78,6 +78,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<FbopricesService, FbopricesService>();
             services.AddTransient<AirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
+            services.AddTransient<IAirportFboGeofenceClustersService, AirportFboGeofenceClustersService>();
             services.AddTransient<AirportWatchService, AirportWatchService>();
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<ISWIMService, SWIMService>();
@@ -123,6 +124,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<AFSAircraftEntityService, AFSAircraftEntityService>();
             services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
             services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
+            services.AddTransient<IAirportFboGeoFenceClusterEntityService, AirportFboGeoFenceClusterEntityService>();
 
             return services;
         }

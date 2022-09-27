@@ -8,15 +8,25 @@ using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.EntityServices;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
+    public interface IAircraftService : IBaseDTOService<AirCraftsDto, DB.Models.AirCrafts>
+    {
+        Task<List<AirCraftsDto>> GetAllAircrafts(bool useCache = true);
+        IIncludableQueryable<AirCrafts, AircraftSpecifications> GetAllAircraftsAsQueryable();
+        IQueryable<AirCrafts> GetAllAircraftsOnlyAsQueryable();
+        Task<AirCraftsDto> GetAircrafts(int oid);
+        Task AddAirCrafts(AirCraftsDto airCrafts);
+        Task UpdateAirCrafts(AirCraftsDto airCrafts);
+        Task RemoveAirCrafts(AirCraftsDto airCrafts);
+    }
 
-
-    public class AircraftService : BaseDTOService<AirCraftsDto, DB.Models.AirCrafts, DegaContext>
+    public class AircraftService : BaseDTOService<AirCraftsDto, DB.Models.AirCrafts, DegaContext>, IAircraftService
     {
         private int _CacheLifeSpanInMinutes = 60;
         private string _AllAircraftCacheKey = "AllAircraftFactorySpecifications";
@@ -56,7 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         public IQueryable<AirCrafts> GetAllAircraftsOnlyAsQueryable()
         {
-            return _degaContext.AirCrafts.AsNoTracking();
+            return _AircraftEntityService.GetAllAircraftsOnlyAsQueryable();
         }
 
         public async Task<AirCraftsDto> GetAircrafts(int oid)
@@ -64,22 +74,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             return await GetSingleBySpec(new AircraftSpecification(new List<int>() { oid }));
         }
 
-        public async Task AddAirCrafts(AirCrafts airCrafts)
+        public async Task AddAirCrafts(AirCraftsDto airCrafts)
         {
-            _degaContext.AirCrafts.Add(airCrafts);
-            await _degaContext.SaveChangesAsync();
+            await AddAsync(airCrafts);
+            _MemoryCache.Remove(_AllAircraftCacheKey);
         }
 
-        public async Task UpdateAirCrafts(AirCrafts airCrafts)
+        public async Task UpdateAirCrafts(AirCraftsDto airCrafts)
         {
-            _degaContext.AirCrafts.Update(airCrafts);
-            await _degaContext.SaveChangesAsync();
+            await UpdateAsync(airCrafts);
+            _MemoryCache.Remove(_AllAircraftCacheKey);
         }
 
-        public async Task RemoveAirCrafts(AirCrafts airCrafts)
+        public async Task RemoveAirCrafts(AirCraftsDto airCrafts)
         {
-            _degaContext.AirCrafts.Remove(airCrafts);
-            await _degaContext.SaveChangesAsync();
+            await DeleteAsync(airCrafts);
+            _MemoryCache.Remove(_AllAircraftCacheKey);
         }
     }
 }

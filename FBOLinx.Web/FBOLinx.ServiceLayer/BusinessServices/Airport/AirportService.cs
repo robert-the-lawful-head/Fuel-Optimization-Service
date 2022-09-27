@@ -58,7 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
         public async Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds)
         {
-            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).ToListAsync();
+            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
             return airports;
         }
 

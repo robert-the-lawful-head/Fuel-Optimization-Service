@@ -22,7 +22,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public IQueryable<AirCrafts> GetAllAircraftsOnlyAsQueryable()
         {
-            return _degaContext.AirCrafts.AsNoTracking();
+            return context.AirCrafts.AsNoTracking();
         }
     }
 }

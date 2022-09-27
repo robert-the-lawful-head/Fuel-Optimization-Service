@@ -11,7 +11,9 @@ using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using Mapster;
@@ -28,11 +30,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportService _AirportService;
         private SWIMFlightLegEntityService _FlightLegEntityService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
+        private IFlightWatchService _FlightWatchService;
 
         public AirportWatchFlightLegStatusService(IAirportService airportService,
             SWIMFlightLegEntityService flightLegEntityService,
-            IAirportWatchLiveDataService airportWatchLiveDataService)
+            IAirportWatchLiveDataService airportWatchLiveDataService,
+            IFlightWatchService flightWatchService)
         {
+            _FlightWatchService = flightWatchService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FlightLegEntityService = flightLegEntityService;
             _AirportService = airportService;
@@ -40,6 +45,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithFlightLegStatuses()
         {
+            //var flightWatchData = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
+            //{
+            //    IncludeRecentHistoricalRecords = true
+            //});
+
             //First load all live records from our FlightWatch antenna from the last 5 minutes with their associated historical records from the past 24 hours.
             var liveAircraftDataWithHistoricalStatuses =
                 await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses();

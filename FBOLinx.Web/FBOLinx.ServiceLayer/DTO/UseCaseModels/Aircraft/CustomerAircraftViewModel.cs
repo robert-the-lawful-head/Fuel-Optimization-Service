@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
 {
@@ -22,12 +23,38 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public string PricingTemplateName { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }
+        public double? FuelCapacityGal { get; set; }
         public bool IsFuelerlinxNetwork { get; set; }
         public bool IsCompanyPricing { get; set; }
+        public string ICAOAircraftCode { get; set; }
 
         public string AircraftSizeDescription
         {
             get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AircraftSizes.NotSet); }
+        }
+
+        public void CastFromDTO(CustomerAircraftsDto customerAircraft)
+        {
+            Oid = customerAircraft.Oid;
+            GroupId = customerAircraft.GroupId;
+            CustomerId = customerAircraft.CustomerId;
+            Company = customerAircraft.Customer?.Company;
+            AircraftId = customerAircraft.AircraftId;
+            TailNumber = customerAircraft.TailNumber;
+            Size = customerAircraft.Size.HasValue && customerAircraft.Size != AircraftSizes.NotSet
+                ? customerAircraft.Size
+                : (AircraftSizes.NotSet);
+            BasedPaglocation = customerAircraft.BasedPaglocation;
+            NetworkCode = customerAircraft.NetworkCode;
+            AddedFrom = customerAircraft.AddedFrom ?? 0;
+            IsFuelerlinxNetwork = customerAircraft.Customer?.FuelerlinxId > 0;
+        }
+
+        public static CustomerAircraftsViewModel Cast(CustomerAircraftsDto customerAircraft)
+        {
+            var result = new CustomerAircraftsViewModel();
+            result.CastFromDTO(customerAircraft);
+            return result;
         }
     }
 }

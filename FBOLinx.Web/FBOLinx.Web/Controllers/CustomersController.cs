@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.ViewModels;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
 
 namespace FBOLinx.Web.Controllers
@@ -222,7 +224,7 @@ namespace FBOLinx.Web.Controllers
                             ac.Size = acSize;
                         }
 
-                        await _aircraftService.AddAirCrafts(ac);
+                        await _aircraftService.AddAirCrafts(ac.Adapt<AirCraftsDto>());
 
                         if (ac.AircraftId != 0)
                         {
