@@ -9,6 +9,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
     public class FlightWatchDataRequestOptions
     {
         public int? FboIdForCenterPoint { get; set; }
+        public string AirportIdentifier { get; set; }
         public bool IncludeRecentHistoricalRecords { get; set; } = true;
         public bool IncludeNearestAirportPosition { get; set; } = true;
         public bool IncludeFuelOrderInformation { get; set; }

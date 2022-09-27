@@ -41,6 +41,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CustomerAircraftsViewModel> _CustomerAircrafts;
         private IAirportFboGeofenceClustersService _AirportFboGeofenceClustersService;
         private AirportFboGeofenceClustersDto _GeoFenceCluster;
+        private List<string> _DistinctTailNumbers;
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -73,10 +74,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
-                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(options.FboIdForCenterPoint.GetValueOrDefault(), 1, daysToCheckBackForHistoricalData);
+                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetAirportIdentifier(), 1, daysToCheckBackForHistoricalData);
 
             //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(options.FboIdForCenterPoint.GetValueOrDefault())).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(GetAirportIdentifier())).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs);
@@ -87,6 +88,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             return result;
         }
 
+        private string GetAirportIdentifier()
+        {
+            if (!string.IsNullOrEmpty(_Options.AirportIdentifier))
+                return _Options.AirportIdentifier;
+            if (!string.IsNullOrEmpty(_Fbo?.FboAirport?.Icao))
+                return _Fbo?.FboAirport?.Icao;
+            return string.Empty;
+
+        }
+
         private List<FlightWatchModel> CombineAirportWatchAndSWIMData(List<AirportWatchLiveDataWithHistoricalStatusDto> liveDataWithHistoricalInfo,
             IEnumerable<SWIMFlightLegDTO> swimFlightLegs)
         {
@@ -94,7 +105,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             //Combine SWIM and AirportWatch data by tail number
             result = (from liveData in liveDataWithHistoricalInfo
-                join flightLeg in swimFlightLegs on liveData.TailNumber equals flightLeg.AircraftIdentification
+                join flightLeg in swimFlightLegs on liveData.TailNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
                 select new FlightWatchModel(liveData.AirportWatchLiveData,
                     liveData.RecentAirportWatchHistoricalDataCollection,
                     flightLeg)
@@ -102,8 +113,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 }).ToList();
 
             //Combine SWIM and AirportWatch data by flight number
-            result = (from liveData in liveDataWithHistoricalInfo
-                    join flightLeg in swimFlightLegs on liveData.AtcFlightNumber equals flightLeg.AircraftIdentification
+            result.AddRange((from liveData in liveDataWithHistoricalInfo
+                    join flightLeg in swimFlightLegs on liveData.AtcFlightNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
                     join existing in result on liveData.Oid equals existing.AirportWatchLiveDataId.GetValueOrDefault()
                         into leftJoinResult
                     from existing in leftJoinResult.DefaultIfEmpty()
@@ -113,7 +124,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                         flightLeg)
                     {
                     }
-                ).ToList();
+                ).ToList());
 
             //Add any remaining AirportWatch data to the result without a SWIM match
             result.AddRange(liveDataWithHistoricalInfo
@@ -128,6 +139,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
         private async Task PopulateAdditionalDataFromOptions(List<FlightWatchModel> result)
         {
+            _DistinctTailNumbers = result.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber)
+                .Distinct().ToList();
+
             //Set the nearest airport positions of each result
             foreach (var flightWatchModel in result)
             {
@@ -160,6 +174,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Set any upcoming orders to each result
             if (_Fbo == null || _Fbo.Oid == 0)
                 return;
+            if (string.IsNullOrEmpty(flightWatchModel.TailNumber))
+                return;
             var orders =
                 await _FuelReqService.GetUpcomingDirectAndContractOrdersForTailNumber(_Fbo.GroupId.GetValueOrDefault(),
                     _Fbo.Oid, flightWatchModel.TailNumber, true);
@@ -170,10 +186,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         {
             if (_Fbo == null || _Fbo.Oid == 0)
                 return;
+            if (string.IsNullOrEmpty(flightWatchModel.TailNumber))
+                return;
             if (_CustomerAircrafts == null)
                 _CustomerAircrafts = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(
                     _Fbo.GroupId.GetValueOrDefault(),
-                    _Fbo.Oid);
+                    _Fbo.Oid,
+                    0,
+                    _DistinctTailNumbers);
             var matchingCustomerAircraft =
                 _CustomerAircrafts.FirstOrDefault(x => x.TailNumber?.ToUpper() == flightWatchModel.TailNumber);
             if (matchingCustomerAircraft != null)
@@ -198,6 +218,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
             flightWatchModel.Arrivals = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Landing);
             flightWatchModel.Departures = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Takeoff);
+            flightWatchModel.FocusedAirportICAO = GetAirportIdentifier();
+
+            //string focusedAirport = GetAirportIdentifier();
+            //if (string.IsNullOrEmpty(focusedAirport))
+            //    return;
+            //if (flightWatchModel.ArrivalICAO == focusedAirport)
+            //{
+            //    flightWatchModel.Origin = flightWatchModel.DepartureICAO;
+            //    flightWatchModel.City = flightWatchModel.DepartureCity;
+            //}
+            //else
+            //{
+            //    flightWatchModel.Origin = flightWatchModel.ArrivalICAO;
+            //    flightWatchModel.City = flightWatchModel.ArrivalCity;
+            //}
         }
         
     }

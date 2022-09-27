@@ -19,7 +19,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
     public interface ICustomerAircraftService : IBaseDTOService<CustomerAircraftsDto, CustomerAircrafts>
     {
-        Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0);
+        Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0,
+            int customerId = 0, List<string> tailNumbers = null);
         Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId);
         Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId);
     }
@@ -35,7 +36,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             _pricingTemplateService = pricingTemplateService;
         }
 
-        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0)
+        public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null)
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);
 
@@ -43,7 +44,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             var allAircraft = await _AircraftService.GetAllAircrafts();
 
-            var result = await GetCustomerAircraftsViewModel(groupId);
+            var result = await GetCustomerAircraftsViewModel(groupId, tailNumbers);
 
             result.ForEach(x =>
             {
@@ -81,9 +82,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             return result.OrderBy(x => x.TailNumber).ToList();
         }
 
-        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId)
+        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
         {
-            var result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            List<CustomerAircraftsDto> result = new List<CustomerAircraftsDto>();
+            if (tailNumbers?.Count == 0)
+                result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            else
+                result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId, tailNumbers));
             return result?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
 

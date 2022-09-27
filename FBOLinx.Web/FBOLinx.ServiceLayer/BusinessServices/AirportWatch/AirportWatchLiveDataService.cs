@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Projections.AirportWatch;
 using FBOLinx.DB.Specifications.AirportWatchData;
-using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
@@ -24,7 +24,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         IAirportWatchLiveDataService : IBaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData>
     {
         Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(
-            int? centerfboId = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
+            string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
     }
 
     public class AirportWatchLiveDataService : BaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData, FboLinxContext>, IAirportWatchLiveDataService
@@ -45,18 +45,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
         }
 
-        public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(int? centerfboId = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
+        public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
         {
             //Load live data
-            List<AirportWatchLiveDataDto> liveData = await GetLiveData(centerfboId, pastMinutesForLiveData);
-            var aircraftHexCodes = liveData.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList();
-            
+            List<AirportWatchLiveDataDto> liveData = await GetLiveData(airportIdentifier, pastMinutesForLiveData);
+
             //Load historical data
-            List<DB.Models.AirportWatchHistoricalData> historicalData = new List<AirportWatchHistoricalData>();
-            if (pastDaysForHistoricalData > 0)
-                historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
-                    new AirportWatchHistoricalDataByHexCodeSpecification(aircraftHexCodes,
-                        DateTime.UtcNow.AddDays(-pastDaysForHistoricalData)));
+            List<AirportWatchHistoricalDataDto> historicalData =
+                await GetHistoricalData(liveData, airportIdentifier, pastDaysForHistoricalData);
+            
 
             //Group the live data with past historical events over the last day
             var result = (from live in liveData
@@ -73,7 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               Longitude = groupedResult.FirstOrDefault().live.Longitude,
                               AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
                               IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
-                              RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical.Adapt<AirportWatchHistoricalDataDto>()).ToList(),
+                              RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical).ToList(),
                               AirportWatchLiveData = groupedResult.Where(x => x.live != null).Select(x => x.live).FirstOrDefault()
                           }
                 )
@@ -82,12 +79,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             return result;
         }
 
-        private async Task<List<AirportWatchLiveDataDto>> GetLiveData(int? centerfboId = null, int pastMinutesForLiveData = 1)
+        private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
         {
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();
-            if (centerfboId.GetValueOrDefault() > 0)
+            if (!string.IsNullOrEmpty(airportIdentifier))
             {
-                var airportPosition = await _AirportService.GetAirportPositionForFbo(centerfboId.GetValueOrDefault());
+                var airportPosition = await _AirportService.GetAirportPositionByAirportIdentifier(airportIdentifier);
                 CoordinateBoundaries boundaries = new CoordinateBoundaries(airportPosition.GetFboCoordinate(), _DistanceInNauticalMiles, DistanceUnit.Miles);
                 result = await GetListbySpec(new AirportWatchLiveDataByBoundarySpecification(
                     DateTime.UtcNow.AddMinutes(-pastMinutesForLiveData), DateTime.UtcNow,
@@ -100,6 +97,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             }
 
             return result;
+        }
+
+        private async Task<List<AirportWatchHistoricalDataDto>> GetHistoricalData(
+            List<AirportWatchLiveDataDto> liveData, string airportIdentifier = null, int pastDaysForHistoricalData = 1)
+        {
+            if (pastDaysForHistoricalData <= 0)
+                return new List<AirportWatchHistoricalDataDto>();
+            
+            if (string.IsNullOrEmpty(airportIdentifier))
+            {
+                var aircraftHexCodes = liveData.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList();
+                var historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
+                    new AirportWatchHistoricalDataByHexCodeSpecification(aircraftHexCodes,
+                        DateTime.UtcNow.AddDays(-pastDaysForHistoricalData)));
+                return historicalData.Select(x => x.Adapt<AirportWatchHistoricalDataDto>()).ToList();
+            }
+            else
+            {
+                var tailNumbers = liveData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).ToList();
+                var projectedHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec<AirportWatchHistoricalDataSimplifiedProjection>(
+                    new AirportWatchHistoricalDataByIcaoSpecification(airportIdentifier,
+                        DateTime.UtcNow.AddDays(-pastDaysForHistoricalData), DateTime.UtcNow));
+                return projectedHistoricalData.Select(x => x.Adapt<AirportWatchHistoricalDataDto>()).ToList();
+            }
         }
     }
 }

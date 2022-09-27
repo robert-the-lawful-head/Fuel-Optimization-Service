@@ -15,8 +15,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 {
     public interface ISWIMFlightLegService : IBaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg>
     {
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int? fboId = null,
-            int pastMinutesForDepartureOrArrival = -30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = -30);
+
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(string icao = "", int pastMinutesForDepartureOrArrival = 30);
     }
 
     public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, DegaContext>, ISWIMFlightLegService
@@ -28,23 +29,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             _AirportService = airportService;
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int? fboId = null, int pastMinutesForDepartureOrArrival = -30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30)
         {
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-            if (fboId.GetValueOrDefault() > 0)
-            {
-                var fboAirport = await _AirportService.GetAirportForFboId(fboId.GetValueOrDefault());
-                if (fboAirport == null)
-                    return result;
-                result = await GetListbySpec(new SWIMFlightLegByAirportSpecification(fboAirport.Icao,
-                    DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-            }
-            else
-            {
                 result = await GetListbySpec(
                     new SWIMFlightLegByDateSpecification(
                         DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-            }
+
+            return result;
+        }
+
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(string icao = "", int pastMinutesForDepartureOrArrival = 30)
+        {
+            if (string.IsNullOrEmpty(icao))
+                return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
+            List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
+                result = await GetListbySpec(new SWIMFlightLegByAirportSpecification(icao,
+                    DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
 
             return result;
         }

@@ -11,6 +11,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using Geolocation;
+using SQLitePCL;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 {
@@ -37,7 +38,23 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int VisitsToMyFBO { get; set; }
         public int Arrivals { get; set; }
         public int Departures { get; set; }
+        public string FocusedAirportICAO { get; set; }
+        public DateTime? BoxTransmissionDateTimeUtc => _AirportWatchLiveData?.BoxTransmissionDateTimeUtc;
 
+        public string AtcFlightNumber => string.IsNullOrEmpty(_AirportWatchLiveData?.AtcFlightNumber)
+            ? _SwimFlightLeg?.AircraftIdentification
+            : _AirportWatchLiveData.AtcFlightNumber;
+
+        public int? AltitudeInStandardPressure => _AirportWatchLiveData?.AltitudeInStandardPressure;
+        public int? GroundSpeedKts => _AirportWatchLiveData?.GroundSpeedKts;
+        public double? TrackingDegree => _AirportWatchLiveData?.TrackingDegree;
+        public int? VerticalSpeedKts => _AirportWatchLiveData?.VerticalSpeedKts;
+        public int? TransponderCode => _AirportWatchLiveData?.TransponderCode;
+        public string BoxName => _AirportWatchLiveData?.BoxName;
+        public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc;
+        public string AircraftTypeCode => _AirportWatchLiveData?.AircraftTypeCode;
+        public int? GpsAltitude => _AirportWatchLiveData?.GpsAltitude;
+        public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
         public string TailNumber => string.IsNullOrEmpty(_AirportWatchLiveData?.TailNumber) ? _SwimFlightLeg?.AircraftIdentification : _AirportWatchLiveData.TailNumber;
 
         public string FlightDepartment => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
@@ -47,8 +64,27 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public string FAAMake => _SwimFlightLeg?.FAAMake;
         public string FAAModel => _SwimFlightLeg?.FAAModel;
         public double? FuelCapacityGal => _CustomerAircraft?.FuelCapacityGal;
-        public string Origin {get; set; }
-        public string City { get; set; }
+
+        public string Origin
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FocusedAirportICAO))
+                    return "";
+                return FocusedAirportICAO == DepartureICAO ? ArrivalICAO : DepartureICAO;
+            }
+        }
+
+        public string City
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(FocusedAirportICAO))
+                    return "";
+                return FocusedAirportICAO == DepartureICAO ? ArrivalCity : DepartureCity;
+            }
+        }
+
         public string DepartureICAO => _SwimFlightLeg?.DepartureICAO;
         public string DepartureCity => _SwimFlightLeg?.DepartureCity;
         public string ArrivalICAO => _SwimFlightLeg?.ArrivalICAO;
@@ -57,7 +93,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? ATDZulu => _SwimFlightLeg?.ATD;
         public DateTime? ETALocal => _SwimFlightLeg?.ETALocal;
         public DateTime? ETAZulu => _SwimFlightLeg?.ETA;
-        public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration();
+        public TimeSpan? ETE => (_SwimFlightLeg?.ETA).HasValue ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
         public double? Latitude => (_AirportWatchLiveData?.Latitude).HasValue ? _AirportWatchLiveData?.Latitude : _SwimFlightLeg?.Latitude;
@@ -73,7 +109,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? ID => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Oid;
         public int? FuelerlinxID => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
-        public string TransactionStatus => "LIVE";
+        public string TransactionStatus => ID > 0 ? "LIVE" : "";
         public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode;
         public bool IsInNetwork => (_CustomerAircraft?.IsInNetwork()).GetValueOrDefault();
         public bool IsOutOfNetwork => (_CustomerAircraft?.IsOutOfNetwork()).GetValueOrDefault();
