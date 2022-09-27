@@ -67,23 +67,23 @@ export enum SwimType {
 
 export const swimTableColumns = {
        status:
-       'Status',
+       'status',
         tailNumber:
-       'Tail Number',
+       'tailNumber',
         flightDepartment:
-       'Flight Department',
+       'flightDepartment',
         icaoAircraftCode:
-       'Aircraft Type',
+       'icaoAircraftCode',
         ete:
-       'ETE',
+       'ete',
         etaAtd:
-       'ETA/ATD',
+       'etaAtd',
         originDestination:
-       'Origin/Destination',
+       'originDestination',
         isAircraftOnGround:
-       'On Ground',
+       'isAircraftOnGround',
         itpMarginTemplate:
-       'ITP Margin Template',
+       'itpMarginTemplate',
        etaAtdZulu:
        'etaAtdZulu',
        expandedDetail: "expandedDetail"
@@ -98,4 +98,18 @@ export const swimTableColumns = {
         '#FF7F00',
         inNetwork:
         '#C9CEEA'
+     };
+     export const stautsTextColor = {
+        "EnRoute":
+        'black',
+        "Landing":
+        'blue',
+        "TaxiingDestination":
+        'yellow',
+        "Arrived":
+        'green',
+        "Departing":
+        'gray',
+        "TaxiingOrigin":
+        'yellow'
      };
