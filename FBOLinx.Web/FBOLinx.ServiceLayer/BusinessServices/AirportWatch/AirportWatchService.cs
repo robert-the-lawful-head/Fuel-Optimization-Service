@@ -367,7 +367,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             if (fboGeoFenceCluster != null)
             {
-                var fboClusterCoordinates = await _airportFboGeofenceClustersService.GetClusterCoordinatesByClusterIdIQueryable(fboGeoFenceCluster.Oid);
+                var fboClusterCoordinates = await _airportFboGeofenceClustersService.GetClusterCoordinatesByClusterId(fboGeoFenceCluster.Oid);
                 foreach (var clusterCoordinate in fboClusterCoordinates)
                 {
                     Geolocation.Coordinate coordinate = new Geolocation.Coordinate();

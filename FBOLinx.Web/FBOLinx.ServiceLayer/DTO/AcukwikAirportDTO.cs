@@ -37,6 +37,25 @@ namespace FBOLinx.Service.Mapping.Dto
         public string Lighting { get; set; }
         public string AirportNameShort { get; set; }
         public double? DistanceToSelectedAirport { get; set; }
+        public bool IsUnitedStatesAirport
+        {
+            get
+            {
+                return (string.IsNullOrEmpty(Country) || Country.ToUpper() == "UNITED STATES" || Country.ToUpper() == "USA");
+            }
+        }
+
+        public string ProperAirportIdentifier
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(Icao))
+                    return Icao;
+                if (IsUnitedStatesAirport && !string.IsNullOrEmpty(Faa))
+                    return Faa;
+                return Iata;
+            }
+        }
         public ICollection<AcukwikFbohandlerDetailDto> AcukwikFbohandlerDetailCollection { get; set; }
     }
 }

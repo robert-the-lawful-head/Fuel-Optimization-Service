@@ -13,7 +13,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public interface IFboEntityService : IRepository<Fbos, FboLinxContext>
     {
         Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
-        Task<FbosDTO> GetFboByFboId(int fboId);
         Task<int> GetFboAcukwikId(int fboId);
     }
 
@@ -32,14 +31,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
                               where icaos.Contains(fa.Icao) && f.GroupId > 1 && f.Active == true
                               select new FbosDTO { Oid = f.Oid, Fbo = f.Fbo, GroupId = f.GroupId }).ToListAsync();
             return fbos;
-        }
-
-        public async Task<FbosDTO> GetFboByFboId(int fboId)
-        {
-            var result = await (from f in _context.Fbos
-                                where f.Oid == fboId
-                                select new FbosDTO { Oid = f.Oid, Fbo = f.Fbo, GroupId = f.GroupId }).FirstOrDefaultAsync();
-            return result;
         }
 
         public async Task<int> GetFboAcukwikId(int fboId)

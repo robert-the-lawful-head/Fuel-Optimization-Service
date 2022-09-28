@@ -7,32 +7,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
+using FBOLinx.DB.Specifications.AirportFboGeoFence;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.EntityServices;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
-    public class AirportFboGeofenceClustersService
+    public interface IAirportFboGeofenceClustersService : IBaseDTOService<AirportFboGeofenceClustersDto, DB.Models.AirportFboGeofenceClusters>
     {
-        private readonly IServiceProvider _services;
-        private readonly FboLinxContext _context;
-        private readonly DegaContext _degaContext;
-        private IAirportService _airportService;
+        Task<AirportFboGeofenceClustersDto> CreateNewCluster(AirportFboGeofenceClustersDto airportFboGeoFenceClusters);
+        Task DeleteCluster(int id);
+        Task<List<string>> GetDistinctAirportIdentifiersWithClusters();
+        Task<List<AirportFboGeofenceClustersDto>> GetAllClusters(int acukwikAirportId = 0, int acukwikFboHandlerId = 0, bool useCache = true);
+        Task<List<AirportFboGeofenceClusterCoordinatesDto>> GetClusterCoordinatesByClusterId(int clusterId);
+    }
 
-        public AirportFboGeofenceClustersService(FboLinxContext context, IServiceProvider services, DegaContext degaContext,
-            IAirportService airportService)
+    public class AirportFboGeofenceClustersService : BaseDTOService<AirportFboGeofenceClustersDto, DB.Models.AirportFboGeofenceClusters, FboLinxContext>, IAirportFboGeofenceClustersService
+    {
+        private int _CacheLifeSpanInMinutes = 60;
+        private string _AllGeoFenceClustersCacheKey = "AllGeoFenceClusters";
+        
+        private readonly FboLinxContext _context;
+        private IAirportService _airportService;
+        private IMemoryCache _MemoryCache;
+
+        public AirportFboGeofenceClustersService(IAirportFboGeoFenceClusterEntityService airportFboGeoFenceClusterEntityService, FboLinxContext context,
+            IAirportService airportService,
+            IMemoryCache memoryCache) : base(airportFboGeoFenceClusterEntityService)
         {
+            _MemoryCache = memoryCache;
             _airportService = airportService;
             _context = context;
-            _services = services;
-            _degaContext = degaContext;
         }
 
-        public async Task<AirportFboGeofenceClusters> CreateNewCluster(AirportFboGeofenceClusters airportFboGeoFenceClusters)
+        public async Task<AirportFboGeofenceClustersDto> CreateNewCluster(AirportFboGeofenceClustersDto airportFboGeoFenceClusters)
         {
             try
             {
-                _context.AirportFboGeofenceClusters.Add(airportFboGeoFenceClusters);
-                await _context.SaveChangesAsync();
+                await AddAsync(airportFboGeoFenceClusters);
+                _MemoryCache.Remove(_AllGeoFenceClustersCacheKey);
             }
             catch (Exception ex)
             {
@@ -46,18 +62,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             try
             {
-                var airportFboGeoFenceClusters = await _context.AirportFboGeofenceClusters.Where(x => x.Oid == id)
-                    .Include(x => x.ClusterCoordinatesCollection).FirstOrDefaultAsync();
-                if (airportFboGeoFenceClusters.ClusterCoordinatesCollection != null)
-                {
-                    foreach (var clusterCoordinate in airportFboGeoFenceClusters.ClusterCoordinatesCollection)
-                    {
-                        _context.Entry(clusterCoordinate).State = EntityState.Deleted;
-                    }
-                }
-
-                _context.Entry(airportFboGeoFenceClusters).State = EntityState.Deleted;
-                await _context.SaveChangesAsync();
+                await _EntityService.DeleteAsync(id);
+                _MemoryCache.Remove(_AllGeoFenceClustersCacheKey);
             }
             catch (System.Exception exception)
             {
@@ -73,17 +79,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         }
 
 
-        public async Task<List<AirportFboGeofenceClusters>> GetAllClusters(int acukwikAirportId = 0)
+        public async Task<List<AirportFboGeofenceClustersDto>> GetAllClusters(int acukwikAirportId = 0, int acukwikFboHandlerId = 0, bool useCache = true)
         {
-            var allFboGeoClusters = await _context.AirportFboGeofenceClusters
-                .Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId))
-                .Include(x => x.ClusterCoordinatesCollection)
-                .ToListAsync();
+            List<AirportFboGeofenceClustersDto> allFboGeoClusters = null;
+
+            if (useCache)
+            {
+                _MemoryCache.TryGetValue(_AllGeoFenceClustersCacheKey, out allFboGeoClusters);
+            }
+
+            if (allFboGeoClusters != null)
+                return allFboGeoClusters.Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId)
+                && (acukwikFboHandlerId == 0 || x.AcukwikFBOHandlerID == acukwikFboHandlerId)
+                ).ToList();
+
+            allFboGeoClusters = await GetListbySpec(new AirportFboGeoFenceClusterSpecification());
 
             var airportIds = allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToList();
 
-            var airports = await _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection)
-                .ToListAsync();
+            var airports = await _airportService.GetAirportsByAcukwikAirportIds(airportIds);
 
             allFboGeoClusters.ForEach(x =>
             {
@@ -99,46 +113,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 x.FboName = fbo.HandlerLongName;
                 if (x.ClusterCoordinatesCollection?.Count == 0)
                     return;
-                x.ClusterCoordinatesCollection = x.ClusterCoordinatesCollection.OrderBy(x => x.Oid).ToList();
+                x.ClusterCoordinatesCollection = x.ClusterCoordinatesCollection?.OrderBy(x => x.Oid).ToList();
             });
 
-            return allFboGeoClusters;
-        }
-        public async Task<IQueryable<AirportFboGeofenceClusters>> GetAllClustersIQueryable(int acukwikAirportId = 0)
-        {
-            var allFboGeoClusters = _context.AirportFboGeofenceClusters
-                .Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId))
-                .Include(x => x.ClusterCoordinatesCollection)
-                .AsNoTracking();
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
+            _MemoryCache.Set(_AllGeoFenceClustersCacheKey, allFboGeoClusters, cacheEntryOptions);
 
-            var airportIds = await allFboGeoClusters.Select(x => x.AcukwikAirportID).Distinct().ToListAsync();
-
-            var airports = _degaContext.AcukwikAirports.Where(x => airportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection).AsNoTracking();
-
-            (await allFboGeoClusters.ToListAsync()).ForEach(x =>
-            {
-                var airport = airports.FirstOrDefault(a => a.Oid == x.AcukwikAirportID);
-                if (airport == null)
-                    return;
-                x.Icao = airport.Icao;
-                var fbo = airport.AcukwikFbohandlerDetailCollection?.FirstOrDefault(f =>
-                    f.HandlerId == x.AcukwikFBOHandlerID);
-                if (fbo == null)
-                    return;
-                x.AcukwikFBOHandlerID = fbo.HandlerId;
-                x.FboName = fbo.HandlerLongName;
-            });
-            return allFboGeoClusters;
-            
+            return allFboGeoClusters.Where(x => (acukwikAirportId == 0 || x.AcukwikAirportID == acukwikAirportId)
+                                                && (acukwikFboHandlerId == 0 || x.AcukwikFBOHandlerID == acukwikFboHandlerId)).ToList();
         }
-        public async Task<List<AirportFboGeofenceClusterCoordinates>> GetClusterCoordinatesByClusterId(int clusterId)
+
+        public async Task<List<AirportFboGeofenceClusterCoordinatesDto>> GetClusterCoordinatesByClusterId(int clusterId)
         {
-            var clusterCoordinates = await _context.AirportFboGeoFenceClusterCoordinates.Where(a => a.ClusterID == clusterId).ToListAsync();
-            return clusterCoordinates;
-        }
-        public async Task<IQueryable<AirportFboGeofenceClusterCoordinates>> GetClusterCoordinatesByClusterIdIQueryable(int clusterId)
-        {
-            return _context.AirportFboGeoFenceClusterCoordinates.Where(a => a.ClusterID == clusterId).AsNoTracking();
+            var cluster = await GetSingleBySpec(new AirportFboGeoFenceClusterSpecification(clusterId));
+            return cluster?.ClusterCoordinatesCollection?.ToList();
         }
     }
 }

@@ -21,8 +21,8 @@ namespace FBOLinx.Functions
             _SWIMService = swimService;
         }
         
-        [FunctionName("SWIMPlaceholderRecordsSyncFunction")]
-        public async Task Run([TimerTrigger("15 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
+        [FunctionName("SWIMRecentAndUpcomingFlightLegsSyncFunction")]
+        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -31,15 +31,15 @@ namespace FBOLinx.Functions
 
             try
             {
-                await _SWIMService.CreatePlaceholderRecords();
+                await _SWIMService.SyncRecentAndUpcomingFlightLegs();
             }
             catch (Exception ex)
             {
-                log.LogInformation($"SWIMPlaceholderRecordsSyncFunction error: {ex.Message}. StackTrace: {ex.StackTrace}.");
+                log.LogInformation($"SWIMRecentAndUpcomingFlightLegsSyncFunction error: {ex.Message}. StackTrace: {ex.StackTrace}.");
             }
             
             stopwatch.Stop();
-            log.LogInformation($"SWIMPlaceholderRecordsSyncFunction executed in: {stopwatch.ElapsedMilliseconds / 1000}s.");
+            log.LogInformation($"SWIMRecentAndUpcomingFlightLegsSyncFunction executed in: {stopwatch.ElapsedMilliseconds / 1000}s.");
         }
     }
 }

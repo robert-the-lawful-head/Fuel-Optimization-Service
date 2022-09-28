@@ -12,7 +12,8 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
     public class AirportWatchHistoricalDataByHexCodeSpecification : Specification<AirportWatchHistoricalData>
     {
         public AirportWatchHistoricalDataByHexCodeSpecification(List<string> aircraftHexCodes, DateTime aircraftPositionStateDate)
-            : base(x => aircraftHexCodes.Any(hexCode => hexCode == x.AircraftHexCode)
+            : base(x => !string.IsNullOrEmpty(x.AircraftHexCode) 
+                        && aircraftHexCodes.Contains(x.AircraftHexCode)
                         && x.AircraftPositionDateTimeUtc > aircraftPositionStateDate)
         {
         }
