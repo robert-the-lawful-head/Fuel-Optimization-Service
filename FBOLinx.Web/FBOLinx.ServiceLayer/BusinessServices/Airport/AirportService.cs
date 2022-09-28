@@ -123,6 +123,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             var centerAirportPosition =
                 airportPositions.FirstOrDefault(x => x.Icao?.ToUpper() == airportIdentifierForCenterAirport?.ToUpper());
 
+            if (centerAirportPosition == null)
+                return new List<AcukwikAirportDTO>();
+
             var airportTypeFilter = new string[] { EnumHelper.GetDescription(AirportTypeEnum.JointCivilMilitary), EnumHelper.GetDescription(AirportTypeEnum.Civil) };
             var fuelTypeFilter = new string[] { EnumHelper.GetDescription(FuelTypeEnum.AvgasJet), EnumHelper.GetDescription(FuelTypeEnum.Jet), EnumHelper.GetDescription(FuelTypeEnum.JetOnly), EnumHelper.GetDescription(FuelTypeEnum.Unknown) };
 
