@@ -24,6 +24,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private CustomerAircraftsViewModel _CustomerAircraft;
         private SWIMFlightLegDTO _SwimFlightLeg;
         private AirportWatchLiveDataDto _AirportWatchLiveData;
+        private FlightLegStatus? _Status;
+        private bool _DoesSWIMFlightLegNeedUpdate = false;
 
         public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, SWIMFlightLegDTO swimFlightLeg)
         {
@@ -104,10 +106,31 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             : _SwimFlightLeg?.IsAircraftOnGround;
 
         public string ITPMarginTemplate => _CustomerAircraft?.PricingTemplateName;
-        public FlightLegStatus? Status => _SwimFlightLeg?.Status;
-        public string Phone => _SwimFlightLeg?.Phone;
+
+        public FlightLegStatus? Status
+        {
+            get
+            {
+                if (!_Status.HasValue)
+                    return _SwimFlightLeg?.Status;
+                return _Status;
+            }
+            set
+            {
+                _Status = value;
+                if (_SwimFlightLeg != null)
+                {
+                    _SwimFlightLeg.Status = value;
+                    _DoesSWIMFlightLegNeedUpdate = true;
+                }
+            }
+        }
+
+        public string Phone => _CustomerAircraft?.Phone;
         public int? ID => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Oid;
+        public int? FuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Oid;
         public int? FuelerlinxID => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
+        public int? FuelerlinxFuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
         public string TransactionStatus => ID > 0 ? "LIVE" : "";
         public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode;
@@ -119,6 +142,22 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 
         public bool IsFuelerLinxClient => (_CustomerAircraft?.IsFuelerLinxClient()).GetValueOrDefault();
 
+        public string AircraftIdentification
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(TailNumber))
+                    return TailNumber;
+                if (!string.IsNullOrEmpty(AtcFlightNumber))
+                    return AtcFlightNumber;
+                return _AirportWatchLiveData?.AircraftHexCode;
+            }
+        }
+
+        public SWIMFlightLegDTO GetSwimFlightLeg()
+        {
+            return _SwimFlightLeg;
+        }
 
         public void SetAirportWatchHistoricalDataCollection(List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection)
         {
@@ -127,7 +166,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 
         public List<AirportWatchHistoricalDataDto> GetAirportWatchHistoricalDataCollection()
         {
-            return _AirportWatchHistoricalDataCollection;
+            return _AirportWatchHistoricalDataCollection?.OrderByDescending(x => x.AircraftPositionDateTimeUtc).ToList();
         }
 
         public void SetAirportPosition(AirportPosition airportPosition)
@@ -158,6 +197,16 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public CustomerAircraftsViewModel GetCustomerAircraft()
         {
             return _CustomerAircraft;
+        }
+
+        public void MarketSWIMFlightLegAsNeedingUpdate()
+        {
+            _DoesSWIMFlightLegNeedUpdate = true;
+        }
+
+        public bool DoesSWIMFlightLegNeedUpdate()
+        {
+            return _DoesSWIMFlightLegNeedUpdate;
         }
 
         public Geolocation.Coordinate GetCoordinates()

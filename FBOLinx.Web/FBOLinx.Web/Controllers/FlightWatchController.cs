@@ -20,14 +20,14 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("list/fbo/{fboId}")]
-        public async Task<ActionResult<FlightWatchListResponse>> GetFlightWatchDataForFbo([FromRoute] int fboId, [FromRoute] string icao)
+        public async Task<ActionResult<FlightWatchListResponse>> GetFlightWatchDataForFbo([FromRoute] int fboId, int nauticalMileRange = 250)
         {
             try
             {
                 var result = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
                 {
                     FboIdForCenterPoint = fboId,
-                    AirportIdentifier = icao,
+                    NauticalMileRadiusForData = nauticalMileRange,
                     IncludeCustomerAircraftInformation = true,
                     IncludeFuelOrderInformation = true,
                     IncludeVisitsAtFbo = true
@@ -41,13 +41,14 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("list/fbo/{fboId}/airport/{icao}")]
-        public async Task<ActionResult<FlightWatchListResponse>> GetFlightWatchDataForFboAndAirport([FromRoute] int fboId, [FromRoute] string icao)
+        public async Task<ActionResult<FlightWatchListResponse>> GetFlightWatchDataForFboAndAirport([FromRoute] int fboId, [FromRoute] string icao, int nauticalMileRange = 250)
         {
             try
             {
                 var result = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
                 {
                     FboIdForCenterPoint = fboId,
+                    NauticalMileRadiusForData = nauticalMileRange,
                     AirportIdentifier = icao,
                     IncludeCustomerAircraftInformation = true,
                     IncludeFuelOrderInformation = true,

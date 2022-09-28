@@ -22,7 +22,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
     public interface IAirportWatchFlightLegStatusService
     {
-        Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithFlightLegStatuses();
+        Task<List<FlightWatchModel>> GetAirportWatchLiveDataWithFlightLegStatuses();
     }
 
     public class AirportWatchFlightLegStatusService : IAirportWatchFlightLegStatusService
@@ -43,77 +43,69 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AirportService = airportService;
         }
 
-        public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithFlightLegStatuses()
+        public async Task<List<FlightWatchModel>> GetAirportWatchLiveDataWithFlightLegStatuses()
         {
-            //var flightWatchData = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
-            //{
-            //    IncludeRecentHistoricalRecords = true
-            //});
+            var flightWatchData = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
+            {
+                IncludeRecentHistoricalRecords = true,
+                IncludeNearestAirportPosition = true
+            });
 
-            //First load all live records from our FlightWatch antenna from the last 5 minutes with their associated historical records from the past 24 hours.
-            var liveAircraftDataWithHistoricalStatuses =
-                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses();
-            var aircraftIdentifiers = liveAircraftDataWithHistoricalStatuses
-                .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).Distinct().ToList();
-            aircraftIdentifiers.AddRange(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList());
+            ////First load all live records from our FlightWatch antenna from the last 5 minutes with their associated historical records from the past 24 hours.
+            //var liveAircraftDataWithHistoricalStatuses =
+            //    await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses();
+            //var aircraftIdentifiers = liveAircraftDataWithHistoricalStatuses
+            //    .Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).Distinct().ToList();
+            //aircraftIdentifiers.AddRange(liveAircraftDataWithHistoricalStatuses.Where(x => !string.IsNullOrEmpty(x.AtcFlightNumber)).Select(x => x.AtcFlightNumber).ToList());
 
-            //Then load all SWIM flight legs that we have from the last hour.
-            List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegByAircraftSpecification(aircraftIdentifiers, DateTime.UtcNow.AddHours(-1))));
+            ////Then load all SWIM flight legs that we have from the last hour.
+            //List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(
+            //    new SWIMFlightLegByAircraftSpecification(aircraftIdentifiers, DateTime.UtcNow.AddHours(-1))));
 
             //For each live antenna record we will determine the current flight status
-            foreach (var liveAircraftData in liveAircraftDataWithHistoricalStatuses)
+            foreach (var liveAircraftData in flightWatchData)
             {
-                //Get the latest matching leg from SWIM data if available
-                liveAircraftData.SWIMFlightLeg = existingFlightLegs.Where(x =>
-                    x.AircraftIdentification == liveAircraftData.TailNumber ||
-                    x.AircraftIdentification == liveAircraftData.AtcFlightNumber).OrderByDescending(x => x.Oid).FirstOrDefault();
                 await SetFlightLegStatus(liveAircraftData);
             }
 
-            return liveAircraftDataWithHistoricalStatuses;
+            return flightWatchData;
         }
 
-        private async Task SetFlightLegStatus(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData)
+        private async Task SetFlightLegStatus(FlightWatchModel flightWatchModel)
         {
-            //Prepare our airport position and SWIM flight leg association for the live data
-            liveAircraftData.AirportPosition =
-                await _AirportService.GetNearestAirportPosition(liveAircraftData.Latitude,
-                    liveAircraftData.Longitude);
+            ////Prepare our airport position and SWIM flight leg association for the live data
+            //liveAircraftData.AirportPosition =
+            //    await _AirportService.GetNearestAirportPosition(liveAircraftData.Latitude,
+            //        liveAircraftData.Longitude);
             
             //Finally, determine the proper FlightLegStatus of each result based on all of the data we have
-            var mostRecentHistoricalRecord = liveAircraftData.GetMostRecentHistoricalRecord();
+            var mostRecentHistoricalRecord = flightWatchModel.GetAirportWatchHistoricalDataCollection()?.FirstOrDefault();
             FlightLegStatus flightLegStatus = FlightLegStatus.EnRoute;
 
-            if (IsTaxiingForDeparture(liveAircraftData, mostRecentHistoricalRecord))
+            if (IsTaxiingForDeparture(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.TaxiingOrigin;
 
-            else if (IsTaxiingToDestination(liveAircraftData, mostRecentHistoricalRecord))
+            else if (IsTaxiingToDestination(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.TaxiingDestination;
 
-            else if (IsLandingAtDestination(liveAircraftData, mostRecentHistoricalRecord))
+            else if (IsLandingAtDestination(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.Landing;
 
-            else if (IsDepartingFromOrigin(liveAircraftData, mostRecentHistoricalRecord))
+            else if (IsDepartingFromOrigin(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.Departing;
 
-            else if (HasArrivedAtDestination(liveAircraftData, mostRecentHistoricalRecord))
+            else if (HasArrivedAtDestination(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.Arrived;
 
-            liveAircraftData.FlightLegStatus = flightLegStatus;
-            if (liveAircraftData.SWIMFlightLeg != null &&
-                liveAircraftData.FlightLegStatus != liveAircraftData.SWIMFlightLeg.Status)
-            {
-                liveAircraftData.SWIMFlightLeg.Status = flightLegStatus;
-                liveAircraftData.SWIMFlightLegStatusNeedsUpdate = true;
-            }
+            flightWatchModel.Status = flightLegStatus;
+            
         }
 
-        private bool IsTaxiingForDeparture(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData, AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
+        private bool IsTaxiingForDeparture(FlightWatchModel flightWatchModel, AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
         {
-            if (!liveAircraftData.IsAircraftOnGround)
+            if (!(flightWatchModel.IsAircraftOnGround).GetValueOrDefault())
                 return false;
-            
+
             //No historical record exists, it's a new flight we haven't seen so must be prepping to depart
             if (mostRecentHistoricalRecord == null)
                 return true;
@@ -123,28 +115,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return false;
 
             //If we have SWIM data for the upcoming flight leg and the departure airport doesn't match the one we are at then this is NOT taxi'ing for departure
-            if (liveAircraftData.SWIMFlightLeg != null && liveAircraftData.SWIMFlightLeg.ATD > DateTime.UtcNow &&
-                liveAircraftData.SWIMFlightLeg.DepartureICAO !=
-                liveAircraftData.AirportPosition?.GetProperAirportIdentifier())
+            if (flightWatchModel.ATDZulu.HasValue && flightWatchModel.ATDZulu.GetValueOrDefault() > DateTime.UtcNow &&
+                flightWatchModel.DepartureICAO !=
+                flightWatchModel.GetAirportPosition()?.GetProperAirportIdentifier())
                 return false;
 
             //Ensure the parking occurrence was registered within the past 10 minutes so it's still possibly moving
-            if (Math.Abs((liveAircraftData.AircraftPositionDateTimeUtc -
-                          mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 10)
+            if (!flightWatchModel.AircraftPositionDateTimeUtc.HasValue || Math.Abs((flightWatchModel.AircraftPositionDateTimeUtc.GetValueOrDefault() -
+                                                                       mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 10)
                 return false;
 
             //Ensure the aircraft has moved from it's parking position
-            if (Math.Abs(liveAircraftData.Latitude - mostRecentHistoricalRecord.Latitude) < 0.00001
-                && Math.Abs(liveAircraftData.Longitude - mostRecentHistoricalRecord.Longitude) < 0.00001)
+            if (Math.Abs(flightWatchModel.Latitude.GetValueOrDefault() - mostRecentHistoricalRecord.Latitude) < 0.00001
+                && Math.Abs(flightWatchModel.Longitude.GetValueOrDefault() - mostRecentHistoricalRecord.Longitude) < 0.00001)
                 return false;
 
             return true;
         }
 
-        private bool IsTaxiingToDestination(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData,
+        private bool IsTaxiingToDestination(FlightWatchModel flightWatchModel,
             AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
         {
-            if (!liveAircraftData.IsAircraftOnGround)
+            if (!flightWatchModel.IsAircraftOnGround.GetValueOrDefault())
                 return false;
 
             //We haven't seen this flight yet.  It can't be taxi'ing into the arrival.
@@ -156,40 +148,42 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return true;
 
             //Last known status was parking and it's been less than 10 minutes - if it's still moving then consider this taxi'ing to destination.
-            if (mostRecentHistoricalRecord.AircraftStatus == AircraftStatusType.Parking && Math.Abs(
-                    (liveAircraftData.AircraftPositionDateTimeUtc -
+            if (mostRecentHistoricalRecord.AircraftStatus == AircraftStatusType.Parking 
+                && flightWatchModel.AircraftPositionDateTimeUtc.HasValue
+                && Math.Abs(
+                    (flightWatchModel.AircraftPositionDateTimeUtc.Value -
                      mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 10)
                 return true;
             return false;
         }
 
-        private bool IsLandingAtDestination(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData,
+        private bool IsLandingAtDestination(FlightWatchModel flightWatchModel,
             AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
         {
-            if (liveAircraftData.IsAircraftOnGround)
+            if (flightWatchModel.IsAircraftOnGround.GetValueOrDefault())
                 return false;
 
             //Require the SWIM flight leg to confirm we know the actual destination of the aircraft.  Require the airport closest to the aircraft as well.
-            if (liveAircraftData.SWIMFlightLeg == null || liveAircraftData.AirportPosition == null)
+            if (flightWatchModel.SWIMFlightLegId.GetValueOrDefault() == 0 || flightWatchModel.GetAirportPosition() == null)
                 return false;
 
             //If the arrival airport of the leg is not our nearest airport then we can't assume we are within landing range yet
-            if (liveAircraftData.SWIMFlightLeg.ArrivalICAO !=
-                liveAircraftData.AirportPosition.GetProperAirportIdentifier())
+            if (flightWatchModel.ArrivalICAO !=
+                flightWatchModel.GetAirportPosition().GetProperAirportIdentifier())
                 return false;
 
             var distanceFromAirport =
-                liveAircraftData.AirportPosition?.GetDistanceInMilesFromAirportPosition(liveAircraftData.Latitude,
-                    liveAircraftData.Longitude);
+                flightWatchModel.GetAirportPosition().GetDistanceInMilesFromAirportPosition(flightWatchModel.Latitude.GetValueOrDefault(),
+                    flightWatchModel.Longitude.GetValueOrDefault());
 
             //We are considered "landing" if we are within 5 miles of the airport.  We've changed this because the ETA from the SWIM flight leg is a bit lagged in determining the actual arrival time.
             return (distanceFromAirport <= 5);
         }
 
-        private bool IsDepartingFromOrigin(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData,
+        private bool IsDepartingFromOrigin(FlightWatchModel flightWatchModel,
             AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
         {
-            if (liveAircraftData.IsAircraftOnGround)
+            if (flightWatchModel.IsAircraftOnGround.GetValueOrDefault())
                 return false;
 
             //Ensure we have seen this aircraft actually depart the airport recently.
@@ -198,18 +192,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return false;
 
             //The takeoff must have occurred in the last 5 minutes to be considered "departing" before turning into an "enroute" status.
-            if (Math.Abs((liveAircraftData.AircraftPositionDateTimeUtc -
-                          mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 5)
-                return false;
+            if (flightWatchModel.AircraftPositionDateTimeUtc.HasValue || Math.Abs((flightWatchModel.AircraftPositionDateTimeUtc.GetValueOrDefault() -
+                                            mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) <= 5)
+                return true;
             
-            return true;
+            return false;
         }
 
-        private bool HasArrivedAtDestination(AirportWatchLiveDataWithHistoricalStatusDto liveAircraftData,
+        private bool HasArrivedAtDestination(FlightWatchModel flightWatchModel,
             AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
         {
-            if (!liveAircraftData.IsAircraftOnGround)
+            if (!flightWatchModel.IsAircraftOnGround.GetValueOrDefault())
                 return false;
+
+            //If we don't have a live look at the aircraft and SWIM data claims it has already arrived then trust it.
+            if (flightWatchModel.AirportWatchLiveDataId <= 0 && flightWatchModel.ETAZulu.HasValue &&
+                flightWatchModel.ETAZulu.Value < DateTime.UtcNow)
+                return true;
 
             //We haven't seen this flight yet.  It can't be taxi'ing into the arrival.
             if (mostRecentHistoricalRecord == null)
@@ -219,18 +218,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             if (mostRecentHistoricalRecord.AircraftStatus != AircraftStatusType.Parking)
                 return false;
 
-            //Require a SWIM and AirportPosition record to ensure accuracy
-            if (liveAircraftData.SWIMFlightLeg == null || liveAircraftData.AirportPosition == null)
+            //Require a SWIM and AirportPosition record to ensure accuracy.
+            if (flightWatchModel.SWIMFlightLegId.GetValueOrDefault() <= 0 || flightWatchModel.GetAirportPosition() == null)
                 return false;
 
             //Confirm we have arrived at the airport that SWIM data claims we should be at.
-            if (liveAircraftData.AirportPosition?.GetProperAirportIdentifier() !=
-                liveAircraftData.SWIMFlightLeg?.ArrivalICAO)
+            if (flightWatchModel.GetAirportPosition()?.GetProperAirportIdentifier() !=
+                flightWatchModel.ArrivalICAO)
                 return false;
 
             //It's been over 10 minutes since our last parking update.
-            if (Math.Abs(
-                    (liveAircraftData.AircraftPositionDateTimeUtc -
+            if (flightWatchModel.AircraftPositionDateTimeUtc.HasValue && Math.Abs(
+                    (flightWatchModel.AircraftPositionDateTimeUtc.GetValueOrDefault() -
                      mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) >= 10)
                 return true;
             return false;

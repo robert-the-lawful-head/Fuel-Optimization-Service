@@ -17,7 +17,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
     {
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = -30);
 
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(string icao = "", int pastMinutesForDepartureOrArrival = 30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null,
+            int pastMinutesForDepartureOrArrival = 30);
     }
 
     public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, DegaContext>, ISWIMFlightLegService
@@ -39,12 +40,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result;
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(string icao = "", int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
         {
-            if (string.IsNullOrEmpty(icao))
+            if (airportIdentifiers?.Count == 0)
                 return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-                result = await GetListbySpec(new SWIMFlightLegByAirportSpecification(icao,
+                result = await GetListbySpec(new SWIMFlightLegByAirportSpecification(airportIdentifiers,
                     DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
 
             return result;

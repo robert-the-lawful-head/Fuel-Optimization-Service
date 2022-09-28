@@ -40,7 +40,7 @@ namespace FBOLinx.ServiceLayer.ScheduledService
             using (var scope = _ScopeFactory.CreateScope())
             {
                 var swimService = scope.ServiceProvider.GetRequiredService<ISWIMService>();
-                await swimService.CreatePlaceholderRecords();
+                await swimService.SyncRecentAndUpcomingFlightLegs();
             }
         }
     }

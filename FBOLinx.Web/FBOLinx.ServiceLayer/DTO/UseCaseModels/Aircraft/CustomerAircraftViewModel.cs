@@ -27,6 +27,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public bool IsFuelerlinxNetwork { get; set; }
         public bool IsCompanyPricing { get; set; }
         public string ICAOAircraftCode { get; set; }
+        public string Phone { get; set; }
 
         public string AircraftSizeDescription
         {
@@ -48,6 +49,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
             NetworkCode = customerAircraft.NetworkCode;
             AddedFrom = customerAircraft.AddedFrom ?? 0;
             IsFuelerlinxNetwork = customerAircraft.Customer?.FuelerlinxId > 0;
+            Phone = customerAircraft?.Customer?.CustomerInfoByGroup?.MainPhone;
         }
 
         public static CustomerAircraftsViewModel Cast(CustomerAircraftsDto customerAircraft)
