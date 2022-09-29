@@ -42,13 +42,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
         {
-            if (airportIdentifiers?.Count == 0)
+            if ((airportIdentifiers?.Count).GetValueOrDefault() <= 0)
                 return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
-            List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-                result = await GetListbySpec(new SWIMFlightLegByAirportSpecification(airportIdentifiers,
-                    DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-
-            return result;
+            return await GetListbySpec(new SWIMFlightLegByAirportSpecification(airportIdentifiers, DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
         }
     }
 }

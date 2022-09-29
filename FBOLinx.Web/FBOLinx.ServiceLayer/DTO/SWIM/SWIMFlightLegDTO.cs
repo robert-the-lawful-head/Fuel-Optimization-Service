@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string DepartureICAO { get; set; }
         public string ArrivalICAO { get; set; }
         public DateTime ATD { get; set; }
-        public DateTime ETA { get; set; }
+        public DateTime? ETA { get; set; }
         
         public string DepartureCity { get; set; }
         
