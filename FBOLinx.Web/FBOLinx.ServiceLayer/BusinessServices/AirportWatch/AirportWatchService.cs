@@ -548,13 +548,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 var airportWatchHistoricalData = AirportWatchHistoricalDataDto.Cast(record);
 
                 double distance = 0;
+                double airportLatitude = 0;
+                double airportLongitude = 0;
                 var airportWatchDistinctBox = airportWatchDistinctBoxes.Where(a => a.BoxName == record.BoxName).FirstOrDefault();
                 if (airportWatchDistinctBox != null && airportWatchDistinctBox.Latitude != "" && airportWatchDistinctBox.Longitude != "")
                 {
-                    var latitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLatitudeGeoLocationFromGPS(airportWatchDistinctBox.Latitude);
-                    var longitude = FBOLinx.Core.Utilities.Geography.LocationHelper.GetLongitudeGeoLocationFromGPS(airportWatchDistinctBox.Longitude);
+                    airportLatitude = LocationHelper.GetLatitudeGeoLocationFromGPS(airportWatchDistinctBox.Latitude);
+                    airportLongitude = LocationHelper.GetLongitudeGeoLocationFromGPS(airportWatchDistinctBox.Longitude);
 
-                    distance = new Coordinates(latitude, longitude).DistanceTo(
+                    distance = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
                      new Coordinates(record.Latitude, record.Longitude),
                      UnitOfLength.NauticalMiles
                  );
@@ -591,7 +593,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
-                    _LiveDataToInsert.Add(record);
+                    if (_LiveDataToInsert.Any(l => l.AircraftHexCode == record.AircraftHexCode && l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc))
+                    {
+                        var existingLiveData = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc).FirstOrDefault();
+
+                        if (existingLiveData.BoxName == record.BoxName)
+                            return;
+
+                        var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                     new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
+                     UnitOfLength.NauticalMiles
+                 );
+
+                        if (distance2 < distance)
+                        {
+                            _LiveDataToInsert.Add(record);
+                            _LiveDataToInsert.Remove(existingLiveData);
+                        }
+                    }
                 }
                 else
                 {
