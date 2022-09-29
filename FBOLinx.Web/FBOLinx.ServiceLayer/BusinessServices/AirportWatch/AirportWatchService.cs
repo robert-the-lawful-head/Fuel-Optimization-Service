@@ -593,9 +593,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
-                    if (_LiveDataToInsert.Any(l => l.AircraftHexCode == record.AircraftHexCode && l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc))
+                    if (_LiveDataToInsert.Any(l => l.AircraftHexCode == record.AircraftHexCode && l.Latitude == record.Latitude && l.Longitude == record.Longitude))
                     {
-                        var existingLiveData = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc).FirstOrDefault();
+                        var existingLiveData = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && l.Latitude == record.Latitude && l.Longitude == record.Longitude).FirstOrDefault();
 
                         if (existingLiveData.BoxName == record.BoxName)
                             return;
