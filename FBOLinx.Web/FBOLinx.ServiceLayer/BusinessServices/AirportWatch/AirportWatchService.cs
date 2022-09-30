@@ -611,6 +611,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             }
                         }
                     }
+                    else
+                        _LiveDataToInsert.Add(record);
                 }
                 else
                 {
