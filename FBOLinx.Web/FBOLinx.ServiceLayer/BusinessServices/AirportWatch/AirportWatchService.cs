@@ -500,6 +500,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalDataDto>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalDataDto>();
 
+
+
+            data = data.OrderByDescending(row => row.AircraftPositionDateTimeUtc)
+               .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
+               .Select(grouped => grouped.First()).ToList();
+
+
             //await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
             //await using var degaContext = _ServiceProvider.GetService<DegaContext>();
 
@@ -593,21 +600,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
-                    if (_LiveDataToInsert.Any(l => l.AircraftHexCode == record.AircraftHexCode && l.Latitude == record.Latitude && l.Longitude == record.Longitude))
+                    if (_LiveDataToInsert.Any(l => l.AircraftHexCode == record.AircraftHexCode && ((l.Latitude == record.Latitude && l.Longitude == record.Longitude) || (l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc))))
                     {
-                        var existingLiveData = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && l.Latitude == record.Latitude && l.Longitude == record.Longitude).FirstOrDefault();
+                        var existingLiveDataList = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && ((l.Latitude == record.Latitude && l.Longitude == record.Longitude) || (l.AircraftPositionDateTimeUtc == record.AircraftPositionDateTimeUtc))).ToList();
 
-                        if (existingLiveData.BoxName != record.BoxName)
+                        foreach (var existingLiveData in existingLiveDataList)
                         {
-                            var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                         new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
-                         UnitOfLength.NauticalMiles
-                     );
-
-                            if (distance2 < distance)
+                            if (existingLiveData.BoxName != record.BoxName)
                             {
-                                _LiveDataToInsert.Add(record);
-                                _LiveDataToInsert.Remove(existingLiveData);
+                                var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                     new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
+                                     UnitOfLength.NauticalMiles
+                                );
+
+                                if (distance2 < distance)
+                                {
+                                    _LiveDataToInsert.Add(record);
+                                    _LiveDataToInsert.Remove(existingLiveData);
+                                }
                             }
                         }
                     }
