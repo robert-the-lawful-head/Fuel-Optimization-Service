@@ -602,48 +602,62 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 {
                     var existingLiveDataToInsertList = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode).ToList();
                     var existingLiveDataToUpdateList = _LiveDataToUpdate.Where(l => l.AircraftHexCode == record.AircraftHexCode).ToList();
-                    
-                    if (existingLiveDataToInsertList.Count > 0 || existingLiveDataToUpdateList.Count > 0)
+
+                    foreach (var existingLiveData in existingLiveDataToInsertList)
                     {
-                        foreach (var existingLiveData in existingLiveDataToInsertList)
+                        if (existingLiveData.BoxName != record.BoxName)
                         {
-                            if (existingLiveData.BoxName != record.BoxName)
+                            var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                 new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
+                                 UnitOfLength.NauticalMiles
+                            );
+
+                            if (distance2 < distance)
                             {
-                                var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                                     new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
-                                     UnitOfLength.NauticalMiles
-                                );
+                                _LiveDataToInsert.Remove(existingLiveData);
 
-                                if (distance2 < distance)
+                                foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
                                 {
-                                    _LiveDataToInsert.Remove(existingLiveData);
-
-                                    if (existingLiveDataToUpdateList.Count > 0)
+                                    if (existingLiveDataToUpdate.BoxName != record.BoxName)
                                     {
-                                        foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
-                                        {
-                                            if (existingLiveDataToUpdate.BoxName != record.BoxName)
-                                            {
-                                                var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                                                     new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
-                                                     UnitOfLength.NauticalMiles
-                                                );
+                                        var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                             new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
+                                             UnitOfLength.NauticalMiles
+                                        );
 
-                                                if (distance3 < distance2)
-                                                {
-                                                    _LiveDataToUpdate.Remove(existingLiveData);
-                                                }
-                                            }
+                                        distance = distance2;
+
+                                        if (distance3 < distance2)
+                                        {
+                                            _LiveDataToUpdate.Remove(existingLiveData);
+
+                                            distance = distance3;
                                         }
                                     }
-
-                                    _LiveDataToInsert.Add(record);
                                 }
                             }
                         }
                     }
-                    else
-                        _LiveDataToInsert.Add(record);
+
+                    existingLiveDataToUpdateList = _LiveDataToUpdate.Where(l => l.AircraftHexCode == record.AircraftHexCode).ToList();
+
+                    foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
+                    {
+                        if (existingLiveDataToUpdate.BoxName != record.BoxName)
+                        {
+                            var distance4 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                 new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
+                                 UnitOfLength.NauticalMiles
+                            );
+
+                            if (distance4 < distance)
+                            {
+                                _LiveDataToUpdate.Remove(existingLiveDataToUpdate);
+                            }
+                        }
+                    }
+
+                    _LiveDataToInsert.Add(record);
                 }
                 else
                 {
