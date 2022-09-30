@@ -142,7 +142,7 @@ namespace FBOLinx.Job.AirportWatch
 
             return data;
         }
-    
+
         private List<AirportWatchLiveData> ConvertToDBModel(List<AirportWatchDataType> data)
         {
             List<AirportWatchLiveData> airportWatchData = new List<AirportWatchLiveData>();
@@ -270,11 +270,11 @@ namespace FBOLinx.Job.AirportWatch
                 airportWatchData.Add(airportWatchRow);
             }
 
-            return airportWatchData;
-                //.OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-                //.GroupBy(row => new { row.AircraftHexCode })
-                //.Select(grouped => grouped.First())
-                //.ToList();
+            return airportWatchData
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
+                .Select(grouped => grouped.First())
+                .ToList();
         }
     }
 }

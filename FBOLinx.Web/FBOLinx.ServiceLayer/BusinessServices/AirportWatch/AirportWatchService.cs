@@ -597,18 +597,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     {
                         var existingLiveData = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode && l.Latitude == record.Latitude && l.Longitude == record.Longitude).FirstOrDefault();
 
-                        if (existingLiveData.BoxName == record.BoxName)
-                            return;
-
-                        var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                     new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
-                     UnitOfLength.NauticalMiles
-                 );
-
-                        if (distance2 < distance)
+                        if (existingLiveData.BoxName != record.BoxName)
                         {
-                            _LiveDataToInsert.Add(record);
-                            _LiveDataToInsert.Remove(existingLiveData);
+                            var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                         new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
+                         UnitOfLength.NauticalMiles
+                     );
+
+                            if (distance2 < distance)
+                            {
+                                _LiveDataToInsert.Add(record);
+                                _LiveDataToInsert.Remove(existingLiveData);
+                            }
                         }
                     }
                 }
