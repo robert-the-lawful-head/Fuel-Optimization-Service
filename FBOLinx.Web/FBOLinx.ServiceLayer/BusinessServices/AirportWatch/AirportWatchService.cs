@@ -616,25 +616,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
                                 if (distance2 < distance)
                                 {
-                                    _LiveDataToInsert.Add(record);
                                     _LiveDataToInsert.Remove(existingLiveData);
-                                }
-                            }
-                        }
 
-                        foreach (var existingLiveData in existingLiveDataToUpdateList)
-                        {
-                            if (existingLiveData.BoxName != record.BoxName)
-                            {
-                                var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                                     new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
-                                     UnitOfLength.NauticalMiles
-                                );
+                                    if (existingLiveDataToUpdateList.Count > 0)
+                                    {
+                                        foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
+                                        {
+                                            if (existingLiveDataToUpdate.BoxName != record.BoxName)
+                                            {
+                                                var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                                     new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
+                                                     UnitOfLength.NauticalMiles
+                                                );
 
-                                if (distance2 < distance)
-                                {
+                                                if (distance3 < distance2)
+                                                {
+                                                    _LiveDataToUpdate.Remove(existingLiveData);
+                                                }
+                                            }
+                                        }
+                                    }
+
                                     _LiveDataToInsert.Add(record);
-                                    _LiveDataToUpdate.Remove(existingLiveData);
                                 }
                             }
                         }
