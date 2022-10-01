@@ -616,34 +616,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             {
                                 _LiveDataToInsert.Remove(existingLiveData);
                                 distance = distance2;
+
+                                if (existingLiveDataToUpdateList.Count == 0)
+                                    _LiveDataToInsert.Add(record);
                             }
                         }
                     }
 
-                    if (existingLiveDataToUpdateList.Count > 0)
+                    foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
                     {
-                        foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
+                        if (existingLiveDataToUpdate.BoxName != record.BoxName)
                         {
-                            if (existingLiveDataToUpdate.BoxName != record.BoxName)
-                            {
-                                var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                                     new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
-                                     UnitOfLength.NauticalMiles
-                                );
+                            var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
+                                 new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
+                                 UnitOfLength.NauticalMiles
+                            );
 
-                                if (distance3 < distance)
-                                {
-                                    record.TailNumber = oldAirportWatchLiveData.TailNumber;
-                                    record.Oid = oldAirportWatchLiveData.Oid;
-                                    _LiveDataToUpdate.Remove(existingLiveDataToUpdate);
-                                    _LiveDataToUpdate.Add(record);
-                                    distance = distance3;
-                                }
+                            if (distance3 < distance)
+                            {
+                                record.TailNumber = oldAirportWatchLiveData.TailNumber;
+                                record.Oid = oldAirportWatchLiveData.Oid;
+                                _LiveDataToUpdate.Remove(existingLiveDataToUpdate);
+                                _LiveDataToUpdate.Add(record);
+                                distance = distance3;
                             }
                         }
                     }
-                    else
-                        _LiveDataToInsert.Add(record);
                 }
                 else
                 {
