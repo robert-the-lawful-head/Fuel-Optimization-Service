@@ -617,7 +617,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                 _LiveDataToInsert.Remove(existingLiveData);
                                 distance = distance2;
 
-                                if (existingLiveDataToUpdateList.Count == 0)
+                                if (existingLiveDataToUpdateList == null || existingLiveDataToUpdateList.Count == 0)
                                     _LiveDataToInsert.Add(record);
                             }
                         }
