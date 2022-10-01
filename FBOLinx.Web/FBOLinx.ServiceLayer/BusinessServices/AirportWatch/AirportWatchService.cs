@@ -616,12 +616,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             {
                                 _LiveDataToInsert.Remove(existingLiveData);
                                 distance = distance2;
-
-                                if (existingLiveDataToUpdateList == null || existingLiveDataToUpdateList.Count == 0)
-                                    _LiveDataToInsert.Add(record);
                             }
                         }
                     }
+
+                    _LiveDataToInsert.Add(record);
 
                     foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
                     {
@@ -638,6 +637,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                 record.Oid = oldAirportWatchLiveData.Oid;
                                 _LiveDataToUpdate.Remove(existingLiveDataToUpdate);
                                 _LiveDataToUpdate.Add(record);
+                                _LiveDataToInsert.Remove(record);
                                 distance = distance3;
                             }
                         }
