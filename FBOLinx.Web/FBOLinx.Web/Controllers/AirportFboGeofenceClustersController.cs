@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 
 namespace FBOLinx.Web.Controllers
@@ -141,7 +142,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/airportfbogeofenceclusters
         [HttpPost]
-        public async Task<IActionResult> PostAirportFboGeofenceClusters([FromBody] AirportFboGeofenceClusters airportFboGeoFenceClusters)
+        public async Task<IActionResult> PostAirportFboGeofenceClusters([FromBody] AirportFboGeofenceClustersDto airportFboGeoFenceClusters)
         {
             if (!ModelState.IsValid)
             {
@@ -237,7 +238,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("clusters-by-acukwik-airport-id/{acukwikAirportId}")]
-        public async Task<ActionResult<List<AirportFboGeofenceClusters>>> GetClustersByAcukwikAirportId([FromRoute] int acukwikAirportId)
+        public async Task<ActionResult<List<AirportFboGeofenceClustersDto>>> GetClustersByAcukwikAirportId([FromRoute] int acukwikAirportId)
         {
             try
             {
@@ -246,12 +247,12 @@ namespace FBOLinx.Web.Controllers
             }
             catch (System.Exception exception)
             {
-                return new List<AirportFboGeofenceClusters>();
+                return new List<AirportFboGeofenceClustersDto>();
             }
         }
 
         [HttpGet("clusters-by-icao/{icao}")]
-        public async Task<ActionResult<List<AirportFboGeofenceClusters>>> GetClustersByIcao([FromRoute] string icao)
+        public async Task<ActionResult<List<AirportFboGeofenceClustersDto>>> GetClustersByIcao([FromRoute] string icao)
         {
             try
             {
@@ -262,7 +263,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (System.Exception exception)
             {
-                return new List<AirportFboGeofenceClusters>();
+                return new List<AirportFboGeofenceClustersDto>();
             }
         }
     }

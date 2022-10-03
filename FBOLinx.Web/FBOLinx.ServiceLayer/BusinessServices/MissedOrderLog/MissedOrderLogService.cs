@@ -17,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
@@ -54,11 +55,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
         public async Task<List<MissedQuotesLogViewModel>> GetMissedOrders(int fboId, DateTime startDateTime, DateTime endDateTime, bool isRecent = false)
         {
-            var fbo = await _FboEntityService.GetFboByFboId(fboId);
+            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
 
-            var fboAirport = await _FboAirportsService.GetFboAirportsByFboId(fboId);
+            if (fbo == null)
+                return new List<MissedQuotesLogViewModel>();
 
-            var fbos = await _FboEntityService.GetFbosByIcaos(fboAirport.Icao);
+            var fbos = await _FboEntityService.GetFbosByIcaos(fbo.FboAirport?.Icao);
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
@@ -73,7 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                 allFboLinxTransactions.AddRange(recentTransactions);
             }
 
-            var localTimeZone = await _AirportTimeService.GetAirportTimeZone(fboAirport.Icao);
+            var localTimeZone = await _AirportTimeService.GetAirportTimeZone(fbo.FboAirport?.Icao);
 
             var groupedAllFboLinxTransactions = allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).GroupBy(t => t.CustomerId).Select(g => new
             {
@@ -90,11 +92,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DateCreated.GetValueOrDefault());
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.DateCreated.GetValueOrDefault());
                     missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Eta.GetValueOrDefault());
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.Eta.GetValueOrDefault());
                     missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
-                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.Etd.GetValueOrDefault());
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.Etd.GetValueOrDefault());
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.Volume = transaction.QuotedVolume.GetValueOrDefault();
@@ -111,7 +113,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                 return missedOrdersLogList.OrderByDescending(m => m.CreatedDate).Take(5).ToList();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _FuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fboAirport.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
+            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fbo.FboAirport?.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
 
             var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
             {
@@ -128,11 +130,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.CreationDate.GetValueOrDefault());
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.CreationDate.GetValueOrDefault());
                     missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
-                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.ArrivalDateTime.GetValueOrDefault());
+                    var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.ArrivalDateTime.GetValueOrDefault());
                     missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;
-                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fboAirport.Icao, transaction.DepartureDateTime.GetValueOrDefault());
+                    var localDateTimeEtd = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.DepartureDateTime.GetValueOrDefault());
                     missedQuotesLogViewModel.Etd = localDateTimeEtd.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
 
                     missedQuotesLogViewModel.Volume = transaction.DispatchedVolume.Amount;

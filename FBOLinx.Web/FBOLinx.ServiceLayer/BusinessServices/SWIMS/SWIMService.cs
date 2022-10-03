@@ -25,8 +25,10 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
@@ -55,6 +57,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
         private readonly FAAAircraftMakeModelEntityService _FAAAircraftMakeModelEntityService;
         private IAirportWatchFlightLegStatusService _AirportWatchFlightLegStatusService;
+        private ISWIMFlightLegService _SwimFlightLegService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -63,8 +66,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
             AFSAircraftEntityService afsAircraftEntityService,
             FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService,
-            IAirportWatchFlightLegStatusService airportWatchFlightLegStatusService)
+            IAirportWatchFlightLegStatusService airportWatchFlightLegStatusService,
+            ISWIMFlightLegService swimFlightLegService)
         {
+            _SwimFlightLegService = swimFlightLegService;
             _AirportWatchFlightLegStatusService = airportWatchFlightLegStatusService;
             _FlightLegEntityService = flightLegEntityService;
             _FlightLegDataEntityService = flightLegDataEntityService;
@@ -234,51 +239,65 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
         }
 
-        public async Task CreatePlaceholderRecords()
+        public async Task SyncRecentAndUpcomingFlightLegs()
         {
-            var tailNumbersByLiveAndParkingCoordinates =
+            //Load our data to work with from both SWIM and AirportWatch
+            var flightWatchModelsWithLegStatuses =
                 await _AirportWatchFlightLegStatusService.GetAirportWatchLiveDataWithFlightLegStatuses();
 
-            List<SWIMFlightLeg> existingFlightLegsToUpdate = tailNumbersByLiveAndParkingCoordinates.Where(x => x.SWIMFlightLeg != null && x.SWIMFlightLegStatusNeedsUpdate)
-                .Select(x => x.SWIMFlightLeg).Distinct().ToList();
-            List<SWIMFlightLeg> placeholderRecordsToInsert = tailNumbersByLiveAndParkingCoordinates.Where(x =>
-                    x.SWIMFlightLeg == null && x.AirportPosition != null && (x.FlightLegStatus == FlightLegStatus.TaxiingOrigin || x.FlightLegStatus == FlightLegStatus.Departing))
-                .Select(x => new SWIMFlightLeg()
-                {
-                    DepartureICAO = x.AirportPosition.Icao,
-                    AircraftIdentification = string.IsNullOrEmpty(x.TailNumber) ? (x.AtcFlightNumber ?? "") : x.TailNumber,
-                    ATD = DateTime.UtcNow,
-                    ATDLocal = DateTimeHelper.GetLocalTime(DateTime.UtcNow, x.AirportPosition.IntlTimeZone, x.AirportPosition.DaylightSavingsYn?.ToLower() == "y"),
-                    IsPlaceholder = true,
-                    Status = x.FlightLegStatus,
-                    IsAircraftOnGround = true
-                }).ToList();
+            //Ensure we set the FAA make/model and any other static data needed for any that don't have it yet
+            await SetFlightLegsStaticData(flightWatchModelsWithLegStatuses);
 
+            //Update the flight leg with the latest lat/lng, altitude, and speed
+            await SetFlightLegsLocationAndTrajectory(flightWatchModelsWithLegStatuses);
+
+            //Grab all existing record that will need to be updated
+            List<SWIMFlightLegDTO> existingFlightLegsToUpdate = flightWatchModelsWithLegStatuses.Where(x => x.SWIMFlightLegId.GetValueOrDefault() > 0 && x.DoesSWIMFlightLegNeedUpdate())
+                .Select(x => x.GetSwimFlightLeg()).Distinct().ToList();
+
+            //Add new records as "placeholders" for taxi'ing departure/departing legs that haven't been sent by the FAA feed yet
+            List<SWIMFlightLegDTO> placeholderRecordsToInsert = flightWatchModelsWithLegStatuses.Where(x =>
+                    x.SWIMFlightLegId.GetValueOrDefault() <= 0 && x.GetAirportPosition() != null && (x.Status == FlightLegStatus.TaxiingOrigin || x.Status == FlightLegStatus.Departing))
+                .Select(x => new SWIMFlightLegDTO()
+                {
+                    DepartureICAO = x.GetAirportPosition().Icao,
+                    AircraftIdentification = x.AircraftIdentification,
+                    ATD = DateTime.UtcNow,
+                    ATDLocal = DateTimeHelper.GetLocalTime(DateTime.UtcNow, x.GetAirportPosition().IntlTimeZone, x.GetAirportPosition().DaylightSavingsYn?.ToLower() == "y"),
+                    IsPlaceholder = true,
+                    Status = x.Status.GetValueOrDefault(),
+                    IsAircraftOnGround = true,
+                    Latitude = x.Latitude,
+                    Longitude = x.Longitude
+                }).ToList();
+            
+            //Bulk update and insert all legs that need it
             if (existingFlightLegsToUpdate.Count > 0)
             {
-                await _FlightLegEntityService.BulkUpdate(existingFlightLegsToUpdate);
+                await _SwimFlightLegService.BulkUpdate(existingFlightLegsToUpdate);
             }
 
             if (placeholderRecordsToInsert.Count > 0)
             {
-                await _FlightLegEntityService.BulkInsert(placeholderRecordsToInsert);
+                await _SwimFlightLegService.BulkInsert(placeholderRecordsToInsert);
             }
         }
+        
 
-        public async Task UpdateFlightStatusAndOtherDynamicData()
+        private async Task SetFlightLegsLocationAndTrajectory(List<FlightWatchModel> flightWatchModels)
         {
+            var flightWatchModelsToProcess = flightWatchModels.Where(x =>
+                x.SWIMFlightLegId > 0 && x.GetSwimFlightLeg() != null).ToList();
+
             Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(DateTime.UtcNow.AddMinutes(-10)));
+            List<SWIMFlightLegData> swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
             stopwatch.Stop();
             stopwatch.Restart();
-            List<SWIMFlightLegData> swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(swimFlightLegs.Select(x => x.Oid).ToList(), DateTime.UtcNow.AddHours(-1)));
-            stopwatch.Stop();
-            stopwatch.Restart();
-            Parallel.ForEach(swimFlightLegs, swimFlightLeg =>
+            Parallel.ForEach(flightWatchModelsToProcess, flightWatchModel =>
             {
+                var swimFlightLeg = flightWatchModel.GetSwimFlightLeg();
                 SWIMFlightLegData latestSwimMessage =
-                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.Oid).FirstOrDefault();
+                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
                 if (latestSwimMessage != null)
                 {
@@ -287,72 +306,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     swimFlightLeg.Altitude = latestSwimMessage.Altitude;
                     swimFlightLeg.Latitude = latestSwimMessage.Latitude;
                     swimFlightLeg.Longitude = latestSwimMessage.Longitude;
+                    flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
                 }
             });
-
-            await _FlightLegEntityService.BulkUpdate(swimFlightLegs);
+            
             stopwatch.Stop();
         }
 
-        public async Task SetFlightLegsStaticData()
+        private async Task SetFlightLegsStaticData(List<FlightWatchModel> flightWatchModels)
         {
-            List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins), true));
-
-            //List<AirportWatchLiveData> antennaLiveData = new List<AirportWatchLiveData>();
-            List<string> tailNumbers = swimFlightLegs.Where(x => x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).Distinct().ToList();
-            IList<Tuple<int, string, string, string>> flightDepartmentsByTailNumbers = await _CustomerAircraftEntityService.GetAircraftsByFlightDepartments(tailNumbers);
-            var aircraftIds = flightDepartmentsByTailNumbers.Select(x => x.Item1).Distinct().ToList();
-            List<AirCrafts> aircrafts = await _AircraftEntityService.GetListBySpec(new AircraftSpecification(aircraftIds));
-            var afsAircrafts = await _AFSAircraftEntityService.GetListBySpec(new AFSAircraftSpecification(aircraftIds));
+            var flightWatchModelsToProcess = flightWatchModels.Where(x =>
+                x.SWIMFlightLegId > 0 && x.GetSwimFlightLeg() != null && !x.GetSwimFlightLeg().IsProcessed &&
+                !string.IsNullOrEmpty(x.TailNumber)).ToList();
+            List<string> tailNumbers = flightWatchModelsToProcess
+                .Select(x => x.TailNumber).Distinct().ToList();
 
             List<AircraftHexTailMapping> hexTailMappings = await _AircraftHexTailMappingEntityService.GetListBySpec(new AircraftHexTailMappingSpecification(tailNumbers));
             var aircraftMakeModels = await _FAAAircraftMakeModelEntityService.GetListBySpec(new AircraftMakeModelSpecification(hexTailMappings.Select(x => x.FAAAircraftMakeModelCode).Distinct().ToList()));
 
-            Parallel.ForEach(swimFlightLegs, swimFlightLeg =>
+            Parallel.ForEach(flightWatchModelsToProcess, flightWatchModel =>
             {
-                //AirportWatchLiveData latestAntennaLiveDataRecord = antennaLiveData.Where(
-                //    x => x.AtcFlightNumber == swimFlightLeg.AircraftIdentification || x.TailNumber == swimFlightLeg.AircraftIdentification).OrderByDescending(x => x.AircraftPositionDateTimeUtc).FirstOrDefault();
-                //if (latestAntennaLiveDataRecord != null)
-                //{
-                //    swimFlightLeg.IsAircraftOnGround = latestAntennaLiveDataRecord.IsAircraftOnGround;
-                //}
-
-                //List<string> atcFlightNumbers = swimFlightLegDTOs.Where(x => !x.AircraftIdentification.ToUpperInvariant().StartsWith('N')).Select(x => x.AircraftIdentification).ToList();
-
-                var aircraftByFlightDepartment = flightDepartmentsByTailNumbers.FirstOrDefault(x => x.Item2 == swimFlightLeg.AircraftIdentification);
-                if (aircraftByFlightDepartment != null)
+                var swimFlightLeg = flightWatchModel.GetSwimFlightLeg();
+                var tailMapping = hexTailMappings.FirstOrDefault(x => x.TailNumber == flightWatchModel.TailNumber);
+                if (tailMapping != null)
                 {
-                    swimFlightLeg.FlightDepartment = aircraftByFlightDepartment.Item3;
-                    swimFlightLeg.Phone = aircraftByFlightDepartment.Item4;
-                    var aircraft = aircrafts.FirstOrDefault(x => x.AircraftId == aircraftByFlightDepartment.Item1);
-                    if (aircraft != null)
+                    FAAAircraftMakeModelReference aircraftMakeModelReference =
+                        aircraftMakeModels.FirstOrDefault(x => x.CODE == tailMapping.FAAAircraftMakeModelCode);
+                    if (aircraftMakeModelReference != null)
                     {
-                        swimFlightLeg.Make = aircraft.Make;
-                        swimFlightLeg.Model = aircraft.Model;
-                        swimFlightLeg.FuelCapacityGal = aircraft.FuelCapacityGal;
-                    }
-
-                    var afsAircraft = afsAircrafts.FirstOrDefault(x => x.DegaAircraftID == aircraftByFlightDepartment.Item1);
-                    if (afsAircraft != null)
-                    {
-                        swimFlightLeg.ICAOAircraftCode = afsAircraft.Icao;
+                        swimFlightLeg.FAAMake = aircraftMakeModelReference.MFR;
+                        swimFlightLeg.FAAModel = aircraftMakeModelReference.MODEL;
                     }
                 }
 
-                if (swimFlightLeg.AircraftIdentification.ToUpper().StartsWith('N'))
-                {
-                    var tailMapping = hexTailMappings.FirstOrDefault(x => x.TailNumber == swimFlightLeg.AircraftIdentification);
-                    if (tailMapping != null)
-                    {
-                        FAAAircraftMakeModelReference aircraftMakeModelReference = aircraftMakeModels.FirstOrDefault(x => x.CODE == tailMapping.FAAAircraftMakeModelCode);
-                        if (aircraftMakeModelReference != null)
-                        {
-                            swimFlightLeg.FAAMake = aircraftMakeModelReference.MFR;
-                            swimFlightLeg.FAAModel = aircraftMakeModelReference.MODEL;
-                        }
-                    }
-                }
-                
                 if (string.IsNullOrWhiteSpace(swimFlightLeg.Make))
                 {
                     swimFlightLeg.Make = swimFlightLeg.FAAMake;
@@ -364,9 +350,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
 
                 swimFlightLeg.IsProcessed = true;
+                flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
             });
-            
-            await _FlightLegEntityService.BulkUpdate(swimFlightLegs);
         }
         
         //TODO: Refactor this.  Get a lot of this code into it's own set of services.

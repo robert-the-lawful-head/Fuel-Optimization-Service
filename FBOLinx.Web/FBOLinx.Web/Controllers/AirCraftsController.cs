@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -98,7 +99,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/AirCrafts/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAirCrafts([FromRoute] int id, [FromBody] AirCrafts airCrafts)
+        public async Task<IActionResult> PutAirCrafts([FromRoute] int id, [FromBody] AirCraftsDto airCrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -124,7 +125,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/AirCrafts
         [HttpPost]
-        public async Task<IActionResult> PostAirCrafts([FromBody] AirCrafts airCrafts)
+        public async Task<IActionResult> PostAirCrafts([FromBody] AirCraftsDto airCrafts)
         {
             if (!ModelState.IsValid)
             {

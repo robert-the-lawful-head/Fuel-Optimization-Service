@@ -13,6 +13,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Enums;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -22,10 +23,12 @@ namespace FBOLinx.Web.Controllers
     public class AcukwikAirportsController : ControllerBase
     {
         private readonly DegaContext _context;
-     
+        private IAirportService _AirportService;
 
-        public AcukwikAirportsController(DegaContext context)
+
+        public AcukwikAirportsController(DegaContext context, IAirportService airportService)
         {
+            _AirportService = airportService;
             _context = context;
         }
 
@@ -45,7 +48,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var acukwikAirports = await _context.AcukwikAirports.FindAsync(id);
+            var acukwikAirports = await _AirportService.GetAirportByAcukwikAirportId(id);
 
             if (acukwikAirports == null)
             {
@@ -202,31 +205,8 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("{icao}/nearby-airports/{miles}/nautical-miles")]
         public async Task<ActionResult<List<AcukwikAirportDTO>>> GetNearbyAcukwikAirportsByIcao([FromRoute] string icao, [FromRoute] int miles)
         {
-            var selectedAirport = await _context.AcukwikAirports
-                                            .Where(x => x.Icao.ToLower() == icao.ToLower())
-                                            .FirstOrDefaultAsync();
-
-            if (selectedAirport == null) return NotFound();
-
-            var airportTypeFilter = new string[] { EnumHelper.GetDescription(AirportTypeEnum.JointCivilMilitary)  , EnumHelper.GetDescription(AirportTypeEnum.Civil) };
-            var fuelTypeFilter = new string[] { EnumHelper.GetDescription(FuelTypeEnum.AvgasOnly), EnumHelper.GetDescription(FuelTypeEnum.Avgas), EnumHelper.GetDescription(FuelTypeEnum.NoFuel) };
-
-            var cityAirports = await _context.AcukwikAirports
-                                           .Where(x => x.StateSubdivision == selectedAirport.StateSubdivision)
-                                           .Where(x => airportTypeFilter.Contains(x.AirportType))
-                                           .Where(x => !fuelTypeFilter.Contains(x.FuelType))
-                                           .ToListAsync();
-
-            var airportsResult = cityAirports.Adapt<List<AcukwikAirportDTO>>();
-            foreach (var airport in airportsResult)
-            {
-                airport.DistanceToSelectedAirport = DistanceHelper.MetersToNauticalMiles(DistanceHelper.GetDistanceBetweenTwoPoints(
-                    LocationHelper.ConvertDMSToDEG(selectedAirport.Latitude), LocationHelper.ConvertDMSToDEG(selectedAirport.Longitude),
-                    LocationHelper.ConvertDMSToDEG(airport.Latitude), LocationHelper.ConvertDMSToDEG(airport.Longitude)));
-                
-            }
-
-            return Ok(airportsResult.Where(x => x.DistanceToSelectedAirport < miles).ToList());
+            var result = await _AirportService.GetAirportsWithinRange(icao, miles);
+            return Ok(result);
         }
 
         private bool AcukwikAirportsExists(int id)

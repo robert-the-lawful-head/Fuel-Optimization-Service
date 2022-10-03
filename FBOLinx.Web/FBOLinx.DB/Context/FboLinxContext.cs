@@ -1045,6 +1045,9 @@ namespace FBOLinx.DB.Context
             modelBuilder.Entity<AirportWatchDistinctBoxes>(entity =>
             {
                 entity.Property(e => e.Oid).ValueGeneratedOnAdd();
+                entity.Property(e => e.Latitude).IsUnicode(false);
+
+                entity.Property(e => e.Longitude).IsUnicode(false);
             });
         }
     }

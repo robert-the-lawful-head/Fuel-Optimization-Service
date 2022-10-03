@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Specifications;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -50,7 +51,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         {
             var recentMissedQuotes = await GetRecentMissedQuotes(fboId, true);
 
-            var fbo = await _FboEntityService.GetFboByFboId(fboId);
+            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
             var customersList = await _CustomerService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
 
             var recentMissedQuotesGroupedList = recentMissedQuotes.GroupBy(r => r.CustomerId).Select(g => new

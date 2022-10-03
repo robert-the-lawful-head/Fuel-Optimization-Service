@@ -24,6 +24,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
     public interface IFuelReqService : IBaseDTOService<FuelReqDto, FuelReq>
     {
+        Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
+            string tailNumber,
+            bool useCache = false);
         Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrders(int groupId, int fboId,
             bool useCache = false);
         Task<List<FuelReqDto>> GetDirectOrdersForFbo(int fboId, DateTime? startDateTime = null,
@@ -35,7 +38,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
     {
+        private int _CacheLifeSpanInMinutes = 10;
         private string _UpcomingOrdersCacheKeyPrefix = "UpcomingOrders_ByGroupAndFbo_";
+        private int _HoursToLookBackForUpcomingOrders = 1;
+        private int _HoursToLookForwardForUpcomingOrders = 12;
+
         private FuelReqEntityService _FuelReqEntityService;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly FboLinxContext _context;
@@ -57,8 +64,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _context = context;
         }
 
+        public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
+            string tailNumber,
+            bool useCache = true)
+        {
+            tailNumber = tailNumber.Trim().ToUpper();
+            var upcomingOrders = await GetUpcomingDirectAndContractOrders(groupId, fboId, useCache);
+            return upcomingOrders?.Where(x => x.TailNumber?.ToUpper() == tailNumber).ToList();
+        }
+
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrders(int groupId, int fboId,
-            bool useCache = false)
+            bool useCache = true)
         {
             List<FuelReqDto> result = null;
             if (useCache)
@@ -66,11 +82,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 result = await GetUpcomingOrdersFromCache(groupId, fboId);
             }
 
-            if (result == null)
-            {
-                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, DateTime.UtcNow.AddHours(-1),
-                    DateTime.UtcNow.AddHours(12));
-                var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(10));
+            if (result == null) {
+                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, DateTime.UtcNow.AddHours(-_HoursToLookBackForUpcomingOrders),
+                    DateTime.UtcNow.AddHours(_HoursToLookForwardForUpcomingOrders));
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
                 _MemoryCache.Set(_UpcomingOrdersCacheKeyPrefix + groupId + "_" + fboId, result, cacheEntryOptions);
             }
 

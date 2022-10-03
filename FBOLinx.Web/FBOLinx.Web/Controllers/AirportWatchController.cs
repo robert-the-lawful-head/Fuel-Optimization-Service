@@ -133,5 +133,12 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(unassignedAntennas);
         }
+
+        //[HttpGet("test")]
+        //public async Task<ActionResult> Test()
+        //{
+        //    await _airportWatchService.GetAirportWatchTestData();
+        //    return Ok();
+        //}
     }
 }
