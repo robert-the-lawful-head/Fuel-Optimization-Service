@@ -500,30 +500,44 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalDataDto>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalDataDto>();
 
+            var airports = await _AirportService.GetAirportPositions();
+            var airportWatchDistinctBoxes = await _AirportWatchDistinctBoxesService.GetAllAirportWatchDistinctBoxes();
 
+            var dataWithLatLng = (from d in data
+                                  join ad in airportWatchDistinctBoxes on d.BoxName equals ad.BoxName
+                                  join a in airports on new { Icao = ad.AirportICAO } equals new { Icao = (string.IsNullOrEmpty(a.Icao) ? a.Faa : a.Icao) }
+                                  select new
+                                  {
+                                      d,
+                                      AirportLatitude = a.Latitude,
+                                      AirportLongitude = a.Longitude
+                                  ,
+                                      DistanceFromAirport = new Coordinates(a.Latitude, a.Longitude).DistanceTo(
+                          new Coordinates(d.Latitude, d.Longitude),
+                          UnitOfLength.NauticalMiles
+                                 )
+                                  }).ToList();
 
-            data = data.OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-               .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
-               .Select(grouped => grouped.First()).ToList();
+            data = dataWithLatLng.Where(r => r.DistanceFromAirport < 350).OrderByDescending(r => r.DistanceFromAirport).ThenByDescending(r => r.d.AircraftPositionDateTimeUtc)
+                .GroupBy(r => r.d.AircraftHexCode).Select(grouped => grouped.First().d).ToList();
 
+                     //await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
+                     //await using var degaContext = _ServiceProvider.GetService<DegaContext>();
 
-            //await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
-            //await using var degaContext = _ServiceProvider.GetService<DegaContext>();
+                     // TEST DATA
+                     //data.Clear();
+                     //var testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":0,\"GroundSpeedKts\":7,\"TrackingDegree\":17.0,\"Latitude\":33.57487,\"Longitude\":-117.12913,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":-75,\"IsAircraftOnGround\":true,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
+                     //var newAircraftWatchLiveData = new AirportWatchLiveDataDto();
+                     //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
+                     //data.Add(newAircraftWatchLiveData);
+                     //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":2100,\"GroundSpeedKts\":89,\"TrackingDegree\":195.0,\"Latitude\":33.56058,\"Longitude\":-117.13237,\"VerticalSpeedKts\":1664,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":2100,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
+                     //newAircraftWatchLiveData = new AirportWatchLiveDataDto();
+                     //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
+                     //data.Add(newAircraftWatchLiveData);
 
-            // TEST DATA
-            //data.Clear();
-            //var testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":0,\"GroundSpeedKts\":7,\"TrackingDegree\":17.0,\"Latitude\":33.57487,\"Longitude\":-117.12913,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":-75,\"IsAircraftOnGround\":true,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-            //var newAircraftWatchLiveData = new AirportWatchLiveDataDto();
-            //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
-            //data.Add(newAircraftWatchLiveData);
-            //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":2100,\"GroundSpeedKts\":89,\"TrackingDegree\":195.0,\"Latitude\":33.56058,\"Longitude\":-117.13237,\"VerticalSpeedKts\":1664,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":2100,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-            //newAircraftWatchLiveData = new AirportWatchLiveDataDto();
-            //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
-            //data.Add(newAircraftWatchLiveData);
-
-            //Grab distinct aircraft for this set of data
-            //var distinctAircraftHexCodes =
-            //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
+                     //Grab distinct aircraft for this set of data
+                     //var distinctAircraftHexCodes =
+                     //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
             var distinctHexCodes = data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode))
                 .Select(x => x.AircraftHexCode).Distinct().ToList();
 
@@ -538,8 +552,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(distinctHexCodes, DateTime.UtcNow.AddHours(-4));
 
-            var airportWatchDistinctBoxes = await _AirportWatchDistinctBoxesService.GetAllAirportWatchDistinctBoxes();
-
             foreach (var record in data)
             {
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
@@ -553,26 +565,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     .FirstOrDefault();
 
                 var airportWatchHistoricalData = AirportWatchHistoricalDataDto.Cast(record);
-
-                double distance = 0;
-                double airportLatitude = 0;
-                double airportLongitude = 0;
-                var airportWatchDistinctBox = airportWatchDistinctBoxes.Where(a => a.BoxName == record.BoxName).FirstOrDefault();
-                if (airportWatchDistinctBox != null && airportWatchDistinctBox.Latitude != "" && airportWatchDistinctBox.Longitude != "")
-                {
-                    airportLatitude = LocationHelper.GetLatitudeGeoLocationFromGPS(airportWatchDistinctBox.Latitude);
-                    airportLongitude = LocationHelper.GetLongitudeGeoLocationFromGPS(airportWatchDistinctBox.Longitude);
-
-                    distance = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                     new Coordinates(record.Latitude, record.Longitude),
-                     UnitOfLength.NauticalMiles
-                 );
-                }
-                else
-                    return;
-
-                if (distance > 350)
-                    return;
 
                 //Record historical status
 
@@ -600,48 +592,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 //Record live-view data and new flight/tail combinations
                 if (oldAirportWatchLiveData == null)
                 {
-                    var existingLiveDataToInsertList = _LiveDataToInsert.Where(l => l.AircraftHexCode == record.AircraftHexCode).ToList();
-                    var existingLiveDataToUpdateList = _LiveDataToUpdate.Where(l => l.AircraftHexCode == record.AircraftHexCode).ToList();
-
-                    //foreach (var existingLiveData in existingLiveDataToInsertList)
-                    //{
-                    //    if (existingLiveData.BoxName != record.BoxName)
-                    //    {
-                    //        var distance2 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                    //             new Coordinates(existingLiveData.Latitude, existingLiveData.Longitude),
-                    //             UnitOfLength.NauticalMiles
-                    //        );
-
-                    //        if (distance2 < distance)
-                    //        {
-                    //            _LiveDataToInsert.Remove(existingLiveData);
-                    //            distance = distance2;
-                    //        }
-                    //    }
-                    //}
-
                     _LiveDataToInsert.Add(record);
-
-                    //foreach (var existingLiveDataToUpdate in existingLiveDataToUpdateList)
-                    //{
-                    //    if (existingLiveDataToUpdate.BoxName != record.BoxName)
-                    //    {
-                    //        var distance3 = new Coordinates(airportLatitude, airportLongitude).DistanceTo(
-                    //             new Coordinates(existingLiveDataToUpdate.Latitude, existingLiveDataToUpdate.Longitude),
-                    //             UnitOfLength.NauticalMiles
-                    //        );
-
-                    //        if (distance3 < distance)
-                    //        {
-                    //            record.TailNumber = oldAirportWatchLiveData.TailNumber;
-                    //            record.Oid = oldAirportWatchLiveData.Oid;
-                    //            _LiveDataToUpdate.Remove(existingLiveDataToUpdate);
-                    //            _LiveDataToUpdate.Add(record);
-                    //            _LiveDataToInsert.Remove(record);
-                    //            distance = distance3;
-                    //        }
-                    //    }
-                    //}
                 }
                 else
                 {
