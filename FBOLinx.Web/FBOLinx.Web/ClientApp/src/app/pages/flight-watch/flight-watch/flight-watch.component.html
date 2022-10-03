@@ -45,19 +45,19 @@
             class="drawer-container"
             opened
         >
-            <div *ngIf="flightWatchData">
+            <ng-container *ngIf="flightWatchData">
                 <app-flight-watch-settings
-                    [swimArrivals]="swimArrivals"
-                    [swimDepartures]="swimDepartures"
-                    [icaoList]="airportsICAO"
-                    [icao]="selectedICAO"
-                    [filteredTypes]="filteredTypes"
-                    (filterChanged)="onFilterChanged($event)"
-                    (typesFilterChanged)="onTypesFilterChanged($event)"
-                    (icaoChanged)="updateIcao($event)"
-                    (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
+                [swimArrivals]="swimArrivals"
+                [swimDepartures]="swimDepartures"
+                [icaoList]="airportsICAO"
+                [icao]="selectedICAO"
+                [filteredTypes]="filteredTypes"
+                (filterChanged)="onFilterChanged($event)"
+                (typesFilterChanged)="onTypesFilterChanged($event)"
+                (icaoChanged)="updateIcao($event)"
+                (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                 ></app-flight-watch-settings>
-            </div>
+            </ng-container>
         </mat-drawer>
     </mat-drawer-container>
 </div>

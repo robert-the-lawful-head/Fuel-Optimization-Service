@@ -84,13 +84,13 @@ table.description-table {
 .table-header-container{
     p.table-header{
         font-weight: bold;
-        font-size: 15px;
-        padding: 20px 0px 0px 20px;
+        font-size: 16px;
+        padding: 10px 0px 0px 20px;
         margin: 0px;
       }
   }
 
 .table-container {
     overflow: auto;
-    height: 100%;
+    height: calc(100% - 40px);
 }
