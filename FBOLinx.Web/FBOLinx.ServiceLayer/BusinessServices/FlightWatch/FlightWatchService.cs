@@ -26,6 +26,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
     public interface IFlightWatchService
     {
         Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options);
+        Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId);
     }
 
     public class FlightWatchService : IFlightWatchService
@@ -59,6 +60,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _SwimFlightLegService = swimFlightLegService;
             _FboService = fboService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
+        }
+
+        public async Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId)
+        {
+            FlightWatchLegAdditionalDetailsModel result = new FlightWatchLegAdditionalDetailsModel();
+            result.SWIMFlightLeg = await _SwimFlightLegService.GetSingleBySpec(new SWIMFlightLegSpecification(swimFlightLegId));
+            if (result.SWIMFlightLeg == null)
+                return null;
+            if (!string.IsNullOrEmpty(result.SWIMFlightLeg.DepartureICAO))
+                result.DepartureAirportPositionInfo =
+                    await _AirportService.GetAirportPositionByAirportIdentifier(result.SWIMFlightLeg.DepartureICAO);
+            if (!string.IsNullOrEmpty(result.SWIMFlightLeg.ArrivalICAO))
+                result.ArrivalAirportPositionInfo =
+                    await _AirportService.GetAirportPositionByAirportIdentifier(result.SWIMFlightLeg.ArrivalICAO);
+            result.SWIMFlightLeg?.SWIMFlightLegDataMessages?.RemoveAll(x =>
+                !x.Latitude.HasValue || !x.Longitude.HasValue);
+            return result;
         }
 
         public async Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options)

@@ -42,6 +42,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public string ICAOAircraftCode { get; set; }
         public bool IsProcessed { get; set; }
 
-        public virtual IEnumerable<SWIMFlightLegDataDTO> SWIMFlightLegDataMessages { get; set; }
+        public virtual List<SWIMFlightLegDataDTO> SWIMFlightLegDataMessages { get; set; }
     }
 }
