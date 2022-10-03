@@ -1,15 +1,13 @@
 <div class="settings-filter">
-    <mat-form-field >
-        <mat-label>Select Airport</mat-label>
-        <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
+    <div>
+        <select class="form-select form-select-sm" aria-label="select ICAO" [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
+            <option selected>Select ICAO</option>
             <ng-container *ngFor="let icao of icaoList">
-                <mat-option value="{{ icao }}">{{ icao }}</mat-option>
+                <option value="{{ icao }}">{{ icao }}</option>
             </ng-container>
-        </mat-select>
-    </mat-form-field>
-    <mat-form-field *ngIf="!isSearchAirportHidden">
-        <mat-label>Search Aircraft</mat-label>
-        <mat-icon matPrefix>search</mat-icon>
-        <input placeholder="Search Aircraft" matInput (keyup)="applyFilter($event)" />
-    </mat-form-field>
+        </select>
+    </div>
+    <div *ngIf="!isSearchAirportHidden">
+        <input class="form-control form-control-sm" type="text" aria-label="Search Aircraft" placeholder="Search Aircraft" matInput (keyup)="applyFilter($event)">
+    </div>
 </div>
