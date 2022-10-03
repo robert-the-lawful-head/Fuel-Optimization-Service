@@ -537,4 +537,20 @@ export class FlightWatchMapComponent
             });
         }
     }
+    resizeMap(isopen: boolean){
+        var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0] as HTMLElement;
+        var mapDiv = document.getElementById(this.mapContainer);
+        var mapWrapper = document.getElementById('map-wrapper');
+
+        if(isopen){
+            mapDiv.style.width = mapWrapper.offsetWidth + 'px';
+            mapCanvas.style.width = '100%';
+
+        }else{
+            mapDiv.style.width = '100%';
+            mapCanvas.style.width = '100%';
+        }
+
+        this.map.resize();
+    }
 }

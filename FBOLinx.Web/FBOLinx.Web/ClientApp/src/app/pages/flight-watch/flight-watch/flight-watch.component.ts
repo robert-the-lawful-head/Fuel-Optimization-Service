@@ -294,11 +294,19 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     async updateButtonOnDrawerResize(){
         if(!this.drawer.opened) return;
-          this.drawer.toggle();
+        await this.drawer.toggle();
         await this.delay(50);
-        this.drawer.toggle();
+        this.openSettingsDrawer();
+
     }
     delay(time) {
         return new Promise(resolve => setTimeout(resolve, time));
+    }
+    async openSettingsDrawer(){
+        await this.drawer.toggle();
+        this.mapWrapper.resizeMap(this.drawer.opened);
+    }
+    isDrawerOpen(){
+       return this.drawer.opened;
     }
 }

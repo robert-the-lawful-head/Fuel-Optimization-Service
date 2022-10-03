@@ -61,4 +61,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         else if (type == 'taxiway')
             this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
     }
+    resizeMap(isopen: boolean){
+        this.map.resizeMap(isopen);
+    }
 }
