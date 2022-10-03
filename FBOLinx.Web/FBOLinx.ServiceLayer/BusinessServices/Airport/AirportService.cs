@@ -31,6 +31,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
         Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
             int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
+        Task<List<AirportPosition>> GetAirportPositions();
     }
 
     //TODO: Convert this to a DTO and Entity Service!
@@ -145,7 +146,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return result?.Select(x => x.Adapt<AcukwikAirportDTO>()).ToList();
         }
 
-        private async Task<List<AirportPosition>> GetAirportPositions()
+        public async Task<List<AirportPosition>> GetAirportPositions()
         {
             if (_AirportPositions?.Count > 0)
                 return _AirportPositions;
