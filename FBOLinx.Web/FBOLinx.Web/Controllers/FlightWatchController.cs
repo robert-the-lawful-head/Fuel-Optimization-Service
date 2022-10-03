@@ -61,5 +61,20 @@ namespace FBOLinx.Web.Controllers
                 return Ok(new FlightWatchListResponse(false, exception.Message));
             }
         }
+
+        [HttpGet("leg/{swimFlightLegId}")]
+        public async Task<ActionResult<FlightWatchLegAdditionalDetailsResponse>> GetFlightWatchLegAdditionalDetails(
+            [FromRoute] int swimFlightLegId)
+        {
+            try
+            {
+                var result = await _FlightWatchService.GetAdditionalDetailsForLeg(swimFlightLegId);
+                return Ok(new FlightWatchLegAdditionalDetailsResponse(result));
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new FlightWatchLegAdditionalDetailsResponse(false, exception.Message));
+            }
+        }
     }
 }
