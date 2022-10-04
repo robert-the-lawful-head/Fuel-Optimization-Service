@@ -1,21 +1,20 @@
-
 table {
     width: 100%;
-  }
+}
 
-  tr.example-detail-row {
+tr.example-detail-row {
     height: 0;
-  }
+}
 
-  tr.example-element-row:not(.example-expanded-row):hover {
+tr.example-element-row:not(.example-expanded-row):hover {
     background: whitesmoke;
-  }
+}
 
-  tr.example-element-row:not(.example-expanded-row):active {
+tr.example-element-row:not(.example-expanded-row):active {
     background: #efefef;
-  }
+}
 
-  .example-element-row td {
+.example-element-row td {
     border-bottom-width: 0;
     min-width: 70px;
     white-space: nowrap;
@@ -23,74 +22,78 @@ table {
     overflow: hidden;
     font-size: 12px;
     padding: 10px;
-  }
+}
 
-  .example-element-detail {
+.example-element-detail {
     overflow: hidden;
     width: 100%;
-  }
+}
 
-
-  .example-element-diagram {
+.example-element-diagram {
     min-width: 80px;
     border: 2px solid black;
     padding: 8px;
     font-weight: lighter;
     margin: 8px 0;
     height: 104px;
-  }
+}
 
-  .example-element-symbol {
+.example-element-symbol {
     font-weight: bold;
     font-size: 40px;
     line-height: normal;
-  }
+}
 
-  .example-element-description {
+.example-element-description {
     padding: 16px;
-  }
+}
 
-  .example-element-description-attribution {
+.example-element-description-attribution {
     opacity: 0.5;
-  }
+}
 
-  tr.mat-row, tr.mat-footer-row, th.mat-header-cell {
+tr.mat-row,
+tr.mat-footer-row,
+th.mat-header-cell {
     height: auto;
     padding: 0 0 0 10px;
     margin: 0px;
 }
-th{
-font-weight: bolder;
-font-size: 14px;
+th {
+    font-weight: bolder;
+    font-size: 14px;
 }
 table.description-table {
     border-collapse: collapse;
     width: 100%;
-    th, td {
+    th,
+    td {
         text-align: left;
         padding: 4px;
         font-size: 12px;
-      }
-
-  }
-
-  .table-container{
-    padding: 0px 20px 0px 20px;
-  }
-
-  .hide {
-    display: none;
+    }
 }
-.table-header-container{
-    p.table-header{
-        font-weight: bold;
-        font-size: 16px;
-        padding: 10px 0px 0px 20px;
-        margin: 0px;
-      }
-  }
 
 .table-container {
+    padding: 0px 20px 0px 20px;
+    margin: 0;
     overflow: auto;
-    height: calc(100% - 40px);
+    height: calc(100% - 42px);
+}
+
+.hide {
+    display: none;
+}
+.table-header-container {
+    p.table-header {
+        font-weight: bold;
+        font-size: 16px;
+        margin: 0px;
+    }
+    p.table-header:first-child {
+        padding: 20px 0px 0px 20px;
+    }
+    p.table-header:nth-of-type(2) {
+        padding: 0px 0px 0px 20px;
+    }
 }
