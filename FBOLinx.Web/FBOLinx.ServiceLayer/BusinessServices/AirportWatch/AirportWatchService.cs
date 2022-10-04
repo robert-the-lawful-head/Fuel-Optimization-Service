@@ -609,26 +609,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 }
             }
 
-            await PrepareRecordsForDatabase();
+            await PrepareRecordsForDatabase(airportWatchDistinctBoxes);
 
             if (!isTesting)
                 await CommitChanges();
         }
 
-        private async Task PrepareRecordsForDatabase()
+        private async Task PrepareRecordsForDatabase(List<AirportWatchDistinctBoxesDTO> airportWatchDistinctBoxes)
         {
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+
+                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
+                    airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             }
 
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
-                airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+
+                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
+                    airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             }
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
