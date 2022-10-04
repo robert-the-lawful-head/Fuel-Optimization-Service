@@ -105,11 +105,11 @@ export const swimTableColumns = {
         "Landing":
         'blue',
         "TaxiingDestination":
-        'yellow',
+        '#FDD953',
         "Arrived":
         'green',
         "Departing":
         'gray',
         "TaxiingOrigin":
-        'yellow'
+        '#FDD953'
      };
