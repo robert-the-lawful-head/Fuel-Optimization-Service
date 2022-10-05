@@ -27,6 +27,6 @@ namespace FBOLinx.Core.Enums
         [Description("JET")]
         Jet = 5,
         [Description("AVGAS JET")]
-        AvgasJet = 5,
+        AvgasJet = 6
     }
 }
