@@ -22,6 +22,8 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     // Public Members
     public totalOrders: number;
     public startDateString: string;
+    public dayDifference: number = 30;
+    public monthDifference: number = 1;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -33,6 +35,8 @@ export class StatisticsTotalOrdersComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.dayDifference = Math.abs(moment(this.endDate).diff(this.startDate, 'days'));
+        this.monthDifference = Math.abs(moment(this.endDate).diff(this.startDate, 'months'));
         this.refreshData();
     }
 

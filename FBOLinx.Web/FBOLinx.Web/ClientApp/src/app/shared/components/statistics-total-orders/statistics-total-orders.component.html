@@ -1,12 +1,11 @@
-<ni-card
-    *ngIf="options.useCard"
-    [bgColor]="'info'"
-    [outline]="true"
-    class="info-card"
->
+<ni-card *ngIf="options.useCard"
+         [bgColor]="'info'"
+         [outline]="true"
+         class="info-card">
     <h6 class="mt-0 title">Fuel Orders through FBOLinx</h6>
     <div class="count">{{ totalOrders | number }}</div>
-    <small>Since {{ startDateString }}</small>
+    <small *ngIf="dayDifference <= 60">Last {{ dayDifference }} days</small>
+    <small *ngIf="dayDifference > 60">Last {{ monthDifference }} months</small>
     <mat-icon>shopping_basket</mat-icon>
 </ni-card>
 

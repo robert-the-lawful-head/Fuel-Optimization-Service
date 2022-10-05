@@ -4,6 +4,8 @@ import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 
+import * as moment from 'moment';
+
 @Component({
     selector: 'app-statistics-orders-by-location',
     styleUrls: ['./statistics-orders-by-location.component.scss'],
@@ -19,6 +21,8 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     // Public Members
     public totalOrders: number;
     public icao: string;
+    public dayDifference: number = 30;
+    public monthDifference: number = 1;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -26,6 +30,8 @@ export class StatisticsOrdersByLocationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
+        this.dayDifference = Math.abs(moment(this.endDate).diff(this.startDate, 'days'));
+        this.monthDifference = Math.abs(moment(this.endDate).diff(this.startDate, 'months'));
         this.refreshData();
     }
 

@@ -1,7 +1,8 @@
 <ni-card [bgColor]="'info'" [outline]="true" class="info-card">
     <h6 class="mt-0 title">Uplifts</h6>
     <div class="count">{{ totalOrders | number }}</div>
-    <small>Last 30 days @ {{ icao }} - Generated via FuelerLinx</small>
+    <small *ngIf="dayDifference <= 60">Last {{ dayDifference }} days @ {{ icao }} - Generated via FuelerLinx</small>
+    <small *ngIf="dayDifference > 60">Last {{ monthDifference }} months @ {{ icao }} - Generated via FuelerLinx</small>
     <mat-icon>local_gas_station</mat-icon>
 </ni-card>
 
