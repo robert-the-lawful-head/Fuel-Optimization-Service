@@ -5,32 +5,25 @@
         <mat-tab label="Statistics">
             <div class="row mt-3">
                 <div class="col-md-6 col-xl-3">
-                    <app-statistics-total-orders
-                        [endDate]="filterEndDate"
-                        [startDate]="filterStartDate"
-                    ></app-statistics-total-orders>
+                    <app-statistics-total-customers [endDate]="filterEndDate"
+                                                    [startDate]="filterStartDate"></app-statistics-total-customers>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <app-statistics-total-customers
-                        [endDate]="filterEndDate"
-                        [startDate]="filterStartDate"
-                    ></app-statistics-total-customers>
+                    <app-statistics-total-aircraft [endDate]="filterEndDate"
+                                                   [startDate]="filterStartDate"></app-statistics-total-aircraft>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <app-statistics-total-aircraft
-                        [endDate]="filterEndDate"
-                        [startDate]="filterStartDate"
-                    ></app-statistics-total-aircraft>
+                    <app-statistics-total-orders [endDate]="filterEndDate"
+                                                 [startDate]="filterStartDate"></app-statistics-total-orders>
                 </div>
 
                 <div class="col-md-6 col-xl-3">
-                    <app-statistics-orders-by-location
-                        [endDate]="filterEndDate"
-                        [startDate]="pastThirtyDaysStartDate"
-                    ></app-statistics-orders-by-location>
+                    <app-statistics-orders-by-location [endDate]="filterEndDate"
+                                                       [startDate]="filterStartDate"></app-statistics-orders-by-location>
                 </div>
+
             </div>
 
             <div class="row">
