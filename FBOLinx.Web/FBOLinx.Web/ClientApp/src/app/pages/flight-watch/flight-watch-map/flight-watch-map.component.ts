@@ -16,8 +16,6 @@ import * as mapboxgl from 'mapbox-gl';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
-
-import { isCommercialAircraft } from '../../../../utils/aircraft';
 import {
     Aircraftwatch,
     FlightWatch,
