@@ -5,6 +5,16 @@
         <mat-tab label="Statistics">
             <div class="row mt-3">
                 <div class="col-md-6 col-xl-3">
+                    <app-statistics-total-customers [endDate]="filterEndDate"
+                                                    [startDate]="filterStartDate"></app-statistics-total-customers>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
+                    <app-statistics-total-aircraft [endDate]="filterEndDate"
+                                                   [startDate]="filterStartDate"></app-statistics-total-aircraft>
+                </div>
+
+                <div class="col-md-6 col-xl-3">
                     <app-statistics-total-orders [endDate]="filterEndDate"
                                                  [startDate]="filterStartDate"></app-statistics-total-orders>
                 </div>
@@ -14,15 +24,6 @@
                                                        [startDate]="filterStartDate"></app-statistics-orders-by-location>
                 </div>
 
-                <div class="col-md-6 col-xl-3">
-                    <app-statistics-total-customers [endDate]="filterEndDate"
-                                                    [startDate]="filterStartDate"></app-statistics-total-customers>
-                </div>
-
-                <div class="col-md-6 col-xl-3">
-                    <app-statistics-total-aircraft [endDate]="filterEndDate"
-                                                   [startDate]="filterStartDate"></app-statistics-total-aircraft>
-                </div>
             </div>
 
             <div class="row">
