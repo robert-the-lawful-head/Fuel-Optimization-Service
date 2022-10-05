@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { FlightLegStatusEnum, stautsTextColor, Swim, swimTableColumns, tailNumberTextColor } from 'src/app/models/swim';
+import { FlightLegStatusEnum, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -46,6 +46,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     fbo: string;
     icao: string
 
+    hasChangeDefaultSort = false;
+
     constructor(private getTime : GetTimePipe,
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
@@ -56,6 +58,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
         this.icao = this.sharedService.currentUser.icao;
     }
     ngAfterViewInit() {
+
+        if(!this.hasChangeDefaultSort && !this.isArrival){
+            let flights = this.setManualSortOnDepartures(this.data)
+            this.dataSource = new MatTableDataSource(flights);
+        }else{
+            this.dataSource = new MatTableDataSource(this.data);
+        }
+
         this.dataSource = new MatTableDataSource(this.data);
 
         if(this.isArrival){
@@ -77,27 +87,30 @@ export class FlightWatchSettingTableComponent implements OnInit {
             this.saveSettings.emit();
         });
     }
-    setManualSortOnDepartures(data: Swim[]){
-        var taxiing = data.filter((row) => { return FlightLegStatusEnum.TaxiingDestination == row.status || FlightLegStatusEnum.TaxiingOrigin == row.status; }).sort((a, b) => { return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, false); });
-        var departing = data.filter((row) => { return FlightLegStatusEnum.Departing == row.status }).sort((a, b) => { return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, false); });
-        var enRoute = data.filter((row) => { return FlightLegStatusEnum.EnRoute == row.status; }).sort((a, b) => { return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, false); });
-
-        return (taxiing.concat(departing)).concat(enRoute);
-
-    }
-
     ngOnChanges(changes: SimpleChanges) {
         if(changes.columns){
             this.columnsToDisplay = this.getVisibleColumns();
             this.setVisibleColumnsName();
         }
         if (changes.data && this.dataSource){
-            if(changes.data.previousValue == null){
+            if(!this.hasChangeDefaultSort && !this.isArrival){
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }else{
                 this.dataSource.data = changes.data.currentValue;
             }
         }
+    }
+    setManualSortOnDepartures(data: Swim[]){
+        var taxiing = data?.filter((row) => { return FlightLegStatusEnum.TaxiingDestination == row.status || FlightLegStatusEnum.TaxiingOrigin == row.status; }) || [];
+        taxiing = taxiing.sort((a, b) => { return this.compare(a.atdZulu, b.atdZulu, false); });
+
+        var departing = data?.filter((row) => { return FlightLegStatusEnum.Departing == row.status }) || [];
+        departing = departing.sort((a, b) => { return this.compare(a.atdZulu, b.atdZulu, false); });
+
+        var enRoute = data?.filter((row) => { return FlightLegStatusEnum.EnRoute == row.status; }) || [];
+        enRoute = enRoute.sort((a, b) => { return this.compare(a.atdZulu, b.atdZulu, false); });
+
+        return (taxiing.concat(departing)).concat(enRoute);
     }
     getVisibleColumns() {
         return (
@@ -123,6 +136,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 : element.arrivalICAO
     }
     refreshSort() {
+        this.hasChangeDefaultSort= true;
         let sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
         );
@@ -171,19 +185,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return row[col.id];
     }
     getColumnDisplayString(column:string){
-        if(column == swimTableColumns.etaAtd){
+        if(column == swimTableColumns.originDestination || column == swimTableColumns.etaAtd){
             return this.isArrival
-            ? "ETA"
-            : "ATD";
+            ? swimTableColumnsDisplayText[column].arrivals
+            : swimTableColumnsDisplayText[column].departures;
         }
 
-        if(column == swimTableColumns.originDestination){
-            return this.isArrival
-            ? "Origin"
-            : "Destination";
-        }
-
-        return this.columnsToDisplayDic[column];
+        return swimTableColumnsDisplayText[column]
     }
     getOriginCityLabel(){
         return this.isArrival
@@ -219,6 +227,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
             : row.departures;
 }
     sortData(sort: Sort) {
+        this.hasChangeDefaultSort = true;
         this.dataSource.data.sort((a, b) => {
           const isAsc = sort.direction === 'asc';
           switch (sort.active) {
