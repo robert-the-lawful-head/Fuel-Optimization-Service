@@ -9,6 +9,7 @@
     width: 100%;
     background: $main-bg;
     z-index: 99997;
+    top: $navbar-height;
 
     .breadcrumb {
         display: flex;
@@ -67,8 +68,7 @@
                     height: 36px;
                     padding: 7px ($module-rem * 2) 3px;
                     position: relative;
-                    transition: background 0.2s $animation,
-                        color 0.2s $animation;
+                    transition: background 0.2s $animation, color 0.2s $animation;
                     vertical-align: top;
 
                     @media only screen and (max-width: 767px) {
@@ -189,8 +189,7 @@
                     height: 36px;
                     padding: 7px ($module-rem * 2) 3px;
                     position: relative;
-                    transition: background 0.2s $animation,
-                        color 0.2s $animation;
+                    transition: background 0.2s $animation, color 0.2s $animation;
                     vertical-align: top;
 
                     @media only screen and (max-width: 767px) {
