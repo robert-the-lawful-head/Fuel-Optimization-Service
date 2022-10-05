@@ -4,7 +4,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { FlightLegStatusEnum, stautsTextColor, Swim, swimTableColumns, tailNumberTextColor } from 'src/app/models/swim';
+import { FlightLegStatusEnum, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -185,19 +185,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return row[col.id];
     }
     getColumnDisplayString(column:string){
-        if(column == swimTableColumns.etaAtd){
+        if(column == swimTableColumns.originDestination || column == swimTableColumns.etaAtd){
             return this.isArrival
-            ? "ETA"
-            : "ATD";
+            ? swimTableColumnsDisplayText[column].arrivals
+            : swimTableColumnsDisplayText[column].departures;
         }
 
-        if(column == swimTableColumns.originDestination){
-            return this.isArrival
-            ? "Origin"
-            : "Destination";
-        }
-
-        return this.columnsToDisplayDic[column];
+        return swimTableColumnsDisplayText[column]
     }
     getOriginCityLabel(){
         return this.isArrival

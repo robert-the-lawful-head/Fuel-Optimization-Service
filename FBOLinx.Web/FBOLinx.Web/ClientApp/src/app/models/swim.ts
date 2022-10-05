@@ -44,7 +44,7 @@ export enum FlightLegStatusEnum {
     TaxiingDestination,
     Arrived,
     Departing,
-    TaxiingOrigin
+    TaxiingOrigin,
 }
 export interface Time {
     ticks: number;
@@ -61,55 +61,48 @@ export interface Time {
 }
 
 export enum SwimType {
-    Arrival ,
-    Departure
-  }
+    Arrival,
+    Departure,
+}
 
 export const swimTableColumns = {
-       status:
-       'status',
-        tailNumber:
-       'tailNumber',
-        flightDepartment:
-       'flightDepartment',
-        icaoAircraftCode:
-       'icaoAircraftCode',
-        ete:
-       'ete',
-        etaAtd:
-       'etaAtd',
-        originDestination:
-       'originDestination',
-        isAircraftOnGround:
-       'isAircraftOnGround',
-        itpMarginTemplate:
-       'itpMarginTemplate',
-       etaAtdZulu:
-       'etaAtdZulu',
-       expandedDetail: "expandedDetail"
-    };
+    status: 'status',
+    tailNumber: 'tailNumber',
+    flightDepartment: 'flightDepartment',
+    icaoAircraftCode: 'icaoAircraftCode',
+    ete: 'ete',
+    etaAtd: 'etaAtd',
+    originDestination: 'originDestination',
+    isAircraftOnGround: 'isAircraftOnGround',
+    itpMarginTemplate: 'itpMarginTemplate',
+    etaAtdZulu: 'etaAtdZulu',
+    expandedDetail: 'expandedDetail',
+};
 
-    export const tailNumberTextColor = {
-        fuelerLinx:
-        '#1D497F',
-        activeFuelRelease:
-        '#0DC520',
-        outOfNetwork:
-        '#FF7F00',
-        inNetwork:
-        '#C9CEEA'
-     };
-     export const stautsTextColor = {
-        "EnRoute":
-        'black',
-        "Landing":
-        'blue',
-        "TaxiingDestination":
-        '#FDD953',
-        "Arrived":
-        'green',
-        "Departing":
-        'gray',
-        "TaxiingOrigin":
-        '#FDD953'
-     };
+export const swimTableColumnsDisplayText = {
+    status: 'Status',
+    tailNumber: 'Tail Number',
+    flightDepartment: 'Flight Department',
+    icaoAircraftCode: 'Aircraft Type',
+    ete: 'ETE',
+    etaAtd: { arrivals: 'ETA', departures: 'ATD'},
+    originDestination: { arrivals: 'Origin', departures: 'Destination'},
+    isAircraftOnGround: 'On Ground',
+    itpMarginTemplate: 'ITP Margin Template:',
+    expandedDetail: 'expandedDetail',
+};
+
+export const tailNumberTextColor = {
+    fuelerLinx: '#1D497F',
+    activeFuelRelease: '#0DC520',
+    outOfNetwork: '#FF7F00',
+    inNetwork: '#C9CEEA',
+};
+export const stautsTextColor = {
+    EnRoute: 'black',
+    Landing: 'blue',
+    TaxiingDestination: '#FDD953',
+    Arrived: 'green',
+    Departing: 'gray',
+    TaxiingOrigin: '#FDD953',
+};
