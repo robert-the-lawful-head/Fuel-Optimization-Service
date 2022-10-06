@@ -9,6 +9,11 @@ namespace FBOLinx.DB.Specifications.SWIM
 {
     public sealed class SWIMFlightLegSpecification : Specification<SWIMFlightLeg>
     {
+        public SWIMFlightLegSpecification(int swimFlightLegId) : base(x => x.Oid == swimFlightLegId)
+        {
+            AddInclude(x => x.SWIMFlightLegDataMessages);
+        }
+
         public SWIMFlightLegSpecification(IList<string> departureICAOs, IList<string> arrivalICAOs, DateTime atdMin, DateTime atdMax)
             : base(x => departureICAOs.Contains(x.DepartureICAO) && arrivalICAOs.Contains(x.ArrivalICAO) && x.ATD >= atdMin && x.ATD <= atdMax)
         {

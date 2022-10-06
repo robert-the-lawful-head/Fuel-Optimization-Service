@@ -17,6 +17,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public ICollection<FuelReqDto> FuelReqs { get; set; }
         public AircraftPricesDto AircraftPrices { get; set; }
         public AirCraftsDto Aircraft { get; set; }
+        public CustomersDto Customer { get; set; }
         public int Oid { get; set; }
     }
 }

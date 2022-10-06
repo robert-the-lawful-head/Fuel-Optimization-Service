@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
+using FBOLinx.Core.Utilities.Enums;
+using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
+using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -18,7 +25,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
         Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds);
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
+        Task<AirportPosition> GetAirportPositionForFbo(int fboId);
+        Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
         Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
+
+        Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
+            int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
         Task<List<AirportPosition>> GetAirportPositions();
     }
 
@@ -30,9 +42,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         private DegaContext _degaContext;
         private IMemoryCache _MemoryCache;
         private List<AirportPosition> _AirportPositions;
+        private IFboEntityService _FboEntityService;
 
-        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache)
+        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService)
         {
+            _FboEntityService = fboEntityService;
             _MemoryCache = memoryCache;
             _degaContext = degaContext;
             _fboLinxContext = fboLinxContext;
@@ -52,7 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
         public async Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds)
         {
-            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).ToListAsync();
+            var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
             return airports;
         }
 
@@ -66,6 +80,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                 .AsNoTracking()
                 .ToListAsync();
             return airports;
+        }
+
+        public async Task<AirportPosition> GetAirportPositionForFbo(int fboId)
+        {
+            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
+            if (fbo == null || fbo.FboAirport == null)
+                return null;
+            return await GetAirportPositionByAirportIdentifier(fbo.FboAirport.Icao);
+        }
+
+        public async Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier)
+        {
+            var positions = await GetAirportPositions();
+            airportIdentifier = airportIdentifier.ToUpper();
+            return positions?.Where(x => x.GetProperAirportIdentifier() == airportIdentifier).FirstOrDefault();
         }
 
         public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
@@ -86,6 +115,35 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             }
 
             return nearestAirportPosition;
+        }
+
+        public async Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
+            int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true)
+        {
+            List<AirportPosition> airportPositions = await GetAirportPositions();
+            var centerAirportPosition =
+                airportPositions.FirstOrDefault(x => x.Icao?.ToUpper() == airportIdentifierForCenterAirport?.ToUpper());
+
+            if (centerAirportPosition == null)
+                return new List<AcukwikAirportDTO>();
+
+            var airportTypeFilter = new string[] { EnumHelper.GetDescription(AirportTypeEnum.JointCivilMilitary), EnumHelper.GetDescription(AirportTypeEnum.Civil) };
+            var fuelTypeFilter = new string[] { EnumHelper.GetDescription(FuelTypeEnum.AvgasJet), EnumHelper.GetDescription(FuelTypeEnum.Jet), EnumHelper.GetDescription(FuelTypeEnum.JetOnly), EnumHelper.GetDescription(FuelTypeEnum.Unknown) };
+
+            var nearestAirportPositions = airportPositions.Where(x => DistanceHelper.MetersToNauticalMiles(
+                DistanceHelper.GetDistanceBetweenTwoPoints(
+                    centerAirportPosition.Latitude, centerAirportPosition.Longitude,
+                    x.Latitude, x.Longitude)) < nauticalMileRadius).ToList();
+
+            var distinctMatchingAirports = nearestAirportPositions?.Select(x => x.GetProperAirportIdentifier());
+
+            var result = await _degaContext.AcukwikAirports
+                .Where(x => distinctMatchingAirports.Contains(x.Icao))
+                .Where(x => !excludeMilitary || airportTypeFilter.Contains(x.AirportType))
+                .Where(x => !mustProvideJetFuel || fuelTypeFilter.Contains(x.FuelType))
+                .ToListAsync();
+
+            return result?.Select(x => x.Adapt<AcukwikAirportDTO>()).ToList();
         }
 
         public async Task<List<AirportPosition>> GetAirportPositions()
