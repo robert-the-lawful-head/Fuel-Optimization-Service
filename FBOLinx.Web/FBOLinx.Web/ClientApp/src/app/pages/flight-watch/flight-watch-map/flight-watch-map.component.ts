@@ -16,8 +16,6 @@ import * as mapboxgl from 'mapbox-gl';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
-
-import { isCommercialAircraft } from '../../../../utils/aircraft';
 import {
     Aircraftwatch,
     FlightWatch,
@@ -536,5 +534,21 @@ export class FlightWatchMapComponent
                 this.setLayoutProperty(layer, 'visibility', 'visible');
             });
         }
+    }
+    resizeMap(isopen: boolean){
+        var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0] as HTMLElement;
+        var mapDiv = document.getElementById(this.mapContainer);
+        var mapWrapper = document.getElementById('map-wrapper');
+
+        if(isopen){
+            mapDiv.style.width = mapWrapper.offsetWidth + 'px';
+            mapCanvas.style.width = '100%';
+
+        }else{
+            mapDiv.style.width = '100%';
+            mapCanvas.style.width = '100%';
+        }
+
+        this.map.resize();
     }
 }

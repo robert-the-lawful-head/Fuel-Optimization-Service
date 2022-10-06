@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using FBOLinx.Core.Utilities.Geography;
+using Geolocation;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
 {
@@ -36,6 +37,11 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
                     UnitOfLength.Miles
                 );
             return distanceFromAirport;
+        }
+
+        public Geolocation.Coordinate GetFboCoordinate()
+        {
+            return new Coordinate(Latitude, Longitude);
         }
     }
 }

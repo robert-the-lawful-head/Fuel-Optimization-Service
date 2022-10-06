@@ -128,40 +128,40 @@ export class FlightWatchSettingsComponent {
         } else {
             this.columns = [
                 {
-                    id: 'status',
+                    id: swimTableColumns.status,
                     name: swimTableColumns.status,
                 },
                 {
-                    id: 'tailNumber',
+                    id: swimTableColumns.tailNumber,
                     name: swimTableColumns.tailNumber,
                 },
                 {
-                    id: 'flightDepartment',
+                    id: swimTableColumns.flightDepartment,
                     name: swimTableColumns.flightDepartment,
                     sort: 'desc',
                 },
                 {
-                    id: 'icaoAircraftCode',
+                    id: swimTableColumns.icaoAircraftCode,
                     name: swimTableColumns.icaoAircraftCode,
                 },
                 {
-                    id: 'ete',
+                    id: swimTableColumns.ete,
                     name: swimTableColumns.ete,
                 },
                 {
-                    id: 'eta-atd',
+                    id: swimTableColumns.etaAtd,
                     name: swimTableColumns.etaAtd,
                 },
                 {
-                    id: 'origin-destination',
+                    id: swimTableColumns.originDestination,
                     name: swimTableColumns.originDestination,
                 },
                 {
-                    id: 'isAircraftOnGround',
+                    id: swimTableColumns.isAircraftOnGround,
                     name: swimTableColumns.isAircraftOnGround,
                 },
                 {
-                    id: 'itpMarginTemplate',
+                    id: swimTableColumns.itpMarginTemplate,
                     name: swimTableColumns.itpMarginTemplate,
                 }
             ];

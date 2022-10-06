@@ -37,7 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
         Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
-        Task<FbosDTO> GetFboByFboId(int fboId);
+        Task<FbosDto> GetFboByFboId(int fboId);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
@@ -49,12 +49,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         private readonly IAcukwikFbohandlerDetailEntityService _AcukwikFbohandlerDetailEntityService;
         private readonly FilestorageContext _fileStorageContext;
         private readonly IServiceProvider _services;
+        private IAirportService _AirportService;
 
         public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService, 
             IFboContactsEntityService fboContactsEntityService,
             IAcukwikFbohandlerDetailEntityService acukwikFbohandlerDetailEntityService, IServiceProvider services,
-            FilestorageContext fileStorageContext) : base(fboEntityService)
+            FilestorageContext fileStorageContext,
+            IAirportService airportService) : base(fboEntityService)
         {
+            _AirportService = airportService;
             _fboEntityService = fboEntityService;
             _context = context;
             _degaContext = degaContext;
@@ -167,9 +170,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var result = await _MailService.SendAsync(mailMessage);
         }
 
-        public async Task<FbosDTO> GetFboByFboId(int fboId)
+        public async Task<FbosDto> GetFboByFboId(int fboId)
         {
-            var fbo = await _fboEntityService.GetFboByFboId(fboId);
+            var fbo = await GetSingleBySpec(new FboByIdSpecification(fboId));
             return fbo;
         }
 
@@ -196,32 +199,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             });
         }
 
-        public async Task<Fbos> GetFboAsNoTracing(int fboId)
-        {
-            var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
-                .Include(x => x.FboAirport).AsNoTracking().FirstOrDefaultAsync();
-            return result;
-        }
-
         public async Task<Coordinate> GetFBOLocation(int fboid)
         {
-            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboid).FirstOrDefaultAsync();
-            if (fboAirport == null)
-                return new Coordinate(0, 0);
-            var airport = await _degaContext.AcukwikAirports.Where(a => a.Icao == fboAirport.Icao).FirstOrDefaultAsync();
+            var position = await _AirportService.GetAirportPositionForFbo(fboid);
 
-            var latDirection = airport.Latitude.Substring(0, 1);
-            var lngDirection = airport.Longitude.Substring(0, 1);
-
-            double latitude = double.Parse(airport.Latitude.Substring(1, 2)) + double.Parse(airport.Latitude.Substring(4, 2)) / 60 + double.Parse(airport.Latitude[7..]) / 3600;
-            double longitude = airport.Longitude.Length == 8 ?
-                double.Parse(airport.Longitude.Substring(1, 2)) + double.Parse(airport.Longitude.Substring(4, 2)) / 60 + double.Parse(airport.Longitude[6..]) / 3600 :
-                double.Parse(airport.Longitude.Substring(1, 3)) + double.Parse(airport.Longitude.Substring(5, 2)) / 60 + double.Parse(airport.Longitude[7..]) / 3600;
-
-            if (latDirection != "N") latitude = -latitude;
-            if (lngDirection != "E") longitude = -longitude;
-
-            return new Coordinate(latitude, longitude);
+            return (position?.GetFboCoordinate()).GetValueOrDefault();
         }
 
         public async Task<string> UploadLogo(FboLogoRequest fboLogoRequest)

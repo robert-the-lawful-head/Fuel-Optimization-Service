@@ -21,25 +21,23 @@
         (icaoChanged)="icaoChanged.emit($event)"
         ></app-flight-watch-filters>
 </div>
-<div id="arrivals-departures-container" class="tables-container">
-    <div class="data-container">
-        <app-flight-watch-setting-table
-            #arrivalsTable
-            [data]="swimArrivals"
-            [isArrival]="true"
-            [columns]="columns"
-            (saveSettings)="sortChangeSaveSettings()"
-            (openAircraftPopup)="openPopup($event)"
-        ></app-flight-watch-setting-table>
-    </div>
-    <div class="data-container">
-        <app-flight-watch-setting-table
-            #departuresTable
-            [data]="swimDepartures"
-            [isArrival]="false"
-            [columns]="columns"
-            (saveSettings)="sortChangeSaveSettings()"
-            (openAircraftPopup)="openPopup($event)"
-        ></app-flight-watch-setting-table>
-    </div>
+<div class="data-container" >
+    <app-flight-watch-setting-table
+        #arrivalsTable
+        [data]="swimArrivals"
+        [isArrival]="true"
+        [columns]="columns"
+        (saveSettings)="sortChangeSaveSettings()"
+        (openAircraftPopup)="openPopup($event)"
+    ></app-flight-watch-setting-table>
+</div>
+<div class="data-container">
+    <app-flight-watch-setting-table
+        #departuresTable
+        [data]="swimDepartures"
+        [isArrival]="false"
+        [columns]="columns"
+        (saveSettings)="sortChangeSaveSettings()"
+        (openAircraftPopup)="openPopup($event)"
+    ></app-flight-watch-setting-table>
 </div>

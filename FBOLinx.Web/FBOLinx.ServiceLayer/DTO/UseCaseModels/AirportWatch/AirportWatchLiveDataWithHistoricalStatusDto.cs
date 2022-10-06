@@ -29,6 +29,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
         public FlightLegStatus? FlightLegStatus { get; set; }
         public AirportPosition AirportPosition { get; set; }
         public SWIMFlightLeg SWIMFlightLeg { get; set; }
+        public AirportWatchLiveDataDto AirportWatchLiveData { get; set; }
 
         public AirportWatchHistoricalDataDto GetMostRecentHistoricalRecord()
         {

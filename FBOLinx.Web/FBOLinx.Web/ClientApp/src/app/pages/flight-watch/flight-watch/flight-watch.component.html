@@ -5,12 +5,12 @@
         <mat-drawer-content>
             <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
             <div *ngIf="flightWatchData">
-                <div class="drawer-button" (click)="mapfilters.toggle()">
+                <div class="drawer-button" (click)="openSettingsDrawer()">
                     <button class="mat-dark-blue" mat-flat-button>
-                        <mat-icon *ngIf="!mapfilters.opened"
+                        <mat-icon *ngIf="!isDrawerOpen()"
                             >chevron_left</mat-icon
                         >
-                        <mat-icon *ngIf="mapfilters.opened"
+                        <mat-icon *ngIf="isDrawerOpen()"
                             >chevron_right</mat-icon
                         >
                     </button>
@@ -20,6 +20,7 @@
                 </div>
                 <div class="flight-watch-container">
                     <app-flight-watch-map-wrapper
+                        id="map-wrapper"
                         #map
                         (markerClicked)="onFlightWatchClick($event)"
                         (airportClick)="updateIcao($event.icao)"
@@ -45,19 +46,19 @@
             class="drawer-container"
             opened
         >
-            <div *ngIf="flightWatchData">
+            <ng-container *ngIf="flightWatchData">
                 <app-flight-watch-settings
-                    [swimArrivals]="swimArrivals"
-                    [swimDepartures]="swimDepartures"
-                    [icaoList]="airportsICAO"
-                    [icao]="selectedICAO"
-                    [filteredTypes]="filteredTypes"
-                    (filterChanged)="onFilterChanged($event)"
-                    (typesFilterChanged)="onTypesFilterChanged($event)"
-                    (icaoChanged)="updateIcao($event)"
-                    (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
+                [swimArrivals]="swimArrivals"
+                [swimDepartures]="swimDepartures"
+                [icaoList]="airportsICAO"
+                [icao]="selectedICAO"
+                [filteredTypes]="filteredTypes"
+                (filterChanged)="onFilterChanged($event)"
+                (typesFilterChanged)="onTypesFilterChanged($event)"
+                (icaoChanged)="updateIcao($event)"
+                (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                 ></app-flight-watch-settings>
-            </div>
+            </ng-container>
         </mat-drawer>
     </mat-drawer-container>
 </div>
