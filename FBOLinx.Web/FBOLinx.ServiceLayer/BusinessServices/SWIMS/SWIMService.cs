@@ -177,7 +177,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
                 else
                 {
-                    await SetTailNumber(swimFlightLegDto, antennaLiveData, antennaHistoricalData);
+                    //[#3jv5g9w] Setting the tail number is no longer needed.
+                    //await SetTailNumber(swimFlightLegDto, antennaLiveData, antennaHistoricalData);
                     swimFlightLegDto.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
                     var flightLegToInsert = swimFlightLegDto.Adapt<SWIMFlightLeg>();
                     flightLegToInsert.Status = FlightLegStatus.Departing;
@@ -445,6 +446,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
         }
         
+        [Obsolete("3jv5g9w - Setting the tail number of the SWIM flight leg feed is no longer needed.  The SWIM data should maintain it's original aircraft identification and the tail number is determined through the FlightWatchService join on antenna data.")]
         private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveHexTailMapping> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))
