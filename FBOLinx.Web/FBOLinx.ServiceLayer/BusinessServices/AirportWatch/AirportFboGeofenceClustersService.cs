@@ -47,8 +47,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             try
             {
-                await AddAsync(airportFboGeoFenceClusters);
+                var result = await AddAsync(airportFboGeoFenceClusters);
                 _MemoryCache.Remove(_AllGeoFenceClustersCacheKey);
+                return result;
             }
             catch (Exception ex)
             {

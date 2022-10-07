@@ -287,7 +287,7 @@ export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, O
                 {
                     data: {
                         geometry: {
-                            coordinates: [ cluster.clusterCoordinatesCollection.map(coords => coords.longitudeLatitudeAsList)],
+                            coordinates: [ cluster.clusterCoordinatesCollection.map(coords => [coords.longitude,coords.latitude])],
                             type: 'Polygon',
                         },
                         properties: {
