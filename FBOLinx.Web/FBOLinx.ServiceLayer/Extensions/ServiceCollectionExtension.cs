@@ -2,6 +2,7 @@
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
@@ -92,6 +93,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IGroupCustomersService, GroupCustomersService>();
             services.AddTransient<ISWIMFlightLegService, SWIMFlightLegService>();
             services.AddTransient<IFlightWatchService, FlightWatchService>();
+            services.AddTransient<ICompanyPricingLogService, CompanyPricingLogService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -124,6 +126,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<FAAAircraftMakeModelEntityService, FAAAircraftMakeModelEntityService>();
             services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
             services.AddTransient<IAirportFboGeoFenceClusterEntityService, AirportFboGeoFenceClusterEntityService>();
+            services.AddTransient<ICompanyPricingLogEntityService, CompanyPricingLogEntityService>();
 
             return services;
         }
