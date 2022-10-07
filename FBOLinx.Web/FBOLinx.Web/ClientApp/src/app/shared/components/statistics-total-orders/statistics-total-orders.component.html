@@ -2,10 +2,10 @@
          [bgColor]="'info'"
          [outline]="true"
          class="info-card">
-    <h6 class="mt-0 title">Fuel Orders through FBOLinx</h6>
+    <h6 class="mt-0 title">Your Direct FBOLinx Orders</h6>
     <div class="count">{{ totalOrders | number }}</div>
-    <small *ngIf="dayDifference <= 60">Last {{ dayDifference }} days</small>
-    <small *ngIf="dayDifference > 60">Last {{ monthDifference }} months</small>
+    <small *ngIf="dayDifference <= 60">(Last {{ dayDifference }} days) Not Including Contract Fuel</small>
+    <small *ngIf="dayDifference > 60">(Last {{ monthDifference }} months) Not Including Contract Fuel</small>
     <mat-icon>shopping_basket</mat-icon>
 </ni-card>
 
