@@ -89,9 +89,10 @@ export class GroupCustomersGridComponent implements OnInit {
 
         this.refreshCustomerDataSource();
 
-        this.airportWatchService.getStartDate().subscribe((date) => {
-            this.airportWatchStartDate = new Date(date);
-        });
+        //this.airportWatchService.getStartDate().subscribe((date) => {
+        //    this.airportWatchStartDate = new Date(date);
+        //});
+        this.airportWatchStartDate = new Date("10/6/2022");
     }
 
     onPageChanged(event: any) {
