@@ -62,7 +62,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(!this.isArrival){
             this.dataSource = new MatTableDataSource(this.setManualSortOnDepartures(this.data));
         }else{
-            this.dataSource = new MatTableDataSource(this.data.sort((a, b) => { return this.compare(a.etaLocal, b.etaLocal, false); }));
+            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(a.etaLocal, b.etaLocal, false); }));
         }
 
         this.dataSource.sort = this.sort;
