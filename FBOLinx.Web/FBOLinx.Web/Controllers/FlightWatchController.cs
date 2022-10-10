@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlightWatchController : ControllerBase
@@ -30,7 +32,8 @@ namespace FBOLinx.Web.Controllers
                     NauticalMileRadiusForData = nauticalMileRange,
                     IncludeCustomerAircraftInformation = true,
                     IncludeFuelOrderInformation = true,
-                    IncludeVisitsAtFbo = true
+                    IncludeVisitsAtFbo = true,
+                    IncludeCompanyPricingLogLastQuoteDate = true
                 });
                 return Ok(new FlightWatchListResponse(result));
             }
@@ -52,7 +55,8 @@ namespace FBOLinx.Web.Controllers
                     AirportIdentifier = icao,
                     IncludeCustomerAircraftInformation = true,
                     IncludeFuelOrderInformation = true,
-                    IncludeVisitsAtFbo = true
+                    IncludeVisitsAtFbo = true,
+                    IncludeCompanyPricingLogLastQuoteDate = true
                 });
                 return Ok(new FlightWatchListResponse(result));
             }

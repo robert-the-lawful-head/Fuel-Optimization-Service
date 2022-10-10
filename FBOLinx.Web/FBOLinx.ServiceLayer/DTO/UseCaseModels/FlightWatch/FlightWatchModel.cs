@@ -106,6 +106,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             : _SwimFlightLeg?.IsAircraftOnGround;
 
         public string ITPMarginTemplate => _CustomerAircraft?.PricingTemplateName;
+        public int? PricingTemplateId => _CustomerAircraft?.PricingTemplateId;
 
         public FlightLegStatus? Status
         {
