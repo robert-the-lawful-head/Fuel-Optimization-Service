@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO;
@@ -56,6 +58,23 @@ namespace FBOLinx.Service.Mapping.Dto
                 return Iata;
             }
         }
+
+        public double LatitudeInDegrees
+        {
+            get
+            {
+                return Math.Round(LocationHelper.GetLatitudeGeoLocationFromGPS(Latitude), 3);
+            }
+        }
+
+        public double LongitudeInDegrees
+        {
+            get
+            {
+                return Math.Round(LocationHelper.GetLongitudeGeoLocationFromGPS(Longitude), 3);
+            }
+        }
+
         public ICollection<AcukwikFbohandlerDetailDto> AcukwikFbohandlerDetailCollection { get; set; }
     }
 }

@@ -143,7 +143,7 @@ export class FlightWatchMapComponent
             this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
             return {
                 geometry: {
-                    coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
+                    coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
                     type: 'Point',
                 },
                 properties: {
@@ -166,7 +166,7 @@ export class FlightWatchMapComponent
             this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
             return {
                 geometry: {
-                    coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
+                    coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
                     type: 'Point',
                 },
                 properties: {
@@ -374,8 +374,8 @@ export class FlightWatchMapComponent
     getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
         return this.acukwikairports.filter((airport) => {
             const airportPosition: mapboxgl.LngLatLike = {
-                lat: convertDMSToDEG(airport.latitude),
-                lng: convertDMSToDEG(airport.longitude),
+                lat: airport.latitudeInDegrees,
+                lng: airport.longitudeInDegrees,
             };
             return bound.contains(airportPosition);
         });
@@ -494,8 +494,8 @@ export class FlightWatchMapComponent
     goToAirport(icao: string){
         let airport = this.acukwikairports.find( x => x.icao == icao);
         let flyToCenter = {
-            lat: convertDMSToDEG(airport.latitude),
-            lng: convertDMSToDEG(airport.longitude),
+            lat: airport.latitudeInDegrees,
+            lng: airport.longitudeInDegrees,
         };
         this.flyTo(flyToCenter);
     }

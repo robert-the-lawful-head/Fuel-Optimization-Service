@@ -29,6 +29,8 @@ export interface AcukwikAirport {
     lighting: string;
     airportNameShort: string;
     distanceToSelectedAirport: number;
+    latitudeInDegrees: number;
+    longitudeInDegrees: number;
     acukwikFbohandlerDetailCollection: AcukwikFbohandlerDetail[];
 }
 
