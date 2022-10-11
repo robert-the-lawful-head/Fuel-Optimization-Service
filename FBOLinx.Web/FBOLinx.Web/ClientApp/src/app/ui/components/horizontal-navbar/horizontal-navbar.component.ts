@@ -75,7 +75,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     currentUser: any;
     needsAttentionCustomersData: any[];
     subscription: any;
-    fuelOrders: any[];
+    fuelOrders: any[] = [];
     flightWatchData: any[];
 
     constructor(
@@ -473,29 +473,65 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     loadUpcomingOrders() {
 
-        this.airportWatchService
-            .getAll(
+        this.fuelOrders.length = 0;
+        var startDate = moment().add(-1, 'hour').local().toDate();
+        var endDate = moment().add(1, 'd').local().toDate();
+
+        this.fuelReqsService
+            .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId
+                this.sharedService.currentUser.fboId,
+                startDate,
+                endDate
             )
             .subscribe((data: any) => {
                 if (data && data != null) {
-                    var fuelOrders = this.fuelOrders = [];
-                    this.flightWatchData = data.flightWatchData;
-                    this.flightWatchData.forEach(x => {
-                        if (!x.fuelOrder)
+                    
+                    data.forEach(x => {
+                        if (!x || x.cancelled)
                             return;
-                        if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
-                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
+                        if (x.timeStandard != null && x.timeStandard.toLowerCase() == 'z' ||
+                            x.timeStandard == '0')
+                            x.minutesUntilArrival =
+                                moment.duration(moment(x.eta).diff(moment().utc())).asMinutes();
                         else
-                            x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
-                        x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
-                        fuelOrders.push(x.fuelOrder);
+                            x.minutesUntilArrival =
+                                moment.duration(moment(x.eta).diff(moment())).asMinutes();
+                        x.minutesUntilArrival = Math.round(x.minutesUntilArrival);
+                        x.hoursUntilArrival = Math.round(x.minutesUntilArrival / 60);
+                        this.fuelOrders.push(x);
                     });
                 }
+
+                this.fuelOrders = this.fuelOrders.sort((x1, x2) => x1.minutesUntilArrival - x2.minutesUntilArrival);
             }, (error: any) => {
 
             });
+
+
+        //this.airportWatchService
+        //    .getAll(
+        //        this.sharedService.currentUser.groupId,
+        //        this.sharedService.currentUser.fboId
+        //    )
+        //    .subscribe((data: any) => {
+        //        if (data && data != null) {
+        //            var fuelOrders = this.fuelOrders = [];
+        //            this.flightWatchData = data.flightWatchData;
+        //            this.flightWatchData.forEach(x => {
+        //                if (!x.fuelOrder)
+        //                    return;
+        //                if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
+        //                    x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
+        //                else
+        //                    x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
+        //                x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
+        //                fuelOrders.push(x.fuelOrder);
+        //            });
+        //        }
+        //    }, (error: any) => {
+
+        //    });
 
         //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.
         //this.fuelReqsService
