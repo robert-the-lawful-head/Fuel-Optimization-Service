@@ -95,8 +95,8 @@ export const swimTableColumnsDisplayText = {
 export const tailNumberTextColor = {
     fuelerLinx: '#1D497F',
     activeFuelRelease: '#0DC520',
-    outOfNetwork: '#FF7F00',
-    inNetwork: '#C9CEEA',
+    outOfNetwork: '#C9CEEA',
+    inNetwork: '#FF7F00',
 };
 export const stautsTextColor = {
     EnRoute: 'black',
