@@ -37,7 +37,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     dataSource: MatTableDataSource<Swim>;
 
-    columnsToDisplay : string[];
+    allColumnsToDisplay: string[];
+    dataColumnsToDisplay: string[];
     columnsToDisplayDic = new Object();
 
     columnsToDisplayWithExpand : any[];
@@ -82,7 +83,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     ngOnChanges(changes: SimpleChanges) {
         if(changes.columns){
-            this.columnsToDisplay = this.getVisibleColumns();
+            this.allColumnsToDisplay = this.getVisibleColumns();
+            this.dataColumnsToDisplay = this.getVisibleDataColumns();
             this.setVisibleColumnsName();
         }
         if (changes.data && this.dataSource){
@@ -110,12 +112,19 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         return (taxiing.concat(departing)).concat(enRoute);
     }
+    getVisibleDataColumns() {
+        return this.columns
+            .filter((column) => !column.hidden)
+            .map((column) => column.id) ||
+            [];
+    }
     getVisibleColumns() {
-        return (
-            this.columns
-                .filter((column) => !column.hidden)
-                .map((column) => column.id) || []
+        var result = ['expand-icon'];
+        result.push(...
+            this.getVisibleDataColumns()
         );
+
+        return result;
     }
     setVisibleColumnsName() {
         this.columns.filter((column) => !column.hidden).forEach((col) => {
