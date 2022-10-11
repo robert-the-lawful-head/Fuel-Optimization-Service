@@ -224,7 +224,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var orders =
                 await _FuelReqService.GetUpcomingDirectAndContractOrdersForTailNumber(_Fbo.GroupId.GetValueOrDefault(),
                     _Fbo.Oid, flightWatchModel.TailNumber, true);
-            flightWatchModel.SetUpcomingFuelOrderCollection(orders?.Where(x => x.Icao == flightWatchModel.ArrivalICAO).ToList());
+
+            //[#31pb4b8] Changed to mark the aircraft as green if it has any upcoming orders, even if it's not for the current leg.
+            //flightWatchModel.SetUpcomingFuelOrderCollection(orders?.Where(x => x.Icao == flightWatchModel.ArrivalICAO).ToList());
+            
+            flightWatchModel.SetUpcomingFuelOrderCollection(orders.ToList());
         }
 
         private async Task PopulateCustomerAircraftInformation(FlightWatchModel flightWatchModel)
