@@ -119,8 +119,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
-            var missingStatus = result.Where(x => !x.Status.HasValue).ToList();
-
             return result;
         }
 

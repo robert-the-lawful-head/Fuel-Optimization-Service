@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlightWatchController : ControllerBase
