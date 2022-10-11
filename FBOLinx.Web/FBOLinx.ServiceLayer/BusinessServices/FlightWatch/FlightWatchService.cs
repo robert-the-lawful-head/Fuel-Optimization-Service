@@ -88,6 +88,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     await _AirportService.GetAirportPositionByAirportIdentifier(result.SWIMFlightLeg.ArrivalICAO);
             result.SWIMFlightLeg?.SWIMFlightLegDataMessages?.RemoveAll(x =>
                 !x.Latitude.HasValue || !x.Longitude.HasValue);
+
             return result;
         }
 
@@ -117,6 +118,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
+
+            var missingStatus = result.Where(x => !x.Status.HasValue).ToList();
 
             return result;
         }
@@ -188,6 +191,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Set the nearest airport positions of each result
             foreach (var flightWatchModel in result)
             {
+                flightWatchModel.FocusedAirportICAO = GetFocusedAirportIdentifier();
+
                 if (_Options.IncludeNearestAirportPosition)
                     await PopulateNearestAirportPosition(flightWatchModel);
                 if (_Options.IncludeFuelOrderInformation)
@@ -263,7 +268,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
             flightWatchModel.Arrivals = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Landing);
             flightWatchModel.Departures = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Takeoff);
-            flightWatchModel.FocusedAirportICAO = GetFocusedAirportIdentifier();
         }
 
         private async Task PopulateLastQuoteDate(FlightWatchModel flightWatchModel)
