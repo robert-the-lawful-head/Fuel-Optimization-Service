@@ -405,7 +405,7 @@ export class FlightWatchMapComponent
     getFlightSourcerFeatureMarkers(flights: any): any {
         return flights.map((key) => {
             const row = this.data[key];
-            const id = this.flightWatchMapService.buildAircraftId(row.tailNumber);
+            const id = this.flightWatchMapService.buildAircraftId(row.aircraftIdentification);
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
                 row,
                 id,
