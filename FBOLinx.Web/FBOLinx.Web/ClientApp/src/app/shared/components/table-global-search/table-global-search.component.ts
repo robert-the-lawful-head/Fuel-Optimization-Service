@@ -28,7 +28,8 @@ export class TableGlobalSearchComponent implements OnInit {
             this.page = "customer-manager-filters";
         this.matDataSource.filter = localStorage.getItem(this.page);
 
-        for (const filter of JSON.parse(this.matDataSource.filter)) {
+        var filters = JSON.parse(this.matDataSource.filter);
+        for (const filter of filters) {
             if (filter.isGlobal) {
                 hasGlobal = true;
                 this.globalFilter = filter;
