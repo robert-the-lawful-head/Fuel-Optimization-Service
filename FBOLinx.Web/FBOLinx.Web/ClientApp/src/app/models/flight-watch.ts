@@ -1,5 +1,7 @@
+import { FlightLegStatus } from "../enums/flight-watch.enum";
+
 export type FlightWatchDictionary = {
-    [oid: number]: FlightWatch;
+    [oid: number]: FlightWatchModelResponse;
 };
 export type FlightWatch = {
     oid: number;
@@ -41,3 +43,125 @@ export type Aircraftwatch = {
     currentPricing : string;
     aircraftICAO : string;
 };
+export interface FlightWatchModelResponse {
+    airportWatchLiveDataId: number;
+    swimFlightLegId: number;
+    visitsToMyFBO: number;
+    arrivals: number;
+    departures: number;
+    focusedAirportICAO: string;
+    boxTransmissionDateTimeUtc: Date;
+    atcFlightNumber: string;
+    altitudeInStandardPressure: number;
+    groundSpeedKts: number;
+    trackingDegree: number;
+    verticalSpeedKts: number;
+    transponderCode: number;
+    boxName: string;
+    aircraftPositionDateTimeUtc: Date;
+    aircraftTypeCode: string;
+    gpsAltitude: number;
+    aircraftHexCode: string;
+    tailNumber: string;
+    flightDepartment: string;
+    make: string;
+    model: string;
+    faaMake: string;
+    faaModel: string;
+    fuelCapacityGal: number;
+    origin: string;
+    city: string;
+    departureICAO: string;
+    departureCity: string;
+    arrivalICAO: string;
+    arrivalCity: string;
+    atdLocal: Date;
+    atdZulu: Date;
+    etaLocal: Date;
+    etaZulu: Date;
+    ete: string;
+    actualSpeed: number;
+    altitude: number;
+    latitude: number;
+    longitude: number;
+    isAircraftOnGround: boolean;
+    itpMarginTemplate: string;
+    pricingTemplateId: number;
+    status: FlightLegStatus | null;
+    phone: string;
+    id: number;
+    fuelOrderId: number;
+    fuelerlinxID: number;
+    fuelerlinxFuelOrderId: number;
+    vendor: string;
+    transactionStatus: string;
+    icaoAircraftCode: string;
+    isInNetwork: boolean;
+    isOutOfNetwork: boolean;
+    isActiveFuelRelease: boolean;
+    isFuelerLinxClient: boolean;
+    aircraftIdentification: string;
+    lastQuoted: Date;
+    company: string,
+    lastQuote: string,
+    currentPricing: string,
+}
+
+// export interface  {
+//     airportWatchLiveDataId: number | null;
+//     sWIMFlightLegId: number | null;
+//     visitsToMyFBO: number;
+//     arrivals: number;
+//     departures: number;
+//     focusedAirportICAO: string;
+//     boxTransmissionDateTimeUtc: string | null;
+//     atcFlightNumber: string;
+//     altitudeInStandardPressure: number | null;
+//     groundSpeedKts: number | null;
+//     trackingDegree: number | null;
+//     verticalSpeedKts: number | null;
+//     transponderCode: number | null;
+//     boxName: string;
+//     aircraftPositionDateTimeUtc: string | null;
+//     aircraftTypeCode: string;
+//     gpsAltitude: number | null;
+//     aircraftHexCode: string;
+//     tailNumber: string;
+//     flightDepartment: string;
+//     make: string;
+//     model: string;
+//     fAAMake: string;
+//     fAAModel: string;
+//     fuelCapacityGal: number | null;
+//     origin: string;
+//     city: string;
+//     departureICAO: string;
+//     departureCity: string;
+//     arrivalICAO: string;
+//     arrivalCity: string;
+//     aTDLocal: string | null;
+//     aTDZulu: string | null;
+//     eTALocal: string | null;
+//     eTAZulu: string | null;
+//     eTE: string | null;
+//     actualSpeed: number | null;
+//     altitude: number | null;
+//     latitude: number | null;
+//     longitude: number | null;
+//     isAircraftOnGround: boolean | null;
+//     iTPMarginTemplate: string;
+//     status: FlightLegStatus | null;
+//     phone: string;
+//     id: number | null;
+//     fuelOrderId: number | null;
+//     fuelerlinxID: number | null;
+//     fuelerlinxFuelOrderId: number | null;
+//     vendor: string;
+//     transactionStatus: string;
+//     iCAOAircraftCode: string;
+//     isInNetwork: boolean;
+//     isOutOfNetwork: boolean;
+//     isActiveFuelRelease: boolean;
+//     isFuelerLinxClient: boolean;
+//     aircraftIdentification: string;
+// }

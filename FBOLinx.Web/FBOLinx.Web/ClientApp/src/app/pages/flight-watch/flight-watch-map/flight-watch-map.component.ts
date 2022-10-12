@@ -18,8 +18,8 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
 import {
     Aircraftwatch,
-    FlightWatch,
     FlightWatchDictionary,
+    FlightWatchModelResponse,
 } from '../../../models/flight-watch';
 import { AirportFboGeoFenceCluster } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-cluster';
 import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
@@ -30,7 +30,7 @@ import { AircraftImageData, AIRCRAFT_IMAGES } from './aircraft-images';
 import { AircraftPopupContainerComponent } from '../aircraft-popup-container/aircraft-popup-container.component';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
-import { convertDMSToDEG } from 'src/utils/coordinates';
+
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -50,7 +50,7 @@ export class FlightWatchMapComponent
     @Input() isStable: boolean;
     @Input() icao: string;
 
-    @Output() markerClicked = new EventEmitter<FlightWatch>();
+    @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
     @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
@@ -124,7 +124,7 @@ export class FlightWatchMapComponent
             .onLoad(async () => {
                 await this.loadMapIcons();
                 this.loadICAOIconOnMap(this.icao);
-                this.loadFlightOnMap();
+                if(this.data) this.loadFlightOnMap();
                 this.getFbosAndLoad();
             });
     }
@@ -183,6 +183,8 @@ export class FlightWatchMapComponent
             features: markers,
         };
         const source = this.getSource(this.airportSourceId);
+
+        if(!source) return;
 
         source.setData(data);
         this.addHoverPointerActions(this.airportLayerId);
@@ -278,9 +280,9 @@ export class FlightWatchMapComponent
         );
     }
     ngOnChanges(changes: SimpleChanges): void {
-        const currentData = changes.data?.currentValue;
-        const oldData = changes.data?.previousValue;
-        if (currentData && !isEqual(currentData, oldData)) {
+        if(!this.map) return;
+
+        if (changes.data) {
             this.updateFlightOnMap();
         } else this.setPopUpContainerData(changes);
     }
@@ -322,11 +324,19 @@ export class FlightWatchMapComponent
 
         const source = this.getSource(this.flightSourceId);
 
+        if(!source){
+            this.loadFlightOnMap();
+            return;
+        }
+
+
+        const dataFeatures = this.getFlightSourcerFeatureMarkers(newflightsInMapBounds);
+
+        if ( dataFeatures.length == 0 ) return;
+
         const data: any = {
             type: 'FeatureCollection',
-            features: this.getFlightSourcerFeatureMarkers(
-                newflightsInMapBounds
-            ),
+            features: dataFeatures,
         };
 
         source.setData(data);
@@ -356,13 +366,15 @@ export class FlightWatchMapComponent
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
         return keys(this.data).filter((id) => {
-            const flightWatch = this.data[Number(id)];
+            if(id == null) return false;
+            const flightWatch = this.data[id];
             const flightWatchPosition: mapboxgl.LngLatLike = {
                 lat: flightWatch.latitude,
                 lng: flightWatch.longitude,
             };
             return ( true
-                // bound.contains(flightWatchPosition) &&
+                // bound.contains(flightWatchPosition)
+                // &&
                 // (this.isCommercialVisible ||
                 //     !isCommercialAircraft(
                 //         flightWatch.aircraftTypeCode,
@@ -371,7 +383,8 @@ export class FlightWatchMapComponent
             );
         });
     }
-    getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
+    getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): AcukwikAirport[] {
+        if(!this.acukwikairports) return [];
         return this.acukwikairports.filter((airport) => {
             const airportPosition: mapboxgl.LngLatLike = {
                 lat: airport.latitudeInDegrees,
@@ -383,7 +396,7 @@ export class FlightWatchMapComponent
     getFlightSourcerFeatureMarkers(flights: any): any {
         return flights.map((key) => {
             const row = this.data[key];
-            const id = this.flightWatchMapService.buildAircraftId(row.oid);
+            const id = this.flightWatchMapService.buildAircraftId(row.airportWatchLiveDataId);
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
                 row,
                 id,
@@ -486,8 +499,8 @@ export class FlightWatchMapComponent
     updateAircraft(event: Aircraftwatch): void {
         this.data[this.selectedAircraft].isInNetwork = true;
         this.data[this.selectedAircraft].company = event.company;
-        this.data[this.selectedAircraft].aircraftMakeModel =
-            event.aircraftMakeModel;
+        // this.data[this.selectedAircraft].aircraftMakeModel =
+        //     event.aircraftMakeModel;
         this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
     }
