@@ -133,6 +133,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
 
     // PRIVATE METHODS
     private loadFuelReqs() {
+        this.fuelreqsData = null;
         this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
