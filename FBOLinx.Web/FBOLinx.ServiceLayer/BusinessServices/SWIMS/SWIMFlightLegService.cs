@@ -44,7 +44,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         {
             if ((airportIdentifiers?.Count).GetValueOrDefault() <= 0)
                 return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
-            return await GetListbySpec(new SWIMFlightLegByAirportSpecification(airportIdentifiers, DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+            var departures = await GetListbySpec(new SWIMFlightLegByDepartureAirportSpecification(airportIdentifiers,
+                DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+            var arrivals = await GetListbySpec(new SWIMFlightLegByArrivalAirportSpecification(airportIdentifiers,
+                DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+            var result = departures;
+            result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
+            return result;
         }
     }
 }
