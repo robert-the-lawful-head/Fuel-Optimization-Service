@@ -13,6 +13,7 @@ export class TableGlobalSearchComponent implements OnInit {
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
+    private page: string = "";
 
     constructor() {}
 
@@ -22,9 +23,12 @@ export class TableGlobalSearchComponent implements OnInit {
             this.matDataSource.filterCollection = [];
         }
         let hasGlobal = false;
-       
 
-        for (const filter of this.matDataSource.filterCollection) {
+        if (this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
+            this.page = "customer-manager-filters";
+        this.matDataSource.filter = localStorage.getItem(this.page);
+
+        for (const filter of JSON.parse(this.matDataSource.filter)) {
             if (filter.isGlobal) {
                 hasGlobal = true;
                 this.globalFilter = filter;
@@ -39,6 +43,10 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
+        //localStorage.setItem(
+        //    this.tableLocalStorageKey,
+        //    filterValue
+        //);
 
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
@@ -77,6 +85,10 @@ export class TableGlobalSearchComponent implements OnInit {
 
         this.matDataSource.filter = JSON.stringify(existingFilters);
 
+        localStorage.setItem(
+            this.page,
+            this.matDataSource.filter
+        );
 
         this.filterApplied.emit(filterValue);
     }
@@ -100,6 +112,10 @@ export class TableGlobalSearchComponent implements OnInit {
                 start: null,
             };
             filter.isFiltered = false;
+        }
+
+        if (this.page != "") {
+            localStorage.removeItem(this.page);
         }
     }
 
