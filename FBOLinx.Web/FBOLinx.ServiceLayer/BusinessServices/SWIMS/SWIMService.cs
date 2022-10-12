@@ -124,7 +124,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             foreach (IGrouping<string, SWIMFlightLegDTO> flightLegGrouping in swimFlightLegs.GroupBy(x => x.AircraftIdentification))
             {
                 SWIMFlightLegDTO swimFlightLegDto = flightLegGrouping.First();
-                swimFlightLegDto.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>() { flightLegGrouping.SelectMany(x => x.SWIMFlightLegDataMessages).ToList().First() };
+                swimFlightLegDto.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>() { flightLegGrouping.SelectMany(x => x.SWIMFlightLegDataMessages)
+                    .OrderBy(x => x.Latitude.HasValue ? 1 : 2)
+                    .ThenByDescending(x => x.MessageTimestamp)
+                    .ToList().First() };
                 swimFlightLegDTOs.Add(swimFlightLegDto);
             }
             
