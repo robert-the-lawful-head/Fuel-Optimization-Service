@@ -26,6 +26,8 @@ export class TableGlobalSearchComponent implements OnInit {
 
         if (this.matDataSource.data.length > 0 && this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
             this.page = "customer-manager-filters";
+        else
+            this.page = "fuel-orders-filters";
         this.matDataSource.filter = localStorage.getItem(this.page);
 
         if (this.matDataSource.filter != null) {
@@ -46,11 +48,6 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
-        //localStorage.setItem(
-        //    this.tableLocalStorageKey,
-        //    filterValue
-        //);
-
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];
