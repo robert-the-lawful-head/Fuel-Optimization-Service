@@ -1,22 +1,19 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty, keyBy } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim } from 'src/app/models/swim';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
-import { SwimService } from 'src/app/services/swim.service';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { SharedService } from '../../../layouts/shared-service';
-import { Aircraftwatch, FlightWatch, FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
-import { AirportWatchService } from '../../../services/airportwatch.service';
+import { Aircraftwatch, FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 
 const BREADCRUMBS: any[] = [
@@ -74,10 +71,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private flightWatchService: FlightWatchService,
         private acukwikairportsService: AcukwikairportsService,
         private sharedService: SharedService,
-        public dialog: MatDialog)
+        public dialog: MatDialog,
+        private cdref: ChangeDetectorRef)
     {
         this.sharedService.titleChange(this.pageTitle);
         this.selectedICAO = (this.sharedService.currentUser.icao)?this.sharedService.currentUser.icao:localStorage.getItem('icao');
+    }
+
+    ngAfterContentChecked() {
+        this.cdref.detectChanges();
     }
 
     async ngOnInit() {
