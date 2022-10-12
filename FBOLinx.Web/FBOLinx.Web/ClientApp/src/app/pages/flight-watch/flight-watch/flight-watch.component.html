@@ -5,7 +5,7 @@
         <mat-drawer-content>
             <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
             <div *ngIf="flightWatchData">
-                <div class="drawer-button" (click)="openSettingsDrawer()">
+                <div class="drawer-button" (click)="toggleSettingsDrawer()">
                     <button class="mat-dark-blue" mat-flat-button>
                         <mat-icon *ngIf="!isDrawerOpen()"
                             >chevron_left</mat-icon
