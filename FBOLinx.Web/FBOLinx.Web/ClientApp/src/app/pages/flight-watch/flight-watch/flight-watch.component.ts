@@ -101,13 +101,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         }
     }
     setData(data: FlightWatchModelResponse[]):void{
-        let currentFilter: SwimFilter = { filterText : this.filter, dataType: null };
+        let currentFilter: SwimFilter = { filterText: this.filter, dataType: null };
+        this.flightWatchData = data;
 
         this.arrivals = data?.filter((row: FlightWatchModelResponse) => { return row.arrivalICAO == row.focusedAirportICAO  && row.status != null });
         this.departures = data?.filter((row: FlightWatchModelResponse) => { return row.departureICAO  == row.focusedAirportICAO && row.status != null });
-
-        this.flightWatchData = this.arrivals.concat(this.departures);
-
+        
         this.arrivalsAllRecords = this.arrivals;
         this.departuresAllRecords = this.departures;
 
@@ -139,6 +138,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
             if (data.success) {
                 this.setData(data.result);
+            } else {
+                this.flightWatchData = [];
             }
             this.loading = false;
         }, (error: any) => {

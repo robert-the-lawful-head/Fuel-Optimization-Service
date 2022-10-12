@@ -24,7 +24,7 @@ export class TableGlobalSearchComponent implements OnInit {
         }
         let hasGlobal = false;
 
-        if (this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
+        if (this.matDataSource.data.length > 0 && this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
             this.page = "customer-manager-filters";
         this.matDataSource.filter = localStorage.getItem(this.page);
 

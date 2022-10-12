@@ -104,7 +104,7 @@ export class TableColumnFilterComponent implements OnInit {
 
         this.setupFilterPredicate();
 
-        if (this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
+        if (this.matDataSource.data.length > 0 && this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
             this.page = "customer-manager-filters";
 
         var existingFilters = localStorage.getItem(this.page);
