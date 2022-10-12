@@ -154,6 +154,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
                 return _AirportWatchLiveData?.AircraftHexCode;
             }
         }
+
+        public int? CustomerInfoByGroupId => _CustomerAircraft?.CustomerInfoByGroupId;
         public DateTime? LastQuoted { get; set; }
 
         public SWIMFlightLegDTO GetSwimFlightLeg()
