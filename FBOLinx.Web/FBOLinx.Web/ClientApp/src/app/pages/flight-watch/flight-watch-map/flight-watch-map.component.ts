@@ -64,18 +64,7 @@ export class FlightWatchMapComponent
     public acukwikairports: AcukwikAirport[];
     nearbyMiles: number = 150;
     //popup
-    public popupData: Aircraftwatch = {
-        customerInfoBygGroupId: 0,
-        tailNumber: '',
-        atcFlightNumber: '',
-        aircraftTypeCode: '',
-        isAircraftOnGround: false,
-        company: '',
-        aircraftMakeModel: '',
-        lastQuote: '',
-        currentPricing: '',
-        aircraftICAO: '',
-    };
+    public popupData: Aircraftwatch;
     public fboId: any;
     public groupId: any;
     public selectedAircraft: number = 0;
@@ -519,12 +508,7 @@ export class FlightWatchMapComponent
     updateAircraft(event: Aircraftwatch): void {
         this.data[this.selectedAircraft].isInNetwork = true;
         this.data[this.selectedAircraft].company = event.company;
-        // this.data[this.selectedAircraft].aircraftMakeModel =
-        //     event.aircraftMakeModel;
-
-        // var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model);
-        // makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
-
+        this.data[this.selectedAircraft].aircraftTypeCode = event.aircraftTypeCode;
         this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
     }

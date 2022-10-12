@@ -181,7 +181,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return row[col.id];
     }
     getColumnDisplayString(column:string){
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 184 ~ FlightWatchSettingTableComponent ~ getColumnDisplayString ~ column", column)
         if(column == swimTableColumns.originDestination || column == swimTableColumns.etaAtd){
             return this.isArrival
             ? swimTableColumnsDisplayText[column].arrivals

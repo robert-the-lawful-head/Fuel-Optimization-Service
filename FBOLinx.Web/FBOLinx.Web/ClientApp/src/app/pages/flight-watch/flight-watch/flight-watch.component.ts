@@ -13,7 +13,7 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { SharedService } from '../../../layouts/shared-service';
-import { Aircraftwatch, FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
+import { FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 
 const BREADCRUMBS: any[] = [
@@ -48,8 +48,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     filteredTypes: string[] = [];
     center: LngLatLike;
     selectedFlightWatch: FlightWatchModelResponse;
-    selectedAircraftData: Aircraftwatch;
-
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
 
     AircraftLiveDatasubscription: Subscription;

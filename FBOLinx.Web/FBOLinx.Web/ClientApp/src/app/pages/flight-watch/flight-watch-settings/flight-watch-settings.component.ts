@@ -119,7 +119,6 @@ export class FlightWatchSettingsComponent {
                 localStorage.getItem(this.tableLocalStorageKey)
             );
         } else {
-            //refator this useless structure
             this.columns = [
                 {
                     id: swimTableColumns.status,
