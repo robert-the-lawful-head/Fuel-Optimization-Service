@@ -31,6 +31,7 @@ import { AircraftPopupContainerComponent } from '../aircraft-popup-container/air
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { detailDataBound } from '@syncfusion/ej2-angular-grids';
+import { FlightWatchHelper } from '../FlightWatchHelper.service';
 
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -101,7 +102,8 @@ export class FlightWatchMapComponent
         private flightWatchMapService: FlightWatchMapService,
         private fboFlightWatchService: FboFlightWatchService,
         private aircraftFlightWatchService: AircraftFlightWatchService,
-        private acukwikairportsService: AcukwikairportsService
+        private acukwikairportsService: AcukwikairportsService,
+        private flightWatchHelper: FlightWatchHelper
     ) {
         super();
         this.fboId = this.sharedService.currentUser.fboId;
@@ -292,7 +294,8 @@ export class FlightWatchMapComponent
         this.mapRemove();
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
-        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 295 ~ setPopUpContainerData ~ data", selectedPopUp)
+        var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
+        makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
         let obj = {
             customerInfoBygGroupId : 0,
             tailNumber: selectedPopUp.tailNumber,
@@ -300,14 +303,13 @@ export class FlightWatchMapComponent
             aircraftTypeCode: selectedPopUp.aircraftTypeCode,
             isAircraftOnGround: selectedPopUp.isAircraftOnGround,
             company: selectedPopUp.company,
-            aircraftMakeModel: "",
+            aircraftMakeModel: makemodelstr,
             lastQuote: selectedPopUp.lastQuote,
             currentPricing: selectedPopUp.currentPricing,
             aircraftICAO: selectedPopUp.icaoAircraftCode
         };
 
         this.popupData = Object.assign({}, obj);
-        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 297 ~ setPopUpContainerData ~  this.popupData",  this.popupData)
     }
     loadFlightOnMap() {
         const source = this.getSource(this.flightSourceId);
@@ -519,6 +521,10 @@ export class FlightWatchMapComponent
         this.data[this.selectedAircraft].company = event.company;
         // this.data[this.selectedAircraft].aircraftMakeModel =
         //     event.aircraftMakeModel;
+
+        // var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model);
+        // makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
+
         this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
     }

@@ -12,6 +12,7 @@ import {
 import { BooleanToTextPipe } from 'src/app/shared/pipes/boolean/booleanToText.pipe';
 import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
+import { FlightWatchHelper } from '../../FlightWatchHelper.service';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -52,7 +53,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     constructor(private getTime : GetTimePipe,
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
-                private booleanToText: BooleanToTextPipe) { }
+                private booleanToText: BooleanToTextPipe,
+                private flightWatchHelper: FlightWatchHelper) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
@@ -124,12 +126,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
             this.columnsToDisplayDic[col.id] = col.name;
         });
     }
-    getSlashSeparationDisplayString(e1: any,e2: any){
-        let str = (e1)?e1:"";
-        str += (e1 && e2)?"/":"";
-        str += (e2)?e2:"";
-        return str;
-    }
     getOriginDestinationString(element: Swim){
         return this.isArrival
                 ? element.origin
@@ -185,6 +181,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return row[col.id];
     }
     getColumnDisplayString(column:string){
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts ~ line 184 ~ FlightWatchSettingTableComponent ~ getColumnDisplayString ~ column", column)
         if(column == swimTableColumns.originDestination || column == swimTableColumns.etaAtd){
             return this.isArrival
             ? swimTableColumnsDisplayText[column].arrivals
@@ -199,10 +196,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
         : "Destination City";
     }
     getMakeModelDisplayString(element: Swim){
-
-        var makemodelstr = this.getSlashSeparationDisplayString(element.make,element.model);
-
-        return makemodelstr == ""  ? "Unknown" : makemodelstr ;
+        var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model);
+        return this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
     }
     getTextColor(row: Swim, column:string){
         if(column == swimTableColumns.tailNumber)
@@ -257,6 +252,5 @@ export class FlightWatchSettingTableComponent implements OnInit {
     compare(a: number | string , b: number | string, isAsc: boolean) {
         var result =  (a < b ? -1 : 1) * (isAsc ? 1 : -1);
         return result;
-
     }
 }

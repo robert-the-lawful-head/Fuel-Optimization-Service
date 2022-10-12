@@ -64,7 +64,6 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         this.map.resizeMap(isopen);
     }
     updateSelectedAircraft($event: FlightWatchModelResponse){
-        console.log("🚀 ~ file: flight-watch-map-wrapper.component.ts ~ line 66 ~ FlightWatchMapWrapperComponent ~ updateSelectedAircraft ~ event", event)
         this.selectedPopUp = $event;
     }
 }

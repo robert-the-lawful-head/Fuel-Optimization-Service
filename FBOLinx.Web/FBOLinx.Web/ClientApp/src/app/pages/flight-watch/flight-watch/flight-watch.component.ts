@@ -154,12 +154,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         else
             this.isMapShowing = true;
     }
-    getSlashSeparationDisplayString(e1: any,e2: any){
-        let str = (e1)?e1:"";
-        str += (e1 && e2)?"/":"";
-        str += (e2)?e2:"";
-        return str;
-    }
 
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;

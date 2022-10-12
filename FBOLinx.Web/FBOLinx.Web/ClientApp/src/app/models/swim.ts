@@ -76,7 +76,7 @@ export const swimTableColumnsDisplayText = {
     etaAtd: { arrivals: 'ETA', departures: 'ATD'},
     originDestination: { arrivals: 'Origin', departures: 'Destination'},
     isAircraftOnGround: 'On Ground',
-    itpMarginTemplate: 'ITP Margin Template:',
+    itpMarginTemplate: 'ITP Margin Template',
     expandedDetail: 'expandedDetail',
 };
 
