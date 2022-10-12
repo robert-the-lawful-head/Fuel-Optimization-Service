@@ -1,4 +1,4 @@
-import { SwimType } from "./swim";
+import { SwimType } from "../enums/flight-watch.enum";
 
 export interface SwimFilter {
     filterText: string;

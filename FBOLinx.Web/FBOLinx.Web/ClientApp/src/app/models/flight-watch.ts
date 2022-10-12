@@ -1,5 +1,7 @@
+import { FlightLegStatus } from "../enums/flight-watch.enum";
+
 export type FlightWatchDictionary = {
-    [oid: number]: FlightWatch;
+    [oid: number]: FlightWatchModelResponse;
 };
 export type FlightWatch = {
     oid: number;
@@ -41,3 +43,67 @@ export type Aircraftwatch = {
     currentPricing : string;
     aircraftICAO : string;
 };
+export interface FlightWatchModelResponse {
+    airportWatchLiveDataId: number;
+    swimFlightLegId: number;
+    visitsToMyFBO: number;
+    arrivals: number;
+    departures: number;
+    focusedAirportICAO: string;
+    boxTransmissionDateTimeUtc: Date;
+    atcFlightNumber: string;
+    altitudeInStandardPressure: number;
+    groundSpeedKts: number;
+    trackingDegree: number;
+    verticalSpeedKts: number;
+    transponderCode: number;
+    boxName: string;
+    aircraftPositionDateTimeUtc: Date;
+    aircraftTypeCode: string;
+    gpsAltitude: number;
+    aircraftHexCode: string;
+    tailNumber: string;
+    flightDepartment: string;
+    make: string;
+    model: string;
+    faaMake: string;
+    faaModel: string;
+    fuelCapacityGal: number;
+    origin: string;
+    city: string;
+    departureICAO: string;
+    departureCity: string;
+    arrivalICAO: string;
+    arrivalCity: string;
+    atdLocal: Date;
+    atdZulu: Date;
+    etaLocal: Date;
+    etaZulu: Date;
+    ete: string;
+    actualSpeed: number;
+    altitude: number;
+    latitude: number;
+    longitude: number;
+    isAircraftOnGround: boolean;
+    itpMarginTemplate: string;
+    pricingTemplateId: number;
+    status: FlightLegStatus | null;
+    phone: string;
+    id: number;
+    fuelOrderId: number;
+    fuelerlinxID: number;
+    fuelerlinxFuelOrderId: number;
+    vendor: string;
+    transactionStatus: string;
+    icaoAircraftCode: string;
+    isInNetwork: boolean;
+    isOutOfNetwork: boolean;
+    isActiveFuelRelease: boolean;
+    isFuelerLinxClient: boolean;
+    aircraftIdentification: string;
+    lastQuoted: Date;
+    company: string,
+    lastQuote: string,
+    currentPricing: string,
+    customerInfoBygGroupId: string
+}
