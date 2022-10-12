@@ -11,6 +11,7 @@ using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.FboAirport;
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO;
@@ -40,8 +41,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
     {
         private int _CacheLifeSpanInMinutes = 10;
         private string _UpcomingOrdersCacheKeyPrefix = "UpcomingOrders_ByGroupAndFbo_";
-        private int _HoursToLookBackForUpcomingOrders = 1;
-        private int _HoursToLookForwardForUpcomingOrders = 12;
+        private int _HoursToLookBackForUpcomingOrders = 12;
+        private int _HoursToLookForwardForUpcomingOrders = 24;
 
         private FuelReqEntityService _FuelReqEntityService;
         private readonly FuelerLinxApiService _fuelerLinxService;
@@ -49,13 +50,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IFboEntityService _FboEntityService;
         private ICustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
+        private IAirportService _AirportService;
+        private IAirportTimeService _AirportTimeService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IMemoryCache memoryCache
+            IMemoryCache memoryCache,
+            IAirportTimeService airportTimeService
             ) : base(fuelReqEntityService)
         {
+            _AirportTimeService = airportTimeService;
             _MemoryCache = memoryCache;
             _CustomerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _FboEntityService = fboEntityService;
@@ -82,9 +87,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 result = await GetUpcomingOrdersFromCache(groupId, fboId);
             }
 
-            if (result == null) {
-                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, DateTime.UtcNow.AddHours(-_HoursToLookBackForUpcomingOrders),
+            if (result == null)
+            {
+                var startDateTime = await _AirportTimeService.GetAirportLocalDateTime(fboId, DateTime.UtcNow.AddHours(-_HoursToLookBackForUpcomingOrders));
+                var endDateTime = await _AirportTimeService.GetAirportLocalDateTime(fboId,
                     DateTime.UtcNow.AddHours(_HoursToLookForwardForUpcomingOrders));
+                result = await GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, startDateTime, endDateTime);
                 var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
                 _MemoryCache.Set(_UpcomingOrdersCacheKeyPrefix + groupId + "_" + fboId, result, cacheEntryOptions);
             }

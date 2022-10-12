@@ -35,9 +35,10 @@
                         <a>
                             <mat-icon aria-hidden="false" aria-label="Inbound visit">flight</mat-icon>
                             <div class="content">
-                                <span class="desc">Fueling Alert <strong>{{fuelOrder.customerAircraft.tailNumber}}</strong></span>
+                                <span class="desc">Fueling Alert <strong>{{fuelOrder.tailNumber}}</strong></span>
                                 <span class="date">Gallons: {{(fuelOrder.quotedVolume <= 1 ? 'Captain\'s Request' : fuelOrder.quotedVolume)}} ({{(!fuelOrder.product || fuelOrder.product == '' ? 'JetA' : fuelOrder.product)}})</span>
-                                <span class="date">ETA: {{fuelOrder.minutesUntilArrival}} minutes</span>
+                                <span class="date" *ngIf="fuelOrder.minutesUntilArrival <= 0">ETA: Now</span>
+                                <span class="date" *ngIf="fuelOrder.minutesUntilArrival > 0">ETA: {{fuelOrder.hoursUntilArrival > 0 ? fuelOrder.hoursUntilArrival.toString() + ' hours' : fuelOrder.minutesUntilArrival.toString() + ' minutes'}}</span>
                             </div>
                         </a>
                     </li>
