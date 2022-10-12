@@ -193,12 +193,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     filterAircrafts(records: FlightWatchModelResponse[]): FlightWatchDictionary{
         if (this.selectedFlightWatch) {
             this.selectedFlightWatch =
-                this.filteredFlightWatchData[this.selectedFlightWatch.airportWatchLiveDataId];
+                this.filteredFlightWatchData[this.selectedFlightWatch.tailNumber];
         }
 
-        return keyBy(records, (fw) => {
-            return fw.airportWatchLiveDataId
+        var result = keyBy(records, (fw) => {
+            return fw.tailNumber
         });
+        return result;
     }
     validate(event: ResizeEvent): boolean {
         const MAX_DIMENSIONS_PX = 800;

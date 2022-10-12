@@ -307,6 +307,13 @@ export class FlightWatchMapComponent
         this.isAircraftDataLoading = false;
     }
     loadFlightOnMap() {
+        const source = this.getSource(this.flightSourceId);
+
+        if(source){
+            this.updateFlightOnMap();
+            return;
+        }
+
         var newflightsInMapBounds = this.getFlightsWithinMapBounds(
             this.getBounds()
         );
@@ -357,7 +364,7 @@ export class FlightWatchMapComponent
     }
     setDefaultPopUpOpen(flightsIdsOnMap: string[]): void {
         let selectedFlight = flightsIdsOnMap.find(
-            (key) => this.data[key].airportWatchLiveDataId == this.currentPopup.popupId
+            (key) => this.data[key].tailNumber == this.currentPopup.popupId
         );
 
         if (!selectedFlight) return;
@@ -404,7 +411,7 @@ export class FlightWatchMapComponent
     getFlightSourcerFeatureMarkers(flights: any): any {
         return flights.map((key) => {
             const row = this.data[key];
-            const id = this.flightWatchMapService.buildAircraftId(row.airportWatchLiveDataId);
+            const id = this.flightWatchMapService.buildAircraftId(row.tailNumber);
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
                 row,
                 id,
@@ -431,7 +438,6 @@ export class FlightWatchMapComponent
             this.data[id].latitude,
         ];
         self.currentPopup.popupId = id;
-        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 425 ~ self.currentPopup", self.currentPopup)
         self.isAircraftDataLoading = true;
         self.markerClicked.emit(this.data[id]);
         self.openPopupRenderComponent(

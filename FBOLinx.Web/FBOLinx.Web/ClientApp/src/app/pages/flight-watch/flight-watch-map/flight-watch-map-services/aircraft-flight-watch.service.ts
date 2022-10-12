@@ -30,7 +30,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 type: 'Point',
             },
             properties: {
-                id: data.airportWatchLiveDataId,
+                id: data.tailNumber,
                'icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
