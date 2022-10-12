@@ -70,6 +70,9 @@ export class TableColumnFilterComponent implements OnInit {
     public isFilterOpen = false;
     public stringFilterConditionOptions: Array<EnumOptions.EnumOption> = EnumOptions.stringFilterConditionOptions;
 
+    private page;
+    private existingFilterPassed = false;
+
     constructor() {}
 
     ngOnInit(): void {
@@ -100,6 +103,20 @@ export class TableColumnFilterComponent implements OnInit {
         }
 
         this.setupFilterPredicate();
+
+        if (this.matDataSource.data[0].hasOwnProperty('fuelerLinxId'))
+            this.page = "customer-manager-filters";
+
+        var existingFilters = localStorage.getItem(this.page);
+        if (existingFilters != null) {
+            var filters = JSON.parse(existingFilters);
+            filters.forEach((filter) => {
+                if (filter.propertyName == this.column.propertyName) {
+                    this.existingFilterPassed = true;
+                    this.applyFilter(filter.filter, null);
+                }
+            });
+        }
     }
 
     public orderData(id: string, start?: 'asc' | 'desc'): void {
@@ -131,21 +148,36 @@ export class TableColumnFilterComponent implements OnInit {
         const existingFilter = this.tableFilter.filter(
             (column) => column.propertyName === this.column.propertyName
         );
+
+        var existingFilterIndex = -1;
+
         if (existingFilter.length === 0) {
             this.tableFilter.push(this.column);
             existingFilter.push(this.column);
         } else {
+            existingFilterIndex = this.tableFilter.findIndex(column => {
+                return column.propertyName === existingFilter[0].propertyName
+            });
+
             existingFilter[0].filter = this.column.filter;
         }
 
         if (!filterValue || filterValue === '') {
-            this.tableFilter.splice(existingFilter[0], 1);
+            this.tableFilter.splice(existingFilterIndex, 1);
         }
 
         this.matDataSource.filter = JSON.stringify(this.tableFilter);
         this.filterApplied.emit(this.column);
         if (menuTrigger) {
             menuTrigger.closeMenu();
+        }
+
+        if ((!this.existingFilterPassed && filterValue != null) || filterValue == null) {
+            localStorage.setItem(
+                this.page,
+                this.matDataSource.filter
+            );
+            this.existingFilterPassed = false;
         }
     }
 
