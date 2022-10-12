@@ -22,7 +22,6 @@
                     <app-flight-watch-map-wrapper
                         id="map-wrapper"
                         #map
-                        (markerClicked)="onFlightWatchClick($event)"
                         (airportClick)="updateIcao($event.icao)"
                         (setIcaoList)="setIcaoList($event)"
                         (filterChanged)="onFilterChanged($event)"

@@ -160,22 +160,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         str += (e2)?e2:"";
         return str;
     }
-    async onFlightWatchClick(flightWatch: FlightWatchModelResponse) {
-        if(!flightWatch.tailNumber) {
-            this.selectedAircraftData = {
-                customerInfoBygGroupId : 0,
-                tailNumber: flightWatch?.tailNumber,
-                atcFlightNumber: flightWatch?.atcFlightNumber,
-                aircraftTypeCode: flightWatch?.aircraftTypeCode,
-                isAircraftOnGround: flightWatch?.isAircraftOnGround,
-                company: flightWatch?.company,
-                aircraftMakeModel: this.getSlashSeparationDisplayString(flightWatch?.make,flightWatch?.model),
-                lastQuote: flightWatch?.lastQuote,
-                currentPricing: flightWatch?.currentPricing,
-                aircraftICAO: flightWatch?.icaoAircraftCode
-            };
-        }
-    }
 
     onAircraftInfoClose() {
         this.selectedFlightWatch = undefined;
