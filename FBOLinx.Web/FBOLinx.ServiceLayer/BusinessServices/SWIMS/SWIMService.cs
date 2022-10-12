@@ -157,7 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
                 if (existingLeg != null)
                 {
-                    foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
+                    foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages.Where(x => (x.Latitude != null && x.Longitude != null) || x.Altitude != null || x.ActualSpeed != null))
                     {
                         flightLegDataMessageDto.SWIMFlightLegId = existingLeg.Oid;
                         flightLegDataMessageDto.MessageTimestamp = DateTime.UtcNow;
