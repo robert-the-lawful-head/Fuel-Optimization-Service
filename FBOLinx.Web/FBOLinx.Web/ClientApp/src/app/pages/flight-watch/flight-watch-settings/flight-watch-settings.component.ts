@@ -1,12 +1,11 @@
-import { ChangeDetectionStrategy, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
-import { Swim, swimTableColumns } from 'src/app/models/swim';
+import { swimTableColumns } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
-import { FlightWatch } from '../../../models/flight-watch';
+import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
 
@@ -17,8 +16,8 @@ import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/f
     templateUrl: './flight-watch-settings.component.html',
 })
 export class FlightWatchSettingsComponent {
-    @Input() swimArrivals: Swim[];
-    @Input() swimDepartures: Swim[];
+    @Input() arrivals: FlightWatchModelResponse[];
+    @Input() departures: FlightWatchModelResponse[];
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() filteredTypes: string[];
@@ -26,7 +25,6 @@ export class FlightWatchSettingsComponent {
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
-    @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
 
     @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
@@ -43,10 +41,8 @@ export class FlightWatchSettingsComponent {
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if((changes.swimArrivals && !changes.swimArrivals.previousValue)
-        || (changes.swimDepartures && !changes.swimDepartures.previousValue)){
-            this.updateDrawerButtonPosition.emit();
-        }
+        if(!changes.arrivals?.previousValue && !changes.departures?.previousValue)
+        this.updateDrawerButtonPosition.emit();
     }
 
     get aircraftTypes() {
@@ -92,13 +88,10 @@ export class FlightWatchSettingsComponent {
         }
     }
     updateIcao(event: any ){
-        this.swimArrivals = null;
-        this.swimDepartures = null;
+        this.arrivals = null;
+        this.departures = null;
         this.updateDrawerButtonPosition.emit();
         this.icaoChanged.emit(event);
-    }
-    openPopup(tailnumber: string): void{
-        this.openAircraftPopup.emit(tailnumber);
     }
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(

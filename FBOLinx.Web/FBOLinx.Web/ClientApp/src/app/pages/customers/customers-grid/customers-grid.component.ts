@@ -164,7 +164,7 @@ export class CustomersGridComponent implements OnInit {
 
     ngOnInit() {
         /*this.initializeImporter();*/
-         if (this.customerGridState.filterType) {
+        if (this.customerGridState.filterType) {
             this.customerFilterType = this.customerGridState.filterType;
         }
 
@@ -196,9 +196,10 @@ export class CustomersGridComponent implements OnInit {
             this.sort.direction = this.customerGridState
                 .orderBy as SortDirection;
         }
-        this.airportWatchService.getStartDate().subscribe((date) => {
-            this.airportWatchStartDate = new Date(date);
-        });
+        //this.airportWatchService.getStartDate().subscribe((date) => {
+        //this.airportWatchStartDate = new Date(date);
+        //});
+        this.airportWatchStartDate = new Date("10/6/2022");
     }
 
 

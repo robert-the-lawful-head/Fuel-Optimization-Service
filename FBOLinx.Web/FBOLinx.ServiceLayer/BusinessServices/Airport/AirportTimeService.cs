@@ -10,6 +10,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 {
     public interface IAirportTimeService
     {
+        Task<DateTime> GetAirportLocalDateTime(int fboId, DateTime? utcDateTime = null);
         Task<DateTime> GetAirportLocalDateTime(string icao, DateTime? utcDateTime = null);
         Task<string> GetAirportTimeZone(string icao);
     }
@@ -18,10 +19,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
     {
         private FuelerLinxApiService _FuelerLinxApiService;
         private List<GeneralAirportInformation> _AirportGeneralInformationList;
+        private IAirportService _AirportService;
 
-        public AirportTimeService(FuelerLinxApiService fuelerLinxApiService)
+        public AirportTimeService(FuelerLinxApiService fuelerLinxApiService, IAirportService airportService)
         {
+            _AirportService = airportService;
             _FuelerLinxApiService = fuelerLinxApiService;
+        }
+
+        public async Task<DateTime> GetAirportLocalDateTime(int fboId, DateTime? utcDateTime = null)
+        {
+            var airportPosition = await _AirportService.GetAirportPositionForFbo(fboId);
+            if (airportPosition == null)
+                return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
+            return await GetAirportLocalDateTime(airportPosition.Icao, utcDateTime);
         }
 
         public async Task<DateTime> GetAirportLocalDateTime(string icao, DateTime? utcDateTime = null)

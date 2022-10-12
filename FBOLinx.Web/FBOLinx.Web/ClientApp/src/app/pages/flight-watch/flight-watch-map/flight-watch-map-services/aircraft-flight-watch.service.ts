@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
 
@@ -8,17 +9,17 @@ import { FlightWatchMapService } from './flight-watch-map.service';
 export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
-    public getFlightFeatureJsonData(data: any,id,selectedAircraft): any {
+    public getFlightFeatureJsonData(data: FlightWatchModelResponse,id,selectedAircraft): any {
         let icon = "aircraft_image_";
-        if (data.isInNetwork && !data.fuelOrder && !data.isFuelerLinxCustomer){
+        if (data.isInNetwork && !data.fuelOrderId && !data.isFuelerLinxClient){
             icon = `${icon}client`;
         }else{
             icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
                 data.aircraftTypeCode
             )}${id === selectedAircraft.toString() ? '_reversed' : ''}${
-                data.fuelOrder != null
+                data.fuelOrderId != null
                     ? '_release'
-                    : data.isFuelerLinxCustomer
+                    : data.isFuelerLinxClient
                     ? '_fuelerlinx'
                     : ''
             }`
@@ -29,7 +30,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 type: 'Point',
             },
             properties: {
-                id: data.oid,
+                id: data.tailNumber,
                'icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,

@@ -1,3 +1,5 @@
+import { FlightLegStatus } from "../enums/flight-watch.enum";
+
 export interface Swim {
     tailNumber: string;
     flightDepartment: string;
@@ -23,7 +25,7 @@ export interface Swim {
     longitude: number | null;
     isAircraftOnGround: boolean;
     itpMarginTemplate: string;
-    status: FlightLegStatusEnum;
+    status: FlightLegStatus;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
@@ -38,14 +40,6 @@ export interface Swim {
     isActiveFuelRelease: boolean;
     isFuelerLinxClient: boolean;
 }
-export enum FlightLegStatusEnum {
-    EnRoute,
-    Landing,
-    TaxiingDestination,
-    Arrived,
-    Departing,
-    TaxiingOrigin,
-}
 export interface Time {
     ticks: number;
     days: number;
@@ -59,12 +53,6 @@ export interface Time {
     totalMinutes: number;
     totalSeconds: number;
 }
-
-export enum SwimType {
-    Arrival,
-    Departure,
-}
-
 export const swimTableColumns = {
     status: 'status',
     tailNumber: 'tailNumber',
@@ -88,15 +76,15 @@ export const swimTableColumnsDisplayText = {
     etaAtd: { arrivals: 'ETA', departures: 'ATD'},
     originDestination: { arrivals: 'Origin', departures: 'Destination'},
     isAircraftOnGround: 'On Ground',
-    itpMarginTemplate: 'ITP Margin Template:',
+    itpMarginTemplate: 'ITP Margin Template',
     expandedDetail: 'expandedDetail',
 };
 
 export const tailNumberTextColor = {
     fuelerLinx: '#1D497F',
     activeFuelRelease: '#0DC520',
-    outOfNetwork: '#FF7F00',
-    inNetwork: '#C9CEEA',
+    outOfNetwork: '#C1C1C1',
+    inNetwork: '#FF7F00',
 };
 export const stautsTextColor = {
     EnRoute: 'black',

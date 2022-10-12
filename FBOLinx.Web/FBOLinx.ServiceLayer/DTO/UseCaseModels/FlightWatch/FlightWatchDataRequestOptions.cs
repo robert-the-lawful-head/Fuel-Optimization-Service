@@ -15,6 +15,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public bool IncludeFuelOrderInformation { get; set; }
         public bool IncludeCustomerAircraftInformation { get; set; }
         public bool IncludeVisitsAtFbo { get; set; }
+        public bool IncludeCompanyPricingLogLastQuoteDate { get; set; }
         public int NauticalMileRadiusForData { get; set; } = 250;
     }
 }

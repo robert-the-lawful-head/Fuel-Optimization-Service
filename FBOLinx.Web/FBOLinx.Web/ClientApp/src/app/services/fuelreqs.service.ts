@@ -1,6 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
+import * as moment from 'moment';
+
 @Injectable()
 export class FuelreqsService {
     private headers: HttpHeaders;
@@ -27,8 +29,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
-                endDateTime: endDate,
-                startDateTime: startDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -50,8 +52,8 @@ export class FuelreqsService {
                 fboId +
                 '/daterange',
             {
-                endDateTime: endDate,
-                startDateTime: startDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -63,7 +65,7 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
             {
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -147,9 +149,9 @@ export class FuelreqsService {
                 '/analysis/quotes-orders-over-time/fbo/' +
                 fboId,
             {
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 fboId,
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -161,9 +163,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/orders-won-over-time/fbo/' + fboId,
             {
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 fboId,
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -183,9 +185,9 @@ export class FuelreqsService {
                 fboId,
             {
                 distanceMile: mile,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 icao: '',
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -201,8 +203,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -220,9 +222,9 @@ export class FuelreqsService {
             this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
             {
                 chartType,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 icao: '',
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -243,8 +245,8 @@ export class FuelreqsService {
                 '/fbo/' +
                 fboId,
             {
-                endDateTime: endDate,
-                startDateTime: startDate
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm')
             },
             {
                 headers: this.headers,
@@ -263,9 +265,9 @@ export class FuelreqsService {
             '/analysis/company-quoting-deal-statistics/group/' +
             groupId,
             {
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 fboIds,
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -278,8 +280,8 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 customerId: customerId.toString()
             },
             {
@@ -294,9 +296,9 @@ export class FuelreqsService {
                 '/analysis/fbo-fuel-vendor-sources/fbo/' +
                 fboId,
             {
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 icao: '',
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -314,9 +316,9 @@ export class FuelreqsService {
                 '/analysis/market-share-fbo-airport/fbo/' +
                 fboId,
             {
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 icao: '',
-                startDateTime: startDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -334,8 +336,8 @@ export class FuelreqsService {
                 '/analysis/market-share-fbos-airports/group/' +
                 groupId,
             {
-                endDateTime: endDate,
-                startDateTime: startDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
                 icaos: [],
                 fbos: []
             },
@@ -355,8 +357,8 @@ export class FuelreqsService {
                 '/analysis/fbo-fuel-vendor-sources/group/' +
                 groupId,
             {
-                endDateTime: endDate,
-                startDateTime: startDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
                 icaosfbos: {}
             },
             {

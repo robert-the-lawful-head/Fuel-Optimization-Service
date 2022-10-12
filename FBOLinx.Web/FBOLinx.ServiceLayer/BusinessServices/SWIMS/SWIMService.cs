@@ -124,7 +124,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             foreach (IGrouping<string, SWIMFlightLegDTO> flightLegGrouping in swimFlightLegs.GroupBy(x => x.AircraftIdentification))
             {
                 SWIMFlightLegDTO swimFlightLegDto = flightLegGrouping.First();
-                swimFlightLegDto.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>() { flightLegGrouping.SelectMany(x => x.SWIMFlightLegDataMessages).ToList().First() };
+                swimFlightLegDto.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>() { flightLegGrouping.SelectMany(x => x.SWIMFlightLegDataMessages)
+                    .OrderBy(x => x.Latitude.HasValue ? 1 : 2)
+                    .ThenByDescending(x => x.MessageTimestamp)
+                    .ToList().First() };
                 swimFlightLegDTOs.Add(swimFlightLegDto);
             }
             
@@ -157,7 +160,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
                 if (existingLeg != null)
                 {
-                    foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages)
+                    foreach (SWIMFlightLegDataDTO flightLegDataMessageDto in swimFlightLegDto.SWIMFlightLegDataMessages.Where(x => (x.Latitude != null && x.Longitude != null) || x.Altitude != null || x.ActualSpeed != null))
                     {
                         flightLegDataMessageDto.SWIMFlightLegId = existingLeg.Oid;
                         flightLegDataMessageDto.MessageTimestamp = DateTime.UtcNow;
@@ -166,6 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
                     if (existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
                     {
+                        existingLeg.LastUpdated = DateTime.UtcNow;
                         existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
                         AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
                         if (arrivalAirport != null)
@@ -177,10 +181,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
                 else
                 {
-                    await SetTailNumber(swimFlightLegDto, antennaLiveData, antennaHistoricalData);
+                    //[#3jv5g9w] Setting the tail number is no longer needed.
+                    //await SetTailNumber(swimFlightLegDto, antennaLiveData, antennaHistoricalData);
                     swimFlightLegDto.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
                     var flightLegToInsert = swimFlightLegDto.Adapt<SWIMFlightLeg>();
                     flightLegToInsert.Status = FlightLegStatus.Departing;
+                    swimFlightLegDto.LastUpdated = DateTime.UtcNow;
 
                     AcukwikAirport departureAirport = airports.FirstOrDefault(x => x.Icao == flightLegToInsert.DepartureICAO);
                     if (departureAirport != null)
@@ -268,7 +274,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     Status = x.Status.GetValueOrDefault(),
                     IsAircraftOnGround = true,
                     Latitude = x.Latitude,
-                    Longitude = x.Longitude
+                    Longitude = x.Longitude,
+                    LastUpdated = DateTime.UtcNow
                 }).ToList();
             
             //Bulk update and insert all legs that need it
@@ -306,7 +313,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     swimFlightLeg.Altitude = latestSwimMessage.Altitude;
                     swimFlightLeg.Latitude = latestSwimMessage.Latitude;
                     swimFlightLeg.Longitude = latestSwimMessage.Longitude;
-                    flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
+                    swimFlightLeg.LastUpdated = latestSwimMessage.MessageTimestamp;
+                    flightWatchModel.MarkSWIMFlightLegAsNeedingUpdate();
                 }
             });
             
@@ -350,7 +358,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
 
                 swimFlightLeg.IsProcessed = true;
-                flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
+                flightWatchModel.MarkSWIMFlightLegAsNeedingUpdate();
             });
         }
         
@@ -445,6 +453,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
         }
         
+        [Obsolete("3jv5g9w - Setting the tail number of the SWIM flight leg feed is no longer needed.  The SWIM data should maintain it's original aircraft identification and the tail number is determined through the FlightWatchService join on antenna data.")]
         private async Task SetTailNumber(SWIMFlightLegDTO swimFlightLegDto, List<AirportWatchLiveHexTailMapping> antennaLiveData, List<AirportWatchHistoricalData> antennaHistoricalData)
         {
             if (IsCorrectTailNumber(swimFlightLegDto.AircraftIdentification))

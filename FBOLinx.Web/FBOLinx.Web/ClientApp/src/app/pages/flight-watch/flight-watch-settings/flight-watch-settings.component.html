@@ -24,20 +24,18 @@
 <div class="data-container" >
     <app-flight-watch-setting-table
         #arrivalsTable
-        [data]="swimArrivals"
+        [data]="arrivals"
         [isArrival]="true"
         [columns]="columns"
         (saveSettings)="sortChangeSaveSettings()"
-        (openAircraftPopup)="openPopup($event)"
     ></app-flight-watch-setting-table>
 </div>
 <div class="data-container">
     <app-flight-watch-setting-table
         #departuresTable
-        [data]="swimDepartures"
+        [data]="departures"
         [isArrival]="false"
         [columns]="columns"
         (saveSettings)="sortChangeSaveSettings()"
-        (openAircraftPopup)="openPopup($event)"
     ></app-flight-watch-setting-table>
 </div>
