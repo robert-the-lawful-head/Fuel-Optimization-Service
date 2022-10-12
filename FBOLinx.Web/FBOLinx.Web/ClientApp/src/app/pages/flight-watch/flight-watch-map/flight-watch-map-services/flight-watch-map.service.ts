@@ -24,7 +24,7 @@ export class FlightWatchMapService {
             }
         };
     }
-    public buildAircraftId(aircraftId: number): string {
+    public buildAircraftId(aircraftId: any): string {
         return `aircraft_${aircraftId}`;
     }
 }

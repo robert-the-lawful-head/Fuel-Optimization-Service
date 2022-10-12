@@ -18,8 +18,8 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
 import {
     Aircraftwatch,
-    FlightWatch,
     FlightWatchDictionary,
+    FlightWatchModelResponse,
 } from '../../../models/flight-watch';
 import { AirportFboGeoFenceCluster } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-cluster';
 import { MapboxglBase } from 'src/app/services/mapbox/mapboxBase';
@@ -30,7 +30,9 @@ import { AircraftImageData, AIRCRAFT_IMAGES } from './aircraft-images';
 import { AircraftPopupContainerComponent } from '../aircraft-popup-container/aircraft-popup-container.component';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
-import { convertDMSToDEG } from 'src/utils/coordinates';
+import { detailDataBound } from '@syncfusion/ej2-angular-grids';
+import { FlightWatchHelper } from '../FlightWatchHelper.service';
+
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -46,11 +48,11 @@ export class FlightWatchMapComponent
 {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: FlightWatchDictionary;
-    @Input() aircraftData: Aircraftwatch;
+    @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
 
-    @Output() markerClicked = new EventEmitter<FlightWatch>();
+    @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
     @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
@@ -62,19 +64,7 @@ export class FlightWatchMapComponent
     public acukwikairports: AcukwikAirport[];
     nearbyMiles: number = 150;
     //popup
-    public popupData: Aircraftwatch = {
-        customerInfoBygGroupId: 0,
-        tailNumber: '',
-        atcFlightNumber: '',
-        aircraftTypeCode: '',
-        isAircraftOnGround: false,
-        company: '',
-        aircraftMakeModel: '',
-        lastQuote: '',
-        currentPricing: '',
-        aircraftICAO: '',
-    };
-    public isAircraftDataLoading: boolean = true;
+    public popupData: Aircraftwatch;
     public fboId: any;
     public groupId: any;
     public selectedAircraft: number = 0;
@@ -101,7 +91,8 @@ export class FlightWatchMapComponent
         private flightWatchMapService: FlightWatchMapService,
         private fboFlightWatchService: FboFlightWatchService,
         private aircraftFlightWatchService: AircraftFlightWatchService,
-        private acukwikairportsService: AcukwikairportsService
+        private acukwikairportsService: AcukwikairportsService,
+        private flightWatchHelper: FlightWatchHelper
     ) {
         super();
         this.fboId = this.sharedService.currentUser.fboId;
@@ -178,11 +169,14 @@ export class FlightWatchMapComponent
             };
         });
 
+
         const data: any = {
             type: 'FeatureCollection',
             features: markers,
         };
         const source = this.getSource(this.airportSourceId);
+
+        if(!source) return;
 
         source.setData(data);
         this.addHoverPointerActions(this.airportLayerId);
@@ -278,23 +272,42 @@ export class FlightWatchMapComponent
         );
     }
     ngOnChanges(changes: SimpleChanges): void {
-        const currentData = changes.data?.currentValue;
-        const oldData = changes.data?.previousValue;
-        if (currentData && !isEqual(currentData, oldData)) {
+        if(!this.map) return;
+
+        if (changes.data) {
             this.updateFlightOnMap();
-        } else this.setPopUpContainerData(changes);
+        }
+        if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
     ngOnDestroy(): void {
         this.mapRemove();
     }
-    setPopUpContainerData(changes) {
-        if (!changes.aircraftData?.currentValue) return;
-        let aircraft = changes.aircraftData.currentValue;
+    setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
+        var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
+        makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
+        let obj = {
+            customerInfoBygGroupId : 0,
+            tailNumber: selectedPopUp.tailNumber,
+            atcFlightNumber: selectedPopUp.atcFlightNumber,
+            aircraftTypeCode: selectedPopUp.aircraftTypeCode,
+            isAircraftOnGround: selectedPopUp.isAircraftOnGround,
+            company: selectedPopUp.company,
+            aircraftMakeModel: makemodelstr,
+            lastQuote: selectedPopUp.lastQuote,
+            currentPricing: selectedPopUp.currentPricing,
+            aircraftICAO: selectedPopUp.icaoAircraftCode
+        };
 
-        this.popupData = aircraft;
-        this.isAircraftDataLoading = false;
+        this.popupData = Object.assign({}, obj);
     }
     loadFlightOnMap() {
+        const source = this.getSource(this.flightSourceId);
+
+        if(source){
+            this.updateFlightOnMap();
+            return;
+        }
+
         var newflightsInMapBounds = this.getFlightsWithinMapBounds(
             this.getBounds()
         );
@@ -322,14 +335,20 @@ export class FlightWatchMapComponent
 
         const source = this.getSource(this.flightSourceId);
 
+        if(!source){
+            this.loadFlightOnMap();
+            return;
+        }
+
+        const dataFeatures = this.getFlightSourcerFeatureMarkers(newflightsInMapBounds);
+
         const data: any = {
             type: 'FeatureCollection',
-            features: this.getFlightSourcerFeatureMarkers(
-                newflightsInMapBounds
-            ),
+            features: dataFeatures,
         };
 
         source.setData(data);
+
         if (this.currentPopup.isPopUpOpen) {
             this.closeAllPopUps();
             this.setDefaultPopUpOpen(newflightsInMapBounds);
@@ -339,7 +358,7 @@ export class FlightWatchMapComponent
     }
     setDefaultPopUpOpen(flightsIdsOnMap: string[]): void {
         let selectedFlight = flightsIdsOnMap.find(
-            (key) => this.data[key].oid == this.currentPopup.popupId
+            (key) => this.data[key].tailNumber == this.currentPopup.popupId
         );
 
         if (!selectedFlight) return;
@@ -356,13 +375,15 @@ export class FlightWatchMapComponent
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
         return keys(this.data).filter((id) => {
-            const flightWatch = this.data[Number(id)];
+            if(id == null) return false;
+            const flightWatch = this.data[id];
             const flightWatchPosition: mapboxgl.LngLatLike = {
                 lat: flightWatch.latitude,
                 lng: flightWatch.longitude,
             };
             return ( true
-                // bound.contains(flightWatchPosition) &&
+                // bound.contains(flightWatchPosition)
+                // &&
                 // (this.isCommercialVisible ||
                 //     !isCommercialAircraft(
                 //         flightWatch.aircraftTypeCode,
@@ -371,7 +392,8 @@ export class FlightWatchMapComponent
             );
         });
     }
-    getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
+    getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): AcukwikAirport[] {
+        if(!this.acukwikairports) return [];
         return this.acukwikairports.filter((airport) => {
             const airportPosition: mapboxgl.LngLatLike = {
                 lat: airport.latitudeInDegrees,
@@ -383,7 +405,7 @@ export class FlightWatchMapComponent
     getFlightSourcerFeatureMarkers(flights: any): any {
         return flights.map((key) => {
             const row = this.data[key];
-            const id = this.flightWatchMapService.buildAircraftId(row.oid);
+            const id = this.flightWatchMapService.buildAircraftId(row.tailNumber);
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
                 row,
                 id,
@@ -404,12 +426,12 @@ export class FlightWatchMapComponent
         const id = e.features[0].properties.id;
         self.selectedAircraft = id;
         self.currentPopup.isPopUpOpen = true;
+
         self.currentPopup.coordinates = [
             this.data[id].longitude,
             this.data[id].latitude,
         ];
         self.currentPopup.popupId = id;
-        self.isAircraftDataLoading = true;
         self.markerClicked.emit(this.data[id]);
         self.openPopupRenderComponent(
             self.currentPopup.coordinates,
@@ -486,8 +508,7 @@ export class FlightWatchMapComponent
     updateAircraft(event: Aircraftwatch): void {
         this.data[this.selectedAircraft].isInNetwork = true;
         this.data[this.selectedAircraft].company = event.company;
-        this.data[this.selectedAircraft].aircraftMakeModel =
-            event.aircraftMakeModel;
+        this.data[this.selectedAircraft].aircraftTypeCode = event.aircraftTypeCode;
         this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
     }
