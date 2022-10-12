@@ -47,7 +47,7 @@ export class FlightWatchMapComponent
 {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: FlightWatchDictionary;
-    @Input() aircraftData: Aircraftwatch;
+    @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
 
@@ -75,7 +75,6 @@ export class FlightWatchMapComponent
         currentPricing: '',
         aircraftICAO: '',
     };
-    public isAircraftDataLoading: boolean = true;
     public fboId: any;
     public groupId: any;
     public selectedAircraft: number = 0;
@@ -287,24 +286,28 @@ export class FlightWatchMapComponent
         if (changes.data) {
             this.updateFlightOnMap();
         }
+        if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
     ngOnDestroy(): void {
         this.mapRemove();
     }
-    setPopUpContainerData(data: FlightWatchModelResponse) {
-        this.popupData = {
+    setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
+        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 295 ~ setPopUpContainerData ~ data", selectedPopUp)
+        let obj = {
             customerInfoBygGroupId : 0,
-            tailNumber: data.tailNumber,
-            atcFlightNumber: data.atcFlightNumber,
-            aircraftTypeCode: data.aircraftTypeCode,
-            isAircraftOnGround: data.isAircraftOnGround,
-            company: data.company,
+            tailNumber: selectedPopUp.tailNumber,
+            atcFlightNumber: selectedPopUp.atcFlightNumber,
+            aircraftTypeCode: selectedPopUp.aircraftTypeCode,
+            isAircraftOnGround: selectedPopUp.isAircraftOnGround,
+            company: selectedPopUp.company,
             aircraftMakeModel: "",
-            lastQuote: data.lastQuote,
-            currentPricing: data.currentPricing,
-            aircraftICAO: data.icaoAircraftCode
+            lastQuote: selectedPopUp.lastQuote,
+            currentPricing: selectedPopUp.currentPricing,
+            aircraftICAO: selectedPopUp.icaoAircraftCode
         };
-        this.isAircraftDataLoading = false;
+
+        this.popupData = Object.assign({}, obj);
+        console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 297 ~ setPopUpContainerData ~  this.popupData",  this.popupData)
     }
     loadFlightOnMap() {
         const source = this.getSource(this.flightSourceId);
@@ -438,14 +441,12 @@ export class FlightWatchMapComponent
             this.data[id].latitude,
         ];
         self.currentPopup.popupId = id;
-        self.isAircraftDataLoading = true;
         self.markerClicked.emit(this.data[id]);
         self.openPopupRenderComponent(
             self.currentPopup.coordinates,
             self.aircraftPopupContainerRef,
             self.currentPopup
         );
-        this.setPopUpContainerData( this.data[id]);
     }
     getFbosAndLoad() {
         if (this.clusters) return;

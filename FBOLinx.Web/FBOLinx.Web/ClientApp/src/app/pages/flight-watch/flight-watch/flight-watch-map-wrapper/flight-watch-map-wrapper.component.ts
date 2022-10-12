@@ -12,6 +12,7 @@ import {
     Aircraftwatch,
     FlightWatch,
     FlightWatchDictionary,
+    FlightWatchModelResponse,
 } from 'src/app/models/flight-watch';
 import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
 
@@ -25,7 +26,7 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 export class FlightWatchMapWrapperComponent implements OnInit {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: FlightWatchDictionary;
-    @Input() aircraftData: Aircraftwatch;
+    @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
     @Input() icaoList: string[];
@@ -61,5 +62,9 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
     resizeMap(isopen: boolean){
         this.map.resizeMap(isopen);
+    }
+    updateSelectedAircraft($event: FlightWatchModelResponse){
+        console.log("🚀 ~ file: flight-watch-map-wrapper.component.ts ~ line 66 ~ FlightWatchMapWrapperComponent ~ updateSelectedAircraft ~ event", event)
+        this.selectedPopUp = $event;
     }
 }

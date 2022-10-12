@@ -2,8 +2,9 @@
     #map
     (airportClick)="airportClick.emit($event)"
     (setIcaoList)="setIcaoList.emit($event)"
+    (markerClicked)="updateSelectedAircraft($event)"
     style="width: 100%"
-    [aircraftData]="aircraftData"
+    [selectedPopUp]="selectedPopUp"
     [center]="center"
     [data]="data"
     [icao]="icao"
