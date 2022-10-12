@@ -3,7 +3,7 @@ import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+
 import { SharedService } from 'src/app/layouts/shared-service';
 import { stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
@@ -12,7 +12,8 @@ import {
 import { BooleanToTextPipe } from 'src/app/shared/pipes/boolean/booleanToText.pipe';
 import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
-import { FlightWatchHelper } from '../../FlightWatchHelper.service';
+import { FlightWatchHelper } from "../../FlightWatchHelper.service";
+import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 
 @Component({
     selector: 'app-flight-watch-setting-table',

@@ -166,6 +166,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
                     if (existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
                     {
+                        existingLeg.LastUpdated = DateTime.UtcNow;
                         existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
                         AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
                         if (arrivalAirport != null)
@@ -182,6 +183,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     swimFlightLegDto.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
                     var flightLegToInsert = swimFlightLegDto.Adapt<SWIMFlightLeg>();
                     flightLegToInsert.Status = FlightLegStatus.Departing;
+                    swimFlightLegDto.LastUpdated = DateTime.UtcNow;
 
                     AcukwikAirport departureAirport = airports.FirstOrDefault(x => x.Icao == flightLegToInsert.DepartureICAO);
                     if (departureAirport != null)
@@ -269,7 +271,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     Status = x.Status.GetValueOrDefault(),
                     IsAircraftOnGround = true,
                     Latitude = x.Latitude,
-                    Longitude = x.Longitude
+                    Longitude = x.Longitude,
+                    LastUpdated = DateTime.UtcNow
                 }).ToList();
             
             //Bulk update and insert all legs that need it
@@ -307,7 +310,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     swimFlightLeg.Altitude = latestSwimMessage.Altitude;
                     swimFlightLeg.Latitude = latestSwimMessage.Latitude;
                     swimFlightLeg.Longitude = latestSwimMessage.Longitude;
-                    flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
+                    swimFlightLeg.LastUpdated = latestSwimMessage.MessageTimestamp;
+                    flightWatchModel.MarkSWIMFlightLegAsNeedingUpdate();
                 }
             });
             
@@ -351,7 +355,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
 
                 swimFlightLeg.IsProcessed = true;
-                flightWatchModel.MarketSWIMFlightLegAsNeedingUpdate();
+                flightWatchModel.MarkSWIMFlightLegAsNeedingUpdate();
             });
         }
         

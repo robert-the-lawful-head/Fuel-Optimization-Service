@@ -277,14 +277,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_Fbo == null || _Fbo.Oid == 0 || string.IsNullOrEmpty(_Fbo.FboAirport.Icao))
                 return;
 
-            if (flightWatchModel.FuelerlinxID.GetValueOrDefault() <= 0)
+            if (flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault() <= 0)
                 return;
 
             if (_MostRecentQuotes == null)
                 _MostRecentQuotes = await _CompanyPricingLogService.GetMostRecentQuoteDatesForAirport(_Fbo.FboAirport.Icao);
 
-            flightWatchModel.LastQuoted = _MostRecentQuotes
-                .FirstOrDefault(x => x.FuelerLinxCompanyId == flightWatchModel.FuelerlinxID.GetValueOrDefault())
+            flightWatchModel.LastQuoteDate = _MostRecentQuotes
+                .FirstOrDefault(x => x.FuelerLinxCompanyId == flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault())
                 ?.MostRecentQuoteDateTime;
         }
 

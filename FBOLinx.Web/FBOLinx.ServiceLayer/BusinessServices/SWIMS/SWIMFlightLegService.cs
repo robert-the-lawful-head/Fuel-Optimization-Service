@@ -42,14 +42,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
         {
+            List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
             if ((airportIdentifiers?.Count).GetValueOrDefault() <= 0)
-                return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
-            var departures = await GetListbySpec(new SWIMFlightLegByDepartureAirportSpecification(airportIdentifiers,
-                DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-            var arrivals = await GetListbySpec(new SWIMFlightLegByArrivalAirportSpecification(airportIdentifiers,
-                DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-            var result = departures;
-            result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
+            {
+                result = await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
+            }
+            else
+            {
+                var departures = await GetListbySpec(new SWIMFlightLegByDepartureAirportSpecification(
+                    airportIdentifiers,
+                    DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+                var arrivals = await GetListbySpec(new SWIMFlightLegByArrivalAirportSpecification(airportIdentifiers,
+                    DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+                result = departures;
+                result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
+            }
+
+            //Remove any SWIM data that hasn't seen a message in the last 10 minutes.  
+            result.RemoveAll(x => !x.LastUpdated.HasValue || x.LastUpdated.Value < DateTime.UtcNow.AddMinutes(-10));
+
             return result;
         }
     }

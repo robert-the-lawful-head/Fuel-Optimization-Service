@@ -59,7 +59,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
         public string TailNumber => string.IsNullOrEmpty(_AirportWatchLiveData?.TailNumber) ? _SwimFlightLeg?.AircraftIdentification : _AirportWatchLiveData.TailNumber;
 
-        public string FlightDepartment => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
+        public string Company => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
 
         public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ? _SwimFlightLeg?.FAAMake : _CustomerAircraft?.Make;
         public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ? _SwimFlightLeg?.FAAModel : _CustomerAircraft?.Model;
@@ -132,6 +132,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? FuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Oid;
         public int? FuelerlinxID => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
         public int? FuelerlinxFuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
+        public int? FuelerlinxCompanyId => _CustomerAircraft?.FuelerlinxCompanyId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
         public string TransactionStatus => ID > 0 ? "LIVE" : "";
         public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode;
@@ -156,7 +157,10 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         }
 
         public int? CustomerInfoByGroupId => _CustomerAircraft?.CustomerInfoByGroupId;
-        public DateTime? LastQuoted { get; set; }
+        public DateTime? LastQuoteDate { get; set; }
+
+        public string LastQuote =>
+            (!LastQuoteDate.HasValue ? "" : LastQuoteDate.GetValueOrDefault().ToShortDateString());
 
         public SWIMFlightLegDTO GetSwimFlightLeg()
         {
@@ -203,7 +207,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             return _CustomerAircraft;
         }
 
-        public void MarketSWIMFlightLegAsNeedingUpdate()
+        public void MarkSWIMFlightLegAsNeedingUpdate()
         {
             _DoesSWIMFlightLegNeedUpdate = true;
         }

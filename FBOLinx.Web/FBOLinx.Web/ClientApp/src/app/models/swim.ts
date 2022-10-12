@@ -83,7 +83,7 @@ export const swimTableColumnsDisplayText = {
 export const tailNumberTextColor = {
     fuelerLinx: '#1D497F',
     activeFuelRelease: '#0DC520',
-    outOfNetwork: '#5a5b5e',
+    outOfNetwork: '#C1C1C1',
     inNetwork: '#FF7F00',
 };
 export const stautsTextColor = {
