@@ -59,16 +59,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
         this.icao = this.sharedService.currentUser.icao;
     }
     ngAfterViewInit() {
-
-        // if(!this.isArrival){
-        //     this.dataSource = new MatTableDataSource(this.setManualSortOnDepartures(this.data));
-        // }else{
-        //     this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(a.etaLocal, b.etaLocal, false); }));
-        // }
-
-        this.dataSource = new MatTableDataSource(this.data);
-
+        if(this.isArrival){
+            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(a.etaLocal, b.etaLocal, false); }));
+        }else{
+            this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(this.data));
+        }
         this.dataSource.sort = this.sort;
+
 
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
@@ -90,17 +87,17 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
         if (changes.data && this.dataSource){
             this.dataSource.data = changes.data.currentValue;
-            // if(this.hasChangeDefaultSort){
-            //     this.dataSource.data = changes.data.currentValue;
-            //     this.refreshSort();
-            //     return;
-            // }
+            if(this.hasChangeDefaultSort){
+                this.dataSource.data = changes.data.currentValue;
+                this.refreshSort();
+                return;
+            }
 
-            // if(this.isArrival){
-            //     this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaAtd, start: 'desc'}));
-            // }else{
-            //     this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
-            // }
+            if(this.isArrival){
+                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaAtd, start: 'desc'}));
+            }else{
+                this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
+            }
         }
     }
     setManualSortOnDepartures(data: Swim[]){
