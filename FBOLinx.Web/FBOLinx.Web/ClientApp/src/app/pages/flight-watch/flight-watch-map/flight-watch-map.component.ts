@@ -124,7 +124,7 @@ export class FlightWatchMapComponent
             .onLoad(async () => {
                 await this.loadMapIcons();
                 this.loadICAOIconOnMap(this.icao);
-                if(this.data) this.loadFlightOnMap();
+                this.loadFlightOnMap();
                 this.getFbosAndLoad();
             });
     }
@@ -177,6 +177,7 @@ export class FlightWatchMapComponent
                 type: 'Feature'
             };
         });
+
 
         const data: any = {
             type: 'FeatureCollection',
@@ -329,10 +330,7 @@ export class FlightWatchMapComponent
             return;
         }
 
-
         const dataFeatures = this.getFlightSourcerFeatureMarkers(newflightsInMapBounds);
-
-        if ( dataFeatures.length == 0 ) return;
 
         const data: any = {
             type: 'FeatureCollection',
