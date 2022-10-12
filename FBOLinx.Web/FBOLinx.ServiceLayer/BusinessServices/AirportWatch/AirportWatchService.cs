@@ -135,7 +135,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             var fboairports = await _context.Fboairports.Where(x => x.Fboid == fboId).FirstOrDefaultAsync();
 
-            CompanyPricingLog pricingLogs = null;
+            DB.Models.CompanyPricingLog pricingLogs = null;
             if (customerInfoByGroup != null && customerInfoByGroup?.Customer?.FuelerlinxId > 0)
             {
                 pricingLogs = await _context.CompanyPricingLog

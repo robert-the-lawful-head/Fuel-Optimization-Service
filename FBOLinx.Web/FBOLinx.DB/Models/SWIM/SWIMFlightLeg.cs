@@ -50,6 +50,7 @@ namespace FBOLinx.DB.Models
         public string Phone { get; set; }
         public string ICAOAircraftCode { get; set; }
         public bool IsProcessed { get; set; }
+        public DateTime? LastUpdated { get; set; }
 
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }

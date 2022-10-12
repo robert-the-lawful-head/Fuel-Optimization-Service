@@ -9,6 +9,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
@@ -45,7 +46,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             var allAircraft = await _AircraftService.GetAllAircrafts();
 
             var result = await GetCustomerAircraftsViewModel(groupId, tailNumbers);
-
+            
             result.ForEach(x =>
             {
                 var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);

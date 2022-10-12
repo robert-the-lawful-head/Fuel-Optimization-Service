@@ -102,6 +102,8 @@ import { AirportFboGeofenceClustersService } from './services/airportfbogeofence
 import { AirportFboGeofenceClusterCoordinatesService } from './services/airportfbogeofenceclustercoordinates.service';
 import { DateTimeService } from './services/datetime.service';
 import { SwimService } from './services/swim.service';
+import { FlightWatchService } from './services/flightwatch.service';
+import { FlightWatchHelper } from './pages/flight-watch/FlightWatchHelper.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -219,7 +221,9 @@ import { SwimService } from './services/swim.service';
         AirportFboGeofenceClustersService,
         AirportFboGeofenceClusterCoordinatesService,
         DateTimeService,
-        SwimService
+        SwimService,
+        FlightWatchService,
+        FlightWatchHelper
     ],
 })
 export class AppModule { }

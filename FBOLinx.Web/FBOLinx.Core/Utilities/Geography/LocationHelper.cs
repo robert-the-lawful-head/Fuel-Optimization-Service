@@ -7,29 +7,61 @@ namespace FBOLinx.Core.Utilities.Geography
 {
     public class LocationHelper
     {
-        public static double GetLatitudeGeoLocationFromGPS(string lat)
+        public static double GetLatitudeGeoLocationFromGPS(string latitudeInGPS)
         {
-            var latDirection = lat.Substring(0, 1);
+            //var latDirection = lat.Substring(0, 1);
 
-            double latitude = double.Parse(lat.Substring(1, 2)) + double.Parse(lat.Substring(4, 2)) / 60 + double.Parse(lat[7..]) / 3600;
+            //double latitude = double.Parse(lat.Substring(1, 2)) + double.Parse(lat.Substring(4, 2)) / 60 + double.Parse(lat[7..]) / 3600;
+            
 
-            if (latDirection != "N") latitude = -latitude;
+            //if (latDirection != "N") latitude = -latitude;
 
-            return latitude;
+            double latitudeResult = 0;
+
+            if (latitudeInGPS.Contains("N") || latitudeInGPS.Contains("S"))
+            {
+                string[] strlatitude = latitudeInGPS.ToString().Split('-');
+
+                latitudeResult = System.Convert.ToDouble(strlatitude[0].Replace("N", "").Replace("S", "")) + (System.Convert.ToDouble(strlatitude[1]) / 60);
+                if (strlatitude[0].Contains("S"))
+                    latitudeResult = -latitudeResult;
+            }
+            else
+            {
+                latitudeResult = double.Parse(latitudeInGPS);
+            }
+
+
+            return latitudeResult;
         }
 
-        public static double GetLongitudeGeoLocationFromGPS(string lng)
+        public static double GetLongitudeGeoLocationFromGPS(string longitudeInGPS)
         {
-            var lngDirection = lng.Substring(0, 1);
-            
-            double longitude = lng.Length == 8 ?
-                double.Parse(lng.Substring(1, 2)) + double.Parse(lng.Substring(4, 2)) / 60 + double.Parse(lng[6..]) / 3600 :
-                double.Parse(lng.Substring(1, 3)) + double.Parse(lng.Substring(5, 2)) / 60 + double.Parse(lng[7..]) / 3600;
+            //var lngDirection = lng.Substring(0, 1);
 
-            
-            if (lngDirection != "E") longitude = -longitude;
+            //double longitude = lng.Length == 8 ?
+            //    double.Parse(lng.Substring(1, 2)) + double.Parse(lng.Substring(4, 2)) / 60 + double.Parse(lng[6..]) / 3600 :
+            //    double.Parse(lng.Substring(1, 3)) + double.Parse(lng.Substring(5, 2)) / 60 + double.Parse(lng[7..]) / 3600;
 
-            return longitude;
+
+            //if (lngDirection != "E") longitude = -longitude;
+
+            double longitudeResult = 0.0;
+            if (longitudeInGPS.Contains("W") || longitudeInGPS.Contains("E"))
+            {
+                string[] strlongitude = longitudeInGPS.ToString().Split('-');
+
+                longitudeResult = System.Convert.ToDouble(strlongitude[0].Replace("W", "").Replace("E", "")) +
+                                  (System.Convert.ToDouble(strlongitude[1]) / 60);
+                if (strlongitude[0].Contains("W"))
+                    longitudeResult = -longitudeResult;
+            }
+            else
+            {
+                longitudeResult = double.Parse(longitudeInGPS);
+            }
+
+            return longitudeResult;
         }
 
         public static double ConvertDMSToDEG(string dms)

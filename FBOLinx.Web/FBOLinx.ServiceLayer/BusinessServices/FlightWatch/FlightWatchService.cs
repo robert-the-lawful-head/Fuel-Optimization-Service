@@ -11,13 +11,17 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 
@@ -43,6 +47,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private IAirportFboGeofenceClustersService _AirportFboGeofenceClustersService;
         private AirportFboGeofenceClustersDto _GeoFenceCluster;
         private List<string> _DistinctTailNumbers;
+        private ICompanyPricingLogService _CompanyPricingLogService;
+        private List<CompanyPricingLogMostRecentQuoteModel> _MostRecentQuotes;
+        private IPriceFetchingService _PriceFetchingService;
+        private List<CustomerWithPricing> _CurrentPricingResults;
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -50,9 +58,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             IAirportService airportService,
             IFuelReqService fuelReqService,
             ICustomerAircraftService customerAircraftService,
-            IAirportFboGeofenceClustersService airportFboGeofenceClustersService
-            )
+            IAirportFboGeofenceClustersService airportFboGeofenceClustersService,
+            ICompanyPricingLogService companyPricingLogService,
+            IPriceFetchingService priceFetchingService
+        )
         {
+            _PriceFetchingService = priceFetchingService;
+            _CompanyPricingLogService = companyPricingLogService;
             _AirportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _CustomerAircraftService = customerAircraftService;
             _FuelReqService = fuelReqService;
@@ -76,6 +88,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     await _AirportService.GetAirportPositionByAirportIdentifier(result.SWIMFlightLeg.ArrivalICAO);
             result.SWIMFlightLeg?.SWIMFlightLegDataMessages?.RemoveAll(x =>
                 !x.Latitude.HasValue || !x.Longitude.HasValue);
+
             return result;
         }
 
@@ -98,7 +111,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures, 30, options.FboIdForCenterPoint.GetValueOrDefault() > 0)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs);
@@ -176,6 +189,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Set the nearest airport positions of each result
             foreach (var flightWatchModel in result)
             {
+                flightWatchModel.FocusedAirportICAO = GetFocusedAirportIdentifier();
+
                 if (_Options.IncludeNearestAirportPosition)
                     await PopulateNearestAirportPosition(flightWatchModel);
                 if (_Options.IncludeFuelOrderInformation)
@@ -184,6 +199,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     await PopulateCustomerAircraftInformation(flightWatchModel);
                 if (_Options.IncludeVisitsAtFbo)
                     await PopulateVisitsAtFbo(flightWatchModel);
+                if (_Options.IncludeCompanyPricingLogLastQuoteDate)
+                    await PopulateLastQuoteDate(flightWatchModel);
             }
         }
 
@@ -210,7 +227,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var orders =
                 await _FuelReqService.GetUpcomingDirectAndContractOrdersForTailNumber(_Fbo.GroupId.GetValueOrDefault(),
                     _Fbo.Oid, flightWatchModel.TailNumber, true);
-            flightWatchModel.SetUpcomingFuelOrderCollection(orders?.Where(x => x.Icao == flightWatchModel.ArrivalICAO).ToList());
+
+            //[#31pb4b8] Changed to mark the aircraft as green if it has any upcoming orders, even if it's not for the current leg.
+            //flightWatchModel.SetUpcomingFuelOrderCollection(orders?.Where(x => x.Icao == flightWatchModel.ArrivalICAO).ToList());
+            
+            flightWatchModel.SetUpcomingFuelOrderCollection(orders.ToList());
         }
 
         private async Task PopulateCustomerAircraftInformation(FlightWatchModel flightWatchModel)
@@ -249,22 +270,41 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
             flightWatchModel.Arrivals = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Landing);
             flightWatchModel.Departures = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Takeoff);
-            flightWatchModel.FocusedAirportICAO = GetFocusedAirportIdentifier();
-
-            //string focusedAirport = GetAirportIdentifier();
-            //if (string.IsNullOrEmpty(focusedAirport))
-            //    return;
-            //if (flightWatchModel.ArrivalICAO == focusedAirport)
-            //{
-            //    flightWatchModel.Origin = flightWatchModel.DepartureICAO;
-            //    flightWatchModel.City = flightWatchModel.DepartureCity;
-            //}
-            //else
-            //{
-            //    flightWatchModel.Origin = flightWatchModel.ArrivalICAO;
-            //    flightWatchModel.City = flightWatchModel.ArrivalCity;
-            //}
         }
-        
+
+        private async Task PopulateLastQuoteDate(FlightWatchModel flightWatchModel)
+        {
+            if (_Fbo == null || _Fbo.Oid == 0 || string.IsNullOrEmpty(_Fbo.FboAirport.Icao))
+                return;
+
+            if (flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault() <= 0)
+                return;
+
+            if (_MostRecentQuotes == null)
+                _MostRecentQuotes = await _CompanyPricingLogService.GetMostRecentQuoteDatesForAirport(_Fbo.FboAirport.Icao);
+
+            flightWatchModel.LastQuoteDate = _MostRecentQuotes
+                .FirstOrDefault(x => x.FuelerLinxCompanyId == flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault())
+                ?.MostRecentQuoteDateTime;
+        }
+
+        //Commenting this out until we find a faster way to load this
+        //private async Task PopulateCurrentPricing(FlightWatchModel flightWatchModel)
+        //{
+        //    if (_Fbo == null || _Fbo.Oid == 0 || string.IsNullOrEmpty(_Fbo.FboAirport.Icao))
+        //        return;
+
+        //    if (!flightWatchModel.IsInNetwork || flightWatchModel.PricingTemplateId.GetValueOrDefault() <= 0)
+        //        return;
+
+        //    if (_CurrentPricingResults == null)
+        //        _CurrentPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_Fbo.Oid,
+        //            _Fbo.GroupId.GetValueOrDefault(), 0, new List<int>(), FlightTypeClassifications.Private,
+        //            ApplicableTaxFlights.DomesticOnly);
+
+        //    flightWatchModel.CurrentPricing = _CurrentPricingResults
+        //        ?.FirstOrDefault(x => x.PricingTemplateId == flightWatchModel.PricingTemplateId)?.AllInPrice;
+
+        //}
     }
 }
