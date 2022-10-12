@@ -28,14 +28,16 @@ export class TableGlobalSearchComponent implements OnInit {
             this.page = "customer-manager-filters";
         this.matDataSource.filter = localStorage.getItem(this.page);
 
-        var filters = JSON.parse(this.matDataSource.filter);
-        for (const filter of filters) {
-            if (filter.isGlobal) {
-                hasGlobal = true;
-                this.globalFilter = filter;
-                break;
+        if (this.matDataSource.filter != null) {
+            for (const filter of JSON.parse(this.matDataSource.filter)) {
+                if (filter.isGlobal) {
+                    hasGlobal = true;
+                    this.globalFilter = filter;
+                    break;
+                }
             }
         }
+
         if (!hasGlobal) {
             this.matDataSource.filterCollection.push(this.globalFilter);
         }
