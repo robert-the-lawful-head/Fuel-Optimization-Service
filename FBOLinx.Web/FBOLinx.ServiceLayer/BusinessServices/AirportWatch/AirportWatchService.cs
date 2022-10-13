@@ -161,7 +161,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             return new AircraftWatchLiveData()
             {
-                CustomerInfoBygGroupId = customerInfoByGroup?.Oid,
+                CustomerInfoByGroupId = customerInfoByGroup?.Oid,
                 TailNumber = aircraftWatchLiveData?.TailNumber,
                 AtcFlightNumber = aircraftWatchLiveData?.AtcFlightNumber,
                 AircraftTypeCode = aircraftWatchLiveData?.AircraftTypeCode,

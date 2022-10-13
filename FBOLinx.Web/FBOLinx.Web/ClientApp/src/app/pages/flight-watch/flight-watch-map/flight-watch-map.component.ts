@@ -286,7 +286,7 @@ export class FlightWatchMapComponent
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
         makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
         let obj = {
-            customerInfoBygGroupId : 0,
+            customerInfoByGroupId: selectedPopUp.customerInfoByGroupId,
             tailNumber: selectedPopUp.tailNumber,
             atcFlightNumber: selectedPopUp.atcFlightNumber,
             aircraftTypeCode: selectedPopUp.aircraftTypeCode,

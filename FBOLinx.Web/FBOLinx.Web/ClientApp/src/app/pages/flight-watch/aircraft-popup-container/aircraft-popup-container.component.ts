@@ -20,7 +20,7 @@ export class AircraftPopupContainerComponent {
   @Output() refreshAircraftProperties = new EventEmitter<Aircraftwatch>();
 
   public aircraftWatch: Aircraftwatch = {
-      customerInfoBygGroupId : 0,
+      customerInfoByGroupId : 0,
       tailNumber: '',
       atcFlightNumber: '',
       aircraftTypeCode: '',
@@ -84,8 +84,8 @@ export class AircraftPopupContainerComponent {
               this.customers = customers;
           });
   }
-  goToCustomerManager(customerInfoBygGroupId: number):void{
-    console.log(customerInfoBygGroupId);
-    this.router.navigate(['default-layout','customers',customerInfoBygGroupId])
+  goToCustomerManager(customerInfoByGroupId: number):void{
+    console.log(customerInfoByGroupId);
+    this.router.navigate(['default-layout','customers',customerInfoByGroupId])
   }
 }
