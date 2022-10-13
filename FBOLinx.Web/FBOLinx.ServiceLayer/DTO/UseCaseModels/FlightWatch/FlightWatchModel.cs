@@ -58,8 +58,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? GpsAltitude => _AirportWatchLiveData?.GpsAltitude;
         public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
         public string TailNumber => string.IsNullOrEmpty(_AirportWatchLiveData?.TailNumber) ? _SwimFlightLeg?.AircraftIdentification : _AirportWatchLiveData.TailNumber;
-
-        public string Company => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
+        
+        public string FlightDepartment => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
 
         public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ? _SwimFlightLeg?.FAAMake : _CustomerAircraft?.Make;
         public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ? _SwimFlightLeg?.FAAModel : _CustomerAircraft?.Model;
