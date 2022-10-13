@@ -38,7 +38,7 @@ export type Aircraftwatch = {
     atcFlightNumber: string;
     aircraftTypeCode: string;
     isAircraftOnGround: boolean;
-    company : string;
+    flightDepartment: string;
     aircraftMakeModel : string;
     lastQuote : string;
     currentPricing : string;

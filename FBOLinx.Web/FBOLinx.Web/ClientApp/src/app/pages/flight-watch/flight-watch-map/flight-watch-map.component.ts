@@ -291,7 +291,7 @@ export class FlightWatchMapComponent
             atcFlightNumber: selectedPopUp.atcFlightNumber,
             aircraftTypeCode: selectedPopUp.aircraftTypeCode,
             isAircraftOnGround: selectedPopUp.isAircraftOnGround,
-            company: selectedPopUp.company,
+            flightDepartment: selectedPopUp.flightDepartment,
             aircraftMakeModel: makemodelstr,
             lastQuote: selectedPopUp.lastQuote,
             currentPricing: selectedPopUp.currentPricing,
@@ -507,7 +507,7 @@ export class FlightWatchMapComponent
 
     updateAircraft(event: Aircraftwatch): void {
         this.data[this.selectedAircraft].isInNetwork = true;
-        this.data[this.selectedAircraft].company = event.company;
+        this.data[this.selectedAircraft].flightDepartment = event.flightDepartment;
         this.data[this.selectedAircraft].aircraftTypeCode = event.aircraftTypeCode;
         this.markerClicked.emit(this.data[this.selectedAircraft]);
         this.updateFlightOnMap();
