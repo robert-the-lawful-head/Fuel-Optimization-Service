@@ -88,6 +88,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
+        this.fuelreqsData = null;
         this.loadFuelReqs();
     }
 
@@ -133,7 +134,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
 
     // PRIVATE METHODS
     private loadFuelReqs() {
-        this.fuelreqsData = null;
         this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
