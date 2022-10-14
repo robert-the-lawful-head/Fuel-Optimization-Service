@@ -218,12 +218,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         return "black";
     }
-    getTailNumberTextColor(row: Swim){
-        if(row.isInNetwork)return tailNumberTextColor.inNetwork;
-        if(row.isOutOfNetwork) return tailNumberTextColor.outOfNetwork;
-        if(row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
+    getTailNumberTextColor(row: Swim) {
+        if (row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
+        if (row.isFuelerLinxClient) return tailNumberTextColor.fuelerLinx;
+        if (row.isInNetwork) return tailNumberTextColor.inNetwork;
 
-        return tailNumberTextColor.fuelerLinx;
+        return tailNumberTextColor.outOfNetwork;
     }
     getPastArrivalsValue(row: Swim){
         return this.isArrival
