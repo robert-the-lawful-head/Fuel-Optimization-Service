@@ -475,7 +475,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.fuelOrders.length = 0;
         var startDate = moment().add(-1, 'hour').local().toDate();
-        var endDate = moment().add(1, 'd').local().toDate();
+        var endDate = moment().add(2, 'd').local().toDate();
 
         this.fuelReqsService
             .getForGroupFboAndDateRange(

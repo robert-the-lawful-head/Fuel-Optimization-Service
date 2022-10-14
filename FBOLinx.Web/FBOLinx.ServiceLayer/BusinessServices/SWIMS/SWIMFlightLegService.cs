@@ -52,8 +52,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
                 var departures = await GetListbySpec(new SWIMFlightLegByDepartureAirportSpecification(
                     airportIdentifiers,
                     DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+                //departures = departures.OrderBy(x => x.GetDepartureLegSortPriority()).ThenBy(x => x.ATD).ToList();
                 var arrivals = await GetListbySpec(new SWIMFlightLegByArrivalAirportSpecification(airportIdentifiers,
                     DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+                //arrivals = arrivals.OrderBy(x => (DateTime.UtcNow - x.ETA.GetValueOrDefault()).TotalMinutes).ToList();
                 result = departures;
                 result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
             }

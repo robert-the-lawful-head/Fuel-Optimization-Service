@@ -95,7 +95,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? ATDZulu => _SwimFlightLeg?.ATD;
         public DateTime? ETALocal => _SwimFlightLeg?.ETALocal;
         public DateTime? ETAZulu => _SwimFlightLeg?.ETA;
-        public TimeSpan? ETE => (_SwimFlightLeg?.ETA).HasValue ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
+        public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).HasValue && _SwimFlightLeg?.ETA.Value >= DateTime.UtcNow) ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
         public double? Latitude => (_AirportWatchLiveData?.Latitude).HasValue ? _AirportWatchLiveData?.Latitude : _SwimFlightLeg?.Latitude;

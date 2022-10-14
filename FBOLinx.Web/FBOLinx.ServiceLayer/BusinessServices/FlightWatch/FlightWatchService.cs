@@ -121,7 +121,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             return result;
         }
-
+        
         private string GetFocusedAirportIdentifier()
         {
             if (!string.IsNullOrEmpty(_Options.AirportIdentifier))
