@@ -159,21 +159,21 @@ export class TableGlobalSearchComponent implements OnInit {
                         if (!data) {
                             return true;
                         } else {
-                            if (data.hasOwnProperty('fboName')) {
-                                delete data.icao;
-                                delete data.timeStandard;
-                                delete data.fbo;
-                                delete data.fuelOn;
-                                delete data.source;
-                                delete data.fboName;
-                            }
-                            return (Object.values(data).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            //if (data.hasOwnProperty('fboName')) {
+                            //    delete data.icao;
+                            //    delete data.timeStandard;
+                            //    delete data.fbo;
+                            //    delete data.fuelOn;
+                            //    delete data.source;
+                            //    delete data.fboName;
+                            //}
+                            //return (Object.values(data).toString().toLowerCase().indexOf(element.filterValue) > -1);
 
-                            //const serializedData =
-                            //    JSON.stringify(data).toLowerCase();
-                            //return (
-                            //    serializedData.trim().indexOf(element.filterValue.trim()) > -1
-                            //);
+                            const serializedData =
+                                JSON.stringify(data).toLowerCase();
+                            return (
+                                serializedData.trim().indexOf(element.filterValue.trim()) > -1
+                            );
 
                             //Object.keys(data).some((k) => {
                             //    return data[k] == null ? false : data[k].toString().indexOf(element.filterValue) > -1;
