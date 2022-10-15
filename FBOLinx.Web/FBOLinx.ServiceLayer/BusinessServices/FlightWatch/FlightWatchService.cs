@@ -24,6 +24,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.EntityServices;
+using Geolocation;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 {
@@ -121,7 +122,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             return result;
         }
-
+        
         private string GetFocusedAirportIdentifier()
         {
             if (!string.IsNullOrEmpty(_Options.AirportIdentifier))
@@ -212,6 +213,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     await PopulateVisitsAtFbo(flightWatchModel);
                 if (_Options.IncludeCompanyPricingLogLastQuoteDate)
                     await PopulateLastQuoteDate(flightWatchModel);
+                await AssignTrackingDegree(flightWatchModel);
             }
         }
 
@@ -297,6 +299,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             flightWatchModel.LastQuoteDate = _MostRecentQuotes
                 .FirstOrDefault(x => x.FuelerLinxCompanyId == flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault())
                 ?.MostRecentQuoteDateTime;
+        }
+
+        private async Task AssignTrackingDegree(FlightWatchModel flightWatchModel)
+        {
+            if (flightWatchModel.TrackingDegree.HasValue)
+                return;
+
+            if (string.IsNullOrEmpty(flightWatchModel.ArrivalICAO))
+                return;
+
+            var destinationAirportPosition =
+                await _AirportService.GetAirportPositionByAirportIdentifier(flightWatchModel.ArrivalICAO);
+
+            if (destinationAirportPosition == null)
+                return;
+
+            flightWatchModel.SetTrackingDegree(
+                FBOLinx.Core.Utilities.Geography.LocationHelper.GetBearingDegreesBetweenTwoPoints(
+                    new Coordinate(flightWatchModel.Latitude.GetValueOrDefault(), flightWatchModel.Longitude.GetValueOrDefault()),
+                    new Coordinate(destinationAirportPosition.Latitude, destinationAirportPosition.Longitude)));
         }
 
         //Commenting this out until we find a faster way to load this

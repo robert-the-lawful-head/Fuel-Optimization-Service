@@ -33,7 +33,7 @@ export type FlightWatch = {
 };
 
 export type Aircraftwatch = {
-    customerInfoBygGroupId: number;
+    customerInfoByGroupId: number;
     tailNumber: string;
     atcFlightNumber: string;
     aircraftTypeCode: string;
@@ -103,8 +103,8 @@ export interface FlightWatchModelResponse {
     isFuelerLinxClient: boolean;
     aircraftIdentification: string;
     lastQuoted: Date;
-    company: string,
-    lastQuote: string,
-    currentPricing: string,
-    customerInfoBygGroupId: string
+    company: string;
+    lastQuote: string;
+    currentPricing: string;
+    customerInfoByGroupId: number;
 }

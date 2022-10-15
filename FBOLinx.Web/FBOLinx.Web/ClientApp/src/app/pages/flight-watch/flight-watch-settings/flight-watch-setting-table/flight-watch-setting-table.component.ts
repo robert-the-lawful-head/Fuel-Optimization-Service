@@ -64,7 +64,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     ngAfterViewInit() {
         if(this.isArrival){
-            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(a.etaLocal, b.etaLocal, false); }));
+            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); }));
         }else{
             this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(this.data));
         }
@@ -99,7 +99,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }
 
             if(this.isArrival){
-                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaAtd, start: 'desc'}));
+                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaAtd, start: 'asc'}));
             }else{
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
@@ -107,13 +107,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     setManualSortOnDepartures(data: Swim[]){
         var taxiing = data?.filter((row) => { return FlightLegStatus.TaxiingDestination == row.status || FlightLegStatus.TaxiingOrigin == row.status; }) || [];
-        taxiing = taxiing.sort((a, b) => { return this.compare(a.atdLocal, b.atdLocal, false); });
+        taxiing = taxiing.sort((a, b) => { return this.compare(b.atdLocal, a.atdLocal, false); });
 
         var departing = data?.filter((row) => { return FlightLegStatus.Departing == row.status }) || [];
-        departing = departing.sort((a, b) => { return this.compare(a.atdLocal, b.atdLocal, false); });
+        departing = departing.sort((a, b) => { return this.compare(b.atdLocal, a.atdLocal, false); });
 
         var enRoute = data?.filter((row) => { return FlightLegStatus.EnRoute == row.status; }) || [];
-        enRoute = enRoute.sort((a, b) => { return this.compare(a.atdLocal, b.atdLocal, false); });
+        enRoute = enRoute.sort((a, b) => { return this.compare(b.atdLocal, a.atdLocal, false); });
 
         return (taxiing.concat(departing)).concat(enRoute);
     }
@@ -218,12 +218,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         return "black";
     }
-    getTailNumberTextColor(row: Swim){
-        if(row.isInNetwork)return tailNumberTextColor.inNetwork;
-        if(row.isOutOfNetwork) return tailNumberTextColor.outOfNetwork;
-        if(row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
+    getTailNumberTextColor(row: Swim) {
+        if (row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
+        if (row.isFuelerLinxClient) return tailNumberTextColor.fuelerLinx;
+        if (row.isInNetwork) return tailNumberTextColor.inNetwork;
 
-        return tailNumberTextColor.fuelerLinx;
+        return tailNumberTextColor.outOfNetwork;
     }
     getPastArrivalsValue(row: Swim){
         return this.isArrival

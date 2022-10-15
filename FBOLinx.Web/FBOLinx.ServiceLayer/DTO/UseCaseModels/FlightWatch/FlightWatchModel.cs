@@ -17,7 +17,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 {
     public class FlightWatchModel
     {
-        
+        private double? _TrackingDegree;
         private List<AirportWatchHistoricalDataDto> _AirportWatchHistoricalDataCollection;
         private AirportPosition _AirportPosition;
         private List<FuelReqDto> _UpcomingFuelOrderCollection;
@@ -49,7 +49,17 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 
         public int? AltitudeInStandardPressure => _AirportWatchLiveData?.AltitudeInStandardPressure;
         public int? GroundSpeedKts => _AirportWatchLiveData?.GroundSpeedKts;
-        public double? TrackingDegree => _AirportWatchLiveData?.TrackingDegree;
+
+        public double? TrackingDegree
+        {
+            get
+            {
+                if (_TrackingDegree.HasValue)
+                    return _TrackingDegree.GetValueOrDefault();
+                return _AirportWatchLiveData?.TrackingDegree;
+            }
+            
+        }
         public int? VerticalSpeedKts => _AirportWatchLiveData?.VerticalSpeedKts;
         public int? TransponderCode => _AirportWatchLiveData?.TransponderCode;
         public string BoxName => _AirportWatchLiveData?.BoxName;
@@ -95,7 +105,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? ATDZulu => _SwimFlightLeg?.ATD;
         public DateTime? ETALocal => _SwimFlightLeg?.ETALocal;
         public DateTime? ETAZulu => _SwimFlightLeg?.ETA;
-        public TimeSpan? ETE => (_SwimFlightLeg?.ETA).HasValue ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
+        public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).HasValue && _SwimFlightLeg?.ETA.Value >= DateTime.UtcNow) ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
         public double? Latitude => (_AirportWatchLiveData?.Latitude).HasValue ? _AirportWatchLiveData?.Latitude : _SwimFlightLeg?.Latitude;
@@ -227,6 +237,11 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
                 return new Geolocation.Coordinate(_SwimFlightLeg.Latitude.GetValueOrDefault(),
                     _SwimFlightLeg.Longitude.GetValueOrDefault());
             return new Coordinate();
+        }
+
+        public void SetTrackingDegree(double trackingDegree)
+        {
+            _TrackingDegree = trackingDegree;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public bool? Suspended { get; set; }
         public CertificateTypes? CertificateType { get; set; }
         public CompaniesByGroupDto CompanyByGroup { get; set; }
-        public CustomerInfoByGroupDto CustomerInfoByGroup { get; set; }
+        public List<CustomerInfoByGroupDto> CustomerInfoByGroup { get; set; }
         public CustomCustomerTypesDto CustomCustomerType { get; set; }
         public ICollection<FuelReqDto> FuelReqs { get; set; }
         public ICollection<CustomerContactsDto> CustomerContacts { get; set; }
