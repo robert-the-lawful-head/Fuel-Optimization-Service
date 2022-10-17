@@ -121,6 +121,9 @@ export class TableGlobalSearchComponent implements OnInit {
     public clearAllFilters() {
         this.globalFilter.filterValue = '';
         this.matDataSource.filter = '';
+        if (!this.matDataSource.filterCollection) {
+            this.matDataSource.filterCollection = [];
+        }
 
         for (const filter of this.matDataSource.filterCollection) {
             if (filter.isGlobal) {

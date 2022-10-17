@@ -123,7 +123,9 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
+        var searchFilter = localStorage.getItem("fuel-orders-filters");
         if (
+            (searchFilter == null || searchFilter == '') &&
             changes.fuelreqsData &&
             !isEqual(
                 changes.fuelreqsData.currentValue,
