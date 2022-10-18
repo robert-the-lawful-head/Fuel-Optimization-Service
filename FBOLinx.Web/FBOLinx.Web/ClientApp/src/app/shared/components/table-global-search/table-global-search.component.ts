@@ -163,13 +163,21 @@ export class TableGlobalSearchComponent implements OnInit {
                             return true;
                         } else {
                             if (data.hasOwnProperty('fboName')) {
-                                var tempData = data;
+                                let tempDataString = JSON.stringify(data)
+                                let tempData = JSON.parse(tempDataString);
                                 delete tempData.icao;
                                 delete tempData.timeStandard;
                                 delete tempData.fbo;
                                 delete tempData.fuelOn;
                                 delete tempData.source;
                                 delete tempData.fboName;
+
+                                return (Object.values(tempData).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            }
+                            else if (data.hasOwnProperty('fuelVendors')) {
+                                let tempDataString = JSON.stringify(data)
+                                let tempData = JSON.parse(tempDataString);
+                                delete tempData.fuelVendors;
 
                                 return (Object.values(tempData).toString().toLowerCase().indexOf(element.filterValue) > -1);
                             }

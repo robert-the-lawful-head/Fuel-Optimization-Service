@@ -279,8 +279,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (historicalDataPoints == null || historicalDataPoints.Count == 0)
                 return;
 
-
-            flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
+            if (_GeoFenceCluster == null)
+                flightWatchModel.VisitsToMyFBO = 0;
+            else
+                flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
             flightWatchModel.Arrivals = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Landing);
             flightWatchModel.Departures = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Takeoff);
         }
