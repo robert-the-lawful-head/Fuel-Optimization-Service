@@ -350,28 +350,30 @@ export class FlightWatchMapComponent
         source.setData(data);
 
         if (this.currentPopup.isPopUpOpen) {
-            this.closeAllPopUps();
-            this.setDefaultPopUpOpen(newflightsInMapBounds);
-            this.currentPopup.isPopUpOpen = true;
+            let selectedFlight = newflightsInMapBounds.find(
+                (key) => this.data[key].tailNumber == this.currentPopup.popupId
+            );
+            if (!selectedFlight){
+                this.closeAllPopUps();
+                this.currentPopup.isPopUpOpen = false;
+            }else{
+                this.setDefaultPopUpOpen(selectedFlight);
+                this.currentPopup.isPopUpOpen = true;
+            }
         }
         this.applyMouseFunctions(this.flightLayerId);
     }
-    setDefaultPopUpOpen(flightsIdsOnMap: string[]): void {
-        let selectedFlight = flightsIdsOnMap.find(
-            (key) => this.data[key].tailNumber == this.currentPopup.popupId
-        );
-
-        if (!selectedFlight) return;
+    setDefaultPopUpOpen(selectedFlightId: string): void {
+        if (!selectedFlightId){
+            this.closeAllPopUps();
+            return;
+        }
 
         this.currentPopup.coordinates = [
-            this.data[selectedFlight].longitude,
-            this.data[selectedFlight].latitude,
+            this.data[selectedFlightId].longitude,
+            this.data[selectedFlightId].latitude,
         ];
-        this.openPopupRenderComponent(
-            this.currentPopup.coordinates,
-            this.aircraftPopupContainerRef,
-            this.currentPopup
-        );
+        this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
     }
     getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
         return keys(this.data).filter((id) => {
@@ -424,16 +426,16 @@ export class FlightWatchMapComponent
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
+        self.markerClicked.emit(this.data[id]);
         self.selectedAircraft = id;
-        self.currentPopup.isPopUpOpen = true;
 
+        self.currentPopup.isPopUpOpen = true;
         self.currentPopup.coordinates = [
             this.data[id].longitude,
             this.data[id].latitude,
         ];
         self.currentPopup.popupId = id;
-        self.markerClicked.emit(this.data[id]);
-        self.openPopupRenderComponent(
+        self.currentPopup.popupInstance = self.openPopupRenderComponent(
             self.currentPopup.coordinates,
             self.aircraftPopupContainerRef,
             self.currentPopup

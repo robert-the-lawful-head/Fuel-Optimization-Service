@@ -4,7 +4,8 @@ import { environment } from 'src/environments/environment';
 export interface PopUpProps{
     isPopUpOpen: boolean;
     coordinates: [number,number];
-    popupId: number;
+    popupId: string;
+    popupInstance: mapboxgl.Popup
 }
 export abstract class MapboxglBase {
     public map: mapboxgl.Map;
@@ -20,6 +21,7 @@ export abstract class MapboxglBase {
             isPopUpOpen: false,
             popupId: null,
             coordinates: null,
+            popupInstance: null
         }
         let optimizeMapFlag = (optimizeMap)?'?optimize=true':'';
         this.map = new mapboxgl.Map({
@@ -249,8 +251,8 @@ export abstract class MapboxglBase {
             img.src = src;
         });
     }
-    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):void{
-        new mapboxgl.Popup()
+    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):mapboxgl.Popup{
+        return new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
