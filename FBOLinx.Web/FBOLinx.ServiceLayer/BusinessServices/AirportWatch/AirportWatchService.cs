@@ -514,7 +514,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                       AirportLatitude = a.Icao == null ? ad.Latitude : a.Latitude,
                                       AirportLongitude = a.Icao == null ? ad.Latitude : a.Longitude
                                   ,
-                                      DistanceFromAirport = a.Icao == null ? new Coordinates(ad.Latitude, ad.Longitude).DistanceTo(
+                                      DistanceFromAirport = a.Icao == null ? new Coordinates(ad.Latitude.Value, ad.Longitude.Value).DistanceTo(
                           new Coordinates(d.Latitude, d.Longitude),
                           UnitOfLength.NauticalMiles
                                  ) : new Coordinates(a.Latitude, a.Longitude).DistanceTo(
