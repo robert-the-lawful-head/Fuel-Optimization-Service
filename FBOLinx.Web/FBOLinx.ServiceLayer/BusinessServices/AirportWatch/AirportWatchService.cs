@@ -683,11 +683,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             }
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
-                if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
+                //if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
+                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return true;
             }).ToList();
             _HistoricalDataToUpdate = _HistoricalDataToUpdate.Where(record => {
-                if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
+                //if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
+                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
                 return true;
             }).ToList();
 
