@@ -506,13 +506,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var dataWithLatLng = (from d in data
                                   join ad in airportWatchDistinctBoxes on d.BoxName equals ad.BoxName
                                   join a in airports on new { Icao = ad.AirportICAO } equals new { Icao = (string.IsNullOrEmpty(a.Icao) ? a.Faa : a.Icao) }
+                                  into leftJoinedAirports
+                                  from a in leftJoinedAirports.DefaultIfEmpty()
                                   select new
                                   {
                                       d,
-                                      AirportLatitude = a.Latitude,
-                                      AirportLongitude = a.Longitude
+                                      AirportLatitude = a.Icao == null ? ad.Latitude : a.Latitude,
+                                      AirportLongitude = a.Icao == null ? ad.Latitude : a.Longitude
                                   ,
-                                      DistanceFromAirport = new Coordinates(a.Latitude, a.Longitude).DistanceTo(
+                                      DistanceFromAirport = a.Icao == null ? new Coordinates(ad.Latitude, ad.Longitude).DistanceTo(
+                          new Coordinates(d.Latitude, d.Longitude),
+                          UnitOfLength.NauticalMiles
+                                 ) : new Coordinates(a.Latitude, a.Longitude).DistanceTo(
                           new Coordinates(d.Latitude, d.Longitude),
                           UnitOfLength.NauticalMiles
                                  )
@@ -621,30 +626,42 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Set the nearest airport for all records that will be recorded for historical statuses
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                airportWatchHistoricalDataDto.AirportICAO = "";
 
-                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
-                    airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                if (boxAtAirport != null && boxAtAirport.AirportICAO != null)
+                {
+                    var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
+
+                    if (boxAtAirport.AirportICAO == nearestAirport.Icao)
+                        airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                    else
+                        airportWatchHistoricalDataDto.AirportICAO = "-";
+                }
             }
 
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
+                airportWatchHistoricalDataDto.AirportICAO = "";
 
-                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
-                    airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                if (boxAtAirport != null && boxAtAirport.AirportICAO != null)
+                {
+                    var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
+
+                    if (boxAtAirport.AirportICAO == nearestAirport.Icao)
+                        airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
+                    else
+                        airportWatchHistoricalDataDto.AirportICAO = "-";
+                }
             }
 
             _HistoricalDataToInsert = _HistoricalDataToInsert.Where(record => {
-                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
-                //return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+                if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
                 return true;
             }).ToList();
             _HistoricalDataToUpdate = _HistoricalDataToUpdate.Where(record => {
-                if (string.IsNullOrEmpty(record.AirportICAO) || string.IsNullOrEmpty(record.BoxName)) return false;
-                //return record.BoxName.ToLower().StartsWith(record.AirportICAO.ToLower());
+                if (record.AirportICAO.Contains("-") || string.IsNullOrEmpty(record.BoxName)) return false;
                 return true;
             }).ToList();
 
