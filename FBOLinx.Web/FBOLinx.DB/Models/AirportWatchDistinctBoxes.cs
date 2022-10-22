@@ -20,7 +20,7 @@ namespace FBOLinx.DB.Models
         public DateTime? LastHistoricDateTime { get; set; }
         [StringLength(10)]
         public string AirportICAO { get; set; }
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }
