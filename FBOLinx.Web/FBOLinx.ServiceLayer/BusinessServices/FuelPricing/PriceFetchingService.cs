@@ -21,7 +21,7 @@ using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
-    public class PriceFetchingService: IPriceFetchingService
+    public class PriceFetchingService : IPriceFetchingService
     {
         private FboLinxContext _context;
         private int _FboId;
@@ -49,7 +49,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             return await GetCustomerPricingByLocationAsync(icao, customerId, flightTypeClassifications, departureType, feesAndTaxes, fboId, 0, false);
         }
         public async Task<List<CustomerWithPricing>> GetCustomerPricingByLocationAsync(
-            string icao, int customerId, FlightTypeClassifications flightTypeClassifications, 
+            string icao, int customerId, FlightTypeClassifications flightTypeClassifications,
             ApplicableTaxFlights departureType = ApplicableTaxFlights.All, List<FboFeesAndTaxes> feesAndTaxes = null, int fboId = 0, int groupId = 0, bool isAnalytics = false)
         {
             List<string> airports = icao.Split(',').Select(x => x.Trim()).ToList();
@@ -103,9 +103,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     }
                     if (alertEmailAddresses != null)
                         price.CopyEmails = string.Join(";", alertEmailAddresses);
-                    if(alertEmailAddressesUsers!=null)
+                    if (alertEmailAddressesUsers != null)
                     {
-                        foreach(var email in alertEmailAddressesUsers)
+                        foreach (var email in alertEmailAddressesUsers)
                         {
                             if (email.Contains('@'))
                                 price.CopyEmails += ";" + email;
@@ -138,7 +138,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             var feesAndTaxesPassedIn = feesAndTaxes;
 
             try
-            {                                                                                
+            {
                 //Prepare default values
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||
                     flightTypeClassifications == FlightTypeClassifications.All)
@@ -257,7 +257,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                                           (tmp.MarginJet.HasValue)
                                                       ? (ppt == null ? 0 : ppt.Amount) + (double)tmp.MarginJet ?? 0
                                                       : (ppt == null ? 0 : ppt.Amount)),
-                                                  amount = ppt == null ? 0 : ppt.Amount ,
+                                                  amount = ppt == null ? 0 : ppt.Amount,
                                                   Suspended = cg.Suspended,
                                                   FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
                                                   Network = cg.Network,
@@ -284,7 +284,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 if (feesAndTaxes.Count == 0)
                     return customerPricingResults;
-                
+
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
                 if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.DomesticOnly) &&
@@ -296,7 +296,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                         x.Product = "Jet A (Domestic Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
-                            fee.DepartureType == ApplicableTaxFlights.All)                                                                                                            
+                            fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
@@ -318,7 +318,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             .ToList();
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                                 fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
-                                fee.DepartureType == ApplicableTaxFlights.All)                                                                                                        
+                                fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
                     });
                 }
@@ -348,7 +348,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 resultsWithFees.AddRange(domesticOptions);
                 resultsWithFees.AddRange(internationalOptions);
                 resultsWithFees.AddRange(allDepartureOptions);
-                
+
                 //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
                 //Each collection of fees is cloned so updating the flag of one collection does not affect other pricing results where the template did not omit it
                 resultsWithFees.ForEach(x =>
@@ -429,7 +429,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         public async Task<List<FbosGridViewModel>> GetAllFbosWithExpiredPricing()
         {
             var fboIdsWithExpiredPrice = new List<int>();
-            var fbos = await _context.Fbos.Where(f => f.Active == true).Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
+
+            var fbos = await (from f in _context.Fbos
+                              join fa in _context.Fboairports on f.Oid equals fa.Fboid
+                              where f.Active == true && f.GroupId > 1
+                              select new
+                              {
+                                  Active = f.Active,
+                                  Oid = f.Oid,
+                                  Fbo = f.Fbo,
+                                  Icao = fa.Icao,
+                                  GroupId = f.GroupId
+                              }).ToListAsync();
+
+            //var fbos = await _context.Fbos.Where(f => f.Active == true).Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
 
             foreach (var fbo in fbos)
             {
@@ -443,10 +456,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             {
                 Active = f.Active,
                 Fbo = f.Fbo,
-                Icao = f.FboAirport?.Icao,
+                Icao = f.Icao,
                 Oid = f.Oid,
-                GroupId = f.GroupId ?? 0,
-                Users = f.Users
+                GroupId = f.GroupId ?? 0
             }).ToList();
 
             return fbosWithExpiredPricing;
