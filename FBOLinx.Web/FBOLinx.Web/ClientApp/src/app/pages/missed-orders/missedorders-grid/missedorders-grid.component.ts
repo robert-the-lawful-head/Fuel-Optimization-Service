@@ -26,6 +26,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import * as SharedEvent from '../../../models/sharedEvents';
 
 const initialColumns: ColumnType[] = [
     {
@@ -89,6 +90,8 @@ export class MissedOrdersGridComponent implements OnInit {
     columns: ColumnType[] = [];
 
     dashboardSettings: any;
+
+    resetMissedOrdersSubscription: any;
 
     constructor(
         private sharedService: SharedService,
@@ -154,6 +157,25 @@ export class MissedOrdersGridComponent implements OnInit {
         }
 
         this.refreshTable();
+    }
+
+    ngAfterViewInit() {
+        this.resetMissedOrdersSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === SharedEvent.resetMissedOrders) {
+                    this.filterStartDate = new Date(
+                        moment().add(-1, 'week').format('MM/DD/YYYY')
+                    );
+                    this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
+                    this.refreshTable();
+                }
+            });
+    }
+
+    ngOnDestroy() {
+        if (this.resetMissedOrdersSubscription) {
+            this.resetMissedOrdersSubscription.unsubscribe();
+        }
     }
 
     getTableColumns() {
