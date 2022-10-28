@@ -7,7 +7,7 @@ export interface Swim {
     model: string;
     fAAMake: string;
     fAAModel: string;
-    fuelCapacityGal: number | null;
+    fuelCapacityGal: number | any;
     origin: string;
     city: string;
     departureICAO: string;
@@ -16,29 +16,29 @@ export interface Swim {
     arrivalCity: string;
     atdLocal: string;
     atdZulu: string;
-    etaLocal: string | null;
-    etaZulu: string | null;
-    ete: string | null;
-    actualSpeed: number | null;
-    altitude: number | null;
-    latitude: number | null;
-    longitude: number | null;
-    isAircraftOnGround: boolean;
+    etaLocal: string;
+    etaZulu: string;
+    ete: string;
+    actualSpeed: number | any;
+    altitude: number | any;
+    latitude: number | any;
+    longitude: number | any;
+    isAircraftOnGround: boolean | any;
     itpMarginTemplate: string;
-    status: FlightLegStatus;
+    status: FlightLegStatus | any;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
     departures: number;
-    id: number | null;
-    fuelerlinxID: number | null;
+    id: number | any;
+    fuelerlinxID: number | any;
     vendor: string;
     transactionStatus: string;
     icaoAircraftCode: string;
-    isInNetwork: boolean;
-    isOutOfNetwork: boolean;
-    isActiveFuelRelease: boolean;
-    isFuelerLinxClient: boolean;
+    isInNetwork: boolean | any;
+    isOutOfNetwork: boolean | any;
+    isActiveFuelRelease: boolean | any;
+    isFuelerLinxClient: boolean | any;
 }
 export interface Time {
     ticks: number;
@@ -59,8 +59,10 @@ export const swimTableColumns = {
     flightDepartment: 'flightDepartment',
     icaoAircraftCode: 'icaoAircraftCode',
     ete: 'ete',
-    etaAtd: 'etaAtd',
-    originDestination: 'originDestination',
+    eta: 'eta',
+    atd: 'atd',
+    origin: 'origin',
+    arrival: 'arrivalICAO',
     isAircraftOnGround: 'isAircraftOnGround',
     itpMarginTemplate: 'itpMarginTemplate',
     etaAtdZulu: 'etaAtdZulu',
@@ -73,8 +75,10 @@ export const swimTableColumnsDisplayText = {
     flightDepartment: 'Flight Department',
     icaoAircraftCode: 'Aircraft Type',
     ete: 'ETE',
-    etaAtd: { arrivals: 'ETA', departures: 'ATD'},
-    originDestination: { arrivals: 'Origin', departures: 'Destination'},
+    eta: 'ETA',
+    atd: 'ATD',
+    origin: 'Origin',
+    arrivalICAO: 'Destination',
     isAircraftOnGround: 'On Ground',
     itpMarginTemplate: 'ITP Margin Template',
     expandedDetail: 'expandedDetail',
@@ -93,4 +97,16 @@ export const stautsTextColor = {
     Arrived: 'green',
     Departing: 'gray',
     TaxiingOrigin: '#FDD953',
-};
+    default: 'black'
+}
+
+export interface MapMarkers {
+    flights : MapMarkerInfo,
+    fbos: MapMarkerInfo,
+    airports: MapMarkerInfo
+}
+export interface MapMarkerInfo {
+    sourceId: string,
+    layerId: string,
+    data: any[] | null
+}

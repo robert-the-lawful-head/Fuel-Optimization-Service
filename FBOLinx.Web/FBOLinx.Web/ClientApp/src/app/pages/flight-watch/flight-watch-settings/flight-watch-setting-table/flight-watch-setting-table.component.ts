@@ -64,9 +64,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     ngAfterViewInit() {
         if(this.isArrival){
-            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); }));
+            this.dataSource = new MatTableDataSource(this.mapValuesToStrings(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); })));
         }else{
-            this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(this.data));
+            this.dataSource =  new MatTableDataSource(this.mapValuesToStrings(this.setManualSortOnDepartures(this.data)));
         }
         this.dataSource.sort = this.sort;
 
@@ -88,22 +88,30 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(changes.columns){
             this.allColumnsToDisplay = this.getVisibleColumns();
             this.dataColumnsToDisplay = this.getVisibleDataColumns();
-            this.setVisibleColumnsName();
         }
         if (changes.data && this.dataSource){
-            this.dataSource.data = changes.data.currentValue;
             if(this.hasChangeDefaultSort){
-                this.dataSource.data = changes.data.currentValue;
+                this.dataSource.data =  this.mapValuesToStrings(changes.data.currentValue);
                 this.refreshSort();
                 return;
             }
 
             if(this.isArrival){
-                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaAtd, start: 'asc'}));
+                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.eta, start: 'asc'}));
             }else{
-                this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
+                this.dataSource.data = this.mapValuesToStrings(this.setManualSortOnDepartures(changes.data.currentValue));
             }
         }
+    }
+    mapValuesToStrings(data: Swim[]){
+        return data.map((row) => {
+            row.status = FlightLegStatus[row.status];
+            row.ete = !row.ete ? '' : this.toReadableTime.transform(row.ete);
+            row.etaLocal = this.getTime.transform(this.getDateObject(row.etaLocal));
+            row.atdLocal = this.getTime.transform(this.getDateObject(row.atdLocal));
+            row.isAircraftOnGround = this.booleanToText.transform(row.isAircraftOnGround);
+            return row;
+        });
     }
     setManualSortOnDepartures(data: Swim[]){
         var taxiing = data?.filter((row) => { return FlightLegStatus.TaxiingDestination == row.status || FlightLegStatus.TaxiingOrigin == row.status; }) || [];
@@ -115,13 +123,22 @@ export class FlightWatchSettingTableComponent implements OnInit {
         var enRoute = data?.filter((row) => { return FlightLegStatus.EnRoute == row.status; }) || [];
         enRoute = enRoute.sort((a, b) => { return this.compare(b.atdLocal, a.atdLocal, false); });
 
-        return (taxiing.concat(departing)).concat(enRoute);
+        var result = (taxiing.concat(departing)).concat(enRoute);
+        return result;
     }
     getVisibleDataColumns() {
         return this.columns
-            .filter((column) => !column.hidden)
-            .map((column) => column.id) ||
-            [];
+            .filter((column) => {
+                if(column.hidden) return false;
+                if(this.isArrival && column.name == swimTableColumns.origin) return false;
+                if(this.isArrival && column.name == swimTableColumns.eta) return false;
+
+                if(!this.isArrival && column.name == swimTableColumns.arrival) return false;
+                if(!this.isArrival && column.name == swimTableColumns.atd) return false;
+
+                return true;
+            })
+            .map((column) => column.id) || [];
     }
     getVisibleColumns() {
         var result = ['expand-icon'];
@@ -130,16 +147,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         );
 
         return result;
-    }
-    setVisibleColumnsName() {
-        this.columns.filter((column) => !column.hidden).forEach((col) => {
-            this.columnsToDisplayDic[col.id] = col.name;
-        });
-    }
-    getOriginDestinationString(element: Swim){
-        return this.isArrival
-                ? element.origin
-                : element.arrivalICAO
     }
     refreshSort() {
         this.hasChangeDefaultSort= true;
@@ -169,34 +176,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
-        if(column == swimTableColumns.originDestination) return this.getOriginDestinationString(row);
-        if (column == swimTableColumns.ete) { return !row.ete ? '' : this.toReadableTime.transform(row.ete);}
-        if(column == swimTableColumns.isAircraftOnGround) return this.booleanToText.transform(row.isAircraftOnGround);
-        if(column == swimTableColumns.status) {
-            if(row.status == FlightLegStatus.EnRoute)
-                return "En Route";
-            else if(row.status == FlightLegStatus.TaxiingOrigin || row.status == FlightLegStatus.TaxiingDestination)
-                return "Taxiing";
-            return  FlightLegStatus[row.status];
-        }
-        if(column == swimTableColumns.etaAtd){
-            return this.isArrival
-            ? this.getTime.transform(this.getDateObject(row.etaLocal))
-            : this.getTime.transform(this.getDateObject(row.atdLocal));
-        }
-
+        if(column == swimTableColumns.origin) return row.origin;
+        if(column == swimTableColumns.arrival) return row.arrivalICAO
         let col = this.columns.find( c => {
             return c.id == column
         });
         return row[col.id];
     }
     getColumnDisplayString(column:string){
-        if(column == swimTableColumns.originDestination || column == swimTableColumns.etaAtd){
-            return this.isArrival
-            ? swimTableColumnsDisplayText[column].arrivals
-            : swimTableColumnsDisplayText[column].departures;
-        }
-
         return swimTableColumnsDisplayText[column];
     }
     getOriginCityLabel(){
@@ -215,8 +202,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(column == swimTableColumns.status){
             return stautsTextColor[FlightLegStatus[row.status]];
         }
-
-        return "black";
+        return stautsTextColor.default;
     }
     getTailNumberTextColor(row: Swim) {
         if (row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
@@ -245,13 +231,17 @@ export class FlightWatchSettingTableComponent implements OnInit {
               return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, isAsc);
             case swimTableColumns.ete:
               return this.compare(a.ete, b.ete, isAsc);
-              case swimTableColumns.etaAtd:
-              return (this.isArrival) ? this.compare(a.etaLocal, b.etaLocal, isAsc) : this.compare(a.atdLocal, b.atdLocal, isAsc);
-              case swimTableColumns.originDestination:
-                return (this.isArrival)? this.compare(a.origin, b.origin, isAsc): this.compare(a.arrivalICAO, b.arrivalICAO, isAsc);
-              case swimTableColumns.isAircraftOnGround:
-              return this.compare(a.isAircraftOnGround.toString(), b.isAircraftOnGround.toString(), isAsc);
-              case swimTableColumns.itpMarginTemplate:
+            case swimTableColumns.eta:
+            return this.compare(a.etaLocal, b.etaLocal, isAsc);
+            case swimTableColumns.atd:
+                return this.compare(a.atdLocal, b.atdLocal, isAsc);
+            case swimTableColumns.origin:
+                return this.compare(a.origin, b.origin, isAsc);
+            case swimTableColumns.arrival:
+                return this.compare(a.arrivalICAO, b.arrivalICAO, isAsc);
+            case swimTableColumns.isAircraftOnGround:
+                return this.compare(a.isAircraftOnGround, b.isAircraftOnGround, isAsc);
+            case swimTableColumns.itpMarginTemplate:
                 return this.compare(a.itpMarginTemplate, b.itpMarginTemplate, isAsc);
             default:
               return 0;

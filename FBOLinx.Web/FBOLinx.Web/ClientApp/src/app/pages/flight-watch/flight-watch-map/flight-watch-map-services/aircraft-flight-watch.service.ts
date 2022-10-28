@@ -12,7 +12,13 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: FlightWatchModelResponse,id,selectedAircraft): any {
         let icon = "aircraft_image_";
         if (data.isInNetwork && !data.fuelOrderId && !data.isFuelerLinxClient){
-            icon = `${icon}client`;
+            icon = `${icon}client${id === selectedAircraft.toString() ? '_reversed' : ''}${
+                data.fuelOrderId != null
+                    ? '_release'
+                    : data.isFuelerLinxClient
+                    ? '_fuelerlinx'
+                    : ''
+            }`;
         }else{
             icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
                 data.aircraftTypeCode
@@ -48,7 +54,8 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'icon-allow-overlap': true,
                 'icon-image': ['get', 'icon-image'],
                 'icon-rotate': ['get', 'rotate'],
-                'icon-size': ['get', 'size']
+                'icon-size': ['get', 'size'],
+                'symbol-z-order': 'source'
             },
             source: flightSourceId,
             type: 'symbol',

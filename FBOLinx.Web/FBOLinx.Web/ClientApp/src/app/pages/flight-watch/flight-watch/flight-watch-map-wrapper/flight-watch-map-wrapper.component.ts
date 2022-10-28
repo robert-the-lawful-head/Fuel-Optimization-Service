@@ -4,16 +4,16 @@ import {
     Input,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
+import { Dictionary, keyBy } from 'lodash';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import {
-    Aircraftwatch,
-    FlightWatch,
-    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from 'src/app/models/flight-watch';
+import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -25,7 +25,7 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 })
 export class FlightWatchMapWrapperComponent implements OnInit {
     @Input() center: mapboxgl.LngLatLike;
-    @Input() data: FlightWatchDictionary;
+    @Input() data: FlightWatchModelResponse[];
     @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
@@ -44,17 +44,39 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public isCommercialVisible = true;
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
+    public flightWatchDictionary : Dictionary<FlightWatchModelResponse>;
 
     constructor() {}
 
     ngOnInit() {}
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.data) {
+            this.flightWatchDictionary = this.getFilteredData(changes.data.currentValue);
+        }
+    }
+    getFilteredData(data: FlightWatchModelResponse[]): Dictionary<FlightWatchModelResponse>{
+        let filtered = this.filterComercialFlights(data)
+        return keyBy(filtered, (fw) => {
+            return fw.tailNumber
+        });
+    }
+    filterComercialFlights(flightWatch: FlightWatchModelResponse[]): FlightWatchModelResponse[]{
+        if(this.isCommercialVisible) return flightWatch;
+
+        return flightWatch.filter(flightWatch => {
+            !isCommercialAircraft(
+                flightWatch.aircraftTypeCode,
+                flightWatch.atcFlightNumber
+            )
+        });
+    }
     toggleCommercial(event: MouseEvent) {
         this.isCommercialVisible = !this.isCommercialVisible;
-        this.map.updateFlightOnMap();
+        this.flightWatchDictionary = this.getFilteredData(this.data);
     }
     toggleLayer(type: LayerType) {
-        this.toggleLayer(type);
+        this.map.toggleLayer(type);
         if (type == 'icao')
             this.isShowAirportCodesEnabled = !this.isShowAirportCodesEnabled;
         else if (type == 'taxiway')

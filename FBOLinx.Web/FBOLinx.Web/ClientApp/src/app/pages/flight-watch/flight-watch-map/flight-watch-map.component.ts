@@ -11,14 +11,13 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { isEqual, keys } from 'lodash';
+import { Dictionary, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
 import {
     Aircraftwatch,
-    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from '../../../models/flight-watch';
 import { AirportFboGeoFenceCluster } from '../../../models/fbo-geofencing/airport-fbo-geo-fence-cluster';
@@ -30,8 +29,8 @@ import { AircraftImageData, AIRCRAFT_IMAGES } from './aircraft-images';
 import { AircraftPopupContainerComponent } from '../aircraft-popup-container/aircraft-popup-container.component';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
-import { detailDataBound } from '@syncfusion/ej2-angular-grids';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
+import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -47,7 +46,7 @@ export class FlightWatchMapComponent
     implements OnInit, OnChanges, OnDestroy
 {
     @Input() center: mapboxgl.LngLatLike;
-    @Input() data: FlightWatchDictionary;
+    @Input() data: Dictionary<FlightWatchModelResponse>;
     @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
@@ -78,12 +77,23 @@ export class FlightWatchMapComponent
     public clusters: AirportFboGeoFenceCluster[];
 
     // Mapbox and layers IDs
-    public flightSourceId: string = 'flights';
-    public flightLayerId: string = 'flightsLayer';
-    public fboLayerId: string = 'fbosLayerId';
-    public fboSourceId: string = 'fbosSourceId';
-    public airportLayerId: string = 'airportLayerId';
-    public airportSourceId: string = 'airportSourceId';
+    public mapMarkers: MapMarkers= {
+        flights : {
+            sourceId: 'flightSource',
+            layerId: 'flightLayer',
+            data: null
+        },
+        fbos: {
+            sourceId: 'fbosSourceId',
+            layerId: 'fbosLayerId',
+            data: null
+        },
+        airports: {
+            sourceId: 'airportSourceId',
+            layerId: 'airportLayerId',
+            data: null
+        }
+    }
 
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
@@ -99,18 +109,8 @@ export class FlightWatchMapComponent
         this.groupId = this.sharedService.currentUser.groupId;
     }
     ngOnInit(): void {
-        const refreshMapFlight = async () => {
-            this.updateFlightOnMap();
-            this.updateICAOIconOnMap(this.icao);
-            this.getFbosAndLoad();
-        };
-
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
             .addNavigationControls()
-            .onZoom(refreshMapFlight)
-            .onDragend(refreshMapFlight)
-            .onRotate(refreshMapFlight)
-            .onResize(refreshMapFlight)
             .onStyleData(this.mapStyleLoaded)
             .onLoad(async () => {
                 await this.loadMapIcons();
@@ -145,12 +145,12 @@ export class FlightWatchMapComponent
                 type: 'Feature'
             };
         });
-        this.map.addSource(this.airportSourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
+        this.map.addSource(this.mapMarkers.airports.sourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
 
-        this.map.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.airportLayerId, this.airportSourceId));
+        this.map.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.mapMarkers.airports.layerId, this.mapMarkers.airports.sourceId));
 
-        this.addHoverPointerActions(this.airportLayerId);
-        this.onClick(this.airportLayerId, (e) => this.clickActionOnAirportICon(e) );
+        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
+        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
     }
     updateICAOIconOnMap(currentIcao: string) {
         var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
@@ -174,13 +174,13 @@ export class FlightWatchMapComponent
             type: 'FeatureCollection',
             features: markers,
         };
-        const source = this.getSource(this.airportSourceId);
+        const source = this.getSource(this.mapMarkers.airports.sourceId);
 
         if(!source) return;
 
         source.setData(data);
-        this.addHoverPointerActions(this.airportLayerId);
-        this.onClick(this.airportLayerId, (e) => this.clickActionOnAirportICon(e) );
+        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
+        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
     }
     clickActionOnAirportICon(e: any): void{
         let id = e.features[0].properties.id;
@@ -275,7 +275,8 @@ export class FlightWatchMapComponent
         if(!this.map) return;
 
         if (changes.data) {
-            this.updateFlightOnMap();
+            this.setMapMarkersData(keys(changes.data.currentValue));
+            this.updateFlightOnMap(this.mapMarkers.flights);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
@@ -301,46 +302,45 @@ export class FlightWatchMapComponent
         this.popupData = Object.assign({}, obj);
     }
     loadFlightOnMap() {
-        const source = this.getSource(this.flightSourceId);
+
+        this.setMapMarkersData(keys(this.data));
+
+        this.loadFlightMarkersOnMap(this.mapMarkers.flights);
+    }
+    loadFlightMarkersOnMap(marker: MapMarkerInfo) {
+        const source = this.getSource(marker.sourceId);
 
         if(source){
-            this.updateFlightOnMap();
+            this.updateFlightOnMap(marker);
             return;
         }
 
-        var newflightsInMapBounds = this.getFlightsWithinMapBounds(
-            this.getBounds()
-        );
         const markers = this.getFlightSourcerFeatureMarkers(
-            newflightsInMapBounds
+            marker.data
         );
         this.addSource(
-            this.flightSourceId,
+            marker.sourceId,
             this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers)
         );
         this.addLayer(
             this.aircraftFlightWatchService.getFlightLayerJsonData(
-                this.flightLayerId,
-                this.flightSourceId
+                marker.layerId,
+                marker.sourceId
             )
         );
-        this.applyMouseFunctions(this.flightLayerId);
+        this.applyMouseFunctions(marker.layerId);
     }
-    updateFlightOnMap() {
+    updateFlightOnMap(marker: MapMarkerInfo) {
         if (!this.map) return;
 
-        var newflightsInMapBounds = this.getFlightsWithinMapBounds(
-            this.getBounds()
-        );
-
-        const source = this.getSource(this.flightSourceId);
+        const source = this.getSource(marker.sourceId);
 
         if(!source){
             this.loadFlightOnMap();
             return;
         }
 
-        const dataFeatures = this.getFlightSourcerFeatureMarkers(newflightsInMapBounds);
+        const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data);
 
         const data: any = {
             type: 'FeatureCollection',
@@ -350,47 +350,30 @@ export class FlightWatchMapComponent
         source.setData(data);
 
         if (this.currentPopup.isPopUpOpen) {
-            this.closeAllPopUps();
-            this.setDefaultPopUpOpen(newflightsInMapBounds);
-            this.currentPopup.isPopUpOpen = true;
+            let selectedFlight = marker.data.find(
+                (key) => this.data[key].tailNumber == this.currentPopup.popupId
+            );
+            if (!selectedFlight){
+                this.closeAllPopUps();
+                this.currentPopup.isPopUpOpen = false;
+            }else{
+                this.setDefaultPopUpOpen(selectedFlight);
+                this.currentPopup.isPopUpOpen = true;
+            }
         }
-        this.applyMouseFunctions(this.flightLayerId);
+        this.applyMouseFunctions(marker.layerId);
     }
-    setDefaultPopUpOpen(flightsIdsOnMap: string[]): void {
-        let selectedFlight = flightsIdsOnMap.find(
-            (key) => this.data[key].tailNumber == this.currentPopup.popupId
-        );
-
-        if (!selectedFlight) return;
+    setDefaultPopUpOpen(selectedFlightId: string): void {
+        if (!selectedFlightId){
+            this.closeAllPopUps();
+            return;
+        }
 
         this.currentPopup.coordinates = [
-            this.data[selectedFlight].longitude,
-            this.data[selectedFlight].latitude,
+            this.data[selectedFlightId].longitude,
+            this.data[selectedFlightId].latitude,
         ];
-        this.openPopupRenderComponent(
-            this.currentPopup.coordinates,
-            this.aircraftPopupContainerRef,
-            this.currentPopup
-        );
-    }
-    getFlightsWithinMapBounds(bound: mapboxgl.LngLatBounds): any {
-        return keys(this.data).filter((id) => {
-            if(id == null) return false;
-            const flightWatch = this.data[id];
-            const flightWatchPosition: mapboxgl.LngLatLike = {
-                lat: flightWatch.latitude,
-                lng: flightWatch.longitude,
-            };
-            return ( true
-                // bound.contains(flightWatchPosition)
-                // &&
-                // (this.isCommercialVisible ||
-                //     !isCommercialAircraft(
-                //         flightWatch.aircraftTypeCode,
-                //         flightWatch.atcFlightNumber
-                //     ))
-            );
-        });
+        this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
     }
     getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): AcukwikAirport[] {
         if(!this.acukwikairports) return [];
@@ -402,7 +385,18 @@ export class FlightWatchMapComponent
             return bound.contains(airportPosition);
         });
     }
-    getFlightSourcerFeatureMarkers(flights: any): any {
+    setMapMarkersData(flights: string[]): void{
+        let activeFuelRelease = flights.filter((key) => { return this.data[key].isActiveFuelRelease }) || [];
+
+        let fuelerLinxClient = flights.filter((key) => { return this.data[key].isFuelerLinxClient && !this.data[key].isActiveFuelRelease}) || [];
+
+        let inNetwork = flights.filter((key) => { return this.data[key].isInNetwork && !this.data[key].isActiveFuelRelease && !this.data[key].isFuelerLinxClient}) || [];
+
+        let outOfNetwork = flights.filter((key) => { return !this.data[key].isInNetwork && !this.data[key].isActiveFuelRelease && !this.data[key].isFuelerLinxClient }) || [];
+
+        this.mapMarkers.flights.data = [].concat(outOfNetwork,inNetwork,fuelerLinxClient,activeFuelRelease);
+    }
+    getFlightSourcerFeatureMarkers(flights: string[]): any[] {
         return flights.map((key) => {
             const row = this.data[key];
             const id = this.flightWatchMapService.buildAircraftId(row.aircraftIdentification);
@@ -413,9 +407,9 @@ export class FlightWatchMapComponent
             );
         });
     }
-    applyMouseFunctions(id: string): void {
-        this.onClick(id, (e) => this.clickHandler(e, this));
-        this.addHoverPointerActions(this.flightLayerId);
+    applyMouseFunctions(layerid: string): void {
+        this.onClick(layerid, (e) => this.clickHandler(e, this));
+        this.addHoverPointerActions(layerid);
     }
     async clickHandler(
         e: mapboxgl.MapMouseEvent & {
@@ -424,16 +418,16 @@ export class FlightWatchMapComponent
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
+        self.markerClicked.emit(this.data[id]);
         self.selectedAircraft = id;
-        self.currentPopup.isPopUpOpen = true;
 
+        self.currentPopup.isPopUpOpen = true;
         self.currentPopup.coordinates = [
             this.data[id].longitude,
             this.data[id].latitude,
         ];
         self.currentPopup.popupId = id;
-        self.markerClicked.emit(this.data[id]);
-        self.openPopupRenderComponent(
+        self.currentPopup.popupInstance = self.openPopupRenderComponent(
             self.currentPopup.coordinates,
             self.aircraftPopupContainerRef,
             self.currentPopup
@@ -461,16 +455,16 @@ export class FlightWatchMapComponent
             );
         });
         this.addSource(
-            this.fboSourceId,
+            this.mapMarkers.fbos.sourceId,
             this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers)
         );
         this.addLayer(
             this.fboFlightWatchService.getFbosLayer(
-                this.fboLayerId,
-                this.fboSourceId
+                this.mapMarkers.fbos.layerId,
+                this.mapMarkers.fbos.sourceId
             )
         );
-        this.createPopUpOnMouseEnterFromDescription(this.fboLayerId);
+        this.createPopUpOnMouseEnterFromDescription(this.mapMarkers.fbos.layerId);
     }
 
     mapStyleLoaded() {
@@ -510,7 +504,6 @@ export class FlightWatchMapComponent
         this.data[this.selectedAircraft].flightDepartment = event.flightDepartment;
         this.data[this.selectedAircraft].aircraftTypeCode = event.aircraftTypeCode;
         this.markerClicked.emit(this.data[this.selectedAircraft]);
-        this.updateFlightOnMap();
     }
     goToAirport(icao: string){
         let airport = this.acukwikairports.find( x => x.icao == icao);
