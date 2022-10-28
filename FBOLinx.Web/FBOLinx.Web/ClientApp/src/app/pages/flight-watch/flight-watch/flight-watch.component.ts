@@ -163,8 +163,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.departures = this.filterData(this.filter?.toLowerCase(), this.departuresAllRecords);
 
         this.flightWatchData = this.arrivals.concat(this.departures);
-
-        this.filteredFlightWatchData = this.getFligthWatchDictionary(this.flightWatchData);
     }
     filterData(filter: string, records: FlightWatchModelResponse[]): FlightWatchModelResponse[]{
 
@@ -184,17 +182,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             fw.arrivalCity?.toLowerCase().includes(filter)
         );
 
-    }
-    getFligthWatchDictionary(records: FlightWatchModelResponse[]): FlightWatchDictionary{
-        if (this.selectedFlightWatch) {
-            this.selectedFlightWatch =
-                this.filteredFlightWatchData[this.selectedFlightWatch.tailNumber];
-        }
-
-        var result = keyBy(records, (fw) => {
-            return fw.tailNumber
-        });
-        return result;
     }
     validate(event: ResizeEvent): boolean {
         const MAX_DIMENSIONS_PX = 800;

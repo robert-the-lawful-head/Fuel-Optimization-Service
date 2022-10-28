@@ -98,4 +98,15 @@ export const stautsTextColor = {
     Departing: 'gray',
     TaxiingOrigin: '#FDD953',
     default: 'black'
-};
+}
+
+export interface MapMarkers {
+    flights : MapMarkerInfo,
+    fbos: MapMarkerInfo,
+    airports: MapMarkerInfo
+}
+export interface MapMarkerInfo {
+    sourceId: string,
+    layerId: string,
+    data: any[] | null
+}
