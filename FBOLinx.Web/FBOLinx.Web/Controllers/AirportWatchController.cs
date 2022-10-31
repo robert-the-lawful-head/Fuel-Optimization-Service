@@ -26,16 +26,18 @@ namespace FBOLinx.Web.Controllers
     public class AirportWatchController : ControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
+        private readonly IAirportWatchLiveDataService _airportWatchLiveDataService;
         private readonly IFboService _fboService;
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService)
+        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService, IAirportWatchLiveDataService airportWatchLiveDataService)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
             _dBSCANService = dBSCANService;
+            _airportWatchLiveDataService = airportWatchLiveDataService;
         }
 
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
@@ -72,6 +74,24 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 await _airportWatchService.ProcessAirportWatchData(data);
+                return Ok(new AirportWatchDataPostResponse(true));
+            }
+            catch (Exception exception)
+            {
+                if (exception.InnerException != null)
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
+                else
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("save-live-data-to-table-storage")]
+        public async Task<ActionResult<AirportWatchDataPostResponse>> SaveAirportWatchLiveDataToTableStorage([FromBody] List<AirportWatchLiveDataDto> data)
+        {
+            try
+            {
+                await _airportWatchLiveDataService.SaveAirportWatchLiveDataToTableStorage(data);
                 return Ok(new AirportWatchDataPostResponse(true));
             }
             catch (Exception exception)

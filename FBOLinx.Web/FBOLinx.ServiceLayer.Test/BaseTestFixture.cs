@@ -11,11 +11,14 @@ namespace FBOLinx.ServiceLayer.Test
     {
         protected T subject;
 
-        protected void Arrange(Action<ServiceCollection> arrange)
+        protected void Arrange(Action<ServiceCollection> arrange = null)
         {
             var services = new ServiceCollection();
             ServiceConfiguration.Configure(services, GetConfiguration());
-            arrange(services);
+            if (arrange != null)
+            {
+                arrange(services);
+            }
             var serviceProvider = services.BuildServiceProvider();
             subject = serviceProvider.GetRequiredService<T>();
         }

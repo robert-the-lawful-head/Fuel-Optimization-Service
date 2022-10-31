@@ -15,6 +15,8 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.TableStorage.Entities;
+using FBOLinx.TableStorage.EntityServices;
 using Geolocation;
 using Mapster;
 
@@ -25,6 +27,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
     {
         Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(
             string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
+
+        Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data);
     }
 
     public class AirportWatchLiveDataService : BaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData, FboLinxContext>, IAirportWatchLiveDataService
@@ -33,16 +37,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
         private IAirportService _AirportService;
         private IFboService _FboService;
+        private readonly AirportWatchLiveDataTableEntityService _airportWatchLiveDataTableEntityService;
 
         public AirportWatchLiveDataService(IRepository<DB.Models.AirportWatchLiveData, 
                 FboLinxContext> entityService, 
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
                 IAirportService airportService,
-            IFboService fboService) : base(entityService)
+            IFboService fboService, AirportWatchLiveDataTableEntityService airportWatchLiveDataTableEntityService) : base(entityService)
         {
             _FboService = fboService;
             _AirportService = airportService;
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+            _airportWatchLiveDataTableEntityService = airportWatchLiveDataTableEntityService;
         }
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
@@ -77,6 +83,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 .ToList();
 
             return result;
+        }
+
+        public async Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data)
+        {
+            IEnumerable<AirportWatchLiveDataTableEntity> airportWatchTableEntities = data.Select(x => new AirportWatchLiveDataTableEntity()
+            {
+                BoxName = x.BoxName,
+                BoxTransmissionDateTimeUtc = DateTime.SpecifyKind(x.BoxTransmissionDateTimeUtc, DateTimeKind.Utc),
+                AtcFlightNumber = x.AtcFlightNumber,
+                AltitudeInStandardPressure = x.AltitudeInStandardPressure,
+                GroundSpeedKts = x.GroundSpeedKts,
+                TrackingDegree = x.TrackingDegree,
+                Latitude = x.Latitude,
+                Longitude = x.Longitude,
+                VerticalSpeedKts = x.VerticalSpeedKts,
+                TransponderCode = x.TransponderCode,
+                AircraftPositionDateTimeUtc = DateTime.SpecifyKind(x.AircraftPositionDateTimeUtc, DateTimeKind.Utc),
+                AircraftTypeCode = x.AircraftTypeCode,
+                GpsAltitude = x.GpsAltitude,
+                IsAircraftOnGround = x.IsAircraftOnGround,
+                AircraftHexCode = x.AircraftHexCode,
+            });
+
+            await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
         }
 
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
