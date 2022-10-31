@@ -44,5 +44,16 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public DateTime? LastUpdated { get; set; }
 
         public virtual List<SWIMFlightLegDataDTO> SWIMFlightLegDataMessages { get; set; }
+
+        public int GetDepartureLegSortPriority()
+        {
+            if (Status == FlightLegStatus.TaxiingDestination)
+                return 1;
+            if (Status == FlightLegStatus.Departing)
+                return 2;
+            if (Status == FlightLegStatus.EnRoute)
+                return 3;
+            return 4;
+        }
     }
 }

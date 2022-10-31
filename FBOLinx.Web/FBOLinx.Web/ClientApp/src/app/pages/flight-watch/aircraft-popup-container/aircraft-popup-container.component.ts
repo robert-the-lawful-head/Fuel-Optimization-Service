@@ -20,12 +20,12 @@ export class AircraftPopupContainerComponent {
   @Output() refreshAircraftProperties = new EventEmitter<Aircraftwatch>();
 
   public aircraftWatch: Aircraftwatch = {
-      customerInfoBygGroupId : 0,
+      customerInfoByGroupId : 0,
       tailNumber: '',
       atcFlightNumber: '',
       aircraftTypeCode: '',
       isAircraftOnGround: false,
-      company: '',
+      flightDepartment: '',
       aircraftMakeModel: '',
       lastQuote: '',
       currentPricing: '',
@@ -44,7 +44,7 @@ export class AircraftPopupContainerComponent {
   ngOnChanges(changes) {
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;
     if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue;
-    if(changes.flightData?.currentValue?.company) this.hasAircraft = true;
+      if (changes.flightData?.currentValue?.flightDepartment) this.hasAircraft = true;
     else this.hasAircraft = false;
   }
   ngOnInit(){
@@ -69,7 +69,7 @@ export class AircraftPopupContainerComponent {
         if (result) {
           console.log(result)
             this.aircraftWatch.aircraftMakeModel = result.aircraftType;
-            this.aircraftWatch.company = result.company;
+            this.aircraftWatch.flightDepartment = result.company;
             this.refreshAircraftProperties.emit(this.aircraftWatch);
         }
     });
@@ -84,8 +84,8 @@ export class AircraftPopupContainerComponent {
               this.customers = customers;
           });
   }
-  goToCustomerManager(customerInfoBygGroupId: number):void{
-    console.log(customerInfoBygGroupId);
-    this.router.navigate(['default-layout','customers',customerInfoBygGroupId])
+  goToCustomerManager(customerInfoByGroupId: number):void{
+    console.log(customerInfoByGroupId);
+    this.router.navigate(['default-layout','customers',customerInfoByGroupId])
   }
 }

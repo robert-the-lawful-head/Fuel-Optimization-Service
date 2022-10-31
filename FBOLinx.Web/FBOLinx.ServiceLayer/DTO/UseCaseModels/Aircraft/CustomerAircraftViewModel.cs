@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
@@ -51,8 +52,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
             NetworkCode = customerAircraft.NetworkCode;
             AddedFrom = customerAircraft.AddedFrom ?? 0;
             IsFuelerlinxNetwork = customerAircraft.Customer?.FuelerlinxId > 0;
-            Phone = customerAircraft?.Customer?.CustomerInfoByGroup?.MainPhone;
-            CustomerInfoByGroupId = (customerAircraft?.Customer?.CustomerInfoByGroup?.Oid).GetValueOrDefault();
+            Phone = customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.MainPhone;
+            CustomerInfoByGroupId = (customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.Oid).GetValueOrDefault();
             FuelerlinxCompanyId = (customerAircraft?.Customer?.FuelerlinxId);
         }
 
