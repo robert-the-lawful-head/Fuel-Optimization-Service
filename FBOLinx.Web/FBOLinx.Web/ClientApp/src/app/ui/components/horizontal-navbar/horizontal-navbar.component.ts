@@ -409,7 +409,12 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fbo = _.assign({}, data);
-                    localStorage.setItem('fbo',this.fbo.fbo);
+                    localStorage.setItem('fbo', this.fbo.fbo);
+
+                    if (this.sharedService.currentUser.role != 3) {
+                        this.fbosService.updateLastLogin(this.currentUser.fboId).subscribe((data: any) => {
+                        });
+                    }
                 },
                 (error: any) => {
                     console.log(error);
