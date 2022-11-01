@@ -256,10 +256,7 @@ export abstract class MapboxglBase {
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
-            .addTo(this.map)
-            .on('close', function(e) {
-                currentPopup.isPopUpOpen = false;
-            });
+            .addTo(this.map);
     }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
         this.map.flyTo({
