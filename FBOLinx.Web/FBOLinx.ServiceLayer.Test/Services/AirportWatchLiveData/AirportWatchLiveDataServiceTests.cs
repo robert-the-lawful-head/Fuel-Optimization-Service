@@ -14,15 +14,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.AirportWatchLiveData
 {
     public class AirportWatchLiveDataServiceTests : BaseTestFixture<AirportWatchLiveDataTableEntityService>
     {
+        private List<AirportWatchLiveDataTableEntity> testRecords;
+
         [Test]
         public async Task GetAirportWatchLiveDataRecordsTest()
         {
             Arrange();
 
-            var recordsToInsert = new List<AirportWatchLiveDataTableEntity>();
+            testRecords = new List<AirportWatchLiveDataTableEntity>();
             for (int i = 1; i < 10; i++)
             {
-                recordsToInsert.Add(new AirportWatchLiveDataTableEntity()
+                testRecords.Add(new AirportWatchLiveDataTableEntity()
                 {
                     BoxTransmissionDateTimeUtc = DateTime.UtcNow.AddHours(i),
                     AircraftPositionDateTimeUtc = DateTime.UtcNow.AddHours(i),
@@ -31,10 +33,10 @@ namespace FBOLinx.ServiceLayer.Test.Services.AirportWatchLiveData
                 });
             }
 
-            await subject.BatchInsert(recordsToInsert);
+            await subject.BatchInsert(testRecords);
 
-            IEnumerable<AirportWatchLiveDataTableEntity> result = await subject.GetAirportWatchLiveDataRecords(new List<string>() { "test" }, recordsToInsert[0].BoxTransmissionDateTimeUtc.AddMinutes(-1), recordsToInsert[2].BoxTransmissionDateTimeUtc.AddMinutes(1));
-
+            IEnumerable<AirportWatchLiveDataTableEntity> result = await subject.GetAirportWatchLiveDataRecords(new List<string>() { "test" }, testRecords[0].BoxTransmissionDateTimeUtc.AddMinutes(-1), testRecords[2].BoxTransmissionDateTimeUtc.AddMinutes(1));
+            
             Assert.AreEqual(3, result.Count());
         }
 
@@ -43,7 +45,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.AirportWatchLiveData
         {
             Arrange();
 
-            await subject.BatchInsert(new List<AirportWatchLiveDataTableEntity>()
+            testRecords = new List<AirportWatchLiveDataTableEntity>()
             {
                 new AirportWatchLiveDataTableEntity()
                 {
@@ -52,15 +54,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.AirportWatchLiveData
                     BoxName = "test",
                     AircraftHexCode = "test",
                 }
-            });
-
-            await subject.DeleteAllEntitiesAsync();
+            };
+            await subject.BatchInsert(testRecords);
         }
         
         [TearDown]
         public async Task TearDownEachTest()
         {
-            await subject.DeleteAllEntitiesAsync();
+            foreach (AirportWatchLiveDataTableEntity airportWatchLiveDataTableEntity in testRecords)
+            {
+                await subject.Delete(airportWatchLiveDataTableEntity.PartitionKey, airportWatchLiveDataTableEntity.RowKey);
+            }
         }
     }
 }
