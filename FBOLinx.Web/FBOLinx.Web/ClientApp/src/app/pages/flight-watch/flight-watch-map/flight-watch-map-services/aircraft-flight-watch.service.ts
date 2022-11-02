@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { IGNORE_BLOCK_TAGS } from '@syncfusion/ej2-angular-richtexteditor';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
@@ -10,13 +11,18 @@ export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: FlightWatchModelResponse,isSelectedAircraft:boolean): any {
-        let icon = "aircraft_image_";
-
-        let iconDefault = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
-            data.aircraftTypeCode
+        let icon = `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(
+            data
         )}`;
 
-        let iconReversed = `${iconDefault}_reversed`;
+        icon += `${isSelectedAircraft ? '_reversed' : ''}${
+            data.fuelOrderId != null
+                ? '_release'
+                : data.isFuelerLinxClient
+                ? '_fuelerlinx'
+                : ''
+        }`;
+
         return {
             geometry: {
                 coordinates: [data.longitude, data.latitude],
@@ -24,7 +30,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             properties: {
                 id: data.tailNumber,
-                'default-icon-image': isSelectedAircraft ? iconReversed : iconDefault,
+                'default-icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
