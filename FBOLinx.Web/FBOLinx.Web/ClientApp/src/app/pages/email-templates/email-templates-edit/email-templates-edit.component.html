@@ -56,39 +56,42 @@
                                 </div>
 
                                 <div style="height:600px;">
-                                    <ejs-richtexteditor #typeEmail
-                                                        id="rteEmail"
-                                                        [(ngModel)]="emailTemplate.emailContentHtml"
-                                                        placeholder="Enter email body here..."
-                                                        (blur)="formChanged($event)"
-                                                        height="400"
-                                                        [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
-
-                                    <h6 class="mt-2">File Attachment</h6>
+                                    <div>* Any images larger than 700px x 500px will be resized accordingly</div>
                                     <div>
-                                        <input type="file"
-                                               (change)="onFileChange($event)"
-                                               accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
-                                               #fileUpload />
-                                        <button *ngIf="!isUploadingFile"
-                                                (click)="uploadFile()"
-                                                class="ml-3"
-                                                color="accent"
-                                                mat-raised-button>
-                                            Upload File
-                                        </button>
-                                        <div *ngIf="isUploadingFile">
-                                            <mat-spinner></mat-spinner>
-                                        </div>
-                                        <div class="mt-2" *ngIf="fileName != ''">
-                                            <button (click)="downloadFile()" mat-stroked-button>
-                                                Download {{fileName}}
+                                        <ejs-richtexteditor #typeEmail
+                                                            id="rteEmail"
+                                                            [(ngModel)]="emailTemplate.emailContentHtml"
+                                                            placeholder="Enter email body here..."
+                                                            (blur)="formChanged($event)"
+                                                            height="400"
+                                                            [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
+
+                                        <h6 class="mt-2">File Attachment</h6>
+                                        <div>
+                                            <input type="file"
+                                                   (change)="onFileChange($event)"
+                                                   accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
+                                                   #fileUpload />
+                                            <button *ngIf="!isUploadingFile"
+                                                    (click)="uploadFile()"
+                                                    class="ml-3"
+                                                    color="accent"
+                                                    mat-raised-button>
+                                                Upload File
                                             </button>
-                                        </div>
-                                        <div class="mt-2" *ngIf="fileName != ''">
-                                            <button (click)="deleteFile()" class="btn btn-danger btn-sm">
-                                                Delete
-                                            </button>
+                                            <div *ngIf="isUploadingFile">
+                                                <mat-spinner></mat-spinner>
+                                            </div>
+                                            <div class="mt-2" *ngIf="fileName != ''">
+                                                <button (click)="downloadFile()" mat-stroked-button>
+                                                    Download {{fileName}}
+                                                </button>
+                                            </div>
+                                            <div class="mt-2" *ngIf="fileName != ''">
+                                                <button (click)="deleteFile()" class="btn btn-danger btn-sm">
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
