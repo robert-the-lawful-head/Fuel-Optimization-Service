@@ -40,7 +40,7 @@ export class EmailTemplatesEditComponent implements OnInit {
     public hasSaved = false;
     public isSaveQueued = false;
 
-    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64', maxWidth: 800, maxHeight: 600 }
     theFile: any;
     isUploadingFile: boolean;
     fileName: any = "";
