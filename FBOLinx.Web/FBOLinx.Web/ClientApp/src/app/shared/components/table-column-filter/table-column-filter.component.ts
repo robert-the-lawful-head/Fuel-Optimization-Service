@@ -211,11 +211,20 @@ export class TableColumnFilterComponent implements OnInit {
                         if (!data) {
                             return true;
                         } else {
-                            const serializedData =
-                                JSON.stringify(data).toLowerCase();
-                            return (
-                                serializedData.indexOf(element.filterValue) > -1
-                            );
+                            if (data.hasOwnProperty('fuelVendors')) {
+                                let tempDataString = JSON.stringify(data)
+                                let tempData = JSON.parse(tempDataString);
+                                delete tempData.fuelVendors;
+
+                                return (Object.values(tempData).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            }
+                            else
+                                return (Object.values(data).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            //const serializedData =
+                            //    JSON.stringify(data).toLowerCase();
+                            //return (
+                            //    serializedData.indexOf(element.filterValue) > -1
+                            //);
                         }
                     }
                     for (const column of element.columns) {

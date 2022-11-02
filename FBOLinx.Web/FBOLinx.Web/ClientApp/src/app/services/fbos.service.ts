@@ -84,6 +84,12 @@ export class FbosService {
         );
     }
 
+    public updateLastLogin(fboId: number) {
+        return this.http.post(this.accessPointUrl + '/updatelastlogin/' + fboId, {
+            headers: this.headers,
+        });
+    }
+
     public uploadLogo(payload) {
         return this.http.post(this.accessPointUrl + '/uploadfbologo', payload, {
             headers: this.headers,

@@ -142,12 +142,20 @@ export class FlightWatchSettingsComponent {
                     name: swimTableColumns.ete,
                 },
                 {
-                    id: swimTableColumns.etaAtd,
-                    name: swimTableColumns.etaAtd,
+                    id: swimTableColumns.atd,
+                    name: swimTableColumns.atd,
                 },
                 {
-                    id: swimTableColumns.originDestination,
-                    name: swimTableColumns.originDestination,
+                    id: swimTableColumns.eta,
+                    name: swimTableColumns.eta,
+                },
+                {
+                    id: swimTableColumns.origin,
+                    name: swimTableColumns.origin,
+                },
+                {
+                    id: swimTableColumns.arrival,
+                    name: swimTableColumns.arrival,
                 },
                 {
                     id: swimTableColumns.isAircraftOnGround,

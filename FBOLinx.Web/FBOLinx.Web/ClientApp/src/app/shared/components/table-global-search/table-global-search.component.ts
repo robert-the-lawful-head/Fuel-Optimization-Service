@@ -18,6 +18,31 @@ export class TableGlobalSearchComponent implements OnInit {
     constructor() {}
 
     ngOnInit(): void {
+        //if (!this.column) {
+        //    this.column = {
+        //        propertyName: this.propertyName,
+        //    };
+        //}
+        //if (!this.column.propertyName) {
+        //    if (!this.propertyName) {
+        //        throw new Error(
+        //            'A propertyName must be provided for the column value in the data collection.'
+        //        );
+        //    } else {
+        //        this.column.propertyName = this.propertyName;
+        //    }
+        //}
+        //if (!this.column.columnFormat) {
+        //    this.column.columnFormat = this.columnFormat;
+        //}
+
+        //if (!this.matDataSource.filterCollection) {
+        //    this.matDataSource.filterCollection = [];
+        //}
+        //if (this.matDataSource.filterCollection.indexOf(this.filter) === -1) {
+        //    this.matDataSource.filterCollection.push(this.filter);
+        //}
+
         this.setupFilterPredicate();
         if (!this.matDataSource.filterCollection) {
             this.matDataSource.filterCollection = [];
@@ -96,6 +121,9 @@ export class TableGlobalSearchComponent implements OnInit {
     public clearAllFilters() {
         this.globalFilter.filterValue = '';
         this.matDataSource.filter = '';
+        if (!this.matDataSource.filterCollection) {
+            this.matDataSource.filterCollection = [];
+        }
 
         for (const filter of this.matDataSource.filterCollection) {
             if (filter.isGlobal) {
@@ -134,11 +162,55 @@ export class TableGlobalSearchComponent implements OnInit {
                         if (!data) {
                             return true;
                         } else {
-                            const serializedData =
-                                JSON.stringify(data).toLowerCase();
-                            return (
-                                serializedData.indexOf(element.filterValue) > -1
-                            );
+                            if (data.hasOwnProperty('fboName')) {
+                                let tempDataString = JSON.stringify(data)
+                                let tempData = JSON.parse(tempDataString);
+                                delete tempData.icao;
+                                delete tempData.timeStandard;
+                                delete tempData.fbo;
+                                delete tempData.fuelOn;
+                                delete tempData.source;
+                                delete tempData.fboName;
+
+                                return (Object.values(tempData).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            }
+                            else if (data.hasOwnProperty('fuelVendors')) {
+                                let tempDataString = JSON.stringify(data)
+                                let tempData = JSON.parse(tempDataString);
+                                delete tempData.fuelVendors;
+
+                                return (Object.values(tempData).toString().toLowerCase().indexOf(element.filterValue) > -1);
+                            }
+                            else
+                                return (Object.values(data).toString().toLowerCase().indexOf(element.filterValue) > -1);
+
+                            //const serializedData =
+                            //    JSON.stringify(data).toLowerCase();
+                            //return (
+                            //    serializedData.trim().indexOf(element.filterValue.trim()) > -1
+                            //);
+
+                            //Object.keys(data).some((k) => {
+                            //    return data[k] == null ? false : data[k].toString().indexOf(element.filterValue) > -1;
+                            //});
+
+                            //return false;
+                            //for (let key in data) {
+                            //    if (data[key] != null) {
+                            //        var value = data[key].toString();
+                            //        if (value.indexOf(element.filterValue) > -1) {
+                            //            return true;
+                            //        }
+                            //        else return false;
+                            //    }
+                            //}
+
+                            //return false;
+
+                            //return (
+                            //    (Object.values(data).indexOf(element.filterValue) > -1));
+                            //return (
+                            //Object.values(data).includes(element.filterValue));
                         }
                     }
                     for (const column of element.columns) {

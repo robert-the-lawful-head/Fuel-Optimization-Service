@@ -42,7 +42,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private int _CacheLifeSpanInMinutes = 10;
         private string _UpcomingOrdersCacheKeyPrefix = "UpcomingOrders_ByGroupAndFbo_";
         private int _HoursToLookBackForUpcomingOrders = 12;
-        private int _HoursToLookForwardForUpcomingOrders = 24;
+        private int _HoursToLookForwardForUpcomingOrders = 48;
 
         private FuelReqEntityService _FuelReqEntityService;
         private readonly FuelerLinxApiService _fuelerLinxService;

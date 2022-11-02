@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { UploadingEventArgs } from '@syncfusion/ej2-angular-inputs';
 import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -35,12 +36,12 @@ export class EmailTemplatesEditComponent implements OnInit {
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
     public emailTemplate: any;
-    public canSave: boolean;
+    public canSave: boolean = true;
     public isSaving = false;
     public hasSaved = false;
     public isSaveQueued = false;
 
-    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64'}
     theFile: any;
     isUploadingFile: boolean;
     fileName: any = "";
@@ -66,6 +67,23 @@ export class EmailTemplatesEditComponent implements OnInit {
             });
     }
 
+    public onImageUploading = (args: UploadingEventArgs) => {
+        let imgSize: number = 1000000;
+        let sizeInBytes: number = args.fileData.size;
+        if (sizeInBytes > imgSize) {
+            this.canSave = false;
+            args.cancel = true;
+        }
+        else
+            this.canSave = true;
+    }
+
+    public onselected(e) {
+        // Specify the image name
+        e.filesData[0].name = "RTEImage changes";
+    }
+
+
     public cancelEmailTemplateEdit(): void {
         this.router
             .navigate(['/default-layout/email-templates/'])
@@ -73,8 +91,8 @@ export class EmailTemplatesEditComponent implements OnInit {
     }
 
     public formChanged(event): void {
-        this.canSave = true;
-        this.saveEmailTemplate();
+        if (this.canSave)
+            this.saveEmailTemplate();
     }
 
     onFileChange(event) {
@@ -112,29 +130,31 @@ export class EmailTemplatesEditComponent implements OnInit {
 
     // Private Methods
     private saveEmailTemplate() {
-        const self = this;
-        if (this.isSaving) {
-            // Save already in queue - no need to double-up the queue
-            if (this.isSaveQueued) {
+        if (this.canSave) {
+            const self = this;
+            if (this.isSaving) {
+                // Save already in queue - no need to double-up the queue
+                if (this.isSaveQueued) {
+                    return;
+                }
+                this.isSaveQueued = true;
+                setTimeout(() => {
+                    self.saveEmailTemplate();
+                }, 250);
                 return;
             }
-            this.isSaveQueued = true;
-            setTimeout(() => {
-                self.saveEmailTemplate();
-            }, 250);
-            return;
+
+            this.isSaveQueued = false;
+            this.isSaving = true;
+            this.hasSaved = false;
+
+            this.emailContentService
+                .update(this.emailTemplate)
+                .subscribe((response: any) => {
+                    this.isSaving = false;
+                    this.hasSaved = true;
+                });
         }
-
-        this.isSaveQueued = false;
-        this.isSaving = true;
-        this.hasSaved = false;
-
-        this.emailContentService
-            .update(this.emailTemplate)
-            .subscribe((response: any) => {
-                this.isSaving = false;
-                this.hasSaved = true;
-            });
     }
 
     private readAndUploadFile(theFile: any) {

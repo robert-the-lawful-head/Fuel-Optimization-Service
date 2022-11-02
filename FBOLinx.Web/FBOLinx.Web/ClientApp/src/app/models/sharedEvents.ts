@@ -7,3 +7,4 @@ export const customerUpdatedEvent = 'customer updated';
 export const fboProductPreferenceChangeEvent = 'fbo product preference change'
 export const fboPricesClearedEvent = 'fbo prices cleared';
 export const deleteGroupEvent = 'group deleted';
+export const resetMissedOrders = 'reset missed orders';
