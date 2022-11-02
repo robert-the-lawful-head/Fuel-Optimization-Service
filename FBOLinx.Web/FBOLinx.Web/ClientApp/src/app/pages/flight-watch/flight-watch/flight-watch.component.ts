@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
@@ -42,8 +42,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loading = false;
     mapLoadSubscription: Subscription;
     airportWatchFetchSubscription: Subscription;
-    flightWatchData: FlightWatchModelResponse[];
-    filteredFlightWatchData: FlightWatchDictionary;
     filter: string;
     filteredTypes: string[] = [];
     center: LngLatLike;
@@ -52,6 +50,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     AircraftLiveDatasubscription: Subscription;
 
+    flightWatchData: FlightWatchModelResponse[];
+    filteredFlightWatchData: FlightWatchDictionary;
     arrivals: FlightWatchModelResponse[];
     departures: FlightWatchModelResponse[];
     arrivalsAllRecords: FlightWatchModelResponse[];
@@ -102,11 +102,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     setData(data: FlightWatchModelResponse[]):void{
         let currentFilter: SwimFilter = { filterText: this.filter, dataType: null };
-        this.flightWatchData = data;
 
         this.arrivals = data?.filter((row: FlightWatchModelResponse) => { return row.arrivalICAO == row.focusedAirportICAO  && row.status != null });
         this.departures = data?.filter((row: FlightWatchModelResponse) => { return row.departureICAO  == row.focusedAirportICAO && row.status != null });
-        
+
         this.arrivalsAllRecords = this.arrivals;
         this.departuresAllRecords = this.departures;
 
@@ -162,7 +161,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.filter = filter.filterText;
         this.arrivals = this.filterData(this.filter?.toLowerCase(), this.arrivalsAllRecords);
         this.departures = this.filterData(this.filter?.toLowerCase(), this.departuresAllRecords);
-        this.filteredFlightWatchData = this.filterAircrafts(this.filterData(this.filter?.toLowerCase(), this.flightWatchData));
+
+        this.flightWatchData = this.arrivals.concat(this.departures);
     }
     filterData(filter: string, records: FlightWatchModelResponse[]): FlightWatchModelResponse[]{
 
@@ -182,17 +182,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             fw.arrivalCity?.toLowerCase().includes(filter)
         );
 
-    }
-    filterAircrafts(records: FlightWatchModelResponse[]): FlightWatchDictionary{
-        if (this.selectedFlightWatch) {
-            this.selectedFlightWatch =
-                this.filteredFlightWatchData[this.selectedFlightWatch.tailNumber];
-        }
-
-        var result = keyBy(records, (fw) => {
-            return fw.tailNumber
-        });
-        return result;
     }
     validate(event: ResizeEvent): boolean {
         const MAX_DIMENSIONS_PX = 800;

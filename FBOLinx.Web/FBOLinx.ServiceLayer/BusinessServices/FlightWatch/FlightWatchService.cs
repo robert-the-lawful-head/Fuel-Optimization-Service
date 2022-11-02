@@ -24,6 +24,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.EntityServices;
+using Geolocation;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 {
@@ -111,7 +112,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures, 30, options.FboIdForCenterPoint.GetValueOrDefault() > 0)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs);
@@ -121,7 +122,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             return result;
         }
-
+        
         private string GetFocusedAirportIdentifier()
         {
             if (!string.IsNullOrEmpty(_Options.AirportIdentifier))
@@ -178,6 +179,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Add any remaining SWIM data to the result without an AirportWatch match
             result.AddRange(swimFlightLegs.Where(x => !result.Any(r => r.SWIMFlightLegId > 0 && r.SWIMFlightLegId == x.Oid)).Select(x =>
                 new FlightWatchModel(null, null, x)));
+
+            //If we are focused on an FBO then remove any potential records that we've lost track of on antenna + swim data
+            if (_Options.FboIdForCenterPoint.GetValueOrDefault() > 0)
+            {
+                var cutoffDateTime = DateTime.UtcNow.AddMinutes(-15);
+                result.RemoveAll(x =>
+                    x.AirportWatchLiveDataId.GetValueOrDefault() == 0 &&
+                    (!(x.GetSwimFlightLeg()?.LastUpdated).HasValue ||
+                     x.GetSwimFlightLeg().LastUpdated < cutoffDateTime));
+            }
+
             return result;
         }
 
@@ -201,6 +213,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     await PopulateVisitsAtFbo(flightWatchModel);
                 if (_Options.IncludeCompanyPricingLogLastQuoteDate)
                     await PopulateLastQuoteDate(flightWatchModel);
+                await AssignTrackingDegree(flightWatchModel);
             }
         }
 
@@ -266,8 +279,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (historicalDataPoints == null || historicalDataPoints.Count == 0)
                 return;
 
-
-            flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
+            if (_GeoFenceCluster == null)
+                flightWatchModel.VisitsToMyFBO = 0;
+            else
+                flightWatchModel.VisitsToMyFBO = ((historicalDataPoints.Where(x => x.AircraftStatus == AircraftStatusType.Parking))?.Count(x => _GeoFenceCluster.AreCoordinatesInFence(x.Latitude, x.Longitude))).GetValueOrDefault();
             flightWatchModel.Arrivals = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Landing);
             flightWatchModel.Departures = historicalDataPoints.Count(x => x.AircraftStatus == AircraftStatusType.Takeoff);
         }
@@ -286,6 +301,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             flightWatchModel.LastQuoteDate = _MostRecentQuotes
                 .FirstOrDefault(x => x.FuelerLinxCompanyId == flightWatchModel.FuelerlinxCompanyId.GetValueOrDefault())
                 ?.MostRecentQuoteDateTime;
+        }
+
+        private async Task AssignTrackingDegree(FlightWatchModel flightWatchModel)
+        {
+            if (flightWatchModel.TrackingDegree.HasValue)
+                return;
+
+            if (string.IsNullOrEmpty(flightWatchModel.ArrivalICAO))
+                return;
+
+            var destinationAirportPosition =
+                await _AirportService.GetAirportPositionByAirportIdentifier(flightWatchModel.ArrivalICAO);
+
+            if (destinationAirportPosition == null)
+                return;
+
+            flightWatchModel.SetTrackingDegree(
+                FBOLinx.Core.Utilities.Geography.LocationHelper.GetBearingDegreesBetweenTwoPoints(
+                    new Coordinate(flightWatchModel.Latitude.GetValueOrDefault(), flightWatchModel.Longitude.GetValueOrDefault()),
+                    new Coordinate(destinationAirportPosition.Latitude, destinationAirportPosition.Longitude)));
         }
 
         //Commenting this out until we find a faster way to load this

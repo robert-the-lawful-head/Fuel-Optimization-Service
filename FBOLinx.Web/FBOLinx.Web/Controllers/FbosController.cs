@@ -321,6 +321,33 @@ namespace FBOLinx.Web.Controllers
             return Ok(fbos);
         }
 
+        [HttpPost("updatelastlogin/{fboId}")]
+        public async Task<IActionResult> UpdateLastLogin([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+
+            var fbo = _context.Fbos.Find(fboId);
+            if (fbo == null)
+            {
+                return NotFound("FBO Not Found");
+            }
+
+            try
+            {
+                fbo.LastLogin = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw ex;
+            }
+            return Ok();
+        }
+
         // GET: api/getfbologo
         [HttpGet("getfbologo/{fboId}")]
         public async Task<IActionResult> GetFboLogo([FromRoute] int fboId)

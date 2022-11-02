@@ -84,12 +84,15 @@
                 <span [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
                       class="status">
                     {{
-                        data.expiredFboPricingCount === 0
+                        data.expiredFboPricingCount != data.activeFboCount
                             ? "All Pricing Live"
-                            : data.expiredFboPricingCount +
+                            : (data.activeFboCount > 0
+                            ? (data.expiredFboPricingCount +
                               " of " +
                               data.activeFboCount +
-                              " Expired"
+                              " Expired")
+                            : "No FBOs Found")
+                            
                     }}
                 </span>
             </ng-template>
@@ -129,17 +132,17 @@
         ></e-column>
         <e-column field="expiredFboAccountCount" headerText="Active / Inactive">
             <ng-template #template let-data>
-                <span
-                    [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
-                    class="status"
-                >
+                <span [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
+                      class="status">
                     {{
-                        data.expiredFboAccountCount === 0
+                        (data.expiredFboPricingCount != data.activeFboCount)
                             ? "All Active"
-                            : data.expiredFboAccountCount +
+                            : (data.fboCount > 0
+                            ? (data.expiredFboAccountCount +
                               " of " +
                               data.fboCount +
-                              " Inactive"
+                              " Inactive")
+                            : "No FBOs Found")
                     }}
                 </span>
             </ng-template>

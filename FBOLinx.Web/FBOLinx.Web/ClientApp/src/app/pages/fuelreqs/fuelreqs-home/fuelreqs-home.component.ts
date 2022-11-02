@@ -8,6 +8,7 @@ import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
+import * as SharedEvent from '../../../models/sharedEvents';
 
 const BREADCRUMBS: any[] = [
     {
@@ -36,6 +37,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public isFuelOrdersShowing: boolean = true;
     public missedOrdersData: any[];
     public selectedTabIndex: number = 0;
+    public resetMissedOrders: boolean = false;
 
     constructor(
         private fuelReqService: FuelreqsService,
@@ -88,6 +90,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
+        this.fuelreqsData = null;
         this.loadFuelReqs();
     }
 
@@ -125,15 +128,25 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     }
 
     onTabClick(event) {
-        if (event.tab.textLabel == "Fuel Orders")
+        if (event.tab.textLabel == "Fuel Orders") {
             this.isFuelOrdersShowing = true;
-        else
+            this.sharedService.emitChange(SharedEvent.resetMissedOrders);
+        }
+        else {
+            this.filterStartDate = new Date(
+                moment().add(-30, 'd').format('MM/DD/YYYY')
+            );
+            this.filterEndDate = new Date(
+                moment().add(30, 'd').format('MM/DD/YYYY')
+            );
+
+            this.loadFuelReqs();
             this.isFuelOrdersShowing = false;
+        }
     }
 
     // PRIVATE METHODS
     private loadFuelReqs() {
-        this.fuelreqsData = null;
         this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,

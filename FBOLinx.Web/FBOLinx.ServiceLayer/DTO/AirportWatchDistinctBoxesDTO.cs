@@ -12,8 +12,8 @@ namespace FBOLinx.ServiceLayer.DTO
         public string BoxName { get; set; }
         public DateTime? LastLiveDateTime { get; set; }
         public DateTime? LastHistoricDateTime { get; set; }
-        public string AirportICAO { get; set; }
-        public string Latitude { get; set; }
-        public string Longitude { get; set; }
+        public string? AirportICAO { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
     }
 }

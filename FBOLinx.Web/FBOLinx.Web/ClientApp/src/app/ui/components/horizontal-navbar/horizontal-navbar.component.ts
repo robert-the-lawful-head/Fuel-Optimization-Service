@@ -409,7 +409,12 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fbo = _.assign({}, data);
-                    localStorage.setItem('fbo',this.fbo.fbo);
+                    localStorage.setItem('fbo', this.fbo.fbo);
+
+                    if (this.sharedService.currentUser.role != 3) {
+                        this.fbosService.updateLastLogin(this.currentUser.fboId).subscribe((data: any) => {
+                        });
+                    }
                 },
                 (error: any) => {
                     console.log(error);
@@ -475,7 +480,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.fuelOrders.length = 0;
         var startDate = moment().add(-1, 'hour').local().toDate();
-        var endDate = moment().add(1, 'd').local().toDate();
+        var endDate = moment().add(2, 'd').local().toDate();
 
         this.fuelReqsService
             .getForGroupFboAndDateRange(

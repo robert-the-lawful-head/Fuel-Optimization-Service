@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using Itenso.TimePeriod;
 
 namespace FBOLinx.Core.Utilities.Geography
 {
@@ -109,6 +110,29 @@ namespace FBOLinx.Core.Utilities.Geography
                 }
             }
             return inside;
+        }
+
+        public static double GetBearingDegreesBetweenTwoPoints(Geolocation.Coordinate movingFromPoint, Geolocation.Coordinate movingToPoint)
+        {
+            try
+            {
+                double x = Math.Cos(DegreesToRadians(movingFromPoint.Latitude)) * Math.Sin(DegreesToRadians(movingToPoint.Latitude)) - Math.Sin(DegreesToRadians(movingFromPoint.Latitude)) * Math.Cos(DegreesToRadians(movingToPoint.Latitude)) * Math.Cos(DegreesToRadians(movingToPoint.Longitude - movingFromPoint.Longitude));
+                double y = Math.Sin(DegreesToRadians(movingToPoint.Longitude - movingFromPoint.Longitude)) * Math.Cos(DegreesToRadians(movingToPoint.Latitude));
+
+                // Math.Atan2 can return negative value, 0 <= output value < 2*PI expected 
+                var radians = (Math.Atan2(y, x) + Math.PI * 2) % (Math.PI * 2);
+                var degrees = radians * (180 / Math.PI);
+                return degrees;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+            }
+        }
+
+        public static double DegreesToRadians(double angle)
+        {
+            return angle * Math.PI / 180.0d;
         }
     }
 }

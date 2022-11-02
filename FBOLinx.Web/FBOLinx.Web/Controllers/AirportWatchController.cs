@@ -16,6 +16,9 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.Web.Auth;
+using Fuelerlinx.SDK;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,16 +29,18 @@ namespace FBOLinx.Web.Controllers
     public class AirportWatchController : ControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
+        private readonly IAirportWatchLiveDataService _airportWatchLiveDataService;
         private readonly IFboService _fboService;
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService)
+        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService, IAirportWatchLiveDataService airportWatchLiveDataService)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
             _dBSCANService = dBSCANService;
+            _airportWatchLiveDataService = airportWatchLiveDataService;
         }
 
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
@@ -72,6 +77,38 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 await _airportWatchService.ProcessAirportWatchData(data);
+                return Ok(new AirportWatchDataPostResponse(true));
+            }
+            catch (Exception exception)
+            {
+                if (exception.InnerException != null)
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
+                else
+                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
+            }
+        }
+
+        [HttpGet("airport-watch-live-data-from-table-storage")]
+        public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                List<AirportWatchLiveDataDto> result = await _airportWatchLiveDataService.GetAirportWatchLiveDataRecordsFromTableStorage(boxNames, startDate, endDate);
+                return Ok(new AirportWatchLiveDataResponse(result));
+            }
+            catch (Exception exception)
+            {
+                return Ok(new AirportWatchLiveDataResponse(false, exception.Message));
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("post-live-data-to-table-storage")]
+        public async Task<ActionResult<AirportWatchDataPostResponse>> PostAirportWatchLiveDataToTableStorage([FromBody] List<AirportWatchLiveDataDto> data)
+        {
+            try
+            {
+                await _airportWatchLiveDataService.SaveAirportWatchLiveDataToTableStorage(data);
                 return Ok(new AirportWatchDataPostResponse(true));
             }
             catch (Exception exception)

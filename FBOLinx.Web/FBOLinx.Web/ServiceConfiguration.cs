@@ -26,6 +26,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.TableStorage;
+using FBOLinx.TableStorage.EntityServices;
 
 namespace FBOLinx.Web
 {
@@ -121,6 +123,15 @@ namespace FBOLinx.Web
 
             //Scheduled service just for testing.  Will remove soon.
             //services.AddHostedService<SWIMPlaceholderSyncFunctionScheduledService>();
+
+            ConfigureAzureTableStorageEntityServices(services, configuration);
+        }
+
+        private static void ConfigureAzureTableStorageEntityServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AzureTableStorageSettings>(configuration.GetSection("AzureTableStorageSettings"));
+
+            services.AddTransient<AirportWatchLiveDataTableEntityService, AirportWatchLiveDataTableEntityService>();
         }
     }
 }

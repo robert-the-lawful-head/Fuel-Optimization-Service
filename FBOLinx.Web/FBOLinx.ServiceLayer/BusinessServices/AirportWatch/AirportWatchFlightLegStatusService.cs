@@ -192,7 +192,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return false;
 
             //The takeoff must have occurred in the last 5 minutes to be considered "departing" before turning into an "enroute" status.
-            if (flightWatchModel.AircraftPositionDateTimeUtc.HasValue || Math.Abs((flightWatchModel.AircraftPositionDateTimeUtc.GetValueOrDefault() -
+            if (flightWatchModel.AircraftPositionDateTimeUtc.HasValue && Math.Abs((flightWatchModel.AircraftPositionDateTimeUtc.GetValueOrDefault() -
                                             mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) <= 5)
                 return true;
             
