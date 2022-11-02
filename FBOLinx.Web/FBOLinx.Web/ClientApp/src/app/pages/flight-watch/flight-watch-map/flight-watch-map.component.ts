@@ -31,6 +31,7 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
+import { createUnparsedSourceFile } from 'typescript';
 
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -113,15 +114,24 @@ export class FlightWatchMapComponent
     ngOnInit(): void {
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
             .addNavigationControls()
-            .onStyleData(this.mapStyleLoaded)
+            .onStyleData(async () => {
+                this.styleLoaded = true;
+            })
             .onLoad(async () => {
                 await this.loadMapIcons();
                 this.loadFlightOnMap();
                 this.loadICAOIconOnMap(this.icao);
                 this.getFbosAndLoad();
                 this.isMapDataLoaded = true;
+            })
+            .onSourcedata(async () => {
+                let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
+                let airportlayer = this.map.getLayer(this.mapMarkers.airports.layerId);
+                let fbolayer = this.map.getLayer(this.mapMarkers.fbos.layerId);
+                if(!flightslayer && !airportlayer && !fbolayer) return;
+                this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
+                this.map.moveLayer(this.mapMarkers.flights.layerId);
             });
-            this.waitForMapLoaded();
     }
 
     ngAfterViewInit() {
@@ -129,19 +139,6 @@ export class FlightWatchMapComponent
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId
         );
-    }
-    waitForMapLoaded() {
-        if(!this.map?.loaded) {
-            window.setTimeout(this.waitForMapLoaded, 100);
-        } else {
-            // console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 135 ~ waitForMapLoaded ~ this.map", this.map)
-
-            // var layers = this.map.getStyle().layers;
-            // console.log("🚀 ~ file: flight-watch-map.component.ts ~ line 138 ~ waitForMapLoaded ~ layers", layers)
-
-            this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
-            this.map.moveLayer(this.mapMarkers.flights.layerId);
-        }
     }
     async loadICAOIconOnMap(currentIcao: string) {
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -245,7 +242,39 @@ export class FlightWatchMapComponent
                         image.reverseUrl,
                         imageNameReversed
                     );
-                    aircraftIconPromises.concat([img1, img2]);
+                    imageName = `aircraft_image_${image.id}_release`;
+                    let img3 = this.loadSVGImageAsync(
+                        image.size,
+                        image.size,
+                        image.blueUrl,
+                        imageName
+                    );
+
+                    imageName = `aircraft_image_${image.id}_reversed_release`;
+                    let img4 = this.loadSVGImageAsync(
+                        image.size,
+                        image.size,
+                        image.blueReverseUrl,
+                        imageName
+                    );
+
+                    imageName = `aircraft_image_${image.id}_fuelerlinx`;
+                    let img5 = this.loadSVGImageAsync(
+                        image.size,
+                        image.size,
+                        image.fuelerlinxUrl,
+                        imageName
+                    );
+
+                    imageName = `aircraft_image_${image.id}_reversed_fuelerlinx`;
+
+                    let img6 = this.loadSVGImageAsync(
+                        image.size,
+                        image.size,
+                        image.fuelerlinxReverseUrl,
+                        imageName
+                    );
+                    aircraftIconPromises.concat([img1, img2, img3, img4, img5, img6]);
                 }
             )
         );
@@ -281,7 +310,6 @@ export class FlightWatchMapComponent
         this.popupData = Object.assign({}, obj);
     }
     loadFlightOnMap() {
-
         this.setMapMarkersData(keys(this.data));
 
         this.loadFlightMarkersOnMap(this.mapMarkers.flights);
@@ -444,10 +472,6 @@ export class FlightWatchMapComponent
             )
         );
         this.createPopUpOnMouseEnterFromDescription(this.mapMarkers.fbos.layerId);
-    }
-
-    mapStyleLoaded() {
-        this.styleLoaded = true;
     }
 
     getLayersFromType(type: LayerType) {

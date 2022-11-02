@@ -99,6 +99,10 @@ export abstract class MapboxglBase {
         this.map.on('click', callBack);
         return this;
     }
+    onSourcedata(callBack): this{
+        this.map.on('sourcedata', callBack);
+        return this;
+    }
     /* end on functions */
 
     /* start get functions */
