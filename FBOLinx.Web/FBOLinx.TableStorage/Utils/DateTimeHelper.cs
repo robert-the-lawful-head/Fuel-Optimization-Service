@@ -22,5 +22,13 @@ namespace FBOLinx.TableStorage.Utils
             for (var day = from.Date; day.Date <= thru.Date; day = day.AddDays(1))
                 yield return day;
         }
+
+        public static IEnumerable<DateTime> EachHour(DateTime startDate, DateTime endDate)
+        {
+            for (var date = startDate; date <= endDate; date = date.AddHours(1))
+            {
+                yield return date;
+            }
+        }
     }
 }

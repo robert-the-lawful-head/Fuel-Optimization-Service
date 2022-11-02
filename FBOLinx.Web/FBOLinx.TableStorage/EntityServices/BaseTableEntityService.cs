@@ -198,7 +198,22 @@ namespace FBOLinx.TableStorage.EntityServices
                 .ToString(CultureInfo.InvariantCulture);
             return $"{inverseTimeKey}-{Guid.NewGuid()}"; //combined a time-based key with a guid in order to create a unique key
         }
+        
+        protected string GetTableQueryFilterForPartitionKeys(IEnumerable<string> partitionKeys)
+        {
+            var result = "";
+            foreach (var partitionKey in partitionKeys)
+            {
+                if (string.IsNullOrEmpty(result))
+                    result = "(PartitionKey eq '" + partitionKey + "'";
+                else
+                    result += " or PartitionKey eq '" + partitionKey + "'";
+            }
+            result += ")";
 
+            return result;
+        }
+        
         private async Task<bool> AssertTableExists()
         {
             if (tableClient == null)
@@ -209,21 +224,6 @@ namespace FBOLinx.TableStorage.EntityServices
             await tableClient.CreateIfNotExistsAsync();
 
             return true;
-        }
-
-        protected string GetTableQueryFilterForPartitionKeys(IEnumerable<string> partitionKeys)
-        {
-            var result = "";
-            foreach (var partitionKey in partitionKeys)
-            {
-                if (string.IsNullOrEmpty(result))
-                    result = "PartitionKey eq '" + partitionKey + "'";
-                else
-                    result += " or PartitionKey eq '" + partitionKey + "'";
-            }
-
-            return result;
-
         }
     }
 }

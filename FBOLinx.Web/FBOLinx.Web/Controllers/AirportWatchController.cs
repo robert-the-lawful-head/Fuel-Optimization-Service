@@ -16,6 +16,9 @@ using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.Web.Auth;
+using Fuelerlinx.SDK;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -85,9 +88,23 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpGet("airport-watch-live-data-from-table-storage")]
+        public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                List<AirportWatchLiveDataDto> result = await _airportWatchLiveDataService.GetAirportWatchLiveDataRecordsFromTableStorage(boxNames, startDate, endDate);
+                return Ok(new AirportWatchLiveDataResponse(result));
+            }
+            catch (Exception exception)
+            {
+                return Ok(new AirportWatchLiveDataResponse(false, exception.Message));
+            }
+        }
+
         [AllowAnonymous]
-        [HttpPost("save-live-data-to-table-storage")]
-        public async Task<ActionResult<AirportWatchDataPostResponse>> SaveAirportWatchLiveDataToTableStorage([FromBody] List<AirportWatchLiveDataDto> data)
+        [HttpPost("post-live-data-to-table-storage")]
+        public async Task<ActionResult<AirportWatchDataPostResponse>> PostAirportWatchLiveDataToTableStorage([FromBody] List<AirportWatchLiveDataDto> data)
         {
             try
             {

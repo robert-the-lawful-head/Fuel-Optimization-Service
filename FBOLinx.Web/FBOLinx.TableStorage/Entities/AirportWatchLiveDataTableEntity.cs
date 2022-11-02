@@ -23,14 +23,5 @@ namespace FBOLinx.TableStorage.Entities
         public int? GpsAltitude { get; set; }
         public bool IsAircraftOnGround { get; set; }
         public string AircraftHexCode { get; set; }
-        
-        public string TailNumber { get; set; }
-        public int? AircraftId { get; set; }
-        public string AircraftICAO { get; set; }
-        public bool? IsFuelerLinxCustomer { get; set; }
-        public bool? IsInNetwork { get; set; }
-        public bool? IsOutOfNetwork { get; set; }
-        public bool? IsActiveFuelRelease { get; set; }
-        public bool? IsFuelerLinxClient { get; set; }
     }
 }

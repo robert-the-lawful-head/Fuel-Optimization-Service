@@ -28,6 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(
             string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
 
+        Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate);
         Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data);
     }
 
@@ -83,6 +84,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 .ToList();
 
             return result;
+        }
+
+        public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        {
+            var airportWatchLiveDataTableEntities = await _airportWatchLiveDataTableEntityService.GetAirportWatchLiveDataRecords(boxNames, startDate, endDate);
+            return airportWatchLiveDataTableEntities.Select(x => x.Adapt<AirportWatchLiveDataDto>()).ToList();
         }
 
         public async Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data)
