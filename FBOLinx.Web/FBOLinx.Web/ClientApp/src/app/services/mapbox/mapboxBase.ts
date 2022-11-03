@@ -99,6 +99,10 @@ export abstract class MapboxglBase {
         this.map.on('click', callBack);
         return this;
     }
+    onSourcedata(callBack): this{
+        this.map.on('sourcedata', callBack);
+        return this;
+    }
     /* end on functions */
 
     /* start get functions */
@@ -256,10 +260,7 @@ export abstract class MapboxglBase {
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
-            .addTo(this.map)
-            .on('close', function(e) {
-                currentPopup.isPopUpOpen = false;
-            });
+            .addTo(this.map);
     }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
         this.map.flyTo({
