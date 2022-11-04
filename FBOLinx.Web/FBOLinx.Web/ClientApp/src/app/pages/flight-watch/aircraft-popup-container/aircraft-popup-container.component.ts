@@ -85,7 +85,6 @@ export class AircraftPopupContainerComponent {
           });
   }
   goToCustomerManager(customerInfoByGroupId: number):void{
-    console.log(customerInfoByGroupId);
-    this.router.navigate(['default-layout','customers',customerInfoByGroupId])
+    this.router.navigate(['./default-layout','customers',customerInfoByGroupId]);
   }
 }

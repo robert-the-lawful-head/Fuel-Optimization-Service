@@ -31,8 +31,6 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
-import { createUnparsedSourceFile } from 'typescript';
-
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -44,7 +42,7 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 })
 export class FlightWatchMapComponent
     extends MapboxglBase
-    implements OnInit, OnChanges, OnDestroy
+    implements OnInit, OnChanges
 {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: Dictionary<FlightWatchModelResponse>;
@@ -288,9 +286,6 @@ export class FlightWatchMapComponent
             this.updateFlightOnMap(this.mapMarkers.flights);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
-    }
-    ngOnDestroy(): void {
-        this.mapRemove();
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
