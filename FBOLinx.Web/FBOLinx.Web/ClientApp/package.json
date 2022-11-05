@@ -37,7 +37,7 @@
         "bootstrap": "^4.6.0",
         "flatfile-csv-importer": "^0.2.13",
         "lodash": "^4.17.20",
-        "mapbox-gl": "^2.2.0",
+        "mapbox-gl": "^2.9.0",
         "moment": "^2.29.1",
         "ngx-mapbox-gl": "^6.0.4",
         "ngx-smart-popover": "^1.4.0",
