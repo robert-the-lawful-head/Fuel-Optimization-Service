@@ -84,6 +84,11 @@ export class FlightWatchMapComponent
             layerId: 'flightLayer',
             data: null
         },
+        flightsReversed : {
+            sourceId: 'flightReversedSource',
+            layerId: 'flightReversedLayer',
+            data: null
+        },
         fbos: {
             sourceId: 'fbosSourceId',
             layerId: 'fbosLayerId',
@@ -124,13 +129,17 @@ export class FlightWatchMapComponent
             })
             .onSourcedata(async () => {
                 let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
+                let flightsReversedlayer = this.map.getLayer(this.mapMarkers.flightsReversed.layerId);
                 let airportlayer = this.map.getLayer(this.mapMarkers.airports.layerId);
                 let fbolayer = this.map.getLayer(this.mapMarkers.fbos.layerId);
-                if(flightslayer && airportlayer && fbolayer){
+                if(flightslayer && airportlayer && fbolayer && flightsReversedlayer){
                     this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
                     this.map.moveLayer(this.mapMarkers.flights.layerId);
+                    this.map.moveLayer(this.mapMarkers.flightsReversed.layerId);
                 }
+
             });
+
     }
 
     ngAfterViewInit() {
@@ -284,6 +293,7 @@ export class FlightWatchMapComponent
         if (changes.data) {
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.updateFlightOnMap(this.mapMarkers.flights);
+            this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
@@ -309,17 +319,11 @@ export class FlightWatchMapComponent
         this.setMapMarkersData(keys(this.data));
 
         this.loadFlightMarkersOnMap(this.mapMarkers.flights);
+        this.loadFlightMarkersOnMap(this.mapMarkers.flightsReversed,true);
     }
-    loadFlightMarkersOnMap(marker: MapMarkerInfo) {
-        const source = this.getSource(marker.sourceId);
-
-        if(source){
-            this.updateFlightOnMap(marker);
-            return;
-        }
-
+    loadFlightMarkersOnMap(marker: MapMarkerInfo, isReversedLayers = false) {
         const markers = this.getFlightSourcerFeatureMarkers(
-            marker.data
+            marker.data,isReversedLayers
         );
         this.addSource(
             marker.sourceId,
@@ -328,17 +332,19 @@ export class FlightWatchMapComponent
         this.addLayer(
             this.aircraftFlightWatchService.getFlightLayerJsonData(
                 marker.layerId,
-                marker.sourceId
+                marker.sourceId,
+                isReversedLayers
             )
         );
-        this.applyMouseFunctions(marker.layerId);
+        if(!isReversedLayers)
+            this.applyMouseFunctions(marker.layerId);
     }
-    updateFlightOnMap(marker: MapMarkerInfo) {
+    updateFlightOnMap(marker: MapMarkerInfo, isReversedLayers = false) {
         if (!this.map || !this.isMapDataLoaded) return;
 
         const source = this.getSource(marker.sourceId);
 
-        const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data);
+        const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data, isReversedLayers);
 
         const data: any = {
             type: 'FeatureCollection',
@@ -359,7 +365,8 @@ export class FlightWatchMapComponent
                 this.currentPopup.isPopUpOpen = true;
             }
         }
-        this.applyMouseFunctions(marker.layerId);
+        if(!isReversedLayers)
+            this.applyMouseFunctions(marker.layerId);
     }
     setDefaultPopUpOpen(selectedFlightId: string): void {
         if (!selectedFlightId){
@@ -393,13 +400,15 @@ export class FlightWatchMapComponent
         let outOfNetwork = flights.filter((key) => { return !this.data[key].isInNetwork && !this.data[key].isActiveFuelRelease && !this.data[key].isFuelerLinxClient }) || [];
 
         this.mapMarkers.flights.data = [].concat(outOfNetwork,inNetwork,fuelerLinxClient,activeFuelRelease);
+        this.mapMarkers.flightsReversed.data = [].concat(outOfNetwork,inNetwork,fuelerLinxClient,activeFuelRelease);
+
     }
-    getFlightSourcerFeatureMarkers(flights: string[]): any[] {
+    getFlightSourcerFeatureMarkers(flights: string[], isReversedLayout = false): any[] {
         return flights.map((key) => {
             const row = this.data[key];
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
                 row,
-                this.selectedAircraft == key
+                isReversedLayout
             );
         });
     }
@@ -415,8 +424,13 @@ export class FlightWatchMapComponent
         layerId: string
     ) {
         const id = e.features[0].properties.id;
-        self.markerClicked.emit(this.data[id]);
+
+        if (self.selectedAircraft == id) {
+            return;
+        }
+
         self.selectedAircraft = id;
+        self.markerClicked.emit(this.data[id]);
 
         self.currentPopup.isPopUpOpen = true;
         self.currentPopup.coordinates = [
@@ -429,12 +443,13 @@ export class FlightWatchMapComponent
             self.aircraftPopupContainerRef,
             self.currentPopup
         );
-        self.currentPopup.popupInstance.on('close', function(e) {
-          self.selectedAircraft =  null;
-          self.updateFlightOnMap(self.mapMarkers.flights);
+        self.currentPopup.popupInstance.on('close', function(event) {
+            self.selectedAircraft =  null;
+            self.currentPopup.isPopUpOpen = false;
+            self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
         });
 
-        self.updateFlightOnMap(this.mapMarkers.flights);
+        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
     }
     getFbosAndLoad() {
         if (this.clusters) return;

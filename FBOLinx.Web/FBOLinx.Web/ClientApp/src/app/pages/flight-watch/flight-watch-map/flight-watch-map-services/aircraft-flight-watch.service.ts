@@ -34,15 +34,16 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
-            id: data.tailNumber,
             type: 'Feature'
         };
     }
     public getFlightLayerJsonData(
         layerId: string,
         flightSourceId: any,
+        isReversedLayer: boolean
     ): mapboxgl.AnyLayer {
-        return {
+
+        let json : mapboxgl.AnyLayer  = {
             id : layerId,
             layout: {
                 'icon-allow-overlap': true,
@@ -53,7 +54,12 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             source: flightSourceId,
             type: 'symbol',
+
         };
+
+        if(isReversedLayer) json['filter'] = ["==", "id", ""];
+        return json;
+
     }
     public getAirportLayerJsonData(
         layerId: string,

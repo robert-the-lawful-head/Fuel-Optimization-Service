@@ -102,6 +102,7 @@ export const stautsTextColor = {
 
 export interface MapMarkers {
     flights : MapMarkerInfo,
+    flightsReversed : MapMarkerInfo,
     fbos: MapMarkerInfo,
     airports: MapMarkerInfo
 }
