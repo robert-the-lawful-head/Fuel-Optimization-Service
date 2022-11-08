@@ -87,7 +87,7 @@ namespace FBOLinx.TableStorage.EntityServices
             }
         }
 
-        public virtual async Task BatchInsert(IEnumerable<TTableEntity> entities)
+        public virtual async Task BatchInsert(IList<TTableEntity> entities)
         {
             if (entities == null || !await AssertTableExists())
             {
