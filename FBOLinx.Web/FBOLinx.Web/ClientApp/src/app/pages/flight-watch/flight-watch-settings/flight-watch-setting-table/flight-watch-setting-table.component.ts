@@ -105,7 +105,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     mapValuesToStrings(data: Swim[]){
         return data.map((row) => {
-            row.status = FlightLegStatus[row.status];
+            row.statusDisplayString = FlightLegStatus[row.status];
             row.ete = !row.ete ? '' : this.toReadableTime.transform(row.ete);
             row.etaLocal = this.getTime.transform(this.getDateObject(row.etaLocal));
             row.atdLocal = this.getTime.transform(this.getDateObject(row.atdLocal));
@@ -177,10 +177,13 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.origin) return row.origin;
-        if(column == swimTableColumns.arrival) return row.arrivalICAO
+        if(column == swimTableColumns.arrival) return row.arrivalICAO;
+        if(column == swimTableColumns.status) return row.statusDisplayString;
+
         let col = this.columns.find( c => {
             return c.id == column
         });
+
         return row[col.id];
     }
     getColumnDisplayString(column:string){

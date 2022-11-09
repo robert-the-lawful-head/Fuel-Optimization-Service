@@ -25,7 +25,8 @@ export interface Swim {
     longitude: number | any;
     isAircraftOnGround: boolean | any;
     itpMarginTemplate: string;
-    status: FlightLegStatus | any;
+    status: FlightLegStatus;
+    statusDisplayString: string;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
