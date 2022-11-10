@@ -148,25 +148,14 @@ export class FlightWatchMapComponent
             this.sharedService.currentUser.fboId
         );
     }
-    async loadICAOIconOnMap(currentIcao: string) {
+    async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
         this.setIcaoList.emit(this.acukwikairports);
 
-        var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
-            this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
-            return {
-                geometry: {
-                    coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
-                    type: 'Point',
-                },
-                properties: {
-                    id: data.oid,
-                    'icon-image': (data.icao == this.icao)?'airport-icon-active':'airport-icon',
-                    'size': 0.5,
-                },
-                type: 'Feature'
-            };
+        var markers: any[] = this.acukwikairports.map((data) => {
+            return this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao);
         });
+
         this.addSource(this.mapMarkers.airports.sourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
 
         this.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.mapMarkers.airports.layerId, this.mapMarkers.airports.sourceId));
@@ -174,24 +163,13 @@ export class FlightWatchMapComponent
         this.addHoverPointerActions(this.mapMarkers.airports.layerId);
         this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
     }
-    updateICAOIconOnMap(currentIcao: string) {
-        var markers: any[] = this.getAirportsWithinMapBounds(this.getBounds()).map((data) => {
-            this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao)
-            return {
-                geometry: {
-                    coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
-                    type: 'Point',
-                },
-                properties: {
-                    id: data.oid,
-                    'icon-image': (data.icao == currentIcao)?'airport-icon-active':'airport-icon',
-                    'size': 0.5,
-                },
-                type: 'Feature'
-            };
+    async updateICAOIconOnMap(currentIcao: string): Promise<void>{
+        this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
+        this.setIcaoList.emit(this.acukwikairports);
+
+        var markers: any[] = this.acukwikairports.map((data) => {
+            return this.aircraftFlightWatchService.getAirportFeatureJsonData(data, currentIcao);
         });
-
-
         const data: any = {
             type: 'FeatureCollection',
             features: markers,
@@ -380,16 +358,6 @@ export class FlightWatchMapComponent
         ];
         this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
     }
-    getAirportsWithinMapBounds(bound: mapboxgl.LngLatBounds): AcukwikAirport[] {
-        if(!this.acukwikairports) return [];
-        return this.acukwikairports.filter((airport) => {
-            const airportPosition: mapboxgl.LngLatLike = {
-                lat: airport.latitudeInDegrees,
-                lng: airport.longitudeInDegrees,
-            };
-            return bound.contains(airportPosition);
-        });
-    }
     setMapMarkersData(flights: string[]): void{
         let activeFuelRelease = flights.filter((key) => { return this.data[key].isActiveFuelRelease }) || [];
 
@@ -413,15 +381,14 @@ export class FlightWatchMapComponent
         });
     }
     applyMouseFunctions(layerid: string): void {
-        this.onClick(layerid, (e) => this.clickHandler(e, this,layerid));
+        this.onClick(layerid, (e) => this.clickHandler(e, this));
         this.addHoverPointerActions(layerid);
     }
     async clickHandler(
         e: mapboxgl.MapMouseEvent & {
             features?: mapboxgl.MapboxGeoJSONFeature[];
         } & mapboxgl.EventData,
-        self: FlightWatchMapComponent,
-        layerId: string
+        self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
 
