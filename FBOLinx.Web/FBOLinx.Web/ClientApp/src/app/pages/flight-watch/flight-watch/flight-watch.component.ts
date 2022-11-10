@@ -122,7 +122,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     updateIcao(icao:string){
         this.mapWrapper.map.goToAirport(icao);
         this.mapWrapper.map.updateICAOIconOnMap(icao);
-        this.selectedICAO =  icao;
+        this.selectedICAO = icao;
         this.loadAirportWatchData();
     }
     loadAirportWatchData() {

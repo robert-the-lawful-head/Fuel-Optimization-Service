@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IGNORE_BLOCK_TAGS } from '@syncfusion/ej2-angular-richtexteditor';
+import * as mapboxgl from 'mapbox-gl';
+import { AnyLayer, AnySourceData, MapboxEvent } from 'mapbox-gl';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
@@ -79,7 +81,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getAirportFeatureJsonData(data: any, currentIcao: string): any {
         return {
             geometry: {
-                coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
+                coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
                 type: 'Point',
             },
             properties: {
