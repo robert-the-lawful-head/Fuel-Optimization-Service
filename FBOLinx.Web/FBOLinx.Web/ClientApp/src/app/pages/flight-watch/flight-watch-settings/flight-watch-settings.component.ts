@@ -154,8 +154,8 @@ export class FlightWatchSettingsComponent {
                     name: swimTableColumns.origin,
                 },
                 {
-                    id: swimTableColumns.arrival,
-                    name: swimTableColumns.arrival,
+                    id: swimTableColumns.destination,
+                    name: swimTableColumns.destination,
                 },
                 {
                     id: swimTableColumns.isAircraftOnGround,
