@@ -40,6 +40,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     @ViewChild('map') map: FlightWatchMapComponent;
 
+    public showLayers: boolean = true;
     public isCommercialVisible = true;
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
