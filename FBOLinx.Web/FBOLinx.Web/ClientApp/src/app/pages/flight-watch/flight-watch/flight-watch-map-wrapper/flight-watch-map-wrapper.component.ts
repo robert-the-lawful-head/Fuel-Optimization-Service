@@ -40,7 +40,6 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     @ViewChild('map') map: FlightWatchMapComponent;
 
-    public showLayers: boolean = false;
     public isCommercialVisible = true;
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
@@ -66,9 +65,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
         return flightWatch.filter(flightWatch => {
             !isCommercialAircraft(
-                flightWatch.aircraftTypeCode,
-                flightWatch.atcFlightNumber
-            )
+                flightWatch.aircraftTypeCode            )
         });
     }
     toggleCommercial(event: MouseEvent) {
