@@ -10,9 +10,7 @@ import {
 import { Dictionary, keyBy } from 'lodash';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import {
-    FlightWatchModelResponse,
-} from 'src/app/models/flight-watch';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
 
@@ -44,7 +42,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public isCommercialVisible = true;
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
-    public flightWatchDictionary : Dictionary<FlightWatchModelResponse>;
+    public flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
 
     constructor() {}
 
@@ -52,24 +50,27 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.data) {
-            this.flightWatchDictionary = this.getFilteredData(changes.data.currentValue);
+            this.flightWatchDictionary = this.getFilteredData(
+                changes.data.currentValue
+            );
         }
     }
-    getFilteredData(data: FlightWatchModelResponse[]): Dictionary<FlightWatchModelResponse>{
-        let filtered = this.filterComercialFlights(data)
+    getFilteredData(
+        data: FlightWatchModelResponse[]
+    ): Dictionary<FlightWatchModelResponse> {
+        let filtered = this.filterComercialFlights(data);
         return keyBy(filtered, (fw) => {
-            return fw.tailNumber
+            return fw.tailNumber;
         });
     }
-    filterComercialFlights(flightWatch: FlightWatchModelResponse[]): FlightWatchModelResponse[]{
-        if(this.isCommercialVisible) return flightWatch;
+    filterComercialFlights(
+        flightWatch: FlightWatchModelResponse[]
+    ): FlightWatchModelResponse[] {
+        if (this.isCommercialVisible) return flightWatch;
 
-        return flightWatch.filter(flightWatch => {
-            !isCommercialAircraft(
-                flightWatch.aircraftTypeCode,
-                flightWatch.atcFlightNumber
-            )
-        });
+        return flightWatch.filter(
+            (flightWatch) => !isCommercialAircraft(flightWatch.aircraftTypeCode)
+        );
     }
     toggleCommercial(event: MouseEvent) {
         this.isCommercialVisible = !this.isCommercialVisible;
@@ -82,10 +83,10 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         else if (type == 'taxiway')
             this.isShowTaxiwaysEnabled = !this.isShowTaxiwaysEnabled;
     }
-    resizeMap(isopen: boolean){
+    resizeMap(isopen: boolean) {
         this.map.resizeMap(isopen);
     }
-    updateSelectedAircraft($event: FlightWatchModelResponse){
+    updateSelectedAircraft($event: FlightWatchModelResponse) {
         this.selectedPopUp = $event;
     }
 }

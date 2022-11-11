@@ -133,7 +133,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 if(this.isArrival && column.name == swimTableColumns.origin) return false;
                 if(this.isArrival && column.name == swimTableColumns.eta) return false;
 
-                if(!this.isArrival && column.name == swimTableColumns.arrival) return false;
+                if(!this.isArrival && column.name == swimTableColumns.destination) return false;
                 if(!this.isArrival && column.name == swimTableColumns.atd) return false;
 
                 return true;
@@ -176,10 +176,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
-        if(column == swimTableColumns.origin) return row.origin;
-        if(column == swimTableColumns.arrival) return row.arrivalICAO;
         if(column == swimTableColumns.status) return row.statusDisplayString;
-
         let col = this.columns.find( c => {
             return c.id == column
         });
@@ -240,7 +237,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 return this.compare(a.atdLocal, b.atdLocal, isAsc);
             case swimTableColumns.origin:
                 return this.compare(a.origin, b.origin, isAsc);
-            case swimTableColumns.arrival:
+            case swimTableColumns.destination:
                 return this.compare(a.arrivalICAO, b.arrivalICAO, isAsc);
             case swimTableColumns.isAircraftOnGround:
                 return this.compare(a.isAircraftOnGround, b.isAircraftOnGround, isAsc);

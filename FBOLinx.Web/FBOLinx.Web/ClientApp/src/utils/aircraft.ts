@@ -1,4 +1,3 @@
-export const COMMERCIAL_AIRCRAFT_TYPE_CODES = ['A3', 'A5'];
 export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'ASA',
     'UPS',
@@ -11,8 +10,7 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'GTI',
 ];
 
-export const isCommercialAircraft = (type: string, flightNumber: string) =>
-    COMMERCIAL_AIRCRAFT_TYPE_CODES.includes(type) ||
+export const isCommercialAircraft = (flightNumber: string) : boolean =>
     COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER.find((startNum) =>
-        flightNumber.startsWith(startNum)
-    );
+        flightNumber?.startsWith(startNum)
+    ) != undefined;
