@@ -148,6 +148,9 @@ export class FlightWatchMapComponent
             this.sharedService.currentUser.fboId
         );
     }
+    ngOnDestroy(): void {
+        this.mapRemove();
+    }
     async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
         this.setIcaoList.emit(this.acukwikairports);
@@ -413,7 +416,11 @@ export class FlightWatchMapComponent
         self.currentPopup.popupInstance.on('close', function(event) {
             self.selectedAircraft =  null;
             self.currentPopup.isPopUpOpen = false;
-            self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
+            try {
+                self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
+            } catch (err) {
+                console.log("attempt to filter on an undefined map");
+            }
         });
 
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
