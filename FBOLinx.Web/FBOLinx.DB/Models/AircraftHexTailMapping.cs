@@ -16,5 +16,8 @@ namespace FBOLinx.DB
 
         [StringLength(50)]
         public string FAAAircraftMakeModelCode { get; set; }
+
+        [StringLength(100)]
+        public string FAARegisteredOwner { get; set; }
     }
 }

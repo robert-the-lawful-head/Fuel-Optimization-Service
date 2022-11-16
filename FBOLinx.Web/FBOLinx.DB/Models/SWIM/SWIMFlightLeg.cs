@@ -52,6 +52,9 @@ namespace FBOLinx.DB.Models
         public bool IsProcessed { get; set; }
         public DateTime? LastUpdated { get; set; }
 
+        [StringLength(100)]
+        public string FAARegisteredOwner { get; set; }
+
         public virtual ICollection<SWIMFlightLegData> SWIMFlightLegDataMessages { get; set; }
     }
 }
