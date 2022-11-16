@@ -134,15 +134,45 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             List<int> groupIds = _customerInfoByGroupRecords.Select(x => x.GroupId).ToList();
             List<string> tailNumbers = _fuelerlinxAircraftList.Select(x => x.TailNumber).ToList();
 
+            //Find aircrafts that don't have any customer associations to add in
+            var nonCustomerAircraftList =
+               await _customerAircraftEntityService.GetListBySpec(
+                   new CustomerAircraftByGroupAndTailSpecification(groupIds, 0));
+
+            var newAircraftToAdd = (from t in tailNumbers
+                                    join g in groupIds on 1 equals 1
+                                    join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g } equals new
+                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
+                                    //    into leftJoinCustomerAircrafts
+                                    //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
+                                    //where (ca?.Oid).GetValueOrDefault() == 0
+                                    select new CustomerAircrafts()
+                                    {
+                                        AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
+                                        AircraftId = _fuelerlinxAircraftList.FirstOrDefault(x => x.TailNumber == t).AircraftId
+                                            .GetValueOrDefault(),
+                                        GroupId = g,
+                                        CustomerId = _customerRecord.Oid,
+                                        TailNumber = t,
+                                        Size = (Core.Enums.AircraftSizes?)((short)(_fuelerlinxAircraftList
+                                            .FirstOrDefault(x => x.TailNumber == t).Size)),
+                                        Oid = ca.Oid
+
+                                    })
+                .ToList();
+
+            if (newAircraftToAdd?.Count > 0)
+                await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd);
+
             var customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
-                    new CustomerAircraftByGroupAndTailSpecification(groupIds, tailNumbers, _customerRecord.Oid));
+                    new CustomerAircraftByGroupAndTailSpecification(groupIds, _customerRecord.Oid));
 
             //Find any missing customer aircraft records that need to be added
             var aircraftToAdd = (from t in tailNumbers
                 join g in groupIds on 1 equals 1
-                join ca in customerAircraftList on new { TailNumber = t, GroupId = g, CustomerId = _customerRecord.Oid } equals new
-                        { TailNumber = ca.TailNumber, GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
+                join ca in customerAircraftList on new { TailNumber = t.ToLower(), GroupId = g, CustomerId = _customerRecord.Oid } equals new
+                        { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                 where (ca?.Oid).GetValueOrDefault() == 0
@@ -162,6 +192,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             if (aircraftToAdd?.Count > 0)
                 await _customerAircraftEntityService.BulkInsert(aircraftToAdd);
+
+            //Find aircrafts to remove customer association
+            var aircraftToRemove = (from ca in customerAircraftList
+                                    join t in tailNumbers on ca.TailNumber.ToLower() equals t.ToLower()
+                                    into leftJoinTailNumbers
+                                    from t in leftJoinTailNumbers.DefaultIfEmpty()
+                                    where t is null
+                                    select new CustomerAircrafts()
+                                    {
+                                        Oid = ca.Oid,
+                                        CustomerId = 0,
+                                        GroupId = ca.GroupId,
+                                        AircraftId = ca.AircraftId,
+                                        TailNumber = ca.TailNumber,
+                                        Size = ca.Size
+                                    }).ToList();
+
+            if (aircraftToRemove?.Count > 0)
+            {
+                await _customerAircraftEntityService.BulkUpdate(aircraftToRemove);
+                customerAircraftList =
+                await _customerAircraftEntityService.GetListBySpec(
+                    new CustomerAircraftByGroupAndTailSpecification(groupIds, _customerRecord.Oid));
+            }
 
             if (customerAircraftList == null || customerAircraftList.Count == 0)
                 return;
