@@ -258,28 +258,11 @@ export class FbosGridComponent implements OnInit {
 
             if (this.sharedService.currentUser.role != 3) {
                 this.fboService.updateLastLogin(fbo.oid).subscribe((data: any) => {
-                    localStorage.setItem(
-                        'managerGroupId',
-                        this.sharedService.currentUser.groupId.toString()
-                    );
-                    this.sharedService.currentUser.managerGroupId =
-                        this.sharedService.currentUser.groupId;
-
-                    localStorage.setItem('groupId', fbo.groupId.toString());
-                    this.sharedService.currentUser.groupId = fbo.groupId;
-
-                    localStorage.setItem('impersonatedrole', '1');
-                    this.sharedService.currentUser.impersonatedRole = 1;
-
-                    localStorage.setItem('fboId', fbo.oid.toString());
-                    this.sharedService.currentUser.fboId = fbo.oid;
-
-                    this.sharedService.currentUser.icao = fbo.icao;
-
-                    this.sharedService.emitChange(fboChangedEvent);
-                    this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
+                    this.completeManageProcess(fbo);
                 });
             }
+            else
+                this.completeManageProcess(fbo);
         });
     }
 
@@ -310,5 +293,28 @@ export class FbosGridComponent implements OnInit {
                     });
                 }
             });
+    }
+
+    completeManageProcess(fbo) {
+        localStorage.setItem(
+            'managerGroupId',
+            this.sharedService.currentUser.groupId.toString()
+        );
+        this.sharedService.currentUser.managerGroupId =
+            this.sharedService.currentUser.groupId;
+
+        localStorage.setItem('groupId', fbo.groupId.toString());
+        this.sharedService.currentUser.groupId = fbo.groupId;
+
+        localStorage.setItem('impersonatedrole', '1');
+        this.sharedService.currentUser.impersonatedRole = 1;
+
+        localStorage.setItem('fboId', fbo.oid.toString());
+        this.sharedService.currentUser.fboId = fbo.oid;
+
+        this.sharedService.currentUser.icao = fbo.icao;
+
+        this.sharedService.emitChange(fboChangedEvent);
+        this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
     }
 }
