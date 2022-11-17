@@ -25,7 +25,8 @@ export interface Swim {
     longitude: number | any;
     isAircraftOnGround: boolean | any;
     itpMarginTemplate: string;
-    status: FlightLegStatus | any;
+    status: FlightLegStatus;
+    statusDisplayString: string;
     phone: string;
     visitsToMyFBO: number;
     arrivals: number;
@@ -61,8 +62,8 @@ export const swimTableColumns = {
     ete: 'ete',
     eta: 'eta',
     atd: 'atd',
-    origin: 'origin',
-    arrival: 'arrivalICAO',
+    origin: 'arrivalICAO',
+    destination: 'departureICAO',
     isAircraftOnGround: 'isAircraftOnGround',
     itpMarginTemplate: 'itpMarginTemplate',
     etaAtdZulu: 'etaAtdZulu',
@@ -77,7 +78,7 @@ export const swimTableColumnsDisplayText = {
     ete: 'ETE',
     eta: 'ETA',
     atd: 'ATD',
-    origin: 'Origin',
+    departureICAO: 'Origin',
     arrivalICAO: 'Destination',
     isAircraftOnGround: 'On Ground',
     itpMarginTemplate: 'ITP Margin Template',
@@ -102,6 +103,7 @@ export const stautsTextColor = {
 
 export interface MapMarkers {
     flights : MapMarkerInfo,
+    flightsReversed : MapMarkerInfo,
     fbos: MapMarkerInfo,
     airports: MapMarkerInfo
 }

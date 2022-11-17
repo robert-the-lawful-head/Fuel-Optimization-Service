@@ -95,8 +95,20 @@ export abstract class MapboxglBase {
         this.map.on('click', elementId, callBack);
         return this;
     }
+    onceClick(elementId:string,callBack): this{
+        this.map.once('click', elementId, callBack);
+        return this;
+    }
     onMapClick(callBack): this{
         this.map.on('click', callBack);
+        return this;
+    }
+    onSourcedata(callBack): this{
+        this.map.on('sourcedata', callBack);
+        return this;
+    }
+    onReady(callBack): this{
+        this.map.on('ready', callBack);
         return this;
     }
     /* end on functions */
@@ -256,10 +268,7 @@ export abstract class MapboxglBase {
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
-            .addTo(this.map)
-            .on('close', function(e) {
-                currentPopup.isPopUpOpen = false;
-            });
+            .addTo(this.map);
     }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
         this.map.flyTo({

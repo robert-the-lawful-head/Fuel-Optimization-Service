@@ -48,11 +48,10 @@ namespace FBOLinx.TableStorage.EntityServices
             return result.OrderByDescending(x => x.BoxTransmissionDateTimeUtc).ToList();
         }
 
-        public override async Task BatchInsert(IEnumerable<AirportWatchLiveDataTableEntity> entities)
+        public override async Task BatchInsert(IList<AirportWatchLiveDataTableEntity> entities)
         {
             try
             {
-                
                 foreach (AirportWatchLiveDataTableEntity entity in entities)
                 {
                     entity.PartitionKey = CreatePartitionKeyFunc(entity.BoxTransmissionDateTimeUtc, entity.BoxName);
@@ -61,7 +60,7 @@ namespace FBOLinx.TableStorage.EntityServices
 
                 foreach (IGrouping<string, AirportWatchLiveDataTableEntity> entitiesGroup in entities.GroupBy(x => x.PartitionKey))
                 {
-                    await base.BatchInsert(entitiesGroup);
+                    await base.BatchInsert(entitiesGroup.ToList());
                 }
             }
             catch (Exception ex)

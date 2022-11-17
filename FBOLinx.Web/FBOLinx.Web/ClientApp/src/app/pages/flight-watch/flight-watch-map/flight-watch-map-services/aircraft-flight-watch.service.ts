@@ -1,4 +1,7 @@
 import { Injectable } from '@angular/core';
+import { IGNORE_BLOCK_TAGS } from '@syncfusion/ej2-angular-richtexteditor';
+import * as mapboxgl from 'mapbox-gl';
+import { AnyLayer, AnySourceData, MapboxEvent } from 'mapbox-gl';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
@@ -9,27 +12,19 @@ import { FlightWatchMapService } from './flight-watch-map.service';
 export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
-    public getFlightFeatureJsonData(data: FlightWatchModelResponse,id,selectedAircraft): any {
-        let icon = "aircraft_image_";
-        if (data.isInNetwork && !data.fuelOrderId && !data.isFuelerLinxClient){
-            icon = `${icon}client${id === selectedAircraft.toString() ? '_reversed' : ''}${
-                data.fuelOrderId != null
-                    ? '_release'
-                    : data.isFuelerLinxClient
-                    ? '_fuelerlinx'
-                    : ''
-            }`;
-        }else{
-            icon = `${icon}${this.flightWatchMapService.getDefaultAircraftType(
-                data.aircraftTypeCode
-            )}${id === selectedAircraft.toString() ? '_reversed' : ''}${
-                data.fuelOrderId != null
-                    ? '_release'
-                    : data.isFuelerLinxClient
-                    ? '_fuelerlinx'
-                    : ''
-            }`
-        }
+    public getFlightFeatureJsonData(data: FlightWatchModelResponse,isSelectedAircraft:boolean): any {
+        let icon = `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(
+            data
+        )}`;
+
+        icon += `${isSelectedAircraft ? '_reversed' : ''}${
+            data.fuelOrderId != null
+                ? '_release'
+                : data.isFuelerLinxClient
+                ? '_fuelerlinx'
+                : ''
+        }`;
+
         return {
             geometry: {
                 coordinates: [data.longitude, data.latitude],
@@ -37,7 +32,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             },
             properties: {
                 id: data.tailNumber,
-               'icon-image': icon,
+                'default-icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
@@ -47,19 +42,26 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightLayerJsonData(
         layerId: string,
         flightSourceId: any,
+        isReversedLayer: boolean
     ): mapboxgl.AnyLayer {
-        return {
+
+        let json : mapboxgl.AnyLayer  = {
             id : layerId,
             layout: {
                 'icon-allow-overlap': true,
-                'icon-image': ['get', 'icon-image'],
+                'icon-image':['get', 'default-icon-image'],
                 'icon-rotate': ['get', 'rotate'],
                 'icon-size': ['get', 'size'],
                 'symbol-z-order': 'source'
             },
             source: flightSourceId,
             type: 'symbol',
+
         };
+
+        if(isReversedLayer) json['filter'] = ["==", "id", ""];
+        return json;
+
     }
     public getAirportLayerJsonData(
         layerId: string,
@@ -79,7 +81,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getAirportFeatureJsonData(data: any, currentIcao: string): any {
         return {
             geometry: {
-                coordinates: [convertDMSToDEG(data.longitude), convertDMSToDEG(data.latitude)],
+                coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
                 type: 'Point',
             },
             properties: {

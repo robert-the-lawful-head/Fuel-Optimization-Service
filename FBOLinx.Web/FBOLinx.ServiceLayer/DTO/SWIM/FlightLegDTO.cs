@@ -46,5 +46,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public bool IsOutOfNetwork { get; set; }
         public bool IsActiveFuelRelease { get; set; }
         public bool IsFuelerLinxClient { get; set; }
+        public string FAARegisteredOwner { get; set; }
     }
 }
