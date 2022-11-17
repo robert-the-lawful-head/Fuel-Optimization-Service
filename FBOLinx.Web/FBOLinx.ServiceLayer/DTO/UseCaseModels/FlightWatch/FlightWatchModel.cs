@@ -33,7 +33,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             _AirportWatchHistoricalDataCollection = airportWatchHistoricalDataCollection;
             _AirportWatchLiveData = airportWatchLiveData;
         }
-
+        public string FAARegisteredOwner => _SwimFlightLeg?.FAARegisteredOwner;
         public int? AirportWatchLiveDataId => _AirportWatchLiveData?.Oid;
         public int? SWIMFlightLegId => _SwimFlightLeg?.Oid;
 
