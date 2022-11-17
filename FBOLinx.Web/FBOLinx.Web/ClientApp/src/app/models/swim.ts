@@ -40,6 +40,7 @@ export interface Swim {
     isOutOfNetwork: boolean | any;
     isActiveFuelRelease: boolean | any;
     isFuelerLinxClient: boolean | any;
+    faaRegisteredOwner: string;
 }
 export interface Time {
     ticks: number;

@@ -29,7 +29,8 @@ export class AircraftPopupContainerComponent {
       aircraftMakeModel: '',
       lastQuote: '',
       currentPricing: '',
-      aircraftICAO: ''
+      aircraftICAO: '',
+      faaRegisteredOwner: ''
   };
   public hasAircraft = false;
   public customers: CustomersListType[] = []

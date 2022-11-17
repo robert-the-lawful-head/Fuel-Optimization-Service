@@ -291,7 +291,8 @@ export class FlightWatchMapComponent
             aircraftMakeModel: makemodelstr,
             lastQuote: selectedPopUp.lastQuote,
             currentPricing: selectedPopUp.currentPricing,
-            aircraftICAO: selectedPopUp.icaoAircraftCode
+            aircraftICAO: selectedPopUp.icaoAircraftCode,
+            faaRegisteredOwner: selectedPopUp.faaRegisteredOwner
         };
 
         this.popupData = Object.assign({}, obj);
