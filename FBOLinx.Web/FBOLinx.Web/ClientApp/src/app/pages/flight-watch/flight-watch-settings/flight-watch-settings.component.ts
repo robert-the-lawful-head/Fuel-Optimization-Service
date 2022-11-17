@@ -113,60 +113,74 @@ export class FlightWatchSettingsComponent {
         });
     }
     initColumns() {
-        this.tableLocalStorageKey = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-        } else {
-            this.columns = [
-                {
-                    id: swimTableColumns.status,
-                    name: swimTableColumns.status,
-                },
-                {
-                    id: swimTableColumns.tailNumber,
-                    name: swimTableColumns.tailNumber,
-                },
-                {
-                    id: swimTableColumns.flightDepartment,
-                    name: swimTableColumns.flightDepartment,
-                    sort: 'desc',
-                },
-                {
-                    id: swimTableColumns.icaoAircraftCode,
-                    name: swimTableColumns.icaoAircraftCode,
-                },
-                {
-                    id: swimTableColumns.ete,
-                    name: swimTableColumns.ete,
-                },
-                {
-                    id: swimTableColumns.atd,
-                    name: swimTableColumns.atd,
-                },
-                {
-                    id: swimTableColumns.eta,
-                    name: swimTableColumns.eta,
-                },
-                {
-                    id: swimTableColumns.origin,
-                    name: swimTableColumns.origin,
-                },
-                {
-                    id: swimTableColumns.arrival,
-                    name: swimTableColumns.arrival,
-                },
-                {
-                    id: swimTableColumns.isAircraftOnGround,
-                    name: swimTableColumns.isAircraftOnGround,
-                },
-                {
-                    id: swimTableColumns.itpMarginTemplate,
-                    name: swimTableColumns.itpMarginTemplate,
-                }
-            ];
+        this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+        let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
+        let hasColumnUpdates :boolean = false;
+
+        if (localStorageColumns) {
+            let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
+            for(let col in storedCols){
+                let colName = storedCols[col].id;
+                if(swimTableColumns[colName] != undefined) continue;
+                hasColumnUpdates = true;
+                break;
+            }
+            if(!hasColumnUpdates){
+                this.columns = storedCols;
+                return;
+            }
         }
+
+        this.columns = this.getColumnDefinition();
+    }
+    getColumnDefinition(): ColumnType[]{
+        return [
+            {
+                id: swimTableColumns.status,
+                name: swimTableColumns.status,
+            },
+            {
+                id: swimTableColumns.tailNumber,
+                name: swimTableColumns.tailNumber,
+            },
+            {
+                id: swimTableColumns.flightDepartment,
+                name: swimTableColumns.flightDepartment,
+                sort: 'desc',
+            },
+            {
+                id: swimTableColumns.icaoAircraftCode,
+                name: swimTableColumns.icaoAircraftCode,
+            },
+            {
+                id: swimTableColumns.ete,
+                name: swimTableColumns.ete,
+            },
+            {
+                id: swimTableColumns.atd,
+                name: swimTableColumns.atd,
+            },
+            {
+                id: swimTableColumns.eta,
+                name: swimTableColumns.eta,
+            },
+            {
+                id: swimTableColumns.origin,
+                name: swimTableColumns.origin,
+            },
+            {
+                id: swimTableColumns.destination,
+                name: swimTableColumns.destination,
+            },
+            {
+                id: swimTableColumns.isAircraftOnGround,
+                name: swimTableColumns.isAircraftOnGround,
+            },
+            {
+                id: swimTableColumns.itpMarginTemplate,
+                name: swimTableColumns.itpMarginTemplate,
+            }
+        ];
     }
     saveSettings() {
         localStorage.setItem(

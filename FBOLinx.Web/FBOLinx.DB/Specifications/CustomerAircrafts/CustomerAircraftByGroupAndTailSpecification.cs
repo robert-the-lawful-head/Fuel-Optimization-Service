@@ -15,5 +15,14 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
             x.CustomerId == customerId)
         {
         }
+
+        public CustomerAircraftByGroupAndTailSpecification(List<int> groupIds, int customerId) : base(x => x.GroupId.HasValue &&
+            groupIds.Contains(x.GroupId.Value) &&
+            !string.IsNullOrEmpty(x.TailNumber) 
+        &&
+            //tailNumbers.Contains(x.TailNumber) &&
+            x.CustomerId == customerId)
+        {
+        }
     }
 }

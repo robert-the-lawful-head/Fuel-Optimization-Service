@@ -261,8 +261,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                 (x) =>
                     (!this.isCommercialInvisible ||
                         !isCommercialAircraft(
-                            x.aircraftTypeCode,
-                            x.flightNumber
+                            x.aircraftTypeCode
                         )) &&
                     (!this.selectedCustomers.length ||
                         this.selectedCustomers.includes(

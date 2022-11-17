@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         public async Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data)
         {
-            IEnumerable<AirportWatchLiveDataTableEntity> airportWatchTableEntities = data.Select(x => new AirportWatchLiveDataTableEntity()
+            IList<AirportWatchLiveDataTableEntity> airportWatchTableEntities = data.Select(x => new AirportWatchLiveDataTableEntity()
             {
                 BoxName = x.BoxName,
                 BoxTransmissionDateTimeUtc = DateTime.SpecifyKind(x.BoxTransmissionDateTimeUtc, DateTimeKind.Utc),
@@ -111,7 +111,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 GpsAltitude = x.GpsAltitude,
                 IsAircraftOnGround = x.IsAircraftOnGround,
                 AircraftHexCode = x.AircraftHexCode,
-            });
+            }).ToList();
 
             await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
         }

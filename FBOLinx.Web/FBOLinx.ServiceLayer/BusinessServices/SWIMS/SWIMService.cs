@@ -338,6 +338,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 var tailMapping = hexTailMappings.FirstOrDefault(x => x.TailNumber == flightWatchModel.TailNumber);
                 if (tailMapping != null)
                 {
+                    swimFlightLeg.FAARegisteredOwner = tailMapping.FAARegisteredOwner;
+
                     FAAAircraftMakeModelReference aircraftMakeModelReference =
                         aircraftMakeModels.FirstOrDefault(x => x.CODE == tailMapping.FAAAircraftMakeModelCode);
                     if (aircraftMakeModelReference != null)
@@ -398,6 +400,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.FuelCapacityGal = swimFlightLeg.FuelCapacityGal;
                 flightLegDto.Phone = swimFlightLeg.Phone;
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
+                flightLegDto.FAARegisteredOwner = swimFlightLeg.FAARegisteredOwner;
 
                 flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsInNetwork();
                 flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsOutOfNetwork();

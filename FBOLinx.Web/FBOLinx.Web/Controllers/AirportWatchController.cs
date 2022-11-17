@@ -87,9 +87,9 @@ namespace FBOLinx.Web.Controllers
                     return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
             }
         }
-
-        [HttpGet("airport-watch-live-data-from-table-storage")]
-        public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        
+        [HttpGet("get-airport-watch-live-data-from-table-storage")]
+        public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage([FromQuery] IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
         {
             try
             {
