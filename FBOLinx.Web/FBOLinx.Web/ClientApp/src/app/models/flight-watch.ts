@@ -43,6 +43,7 @@ export type Aircraftwatch = {
     lastQuote : string;
     currentPricing : string;
     aircraftICAO : string;
+    faaRegisteredOwner: string;
 };
 export interface FlightWatchModelResponse {
     airportWatchLiveDataId: number;
@@ -107,4 +108,5 @@ export interface FlightWatchModelResponse {
     lastQuote: string;
     currentPricing: string;
     customerInfoByGroupId: number;
+    faaRegisteredOwner: string;
 }
