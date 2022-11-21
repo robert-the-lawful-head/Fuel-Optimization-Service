@@ -80,7 +80,10 @@
                                     getDateObject(element.atdZulu) | getTime
                                     }}
                                 </td>
-                                <td></td>
+                                <td>
+                                    FAA Registered Owner:
+                                    {{ element.faaRegisteredOwner }}
+                                </td>
                             </tr>
                             <tr>
                                 <td>
@@ -114,5 +117,10 @@
         <tr mat-row
             *matRowDef="let row; columns: ['expandedDetail']"
             class="example-detail-row"></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="columns.length">
+            {{ getNoDataToDisplayString() }}
+            </td>
+        </tr>
     </table>
 </div>

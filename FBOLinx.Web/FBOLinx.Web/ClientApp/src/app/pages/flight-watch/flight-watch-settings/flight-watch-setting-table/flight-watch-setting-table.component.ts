@@ -252,4 +252,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         var result =  (a < b ? -1 : 1) * (isAsc ? 1 : -1);
         return result;
     }
+    getNoDataToDisplayString(){
+        return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
+    }
 }
