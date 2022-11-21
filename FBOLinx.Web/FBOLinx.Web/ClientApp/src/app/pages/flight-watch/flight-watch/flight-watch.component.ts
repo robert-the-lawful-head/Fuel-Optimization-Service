@@ -39,6 +39,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
 
+    isStable = true;
     loading = false;
     mapLoadSubscription: Subscription;
     airportWatchFetchSubscription: Subscription;
@@ -137,12 +138,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
             if (data.success) {
                 this.setData(data.result);
+                this.isStable = true;
             } else {
                 this.flightWatchData = [];
+                this.isStable = false;
             }
             this.loading = false;
         }, (error: any) => {
             this.loading = false;
+            this.isStable = false;
         });
     }
 
