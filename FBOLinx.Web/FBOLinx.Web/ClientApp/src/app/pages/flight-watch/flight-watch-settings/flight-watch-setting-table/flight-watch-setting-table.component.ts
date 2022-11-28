@@ -5,7 +5,7 @@ import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sor
 import { MatTableDataSource } from '@angular/material/table';
 
 import { SharedService } from 'src/app/layouts/shared-service';
-import { stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
+import { stautsDisplayText, stautsIcons, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -176,7 +176,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
-        if(column == swimTableColumns.status) return row.statusDisplayString;
+        if(column == swimTableColumns.status) return stautsDisplayText[row.statusDisplayString];
         let col = this.columns.find( c => {
             return c.id == column
         });
@@ -204,6 +204,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
         return stautsTextColor.default;
     }
+    hasIcon(column:string): boolean{
+        return column == swimTableColumns.status;
+    }
+    getIcon(row: Swim): string{
+        return stautsIcons[FlightLegStatus[row.status]];
+    }
     getTailNumberTextColor(row: Swim) {
         if (row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
         if (row.isFuelerLinxClient) return tailNumberTextColor.fuelerLinx;
@@ -211,12 +217,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         return tailNumberTextColor.outOfNetwork;
     }
-    getPastArrivalsValue(row: Swim){
+    getPastArrivalsValue(row: Swim): number{
         return this.isArrival
             ? row.arrivals
             : row.departures;
 }
-    sortData(sort: Sort) {
+    sortData(sort: Sort){
         this.hasChangeDefaultSort = true;
         this.dataSource.data.sort((a, b) => {
           const isAsc = sort.direction === 'asc';
@@ -248,7 +254,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
           }
         });
     }
-    compare(a: number | string , b: number | string, isAsc: boolean) {
+    compare(a: number | string , b: number | string, isAsc: boolean): number{
         var result =  (a < b ? -1 : 1) * (isAsc ? 1 : -1);
         return result;
     }

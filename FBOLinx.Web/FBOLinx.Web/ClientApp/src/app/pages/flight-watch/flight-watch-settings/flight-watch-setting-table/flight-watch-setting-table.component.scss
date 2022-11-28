@@ -16,12 +16,22 @@ tr.example-element-row:not(.example-expanded-row):active {
 
 .example-element-row td {
     border-bottom-width: 0;
-    min-width: 70px;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     font-size: 12px;
-    padding: 10px;
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+    padding: 0 0 0 10px;
+}
+.center-items{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    mat-icon{
+        margin-right: 10px;
+    }
 }
 
 .example-element-detail {
@@ -56,7 +66,6 @@ tr.mat-row,
 tr.mat-footer-row,
 th.mat-header-cell {
     height: auto;
-    padding: 0 0 0 10px;
     margin: 0px;
 }
 th {

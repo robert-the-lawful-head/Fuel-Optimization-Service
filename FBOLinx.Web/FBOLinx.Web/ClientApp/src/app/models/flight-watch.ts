@@ -44,6 +44,8 @@ export type Aircraftwatch = {
     currentPricing : string;
     aircraftICAO : string;
     faaRegisteredOwner: string;
+    origin: string;
+    destination: string;
 };
 export interface FlightWatchModelResponse {
     airportWatchLiveDataId: number;
