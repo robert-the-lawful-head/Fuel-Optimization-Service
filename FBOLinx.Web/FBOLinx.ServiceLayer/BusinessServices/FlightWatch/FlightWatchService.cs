@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
@@ -22,9 +20,10 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
-using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 {
@@ -52,6 +51,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CompanyPricingLogMostRecentQuoteModel> _MostRecentQuotes;
         private IPriceFetchingService _PriceFetchingService;
         private List<CustomerWithPricing> _CurrentPricingResults;
+        private IOptions<DemoData> _demoData;
+
+        private Func<string, bool> _isDemoDataVisible = icao =>
+        {
+            return icao == "KVNY" || icao == "KBID";
+        };
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -61,7 +66,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             ICustomerAircraftService customerAircraftService,
             IAirportFboGeofenceClustersService airportFboGeofenceClustersService,
             ICompanyPricingLogService companyPricingLogService,
-            IPriceFetchingService priceFetchingService
+            IPriceFetchingService priceFetchingService,
+            IOptions<DemoData> demoData
         )
         {
             _PriceFetchingService = priceFetchingService;
@@ -73,6 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _SwimFlightLegService = swimFlightLegService;
             _FboService = fboService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
+            _demoData = demoData;
         }
 
         public async Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId)
@@ -103,7 +110,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var daysToCheckBackForHistoricalData = options.IncludeRecentHistoricalRecords ? 1 : 0;
             if (options.IncludeVisitsAtFbo)
                 daysToCheckBackForHistoricalData = 30;
-            
+
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
                 await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 1, daysToCheckBackForHistoricalData);
@@ -120,9 +127,63 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
+            if (_isDemoDataVisible(options.AirportIdentifier))
+                AddDemoDataToFlightWatchResult(result,_Fbo);
+
             return result;
         }
-        
+        private void AddDemoDataToFlightWatchResult(List<FlightWatchModel> result, FbosDto fbo)
+        {
+            if (_demoData == null || _demoData.Value == null || _demoData.Value.FlightWatch == null)
+                return;
+
+            var demoData = _demoData.Value.FlightWatch;
+            var swim = new SWIMFlightLegDTO()
+            {
+                Make = "TestMake",
+                Model = "TestModel",
+                Altitude = 43650,
+                Latitude = demoData.Latitude,
+                Longitude = demoData.Longitude,
+                Status = FlightLegStatus.EnRoute,
+                Phone = "11111111111",
+                AircraftIdentification = demoData.AtcFlightNumber,
+                ATDLocal = DateTime.UtcNow,
+                ATD = DateTime.UtcNow.AddHours(2),
+                ETALocal = DateTime.UtcNow,
+                ETA = DateTime.UtcNow.AddMinutes(25),
+                DepartureCity = "KTEB",
+                DepartureICAO = "Teterboro",
+                ArrivalCity = fbo.City,
+                ArrivalICAO = fbo.FboAirport.Icao,
+                ActualSpeed = demoData.GroundSpeedKts
+            };
+            var airportWatchLiveData = new AirportWatchLiveDataDto(){
+                Oid= demoData.Oid,
+                AircraftPositionDateTimeUtc = DateTime.UtcNow.AddSeconds(-5),
+                BoxTransmissionDateTimeUtc = DateTime.UtcNow.AddSeconds(-5),
+                AltitudeInStandardPressure = demoData.AltitudeInStandardPressure,
+                AircraftHexCode = demoData.AircraftHexCode,
+                VerticalSpeedKts = demoData.VerticalSpeedKts,
+                TransponderCode = demoData.TransponderCode,
+                BoxName = demoData.BoxName,
+                AircraftTypeCode = demoData.AircraftTypeCode,
+                GpsAltitude = demoData.GpsAltitude,
+                IsAircraftOnGround = demoData.IsAircraftOnGround,
+                Latitude = demoData.Latitude, 
+                Longitude = demoData.Longitude
+            };
+            var airportWatchHistoricalDataCollection = new List<AirportWatchHistoricalDataDto>();
+
+            var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim);
+
+            flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
+
+            var fuelReqOrders =  new List<FuelReqDto>() { new FuelReqDto() };
+            flightWatch.SetUpcomingFuelOrderCollection(fuelReqOrders);
+
+            result.Add(flightWatch);
+        }
         private string GetFocusedAirportIdentifier()
         {
             if (!string.IsNullOrEmpty(_Options.AirportIdentifier))
