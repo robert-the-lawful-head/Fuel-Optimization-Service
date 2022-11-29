@@ -1,0 +1,46 @@
+<mat-drawer-container autosize>
+    <mat-drawer-content>
+        <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+        <div *ngIf="flightWatchData">
+            <div class="drawer-button" (click)="toggleSettingsDrawer()">
+                <button class="mat-dark-blue" mat-flat-button>
+                    <mat-icon *ngIf="!isDrawerOpen()"
+                        >chevron_left</mat-icon
+                    >
+                    <mat-icon *ngIf="isDrawerOpen()"
+                        >chevron_right</mat-icon
+                    >
+                </button>
+            </div>
+            <div class="flight-watch-container" id="map-wrapper">
+                <app-flight-watch-map
+                    #map
+                    style="width: 100%;"
+                    [center]="center"
+                    [data]="flightWatchData"
+                    [icao]="icao"
+                    [isStable]="isStable"
+                ></app-flight-watch-map>
+            </div>
+        </div>
+    </mat-drawer-content>
+
+    <mat-drawer
+        mode="side"
+        #mapfilters
+        position="end"
+        class="drawer-container"
+        opened
+    >
+        <ng-container *ngIf="flightWatchData">
+            <app-flight-watch-settings
+                [arrivals]="arrivals"
+                [departures]="departures"
+                [icaoList]="icaoList"
+                [icao]="icao"
+                [filteredTypes]="filteredTypes"
+                (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
+            ></app-flight-watch-settings>
+        </ng-container>
+    </mat-drawer>
+</mat-drawer-container>
