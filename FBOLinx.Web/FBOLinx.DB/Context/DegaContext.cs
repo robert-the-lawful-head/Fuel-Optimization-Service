@@ -24,6 +24,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<FAAAircraftMakeModelReference> FAAAircraftMakeModelReference { get; set; }
         public virtual DbSet<SWIMFlightLeg> SWIMFlightLegs { get; set; }
         public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
+        public virtual DbSet<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -73,6 +74,20 @@ namespace FBOLinx.DB.Context
                     .HasForeignKey(data => data.SWIMFlightLegId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_SWIMFlightLegData_SWIMFlightLegs");
+
+                entity.Ignore(x => x.RawXmlMessage);
+            });
+
+            modelBuilder.Entity<SWIMFlightLegDataError>(entity =>
+            {
+                entity.HasKey(e => e.Oid)
+                    .HasName("PK_SWIMFlightLegDataErrors_OID");
+
+                entity.HasOne(data => data.SWIMFlightLegData)
+                    .WithMany(leg => leg.SWIMFlightLegDataErrors)
+                    .HasForeignKey(data => data.SWIMFlightLegDataId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("FK_SWIMFlightLegDataErrors_SWIMFlightLegData");
             });
         }
     }

@@ -127,6 +127,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAirportWatchDistinctBoxesEntityService, AirportWatchDistinctBoxesEntityService>();
             services.AddTransient<IAirportFboGeoFenceClusterEntityService, AirportFboGeoFenceClusterEntityService>();
             services.AddTransient<ICompanyPricingLogEntityService, CompanyPricingLogEntityService>();
+            services.AddTransient<SWIMFlightLegDataErrorEntityService, SWIMFlightLegDataErrorEntityService>();
 
             return services;
         }
