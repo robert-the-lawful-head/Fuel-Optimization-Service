@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UploadingEventArgs } from '@syncfusion/ej2-angular-inputs';
-import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
+import { FileInfo, SelectedEventArgs } from '@syncfusion/ej2-angular-inputs';
+import { HtmlEditorService, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
@@ -26,12 +27,13 @@ const BREADCRUMBS: any[] = [
     selector: 'app-email-templates-edit',
     styleUrls: ['./email-templates-edit.component.scss'],
     templateUrl: './email-templates-edit.component.html',
+    providers: [ToolbarService, LinkService, ImageService, HtmlEditorService ]
 })
 export class EmailTemplatesEditComponent implements OnInit {
     @ViewChild('fileUpload') fileUploadName;
-
     private id: any;
-
+    private imgSizeLimitinBytes: number = 60000;
+    private imgLargeImageErrorMsg: string = "This image file size is too large, please use a smaller image.";
     public breadcrumb: any[] = BREADCRUMBS;
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
@@ -50,11 +52,11 @@ export class EmailTemplatesEditComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private sharedService: SharedService,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        private snackBar: MatSnackBar
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
-
     async ngOnInit() {
         // Check for passed in id
         this.id = this.route.snapshot.paramMap.get('id');
@@ -67,10 +69,10 @@ export class EmailTemplatesEditComponent implements OnInit {
             });
     }
 
-    public onImageUploading = (args: UploadingEventArgs) => {
-        let imgSize: number = 1000000;
-        let sizeInBytes: number = args.fileData.size;
-        if (sizeInBytes > imgSize) {
+    public onImageSelected = (args: SelectedEventArgs) => {
+        let lastImage : FileInfo = args.filesData[args.filesData.length - 1];
+        if (this.imgSizeLimitinBytes < lastImage.size) {
+            this.snackBar.open(this.imgLargeImageErrorMsg, "X");
             this.canSave = false;
             args.cancel = true;
         }
@@ -109,7 +111,6 @@ export class EmailTemplatesEditComponent implements OnInit {
             this.readAndUploadFile(this.theFile);
         }
     }
-
     deleteFile(): void {
         this.emailContentService
             .deleteFileAttachment(this.id)

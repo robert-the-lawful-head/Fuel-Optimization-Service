@@ -86,13 +86,31 @@ export const tailNumberTextColor = {
     inNetwork: '#FF7F00',
 };
 export const stautsTextColor = {
-    EnRoute: 'black',
-    Landing: 'blue',
-    TaxiingDestination: '#FDD953',
-    Arrived: 'green',
-    Departing: 'gray',
-    TaxiingOrigin: '#FDD953',
+    EnRoute: '#000000',
+    Landing: '#0000ff',
+    TaxiingDestination: '#fedd00',
+    Arrived: 'black',
+    Departing: '#808080',
+    TaxiingOrigin: '#fedd00',
     default: 'black'
+}
+export const stautsIcons = {
+    EnRoute: 'connecting_airports',
+    Landing: 'flight_land',
+    TaxiingDestination: 'local_taxi',
+    Arrived: 'pin_drop',
+    Departing: 'flight_takeoff',
+    TaxiingOrigin: 'local_taxi',
+    default: 'flight'
+}
+
+export const stautsDisplayText= {
+    EnRoute: 'En Route',
+    Landing: 'Landing',
+    TaxiingDestination: 'Taxiing',
+    Arrived: 'Arrived',
+    Departing: 'Departing',
+    TaxiingOrigin: 'Taxiing',
 }
 
 export interface MapMarkers {
