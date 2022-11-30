@@ -36,6 +36,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @Input() showBreadcrumb: boolean = true;
     @Input() showFilters: boolean = true;
     @Input() showLegend: boolean =  true;
+    @Input() isLobbyView: boolean =  false;
 
     @ViewChild(FlightWatchMapWrapperComponent) private mapWrapper:FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;

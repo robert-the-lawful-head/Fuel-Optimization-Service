@@ -28,8 +28,9 @@
         #arrivalsTable
         [data]="arrivals"
         [isArrival]="true"
-        [columns]="columns"
+        [columns]="arrivalsColumns"
         (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
     ></app-flight-watch-setting-table>
 </div>
 <div class="data-container">
@@ -37,7 +38,8 @@
         #departuresTable
         [data]="departures"
         [isArrival]="false"
-        [columns]="columns"
+        [columns]="departuresColumns"
         (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
     ></app-flight-watch-setting-table>
 </div>
