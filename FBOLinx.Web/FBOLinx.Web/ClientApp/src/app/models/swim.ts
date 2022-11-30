@@ -42,19 +42,6 @@ export interface Swim {
     isFuelerLinxClient: boolean | any;
     faaRegisteredOwner: string;
 }
-export interface Time {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
-}
 export const swimTableColumns = {
     status: 'status',
     tailNumber: 'tailNumber',
@@ -63,8 +50,11 @@ export const swimTableColumns = {
     ete: 'ete',
     eta: 'etaLocal',
     atd: 'atdLocal',
-    origin: 'arrivalICAO',
-    destination: 'departureICAO',
+    originAirport: 'arrivalICAO',
+    originCity: 'arrivalCity',
+    makeModel: 'makeModel',
+    destinationAirport: 'departureICAO',
+    destinationCity: 'departureCity',
     isAircraftOnGround: 'isAircraftOnGround',
     itpMarginTemplate: 'itpMarginTemplate',
     etaAtdZulu: 'etaAtdZulu',
@@ -79,10 +69,13 @@ export const swimTableColumnsDisplayText = {
     ete: 'ETE',
     etaLocal: 'ETA',
     atdLocal: 'ATD',
-    departureICAO: 'Origin',
-    arrivalICAO: 'Destination',
+    departureICAO: 'Origin Airport',
+    departureCity: 'Origin City',
+    arrivalICAO: 'Destination Airport',
+    arrivalCity: 'Destination City',
     isAircraftOnGround: 'On Ground',
     itpMarginTemplate: 'ITP Margin Template',
+    makeModel: 'Make/Model',
     expandedDetail: 'expandedDetail',
 };
 
