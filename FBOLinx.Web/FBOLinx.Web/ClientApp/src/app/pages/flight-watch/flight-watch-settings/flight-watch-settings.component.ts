@@ -227,8 +227,8 @@ export class FlightWatchSettingsComponent {
         ];
     }
     private isHiddenColumn(isArrival: boolean, column: string){
-        let defaultArrivalHiddenCols = [swimTableColumns.originAirport,swimTableColumns.eta];
-        let defaultDeparturesHiddenCols = [swimTableColumns.destinationAirport,swimTableColumns.atd];
+        let defaultArrivalHiddenCols = [swimTableColumns.originAirport,swimTableColumns.eta,swimTableColumns.makeModel,swimTableColumns.eta,swimTableColumns.originAirport,swimTableColumns.originCity,swimTableColumns.destinationAirport,swimTableColumns.destinationCity];
+        let defaultDeparturesHiddenCols = [swimTableColumns.destinationAirport,swimTableColumns.atd,swimTableColumns.makeModel,swimTableColumns.eta,swimTableColumns.originAirport,swimTableColumns.originCity,swimTableColumns.destinationAirport,swimTableColumns.destinationCity];
 
         let lobbyArrivalCols = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.eta,swimTableColumns.originAirport,swimTableColumns.originCity,swimTableColumns.isAircraftOnGround];
 
