@@ -14,5 +14,6 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
         public double? Longitude { get; set; }
         public DateTime MessageTimestamp { get; set; }
         public int SWIMFlightLegId { get; set; }
+        public string RawXmlMessage { get; set; }
     }
 }
