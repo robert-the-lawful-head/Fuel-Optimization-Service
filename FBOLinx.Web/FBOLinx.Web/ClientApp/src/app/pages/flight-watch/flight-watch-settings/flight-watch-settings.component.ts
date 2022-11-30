@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
-import { swimTableColumns } from 'src/app/models/swim';
+import { swimTableColumns, swimTableColumnsDisplayText } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -155,73 +155,73 @@ export class FlightWatchSettingsComponent {
         return [
             {
                 id: swimTableColumns.status,
-                name: swimTableColumns.status,
+                name: swimTableColumnsDisplayText[swimTableColumns.status],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.status)
             },
             {
                 id: swimTableColumns.tailNumber,
-                name: swimTableColumns.tailNumber,
+                name: swimTableColumnsDisplayText[swimTableColumns.tailNumber],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.tailNumber)
             },
             {
                 id: swimTableColumns.flightDepartment,
-                name: swimTableColumns.flightDepartment,
+                name: swimTableColumnsDisplayText[swimTableColumns.flightDepartment],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.flightDepartment),
                 sort: 'desc',
             },
             {
                 id: swimTableColumns.icaoAircraftCode,
-                name: swimTableColumns.icaoAircraftCode,
+                name: swimTableColumnsDisplayText[swimTableColumns.icaoAircraftCode],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.icaoAircraftCode)
             },
             {
                 id: swimTableColumns.ete,
-                name: swimTableColumns.ete,
+                name: swimTableColumnsDisplayText[swimTableColumns.ete],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.ete)
             },
             {
                 id: swimTableColumns.atd,
-                name: swimTableColumns.atd,
+                name: swimTableColumnsDisplayText[swimTableColumns.atd],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.atd)
             },
             {
                 id: swimTableColumns.eta,
-                name: swimTableColumns.eta,
+                name: swimTableColumnsDisplayText[swimTableColumns.eta],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.eta)
             },
             {
                 id: swimTableColumns.originAirport,
-                name: swimTableColumns.originAirport,
+                name: swimTableColumnsDisplayText[swimTableColumns.originAirport],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.originAirport)
             },
             {
                 id: swimTableColumns.originCity,
-                name: swimTableColumns.originCity,
+                name: swimTableColumnsDisplayText[swimTableColumns.originCity],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.originCity)
             },
             {
                 id: swimTableColumns.destinationAirport,
-                name: swimTableColumns.destinationAirport,
+                name: swimTableColumnsDisplayText[swimTableColumns.destinationAirport],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.destinationAirport)
             },
             {
                 id: swimTableColumns.destinationCity,
-                name: swimTableColumns.destinationCity,
+                name: swimTableColumnsDisplayText[swimTableColumns.destinationCity],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.destinationCity)
             },
             {
                 id: swimTableColumns.makeModel,
-                name: swimTableColumns.makeModel,
+                name: swimTableColumnsDisplayText[swimTableColumns.makeModel],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.makeModel)
             },
             {
                 id: swimTableColumns.isAircraftOnGround,
-                name: swimTableColumns.isAircraftOnGround,
+                name: swimTableColumnsDisplayText[swimTableColumns.isAircraftOnGround],
                 hidden : this.isHiddenColumn(isArrival,swimTableColumns.isAircraftOnGround)
             },
             {
                 id: swimTableColumns.itpMarginTemplate,
-                name: swimTableColumns.itpMarginTemplate,
+                name: swimTableColumnsDisplayText[swimTableColumns.itpMarginTemplate],
                 hidden : this.isHiddenColumn(isArrival, swimTableColumns.itpMarginTemplate)
             }
         ];
