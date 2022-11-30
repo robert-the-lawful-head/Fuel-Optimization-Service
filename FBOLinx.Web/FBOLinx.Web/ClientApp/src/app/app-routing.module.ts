@@ -35,6 +35,8 @@ import { UsersEditComponent } from './pages/users/users-edit/users-edit.componen
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
 import { FboGeofencingHomeComponent } from './pages/fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
 import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-status-home/antenna-status-home.component';
+import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
+import { PublicViewComponent } from './layouts/public-view/public-view.component';
 
 const defaultRoutes: Routes = [
     {
@@ -211,6 +213,14 @@ const outsideTheGateRoutes: Routes = [
     },
 ];
 
+const publicViewRoutes: Routes = [
+    {
+        canActivate: [AuthGuard],
+        component: LobbyViewComponent,
+        path: 'lobby-view',
+    },
+];
+
 const routes: Routes = [
     {
         component: LandingSiteLayoutComponent,
@@ -221,6 +231,11 @@ const routes: Routes = [
         children: defaultRoutes,
         component: DefaultLayoutComponent,
         path: 'default-layout',
+    },
+    {
+        children: publicViewRoutes,
+        component: PublicViewComponent,
+        path: 'public-layout',
     },
     {
         children: outsideTheGateRoutes,

@@ -221,6 +221,7 @@ import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flig
 import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
 import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters/flight-watch-filters.component';
+import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 
 @NgModule({
     declarations: [
@@ -364,7 +365,8 @@ import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters
         FlightWatchMapWrapperComponent,
         PriceCheckerDialogComponent,
         AircraftLegendComponent,
-        FlightWatchFiltersComponent
+        FlightWatchFiltersComponent,
+        LobbyViewComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

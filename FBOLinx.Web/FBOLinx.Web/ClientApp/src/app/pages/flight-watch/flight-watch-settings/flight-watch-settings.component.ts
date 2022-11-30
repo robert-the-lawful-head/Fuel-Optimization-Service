@@ -21,6 +21,7 @@ export class FlightWatchSettingsComponent {
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() filteredTypes: string[];
+    @Input() showFilters: boolean =  true;
 
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();

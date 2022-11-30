@@ -104,12 +104,14 @@ import { DateTimeService } from './services/datetime.service';
 import { SwimService } from './services/swim.service';
 import { FlightWatchService } from './services/flightwatch.service';
 import { FlightWatchHelper } from './pages/flight-watch/FlightWatchHelper.service';
+import { PublicViewComponent } from './layouts/public-view/public-view.component';
 
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
         AppComponent,
         DefaultLayoutComponent,
+        PublicViewComponent,
         LandingSiteLayoutComponent,
         OutsideTheGateLayoutComponent,
         LoginModalComponent,
