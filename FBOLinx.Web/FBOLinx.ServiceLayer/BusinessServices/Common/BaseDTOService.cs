@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
+using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Mapping;
 using Mapster;
@@ -29,9 +31,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
     {
         protected IRepository<T, TContext> _EntityService;
 
+        public IUserService EntityService { get; }
+
         public BaseDTOService(IRepository<T, TContext> entityService)
         {
             _EntityService = entityService;
+        }
+
+        public BaseDTOService(IUserService entityService)
+        {
+            EntityService = entityService;
         }
 
         public async Task<TDTO> FindAsync(int id)
@@ -63,20 +72,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
         public async Task<TDTO> AddAsync(TDTO dto)
         {
             var result = await _EntityService.AddAsync(dto.Adapt<T>());
+            await HandlePostChangeEvents();
             return result == null ? default(TDTO) : result.Adapt<TDTO>();
         }
 
         public async Task UpdateAsync(TDTO dto)
         {
             await _EntityService.UpdateAsync(dto.Adapt<T>());
+            await HandlePostChangeEvents();
         }
 
         public async Task DeleteAsync(TDTO dto)
         {
             await _EntityService.DeleteAsync(dto.Adapt<T>());
+            await HandlePostChangeEvents();
         }
 
-        public async Task BulkDeleteAsync(List<TDTO> dtos, BulkConfig? bulkConfig = null)
+        public virtual async Task BulkDeleteAsync(List<TDTO> dtos, BulkConfig? bulkConfig = null)
         {
             if (dtos?.Count == 0)
                 return;
@@ -88,6 +100,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             if (dtos?.Count == 0)
                 return;
             await _EntityService.BulkInsert(dtos.Adapt<List<T>>(), bulkConfig);
+            await HandlePostChangeEvents();
         }
 
         public async Task BulkUpdate(List<TDTO> dtos, BulkConfig? bulkConfig = null)
@@ -95,6 +108,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             if (dtos?.Count == 0)
                 return;
             await _EntityService.BulkUpdate(dtos.Adapt<List<T>>(), bulkConfig);
+            await HandlePostChangeEvents();
+        }
+
+        protected virtual async Task HandlePostChangeEvents()
+        {
+
         }
     }
 }

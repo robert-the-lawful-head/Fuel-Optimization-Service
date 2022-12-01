@@ -10,6 +10,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public string AccessToken { get; set; }
         public DateTime Expired { get; set; }
         public DateTime CreatedAt { get; set; }
-        public UserDto User { get; set; }
+        public UserDTO User { get; set; }
     }
 }

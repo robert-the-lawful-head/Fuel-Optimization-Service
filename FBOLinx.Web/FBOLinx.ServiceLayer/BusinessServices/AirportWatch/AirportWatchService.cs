@@ -62,7 +62,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private FuelerLinxApiService _fuelerLinxApiService;
         private IOptions<DemoData> _demoData;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
-        private readonly FbopricesService _fboPricesService;
+        private readonly IFboPricesService _fboPricesService;
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private IServiceProvider _ServiceProvider;
@@ -79,7 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
-            FbopricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
+            IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IServiceProvider serviceProvider, ILoggingService loggingService,
             IFuelReqService fuelReqService,

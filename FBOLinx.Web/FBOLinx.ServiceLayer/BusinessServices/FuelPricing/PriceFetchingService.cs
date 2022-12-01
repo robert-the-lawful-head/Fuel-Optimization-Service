@@ -18,6 +18,8 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.DB.Specifications.Fbo;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -30,14 +32,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private IFboService _FboService;
         private IMailService _MailService;
         private IPricingTemplateService _PricingTemplateService;
+        private IFboPricesEntityService _fboPricesEntityService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService)
+        public PriceFetchingService(FboLinxContext context, CustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService, IFboPricesEntityService fboPricesEntityService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
             _context = context;
             _MailService = mailService;
             _PricingTemplateService = pricingTemplateService;
+            _fboPricesEntityService = fboPricesEntityService;
         }
 
         #region Public Methods
@@ -155,12 +159,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     List<DB.Models.PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup.FirstOrDefault(), fboId, groupId);
                     pricingTemplateIds = templates.Select(x => x.Oid).ToList();
                 }
-                var fboPrices = await _context.Fboprices.Where(x =>
-                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
-                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                    x.Expired != true && x.Fboid == fboId)
-                    .AsNoTracking()
-                    .ToListAsync();
+                var fboPrices = await _fboPricesEntityService.GetListBySpec(new CurrentFboPricesByFboIdSpecification(fboId));
                 var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Contains(x.Oid))
                     .Include(x => x.CustomerMargins)
                     .AsNoTracking()
@@ -222,7 +221,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                               } equals new
                                               {
                                                   fboId = fp.Fboid ?? 0,
-                                                  product = feesAndTaxesPassedIn == null ? fp.GenericProduct : fp.Product
+                                                  product = feesAndTaxesPassedIn == null ? fp.Product.Split(' ')[1] : fp.Product
                                               }
                                               join tmp in tempAddonMargin on new
                                               {

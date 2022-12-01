@@ -20,6 +20,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
 
         Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuoteDatesForAirport(string icao,
             bool useCache = true);
+        public Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID);
     }
 
     public class CompanyPricingLogService : BaseDTOService<CompanyPricingLogDto, DB.Models.CompanyPricingLog, FboLinxContext>, ICompanyPricingLogService
@@ -59,6 +60,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             }
             
             return result;
+        }
+
+        public async Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID)
+        {
+            //TODO: Refactoring: move this to a bulk insert method once we establish a service for CompanyPricingLog
+            List<string> icaoList = ICAO.Split(',').Select(x => x.Trim())
+                .Where(x => !string.IsNullOrEmpty(x)).ToList();
+            List<CompanyPricingLogDto> companyPricingLogs = new List<CompanyPricingLogDto>();
+            foreach (string icao in icaoList)
+            {
+                companyPricingLogs.Add(new CompanyPricingLogDto
+                {
+                    CompanyId = FuelerlinxCompanyID,
+                    ICAO = icao,
+                    CreatedDate = DateTime.Now
+                });
+            }
+
+            await BulkInsert(companyPricingLogs);
         }
 
         private async Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuotesForAirportFromCache(

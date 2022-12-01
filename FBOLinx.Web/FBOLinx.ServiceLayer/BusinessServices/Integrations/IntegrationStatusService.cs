@@ -1,22 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Specifications;
-using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
-using FBOLinx.ServiceLayer.BusinessServices.Customers;
-using FBOLinx.ServiceLayer.BusinessServices.Fbo;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 {

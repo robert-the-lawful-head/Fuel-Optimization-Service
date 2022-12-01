@@ -22,7 +22,6 @@ using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.DTO;
-using FBOLinx.DB.Specifications;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
@@ -31,7 +30,13 @@ using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.FboPrices;
+using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
+using FBOLinx.ServiceLayer.DTO.Requests;
+using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -44,30 +49,37 @@ namespace FBOLinx.Web.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JwtManager _jwtManager;
         private IPriceFetchingService _PriceFetchingService;
-        private readonly FbopricesService _fbopricesService;
+        private readonly IFboPricesService _fbopricesService;
         private readonly DateTimeService _dateTimeService;
         private readonly IFboService _iFboService;
         private readonly IMissedQuoteLogService _missedQuoteLogService;
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
-        private readonly FboPreferencesService _fboPreferencesService;
+        private readonly IFboPreferencesService _fboPreferencesService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
-
+        private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly CustomerService _customerService;
+        private readonly ICompanyPricingLogService _companyPricingLogService;
+        private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
 
         public FbopricesController(
             FboLinxContext context,
             IHttpContextAccessor httpContextAccessor,
-            JwtManager jwtManager, 
-            RampFeesService rampFeesService, 
-            AircraftService aircraftService, 
+            JwtManager jwtManager,
+            RampFeesService rampFeesService,
+            AircraftService aircraftService,
             IPriceFetchingService priceFetchingService,
-            FbopricesService fbopricesService,
+            IFboPricesService fbopricesService,
             DateTimeService dateTimeService,
             IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
-            FboPreferencesService fboPreferencesService,
+            IFboPreferencesService fboPreferencesService,
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
-            IMissedQuoteLogService missedQuoteLogService
-            )
+            IMissedQuoteLogService missedQuoteLogService,
+            IPricingTemplateService pricingTemplateService
+,
+            ICompanyPricingLogService companyPricingLogService,
+            ServiceLayer.BusinessServices.User.IUserService userService,
+            CustomerService customerService)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
@@ -80,13 +92,10 @@ namespace FBOLinx.Web.Controllers
             _integrationUpdatePricingLogService = integrationUpdatePricingLogService;
             _iFboService = iFboService;
             _missedQuoteLogService = missedQuoteLogService;
-        }
-
-        // GET: api/Fboprices
-        [HttpGet]
-        public IEnumerable<Fboprices> GetFboprices()
-        {
-            return _context.Fboprices;
+            _pricingTemplateService = pricingTemplateService;
+            _companyPricingLogService = companyPricingLogService;
+            _userService = userService;
+            _customerService = customerService;
         }
 
         // GET: api/Fboprices/5
@@ -98,13 +107,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await _context.Fboprices.FindAsync(id);
-            if (fboprices == null)
-            {
-                return NotFound();
-            }
-
-            fboprices.Id = _context.MappingPrices.Where(x => x.FboPriceId == fboprices.Oid).Select(x => x.GroupId).FirstOrDefault();
+            var fboprices = await _fbopricesService.GetFboPricesRecords(id);
             return Ok(fboprices);
         }
 
@@ -117,18 +120,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _fbopricesService.GetPrices(fboId);
-
-            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
-
-            foreach(var price in filteredResult)
-            {
-                if (price.Price != null)
-                {
-                    price.EffectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
-                    price.EffectiveTo = await _iFboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
-                }
-            }
+            var filteredResult = await _fbopricesService.GetCurrentPrices(fboId);
 
             return Ok(filteredResult);
         }
@@ -142,9 +134,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _fbopricesService.GetPrices(fboId);
+            var filteredResult = await _fbopricesService.GetStagedPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null).ToList();
             return Ok(filteredResult);
         }
 
@@ -157,83 +148,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var prices = new List<FboPricesUpdateGenerator>();
-            var fboProducts = await _fboPreferencesService.GetFboProducts(fboId);
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes)).ToArray();
-            var result = await _fbopricesService.GetPrices(fboId);
-
-            foreach (var product in fboProducts)
-            {
-                var fboPricesUpdateGenerator = new FboPricesUpdateGenerator();
-
-                var filteredResultCost = result.Where(f => f.Product == product.ToString() + " Cost" && (f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-                var filteredResultRetail = result.Where(f => f.Product == product.ToString() + " Retail" && (f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-
-                var currentRetailResult = result.Where(f => f.Product == product.ToString() + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-
-                if ((filteredResultCost == null || filteredResultCost.Oid == 0) && (filteredResultRetail == null || filteredResultRetail.Oid == 0))
-                {
-                    fboPricesUpdateGenerator.Product = product.ToString();
-                    fboPricesUpdateGenerator.Fboid = fboId;
-                    if (currentRetailResult != null)
-                    {
-                        if (currentRetailResult.Oid > 0 && !currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
-                        {
-                            fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1);
-                            fboPricesUpdateGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesUpdateGenerator.EffectiveFrom.ToShortDateString()));
-
-                            if (currentRetailResult.Source == FboPricesSource.X1)
-                                fboPricesUpdateGenerator.Source = 1;
-                        }
-                        else if (currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
-                        {
-                            fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.TimeStamp == null ? DateTime.UtcNow : currentRetailResult.TimeStamp.GetValueOrDefault();
-                            fboPricesUpdateGenerator.EffectiveTo = DateTime.Parse("12/31/9999");
-                            fboPricesUpdateGenerator.PricePap = currentRetailResult.Price;
-                            fboPricesUpdateGenerator.Source = 1;
-
-                            var currentCostResult = result.Where(f => f.Product == product.ToString() + " Cost" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-                            fboPricesUpdateGenerator.PriceCost = currentCostResult.Price;
-                        }
-                    }
-                }
-                else
-                {
-                    if (filteredResultCost != null)
-                    {
-                        fboPricesUpdateGenerator.OidCost = filteredResultCost.Oid;
-                        fboPricesUpdateGenerator.PriceCost = filteredResultCost.Price;
-                        fboPricesUpdateGenerator.Product = product.ToString();
-                        fboPricesUpdateGenerator.Fboid = fboId;
-                        fboPricesUpdateGenerator.EffectiveFrom = filteredResultCost.EffectiveFrom;
-                        fboPricesUpdateGenerator.EffectiveTo = filteredResultCost.EffectiveTo;
-                    }
-
-                    if (filteredResultRetail != null)
-                    {
-                        fboPricesUpdateGenerator.OidPap = filteredResultRetail.Oid;
-                        fboPricesUpdateGenerator.PricePap = filteredResultRetail.Price;
-
-                        if (fboPricesUpdateGenerator.Product == "")
-                        {
-                            fboPricesUpdateGenerator.Product = product.ToString();
-                            fboPricesUpdateGenerator.Fboid = fboId;
-                            fboPricesUpdateGenerator.EffectiveFrom = filteredResultRetail.EffectiveFrom;
-                            fboPricesUpdateGenerator.EffectiveTo = filteredResultRetail.EffectiveTo;
-                        }
-                    }
-                }
-
-                if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveFrom))
-                    fboPricesUpdateGenerator.EffectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
-
-                if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault()))
-                    fboPricesUpdateGenerator.EffectiveTo =
-                        await _iFboService.GetAirportLocalDateTimeByUtcFboId(
-                            fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
-
-                prices.Add(fboPricesUpdateGenerator);
-            }
+            var prices = await _fbopricesService.GetFbopricesByFboIdAllStaged(fboId);
 
             return Ok(prices);
         }
@@ -249,48 +164,16 @@ namespace FBOLinx.Web.Controllers
 
             var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
 
-            var activePricingCost = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveFrom <= DateTime.UtcNow && s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Cost" && s.Fboid == fboId && s.Expired != true);
-            var activePricingRetail = await _context.Fboprices.FirstOrDefaultAsync(s => s.EffectiveFrom <= DateTime.UtcNow && s.EffectiveTo > DateTime.UtcNow && s.Product == "JetA Retail" && s.Fboid == fboId && s.Expired != true);
-            
+            var activePricingCost = await _fbopricesService.GetCurrentCostPrice(fboId);
+            var activePricingRetail = await _fbopricesService.GetCurrentRetailPrice(fboId);
+
+
             if (activePricingCost != null && activePricingRetail != null)
             {
                 return Ok(true);
             }
 
             return Ok(null);
-        }
-
-        // GET: api/Fboprices/getallfboswithexpiredretailpricing
-        [HttpGet("getallfboswithexpiredretailpricing")]
-        public async Task<IActionResult> GetAllFbosWithExpiredRetailPricing([FromRoute] int fboId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var fboIdsWithExpiredPrice = new List<int>();
-            var fbos = await GetAllActiveFbos().Include(f => f.Users).Include("fboAirport").Where(x => x.GroupId > 1).ToListAsync();
-
-            foreach (var fbo in fbos)
-            {
-                var retailPricing = await _context.Fboprices.Where(s => s.Product == "JetA Retail" && s.Fboid == fbo.Oid).OrderByDescending(t => t.Oid).FirstOrDefaultAsync();
-
-                if (retailPricing != null && retailPricing.Expired.GetValueOrDefault())
-                    fboIdsWithExpiredPrice.Add(fbo.Oid);
-            }
-
-            var fbosWithExpiredPricing = fbos.Where(t => fboIdsWithExpiredPrice.Contains(t.Oid)).Select(f => new FbosGridViewModel
-            {
-                Active = f.Active,
-                Fbo = f.Fbo,
-                Icao = f.FboAirport?.Icao,
-                Oid = f.Oid,
-                GroupId = f.GroupId ?? 0,
-                Users = f.Users
-            }).ToList();
-
-            return Ok(fbosWithExpiredPricing);
         }
 
         [HttpPost("suspendpricing/{oid}")]
@@ -301,41 +184,22 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            Fboprices price = _context.Fboprices.Where(f => f.Oid == oid).FirstOrDefault();
-            _context.Fboprices.Remove(price);
-
-            await _context.SaveChangesAsync();
-
+            await _fbopricesService.SuspendPricing(oid);
+           
             return Ok();
         }
 
         [HttpPost("suspend-pricing-generator")]
-        public async Task<IActionResult> SuspendPricingGenerator([FromBody] FboPricesUpdateGenerator fboPricesUpdateGenerator)
+        public async Task<IActionResult> SuspendPricingGenerator([FromBody] FboPricesUpdateGenerator fboPricesGenerator)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            List<Fboprices> prices = await _context.Fboprices.Where(f => f.Oid == fboPricesUpdateGenerator.OidCost || f.Oid == fboPricesUpdateGenerator.OidPap).ToListAsync();
-            _context.Fboprices.RemoveRange(prices);
+            await _fbopricesService.SuspendPricingGenerator(fboPricesGenerator);
 
-            await _context.SaveChangesAsync();
-
-            var result = await _fbopricesService.GetPrices(fboPricesUpdateGenerator.Fboid);
-            var currentRetailResult = result.Where(f => f.Product == fboPricesUpdateGenerator.Product + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-
-            var effectiveFrom = new DateTime();
-            var effectiveTo = new DateTime();
-            var isPricingLive = false;
-            if (currentRetailResult != null && currentRetailResult.Oid > 0)
-            {
-                effectiveFrom = await _iFboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesUpdateGenerator.Fboid);
-                effectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(effectiveFrom.ToShortDateString()));
-                isPricingLive = true;
-            }
-
-            return Ok(new { IsPricingLive = isPricingLive, EffectiveFrom = effectiveFrom, EffectiveTo = effectiveTo});
+            return Ok(new { IsPricingLive = fboPricesGenerator.IsLive, EffectiveFrom = fboPricesGenerator.EffectiveFrom, EffectiveTo = fboPricesGenerator.EffectiveTo });
         }
 
         [HttpGet("fbo/{fboId}/product/{product}/current")]
@@ -346,11 +210,8 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await GetAllFboPrices().Where(f => f.Fboid == fboId &&
-                                                                f.Product != null &&
-                                                                f.Product.ToLower() == product.ToLower() &&
-                                                                f.EffectiveFrom <= DateTime.UtcNow &&
-                                                                f.EffectiveTo > DateTime.UtcNow).FirstOrDefaultAsync();
+            var fboprices = await _fbopricesService.GetCurrentPricesByFboId(fboId);
+            var fboPrice = fboprices.Where(f => f.Product.ToLower() == product.ToLower());
 
             return Ok(fboprices);
         }
@@ -363,26 +224,28 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            foreach (Fboprices price in fboprices)
-            {
-                if (price.Price != null)
-                {
-                    price.Timestamp = DateTime.UtcNow;
-                    List<Fboprices> oldPrices = await _context.Fboprices
-                                            .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
-                                            .ToListAsync();
-                    foreach (Fboprices oldPrice in oldPrices)
-                    {
-                        oldPrice.Expired = true;
-                        _context.Fboprices.Update(oldPrice);
-                    }
+            // No longer in use
 
-                    _context.Fboprices.Add(price);
-                    await _context.SaveChangesAsync();
-                }
-            }
+            //foreach (Fboprices price in fboprices)
+            //{
+            //    if (price.Price != null)
+            //    {
+            //        price.Timestamp = DateTime.UtcNow;
+            //        List<Fboprices> oldPrices = await _context.Fboprices
+            //                                .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(price.Fboid) && f.Product.Equals(price.Product) && !f.Expired.Equals(true))
+            //                                .ToListAsync();
+            //        foreach (Fboprices oldPrice in oldPrices)
+            //        {
+            //            oldPrice.Expired = true;
+            //            _context.Fboprices.Update(oldPrice);
+            //        }
 
-            await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboId);
+            //        _context.Fboprices.Add(price);
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
+
+            //await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboId);
 
             return Ok(null);
         }
@@ -395,22 +258,24 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            foreach (Fboprices price in fboprices)
-            {
-                if (price.Price != null)
-                {
-                    price.Timestamp = DateTime.Now;
-                    if (price.Oid > 0)
-                    {
-                        _context.Fboprices.Update(price);
-                    }
-                    else if (price.Price != null)
-                    {
-                        _context.Fboprices.Add(price);
-                    }
-                    await _context.SaveChangesAsync();
-                }
-            }
+            // No longer in use
+
+            //foreach (Fboprices price in fboprices)
+            //{
+            //    if (price.Price != null)
+            //    {
+            //        price.Timestamp = DateTime.Now;
+            //        if (price.Oid > 0)
+            //        {
+            //            _context.Fboprices.Update(price);
+            //        }
+            //        else if (price.Price != null)
+            //        {
+            //            _context.Fboprices.Add(price);
+            //        }
+            //        await _context.SaveChangesAsync();
+            //    }
+            //}
 
             return Ok(null);
         }
@@ -434,74 +299,11 @@ namespace FBOLinx.Web.Controllers
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
                 var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
-                var user = await _context.User.FindAsync(claimedId);
+                var user = await _userService.GetUserByClaimedId(claimedId);
 
                 if (user.FboId > 0)
                 {
-                    integrationUpdatePricingLog.FboId = user.FboId;
-                    integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
-
-                    var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
-                    var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
-
-                    if (request.Retail != null)
-                    {
-                        var retailPrice = new Fboprices
-                        {
-                            EffectiveFrom = effectiveFrom,
-                            EffectiveTo = effectiveTo,
-                            Product = "JetA Retail",
-                            Price = request.Retail,
-                            Fboid = user.FboId,
-                            Timestamp = DateTime.UtcNow,
-                            Source = FboPricesSource.X1
-                        };
-                        List<Fboprices> oldPrices = await _context.Fboprices
-                                                       .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Retail"))
-                                                       .ToListAsync();
-                        foreach (Fboprices oldPrice in oldPrices)
-                        {
-                            if (oldPrice.Expired != true && oldPrice.EffectiveTo > effectiveTo)
-                            {
-                                oldPrice.EffectiveTo = effectiveTo;
-                            }
-                            oldPrice.Expired = true;
-                            _context.Fboprices.Update(oldPrice);
-                        }
-                        _context.Fboprices.Add(retailPrice);
-                    }
-                    if (request.Cost != null)
-                    {
-                        var costPrice = new Fboprices
-                        {
-                            EffectiveFrom = effectiveFrom,
-                            EffectiveTo = effectiveTo,
-                            Product = "JetA Cost",
-                            Price = request.Cost,
-                            Fboid = user.FboId,
-                            Timestamp = DateTime.UtcNow,
-                            Source = FboPricesSource.X1
-                        };
-                        List<Fboprices> oldPrices = await _context.Fboprices
-                                                       .Where(f => f.Fboid.Equals(user.FboId) && f.Product.Equals("JetA Cost"))
-                                                       .ToListAsync();
-                        foreach (Fboprices oldPrice in oldPrices)
-                        {
-                            if (oldPrice.Expired != true && oldPrice.EffectiveTo > effectiveTo)
-                            {
-                                oldPrice.EffectiveTo = effectiveTo;
-                            }
-                            oldPrice.Expired = true;
-                            _context.Fboprices.Update(oldPrice);
-                        }
-                        _context.Fboprices.Add(costPrice);
-                    }
-                    await _context.SaveChangesAsync();
-
-                    await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(user.FboId);
-
-                    integrationUpdatePricingLog.Response = "Success";
-                    await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
+                    await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, user, request);
 
                     return Ok(new { message = "Success" });
                 }
@@ -537,46 +339,14 @@ namespace FBOLinx.Web.Controllers
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
                 var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
-                var user = await _context.User.FindAsync(claimedId);
-
-                var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
-                var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
-
-                if (request.Retail != null)
-                {
-                    var retailPrice = new Fboprices
-                    {
-                        EffectiveFrom = effectiveFrom,
-                        EffectiveTo = effectiveTo,
-                        Product = "JetA Retail",
-                        Price = request.Retail,
-                        Fboid = user.FboId,
-                        Source = FboPricesSource.X1
-                    };
-
-                    _context.Fboprices.Add(retailPrice);
-                }
-                if (request.Cost != null)
-                {
-                    var costPrice = new Fboprices
-                    {
-                        EffectiveFrom = effectiveFrom,
-                        EffectiveTo = effectiveTo,
-                        Product = "JetA Cost",
-                        Price = request.Cost,
-                        Fboid = user.FboId,
-                        Source = FboPricesSource.X1
-                    };
-                    _context.Fboprices.Add(costPrice);
-                }
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Success" });
+                await _fbopricesService.UpdateIntegrationStagePricing(request, claimedId);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
+
+            return Ok(new { message = "Success" });
         }
 
         // POST: api/Fboprices/analysis/prices-by-month/fbo/5
@@ -589,25 +359,28 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboPricesByMonth = await (from f in _context.Fboprices
-                                    where f.Product.ToLower() == request.Product.ToLower()
-                                          && f.Fboid == fboId
-                                          && f.EffectiveFrom >= request.StartDateTime
-                                          && f.EffectiveFrom <= request.EndDateTime
-                                    group f by new
-                                    {
-                                        f.EffectiveFrom.Value.Month,
-                                        f.EffectiveFrom.Value.Year
-                                    }
-                into results
-                                    select new
-                                    {
-                                        results.Key.Month,
-                                        results.Key.Year,
-                                        AveragePrice = results.Average((x => x.Price))
-                                    }).ToListAsync();
+            // NO LONGER IN USE
+            //var fboPricesByMonth = await (from f in _context.Fboprices
+            //                        where f.Product.ToLower() == request.Product.ToLower()
+            //                              && f.Fboid == fboId
+            //                              && f.EffectiveFrom >= request.StartDateTime
+            //                              && f.EffectiveFrom <= request.EndDateTime
+            //                        group f by new
+            //                        {
+            //                            f.EffectiveFrom.Value.Month,
+            //                            f.EffectiveFrom.Value.Year
+            //                        }
+            //    into results
+            //                        select new
+            //                        {
+            //                            results.Key.Month,
+            //                            results.Key.Year,
+            //                            AveragePrice = results.Average((x => x.Price))
+            //                        }).ToListAsync();
 
-            return Ok(fboPricesByMonth);
+            //return Ok(fboPricesByMonth);
+
+            return Ok();
         }
 
         // PUT: api/Fboprices/5
@@ -619,46 +392,48 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != fboprices.Oid)
-            {
-                return BadRequest();
-            }
+            // NO LONGER IN USE
 
-            try
-            {
-                if (FbopricesExists(id))
-                {
-                    _context.Entry(fboprices).State = EntityState.Modified;
-                    fboprices.Timestamp = DateTime.Now;
-                }
-                else
-                {
-                    Fboprices newFboPrice = new Fboprices();
-                    newFboPrice.Currency = fboprices.Currency;
-                    newFboPrice.EffectiveFrom = fboprices.EffectiveFrom;
-                    newFboPrice.EffectiveTo = fboprices.EffectiveTo;
-                    newFboPrice.Fboid = fboprices.Fboid;
-                    newFboPrice.Price = fboprices.Price;
-                    newFboPrice.Product = fboprices.Product;
-                    newFboPrice.SalesTax = fboprices.SalesTax;
-                    newFboPrice.Timestamp = DateTime.Now;
-                    _context.Fboprices.Add(newFboPrice);
-                }
-                await _context.SaveChangesAsync();
+            //if (id != fboprices.Oid)
+            //{
+            //    return BadRequest();
+            //}
 
-                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid.GetValueOrDefault());
-            }
-            catch (DbUpdateConcurrencyException)
-            {                
-                if (!FbopricesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            //try
+            //{
+            //    if (FbopricesExists(id))
+            //    {
+            //        _context.Entry(fboprices).State = EntityState.Modified;
+            //        fboprices.Timestamp = DateTime.Now;
+            //    }
+            //    else
+            //    {
+            //        Fboprices newFboPrice = new Fboprices();
+            //        newFboPrice.Currency = fboprices.Currency;
+            //        newFboPrice.EffectiveFrom = fboprices.EffectiveFrom;
+            //        newFboPrice.EffectiveTo = fboprices.EffectiveTo;
+            //        newFboPrice.Fboid = fboprices.Fboid;
+            //        newFboPrice.Price = fboprices.Price;
+            //        newFboPrice.Product = fboprices.Product;
+            //        newFboPrice.SalesTax = fboprices.SalesTax;
+            //        newFboPrice.Timestamp = DateTime.Now;
+            //        _context.Fboprices.Add(newFboPrice);
+            //    }
+            //    await _context.SaveChangesAsync();
+
+            //    await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid.GetValueOrDefault());
+            //}
+            //catch (DbUpdateConcurrencyException)
+            //{                
+            //    if (!FbopricesExists(id))
+            //    {
+            //        return NotFound();
+            //    }
+            //    else
+            //    {
+            //        throw;
+            //    }
+            //}
 
             return NoContent();
         }
@@ -667,29 +442,31 @@ namespace FBOLinx.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> PostFboprices([FromBody] Fboprices fboprices)
         {
-            int num = 0;
-            MappingPrices map = new MappingPrices();
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            // NO LONGER IN USE
 
-            fboprices.Timestamp = DateTime.Now;
-            _context.Fboprices.Add(fboprices);
-            await _context.SaveChangesAsync();
-            if (fboprices.Id == null)
-            {
-                num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
-            }
-            map.GroupId = fboprices.Id ?? num;
-            map.FboPriceId = fboprices.Oid;
-            _context.MappingPrices.Add(map);
-            await _context.SaveChangesAsync();
+            //int num = 0;
+            //MappingPrices map = new MappingPrices();
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
-            await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Oid);
+            //fboprices.Timestamp = DateTime.Now;
+            //_context.Fboprices.Add(fboprices);
+            //await _context.SaveChangesAsync();
+            //if (fboprices.Id == null)
+            //{
+            //    num = _context.MappingPrices.Select(x => x.GroupId).DefaultIfEmpty(0).Max() + 1;
+            //}
+            //map.GroupId = fboprices.Id ?? num;
+            //map.FboPriceId = fboprices.Oid;
+            //_context.MappingPrices.Add(map);
+            //await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);
+            //await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Oid);
 
+            //return CreatedAtAction("GetFboprices", new { id = fboprices.Oid }, fboprices);
+            return Ok();
         }
 
         [HttpGet("group/{groupid}/ispricingexpiredgroupadmin")]
@@ -705,18 +482,13 @@ namespace FBOLinx.Web.Controllers
             {
                 var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
 
-                var groupFbos = _context.Fbos.Where(s => s.GroupId == groupId && s.Active == true).Select(s => s.Oid).ToList();
+                var groupFbos = await _iFboService.GetFbosByGroupId(groupId);
+                var groupFboIds = groupFbos.Select(s => s.Oid).ToList();
 
-                var activePricing = await _context.Fboprices.Where(s =>
-                                            s.EffectiveFrom <= DateTime.UtcNow &&
-                                            s.EffectiveTo > DateTime.UtcNow &&
-                                            (s.Product == "JetA Cost" || s.Product == "JetA Retail") &&
-                                            s.Expired != true).ToListAsync();
+                var activePricing = await _fbopricesService.GetAllActivePrices();
 
-                var fbosActivePricing = activePricing.Where(a => groupFbos.Any(g => g == a.Fboid)).ToList();
-               
-                var fbos = await _context.Fbos.Where(x => groupFbos.Any(f => f == x.Oid)).ToListAsync();
-                foreach (var groupFbo in groupFbos)
+                var fbosActivePricing = activePricing.Where(a => groupFboIds.Any(g => g == a.Fboid)).ToList();
+                foreach (var groupFbo in groupFboIds)
                 {
                     var isFboActivePricing = fbosActivePricing.FirstOrDefault(s => s.Fboid == groupFbo);
 
@@ -725,7 +497,7 @@ namespace FBOLinx.Web.Controllers
                         FBOGroupPriceUpdateVM gPU = new FBOGroupPriceUpdateVM
                         {
                             FboId = groupFbo,
-                            FboName = fbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
+                            FboName = groupFbos.FirstOrDefault(s => s.Oid == groupFbo).Fbo
                         };
                         groupPriceUpdate.Add(gPU);
                     }
@@ -752,14 +524,9 @@ namespace FBOLinx.Web.Controllers
             {
                 await LogFuelerLinxPriceQuote(request);
 
+                var customer = await _customerService.GetCustomerByFuelerLinxId(request.FuelerlinxCompanyID);
 
-                var customer =
-                    await _context.Customers.Where(x =>
-                        x.FuelerlinxId == request.FuelerlinxCompanyID
-                        ).OrderBy(x => ((!x.GroupId.HasValue) ? 0 : x.GroupId.Value))
-                        .AsNoTracking()
-                        .FirstOrDefaultAsync();
-                if (customer == null)
+                if (customer == null || customer.Oid == 0)
                     return Ok(null);
 
                 
@@ -768,22 +535,11 @@ namespace FBOLinx.Web.Controllers
                 if (validPricing == null)
                     return Ok(null);
 
-                var customerTemplates = await
-                    (from ct in _context.CustomCustomerTypes
-                    join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
-                    select new
-                    {
-                        ct.CustomerId,
-                        ct.Fboid,
-                        ct.CustomerType,
-                        PricingTemplateName = pt.Name
-                    })
-                    .AsNoTracking()
-                    .ToListAsync();
+                var customerTemplates = await _pricingTemplateService.GetCustomerTemplates();
 
                 var result = (
                     from p in validPricing
-                    join ct in customerTemplates on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.Fboid }
+                    join ct in customerTemplates on new { p.CustomerId, p.FboId } equals new { ct.CustomerId, FboId = ct.FboId }
                     into leftJoinCustomerTypes
                     from ct in leftJoinCustomerTypes.DefaultIfEmpty()
                     select new FuelPriceResponse
@@ -818,53 +574,9 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        private async Task<string> GetMissedQuotesDebuggingInformation(Customers customer, Fbos fbo,
-            List<CustomerWithPricing> validPricing)
-        {
-            try
-            {
-                var universalTime = DateTime.UtcNow;
-                var customCustomerType = await _context.CustomCustomerTypes
-                    .Where(c => c.CustomerId == customer.Oid && c.Fboid == fbo.Oid).AsNoTracking()
-                    .FirstOrDefaultAsync();
-                var customerType = new CustomCustomerTypes();
-                customerType.CustomerType = (customCustomerType?.CustomerType).GetValueOrDefault();
-                customerType.Oid = (customCustomerType?.Oid).GetValueOrDefault();
-                var fboPrices = await _context.Fboprices.Where(x =>
-                    (!x.EffectiveTo.HasValue || x.EffectiveTo > universalTime) &&
-                    (!x.EffectiveFrom.HasValue || x.EffectiveFrom <= universalTime) &&
-                    x.Expired != true && x.Fboid == fbo.Oid).ToListAsync();
-
-                var debugging = "Valid Pricing: " + Newtonsoft.Json.JsonConvert.SerializeObject(validPricing);
-                debugging += " Custom Customer Type: " + Newtonsoft.Json.JsonConvert.SerializeObject(customerType);
-                debugging += " FBO Prices: " + Newtonsoft.Json.JsonConvert.SerializeObject(fboPrices);
-                return debugging;
-            }
-            catch (System.Exception exception)
-            {
-                return "";
-            }
-        }
-
         private async Task LogFuelerLinxPriceQuote(VolumeDiscountLoadRequest request)
         {
-            //TODO: Refactoring: move this to a bulk insert method once we establish a service for CompanyPricingLog
-            List<string> icaoList = request.ICAO.Split(',').Select(x => x.Trim())
-                .Where(x => !string.IsNullOrEmpty(x)).ToList();
-            List<CompanyPricingLog> companyPricingLogs = new List<CompanyPricingLog>();
-            foreach (string icao in icaoList)
-            {
-                companyPricingLogs.Add(new CompanyPricingLog
-                {
-                    CompanyId = request.FuelerlinxCompanyID,
-                    ICAO = icao,
-                    CreatedDate = DateTime.Now
-                });
-            }
-
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkInsertAsync(companyPricingLogs);
-            await transaction.CommitAsync();
+            await _companyPricingLogService.AddCompanyPricingLogs(request.ICAO, request.FuelerlinxCompanyID);
         }
 
         [HttpPost("price-lookup-for-customer")]
@@ -891,21 +603,24 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fboprices = await _context.Fboprices.FindAsync(id);
-            if (fboprices == null)
-            {
-                return NotFound();
-            }
-            var fbopricesRange = await _context.Fboprices.Where(x => 
-                                                            x.EffectiveFrom == fboprices.EffectiveFrom && 
-                                                            x.EffectiveTo == fboprices.EffectiveTo && 
-                                                            x.Fboid == fboprices.Fboid
-                                                            ).ToListAsync();
+            // NO LONGER IN USE
 
-            _context.Fboprices.RemoveRange(fbopricesRange);
-            await _context.SaveChangesAsync();
+            //var fboprices = await _context.Fboprices.FindAsync(id);
+            //if (fboprices == null)
+            //{
+            //    return NotFound();
+            //}
+            //var fbopricesRange = await _context.Fboprices.Where(x => 
+            //                                                x.EffectiveFrom == fboprices.EffectiveFrom && 
+            //                                                x.EffectiveTo == fboprices.EffectiveTo && 
+            //                                                x.Fboid == fboprices.Fboid
+            //                                                ).ToListAsync();
 
-            return Ok(fbopricesRange);
+            //_context.Fboprices.RemoveRange(fbopricesRange);
+            //await _context.SaveChangesAsync();
+
+            //return Ok(fbopricesRange);
+            return Ok();
         }
 
         // POST: api/Fboprices/update-price-generator
@@ -917,111 +632,16 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var isStaged = true;
+            fboprices = await _fbopricesService.PostPriceGenerator(fboprices);
 
-            try
-            {
-                var utcEffectiveFrom = await _dateTimeService.ConvertLocalTimeToUtc(fboprices.Fboid, fboprices.EffectiveFrom);
-                var utcEffectiveTo = await _dateTimeService.ConvertLocalTimeToUtc(fboprices.Fboid, fboprices.EffectiveTo.GetValueOrDefault());
-
-                if (utcEffectiveFrom <= DateTime.UtcNow)
-                {
-                    List<Fboprices> oldPrices = await _context.Fboprices
-                                           .Where(f => f.EffectiveFrom <= DateTime.UtcNow && f.Fboid.Equals(fboprices.Fboid) && f.Product.Contains(fboprices.Product) && f.Expired == null)
-                                           .ToListAsync();
-                    foreach (Fboprices oldPrice in oldPrices)
-                    {
-                        oldPrice.Expired = true;
-                        oldPrice.EffectiveTo = utcEffectiveFrom.AddMinutes(-1);
-                        _context.Fboprices.Update(oldPrice);
-                    }
-
-                    isStaged = false;
-                }
-
-                if (FbopricesExists(fboprices.OidPap))
-                {
-                    var fboPrice = await _context.Fboprices.Where(f => f.Oid == fboprices.OidPap).FirstOrDefaultAsync();
-                    fboPrice.Price = fboprices.PricePap;
-                    fboPrice.EffectiveFrom = utcEffectiveFrom;
-                    fboPrice.EffectiveTo = utcEffectiveTo;
-                    fboPrice.Timestamp = DateTime.Now;
-                    _context.Entry(fboPrice).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    Fboprices newFboPrice = new Fboprices();
-                    newFboPrice.EffectiveFrom = utcEffectiveFrom;
-                    newFboPrice.EffectiveTo = utcEffectiveTo;
-                    newFboPrice.Fboid = fboprices.Fboid;
-                    newFboPrice.Price = fboprices.PricePap;
-                    newFboPrice.Product = fboprices.Product + " Retail";
-                    newFboPrice.Timestamp = DateTime.Now;
-                    _context.Fboprices.Add(newFboPrice);
-                    await _context.SaveChangesAsync();
-
-                    fboprices.OidPap = newFboPrice.Oid;
-                }
-
-                if (FbopricesExists(fboprices.OidCost))
-                {
-                    var fboPrice = await _context.Fboprices.Where(f => f.Oid == fboprices.OidCost).FirstOrDefaultAsync();
-                    fboPrice.Price = fboprices.PriceCost;
-                    fboPrice.EffectiveFrom = utcEffectiveFrom;
-                    fboPrice.EffectiveTo = utcEffectiveTo;
-                    fboPrice.Timestamp = DateTime.Now;
-                    _context.Entry(fboPrice).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    Fboprices newFboPrice = new Fboprices();
-                    newFboPrice.EffectiveFrom = utcEffectiveFrom;
-                    newFboPrice.EffectiveTo = utcEffectiveTo;
-                    newFboPrice.Fboid = fboprices.Fboid;
-                    newFboPrice.Price = fboprices.PriceCost;
-                    newFboPrice.Product = fboprices.Product + " Cost";
-                    newFboPrice.Timestamp = DateTime.Now;
-                    _context.Fboprices.Add(newFboPrice);
-                    await _context.SaveChangesAsync();
-
-                    fboprices.OidCost = newFboPrice.Oid;
-                }
-
-                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboprices.Fboid);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FbopricesExists(fboprices.OidPap))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Ok(new { OidPap = fboprices.OidPap, OidCost = fboprices.OidCost,  Status = isStaged ? "staged" : "published" }) ;
+            return Ok(new { OidPap = fboprices.OidPap, OidCost = fboprices.OidCost,  Status = fboprices.IsStaged ? "staged" : "published" }) ;
         }
 
         // DELETE: api/Fboprices/delete-price/fbo/5/jeta
         [HttpDelete("delete-price-by-product/fbo/{fboId}/product/{product}")]
         public async Task<IActionResult> DeletePriceByProduct([FromRoute] int fboId, [FromRoute] string product)
         {
-            List<Fboprices> prices = await _context.Fboprices.Where(f => f.Fboid == fboId && f.Expired == null && (f.Product == product + " Retail" || f.Product == product + " Cost")).ToListAsync();
-            _context.Fboprices.RemoveRange(prices);
-
-            await _context.SaveChangesAsync();
-
-            var fboPrices = await _fbopricesService.GetPrices(fboId);
-            var fboPrice = fboPrices.Where(f => f.Oid > 0 && f.Product.Contains(product)).ToList();
-            if (fboPrice.Count > 0)
-            {
-                _context.Fboprices.RemoveRange((IEnumerable<Fboprices>)fboPrice);
-                await _context.SaveChangesAsync();
-            }
+            await _fbopricesService.DeletePricesByProduct(fboId, product);
 
             return Ok();
         }
@@ -1038,21 +658,6 @@ namespace FBOLinx.Web.Controllers
             await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(fboId);
 
             return Ok();
-        }
-
-        private bool FbopricesExists(int id)
-        {
-            return _context.Fboprices.Any(e => e.Oid == id);
-        }
-
-        private IQueryable<Fboprices> GetAllFboPrices()
-        {
-            return _context.Fboprices.AsQueryable();
-        }
-
-        private IQueryable<Fbos> GetAllActiveFbos()
-        {
-            return _context.Fbos.Where(f => f.Active == true).AsQueryable();
         }
     }
 }

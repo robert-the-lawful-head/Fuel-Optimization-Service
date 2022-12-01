@@ -38,6 +38,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
         Task<FbosDto> GetFboByFboId(int fboId);
+        public Task<List<FbosDto>> GetFbosByGroupId(int groupId);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
@@ -261,6 +262,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
 
             return fboAirport.Icao;
+        }
+
+        public async Task<List<FbosDto>> GetFbosByGroupId(int groupId)
+        {
+            var fbos = await GetListbySpec(new AllFbosByGroupIdSpecification(groupId));
+            return fbos;
         }
     }
 }
