@@ -1,11 +1,11 @@
 
 .layout-setting-button{
     position: absolute;
-    top: 150px;
+    top: calc(30%);
 }
 .map-controls-container{
     position: absolute;
-    top: 20px;
+    top: calc(30%);
     z-index: 1000;
 }
 .map-filters-container{

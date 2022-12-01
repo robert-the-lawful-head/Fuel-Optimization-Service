@@ -29,6 +29,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="DTO\FbopricesDto.g.cs" />
+	  <Compile Remove="DTO\FbosalesTaxDto.g.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Generated Remove="Dto\AuditDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />

@@ -6,11 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOPrices")]
-    public partial class Fboprices
+    public partial class Fboprices : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         [Column("FBOID")]
         public int? Fboid { get; set; }
         [StringLength(50)]
@@ -26,25 +23,25 @@ namespace FBOLinx.DB.Models
         [StringLength(50)]
         public string Currency { get; set; }
         public bool? Expired { get; set; }
-        [NotMapped]
-        public int? Id { get; set; }
+        //[NotMapped]
+        //public int? Id { get; set; }
 
-        [NotMapped]
-        public string GenericProduct
-        {
-            get
-            {
-                if (Product.Contains("Cost"))
-                    return "Cost";
-                if (Product.Contains("Retail"))
-                    return "Retail";
-                return "";
-            }
-        }
+        //[NotMapped]
+        //public string GenericProduct
+        //{
+        //    get
+        //    {
+        //        if (Product.Contains("Cost"))
+        //            return "Cost";
+        //        if (Product.Contains("Retail"))
+        //            return "Retail";
+        //        return "";
+        //    }
+        //}
 
-        [ForeignKey("Fboid")]
-        [InverseProperty("Fboprices")]
-        public Fbos Fbo { get; set; }
+        //[ForeignKey("Fboid")]
+        //[InverseProperty("Fboprices")]
+        //public Fbos Fbo { get; set; }
 
         public FboPricesSource Source { get; set; } = FboPricesSource.FboLinx;
     }

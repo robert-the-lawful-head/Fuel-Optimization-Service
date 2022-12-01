@@ -64,9 +64,8 @@
                                                             placeholder="Enter email body here..."
                                                             (blur)="formChanged($event)"
                                                             height="400"
-                                                            [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
-                                                            <!--(imageSelected)="onselected($event)"></ejs-richtexteditor> (imageUploading)='onImageUploading($event)'-->
-
+                                                            [insertImageSettings]='insertImageSettings'
+                                                            (imageSelected)='onImageSelected($event)'></ejs-richtexteditor>
                                         <h6 class="mt-2">File Attachment</h6>
                                         <div>
                                             <input type="file"

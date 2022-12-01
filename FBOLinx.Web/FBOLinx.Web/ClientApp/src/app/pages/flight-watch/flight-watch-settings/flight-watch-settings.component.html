@@ -14,20 +14,23 @@
             </mat-menu>
         </div>
     </div>
-    <app-flight-watch-filters
+    <ng-container *ngIf="showFilters">
+        <app-flight-watch-filters
         [icaoList]="icaoList"
         [icao]="icao"
         [isSearchAirportHidden]="true"
         (icaoChanged)="icaoChanged.emit($event)"
         ></app-flight-watch-filters>
+    </ng-container>
 </div>
 <div class="data-container" >
     <app-flight-watch-setting-table
         #arrivalsTable
         [data]="arrivals"
         [isArrival]="true"
-        [columns]="columns"
+        [columns]="arrivalsColumns"
         (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
     ></app-flight-watch-setting-table>
 </div>
 <div class="data-container">
@@ -35,7 +38,8 @@
         #departuresTable
         [data]="departures"
         [isArrival]="false"
-        [columns]="columns"
+        [columns]="departuresColumns"
         (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
     ></app-flight-watch-setting-table>
 </div>

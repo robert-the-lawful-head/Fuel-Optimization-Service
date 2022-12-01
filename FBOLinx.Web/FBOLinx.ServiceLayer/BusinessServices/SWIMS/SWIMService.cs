@@ -58,6 +58,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly FAAAircraftMakeModelEntityService _FAAAircraftMakeModelEntityService;
         private IAirportWatchFlightLegStatusService _AirportWatchFlightLegStatusService;
         private ISWIMFlightLegService _SwimFlightLegService;
+        private SWIMFlightLegDataErrorEntityService _SWIMFlightLegDataErrorEntityService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -67,7 +68,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             AFSAircraftEntityService afsAircraftEntityService,
             FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService,
             IAirportWatchFlightLegStatusService airportWatchFlightLegStatusService,
-            ISWIMFlightLegService swimFlightLegService)
+            ISWIMFlightLegService swimFlightLegService,
+            SWIMFlightLegDataErrorEntityService swimFlightLegDataErrorEntityService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportWatchFlightLegStatusService = airportWatchFlightLegStatusService;
@@ -85,6 +87,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _pricingTemplateService = pricingTemplateService;
             _AFSAircraftEntityService = afsAircraftEntityService;
             _FAAAircraftMakeModelEntityService = faaAircraftMakeModelEntityService;
+            _SWIMFlightLegDataErrorEntityService = swimFlightLegDataErrorEntityService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
@@ -164,7 +167,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                     {
                         flightLegDataMessageDto.SWIMFlightLegId = existingLeg.Oid;
                         flightLegDataMessageDto.MessageTimestamp = DateTime.UtcNow;
-                        flightLegDataMessagesToInsert.Add(flightLegDataMessageDto.Adapt<SWIMFlightLegData>());
+                        SWIMFlightLegData swimFlightLegDataToInsert = flightLegDataMessageDto.Adapt<SWIMFlightLegData>();
+                        SetFlightLegDataError(swimFlightLegDataToInsert);
+                        flightLegDataMessagesToInsert.Add(swimFlightLegDataToInsert);
                     }
 
                     if (existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
@@ -212,6 +217,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         }
                     }
 
+                    foreach (SWIMFlightLegData swimFlightLegDataMessage in flightLegToInsert.SWIMFlightLegDataMessages)
+                    {
+                        SetFlightLegDataError(swimFlightLegDataMessage);
+                    }
+                    
                     flightLegsToInsert.Add(flightLegToInsert);
                 }
             }
@@ -236,7 +246,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             
             if (flightLegDataMessagesToInsert.Count > 0)
             {
-                await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert);
+                await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert, new BulkConfig()
+                {
+                    SetOutputIdentity = true,
+                    IncludeGraph = true
+                });
             }
 
             if (flightLegsToUpdate.Count > 0)
@@ -289,7 +303,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _SwimFlightLegService.BulkInsert(placeholderRecordsToInsert);
             }
         }
-        
+
+        private void SetFlightLegDataError(SWIMFlightLegData swimFlightLegData)
+        {
+            if (string.IsNullOrWhiteSpace(swimFlightLegData.RawXmlMessage))
+            {
+                return;
+            }
+
+            swimFlightLegData.SWIMFlightLegDataErrors = new List<SWIMFlightLegDataError>()
+            {
+                new SWIMFlightLegDataError() { XmlMessage = swimFlightLegData.RawXmlMessage }
+            };
+        }
 
         private async Task SetFlightLegsLocationAndTrajectory(List<FlightWatchModel> flightWatchModels)
         {

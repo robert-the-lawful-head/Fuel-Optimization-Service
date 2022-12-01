@@ -54,12 +54,12 @@ namespace FBOLinx.Web.Services
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
         private IFboService _fboService;
-        private readonly FbopricesService _fbopricesService;
+        private readonly IFboPricesService _fbopricesService;
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
             FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
-            IFboService fboService, FbopricesService fbopricesService)
+            IFboService fboService, IFboPricesService fbopricesService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;

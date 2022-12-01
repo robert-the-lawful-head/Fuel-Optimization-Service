@@ -15,11 +15,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[AirportWatchDistinctBoxes]",
-         "ObjectType": 0
-      },
-      {
-      "Name": "[dbo].[MissedQuoteLog]",
+         "Name": "[dbo].[User]",
          "ObjectType": 0
       }
    ],

@@ -1,6 +1,6 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+<ni-breadcrumb [menu]="breadcrumb" *ngIf="showBreadcrumb"></ni-breadcrumb>
 
-<div class="after-breadcrumb flight-watch-tabs">
+<div [ngClass]="{'after-breadcrumb': showBreadcrumb}" class="flight-watch-tabs">
     <mat-drawer-container autosize>
         <mat-drawer-content>
             <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
@@ -15,10 +15,13 @@
                         >
                     </button>
                 </div>
-                <div class="aircraft-legend">
+                <div class="aircraft-legend" *ngIf="showLegend">
                     <app-aircraft-legend></app-aircraft-legend>
                 </div>
-                <div class="flight-watch-container">
+                <div [ngClass]="{
+                    'lobby': isLobbyView,
+                    'default': !isLobbyView
+                }" class="flight-watch-container">
                     <app-flight-watch-map-wrapper
                         id="map-wrapper"
                         #map
@@ -29,9 +32,10 @@
                         style="width: 100%"
                         [center]="center"
                         [data]="flightWatchData"
-                        [isStable]="flightWatchData.length > 0"
+                        [isStable]="isStable"
                         [icaoList]="airportsICAO"
                         [icao]="selectedICAO"
+                        [showFilters]="showFilters"
                     ></app-flight-watch-map-wrapper>
                 </div>
             </div>
@@ -55,6 +59,8 @@
                     (typesFilterChanged)="onTypesFilterChanged($event)"
                     (icaoChanged)="updateIcao($event)"
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
+                    [showFilters]="showFilters"
+                    [isLobbyView]="isLobbyView"
                 ></app-flight-watch-settings>
             </ng-container>
         </mat-drawer>

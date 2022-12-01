@@ -5,7 +5,7 @@ import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sor
 import { MatTableDataSource } from '@angular/material/table';
 
 import { SharedService } from 'src/app/layouts/shared-service';
-import { stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
+import { stautsDisplayText, stautsIcons, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -32,6 +32,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
     @Input() columns: ColumnType[];
+    @Input() isLobbyView: boolean =  false;
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() saveSettings = new EventEmitter();
@@ -71,7 +72,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         this.dataSource.sort = this.sort;
 
 
-        this.sort.sortChange.subscribe(() => {
+        this.sort?.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
@@ -130,11 +131,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return this.columns
             .filter((column) => {
                 if(column.hidden) return false;
-                if(this.isArrival && column.name == swimTableColumns.origin) return false;
-                if(this.isArrival && column.name == swimTableColumns.eta) return false;
 
-                if(!this.isArrival && column.name == swimTableColumns.destination) return false;
-                if(!this.isArrival && column.name == swimTableColumns.atd) return false;
+                // if(this.isArrival && column.name == swimTableColumns.originAirport) return false;
+                // if(this.isArrival && column.name == swimTableColumns.eta) return false;
+
+                // if(!this.isArrival && column.name == swimTableColumns.destinationAirport) return false;
+                // if(!this.isArrival && column.name == swimTableColumns.atd) return false;
 
                 return true;
             })
@@ -177,6 +179,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.status) return row.statusDisplayString;
+        if(column == swimTableColumns.makeModel) return this.getMakeModelDisplayString(row);
+
         let col = this.columns.find( c => {
             return c.id == column
         });
@@ -204,6 +208,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
         return stautsTextColor.default;
     }
+    hasIcon(column:string): boolean{
+        return column == swimTableColumns.status;
+    }
+    getIcon(row: Swim): string{
+        return stautsIcons[FlightLegStatus[row.status]];
+    }
     getTailNumberTextColor(row: Swim) {
         if (row.isActiveFuelRelease) return tailNumberTextColor.activeFuelRelease;
         if (row.isFuelerLinxClient) return tailNumberTextColor.fuelerLinx;
@@ -211,12 +221,12 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
         return tailNumberTextColor.outOfNetwork;
     }
-    getPastArrivalsValue(row: Swim){
+    getPastArrivalsValue(row: Swim): number{
         return this.isArrival
             ? row.arrivals
             : row.departures;
 }
-    sortData(sort: Sort) {
+    sortData(sort: Sort){
         this.hasChangeDefaultSort = true;
         this.dataSource.data.sort((a, b) => {
           const isAsc = sort.direction === 'asc';
@@ -235,9 +245,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
             return this.compare(a.etaLocal, b.etaLocal, isAsc);
             case swimTableColumns.atd:
                 return this.compare(a.atdLocal, b.atdLocal, isAsc);
-            case swimTableColumns.origin:
+            case swimTableColumns.originAirport:
                 return this.compare(a.origin, b.origin, isAsc);
-            case swimTableColumns.destination:
+            case swimTableColumns.destinationAirport:
                 return this.compare(a.arrivalICAO, b.arrivalICAO, isAsc);
             case swimTableColumns.isAircraftOnGround:
                 return this.compare(a.isAircraftOnGround, b.isAircraftOnGround, isAsc);
@@ -248,8 +258,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
           }
         });
     }
-    compare(a: number | string , b: number | string, isAsc: boolean) {
+    compare(a: number | string , b: number | string, isAsc: boolean): number{
         var result =  (a < b ? -1 : 1) * (isAsc ? 1 : -1);
         return result;
+    }
+    getNoDataToDisplayString(){
+        return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
     }
 }

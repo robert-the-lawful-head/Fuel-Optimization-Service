@@ -18,7 +18,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
         )}`;
 
         icon += `${isSelectedAircraft ? '_reversed' : ''}${
-            data.fuelOrderId != null
+            data.isActiveFuelRelease
                 ? '_release'
                 : data.isFuelerLinxClient
                 ? '_fuelerlinx'

@@ -99,11 +99,9 @@ namespace FBOLinx.Web
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
             services.AddTransient<GroupFboService, GroupFboService>();
-            services.AddTransient<FboPreferencesService, FboPreferencesService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
             services.AddTransient<EmailContentService, EmailContentService>();
             services.AddTransient<AssociationsService, AssociationsService>();
-            services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
             services.AddTransient<IGroupEntityService, GroupEntityService>();

@@ -27,5 +27,66 @@ namespace FBOLinx.ServiceLayer.Test.Services.SWIM
 
             Assert.IsNotEmpty(historicalFlightLegs);
         }
+
+        [Test]
+        public async Task SaveFlightLegData_RawXmlMessageProvided_SWIMFlightLegDataErrorCreated()
+        {
+            Arrange(services =>
+            {
+            });
+
+            SWIMFlightLegDTO testFlightLeg = new SWIMFlightLegDTO();
+            testFlightLeg.AircraftIdentification = "test";
+            testFlightLeg.DepartureICAO = "test";
+            testFlightLeg.ArrivalICAO = "test";
+            testFlightLeg.ATD = DateTime.UtcNow;
+            testFlightLeg.ETA = DateTime.UtcNow;
+            testFlightLeg.DepartureCity = "test";
+            testFlightLeg.ArrivalCity = "test";
+
+            testFlightLeg.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>()
+            {
+                new ()
+                {
+                    Altitude = 1,
+                    Latitude = 2,
+                    Longitude = 3,
+                    ETA = DateTime.UtcNow,
+                    MessageTimestamp = DateTime.UtcNow,
+                    RawXmlMessage = "test",
+                }
+            };
+
+            await subject.SaveFlightLegData(new List<SWIMFlightLegDTO>() { testFlightLeg });
+        }
+        
+        [Test]
+        public async Task SaveFlightLegData_RawXmlMessageForExistingLegProvided_SWIMFlightLegDataErrorCreated()
+        {
+            Arrange(services =>
+            {
+            });
+
+            SWIMFlightLegDTO testFlightLeg = new SWIMFlightLegDTO();
+            testFlightLeg.AircraftIdentification = "test";
+            testFlightLeg.DepartureICAO = "KATL";
+            testFlightLeg.ArrivalICAO = "CYYC";
+            testFlightLeg.ATD = Convert.ToDateTime("2022-11-29 22:47:00.000");
+
+            testFlightLeg.SWIMFlightLegDataMessages = new List<SWIMFlightLegDataDTO>()
+            {
+                new ()
+                {
+                    Altitude = 1,
+                    Latitude = 2,
+                    Longitude = 3,
+                    ETA = DateTime.UtcNow,
+                    MessageTimestamp = DateTime.UtcNow,
+                    RawXmlMessage = "test2",
+                }
+            };
+
+            await subject.SaveFlightLegData(new List<SWIMFlightLegDTO>() { testFlightLeg });
+        }
     }
 }
