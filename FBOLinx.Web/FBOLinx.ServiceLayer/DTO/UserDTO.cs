@@ -5,7 +5,7 @@ using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
-    public partial class UserDto
+    public partial class UserDTO
     {
         public int Oid { get; set; }
         public string FirstName { get; set; }

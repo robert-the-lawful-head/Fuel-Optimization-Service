@@ -119,7 +119,7 @@ namespace FBOLinx.DB.Models
         [InverseProperty("Fbo")]
         public ICollection<User> Users { get; set; }
 
-        [InverseProperty("Fbo")]
-        public ICollection<Fboprices> Fboprices { get; set; }
+        //[InverseProperty("Fbo")]
+        //public ICollection<Fboprices> Fboprices { get; set; }
     }
 }

@@ -22,5 +22,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
         Task<PricingTemplateDto> GetPricingTemplateById(int oid);
         Task<List<DB.Models.PricingTemplate>> GetStandardPricingTemplatesForAllCustomers(int fboId, int groupId);
         Task<List<CustomerAircraftsPricingTemplatesModel>> GetCustomerAircraftTemplates(int fboId, int groupId);
+        public Task<List<CustomerPricingTemplatesModel>> GetCustomerTemplates();
     }
 }

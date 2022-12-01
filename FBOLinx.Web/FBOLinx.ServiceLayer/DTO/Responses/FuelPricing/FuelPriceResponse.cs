@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices
+namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
 {
     public class FuelPriceResponse
     {
