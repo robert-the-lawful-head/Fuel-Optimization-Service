@@ -40,19 +40,7 @@ export interface Swim {
     isOutOfNetwork: boolean | any;
     isActiveFuelRelease: boolean | any;
     isFuelerLinxClient: boolean | any;
-}
-export interface Time {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
+    faaRegisteredOwner: string;
 }
 export const swimTableColumns = {
     status: 'status',
@@ -60,10 +48,13 @@ export const swimTableColumns = {
     flightDepartment: 'flightDepartment',
     icaoAircraftCode: 'icaoAircraftCode',
     ete: 'ete',
-    eta: 'eta',
-    atd: 'atd',
-    origin: 'arrivalICAO',
-    destination: 'departureICAO',
+    eta: 'etaLocal',
+    atd: 'atdLocal',
+    originAirport: 'arrivalICAO',
+    originCity: 'arrivalCity',
+    makeModel: 'makeModel',
+    destinationAirport: 'departureICAO',
+    destinationCity: 'departureCity',
     isAircraftOnGround: 'isAircraftOnGround',
     itpMarginTemplate: 'itpMarginTemplate',
     etaAtdZulu: 'etaAtdZulu',
@@ -76,12 +67,15 @@ export const swimTableColumnsDisplayText = {
     flightDepartment: 'Flight Department',
     icaoAircraftCode: 'Aircraft Type',
     ete: 'ETE',
-    eta: 'ETA',
-    atd: 'ATD',
-    departureICAO: 'Origin',
-    arrivalICAO: 'Destination',
+    etaLocal: 'ETA',
+    atdLocal: 'ATD',
+    departureICAO: 'Origin Airport',
+    departureCity: 'Origin City',
+    arrivalICAO: 'Destination Airport',
+    arrivalCity: 'Destination City',
     isAircraftOnGround: 'On Ground',
     itpMarginTemplate: 'ITP Margin Template',
+    makeModel: 'Make/Model',
     expandedDetail: 'expandedDetail',
 };
 
@@ -92,13 +86,31 @@ export const tailNumberTextColor = {
     inNetwork: '#FF7F00',
 };
 export const stautsTextColor = {
-    EnRoute: 'black',
-    Landing: 'blue',
-    TaxiingDestination: '#FDD953',
-    Arrived: 'green',
-    Departing: 'gray',
-    TaxiingOrigin: '#FDD953',
+    EnRoute: '#000000',
+    Landing: '#0000ff',
+    TaxiingDestination: '#fedd00',
+    Arrived: 'black',
+    Departing: '#808080',
+    TaxiingOrigin: '#fedd00',
     default: 'black'
+}
+export const stautsIcons = {
+    EnRoute: 'connecting_airports',
+    Landing: 'flight_land',
+    TaxiingDestination: 'local_taxi',
+    Arrived: 'pin_drop',
+    Departing: 'flight_takeoff',
+    TaxiingOrigin: 'local_taxi',
+    default: 'flight'
+}
+
+export const stautsDisplayText= {
+    EnRoute: 'En Route',
+    Landing: 'Landing',
+    TaxiingDestination: 'Taxiing',
+    Arrived: 'Arrived',
+    Departing: 'Departing',
+    TaxiingOrigin: 'Taxiing',
 }
 
 export interface MapMarkers {

@@ -1,9 +1,9 @@
-import { ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
-import { isEmpty, keyBy } from 'lodash';
+import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
@@ -33,12 +33,18 @@ const BREADCRUMBS: any[] = [
     templateUrl: './flight-watch.component.html',
 })
 export class FlightWatchComponent implements OnInit, OnDestroy {
+    @Input() showBreadcrumb: boolean = true;
+    @Input() showFilters: boolean = true;
+    @Input() showLegend: boolean =  true;
+    @Input() isLobbyView: boolean =  false;
+
     @ViewChild(FlightWatchMapWrapperComponent) private mapWrapper:FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
 
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
 
+    isStable = true;
     loading = false;
     mapLoadSubscription: Subscription;
     airportWatchFetchSubscription: Subscription;
@@ -137,12 +143,15 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
             if (data.success) {
                 this.setData(data.result);
+                this.isStable = true;
             } else {
                 this.flightWatchData = [];
+                this.isStable = false;
             }
             this.loading = false;
         }, (error: any) => {
             this.loading = false;
+            this.isStable = false;
         });
     }
 

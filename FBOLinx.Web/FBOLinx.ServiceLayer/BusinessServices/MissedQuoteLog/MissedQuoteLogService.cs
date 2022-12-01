@@ -12,9 +12,10 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
     public interface IMissedQuoteLogService : IBaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog>
     {
         Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId);
-        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, DB.Models.Customers customer);
+        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO customer);
     }
 
     public class MissedQuoteLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedQuoteLogService
@@ -80,7 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             return missedQuotesLogList;
         }
 
-        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, DB.Models.Customers customer)
+        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO  customer)
         {
             foreach (var icao in icaos.Split(',').Select(x => x.Trim()))
             {

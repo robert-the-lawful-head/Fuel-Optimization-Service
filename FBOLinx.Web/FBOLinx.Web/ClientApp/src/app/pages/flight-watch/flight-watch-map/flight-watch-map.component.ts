@@ -281,7 +281,7 @@ export class FlightWatchMapComponent
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
         makemodelstr =  this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
-        let obj = {
+        let obj : Aircraftwatch= {
             customerInfoByGroupId: selectedPopUp.customerInfoByGroupId,
             tailNumber: selectedPopUp.tailNumber,
             atcFlightNumber: selectedPopUp.atcFlightNumber,
@@ -291,7 +291,10 @@ export class FlightWatchMapComponent
             aircraftMakeModel: makemodelstr,
             lastQuote: selectedPopUp.lastQuote,
             currentPricing: selectedPopUp.currentPricing,
-            aircraftICAO: selectedPopUp.icaoAircraftCode
+            aircraftICAO: selectedPopUp.icaoAircraftCode,
+            faaRegisteredOwner: selectedPopUp.faaRegisteredOwner,
+            origin: selectedPopUp.departureICAO,
+            destination: selectedPopUp.arrivalICAO
         };
 
         this.popupData = Object.assign({}, obj);

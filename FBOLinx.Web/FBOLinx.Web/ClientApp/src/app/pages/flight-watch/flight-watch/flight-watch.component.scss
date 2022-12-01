@@ -1,7 +1,13 @@
+.lobby {
+    height: calc(100vh - 55px);
+}
+.default {
+    height: calc(100vh - 221px);
+}
+
 .flight-watch-container {
     position: relative;
     display: flex;
-    height: calc(100vh - 221px);
 
     app-flight-watch-aircraft-info {
         position: absolute;

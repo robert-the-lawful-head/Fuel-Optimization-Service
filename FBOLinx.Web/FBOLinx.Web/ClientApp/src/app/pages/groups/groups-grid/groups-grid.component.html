@@ -84,15 +84,14 @@
                 <span [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
                       class="status">
                     {{
-                        data.expiredFboPricingCount != data.activeFboCount
+                        data.expiredFboPricingCount === 0 && data.activeFboCount > 0
                             ? "All Pricing Live"
                             : (data.activeFboCount > 0
                             ? (data.expiredFboPricingCount +
                               " of " +
                               data.activeFboCount +
                               " Expired")
-                            : "No FBOs Found")
-                            
+                            : "No Active FBOs")
                     }}
                 </span>
             </ng-template>
@@ -135,14 +134,14 @@
                 <span [ngClass]="{ good: data.expiredFboAccountCount === 0 }"
                       class="status">
                     {{
-                        (data.expiredFboPricingCount != data.activeFboCount)
+                        data.expiredFboAccountCount == 0 && data.fboCount > 0
                             ? "All Active"
-                            : (data.fboCount > 0
+                            : (data.fboCount > 0)
                             ? (data.expiredFboAccountCount +
                               " of " +
                               data.fboCount +
                               " Inactive")
-                            : "No FBOs Found")
+                            : "No FBOs Found"
                     }}
                 </span>
             </ng-template>

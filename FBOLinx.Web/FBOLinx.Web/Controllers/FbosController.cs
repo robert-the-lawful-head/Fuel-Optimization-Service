@@ -38,7 +38,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeeService;
         private readonly FuelerLinxApiService _fuelerLinxApiService;
-        private readonly FbopricesService _fbopricesService;
+        private readonly IFboPricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
 
         public FbosController(
@@ -51,7 +51,7 @@ namespace FBOLinx.Web.Controllers
             IPriceFetchingService priceFetchingService, 
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
-            FbopricesService fbopricesService,
+            IFboPricesService fbopricesService,
             IPricingTemplateService pricingTemplateService)
         {
             _groupFboService = groupFboService;

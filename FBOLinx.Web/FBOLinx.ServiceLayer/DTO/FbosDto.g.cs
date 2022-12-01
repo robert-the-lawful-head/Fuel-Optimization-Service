@@ -58,7 +58,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public ICollection<PricingTemplateDto> PricingTemplates { get; set; }
         public FbopreferencesDto Preferences { get; set; }
         public ICollection<FbocontactsDto> Contacts { get; set; }
-        public ICollection<UserDto> Users { get; set; }
-        public ICollection<FbopricesDto> Fboprices { get; set; }
+        public ICollection<UserDTO> Users { get; set; }
+        //public ICollection<FbopricesDto> Fboprices { get; set; }
     }
 }

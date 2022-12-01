@@ -29,7 +29,10 @@ export class AircraftPopupContainerComponent {
       aircraftMakeModel: '',
       lastQuote: '',
       currentPricing: '',
-      aircraftICAO: ''
+      aircraftICAO: '',
+      faaRegisteredOwner: '',
+      origin: '',
+      destination: ''
   };
   public hasAircraft = false;
   public customers: CustomersListType[] = []
@@ -67,7 +70,6 @@ export class AircraftPopupContainerComponent {
     .afterClosed()
     .subscribe((result: any) => {
         if (result) {
-          console.log(result)
             this.aircraftWatch.aircraftMakeModel = result.aircraftType;
             this.aircraftWatch.flightDepartment = result.company;
             this.refreshAircraftProperties.emit(this.aircraftWatch);

@@ -328,5 +328,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
                                     }).ToListAsync();
             return aircraftPricingTemplates;
         }
+
+        public async Task<List<CustomerPricingTemplatesModel>> GetCustomerTemplates()
+        {
+            var customerTemplates = await
+                   (from ct in _context.CustomCustomerTypes
+                    join pt in _context.PricingTemplate on ct.CustomerType equals pt.Oid
+                    select new CustomerPricingTemplatesModel
+                    {
+                        CustomerId = ct.CustomerId,
+                        FboId = ct.Fboid,
+                        CustomerType = ct.CustomerType,
+                        PricingTemplateName = pt.Name
+                    })
+                   .AsNoTracking()
+                   .ToListAsync();
+
+            return customerTemplates;
+        }
     }
 }

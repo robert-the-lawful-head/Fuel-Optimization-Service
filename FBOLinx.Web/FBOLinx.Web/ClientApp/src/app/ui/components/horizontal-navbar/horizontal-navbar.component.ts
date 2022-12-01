@@ -46,7 +46,9 @@ import * as moment from 'moment';
 export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() openedSidebar: boolean;
+    @Input() isPublicView: boolean = false;
     @Output() sidebarState = new EventEmitter();
+
     showOverlay: boolean;
     isOpened: boolean;
     isLocationsLoading: boolean;
@@ -491,7 +493,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             )
             .subscribe((data: any) => {
                 if (data && data != null) {
-                    
                     data.forEach(x => {
                         if (!x || x.cancelled)
                             return;
