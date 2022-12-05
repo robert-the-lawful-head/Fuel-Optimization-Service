@@ -104,6 +104,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }
         }
     }
+    updateColumns(columns: ColumnType[]): void{
+        this.columns = columns;
+        this.allColumnsToDisplay = this.getVisibleColumns();
+        this.dataColumnsToDisplay = this.getVisibleDataColumns();
+    }
     mapValuesToStrings(data: Swim[]){
         return data.map((row) => {
             row.statusDisplayString = FlightLegStatus[row.status];
@@ -131,13 +136,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return this.columns
             .filter((column) => {
                 if(column.hidden) return false;
-
-                // if(this.isArrival && column.name == swimTableColumns.originAirport) return false;
-                // if(this.isArrival && column.name == swimTableColumns.eta) return false;
-
-                // if(!this.isArrival && column.name == swimTableColumns.destinationAirport) return false;
-                // if(!this.isArrival && column.name == swimTableColumns.atd) return false;
-
                 return true;
             })
             .map((column) => column.id) || [];
