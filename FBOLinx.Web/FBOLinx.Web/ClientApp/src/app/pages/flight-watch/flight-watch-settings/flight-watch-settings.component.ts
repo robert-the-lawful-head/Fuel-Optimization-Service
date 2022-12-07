@@ -119,12 +119,7 @@ export class FlightWatchSettingsComponent {
         });
     }
     initColumns() {
-        this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
-        let savedColumns = null;
-        debugger;
-        if(!this.isLobbyView){
-            savedColumns = this.getClientSavedColumns();
-        }
+        let savedColumns = this.getClientSavedColumns();
 
         if(savedColumns?.length > 0)
             this.columns = savedColumns;
@@ -135,9 +130,13 @@ export class FlightWatchSettingsComponent {
         this.departuresColumns =  this.getFilteredDefaultColumns(false, this.isLobbyView,this.columns);
     }
     private getClientSavedColumns(){
+        if(this.isLobbyView)
+            this.tableLocalStorageKey  = `lobby-settings-${this.sharedService.currentUser.fboId}`;
+        else
+            this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+
         let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
         let hasColumnUpdates :boolean = false;
-
         if (localStorageColumns) {
             let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
             for(let col in storedCols){
