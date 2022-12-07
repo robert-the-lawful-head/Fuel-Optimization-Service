@@ -131,8 +131,8 @@ export class FlightWatchSettingsComponent {
         else
             this.columns = this.getSettingsColumnDefinition();
 
-        this.arrivalsColumns =  this.getFilteredDefaultColumns(true, this.isLobbyView,this.tableColumns);
-        this.departuresColumns =  this.getFilteredDefaultColumns(false, this.isLobbyView,this.tableColumns);
+        this.arrivalsColumns =  this.getFilteredDefaultColumns(true, this.isLobbyView,this.columns);
+        this.departuresColumns =  this.getFilteredDefaultColumns(false, this.isLobbyView,this.columns);
     }
     private getClientSavedColumns(){
         let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
@@ -178,6 +178,7 @@ export class FlightWatchSettingsComponent {
             return columns?.filter((column) => { return this.defaultDeparturesCols.includes(column.id)}) || [];
         }
     }
+
     saveSettings() {
         localStorage.setItem(
             this.tableLocalStorageKey,
