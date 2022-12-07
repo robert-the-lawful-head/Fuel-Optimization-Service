@@ -53,9 +53,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CustomerWithPricing> _CurrentPricingResults;
         private IOptions<DemoData> _demoData;
 
-        private Func<string, bool> _isDemoDataVisible = icao =>
+        private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
-            return icao == "KVNY" || icao == "KBID";
+            return fboId == 276;
         };
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
@@ -127,7 +127,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
-            if (_isDemoDataVisible(options.AirportIdentifier))
+            if (_isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
             return result;
