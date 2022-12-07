@@ -179,7 +179,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
 
-            var fuelReqOrders =  new List<FuelReqDto>() { new FuelReqDto() };
+            var fuelReqOrders =  new List<FuelReqDto>() { 
+                new FuelReqDto()
+                {
+                    Oid= demoData.FuelOrder.Oid,
+                    CustomerId = demoData.FuelOrder.CustomerId,
+                    Icao = demoData.FuelOrder.Icao,
+                    Fboid = demoData.FuelOrder.Fboid,
+                    CustomerAircraftId = demoData.FuelOrder.CustomerAircraftId,
+                    TimeStandard = demoData.FuelOrder.TimeStandard,
+                    QuotedVolume = demoData.FuelOrder.QuotedVolume,
+                    CustomerAircraft = new CustomerAircraftsDto(){ TailNumber = demoData.FuelOrder.CustomerAircraft.TailNumber }
+                } 
+            };
             flightWatch.SetUpcomingFuelOrderCollection(fuelReqOrders);
 
             result.Add(flightWatch);
