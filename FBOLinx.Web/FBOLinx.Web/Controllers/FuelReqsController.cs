@@ -20,7 +20,6 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.Auth;
 using Newtonsoft.Json;
 using Fuelerlinx.SDK;
-using FBOLinx.Web.Services;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
@@ -50,7 +49,7 @@ namespace FBOLinx.Web.Controllers
 
         private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
-            return fboId == 276;
+            return fboId == 276 || fboId == 525;
         };
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
