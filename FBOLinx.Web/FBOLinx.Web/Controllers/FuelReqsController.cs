@@ -478,8 +478,8 @@ namespace FBOLinx.Web.Controllers
                                                                         join c in _context.Customers on (fr.CustomerId ?? 0) equals c.Oid
                                                                         where fr.Fboid == fboId &&
                                                                             (fr.Cancelled == null || fr.Cancelled == false) &&
-                                                                            fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
-                                                                            fr.DateCreated.Value <= request.EndDateTime
+                                                                            fr.Etd.HasValue && fr.Etd.Value >= request.StartDateTime &&
+                                                                            fr.Etd.Value <= request.EndDateTime
                                                                         select new
                                                                         {
                                                                             fr.CustomerId,
@@ -1138,7 +1138,7 @@ namespace FBOLinx.Web.Controllers
 
                 var chartData = await (from fr in (
                                      from fr in _context.FuelReq
-                                     where fr.Fboid.Equals(fboId) && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                     where fr.Fboid == fboId && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
                                      group fr by new
                                      {
                                          CustomerID = fr.CustomerId,
@@ -1166,6 +1166,7 @@ namespace FBOLinx.Web.Controllers
                                        })
                                 .Distinct()
                                 .ToListAsync();
+
                 return Ok(chartData);
             }
             catch (Exception ex)
