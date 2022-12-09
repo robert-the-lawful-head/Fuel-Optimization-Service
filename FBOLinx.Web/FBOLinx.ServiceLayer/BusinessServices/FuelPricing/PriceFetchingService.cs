@@ -20,6 +20,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -28,13 +29,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private FboLinxContext _context;
         private int _FboId;
         private int _GroupId;
-        private CustomerService _CustomerService;
+        private ICustomerService _CustomerService;
         private IFboService _FboService;
         private IMailService _MailService;
         private IPricingTemplateService _PricingTemplateService;
         private IFboPricesEntityService _fboPricesEntityService;
+        private ICustomerInfoByGroupService _customerInfoByGroupService;
 
-        public PriceFetchingService(FboLinxContext context, CustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService, IFboPricesEntityService fboPricesEntityService)
+        public PriceFetchingService(FboLinxContext context, ICustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService, IFboPricesEntityService fboPricesEntityService, ICustomerInfoByGroupService customerInfoByGroupService)
         {
             _FboService = fboService;
             _CustomerService = customerService;
@@ -42,6 +44,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             _MailService = mailService;
             _PricingTemplateService = pricingTemplateService;
             _fboPricesEntityService = fboPricesEntityService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
         #region Public Methods
@@ -79,10 +82,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                             .Where(x => x.Oid == fboAirport.Fboid)
                                             .AsNoTracking()
                                             .FirstOrDefaultAsync();
-                CustomerInfoByGroup customerInfoByGroup = await _context.CustomerInfoByGroup
-                                                                            .Where(x => x.CustomerId == customerId && x.GroupId == fbo.GroupId)
-                                                                            .AsNoTracking()
-                                                                            .FirstOrDefaultAsync();
+                CustomerInfoByGroupDTO customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, fbo.GroupId.Value));
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
@@ -152,7 +152,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
-                var customerInfoByGroup = await _CustomerService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {

@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -12,12 +14,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
-    public class CustomerService
+    public interface ICustomerService : IBaseDTOService<CustomerDTO, DB.Models.Customers>
+    {
+        Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
+        Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
+        Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId);
+        bool CompareCustomers(CustomerInfoByGroup oldCustomer, CustomerInfoByGroup newCustomer);
+        Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId);
+        Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId);
+    }
+
+        public class CustomerService : BaseDTOService<CustomerDTO, DB.Models.Customers, FboLinxContext>, ICustomerService
     {
         private FboLinxContext _context;
-        private CustomerEntityService _customerEntityService;
+        private ICustomersEntityService _customerEntityService;
 
-        public CustomerService(FboLinxContext context, CustomerEntityService customerEntityService)
+        public CustomerService(FboLinxContext context, ICustomersEntityService customerEntityService) : base(customerEntityService)
         {
             _customerEntityService = customerEntityService;
             _context = context;
@@ -141,45 +153,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             return result;
         }
 
-        public async Task<List<CustomerInfoByGroup>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
-        {
-            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId))
-                .Include(x => x.Customer)
-                .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
-                .Include(x => x.Customer.CustomCustomerType)
-                .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
-                .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
-                //.Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
-                .Include(x => x.Customer.CustomerContacts)
-                .ToListAsync();
-
-            customerInfoByGroup.RemoveAll(x => x.Customer == null);
-
-            return customerInfoByGroup;
-        }
-
-        public async Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId)
-        {
-            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(x => x.GroupId == groupId)
-                .Include(x => x.Customer)
-                .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
-                .Include(x => x.Customer.CustomCustomerType)
-                .Where(x => x.Customer.CustomCustomerType.Fboid == fboId)
-                .Include(x => x.Customer.CustomCustomerType.PricingTemplate)
-                //.Where(x => x.Customer.CustomCustomerType.PricingTemplate.Fboid == fboId)
-                .Select(x => new CustomerListResponse
-                {
-                    CustomerInfoByGroupID = x.Oid,
-                    CompanyId = x.CustomerId,
-                    Company = x.Company
-                })
-                .ToListAsync();
-
-            return customerInfoByGroup;
-        }
-
         public bool CompareCustomers (CustomerInfoByGroup oldCustomer , CustomerInfoByGroup newCustomer)
         {
             return
@@ -202,7 +175,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId)
         {
             var result =
-                await _customerEntityService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
+                await GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
             return result;
         }
 

@@ -35,10 +35,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         private readonly CustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _FuelerlinxSdkSettings;
         private IServiceScopeFactory _ScopeFactory;
-        private readonly CustomerService _CustomerService;
+        private readonly ICustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public MissedQuoteLogService(IMissedQuoteLogEntityService entityService, IFboService fboService, IFboEntityService fboEntityService, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IServiceScopeFactory scopeFactory, CustomerService customerService) : base(entityService)
+            IServiceScopeFactory scopeFactory, ICustomerService customerService, ICustomerInfoByGroupService customerInfoByGroupService) : base(entityService)
         {
             _FboService = fboService;
             _FboEntityService = fboEntityService;
@@ -46,6 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             _FuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
             _ScopeFactory = scopeFactory;
             _CustomerService = customerService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
         public async Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId)
@@ -53,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             var recentMissedQuotes = await GetRecentMissedQuotes(fboId, true);
 
             var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
-            var customersList = await _CustomerService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
 
             var recentMissedQuotesGroupedList = recentMissedQuotes.GroupBy(r => r.CustomerId).Select(g => new
             {

@@ -7,6 +7,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -26,7 +27,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private FuelerLinxApiService _fuelerLinxApiService;
         private int _fuelerLinxCompanyId;
         private CompanyDTO _fuelerlinxCompany;
-        private CustomerEntityService _customerEntityService;
+        private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
         private CustomerDTO _customerRecord;
@@ -34,18 +35,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private List<CustomerInfoByGroupDTO> _customerInfoByGroupRecords;
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
+        private ICustomerService _customerService;
 
-        public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService, 
-            CustomerEntityService customerEntityService,
-            IGroupService groupService, 
+        public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
+            ICustomersEntityService customerEntityService,
+            IGroupService groupService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            CustomerAircraftEntityService customerAircraftEntityService)
+            CustomerAircraftEntityService customerAircraftEntityService,
+            ICustomerService customerService)
         {
             _customerAircraftEntityService = customerAircraftEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _groupService = groupService;
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
+            _customerService = customerService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -76,7 +80,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerRecord.Suspended = _fuelerlinxCompany.HideInFboLinx.GetValueOrDefault();
             _customerRecord.Company = _fuelerlinxCompany.CompanyName;
 
-            await _customerEntityService.Update(_customerRecord);
+            await _customerService.UpdateAsync(_customerRecord);
         }
 
         private async Task UpdateCustomerInfoByGroupRecords()
@@ -242,12 +246,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             _existingGroupRecords = await _groupService.GetListbySpec(new AllGroupsSpecification(false));
 
-            _customerRecord = await _customerEntityService.GetSingleBySpec(
+            _customerRecord = await _customerService.GetSingleBySpec(
                 new CustomerByFuelerLinxIdSpecification(_fuelerLinxCompanyId));
 
             //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
             if (_customerRecord == null)
-                _customerRecord = await _customerEntityService.Add(new CustomerDTO()
+                _customerRecord = await _customerService.AddAsync(new CustomerDTO()
                 {
                     Action = false,
                     Margin = 0,

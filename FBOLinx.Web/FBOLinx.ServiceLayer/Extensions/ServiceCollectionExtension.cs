@@ -50,7 +50,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<RampFeesService, RampFeesService>();
             services.AddScoped<GroupTransitionService, GroupTransitionService>();
             services.AddScoped<ILoggingService, LoggingService>();
-            services.AddTransient<CustomerService, CustomerService>();
+            services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<AircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
@@ -108,7 +108,7 @@ namespace FBOLinx.ServiceLayer.Extensions
         public static IServiceCollection RegisterEntityServices(this IServiceCollection services)
         {
             services.AddTransient<ICustomerAircraftEntityService, CustomerAircraftEntityService>();
-            services.AddTransient<CustomerEntityService, CustomerEntityService>();
+            services.AddTransient<ICustomersEntityService, CustomersEntityService>();
             services.AddTransient<GroupEntityService, GroupEntityService>();
             services.AddTransient<CustomerInfoByGroupEntityService, CustomerInfoByGroupEntityService>();
             services.AddTransient<CustomerAircraftEntityService, CustomerAircraftEntityService>();
