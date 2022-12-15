@@ -98,11 +98,16 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }
 
             if(this.isArrival){
-                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.eta, start: 'asc'}));
+                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaLocal, start: 'asc'}));
             }else{
                 this.dataSource.data = this.mapValuesToStrings(this.setManualSortOnDepartures(changes.data.currentValue));
             }
         }
+    }
+    updateColumns(columns: ColumnType[]): void{
+        this.columns = columns;
+        this.allColumnsToDisplay = this.getVisibleColumns();
+        this.dataColumnsToDisplay = this.getVisibleDataColumns();
     }
     mapValuesToStrings(data: Swim[]){
         return data.map((row) => {
@@ -131,13 +136,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return this.columns
             .filter((column) => {
                 if(column.hidden) return false;
-
-                // if(this.isArrival && column.name == swimTableColumns.originAirport) return false;
-                // if(this.isArrival && column.name == swimTableColumns.eta) return false;
-
-                // if(!this.isArrival && column.name == swimTableColumns.destinationAirport) return false;
-                // if(!this.isArrival && column.name == swimTableColumns.atd) return false;
-
                 return true;
             })
             .map((column) => column.id) || [];
@@ -241,9 +239,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
               return this.compare(a.icaoAircraftCode, b.icaoAircraftCode, isAsc);
             case swimTableColumns.ete:
               return this.compare(a.ete, b.ete, isAsc);
-            case swimTableColumns.eta:
+            case swimTableColumns.etaLocal:
             return this.compare(a.etaLocal, b.etaLocal, isAsc);
-            case swimTableColumns.atd:
+            case swimTableColumns.atdLocal:
                 return this.compare(a.atdLocal, b.atdLocal, isAsc);
             case swimTableColumns.originAirport:
                 return this.compare(a.origin, b.origin, isAsc);

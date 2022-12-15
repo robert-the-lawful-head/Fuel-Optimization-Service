@@ -53,7 +53,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public CertificateTypes? CertificateType { get; set; }
 
         public virtual ICollection<CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
-
-
+        public virtual ICollection<CustomCustomerTypes> CustomCustomerType { get; set; }
+        public virtual ICollection<CustomerContacts> CustomerContacts { get; set; }
     }
 }

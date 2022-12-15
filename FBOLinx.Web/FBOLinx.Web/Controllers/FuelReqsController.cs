@@ -20,13 +20,15 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.Auth;
 using Newtonsoft.Json;
 using Fuelerlinx.SDK;
-using FBOLinx.Web.Services;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using Microsoft.Extensions.Options;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -43,9 +45,15 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IFuelReqService _fuelReqService;
+        private IOptions<DemoData> _demoData;
+
+        private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
+        {
+            return fboId == 276 || fboId == 525;
+        };
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
-            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService)
+            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IOptions<DemoData> demoData)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -55,6 +63,8 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _airportWatchService = airportWatchService;
             _fuelReqService = fuelReqService;
+
+            _demoData = demoData;
         }
 
         // GET: api/FuelReqs/5
@@ -171,6 +181,27 @@ namespace FBOLinx.Web.Controllers
             }
             
             var result = await _fuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
+
+            if (_isDemoDataVisibleByFboId(fboId))
+            {
+                var demoData = _demoData.Value.FlightWatch;
+
+                var demoFuelReqOrder = 
+                    new FuelReqDto()
+                    {
+                        Oid= demoData.FuelOrder.Oid,
+                    CustomerId = demoData.FuelOrder.CustomerId,
+                        Icao = demoData.FuelOrder.Icao,
+                    Fboid = demoData.FuelOrder.Fboid,
+                    CustomerAircraftId = demoData.FuelOrder.CustomerAircraftId,
+                    TimeStandard = demoData.FuelOrder.TimeStandard,
+                        QuotedVolume = demoData.FuelOrder.QuotedVolume,
+                    CustomerAircraft = new CustomerAircraftsDto(){ TailNumber = demoData.FuelOrder.CustomerAircraft.TailNumber }
+                
+                    };
+                result.Add(demoFuelReqOrder);
+
+            }
 
             return Ok(result);
         }
@@ -447,8 +478,8 @@ namespace FBOLinx.Web.Controllers
                                                                         join c in _context.Customers on (fr.CustomerId ?? 0) equals c.Oid
                                                                         where fr.Fboid == fboId &&
                                                                             (fr.Cancelled == null || fr.Cancelled == false) &&
-                                                                            fr.DateCreated.HasValue && fr.DateCreated.Value >= request.StartDateTime &&
-                                                                            fr.DateCreated.Value <= request.EndDateTime
+                                                                            fr.Etd.HasValue && fr.Etd.Value >= request.StartDateTime &&
+                                                                            fr.Etd.Value <= request.EndDateTime
                                                                         select new
                                                                         {
                                                                             fr.CustomerId,
@@ -1107,7 +1138,7 @@ namespace FBOLinx.Web.Controllers
 
                 var chartData = await (from fr in (
                                      from fr in _context.FuelReq
-                                     where fr.Fboid.Equals(fboId) && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
+                                     where fr.Fboid == fboId && (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= request.StartDateTime && fr.Etd <= request.EndDateTime
                                      group fr by new
                                      {
                                          CustomerID = fr.CustomerId,
@@ -1135,6 +1166,7 @@ namespace FBOLinx.Web.Controllers
                                        })
                                 .Distinct()
                                 .ToListAsync();
+
                 return Ok(chartData);
             }
             catch (Exception ex)

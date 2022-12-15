@@ -3,6 +3,7 @@
         <div class="row">
             <div *ngIf="customersDataSource" class="col-5">
                 <app-table-global-search [matDataSource]="customersDataSource"
+                (filteredDataSource)="loadFilteredDataSource($event)"
                                          placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
             <div class="col-2">
@@ -67,8 +68,8 @@
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x: auto; position: relative">
-        <table #customerTable [dataSource]="customersDataSource" class="col-md-12 mb-0" mat-table matSort>
+    <div class="w-100 table-container" style="overflow-x: auto; position: relative" (scroll)="onTableScroll($event)">
+        <table #customerTable [dataSource]="dataSource" class="col-md-12 mb-0" mat-table matSort>
             <ng-container matColumnDef="selectAll">
                 <th *matHeaderCellDef mat-header-cell>
                     <input (change)="selectAction()" [(ngModel)]="selectAll" class="checkboxHeight" id="a"
@@ -88,7 +89,7 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Company</span>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
                                                  columnId="company" propertyName="company"></app-table-column-filter>
                     </span>
                 </th>
@@ -124,7 +125,7 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Tags
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort" columnId="tags"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort" columnId="tags"
                                                  propertyName="tags" optionLabel="label" optionValue="value" [columnFormat]="11"
                                                  [options]="tags"></app-table-column-filter>
                     </span>
@@ -169,7 +170,7 @@
                         <div>Network</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [columnFormat]="8" [matDataSource]="customersDataSource"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="8" [matDataSource]="customersDataSource"
                                                  [matSort]="sort" columnId="isFuelerLinxCustomer" propertyName="isFuelerLinxCustomer">
                         </app-table-column-filter>
                     </span>
@@ -186,7 +187,7 @@
                         <div>Size</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="customersDataSource"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
                                                  [matSort]="sort" columnId="fleetSize" propertyName="fleetSize"></app-table-column-filter>
                     </span>
                 </th>
@@ -199,7 +200,7 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     ITP Margin Template
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
                                                  columnId="pricingTemplateId" propertyName="pricingTemplateId" [columnFormat]="10"
                                                  optionLabel="name" optionValue="oid" [options]="pricingTemplatesData">
                         </app-table-column-filter>
@@ -219,7 +220,7 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Fuel Vendors
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
                                                  columnId="fuelVendors" propertyName="fuelVendors" optionLabel="label" optionValue="value"
                                                  [columnFormat]="11" [options]="fuelVendors"></app-table-column-filter>
                     </span>
@@ -272,7 +273,7 @@
                         <div>Type</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
                                                  columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
                         </app-table-column-filter>
                     </span>
@@ -289,7 +290,7 @@
                         <div>Type</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [matDataSource]="customersDataSource" [matSort]="sort"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
                                                  columnId="certificateTypeDescription" propertyName="certificateTypeDescription">
                         </app-table-column-filter>
                     </span>
@@ -308,7 +309,7 @@
                         <div>Visits</div>
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="customersDataSource"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
                                                  [matSort]="sort" columnId="aircraftsVisits" propertyName="aircraftsVisits">
                         </app-table-column-filter>
                     </span>
@@ -324,7 +325,7 @@
                        Pricing Formula
                     </div>
                     <span *ngIf="customersDataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="customersDataSource"
+                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
                                                  [matSort]="sort" columnId="pricingFormula" propertyName="pricingFormula">
                         </app-table-column-filter>
                     </span>
@@ -353,8 +354,6 @@
             <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
             <tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
-        <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="customersData.length"
-            [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
 
         <popover-content #feeAndTaxPopover placement="left" title="Price Information" [closeOnClickOutside]="true">
             <price-breakdown #priceBreakdownPreview *ngIf="focusedCustomer"
