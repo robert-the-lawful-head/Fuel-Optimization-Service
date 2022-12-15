@@ -1,10 +1,23 @@
-﻿using FBOLinx.DB.Context;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.DTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public class CustomerEntityService : FBOLinxBaseEntityService<DB.Models.Customers, DTO.CustomerDTO, int>, IEntityService<DB.Models.Customers, DTO.CustomerDTO, int>
+    public interface ICustomersEntityService : IRepository<Customers, FboLinxContext>
     {
-        public CustomerEntityService(FboLinxContext context) : base(context)
+        
+    }
+
+    public class CustomersEntityService : Repository<Customers, FboLinxContext>, ICustomersEntityService
+    {
+        public CustomersEntityService(FboLinxContext context) : base(context)
         {
         }
     }

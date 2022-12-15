@@ -57,7 +57,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboPreferencesService _fboPreferencesService;
         private readonly IntegrationUpdatePricingLogService _integrationUpdatePricingLogService;
         private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
         private readonly ICompanyPricingLogService _companyPricingLogService;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
 
@@ -75,11 +75,10 @@ namespace FBOLinx.Web.Controllers
             IntegrationUpdatePricingLogService integrationUpdatePricingLogService,
             IFboService iFboService,
             IMissedQuoteLogService missedQuoteLogService,
-            IPricingTemplateService pricingTemplateService
-,
+            IPricingTemplateService pricingTemplateService,
             ICompanyPricingLogService companyPricingLogService,
             ServiceLayer.BusinessServices.User.IUserService userService,
-            CustomerService customerService)
+            ICustomerService customerService)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;

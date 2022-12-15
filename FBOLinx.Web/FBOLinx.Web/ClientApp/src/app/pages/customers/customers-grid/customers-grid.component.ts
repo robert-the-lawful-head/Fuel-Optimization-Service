@@ -17,12 +17,12 @@ import { ActivatedRoute } from '@angular/router';
 import { find, forEach, map, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 import { TagsService } from 'src/app/services/tags.service';
 import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
-import { AirportWatchService } from '../../../services/airportwatch.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
@@ -105,7 +105,7 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./customers-grid.component.scss'],
     templateUrl: './customers-grid.component.html',
 })
-export class CustomersGridComponent implements OnInit {
+export class CustomersGridComponent extends VirtualScrollBase implements OnInit {
     @ViewChild('priceBreakdownPreview')
     priceBreakdownPreview: PriceBreakdownComponent;
     @ViewChild('customerTableContainer') table: ElementRef;
@@ -128,6 +128,8 @@ export class CustomersGridComponent implements OnInit {
     tableLocalStorageKey = 'customer-manager-table-settings';
 
     customersDataSource: any = null;
+    customersTableDataSource: MatTableDataSource<any> = new MatTableDataSource();
+
     customerFilterType: number = 0;
     selectAll = false;
     selectedRows: number;
@@ -147,6 +149,10 @@ export class CustomersGridComponent implements OnInit {
 
     /*private importer: FlatFileImporter;*/
 
+    start: number = 0;
+    limit: number = 20;
+    end: number = this.limit + this.start;
+
     constructor(
         private newCustomerDialog: MatDialog,
         private deleteCustomerDialog: MatDialog,
@@ -155,12 +161,11 @@ export class CustomersGridComponent implements OnInit {
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerMarginsService: CustomermarginsService,
-        private airportWatchService: AirportWatchService,
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private tagsService: TagsService,
         private dialog: MatDialog ,
         private route : ActivatedRoute
-    ) { }
+    ) { super(); }
 
     ngOnInit() {
         /*this.initializeImporter();*/
@@ -201,8 +206,6 @@ export class CustomersGridComponent implements OnInit {
         //});
         this.airportWatchStartDate = new Date("10/6/2022");
     }
-
-
 
     onPageChanged(event: any) {
         localStorage.setItem('pageIndex', event.pageIndex);
@@ -707,7 +710,7 @@ export class CustomersGridComponent implements OnInit {
                         name: column.name,
                     }
             );
-            this.paginator.pageIndex = 0;
+            // this.paginator.pageIndex = 0;
             this.saveSettings();
         });
         if (!this.customersDataSource) {
@@ -725,9 +728,15 @@ export class CustomersGridComponent implements OnInit {
 
         this.sort.active = 'allInPrice';
         this.customersDataSource.sort = this.sort;
-        this.customersDataSource.paginator = this.paginator;
-    }
+        // this.customersDataSource.paginator = this.paginator;
 
+        this.setVirtualScrollVariables();
+    }
+    setVirtualScrollVariables(){
+        this.data = this.customersData;
+        this.dataSource.data = this.getTableData(this.start, this.end);
+        this.updateIndex();
+    }
     private refreshSort() {
         const sortedColumn = this.columns.find(
             (column) => !column.hidden && column.sort
@@ -756,5 +765,16 @@ export class CustomersGridComponent implements OnInit {
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
             });
+    }
+    loadFilteredDataSource(filteredDataSource: any){
+        console.log("🚀 ~ file: customers-grid.component.ts:770 ~ CustomersGridComponent ~ loadFilteredDataSource ~ filteredDataSource", filteredDataSource)
+        if(filteredDataSource.filter.length == 2){
+            this.refreshCustomerDataSource();
+            return;
+        }
+        this.dataSource = filteredDataSource;
+
+        this.start = 0;
+        this.limit = 20;
     }
 }

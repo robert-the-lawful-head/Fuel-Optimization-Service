@@ -32,9 +32,9 @@ namespace FBOLinx.Web.Controllers
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly GroupFboService _groupFboService;
         private readonly IGroupService _groupService;
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService, IGroupService groupService)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, ICustomerService customerService, IGroupService groupService)
         {
             _groupFboService = groupFboService;
             _context = context;

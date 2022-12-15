@@ -53,9 +53,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CustomerWithPricing> _CurrentPricingResults;
         private IOptions<DemoData> _demoData;
 
-        private Func<string, bool> _isDemoDataVisible = icao =>
+        private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
-            return icao == "KVNY" || icao == "KBID";
+            return fboId == 276;
         };
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
@@ -127,7 +127,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
-            if (_isDemoDataVisible(options.AirportIdentifier))
+            if (_isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
             return result;
@@ -179,7 +179,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
 
-            var fuelReqOrders =  new List<FuelReqDto>() { new FuelReqDto() };
+            var fuelReqOrders =  new List<FuelReqDto>() { 
+                new FuelReqDto()
+                {
+                    Oid= demoData.FuelOrder.Oid,
+                    CustomerId = demoData.FuelOrder.CustomerId,
+                    Icao = demoData.FuelOrder.Icao,
+                    Fboid = demoData.FuelOrder.Fboid,
+                    CustomerAircraftId = demoData.FuelOrder.CustomerAircraftId,
+                    TimeStandard = demoData.FuelOrder.TimeStandard,
+                    QuotedVolume = demoData.FuelOrder.QuotedVolume,
+                    CustomerAircraft = new CustomerAircraftsDto(){ TailNumber = demoData.FuelOrder.CustomerAircraft.TailNumber }
+                } 
+            };
             flightWatch.SetUpcomingFuelOrderCollection(fuelReqOrders);
 
             result.Add(flightWatch);

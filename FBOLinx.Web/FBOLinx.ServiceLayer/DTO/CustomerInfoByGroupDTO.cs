@@ -46,7 +46,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public int? CustomerCompanyType { get; set; }
         public bool? PricingTemplateRemoved { get; set; }
         public bool? MergeRejected { get; set; }
-        
-        //public Customers Customer { get; set; }
+
+        public CustomerDTO Customer { get; set; }
     }
 }
