@@ -191,9 +191,9 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
                 this.customerGridState.filter
             );
         }
-        if (this.customerGridState.page) {
-            this.paginator.pageIndex = this.customerGridState.page;
-        }
+        // if (this.customerGridState.page) {
+        //     this.paginator?.pageIndex = this.customerGridState.page;
+        // }
         if (this.customerGridState.order) {
             this.sort.active = this.customerGridState.order;
         }
@@ -249,7 +249,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             filterType: this.customerFilterType,
             order: this.customersDataSource.sort.active,
             orderBy: this.customersDataSource.sort.direction,
-            page: this.customersDataSource.paginator.pageIndex,
+            page: this.customersDataSource.paginator?.pageIndex,
         });
     }
 
@@ -694,7 +694,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             filterType: this.customerFilterType,
             order: this.customersDataSource.sort.active,
             orderBy: this.customersDataSource.sort.direction,
-            page: this.customersDataSource.paginator.pageIndex,
+            page: this.customersDataSource.paginator?.pageIndex,
             pricingTemplateId: customer.pricingTemplateId
         });
     }
@@ -710,7 +710,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
                         name: column.name,
                     }
             );
-            // this.paginator.pageIndex = 0;
+            // this.paginator?.pageIndex = 0;
             this.saveSettings();
         });
         if (!this.customersDataSource) {
