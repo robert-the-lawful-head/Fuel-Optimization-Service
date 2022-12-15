@@ -55,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
         private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
-            return fboId == 276;
+            return fboId == 276 || fboId == 525;
         };
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
