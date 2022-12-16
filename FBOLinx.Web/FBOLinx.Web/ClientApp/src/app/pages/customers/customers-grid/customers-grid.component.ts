@@ -706,7 +706,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
                         name: column.name,
                     }
             );
-            // this.paginator.pageIndex = 0;
+            // this.paginator?.pageIndex = 0;
             this.saveSettings();
         });
         if (!this.customersDataSource) {
