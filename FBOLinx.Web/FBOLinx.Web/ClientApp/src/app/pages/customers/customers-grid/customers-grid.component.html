@@ -67,7 +67,7 @@
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x: auto; position: relative">
+    <div class="w-100 table-container" style="overflow-x: auto; position: relative" (scroll)="onTableScroll($event)">
         <table #customerTable [dataSource]="dataSource" class="col-md-12 mb-0" mat-table matSort>
             <ng-container matColumnDef="selectAll">
                 <th *matHeaderCellDef mat-header-cell>
@@ -78,7 +78,7 @@
                         <div>All</div>
                     </div>
                 </th>
-                <td *matCellDef="let customer;" clickStopPropagation mat-cell>
+                <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <input (change)="selectUnique()" [(ngModel)]="customer.selectAll" class="checkboxHeight"
                            type="checkbox" value="{{ customer.selectAll }}" />
                 </td>
