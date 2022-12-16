@@ -51,7 +51,6 @@ export class TableColumnFilterComponent implements OnInit {
     @Input() optionValue: string;
     @Output() columnChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
-    @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
     public filter: any = {
         dateFilter: {
@@ -128,7 +127,6 @@ export class TableColumnFilterComponent implements OnInit {
         matSort.sort({ disableClear, id, start });
 
         this.matDataSource.sort = this.matSort;
-        this.filteredDataSource.emit(this.matDataSource);
     }
 
     public editHeadingFinished(column: any): void {
@@ -181,8 +179,6 @@ export class TableColumnFilterComponent implements OnInit {
             );
             this.existingFilterPassed = false;
         }
-
-        this.filteredDataSource.emit(this.matDataSource);
     }
 
     public clearFilter(): void {

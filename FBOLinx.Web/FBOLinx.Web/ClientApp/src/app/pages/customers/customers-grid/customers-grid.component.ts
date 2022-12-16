@@ -134,7 +134,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     selectAll = false;
     selectedRows: number;
     pageIndex = 0;
-    pageSize = 100;
+    pageSize = 40;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
 
@@ -148,10 +148,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     feesAndTaxesSubscription: Subscription;
 
     /*private importer: FlatFileImporter;*/
-
-    start: number = 0;
-    limit: number = 20;
-    end: number = this.limit + this.start;
 
     constructor(
         private newCustomerDialog: MatDialog,
@@ -192,7 +188,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             );
         }
         // if (this.customerGridState.page) {
-        //     this.paginator?.pageIndex = this.customerGridState.page;
+        //     this.paginator.pageIndex = this.customerGridState.page;
         // }
         if (this.customerGridState.order) {
             this.sort.active = this.customerGridState.order;
@@ -247,8 +243,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
             filterType: this.customerFilterType,
-            order: this.customersDataSource.sort.active,
-            orderBy: this.customersDataSource.sort.direction,
+            order: this.customersDataSource?.sort?.active,
+            orderBy: this.customersDataSource?.sort?.direction,
             page: this.customersDataSource.paginator?.pageIndex,
         });
     }
@@ -692,8 +688,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             customerInfoByGroupId: customer.customerInfoByGroupId,
             filter: this.customersDataSource.filter,
             filterType: this.customerFilterType,
-            order: this.customersDataSource.sort.active,
-            orderBy: this.customersDataSource.sort.direction,
+            order: this.customersDataSource?.sort?.active,
+            orderBy: this.customersDataSource?.sort?.direction,
             page: this.customersDataSource.paginator?.pageIndex,
             pricingTemplateId: customer.pricingTemplateId
         });
@@ -727,15 +723,13 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         );
 
         this.sort.active = 'allInPrice';
-        this.customersDataSource.sort = this.sort;
-        // this.customersDataSource.paginator = this.paginator;
 
         this.setVirtualScrollVariables();
     }
     setVirtualScrollVariables(){
-        this.data = this.customersData;
-        this.dataSource.data = this.getTableData(this.start, this.end);
-        this.updateIndex();
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.data = this.customersDataSource.data;
     }
     private refreshSort() {
         const sortedColumn = this.columns.find(
@@ -765,16 +759,5 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
             });
-    }
-    loadFilteredDataSource(filteredDataSource: any){
-        console.log("🚀 ~ file: customers-grid.component.ts:770 ~ CustomersGridComponent ~ loadFilteredDataSource ~ filteredDataSource", filteredDataSource)
-        if(filteredDataSource.filter.length == 2){
-            this.refreshCustomerDataSource();
-            return;
-        }
-        this.dataSource = filteredDataSource;
-
-        this.start = 0;
-        this.limit = 20;
     }
 }
