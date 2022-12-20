@@ -912,8 +912,8 @@ namespace FBOLinx.Web.Controllers
 
         private async Task<List<CustomersGridViewModel>> FetchCustomersViewModelByGroupAndFbo(int groupId, int fboId)
         {
-            try
-            {
+            //try
+            //{
                 List<PricingTemplateGrid> pricingTemplatesCollection = await _pricingTemplateService.GetPricingTemplates(fboId, groupId);
 
                 var fboIcao = await _fboService.GetFBOIcao(fboId);
@@ -1224,12 +1224,12 @@ namespace FBOLinx.Web.Controllers
                 });
 
                 return customerGridVM;
-            }
-            catch (Exception ex)
-            {
-                string sss = ex.Message;
-                return null;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    string sss = ex.Message;
+            //    return null;
+            //}
         }
 
         private async Task<List<GroupCustomerAnalyticsResponse>> GetCustomerPricingAnalytics(int groupId, int customerId)

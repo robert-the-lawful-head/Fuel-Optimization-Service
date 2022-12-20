@@ -1,19 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'booleanTryCastToText'
+  name: 'booleanToText'
 })
 export class BooleanToTextPipe implements PipeTransform {
 
-  transform(value: any): string {
-    if(this.isBoolean(value))
-        return (value)?'Yes':'No';
-    else if(value == null)
-        return 'No';
-    else
-        return (value.toLowerCase() == 'yes' || value.toLowerCase() == 'true')?'Yes':'No';
+  transform(value: boolean): string {
+    return (value)?'Yes':'No';
   }
-  private isBoolean(input) {
-    return input === false || input === true;
-  }
+
 }
