@@ -1,9 +1,8 @@
 <div #customerTableContainer class="customers-grid" style="position: relative">
     <div class="container-fluid">
         <div class="row">
-            <div *ngIf="customersDataSource" class="col-5">
-                <app-table-global-search [matDataSource]="customersDataSource"
-                (filteredDataSource)="loadFilteredDataSource($event)"
+            <div *ngIf="dataSource" class="col-5">
+                <app-table-global-search [matDataSource]="dataSource"
                                          placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
             <div class="col-2">
@@ -88,8 +87,8 @@
             <ng-container matColumnDef="company">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Company</span>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
                                                  columnId="company" propertyName="company"></app-table-column-filter>
                     </span>
                 </th>
@@ -124,8 +123,8 @@
             <ng-container matColumnDef="tags">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Tags
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort" columnId="tags"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort" columnId="tags"
                                                  propertyName="tags" optionLabel="label" optionValue="value" [columnFormat]="11"
                                                  [options]="tags"></app-table-column-filter>
                     </span>
@@ -169,8 +168,8 @@
                         <div>FuelerLinx</div>
                         <div>Network</div>
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="8" [matDataSource]="customersDataSource"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [columnFormat]="8" [matDataSource]="dataSource"
                                                  [matSort]="sort" columnId="isFuelerLinxCustomer" propertyName="isFuelerLinxCustomer">
                         </app-table-column-filter>
                     </span>
@@ -186,8 +185,8 @@
                         <div>Fleet</div>
                         <div>Size</div>
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
                                                  [matSort]="sort" columnId="fleetSize" propertyName="fleetSize"></app-table-column-filter>
                     </span>
                 </th>
@@ -199,8 +198,8 @@
             <ng-container matColumnDef="pricingTemplateName">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     ITP Margin Template
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
                                                  columnId="pricingTemplateId" propertyName="pricingTemplateId" [columnFormat]="10"
                                                  optionLabel="name" optionValue="oid" [options]="pricingTemplatesData">
                         </app-table-column-filter>
@@ -219,8 +218,8 @@
             <ng-container matColumnDef="fuelVendors">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Fuel Vendors
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
                                                  columnId="fuelVendors" propertyName="fuelVendors" optionLabel="label" optionValue="value"
                                                  [columnFormat]="11" [options]="fuelVendors"></app-table-column-filter>
                     </span>
@@ -272,8 +271,8 @@
                         <div>Customer</div>
                         <div>Type</div>
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
                                                  columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
                         </app-table-column-filter>
                     </span>
@@ -289,8 +288,8 @@
                         <div>Certificate</div>
                         <div>Type</div>
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[matDataSource]="customersDataSource" [matSort]="sort"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
                                                  columnId="certificateTypeDescription" propertyName="certificateTypeDescription">
                         </app-table-column-filter>
                     </span>
@@ -308,8 +307,8 @@
                         <div>Previous</div>
                         <div>Visits</div>
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
                                                  [matSort]="sort" columnId="aircraftsVisits" propertyName="aircraftsVisits">
                         </app-table-column-filter>
                     </span>
@@ -324,8 +323,8 @@
                     <div>
                        Pricing Formula
                     </div>
-                    <span *ngIf="customersDataSource">
-                        <app-table-column-filter (filteredDataSource)="loadFilteredDataSource($event)"[columnFormat]="1" [matDataSource]="customersDataSource"
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
                                                  [matSort]="sort" columnId="pricingFormula" propertyName="pricingFormula">
                         </app-table-column-filter>
                     </span>
@@ -354,6 +353,11 @@
             <tr *matHeaderRowDef="getTableColumns(); sticky: true" mat-header-row></tr>
             <tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
+
+        <div class="invisible">
+            <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="customersData.length"
+            [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+        </div>
 
         <popover-content #feeAndTaxPopover placement="left" title="Price Information" [closeOnClickOutside]="true">
             <price-breakdown #priceBreakdownPreview *ngIf="focusedCustomer"

@@ -55,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
         private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
-            return fboId == 276;
+            return fboId == 276 || fboId == 525;
         };
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
@@ -140,8 +140,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var demoData = _demoData.Value.FlightWatch;
             var swim = new SWIMFlightLegDTO()
             {
-                Make = "TestMake",
-                Model = "TestModel",
+                FAAMake = "CESSNA",
+                FAAModel = "172N",
                 Altitude = 43650,
                 Latitude = demoData.Latitude,
                 Longitude = demoData.Longitude,
@@ -152,8 +152,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 ATD = DateTime.UtcNow.AddHours(2),
                 ETALocal = DateTime.UtcNow,
                 ETA = DateTime.UtcNow.AddMinutes(25),
-                DepartureCity = "KTEB",
-                DepartureICAO = "Teterboro",
+                DepartureCity = "Teterboro",
+                DepartureICAO = "KTEB",
                 ArrivalCity = fbo.City,
                 ArrivalICAO = fbo.FboAirport.Icao,
                 ActualSpeed = demoData.GroundSpeedKts
