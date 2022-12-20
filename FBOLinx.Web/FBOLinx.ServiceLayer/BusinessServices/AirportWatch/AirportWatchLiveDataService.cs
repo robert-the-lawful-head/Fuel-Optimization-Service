@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
+using FBOLinx.Core.Enums.TableStorage;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Models.ServiceLogs;
 using FBOLinx.DB.Projections.AirportWatch;
 using FBOLinx.DB.Specifications.AirportWatchData;
+using FBOLinx.DB.Specifications.ServiceLogs;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
@@ -15,10 +18,13 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.TableStorage.Entities;
 using FBOLinx.TableStorage.EntityServices;
+using Fuelerlinx.SDK;
 using Geolocation;
 using Mapster;
+using Newtonsoft.Json;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -39,17 +45,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportService _AirportService;
         private IFboService _FboService;
         private readonly AirportWatchLiveDataTableEntityService _airportWatchLiveDataTableEntityService;
+        private readonly TableStorageLogEntityService _TableStorageLogEntityService;
 
         public AirportWatchLiveDataService(IRepository<DB.Models.AirportWatchLiveData, 
                 FboLinxContext> entityService, 
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
                 IAirportService airportService,
-            IFboService fboService, AirportWatchLiveDataTableEntityService airportWatchLiveDataTableEntityService) : base(entityService)
+            IFboService fboService, AirportWatchLiveDataTableEntityService airportWatchLiveDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService) : base(entityService)
         {
             _FboService = fboService;
             _AirportService = airportService;
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
             _airportWatchLiveDataTableEntityService = airportWatchLiveDataTableEntityService;
+            _TableStorageLogEntityService = tableStorageLogEntityService;
         }
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
@@ -113,7 +121,50 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 AircraftHexCode = x.AircraftHexCode,
             }).ToList();
 
-            await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
+            try
+            {
+                await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
+                await UpdateStatistics(airportWatchTableEntities);
+            }
+            catch (Exception ex)
+            {
+                await _TableStorageLogEntityService.AddAsync(new TableStorageLog()
+                {
+                    TableEntityType = TableEntityType.AirportWatchLiveData,
+                    LogType = TableStorageLogType.FailedBatchInsert,
+                    RequestData = JsonConvert.SerializeObject(airportWatchTableEntities),
+                    AdditionalData = ex.Message,
+                });
+            }
+        }
+
+        private async Task UpdateStatistics(IEnumerable<AirportWatchLiveDataTableEntity> entities)
+        {
+            foreach (IGrouping<string, AirportWatchLiveDataTableEntity> entitiesGroup in entities.GroupBy(x => x.PartitionKey))
+            {
+                string partitionKey = entitiesGroup.First().PartitionKey;
+
+                TableStorageLog tableStorageLogStatistics = await _TableStorageLogEntityService.GetSingleBySpec(new TableStorageLogSpecification(partitionKey));
+
+                if (tableStorageLogStatistics != null)
+                {
+                    int recordsCount = int.Parse(tableStorageLogStatistics.AdditionalData);
+                    recordsCount += entitiesGroup.Count();
+                    tableStorageLogStatistics.AdditionalData = recordsCount.ToString();
+
+                    await _TableStorageLogEntityService.UpdateAsync(tableStorageLogStatistics);
+                }
+                else
+                {
+                    await _TableStorageLogEntityService.AddAsync(new TableStorageLog()
+                    {
+                        TableEntityType = TableEntityType.AirportWatchLiveData,
+                        LogType = TableStorageLogType.Statistics,
+                        PartitionKey = partitionKey,
+                        AdditionalData = entitiesGroup.Count().ToString(),
+                    });
+                }
+            }
         }
 
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Azure;
+using Azure.Core;
 using Azure.Data.Tables;
 using FBOLinx.TableStorage.Utils;
 using Microsoft.Extensions.Options;
@@ -20,6 +21,8 @@ namespace FBOLinx.TableStorage.EntityServices
             if (!string.IsNullOrWhiteSpace(azureTableStorageSettings?.Value?.ConnectionString))
             {
                 var options = new TableClientOptions();
+                options.Retry.Mode = RetryMode.Exponential;
+                options.Retry.MaxDelay = TimeSpan.FromMinutes(5);
                 //options.Retry.NetworkTimeout = TimeSpan.FromSeconds(30);
                 tableClient = new TableClient(azureTableStorageSettings.Value.ConnectionString, typeof(TTableEntity).Name, options);
             }
@@ -77,14 +80,7 @@ namespace FBOLinx.TableStorage.EntityServices
                 return;
             }
 
-            try
-            {
-                await tableClient.AddEntityAsync(entity);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            await tableClient.AddEntityAsync(entity);
         }
 
         public virtual async Task BatchInsert(IList<TTableEntity> entities)
@@ -98,16 +94,9 @@ namespace FBOLinx.TableStorage.EntityServices
 
             tableTransactionActions.AddRange(entities.Select(e => new TableTransactionAction(TableTransactionActionType.Add, e)));
 
-            try
+            foreach (IEnumerable<TableTransactionAction> batchToInsert in tableTransactionActions.Batch(100))
             {
-                foreach (IEnumerable<TableTransactionAction> batchToInsert in tableTransactionActions.Batch(100))
-                {
-                    await tableClient.SubmitTransactionAsync(batchToInsert).ConfigureAwait(false);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
+                await tableClient.SubmitTransactionAsync(batchToInsert).ConfigureAwait(false);
             }
         }
 
@@ -118,14 +107,7 @@ namespace FBOLinx.TableStorage.EntityServices
                 return;
             }
 
-            try
-            {
-                await tableClient.DeleteEntityAsync(partitionKey, rawKey);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+            await tableClient.DeleteEntityAsync(partitionKey, rawKey);
         }
 
         /// <summary>

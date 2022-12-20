@@ -134,6 +134,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<SWIMFlightLegDataErrorEntityService, SWIMFlightLegDataErrorEntityService>();
             services.AddTransient<IFboPricesEntityService, FboPricesEntityService>();
             services.AddTransient<IFboPreferencesEntityService, FboPreferencesEntityService>();
+            services.AddTransient<TableStorageLogEntityService, TableStorageLogEntityService>();
 
             return services;
         }

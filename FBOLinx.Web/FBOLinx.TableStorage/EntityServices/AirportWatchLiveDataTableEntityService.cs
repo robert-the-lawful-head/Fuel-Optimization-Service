@@ -50,22 +50,15 @@ namespace FBOLinx.TableStorage.EntityServices
 
         public override async Task BatchInsert(IList<AirportWatchLiveDataTableEntity> entities)
         {
-            try
+            foreach (AirportWatchLiveDataTableEntity entity in entities)
             {
-                foreach (AirportWatchLiveDataTableEntity entity in entities)
-                {
-                    entity.PartitionKey = CreatePartitionKeyFunc(entity.BoxTransmissionDateTimeUtc, entity.BoxName);
-                    entity.RowKey = GetRowKey();
-                }
-
-                foreach (IGrouping<string, AirportWatchLiveDataTableEntity> entitiesGroup in entities.GroupBy(x => x.PartitionKey))
-                {
-                    await base.BatchInsert(entitiesGroup.ToList());
-                }
+                entity.PartitionKey = CreatePartitionKeyFunc(entity.BoxTransmissionDateTimeUtc, entity.BoxName);
+                entity.RowKey = GetRowKey();
             }
-            catch (Exception ex)
+
+            foreach (IGrouping<string, AirportWatchLiveDataTableEntity> entitiesGroup in entities.GroupBy(x => x.PartitionKey))
             {
-                Console.WriteLine(ex);
+                await base.BatchInsert(entitiesGroup.ToList());
             }
         }
 
