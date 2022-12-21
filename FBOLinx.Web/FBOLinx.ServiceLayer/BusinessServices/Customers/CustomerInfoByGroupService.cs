@@ -28,7 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerInfoByGroupDTO>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
             //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await GetListbySpec(new CustomerInfoByGroupByFboIdSpecification(groupId, fboId));
+            var customerInfoByGroup = await GetListbySpec(new CustomerInfoByGroupByFboIdSpecification(groupId, fboId, customerInfoByGroupId));
             customerInfoByGroup.RemoveAll(x => x == null);
 
             return customerInfoByGroup;
@@ -37,7 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
             //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await GetListbySpec(new CustomerInfoByGroupByFboIdSpecification(groupId, fboId));
+            var customerInfoByGroup = await GetListbySpec(new CustomerInfoByGroupByFboIdSpecification(groupId, fboId, customerInfoByGroupId));
             customerInfoByGroup.RemoveAll(x => x == null);
 
             var customerInfoByGroupList = customerInfoByGroup.Select(x => new CustomerListResponse
