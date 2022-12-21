@@ -20,6 +20,7 @@ using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
@@ -99,6 +100,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<DateTimeService, DateTimeService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IFboPreferencesService, FboPreferencesService>();
+            services.AddTransient<IDemoFlightWatch, DemoFlightWatch>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
