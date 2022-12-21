@@ -27,8 +27,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using Microsoft.Extensions.Options;
+using FBOLinx.ServiceLayer.Demo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -45,15 +44,11 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IFuelReqService _fuelReqService;
-        private IOptions<DemoData> _demoData;
+        private readonly IDemoFlightWatch _demoFlightWatch;
 
-        private Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
-        {
-            return fboId == 276 || fboId == 525;
-        };
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
-            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IOptions<DemoData> demoData)
+            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -63,8 +58,7 @@ namespace FBOLinx.Web.Controllers
             _fboService = fboService;
             _airportWatchService = airportWatchService;
             _fuelReqService = fuelReqService;
-
-            _demoData = demoData;
+            _demoFlightWatch = demoFlightWatch;
         }
 
         // GET: api/FuelReqs/5
@@ -182,25 +176,9 @@ namespace FBOLinx.Web.Controllers
             
             var result = await _fuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
 
-            if (_isDemoDataVisibleByFboId(fboId))
+            if (_demoFlightWatch.isDemoDataVisibleByFboId(fboId))
             {
-                var demoData = _demoData.Value.FlightWatch;
-
-                var demoFuelReqOrder = 
-                    new FuelReqDto()
-                    {
-                        Oid= demoData.FuelOrder.Oid,
-                    CustomerId = demoData.FuelOrder.CustomerId,
-                        Icao = demoData.FuelOrder.Icao,
-                    Fboid = demoData.FuelOrder.Fboid,
-                    CustomerAircraftId = demoData.FuelOrder.CustomerAircraftId,
-                    TimeStandard = demoData.FuelOrder.TimeStandard,
-                        QuotedVolume = demoData.FuelOrder.QuotedVolume,
-                    CustomerAircraft = new CustomerAircraftsDto(){ TailNumber = demoData.FuelOrder.CustomerAircraft.TailNumber }
-                
-                    };
-                result.Add(demoFuelReqOrder);
-
+                result.Add(_demoFlightWatch.GetFuelReqDemo());
             }
 
             return Ok(result);
