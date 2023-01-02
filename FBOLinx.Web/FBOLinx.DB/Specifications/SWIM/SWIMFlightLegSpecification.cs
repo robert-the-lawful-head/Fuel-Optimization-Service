@@ -14,8 +14,8 @@ namespace FBOLinx.DB.Specifications.SWIM
             AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(IList<string> departureICAOs, IList<string> arrivalICAOs, DateTime atdMin, DateTime atdMax)
-            : base(x => departureICAOs.Contains(x.DepartureICAO) && arrivalICAOs.Contains(x.ArrivalICAO) && x.ATD >= atdMin && x.ATD <= atdMax)
+        public SWIMFlightLegSpecification(IList<string> departureICAOs, IList<string> arrivalICAOs, DateTime atdMin, DateTime atdMax, IList<string> flightIdentifiers)
+            : base(x => (departureICAOs.Contains(x.DepartureICAO) && arrivalICAOs.Contains(x.ArrivalICAO) && x.ATD >= atdMin && x.ATD <= atdMax) || flightIdentifiers.Contains(x.Gufi))
         {
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }

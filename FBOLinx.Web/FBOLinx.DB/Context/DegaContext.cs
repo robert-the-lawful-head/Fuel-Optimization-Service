@@ -25,6 +25,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<SWIMFlightLeg> SWIMFlightLegs { get; set; }
         public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
         public virtual DbSet<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
+        public virtual DbSet<SWIMUnrecognizedFlightLeg> SWIMUnrecognizedFlightLegs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
