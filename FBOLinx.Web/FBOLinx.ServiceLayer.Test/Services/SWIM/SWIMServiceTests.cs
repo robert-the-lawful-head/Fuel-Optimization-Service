@@ -28,6 +28,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.SWIM
             Assert.IsNotEmpty(historicalFlightLegs);
         }
 
+        // [Test]
+        // public async Task GetNearestAirportICAO()
+        // {
+        //     Arrange(services =>
+        //     {
+        //     });
+        //     var nearestAirport = await subject.GetNearestAirportICAO(new string[] { "3627N", "08641W" });
+        //
+        //     Assert.IsNotEmpty(nearestAirport);
+        // }
+
         [Test]
         public async Task SaveFlightLegData_RawXmlMessageProvided_SWIMFlightLegDataErrorCreated()
         {
