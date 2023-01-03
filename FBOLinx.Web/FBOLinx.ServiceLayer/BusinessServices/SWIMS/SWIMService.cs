@@ -165,7 +165,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<string> departureICAOs = swimFlightLegDTOs.Select(x => x.DepartureICAO).Distinct().ToList();
             List<string> arrivalICAOs = swimFlightLegDTOs.Select(x => x.ArrivalICAO).Distinct().ToList();
             List<string> flightIdentifiers = swimFlightLegDTOs.Select(x => x.Gufi).Distinct().ToList();
-            List<SWIMFlightLeg> existingOldFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList(); // remove after deploy, search only by Gufi instead
+            List<SWIMFlightLeg> existingOldFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList(); // remove next deploy, fetch only by Gufi
             List<SWIMFlightLeg> existingNewFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(flightIdentifiers))).OrderByDescending(x => x.ATD).ToList();
             
             List<SWIMFlightLegData> flightLegDataMessagesToInsert = new List<SWIMFlightLegData>();
@@ -178,7 +178,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 try
                 {
                     var existingLeg = existingOldFlightLegs.FirstOrDefault(
-                    x => (x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD) || (x.Gufi != null && x.Gufi == swimFlightLegDto.Gufi));
+                        x => (x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD) || (x.Gufi != null && x.Gufi == swimFlightLegDto.Gufi)); // remove next deploy, search by Gufi instead
                     if (existingLeg == null)
                     {
                         existingLeg = existingNewFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
