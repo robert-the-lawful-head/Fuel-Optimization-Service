@@ -145,11 +145,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var newAircraftToAdd = (from t in tailNumbers
                                     join g in groupIds on 1 equals 1
-                                    join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g } equals new
-                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
+                                    join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g, CustomerId = 0 } equals new
+                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
                                     //    into leftJoinCustomerAircrafts
                                     //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-                                    //where (ca?.Oid).GetValueOrDefault() == 0
+                                    where ca is not null && (ca?.CustomerId).Value == 0
                                     select new CustomerAircrafts()
                                     {
                                         AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
@@ -161,12 +161,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         Size = (Core.Enums.AircraftSizes?)((short)(_fuelerlinxAircraftList
                                             .FirstOrDefault(x => x.TailNumber == t).Size)),
                                         Oid = ca.Oid
-
-                                    })
-                .ToList();
+                                    }).ToList();
 
             if (newAircraftToAdd?.Count > 0)
-                await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd);
+                await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList());
 
             var customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
@@ -179,7 +177,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                         { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-                where (ca?.Oid).GetValueOrDefault() == 0
+                where ca is null
                 select new CustomerAircrafts()
                 {
                     AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
@@ -189,8 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                     CustomerId = _customerRecord.Oid,
                     TailNumber = t,
                     Size = (Core.Enums.AircraftSizes?)((short)(_fuelerlinxAircraftList
-                        .FirstOrDefault(x => x.TailNumber == t).Size))
-
+                        .FirstOrDefault(x => x.TailNumber == t).Size)),
                 })
                 .ToList();
 
@@ -212,7 +209,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         TailNumber = ca.TailNumber,
                                         Size = ca.Size
                                     }).ToList();
-
+          
             if (aircraftToRemove?.Count > 0)
             {
                 await _customerAircraftEntityService.BulkUpdate(aircraftToRemove);
@@ -266,6 +263,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var result = await _customerInfoByGroupEntityService.GetListBySpec(
                 new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
+
+            result = (from r in result
+                      join g in _existingGroupRecords on r.GroupId equals g.Oid
+                      select r).ToList();
+
             _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
         }
     }
