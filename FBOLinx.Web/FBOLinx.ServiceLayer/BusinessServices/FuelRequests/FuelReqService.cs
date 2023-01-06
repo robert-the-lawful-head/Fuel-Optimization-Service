@@ -4,22 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.DB.Specifications.FboAirport;
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
-using Mapster;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Azure.Core;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -35,6 +31,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
         Task<List<FuelReqDto>> GetDirectAndContractOrdersByGroupAndFbo(int groupId, int fboId,
             DateTime startDateTime, DateTime endDateTime);
+        Task<List<object>> GetCustomersBreakdown(int fboId, int groupId, int? customerId, DateTime startDateTime, DateTime endDateTime);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -172,8 +169,71 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             requests.ForEach(x =>
                 x.CustomerName = customers.FirstOrDefault(c => c.CustomerId == x.CustomerId.GetValueOrDefault())?.Company);
-
             return requests;
+        }
+
+        public async Task<List<object>> GetCustomersBreakdown(int fboId, int groupId, int? customerId, DateTime startDateTime, DateTime endDateTime)
+        {
+            string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+            var validTransactions = await _context.FuelReq.Where(fr =>
+            (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= startDateTime && fr.Etd <= endDateTime && fr.Fboid.HasValue && fr.Fboid.Value == fboId).ToListAsync();
+            var fuelReqs = (from fr in validTransactions
+            group fr by fr.CustomerId
+            into groupedFuelReqs
+            select new
+            {
+                                CustomerId = groupedFuelReqs.Key,
+                                TotalOrders = groupedFuelReqs.Count(),
+                                TotalVolume = groupedFuelReqs.Sum(fr => (fr.ActualVolume ?? 0) * (fr.ActualPpg ?? 0) > 0 ?
+                                             fr.ActualVolume * fr.ActualPpg :
+                                             (fr.QuotedVolume ?? 0) * (fr.QuotedPpg ?? 0)) ?? 0
+                            }).ToList();
+
+            int? customeridval = null;
+            if (customerId.HasValue)
+            {
+                customeridval = customerId;
+            }
+
+            var customers = await _context.CustomerInfoByGroup
+                                    .Where(c => c.GroupId.Equals(groupId))
+                                    .Include(x => x.Customer)
+                                    .Where(x => (x.Customer != null && x.Customer.Suspended != true) && (x.CustomerId == customeridval
+                                    || customeridval == null)).Select(c => new
+                                    {
+                                        Oid = c.Oid,
+                                        c.CustomerId,
+                                        Company = c.Company.Trim(),
+                                        Customer = c.Customer
+                                    })
+                                   .Distinct().ToListAsync();
+
+            FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
+            fbolinxOrdersRequest.StartDateTime = startDateTime;
+            fbolinxOrdersRequest.EndDateTime = endDateTime;
+            fbolinxOrdersRequest.Icao = icao;
+
+            FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest);
+            ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount = response.Result;
+
+            List<object> chartData = new List<object>();
+            foreach (var customer in customers)
+            {
+                var fuelerLinxCustomerID = Math.Abs((customer.Customer?.FuelerlinxId).GetValueOrDefault());
+                var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
+
+                var airportTotalOrders = 0;
+                if (fuelerlinxCustomerOrdersCount != null)
+                    airportTotalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+
+                chartData.Add(new
+                {
+                    Name = customer.Company,
+                    Orders = airportTotalOrders,
+                    Volume = selectedCompanyFuelReqs?.TotalVolume ?? 0
+                });
+            }
+            return chartData;
         }
     }
 }
