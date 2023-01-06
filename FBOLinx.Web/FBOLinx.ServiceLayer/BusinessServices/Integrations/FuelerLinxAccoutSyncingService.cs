@@ -145,11 +145,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var newAircraftToAdd = (from t in tailNumbers
                                     join g in groupIds on 1 equals 1
-                                    join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g, CustomerId = 0 } equals new
-                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
+                                    join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g } equals new
+                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
                                     //    into leftJoinCustomerAircrafts
                                     //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-                                    where ca is not null && (ca?.CustomerId).Value == 0
                                     select new CustomerAircrafts()
                                     {
                                         AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
