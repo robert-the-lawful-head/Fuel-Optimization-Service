@@ -344,54 +344,29 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         }
     }
 
-    onExport() {
-        const dialogRef = this.exportDialog.open<
-            CsvExportModalComponent,
-            ICsvExportModalData,
-            ICsvExportModalData
-        >(CsvExportModalComponent, {
-            data: {
-                filterEndDate: this.filterEndDate,
-                filterStartDate: this.filterStartDate,
-                title: 'Export Airport Departures and Arrivals',
-            },
+    exportCsv() {
+        let cols = this.columns.filter(col => !col.hidden);
+        let exportData = this.dataSource.data.map((item) => {
+            let row = {};
+            cols.forEach( col => {
+                if(col.id == "aircraftTypeCode")
+                    row[col.name] = this.getAircraftLabel(item.aircraftTypeCode)
+                else
+                    row[col.name] = item[col.id]
+            });
+            return row;
         });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(
+            wb,
+            ws,
+            'Airport Departures and Arrivals'
+        );
 
-            this.exportCsv(result.filterStartDate, result.filterEndDate);
-        });
-    }
-
-    exportCsv(startDate: Date, endDate: Date) {
-        this.fetchData(startDate, endDate).subscribe((data) => {
-            const exportData = data.map((item) => ({
-                Aircraft: item.aircraftType,
-                'Aircraft Type': this.getAircraftLabel(item.aircraftTypeCode),
-                Company: item.company,
-                'Date and Time': item.dateTime,
-                'Departure / Arrival':
-                    item.status === FlightWatchStatus.Landing
-                        ? 'Arrival'
-                        : 'Departure',
-                'Flight #': item.flightNumber,
-                'Hex #': item.hexCode,
-                'Tail #': item.tailNumber,
-            }));
-            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-            const wb: XLSX.WorkBook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(
-                wb,
-                ws,
-                'Airport Departures and Arrivals'
-            );
-
-            /* save to file */
-            XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
-        });
-    }
+        /* save to file */
+        XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
+}
 
     clearAllFilters() {
         this.selectedCustomers = [];
