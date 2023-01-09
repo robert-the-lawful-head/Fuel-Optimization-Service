@@ -57,6 +57,8 @@ export class AnalyticsCustomerBreakdownChartComponent implements OnInit {
         this.fuelreqsService
             .getFBOCustomersBreakdown(
                 this.sharedService.currentUser.fboId,
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.oid,
                 this.filterStartDate,
                 this.filterEndDate,
                 this.chartType
