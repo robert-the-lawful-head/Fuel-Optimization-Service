@@ -48,8 +48,8 @@ export class FbosMissedOrdersGridComponent implements OnInit {
         const dialogRef = this.priceCheckerDialog.open(
             PriceCheckerComponent,
             {
-                width: '650px',
-                height: '600px'
+                width: '100%',
+                height: '100%'
             }
         );
 

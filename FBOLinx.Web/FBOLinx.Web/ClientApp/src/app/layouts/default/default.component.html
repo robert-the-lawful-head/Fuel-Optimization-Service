@@ -1,48 +1,47 @@
 <div [ngClass]="layoutClasses" class="site-container">
-    <app-horizontal-navbar
-        (sidebarState)="sidebarState()"
-        [title]="pageTitle"
-    ></app-horizontal-navbar>
+    <app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
+                         [isMenuVisible]="openedSidebar"></app-vertical-navbar>
 
-    <app-vertical-navbar
-        [ngClass]="{ hideSidebar: !openedSidebar }"
-        [isMenuVisible]="openedSidebar"
-    ></app-vertical-navbar>
-    <div *ngIf="pricingTemplatesData">
-        <app-addition-navbar
-            #insideElement
-            [templatelst]="pricingTemplatesData"
-        ></app-addition-navbar>
+    <app-horizontal-navbar (sidebarState)="sidebarState()"
+                           [title]="pageTitle"></app-horizontal-navbar>
+
+    <div [ngClass]="{ 'full-width': !openedSidebar }" class="container-fluid sticky-panel">
+        <div class="row">
+            <div class="col-12 text-md-right pt-md-0">
+                <div class="d-inline-block">
+                    <app-fbo-prices-panel *ngIf="isPricePanelVisible()"
+                                          [enableSaf]="enableSaf"
+                                          [enableJetA]="enableJetA"
+                                          [costSaf]="costSaf"
+                                          [retailSaf]="retailSaf"
+                                          [costJetA]="costJetA"
+                                          [retailJetA]="retailJetA"
+                                          [effectiveToSaf]="effectiveToSaf"
+                                          [effectiveToJetA]="effectiveToJetA"
+                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel><!-- class="d-none d-md-block"-->
+                </div>
+            </div>
+        </div>
+        <!--<app-fbo-prices-panel *ngIf="isPricePanelVisible()"
+                      [enableSaf]="enableSaf"
+                      [enableJetA]="enableJetA"
+                      [costSaf]="costSaf"
+                      [retailSaf]="retailSaf"
+                      [costJetA]="costJetA"
+                      [retailJetA]="retailJetA"
+                      [effectiveToSaf]="effectiveToSaf"
+                      [effectiveToJetA]="effectiveToJetA"
+                      (onClearFboPrice)="onClearFboPrice($event)"
+                      class="d-initial d-md-none"></app-fbo-prices-panel>-->
     </div>
 
-    <app-fbo-prices-panel
-        *ngIf="isPricePanelVisible()"
-        [enableSaf]="enableSaf"
-        [enableJetA]="enableJetA"
-        [costSaf]="costSaf"
-        [retailSaf]="retailSaf"
-        [costJetA]="costJetA"
-        [retailJetA]="retailJetA"
-        [effectiveToSaf]="effectiveToSaf"
-        [effectiveToJetA]="effectiveToJetA"
-        (onClearFboPrice)="onClearFboPrice($event)"
-        class="sticky-panel d-none d-md-block"
-    ></app-fbo-prices-panel>
+    <div *ngIf="pricingTemplatesData">
+        <app-addition-navbar #insideElement
+                             [templatelst]="pricingTemplatesData"></app-addition-navbar>
+    </div>
 
     <main [ngClass]="{ 'full-width': !openedSidebar }"
           class="main-content">
-
-        <app-fbo-prices-panel *ngIf="isPricePanelVisible()"
-                              [enableSaf]="enableSaf"
-                              [enableJetA]="enableJetA"
-                              [costSaf]="costSaf"
-                              [retailSaf]="retailSaf"
-                              [costJetA]="costJetA"
-                              [retailJetA]="retailJetA"
-                              [effectiveToSaf]="effectiveToSaf"
-                              [effectiveToJetA]="effectiveToJetA"
-                              (onClearFboPrice)="onClearFboPrice($event)"
-                              class="d-initial d-md-none"></app-fbo-prices-panel>
 
         <div class="main-content-wrap">
             <router-outlet></router-outlet>

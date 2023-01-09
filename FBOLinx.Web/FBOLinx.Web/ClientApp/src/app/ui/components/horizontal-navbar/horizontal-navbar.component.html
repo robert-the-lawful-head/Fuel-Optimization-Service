@@ -11,8 +11,13 @@
             Live Chat
         </button>
     </div>
-    <div *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">
-        {{ fbo.fbo }} / {{ fboAirport.icao }}
+    <div *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao">
+        <div class="col 6 text-center page-info">
+            {{ fboAirport.icao }}
+        </div>
+        <div class="col page-info">
+            {{ fbo.fbo }}
+        </div>
     </div>
     <div class="nav-items" *ngIf="!isPublicView">
         <!--Fuel order notifications-->
