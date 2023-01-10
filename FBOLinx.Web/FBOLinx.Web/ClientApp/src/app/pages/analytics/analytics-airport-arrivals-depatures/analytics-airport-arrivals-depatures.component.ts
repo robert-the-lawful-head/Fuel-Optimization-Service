@@ -346,7 +346,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
     exportCsv() {
         let cols = this.columns.filter(col => !col.hidden);
-        let exportData = this.dataSource.data.map((item) => {
+        let exportData = this.dataSource.filteredData.map((item) => {
             let row = {};
             cols.forEach( col => {
                 if(col.id == "aircraftTypeCode")
