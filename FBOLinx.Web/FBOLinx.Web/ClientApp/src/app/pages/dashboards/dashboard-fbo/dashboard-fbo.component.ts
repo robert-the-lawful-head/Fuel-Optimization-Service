@@ -35,6 +35,8 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
     constructor(private sharedService: SharedService) {
+        location.href = '/default-layout/dashboard-fbo-updated/';
+
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
         );

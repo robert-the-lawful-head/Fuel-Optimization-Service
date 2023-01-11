@@ -32,14 +32,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
         private IFboEntityService _FboEntityService;
         private IFboAirportsService _FboAirportsService;
         private readonly ICustomerAircraftService _CustomerAircraftService;
-        private readonly CustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private readonly IFuelReqService _FuelReqService;
         private FuelerLinxApiService _FuelerLinxApiService;
         private IPricingTemplateEntityService _PricingTemplateEntityService;
         private IAirportTimeService _AirportTimeService;
 
         public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
-            ICustomerAircraftService customerAircraftService, CustomerService customerService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService,
+            ICustomerAircraftService customerAircraftService, ICustomerInfoByGroupService customerInfoByGroupService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService,
             IAirportTimeService airportTimeService) : base(entityService)
         {
             _AirportTimeService = airportTimeService;
@@ -47,7 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
             _FboEntityService = fboEntityService;
             _FboAirportsService = iFboAirportsService;
             _CustomerAircraftService = customerAircraftService;
-            _CustomerService = customerService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
             _FuelReqService = fuelReqService;
             _FuelerLinxApiService = fuelerLinxApiService;
             _PricingTemplateEntityService = pricingTemplateEntityService;
@@ -64,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
-            var customers = await _CustomerService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customers = await _CustomerInfoByGroupService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
 
             var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId.GetValueOrDefault(), fboId);
 
@@ -85,7 +85,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             foreach (var transaction in allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).OrderByDescending(f => f.DateCreated))
             {
-                var customer = customers.Where(c => c.Customer.Oid == transaction.CustomerId).FirstOrDefault();
+                var customer = customers.Where(c => c.CustomerId == transaction.CustomerId).FirstOrDefault();
 
                 if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
                 {
@@ -104,7 +104,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
                     missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
-                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.Customer.Oid).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.CustomerId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }

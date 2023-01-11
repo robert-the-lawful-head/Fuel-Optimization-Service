@@ -54,12 +54,12 @@ namespace FBOLinx.Web.Services
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
         private IFboService _fboService;
-        private readonly FbopricesService _fbopricesService;
+        private readonly IFboPricesService _fbopricesService;
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
             FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
-            IFboService fboService, FbopricesService fbopricesService)
+            IFboService fboService, IFboPricesService fbopricesService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Services
             _DistributePricingRequest = request;
             _IsPreview = isPreview;
 
-            var customers = new List<CustomerInfoByGroup>();
+            var customers = new List<CustomerInfoByGroupDTO>();
             customers = await GetCustomersForDistribution(request);
 
             if (customers == null)
@@ -97,7 +97,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var customerToSend = new CustomerInfoByGroup();
+                var customerToSend = new CustomerInfoByGroupDTO();
 
                 foreach (var customer in customers)
                 {
@@ -143,25 +143,25 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Private Methods
-        private async Task<List<CustomerInfoByGroup>> GetCustomersForDistribution(DistributePricingRequest request)
+        private async Task<List<CustomerInfoByGroupDTO>> GetCustomersForDistribution(DistributePricingRequest request)
         {
-            List<CustomerInfoByGroup> customers;
+            List<CustomerInfoByGroupDTO> customers;
             if (request.Customer == null || request.Customer.Oid == 0)
             {
                 customers = await GetCustomersForDistribution();
             }
             else
             {
-                customers = new List<CustomerInfoByGroup>();
+                customers = new List<CustomerInfoByGroupDTO>();
                 customers.Add(request.Customer);
             }
 
             if (_DistributePricingRequest.CustomerCompanyType == 0)
                 return customers;
-            return customers.Where((x => x.CustomerCompanyType == _DistributePricingRequest.CustomerCompanyType)).ToList();
+            return customers.Where(x => x.CustomerCompanyType == _DistributePricingRequest.CustomerCompanyType).ToList();
         }
 
-        private async Task<List<CustomerInfoByGroup>> GetCustomersForDistribution()
+        private async Task<List<CustomerInfoByGroupDTO>> GetCustomersForDistribution()
         {
             var result = await (from cg in _context.Set<CustomerInfoByGroup>()
                                 join c in _context.Set<Customers>() on cg.CustomerId equals c.Oid
@@ -169,7 +169,36 @@ namespace FBOLinx.Web.Services
                                 join pt in _context.Set<PricingTemplate>() on cct.CustomerType equals pt.Oid
                                 where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
                                 && !(c.Suspended ?? false)
-                                select cg).ToListAsync();
+                                select new CustomerInfoByGroupDTO
+                                {
+                                    Oid = cg.Oid,
+                                    GroupId = cg.GroupId,
+                                    CustomerId = cg.CustomerId,
+                                    Company = cg.Company,
+                                    Username = cg.Username,
+                                    Password = cg.Password,
+                                    Joined = cg.Joined,
+                                    Active = cg.Active,
+                                    Distribute = cg.Distribute,
+                                    Network = cg.Network,
+                                    MainPhone = cg.MainPhone,
+                                    Address = cg.Address,
+                                    City = cg.City,
+                                    State = cg.State,
+                                    ZipCode = cg.ZipCode,
+                                    Country = cg.Country,
+                                    Website = cg.Website,
+                                    ShowJetA = cg.ShowJetA,
+                                    Suspended = cg.Suspended,
+                                    DefaultTemplate = cg.DefaultTemplate,
+                                    CustomerType = cg.CustomerType,
+                                    EmailSubscription = cg.EmailSubscription,
+                                    Sfid = cg.Sfid,
+                                    CertificateType = cg.CertificateType,
+                                    CustomerCompanyType = cg.CustomerCompanyType,
+                                    PricingTemplateRemoved = cg.PricingTemplateRemoved,
+                                    MergeRejected = cg.MergeRejected
+                                }).ToListAsync();
             return result;
         }
 
@@ -190,7 +219,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task GenerateDistributionMailMessage(CustomerInfoByGroup customer)
+        private async Task GenerateDistributionMailMessage(CustomerInfoByGroupDTO customer)
         {
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
@@ -308,7 +337,7 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task StoreSingleCustomer(CustomerInfoByGroup customer)
+        private async Task StoreSingleCustomer(CustomerInfoByGroupDTO customer)
         {
             DistributionQueue queue = new DistributionQueue()
             {
@@ -321,7 +350,7 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroup customer)
+        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroupDTO customer)
         {
 
             var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
@@ -330,7 +359,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task<byte[]> GetPriceBreakdownImage(CustomerInfoByGroup customer, List<PricingTemplate> pricingTemplates)
+        private async Task<byte[]> GetPriceBreakdownImage(CustomerInfoByGroupDTO customer, List<PricingTemplate> pricingTemplates)
         {
             StringBuilder result = new StringBuilder();
             foreach (var pricingTemplate in pricingTemplates)
@@ -342,7 +371,7 @@ namespace FBOLinx.Web.Services
             return FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(priceBreakdownHTML);
         }
 
-        private async Task<string> GetPriceBreakdownHTML(CustomerInfoByGroup customer, PricingTemplate pricingTemplate)
+        private async Task<string> GetPriceBreakdownHTML(CustomerInfoByGroupDTO customer, PricingTemplate pricingTemplate)
         {
             var commercialInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
             var privateInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
@@ -591,7 +620,7 @@ namespace FBOLinx.Web.Services
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
         }
 
-        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroup customer)
+        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDTO customer)
         {
             var result = await (from cc in _context.Set<CustomerContacts>()
                                 join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
@@ -606,7 +635,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroup> customers)
+        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDTO> customers)
         {
             await GetEmailContent();
             if (!_IsPreview)

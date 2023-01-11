@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
@@ -16,6 +14,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
+using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
@@ -23,7 +22,6 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
-using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
@@ -52,6 +50,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CompanyPricingLogMostRecentQuoteModel> _MostRecentQuotes;
         private IPriceFetchingService _PriceFetchingService;
         private List<CustomerWithPricing> _CurrentPricingResults;
+        private IDemoFlightWatch _demoFlightWatch;
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -61,7 +60,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             ICustomerAircraftService customerAircraftService,
             IAirportFboGeofenceClustersService airportFboGeofenceClustersService,
             ICompanyPricingLogService companyPricingLogService,
-            IPriceFetchingService priceFetchingService
+            IPriceFetchingService priceFetchingService,
+            IDemoFlightWatch demoFlightWatch
         )
         {
             _PriceFetchingService = priceFetchingService;
@@ -73,6 +73,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _SwimFlightLegService = swimFlightLegService;
             _FboService = fboService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
+            _demoFlightWatch = demoFlightWatch;
         }
 
         public async Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId)
@@ -103,7 +104,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var daysToCheckBackForHistoricalData = options.IncludeRecentHistoricalRecords ? 1 : 0;
             if (options.IncludeVisitsAtFbo)
                 daysToCheckBackForHistoricalData = 30;
-            
+
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
                 await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 1, daysToCheckBackForHistoricalData);
@@ -120,9 +121,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
+            if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
+                AddDemoDataToFlightWatchResult(result,_Fbo);
+
             return result;
         }
-        
+        private void AddDemoDataToFlightWatchResult(List<FlightWatchModel> result, FbosDto fbo)
+        {
+            var flightWatch = _demoFlightWatch.GetFlightWatchModelDemo(fbo);
+
+            if(flightWatch == null)
+                return;
+
+            var fuelReqOrders = new List<FuelReqDto>() { _demoFlightWatch.GetFuelReqDemo() };
+
+            flightWatch.SetUpcomingFuelOrderCollection(fuelReqOrders);
+
+            result.Add(flightWatch);
+        }
         private string GetFocusedAirportIdentifier()
         {
             if (!string.IsNullOrEmpty(_Options.AirportIdentifier))

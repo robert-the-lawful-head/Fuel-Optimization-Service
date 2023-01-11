@@ -82,6 +82,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public feesAndTaxes: Array<any>;
 
+    public tab: string = 'customer';
+
     constructor(
         private sharedService: SharedService,
         private aircraftsService: AircraftsService,
@@ -104,6 +106,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
                     this.resetAll();
                 }
             });
+
+        this.tab = 'customer';
     }
 
     ngOnDestroy(): void {
@@ -201,7 +205,8 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
     }
 
-    public onTabChanged(event: any): void {
+    public onOptionChange(event: any): void {
+        this.tab = event.value;
         this.priceCheckerLookupType = event.index;
         this.priceLookupInfo = null;
         this.sampleCalculation = null;

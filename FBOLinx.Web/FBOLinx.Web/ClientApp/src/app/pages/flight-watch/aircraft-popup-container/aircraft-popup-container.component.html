@@ -33,14 +33,6 @@
     </div>
     <div class="row-container">
         <div class="column-container info-labels">
-            <p>Aircraft Type</p>
-        </div>
-        <div class="column-container info-values">
-            <p>{{ aircraftWatch?.aircraftICAO | NullOrEmptyToDefault }}&nbsp;</p>
-        </div>
-    </div>
-    <div class="row-container">
-        <div class="column-container info-labels">
             <p>Make/Model</p>
         </div>
         <div class="column-container info-values">
@@ -52,7 +44,7 @@
             <p>On Ground</p>
         </div>
         <div class="column-container info-values">
-            <p>{{ aircraftWatch?.isAircraftOnGround | booleanToText }}&nbsp;</p>
+            <p>{{ aircraftWatch?.isAircraftOnGround | booleanTryCastToText }}&nbsp;</p>
         </div>
     </div>
     <div class="row-container">
@@ -60,8 +52,23 @@
             <p>Last Quote</p>
         </div>
         <div class="column-container info-values">
-            <!--<p>{{ aircraftWatch?.lastQuote | NullOrEmptyToDefault }}&nbsp;</p>-->
             <p>{{ aircraftWatch?.lastQuote}}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Origin</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.origin}}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Destination</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.destination}}&nbsp;</p>
         </div>
     </div>
       <div class="row-container actions">

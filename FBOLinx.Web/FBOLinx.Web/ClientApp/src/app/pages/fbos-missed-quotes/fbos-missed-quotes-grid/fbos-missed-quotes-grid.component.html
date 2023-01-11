@@ -6,12 +6,6 @@
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
 
-<div class="price-checker-button">
-    <button (click)="openPriceChecker()" view="'default'" size="small" ni-button>
-        Price Checker
-    </button>
-</div>
-
 <div>
     <div class="subtitle">These flights departments requested a quote and your pricing was expired</div>
     <div *ngIf="noMissedQuotes">No Missed Quotes</div>
@@ -23,5 +17,11 @@
                 <div class="col-4 border-bottom pt-3 pb-3"> {{ missedQuote.createdDate }}</div>
             </div>
         </div>
+    </div>
+
+    <div class="col-12 text-right price-checker-button-bottom">
+            <button (click)="openPriceChecker()" view="'default'" size="small" class="btn-sm" ni-button>
+                Price Checker
+            </button>
     </div>
 </div>

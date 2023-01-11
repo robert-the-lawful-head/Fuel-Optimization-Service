@@ -38,7 +38,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly FboLinxContext _context;
         private readonly IPriceFetchingService _priceFetchingService;
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IPriceDistributionService _priceDistributionService;
@@ -46,10 +46,11 @@ namespace FBOLinx.Web.Controllers
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly AircraftService _aircraftService;
         private readonly DegaContext _degaContext;
-        private readonly FbopricesService _fboPricesService;
+        private readonly IFboPricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
+        private ICustomerInfoByGroupService _customerInfoByGroupService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, CustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, FbopricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -64,6 +65,7 @@ namespace FBOLinx.Web.Controllers
             _aircraftService = aircraftService;
             _fboPricesService = fbopricesService;
             _fboFeesAndTaxesService = fboFeesAndTaxesService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
 
@@ -343,7 +345,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             //View model for customers dropdown list
-            var list = await _customerService.GetCustomersListByGroupAndFbo(groupId, fboId);
+            var list = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(groupId, fboId);
 
             return Ok(list);
         }
@@ -941,7 +943,7 @@ namespace FBOLinx.Web.Controllers
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
-                var customerInfoByGroupCollection = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
+                var customerInfoByGroupCollection = await _customerInfoByGroupService.GetCustomersByGroupAndFbo(groupId, fboId);
                 customerInfoByGroupCollection = customerInfoByGroupCollection.OrderBy(c => c.Company).ToList();
 
                 var contactInfoByFboForAlerts =
@@ -974,9 +976,9 @@ namespace FBOLinx.Web.Controllers
                         from ccot in leftJoinCCOT.DefaultIfEmpty()
                         join ai in pricingTemplatesCollection on new
                         {
-                            TemplateId = ((cg.Customer?.CustomCustomerType?.CustomerType).GetValueOrDefault() == 0
+                            TemplateId = ((cg.Customer?.CustomCustomerType.FirstOrDefault() == null ? 0 : cg.Customer?.CustomCustomerType.FirstOrDefault().CustomerType).GetValueOrDefault() == 0
                                     ? defaultPricingTemplate.Oid
-                                    : cg.Customer?.CustomCustomerType?.CustomerType).GetValueOrDefault()
+                                    : cg.Customer?.CustomCustomerType.FirstOrDefault() == null ? 0 : cg.Customer?.CustomCustomerType.FirstOrDefault().CustomerType).GetValueOrDefault()
                         } equals new { TemplateId = ai.Oid }
                             into leftJoinAi
                         from ai in leftJoinAi.DefaultIfEmpty()

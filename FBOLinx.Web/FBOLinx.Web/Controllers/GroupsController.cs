@@ -32,9 +32,9 @@ namespace FBOLinx.Web.Controllers
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly GroupFboService _groupFboService;
         private readonly IGroupService _groupService;
-        private readonly CustomerService _customerService;
+        private readonly ICustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, CustomerService customerService, IGroupService groupService)
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, ICustomerService customerService, IGroupService groupService)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -156,8 +156,8 @@ namespace FBOLinx.Web.Controllers
                 var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
                 g.FboCount = groupFbos.Count();
                 g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
-                g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
                 g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
+                g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
             });
 
             return Ok(new GroupFboViewModel

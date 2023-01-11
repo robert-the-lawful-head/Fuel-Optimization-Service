@@ -7,6 +7,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -26,7 +27,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private FuelerLinxApiService _fuelerLinxApiService;
         private int _fuelerLinxCompanyId;
         private CompanyDTO _fuelerlinxCompany;
-        private CustomerEntityService _customerEntityService;
+        private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
         private CustomerDTO _customerRecord;
@@ -34,18 +35,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private List<CustomerInfoByGroupDTO> _customerInfoByGroupRecords;
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
+        private ICustomerService _customerService;
 
-        public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService, 
-            CustomerEntityService customerEntityService,
-            IGroupService groupService, 
+        public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
+            ICustomersEntityService customerEntityService,
+            IGroupService groupService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            CustomerAircraftEntityService customerAircraftEntityService)
+            CustomerAircraftEntityService customerAircraftEntityService,
+            ICustomerService customerService)
         {
             _customerAircraftEntityService = customerAircraftEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _groupService = groupService;
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
+            _customerService = customerService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -76,7 +80,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerRecord.Suspended = _fuelerlinxCompany.HideInFboLinx.GetValueOrDefault();
             _customerRecord.Company = _fuelerlinxCompany.CompanyName;
 
-            await _customerEntityService.Update(_customerRecord);
+            await _customerService.UpdateAsync(_customerRecord);
         }
 
         private async Task UpdateCustomerInfoByGroupRecords()
@@ -145,7 +149,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                     { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
                                     //    into leftJoinCustomerAircrafts
                                     //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-                                    //where (ca?.Oid).GetValueOrDefault() == 0
                                     select new CustomerAircrafts()
                                     {
                                         AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
@@ -157,12 +160,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         Size = (Core.Enums.AircraftSizes?)((short)(_fuelerlinxAircraftList
                                             .FirstOrDefault(x => x.TailNumber == t).Size)),
                                         Oid = ca.Oid
-
-                                    })
-                .ToList();
+                                    }).ToList();
 
             if (newAircraftToAdd?.Count > 0)
-                await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd);
+                await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList());
 
             var customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
@@ -175,7 +176,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                         { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
-                where (ca?.Oid).GetValueOrDefault() == 0
+                where ca is null
                 select new CustomerAircrafts()
                 {
                     AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
@@ -185,8 +186,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                     CustomerId = _customerRecord.Oid,
                     TailNumber = t,
                     Size = (Core.Enums.AircraftSizes?)((short)(_fuelerlinxAircraftList
-                        .FirstOrDefault(x => x.TailNumber == t).Size))
-
+                        .FirstOrDefault(x => x.TailNumber == t).Size)),
                 })
                 .ToList();
 
@@ -208,7 +208,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         TailNumber = ca.TailNumber,
                                         Size = ca.Size
                                     }).ToList();
-
+          
             if (aircraftToRemove?.Count > 0)
             {
                 await _customerAircraftEntityService.BulkUpdate(aircraftToRemove);
@@ -242,12 +242,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             _existingGroupRecords = await _groupService.GetListbySpec(new AllGroupsSpecification(false));
 
-            _customerRecord = await _customerEntityService.GetSingleBySpec(
+            _customerRecord = await _customerService.GetSingleBySpec(
                 new CustomerByFuelerLinxIdSpecification(_fuelerLinxCompanyId));
 
             //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
             if (_customerRecord == null)
-                _customerRecord = await _customerEntityService.Add(new CustomerDTO()
+                _customerRecord = await _customerService.AddAsync(new CustomerDTO()
                 {
                     Action = false,
                     Margin = 0,
@@ -262,6 +262,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var result = await _customerInfoByGroupEntityService.GetListBySpec(
                 new CustomerInfoByGroupByCustomerIdSpecification(_customerRecord.Oid));
+
+            result = (from r in result
+                      join g in _existingGroupRecords on r.GroupId equals g.Oid
+                      select r).ToList();
+
             _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
         }
     }

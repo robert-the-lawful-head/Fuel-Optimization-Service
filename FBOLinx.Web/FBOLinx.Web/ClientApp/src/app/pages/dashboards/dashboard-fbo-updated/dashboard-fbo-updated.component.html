@@ -1,103 +1,96 @@
-<ni-breadcrumb
-    [menu]="breadcrumb"
-    [style]="'custom1'"
-    class="ni-breadcrumb-wrap"
-></ni-breadcrumb>
+<div class="row">
+    <div class="col-md-6">
+        <ni-breadcrumb [menu]="breadcrumb"
+                       [style]="'custom1'"
+                       class="ni-breadcrumb-wrap"></ni-breadcrumb>
+    </div>
+</div>
 
 <div class="mobile-header">
     <h5>Dashboard</h5>
 </div>
 
 <div class="after-breadcrumb">
-    <app-fbo-prices-update-generator
-        [isCsr]="isCsr"
-        [isMember]="isMember"
-    ></app-fbo-prices-update-generator>
+    <div class="container-fluid">
 
-    <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-            <ni-card
-                [collapsible]="false"
-                [opened]="true"
-                bgColor="dead"
-                class=""
-                headerBgColor="dead"
-                outline="true"
-                theme="small"
-                title="Expired Pricing Lost Opportunities"
-            >
-                <div class="app-fbos-missed-quotes-grid">
-                    <app-fbos-missed-quotes-grid
-                        #missedQuotes
-                    ></app-fbos-missed-quotes-grid>
-                </div>
-            </ni-card>
-        </div>
-        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-            <ni-card
-                [collapsible]="false"
-                [opened]="true"
-                bgColor="dead"
-                class=""
-                headerBgColor="dead"
-                outline="true"
-                theme="small"
-                title="Flight Watch - Live Flight Tracking"
-            >
-                <div class="map-container" (click)="gotoFlightWatch()">
-                    <mat-spinner *ngIf="isMapLoading" ></mat-spinner>
-                    <app-flight-watch-map *ngIf="!isMapLoading"
-                    (markerClicked)="null"
-                    (airportClick)="null"
-                    (setIcaoList)="null"
-                    class="app-flight-watch-map"
-                    [center]="center"
-                    [data]="flightWatchData"
-                    [isStable]="flightWatchData?.length > 0"></app-flight-watch-map>
-                </div>
-            </ni-card>
-        </div>
-        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-            <ni-card
-                [collapsible]="false"
-                [opened]="true"
-                bgColor="dead"
-                class="prices-board-item prices-board-second-column price-checker"
-                headerBgColor="dead"
-                outline="true"
-                theme="small"
-                title="Lost To Competition"
-            >
-                <app-fbos-missed-orders-grid
-                    #missedOrders
-                ></app-fbos-missed-orders-grid>
-            </ni-card>
-        </div>
-    </div>
+            <app-fbo-prices-update-generator [isCsr]="isCsr"
+                                             [isMember]="isMember"></app-fbo-prices-update-generator>
 
-    <div class="row">
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-customers #statisticsTotalCustomers
-                                            [endDate]="filterEndDate"
-                                            [startDate]="filterStartDate"></app-statistics-total-customers>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <ni-card [collapsible]="false"
+                         [opened]="true"
+                         bgColor="dead"
+                         class=""
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Expired Pricing Lost Opportunities">
+                    <div class="app-fbos-missed-quotes-grid">
+                        <app-fbos-missed-quotes-grid #missedQuotes></app-fbos-missed-quotes-grid>
+                    </div>
+                </ni-card>
+            </div>
+            <div class="d-none d-md-block col-sm-12 col-md-6 col-lg-6 col-xl-6">
+                <ni-card [collapsible]="false"
+                         [opened]="true"
+                         bgColor="dead"
+                         class=""
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Flight Watch - Live Flight Tracking">
+                    <div class="map-container" (click)="gotoFlightWatch()">
+                        <mat-spinner *ngIf="isMapLoading"></mat-spinner>
+                        <app-flight-watch-map *ngIf="!isMapLoading"
+                                              (markerClicked)="null"
+                                              (airportClick)="null"
+                                              (setIcaoList)="null"
+                                              class="app-flight-watch-map"
+                                              [center]="center"
+                                              [data]="flightWatchData"
+                                              [isStable]="flightWatchData?.length > 0"></app-flight-watch-map>
+                    </div>
+                </ni-card>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                <ni-card [collapsible]="false"
+                         [opened]="true"
+                         bgColor="dead"
+                         class="prices-board-item prices-board-second-column price-checker"
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Lost To Competition">
+                    <app-fbos-missed-orders-grid #missedOrders></app-fbos-missed-orders-grid>
+                </ni-card>
+            </div>
         </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-aircraft #statisticsTotalAircraft
-                                           [endDate]="filterEndDate"
-                                           [startDate]="filterStartDate"></app-statistics-total-aircraft>
-        </div>
+        <div class="row">
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-customers #statisticsTotalCustomers
+                                                [endDate]="filterEndDate"
+                                                [startDate]="filterStartDate"></app-statistics-total-customers>
+            </div>
 
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-total-orders #statisticsTotalOrders
-                                         [endDate]="filterEndDate"
-                                         [startDate]="pastThirtyDaysStartDate"></app-statistics-total-orders>
-        </div>
-
-        <div class="col-md-6 col-xl-3">
-            <app-statistics-orders-by-location #statisticsOrdersByLocation
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-aircraft #statisticsTotalAircraft
                                                [endDate]="filterEndDate"
-                                               [startDate]="pastThirtyDaysStartDate"></app-statistics-orders-by-location>
+                                               [startDate]="filterStartDate"></app-statistics-total-aircraft>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-total-orders #statisticsTotalOrders
+                                             [endDate]="filterEndDate"
+                                             [startDate]="pastThirtyDaysStartDate"></app-statistics-total-orders>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <app-statistics-orders-by-location #statisticsOrdersByLocation
+                                                   [endDate]="filterEndDate"
+                                                   [startDate]="pastThirtyDaysStartDate"></app-statistics-orders-by-location>
+            </div>
         </div>
     </div>
 </div>

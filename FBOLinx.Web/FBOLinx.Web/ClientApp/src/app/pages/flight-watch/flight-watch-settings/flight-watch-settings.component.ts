@@ -3,7 +3,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
-import { swimTableColumns } from 'src/app/models/swim';
+import { swimTableColumns, swimTableColumnsDisplayText } from 'src/app/models/swim';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -21,6 +21,8 @@ export class FlightWatchSettingsComponent {
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() filteredTypes: string[];
+    @Input() showFilters: boolean =  true;
+    @Input() isLobbyView: boolean =  false;
 
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
@@ -34,12 +36,15 @@ export class FlightWatchSettingsComponent {
     searchIcaoTxt: string;
 
     columns: ColumnType[] = [];
+    arrivalsColumns: ColumnType[] = [];
+    departuresColumns: ColumnType[] = [];
     tableLocalStorageKey: string;
 
     constructor(private tableSettingsDialog: MatDialog,private sharedService: SharedService) {
+    }
+    ngOnInit(): void {
         this.initColumns();
     }
-
     ngOnChanges(changes: SimpleChanges) {
         if(!changes.arrivals?.previousValue && !changes.departures?.previousValue)
         this.updateDrawerButtonPosition.emit();
@@ -104,84 +109,75 @@ export class FlightWatchSettingsComponent {
             if (!result) {
                 return;
             }
-
-            this.columns = [...result];
+            this.columns = [...result]
             this.updateDrawerButtonPosition.emit();
+            this.saveSettings();
+            this.departuresTable.updateColumns(this.getFilteredDefaultColumns(false, this.isLobbyView,this.columns));
+            this.arrivalsTable.updateColumns(this.getFilteredDefaultColumns(true, this.isLobbyView,this.columns));
             this.arrivalsTable.refreshSort();
             this.departuresTable.refreshSort();
-            this.saveSettings();
         });
     }
     initColumns() {
-        this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+        let savedColumns = this.getClientSavedColumns();
+
+        if(savedColumns?.length > 0)
+            this.columns = savedColumns;
+        else
+            this.columns = this.getSettingsColumnDefinition();
+
+        this.arrivalsColumns =  this.getFilteredDefaultColumns(true, this.isLobbyView,this.columns);
+        this.departuresColumns =  this.getFilteredDefaultColumns(false, this.isLobbyView,this.columns);
+    }
+    private getClientSavedColumns(){
+        if(this.isLobbyView)
+            this.tableLocalStorageKey  = `lobby-settings-${this.sharedService.currentUser.fboId}`;
+        else
+            this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
+
         let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
         let hasColumnUpdates :boolean = false;
-
         if (localStorageColumns) {
             let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
             for(let col in storedCols){
                 let colName = storedCols[col].id;
-                if(swimTableColumns[colName] != undefined) continue;
+                if(swimTableColumnsDisplayText[colName] != undefined) continue;
                 hasColumnUpdates = true;
                 break;
             }
             if(!hasColumnUpdates){
-                this.columns = storedCols;
-                return;
+                return storedCols;
+            }
+        }
+        return null;
+    }
+    private getSettingsColumnDefinition(): ColumnType[]{
+        let cols = [];
+        if(this.isLobbyView){
+            cols = [...new Set(this.lobbyArrivalCols.concat(this.lobbyDeparturesCols))]
+        }
+        else{
+            cols = [...new Set(this.defaultArrivalCols.concat(this.defaultDeparturesCols))]
+        }
+        return this.tableColumns?.filter((column) => { return cols.includes(column.id) }) || [];
+
+    }
+    private getFilteredDefaultColumns(isArrival: boolean, isLobbyView, columns: ColumnType[]) : ColumnType[]{
+        if(isLobbyView){
+            if(isArrival){
+                return columns?.filter((column) => { return this.lobbyArrivalCols.includes(column.id) }) || [];
+            }else{
+                return columns?.filter((column) => { return this.lobbyDeparturesCols.includes(column.id) }) || [];
             }
         }
 
-        this.columns = this.getColumnDefinition();
+        if(isArrival){
+            return columns?.filter((column) => { return this.defaultArrivalCols.includes(column.id) }) || [];
+        }else{
+            return columns?.filter((column) => { return this.defaultDeparturesCols.includes(column.id)}) || [];
+        }
     }
-    getColumnDefinition(): ColumnType[]{
-        return [
-            {
-                id: swimTableColumns.status,
-                name: swimTableColumns.status,
-            },
-            {
-                id: swimTableColumns.tailNumber,
-                name: swimTableColumns.tailNumber,
-            },
-            {
-                id: swimTableColumns.flightDepartment,
-                name: swimTableColumns.flightDepartment,
-                sort: 'desc',
-            },
-            {
-                id: swimTableColumns.icaoAircraftCode,
-                name: swimTableColumns.icaoAircraftCode,
-            },
-            {
-                id: swimTableColumns.ete,
-                name: swimTableColumns.ete,
-            },
-            {
-                id: swimTableColumns.atd,
-                name: swimTableColumns.atd,
-            },
-            {
-                id: swimTableColumns.eta,
-                name: swimTableColumns.eta,
-            },
-            {
-                id: swimTableColumns.origin,
-                name: swimTableColumns.origin,
-            },
-            {
-                id: swimTableColumns.destination,
-                name: swimTableColumns.destination,
-            },
-            {
-                id: swimTableColumns.isAircraftOnGround,
-                name: swimTableColumns.isAircraftOnGround,
-            },
-            {
-                id: swimTableColumns.itpMarginTemplate,
-                name: swimTableColumns.itpMarginTemplate,
-            }
-        ];
-    }
+
     saveSettings() {
         localStorage.setItem(
             this.tableLocalStorageKey,
@@ -191,4 +187,75 @@ export class FlightWatchSettingsComponent {
     sortChangeSaveSettings(){
         this.saveSettings();
     }
+    arrivalsDeparturesCommonCols: string[]= [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode,swimTableColumns.ete,swimTableColumns.isAircraftOnGround,swimTableColumns.itpMarginTemplate];
+
+    defaultArrivalCols = [swimTableColumns.etaLocal,swimTableColumns.originAirport].concat(this.arrivalsDeparturesCommonCols);
+
+    defaultDeparturesCols = [swimTableColumns.atdLocal,swimTableColumns.destinationAirport].concat(this.arrivalsDeparturesCommonCols);
+
+    arrivalsDeparturesLobbyCommonCols: string[] = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.isAircraftOnGround];
+
+    lobbyArrivalCols= [swimTableColumns.etaLocal,swimTableColumns.originAirport,swimTableColumns.originCity].concat(this.arrivalsDeparturesLobbyCommonCols);
+
+    lobbyDeparturesCols = [swimTableColumns.atdLocal,swimTableColumns.destinationAirport,swimTableColumns.destinationCity,swimTableColumns.isAircraftOnGround].concat(this.arrivalsDeparturesLobbyCommonCols);
+
+    tableColumns :ColumnType[]= [
+        {
+            id: swimTableColumns.status,
+            name: swimTableColumnsDisplayText[swimTableColumns.status],
+        },
+        {
+            id: swimTableColumns.tailNumber,
+            name: swimTableColumnsDisplayText[swimTableColumns.tailNumber],
+        },
+        {
+            id: swimTableColumns.flightDepartment,
+            name: swimTableColumnsDisplayText[swimTableColumns.flightDepartment],
+            sort: 'desc',
+        },
+        {
+            id: swimTableColumns.icaoAircraftCode,
+            name: swimTableColumnsDisplayText[swimTableColumns.icaoAircraftCode],
+        },
+        {
+            id: swimTableColumns.ete,
+            name: swimTableColumnsDisplayText[swimTableColumns.ete],
+        },
+        {
+            id: swimTableColumns.atdLocal,
+            name: swimTableColumnsDisplayText[swimTableColumns.atdLocal],
+        },
+        {
+            id: swimTableColumns.etaLocal,
+            name: swimTableColumnsDisplayText[swimTableColumns.etaLocal],
+        },
+        {
+            id: swimTableColumns.originAirport,
+            name: swimTableColumnsDisplayText[swimTableColumns.originAirport],
+        },
+        {
+            id: swimTableColumns.originCity,
+            name: swimTableColumnsDisplayText[swimTableColumns.originCity],
+        },
+        {
+            id: swimTableColumns.destinationAirport,
+            name: swimTableColumnsDisplayText[swimTableColumns.destinationAirport],
+        },
+        {
+            id: swimTableColumns.destinationCity,
+            name: swimTableColumnsDisplayText[swimTableColumns.destinationCity],
+        },
+        {
+            id: swimTableColumns.makeModel,
+            name: swimTableColumnsDisplayText[swimTableColumns.makeModel],
+        },
+        {
+            id: swimTableColumns.isAircraftOnGround,
+            name: swimTableColumnsDisplayText[swimTableColumns.isAircraftOnGround],
+        },
+        {
+            id: swimTableColumns.itpMarginTemplate,
+            name: swimTableColumnsDisplayText[swimTableColumns.itpMarginTemplate],
+        }
+    ];
 }

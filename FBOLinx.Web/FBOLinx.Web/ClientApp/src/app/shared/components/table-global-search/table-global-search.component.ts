@@ -71,7 +71,6 @@ export class TableGlobalSearchComponent implements OnInit {
 
         this.applyFilter(this.globalFilter.filterValue);
     }
-
     public applyFilter(filterValue: any) {
         let existingFilters: any[];
         if (!this.matDataSource.filter) {

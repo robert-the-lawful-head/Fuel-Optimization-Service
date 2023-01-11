@@ -1,20 +1,25 @@
 <div class="navbar-wrap">
-    <button (click)="openSidebar()"
+    <button (click)="openSidebar()" *ngIf="!isPublicView"
     [ngClass]="{ open: openedSidebar }"
     mat-icon-button aria-label="open side nav bar">
         <mat-icon>menu</mat-icon>
     </button>
 
     <div class="page-title">FBOLinx</div>
-    <div>
+    <div *ngIf="!isPublicView">
         <button (click)="showWidget()" mat-stroked-button class="navbar-button live-chat">
             Live Chat
         </button>
     </div>
-    <div *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao" class="page-info">
-        {{ fbo.fbo }} / {{ fboAirport.icao }}
+    <div *ngIf="fbo && fbo.fbo && fboAirport && fboAirport.icao">
+        <div class="col 6 text-center page-info">
+            {{ fboAirport.icao }}
+        </div>
+        <div class="col page-info">
+            {{ fbo.fbo }}
+        </div>
     </div>
-    <div class="nav-items">
+    <div class="nav-items" *ngIf="!isPublicView">
         <!--Fuel order notifications-->
         <div class="nav-item fuel-order" [ngClass]="{ opened: fuelOrderNotificationsMenu.isOpened }">
             <a (click)="openFuelOrdersUpdate()" class="nav-link">
@@ -196,6 +201,15 @@
                            style="cursor: pointer">
                             <span class="icon sli-settings"></span>
                             Stop Managing Group
+                        </a>
+                    </li>
+                    <li *ngIf="
+                            currentUser && currentUser.impersonatedRole === 1
+                        ">
+                        <a target="_blank" [routerLink]="['/public-layout/lobby-view']"
+                        style="cursor: pointer">
+                            <span class="icon sli-map"></span>
+                            Lobby View
                         </a>
                     </li>
                     <li>

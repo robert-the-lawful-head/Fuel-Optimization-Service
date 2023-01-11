@@ -12,9 +12,10 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.FuelPrices;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
     public interface IMissedQuoteLogService : IBaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog>
     {
         Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId);
-        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, DB.Models.Customers customer);
+        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO customer);
     }
 
     public class MissedQuoteLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedQuoteLogService
@@ -34,10 +35,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         private readonly CustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _FuelerlinxSdkSettings;
         private IServiceScopeFactory _ScopeFactory;
-        private readonly CustomerService _CustomerService;
+        private readonly ICustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public MissedQuoteLogService(IMissedQuoteLogEntityService entityService, IFboService fboService, IFboEntityService fboEntityService, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IServiceScopeFactory scopeFactory, CustomerService customerService) : base(entityService)
+            IServiceScopeFactory scopeFactory, ICustomerService customerService, ICustomerInfoByGroupService customerInfoByGroupService) : base(entityService)
         {
             _FboService = fboService;
             _FboEntityService = fboEntityService;
@@ -45,6 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             _FuelerlinxSdkSettings = appPartnerSDKSettings.Value.FuelerLinx;
             _ScopeFactory = scopeFactory;
             _CustomerService = customerService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
         public async Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId)
@@ -52,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             var recentMissedQuotes = await GetRecentMissedQuotes(fboId, true);
 
             var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
-            var customersList = await _CustomerService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
 
             var recentMissedQuotesGroupedList = recentMissedQuotes.GroupBy(r => r.CustomerId).Select(g => new
             {
@@ -80,7 +83,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             return missedQuotesLogList;
         }
 
-        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, DB.Models.Customers customer)
+        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO  customer)
         {
             foreach (var icao in icaos.Split(',').Select(x => x.Trim()))
             {

@@ -2,9 +2,12 @@
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.Dto.UseCaseModels;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.PricingTemplate;
@@ -23,8 +26,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplateGrid>> GetCostPlusPricingTemplates(int fboId);
         Task<List<PricingTemplateGrid>> GetPricingTemplatesWithEmailContent(int fboId, int groupId);
         Task<PricingTemplate> CopyPricingTemplate(int? currentPricingTemplateId, string pricingTemplateName);
-        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
-        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
     }
@@ -33,12 +36,15 @@ namespace FBOLinx.ServiceLayer.EntityServices
     {
         private readonly FboLinxContext _context;
         private readonly CustomerAircraftService _customerAircraftService;
+        private readonly IFboPricesEntityService _fboPricesEntityService;
 
         public PricingTemplateEntityService(FboLinxContext context,
             ICustomerMarginsEntityService customerMarginEntityService,
-            CustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(context)
+            CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
+            IFboPricesEntityService fboPricesEntityService) : base(context)
         {
             _context = context;
+            _fboPricesEntityService = fboPricesEntityService;
         }
 
         public async Task<PricingTemplate> CopyPricingTemplate(int? currentPricingTemplateId, string pricingTemplateName)
@@ -163,8 +169,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
             }
             await _context.SaveChangesAsync();
 
-            var tempFboPrices = await _context.Fboprices
-                                                .Where(fp => fp.EffectiveFrom <= DateTime.UtcNow && fp.Fboid == fboId && fp.Expired != true && fp.Product.Contains("JetA")).OrderBy(f => f.Oid).ToListAsync();
+            var tempFboPrices = await _fboPricesEntityService.GetListBySpec(new CurrentFboPricesByFboIdSpecification(fboId));
+
+            tempFboPrices = tempFboPrices.Where(fp => fp.Product.Contains("JetA")).OrderBy(f => f.Oid).ToList();
 
             var oldJetAPriceExists = tempFboPrices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo <= DateTime.UtcNow).ToList();
             if (oldJetAPriceExists.Count() > 0)
@@ -173,7 +180,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 for (int i = 0; i <= 1; i++)
                 {
                     oldJetAPriceExists[i].Expired = true;
-                    _context.Fboprices.Update(oldJetAPriceExists[i]);
+                    await _fboPricesEntityService.DeleteAsync(oldJetAPriceExists[i]);
                     await _context.SaveChangesAsync();
 
                     tempFboPrices.Remove(oldJetAPriceExists[i]);
@@ -226,7 +233,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                           } equals new
                                           {
                                               Fboid = fp.Fboid.GetValueOrDefault(),
-                                              Product = fp.GenericProduct
+                                              Product = fp.Product.Split(' ')[1]
                                           }
                                           into leftJoinFP
                                           from fp in leftJoinFP.DefaultIfEmpty()
@@ -443,7 +450,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return templatesWithEmailContent;
         }
 
-        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             return await(from cg in _context.CustomerInfoByGroup
                                join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -464,7 +471,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                select pt).ToListAsync();
         }
 
-        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroup customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             var aircraftPricesResult = await(from ap in _context.AircraftPrices
                                              join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
