@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileInfo, SelectedEventArgs } from '@syncfusion/ej2-angular-inputs';
-import { HtmlEditorService, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
-
+import { HtmlEditorService, ImageDropEventArgs, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
+import { FileHelper } from 'src/app/helpers/files/file.helper';
+import { EditorBase } from 'src/app/services/text-editor/editorBase';
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 
@@ -29,11 +29,9 @@ const BREADCRUMBS: any[] = [
     templateUrl: './email-templates-edit.component.html',
     providers: [ToolbarService, LinkService, ImageService, HtmlEditorService ]
 })
-export class EmailTemplatesEditComponent implements OnInit {
+export class EmailTemplatesEditComponent extends EditorBase implements OnInit {
     @ViewChild('fileUpload') fileUploadName;
     private id: any;
-    private imgSizeLimitinBytes: number = 60000;
-    private imgLargeImageErrorMsg: string = "This image file size is too large, please use a smaller image.";
     public breadcrumb: any[] = BREADCRUMBS;
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
@@ -44,17 +42,21 @@ export class EmailTemplatesEditComponent implements OnInit {
     public isSaveQueued = false;
 
     public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64'}
+    public fileManagerSettings
+FileManagerSettingsModel
     theFile: any;
     isUploadingFile: boolean;
     fileName: any = "";
+    isUploadButtonDisabled: boolean = true;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private sharedService: SharedService,
         private emailContentService: EmailcontentService,
-        private snackBar: MatSnackBar
+        fileHelper: FileHelper
     ) {
+        super(fileHelper);
         this.sharedService.titleChange(this.pageTitle);
     }
     async ngOnInit() {
@@ -71,15 +73,13 @@ export class EmailTemplatesEditComponent implements OnInit {
 
     public onImageSelected = (args: SelectedEventArgs) => {
         let lastImage : FileInfo = args.filesData[args.filesData.length - 1];
-        if (this.imgSizeLimitinBytes < lastImage.size) {
-            this.snackBar.open(this.imgLargeImageErrorMsg, "X");
+        if (!this.fileHelper.isValidImageSize(lastImage.size)) {
             this.canSave = false;
             args.cancel = true;
         }
         else
             this.canSave = true;
     }
-
     public onselected(e) {
         // Specify the image name
         e.filesData[0].name = "RTEImage changes";
@@ -98,6 +98,11 @@ export class EmailTemplatesEditComponent implements OnInit {
     }
 
     onFileChange(event) {
+        if(!this.fileHelper.isValidImageSize(event.srcElement.files[0].size)){
+            this.isUploadButtonDisabled = true;
+            return;
+        }
+        this.isUploadButtonDisabled = false;
         this.theFile = null;
         if (event.target.files && event.target.files.length > 0) {
             // Set theFile property
