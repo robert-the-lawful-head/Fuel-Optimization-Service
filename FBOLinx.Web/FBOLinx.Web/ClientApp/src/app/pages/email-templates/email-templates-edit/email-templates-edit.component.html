@@ -65,7 +65,9 @@
                                                             (blur)="formChanged($event)"
                                                             height="400"
                                                             [insertImageSettings]='insertImageSettings'
-                                                            (imageSelected)='onImageSelected($event)'></ejs-richtexteditor>
+                                                            (imageSelected)='onImageSelected($event)'
+                                                            (beforeImageDrop)='onImageDrop($event)'
+                                        ></ejs-richtexteditor>
                                         <h6 class="mt-2">File Attachment</h6>
                                         <div>
                                             <input type="file"
@@ -74,6 +76,7 @@
                                                    #fileUpload />
                                             <button *ngIf="!isUploadingFile"
                                                     (click)="uploadFile()"
+                                                    [disabled]="isUploadButtonDisabled"
                                                     class="ml-3"
                                                     color="accent"
                                                     mat-raised-button>

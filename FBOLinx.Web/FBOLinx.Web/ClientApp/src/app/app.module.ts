@@ -105,6 +105,7 @@ import { SwimService } from './services/swim.service';
 import { FlightWatchService } from './services/flightwatch.service';
 import { FlightWatchHelper } from './pages/flight-watch/FlightWatchHelper.service';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
+import { FileHelper } from './helpers/files/file.helper';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -225,7 +226,8 @@ import { PublicViewComponent } from './layouts/public-view/public-view.component
         DateTimeService,
         SwimService,
         FlightWatchService,
-        FlightWatchHelper
+        FlightWatchHelper,
+        FileHelper
     ],
 })
 export class AppModule { }
