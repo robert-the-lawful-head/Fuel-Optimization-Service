@@ -24,9 +24,9 @@ group by ca.GroupID, ca.customerid, ca.tailnumber
 
 
 --Results that require an evaluation because a pricing was somehow assigned to multiple copies (CustomerAircraft records) of the tail.  Should be handled first and corrected manually.
-select *
-from #ResultsForEvaluation re
-where re.MinAssignedPricingOID <> MaxAssignedPricingOID
+--select *
+--from #ResultsForEvaluation re
+--where re.MinAssignedPricingOID <> MaxAssignedPricingOID
 
 
 
