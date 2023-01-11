@@ -1,14 +1,13 @@
 
     <div class="row text-md-center">
-        <div class="col-12 col-md-6 pb-2">
+        <div class="col-12 col-md-6 pb-2" *ngIf="enableSaf">
             <ni-card [align]="'left'"
                      bgColor="success"
                      class="current-price-panel mb-0"
                      headerBgColor="success"
                      outline="true"
                      theme="tiny"
-                     title="SAF"
-                     *ngIf="enableSaf">
+                     title="SAF">
                 <div class="header-button" style="position: absolute; right: 10px; top: -30px" *ngIf="retailSaf > 0">
                     <button (click)="clear('SAF')" 
                             color="warn" mat-flat-button size="small" class="mr-1">
@@ -47,15 +46,14 @@
                 </div>
 </ni-card>
         </div>
-        <div class="col-sm-12 col-md-6">
+        <div class="col-sm-12 col-md-6" *ngIf="enableJetA">
             <ni-card [align]="'left'"
                      bgColor="success"
                      class="current-price-panel mb-0"
                      headerBgColor="success"
                      outline="true"
                      theme="tiny"
-                     title="Jet-A"
-                     *ngIf="enableJetA">
+                     title="Jet-A">
                 <div class="header-button" style="position: absolute; right: 10px; top: -30px" *ngIf="retailJetA > 0">
                     <button (click)="clear('JetA')" class="mr-1" color="warn" mat-flat-button size="small">
                         Clear
