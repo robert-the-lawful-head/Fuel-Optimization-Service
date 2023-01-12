@@ -20,6 +20,8 @@ export class FbosMissedQuotesGridComponent implements OnInit {
     fbosMissedQuotesDataSource: any = null;
     missedQuotesLoader = 'missed-quotes-loader';
     noMissedQuotes = false;
+    getScreenWidth: any;
+    getScreenHeight: any;
 
     constructor(private router: Router,
         private sharedService: SharedService,
@@ -35,11 +37,23 @@ export class FbosMissedQuotesGridComponent implements OnInit {
 
 
     openPriceChecker(): void {
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        var dialogWidth = "650px";
+        var dialogHeight = "600px";
+
+        if (this.getScreenWidth <= 543) {
+            dialogWidth = "100%";
+            dialogHeight = "80%";
+        }
+
         const dialogRef = this.priceCheckerDialog.open(
-            PriceCheckerDialogComponent,
+            PriceCheckerDialogComponent
+            ,
             {
-                width: '650px',
-                height: '600px'
+                width: dialogWidth,
+                height: dialogHeight
             }
         );
 

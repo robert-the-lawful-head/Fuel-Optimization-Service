@@ -1,38 +1,39 @@
-<div class="pr-0">
-    <div class="prices-board">
-        <div class="prices-board-row">
-            <div class="fees-taxes-button d-none d-md-block" *ngIf="!isMember && !isCsr">
-                <button (click)="editFeesAndTaxes()"
-                        class="mr-1"
-                        ni-button
-                        size="small"
-                        view="'default'">
-                    Fees &amp; Taxes
-                </button>
-            </div>
-            <!--Pricing Update-->
-            <ni-card *ngIf="!isCsr"
-                     bgColor="dead"
-                     class="prices-board-item prices-board-second-column"
-                     customStyle="min-height: 160px; overflow-x: auto;"
-                     headerBgColor="dead"
-                     outline="true"
-                     theme="small"
-                     title="Pricing Update Generator">
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <ngx-ui-loader [loaderId]="pricingLoader"
-                                       bgsColor="rgb(100, 181, 246)"
-                                       bgsPosition="center-center"
-                                       bgsType="ball-spin"
-                                       overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
-                    </div>
-                </div>
 
-                <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="row">
-                    <app-fbo-prices-update-generator-grid [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
+    <div class="pr-0">
+        <div class="prices-board">
+            <div class="prices-board-row">
+                <div class="fees-taxes-button d-none d-md-block" *ngIf="!isMember && !isCsr">
+                    <button (click)="editFeesAndTaxes()"
+                            class="mr-1"
+                            ni-button
+                            size="small"
+                            view="'default'">
+                        Fees &amp; Taxes
+                    </button>
                 </div>
-            </ni-card>
+                <!--Pricing Update-->
+                <ni-card *ngIf="!isCsr"
+                         bgColor="dead"
+                         class="prices-board-item prices-board-second-column"
+                         customStyle="min-height: 160px; overflow-x: auto;"
+                         headerBgColor="dead"
+                         outline="true"
+                         theme="small"
+                         title="Pricing Update Generator">
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <ngx-ui-loader [loaderId]="pricingLoader"
+                                           bgsColor="rgb(100, 181, 246)"
+                                           bgsPosition="center-center"
+                                           bgsType="ball-spin"
+                                           overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!fboPricesUpdateGridItem && fboPricesUpdateGridData" class="row">
+                        <app-fbo-prices-update-generator-grid [fboPricesUpdateGridData]="fboPricesUpdateGridData" (onSubmitRow)="onSubmitFboPrice($event)"></app-fbo-prices-update-generator-grid>
+                    </div>
+                </ni-card>
+            </div>
         </div>
     </div>
-</div>

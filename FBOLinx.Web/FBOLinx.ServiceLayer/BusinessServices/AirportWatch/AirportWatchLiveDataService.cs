@@ -86,34 +86,36 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             return result;
         }
 
-        public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        public Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
         {
-            var airportWatchLiveDataTableEntities = await _airportWatchLiveDataTableEntityService.GetAirportWatchLiveDataRecords(boxNames, startDate, endDate);
-            return airportWatchLiveDataTableEntities.Select(x => x.Adapt<AirportWatchLiveDataDto>()).ToList();
+            // var airportWatchLiveDataTableEntities = await _airportWatchLiveDataTableEntityService.GetAirportWatchLiveDataRecords(boxNames, startDate, endDate);
+            // return airportWatchLiveDataTableEntities.Select(x => x.Adapt<AirportWatchLiveDataDto>()).ToList();
+
+            return Task.FromResult(Enumerable.Empty<AirportWatchLiveDataDto>().ToList());
         }
 
         public async Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data)
         {
-            IList<AirportWatchLiveDataTableEntity> airportWatchTableEntities = data.Select(x => new AirportWatchLiveDataTableEntity()
-            {
-                BoxName = x.BoxName,
-                BoxTransmissionDateTimeUtc = DateTime.SpecifyKind(x.BoxTransmissionDateTimeUtc, DateTimeKind.Utc),
-                AtcFlightNumber = x.AtcFlightNumber,
-                AltitudeInStandardPressure = x.AltitudeInStandardPressure,
-                GroundSpeedKts = x.GroundSpeedKts,
-                TrackingDegree = x.TrackingDegree,
-                Latitude = x.Latitude,
-                Longitude = x.Longitude,
-                VerticalSpeedKts = x.VerticalSpeedKts,
-                TransponderCode = x.TransponderCode,
-                AircraftPositionDateTimeUtc = DateTime.SpecifyKind(x.AircraftPositionDateTimeUtc, DateTimeKind.Utc),
-                AircraftTypeCode = x.AircraftTypeCode,
-                GpsAltitude = x.GpsAltitude,
-                IsAircraftOnGround = x.IsAircraftOnGround,
-                AircraftHexCode = x.AircraftHexCode,
-            }).ToList();
-
-            await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
+            // IList<AirportWatchLiveDataTableEntity> airportWatchTableEntities = data.Select(x => new AirportWatchLiveDataTableEntity()
+            // {
+            //     BoxName = x.BoxName,
+            //     BoxTransmissionDateTimeUtc = DateTime.SpecifyKind(x.BoxTransmissionDateTimeUtc, DateTimeKind.Utc),
+            //     AtcFlightNumber = x.AtcFlightNumber,
+            //     AltitudeInStandardPressure = x.AltitudeInStandardPressure,
+            //     GroundSpeedKts = x.GroundSpeedKts,
+            //     TrackingDegree = x.TrackingDegree,
+            //     Latitude = x.Latitude,
+            //     Longitude = x.Longitude,
+            //     VerticalSpeedKts = x.VerticalSpeedKts,
+            //     TransponderCode = x.TransponderCode,
+            //     AircraftPositionDateTimeUtc = DateTime.SpecifyKind(x.AircraftPositionDateTimeUtc, DateTimeKind.Utc),
+            //     AircraftTypeCode = x.AircraftTypeCode,
+            //     GpsAltitude = x.GpsAltitude,
+            //     IsAircraftOnGround = x.IsAircraftOnGround,
+            //     AircraftHexCode = x.AircraftHexCode,
+            // }).ToList();
+            //
+            // await _airportWatchLiveDataTableEntityService.BatchInsert(airportWatchTableEntities);
         }
 
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)

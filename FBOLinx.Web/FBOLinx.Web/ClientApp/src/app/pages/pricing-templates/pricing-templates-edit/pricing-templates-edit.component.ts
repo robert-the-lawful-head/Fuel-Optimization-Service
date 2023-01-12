@@ -602,17 +602,14 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
 
-                      if(discountType == 0)
+                      if(discountType == 1)
                       {
-                        margins[i].allin =
-                        this.jetARetail - Number(margins[i].amount);
-
+                          margins[i].allin =
+                              this.jetARetail * (1 - (Number(margins[i].amount / 100)));
                        }
                     else{
-
-                        margins[i].allin =
-                        this.jetARetail * (1 - (Number(margins[i].amount /100)));
-
+                          margins[i].allin =
+                              this.jetARetail - Number(margins[i].amount);
                     }
 
                     margins[i].itp = this.jetARetail;

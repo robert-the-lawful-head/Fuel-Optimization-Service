@@ -1,6 +1,6 @@
 <div style="width: 100%;">
     <!--START DISPLAY MODES 0 and 1 - Standard calculations with name on left and cost on right-->
-    <div *ngIf="displayMode == 0 || displayMode == 1" class="container-fluid" style="width: 100%;">
+    <div *ngIf="displayMode == 0 || displayMode == 1" class="container-fluid">
         <div class="row font-weight-bold mb-3 pb-1">
             <div class="col">
                 <div *ngIf="displayMode == 1" class="d-inline-block">
@@ -32,10 +32,9 @@
                 <mat-checkbox (change)="omitChanged(aboveLineTax)"
                               [(ngModel)]="aboveLineTax.isOmitted"
                               type="checkbox"
-                              *ngIf="marginType != 1" [disabled] ="isMember"></mat-checkbox>
+                              *ngIf="marginType != 1" [disabled]="isMember"></mat-checkbox>
             </div>
-            <div
-                 class="col">
+            <div class="col">
                 <span [ngClass]="{
                     'strike-through':
                         aboveLineTax.isOmitted ||
@@ -89,8 +88,8 @@
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col" *ngIf="marginType == 0" >ITP-Margin</div>
-            <div class="col" *ngIf="marginType == 1" >Discount</div>
+            <div class="col" *ngIf="marginType == 0">ITP-Margin</div>
+            <div class="col" *ngIf="marginType == 1">Discount</div>
             <div class="col"></div>
             <div class="col text-right">
                 ${{ marginITP | number: "1.4-4" }}
@@ -107,8 +106,12 @@
             </div>
         </div>
 
-        <hr *ngIf="showLineSeparator"
-            style="margin-bottom: 10px; margin-top: 10px" />
+        <div class="row">
+            <div class="col-12">
+                <hr *ngIf="showLineSeparator"
+                    style="margin-bottom: 10px; margin-top: 10px" />
+            </div>
+        </div>
 
         <!--Below the line taxes - Display mode 0 and 1-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes"
@@ -117,7 +120,7 @@
             <div *ngIf="displayMode == 1" class="col-1">
                 <mat-checkbox (change)="omitChanged(belowLineTax)"
                               [(ngModel)]="belowLineTax.isOmitted"
-                              type="checkbox" [disabled] ="isMember"></mat-checkbox>
+                              type="checkbox" [disabled]="isMember"></mat-checkbox>
             </div>
             <div class="col">
                 <span [ngClass]="{
@@ -232,8 +235,12 @@
             </div>
         </div>
 
-        <hr *ngIf="showLineSeparator"
-            style="margin-bottom: 10px; margin-top: 10px" />
+        <div class="row">
+            <div class="col-12">
+                <hr *ngIf="showLineSeparator"
+                    style="margin-bottom: 10px; margin-top: 10px" />
+            </div>
+        </div>
 
         <!--Below the line taxes - Display mode 2-->
         <div *ngFor="let belowLineTax of belowTheLineTaxes" class="row">

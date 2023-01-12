@@ -308,10 +308,6 @@ button.mat-icon-button {
     font-size: 25px !important;
 }
 
-.after-breadcrumb {
-    padding-top: 4rem;
-}
-
 .popover {
     min-width: 350px;
 }
@@ -362,9 +358,9 @@ button.mat-icon-button {
     padding-right: 0px;
 }
 
-.price-lookup-breakdown hr {
+/*.price-lookup-breakdown hr {
     width: 270px;
-}
+}*/
 
 /*END Price Lookup*/
 
@@ -911,11 +907,10 @@ div.fees-taxes-button {
     z-index: 10000;
 }
 
-div.price-checker-button {
+div.price-checker-button-bottom {
     position: absolute;
-    right: 20px;
-    top: -29px;
-    z-index: 10000;
+    bottom:1rem;
+    right:0;
 }
 
 .distribution-toggle {
@@ -956,13 +951,7 @@ div.price-checker-button {
     .addition-navbar {
         top: -20px !important;
     }
-
-    div.fees-taxes-button {
-        position: absolute;
-        right: 15px;
-        top: 16px;
-        z-index: 10000;
-    }
+/**/
 
     .card-wrap .card-header.small-header {
         font-size: 14px !important;
