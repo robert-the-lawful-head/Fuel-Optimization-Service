@@ -22,7 +22,7 @@ namespace FBOLinx.TableStorage.EntityServices
 
         public Func<DateTime, string> CreatePartitionKeyFunc { get; set; }
 
-        public async Task<IEnumerable<AirportWatchDataTableEntity>> GetAirportWatchDataRecords(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<AirportWatchDataTableEntity>> GetAirportWatchDataRecords(DateTime startDate, DateTime endDate)
         {
             IList<string> partitionKeys = new List<string>();
             foreach (DateTime day in DateTimeHelper.EachDay(startDate, endDate))
@@ -45,6 +45,8 @@ namespace FBOLinx.TableStorage.EntityServices
                     result.AddRange(airportWatchDataRecords);
                 }
             }
+
+            await RestoreReferencedData(result);
 
             return result.OrderByDescending(x => x.BoxTransmissionDateTimeUtc).ToList();
         }
@@ -75,9 +77,20 @@ namespace FBOLinx.TableStorage.EntityServices
             }
         }
 
+        private async Task RestoreReferencedData(IEnumerable<AirportWatchDataTableEntity> entities)
+        {
+            foreach (AirportWatchDataTableEntity entity in entities)
+            {
+                if (!string.IsNullOrWhiteSpace(entity.DataBlob))
+                {
+                    entity.DataBlob = await _BlobStorageService.Download<AirportWatchDataTableEntity>(entity.PartitionKey, entity.DataBlob);
+                }
+            }
+        }
+
         private string AppendDateRangeFilter(string filter, DateTime startDate, DateTime endDate)
         {
-            return $"{filter} and (BoxTransmissionDateTimeUtc ge datetime'{startDate:yyyy-MM-ddTHH:mm:ssZ}' and BoxTransmissionDateTimeUtc le datetime'{endDate:yyyy-MM-ddTHH:mm:ssZ}')";
+            return $"{filter} and (MinAircraftPositionDateTimeUtc ge datetime'{startDate:yyyy-MM-ddTHH:mm:ssZ}' and MaxAircraftPositionDateTimeUtc le datetime'{endDate:yyyy-MM-ddTHH:mm:ssZ}')";
         }
     }
 }
