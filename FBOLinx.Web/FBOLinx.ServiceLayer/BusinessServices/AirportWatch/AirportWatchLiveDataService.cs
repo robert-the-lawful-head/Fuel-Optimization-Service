@@ -108,9 +108,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 dataBlob += airportWatchLiveDataDto.ToCsvString() + Environment.NewLine;
             }
             AirportWatchDataTableEntity airportWatchDataTableEntity = new AirportWatchDataTableEntity();
-            airportWatchDataTableEntity.BoxTransmissionDateTimeUtc = data.Max(x => x.BoxTransmissionDateTimeUtc);
-            airportWatchDataTableEntity.MinAircraftPositionDateTimeUtc = data.Min(x => x.AircraftPositionDateTimeUtc);
-            airportWatchDataTableEntity.MaxAircraftPositionDateTimeUtc = data.Max(x => x.AircraftPositionDateTimeUtc);
+            airportWatchDataTableEntity.BoxTransmissionDateTimeUtc = DateTime.SpecifyKind(data.Max(x => x.BoxTransmissionDateTimeUtc), DateTimeKind.Utc);
+            airportWatchDataTableEntity.MinAircraftPositionDateTimeUtc = DateTime.SpecifyKind(data.Min(x => x.AircraftPositionDateTimeUtc), DateTimeKind.Utc);
+            airportWatchDataTableEntity.MaxAircraftPositionDateTimeUtc = DateTime.SpecifyKind(data.Max(x => x.AircraftPositionDateTimeUtc), DateTimeKind.Utc);
             airportWatchDataTableEntity.DataBlob = dataBlob;
             
             try
