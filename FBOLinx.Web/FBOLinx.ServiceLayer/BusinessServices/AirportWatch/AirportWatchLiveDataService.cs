@@ -137,7 +137,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             {
                 result.AddRange(ConvertToDTO(airportWatchDataTableEntity.DataBlob.Split(Environment.NewLine).ToList()));
             }
-            return airportWatchDataTableEntities.Select(x => x.Adapt<AirportWatchLiveDataDto>()).ToList();
+
+            if (boxNames != null && boxNames.Any())
+            {
+                result = result.Where(x => !string.IsNullOrWhiteSpace(x.BoxName) && boxNames.Contains(x.BoxName)).ToList();
+            }
+            return result;
         }
         
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
