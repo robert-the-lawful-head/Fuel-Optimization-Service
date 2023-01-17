@@ -1,11 +1,7 @@
 import {
     ChangeDetectionStrategy,
     Component,
-    OnChanges,
     OnInit,
-    Output,
-    Input,
-    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -27,6 +23,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as SharedEvent from '../../../models/sharedEvents';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 const initialColumns: ColumnType[] = [
     {
@@ -66,13 +63,11 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./missedorders-grid.component.scss'],
     templateUrl: './missedorders-grid.component.html',
 })
-export class MissedOrdersGridComponent implements OnInit {
+export class MissedOrdersGridComponent extends VirtualScrollBase implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     chartName = 'missed-orders-table';
-
-
 
     searchText: string = '';
     filterStartDate: Date;
@@ -80,9 +75,6 @@ export class MissedOrdersGridComponent implements OnInit {
     filtersChanged: Subject<any> = new Subject<any>();
 
     tableLocalStorageKey = 'missed-orders-table-settings';
-
-    pageIndex = 0;
-    pageSize = 100;
 
     missedOrdersData: any;
     missedOrdersDataSource: MatTableDataSource<any> = null;
@@ -100,6 +92,7 @@ export class MissedOrdersGridComponent implements OnInit {
         private fboMissedQuotesLogService: FbomissedquoteslogService,
         private route: ActivatedRoute
     ) {
+        super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
 
         this.route.queryParams.subscribe((params) => {
@@ -131,14 +124,6 @@ export class MissedOrdersGridComponent implements OnInit {
             ) as any;
         } else {
             this.paginator.pageIndex = 0;
-        }
-
-        if (sessionStorage.getItem('pageSizeValueFuelReqs')) {
-            this.pageSize = sessionStorage.getItem(
-                'pageSizeValueFuelReqs'
-            ) as any;
-        } else {
-            this.pageSize = 100;
         }
 
         this.filterStartDate = new Date(
@@ -223,6 +208,9 @@ export class MissedOrdersGridComponent implements OnInit {
         this.refreshSort();
 
         this.applyFilter(this.searchText);
+
+        this.setVirtualScrollVariables(this.paginator, this.sort, this.missedOrdersDataSource.data);
+
     }
 
     refreshSort() {
@@ -246,14 +234,6 @@ export class MissedOrdersGridComponent implements OnInit {
 
     applyFilter(filterValue: string) {
         this.missedOrdersDataSource.filter = filterValue.trim().toLowerCase();
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndexMissedOrders', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeValueMissedOrders',
-            this.paginator.pageSize.toString()
-        );
     }
 
     openSettings() {

@@ -102,7 +102,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     missedQuotesLogViewModel.Volume = transaction.QuotedVolume.GetValueOrDefault();
                     missedQuotesLogViewModel.TailNumber = await _CustomerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(transaction.CustomerAircraftId.GetValueOrDefault());
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
-                    missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
+                    missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate?.PricingTemplateName;
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
                     missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.CustomerId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
