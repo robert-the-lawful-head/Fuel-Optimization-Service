@@ -12,12 +12,13 @@ namespace FBOLinx.DB.Extensions
             return services.RegisterDBConnections(configuration.GetConnectionString("DegaContext"),
                 configuration.GetConnectionString("FboLinxContext"),
                 configuration.GetConnectionString("FuelerLinxContext"),
-                configuration.GetConnectionString("FilestorageContext"));
+                configuration.GetConnectionString("FilestorageContext"),
+                configuration.GetConnectionString("ServiceLogsContext"));
         }
 
         public static IServiceCollection RegisterDBConnections(this IServiceCollection services,
             string degaDbConnectionString = "", string fbolinxDbConnectionString = "",
-            string fuelerlinxDbConnectionString = "", string fileStorageDbConnectionString = "")
+            string fuelerlinxDbConnectionString = "", string fileStorageDbConnectionString = "", string serviceLogsDbConnectionString = "")
         {
             if (!string.IsNullOrEmpty(degaDbConnectionString))
                 services.AddDbContext<DegaContext>(options => {
@@ -40,6 +41,12 @@ namespace FBOLinx.DB.Extensions
             if (!string.IsNullOrEmpty(fileStorageDbConnectionString))
                 services.AddDbContext<FilestorageContext>(options => {
                     options.UseSqlServer(fileStorageDbConnectionString);
+                    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                });
+
+            if (!string.IsNullOrEmpty(serviceLogsDbConnectionString))
+                services.AddDbContext<ServiceLogsContext>(options => {
+                    options.UseSqlServer(serviceLogsDbConnectionString);
                     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                 });
 

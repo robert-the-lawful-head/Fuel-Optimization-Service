@@ -128,8 +128,9 @@ namespace FBOLinx.Web
         private static void ConfigureAzureTableStorageEntityServices(IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AzureTableStorageSettings>(configuration.GetSection("AzureTableStorageSettings"));
-
-            services.AddTransient<AirportWatchLiveDataTableEntityService, AirportWatchLiveDataTableEntityService>();
+            
+            services.AddTransient<BlobStorageService, BlobStorageService>();
+            services.AddTransient<AirportWatchDataTableEntityService, AirportWatchDataTableEntityService>();
         }
     }
 }
