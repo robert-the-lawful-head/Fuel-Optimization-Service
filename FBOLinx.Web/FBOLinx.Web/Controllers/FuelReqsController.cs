@@ -1129,8 +1129,6 @@ namespace FBOLinx.Web.Controllers
             {
                 string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
                 var fuelReqs = await _fuelReqService.GetValidFuelRequestTotals(fboId, request.StartDateTime, request.EndDateTime);
-
-
                 var pricingLogs = await (from cpl in _context.CompanyPricingLog
                                          join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
                                          join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
@@ -1143,7 +1141,6 @@ namespace FBOLinx.Web.Controllers
                 int? customeridval = request.customerId;
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, customeridval).ToListAsync();
-
 
                 var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime);
 
@@ -1181,11 +1178,11 @@ namespace FBOLinx.Web.Controllers
                     var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
                     var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
 
-                    var totalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
-
-                    var airportTotalOrders = 0;
-                    if (fuelerlinxCustomerOrdersCount != null)
-                        airportTotalOrders = fuelerlinxCustomerOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+                    var totalOrders = 0;
+                    if (fuelerlinxCustomerFBOOrdersCount != null)
+                        totalOrders = fuelerlinxCustomerFBOOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+                    
+                    var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
 
                     var conversionRateTotalOrders = 0;
                     if (selectedCompanyFuelReqs != null && selectedCompanyFuelReqs.TotalOrders > 0)
