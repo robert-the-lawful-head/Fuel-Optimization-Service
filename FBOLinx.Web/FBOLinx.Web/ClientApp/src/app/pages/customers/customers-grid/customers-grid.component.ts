@@ -323,8 +323,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             'Company Pricing': item.pricingTemplateName,
         }));
         exportData = sortBy(exportData, [
-            (item) => item.Company.toLowerCase(),
-            (item) => item.Tail.toLowerCase(),
+            (item) => item.Company?.toLowerCase(),
+            (item) => item.Tail?.toLowerCase(),
         ]);
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
