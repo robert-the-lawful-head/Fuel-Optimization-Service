@@ -130,6 +130,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 return;
             }
 
+            _LoggingService.LogError("Total records posted: " + string.Format("{0:N}", swimFlightLegs.Count()), "", LogLevel.Info, LogColorCode.Blue);
+
             IList<SWIMFlightLegDTO> swimFlightLegDTOs = new List<SWIMFlightLegDTO>();
             foreach (IGrouping<string, SWIMFlightLegDTO> flightLegGrouping in swimFlightLegs.GroupBy(x => x.AircraftIdentification))
             {
@@ -187,32 +189,31 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         }
                     }
 
-                    //Temporarily commenting this out as the bulk insert/merge is taking 20+ seconds...
+                    if (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || (swimFlightLegDto.ArrivalICAO != null && swimFlightLegDto.ArrivalICAO.Length > 4) || swimFlightLegDto.ATD == null)
+                    {
+                        SWIMUnrecognizedFlightLeg unrecognizedFlightLeg = new SWIMUnrecognizedFlightLeg();
+                        unrecognizedFlightLeg.Gufi = swimFlightLegDto.Gufi;
+                        unrecognizedFlightLeg.AircraftIdentification = swimFlightLegDto.AircraftIdentification;
+                        unrecognizedFlightLeg.MessageTimestamp = DateTime.UtcNow;
+                        unrecognizedFlightLeg.DeparturePoint = swimFlightLegDto.DepartureICAO;
+                        unrecognizedFlightLeg.ArrivalPoint = swimFlightLegDto.ArrivalICAO;
+                        unrecognizedFlightLeg.ATD = swimFlightLegDto.ATD;
+                        var swimFlightLegDataDto = swimFlightLegDto.SWIMFlightLegDataMessages.FirstOrDefault();
+                        if (swimFlightLegDataDto != null)
+                        {
+                            unrecognizedFlightLeg.ETA = swimFlightLegDataDto.ETA;
+                            unrecognizedFlightLeg.ActualSpeed = swimFlightLegDataDto.ActualSpeed;
+                            unrecognizedFlightLeg.Altitude = swimFlightLegDataDto.Altitude;
+                            unrecognizedFlightLeg.Latitude = swimFlightLegDataDto.Latitude;
+                            unrecognizedFlightLeg.Longitude = swimFlightLegDataDto.Longitude;
+                            unrecognizedFlightLeg.XmlMessage = swimFlightLegDataDto.RawXmlMessage;
+                        }
 
-                    //if (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || (swimFlightLegDto.ArrivalICAO != null && swimFlightLegDto.ArrivalICAO.Length > 4) || swimFlightLegDto.ATD == null)
-                    //{
-                    //    SWIMUnrecognizedFlightLeg unrecognizedFlightLeg = new SWIMUnrecognizedFlightLeg();
-                    //    unrecognizedFlightLeg.Gufi = swimFlightLegDto.Gufi;
-                    //    unrecognizedFlightLeg.AircraftIdentification = swimFlightLegDto.AircraftIdentification;
-                    //    unrecognizedFlightLeg.MessageTimestamp = DateTime.UtcNow;
-                    //    unrecognizedFlightLeg.DeparturePoint = swimFlightLegDto.DepartureICAO;
-                    //    unrecognizedFlightLeg.ArrivalPoint = swimFlightLegDto.ArrivalICAO;
-                    //    unrecognizedFlightLeg.ATD = swimFlightLegDto.ATD;
-                    //    var swimFlightLegDataDto = swimFlightLegDto.SWIMFlightLegDataMessages.FirstOrDefault();
-                    //    if (swimFlightLegDataDto != null)
-                    //    {
-                    //        unrecognizedFlightLeg.ETA = swimFlightLegDataDto.ETA;
-                    //        unrecognizedFlightLeg.ActualSpeed = swimFlightLegDataDto.ActualSpeed;
-                    //        unrecognizedFlightLeg.Altitude = swimFlightLegDataDto.Altitude;
-                    //        unrecognizedFlightLeg.Latitude = swimFlightLegDataDto.Latitude;
-                    //        unrecognizedFlightLeg.Longitude = swimFlightLegDataDto.Longitude;
-                    //        unrecognizedFlightLeg.XmlMessage = swimFlightLegDataDto.RawXmlMessage;
-                    //    }
+                        //Temporarily commenting this out as the bulk insert/merge is taking 20+ seconds...
+                        //unrecognizedFlightLegsToInsert.Add(unrecognizedFlightLeg);
 
-                    //    unrecognizedFlightLegsToInsert.Add(unrecognizedFlightLeg);
-
-                    //    continue;
-                    //}
+                        continue;
+                    }
 
                     foreach (SWIMFlightLegDataDTO swimFlightLegDataMessage in swimFlightLegDto.SWIMFlightLegDataMessages)
                     {
