@@ -151,9 +151,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             airportICAOs.AddRange(swimFlightLegDTOs.Where(x => !string.IsNullOrEmpty(x.ArrivalICAO)).Select(x => x.ArrivalICAO).ToList());
             airportICAOs = airportICAOs.Distinct().ToList();
             List<AcukwikAirport> airports = await _AcukwikAirportEntityService.GetListBySpec(new AcukwikAirportSpecification(airportICAOs));
-            
-            List<string> flightIdentifiers = swimFlightLegDTOs.Select(x => x.Gufi).Distinct().ToList();
-            List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(flightIdentifiers))).OrderByDescending(x => x.ATD).ToList();
+
+            DateTime atdMin = swimFlightLegDTOs.Where(x => x.ATD != null).Min(x => x.ATD.Value);
+            DateTime atdMax = swimFlightLegDTOs.Where(x => x.ATD != null).Max(x => x.ATD.Value);
+            List<string> departureICAOs = swimFlightLegDTOs.Select(x => x.DepartureICAO).Distinct().ToList();
+            List<string> arrivalICAOs = swimFlightLegDTOs.Select(x => x.ArrivalICAO).Distinct().ToList();
+            List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList();
+
+            // List<string> flightIdentifiers = swimFlightLegDTOs.Select(x => x.Gufi).Distinct().ToList();
+            // List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(flightIdentifiers))).OrderByDescending(x => x.ATD).ToList();
             
             List<SWIMFlightLegData> flightLegDataMessagesToInsert = new List<SWIMFlightLegData>();
             List<SWIMFlightLeg> flightLegsToUpdate = new List<SWIMFlightLeg>();
@@ -164,7 +170,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 try
                 {
-                    var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
+                    //var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
+                    var existingLeg = existingFlightLegs.FirstOrDefault(
+                        x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
