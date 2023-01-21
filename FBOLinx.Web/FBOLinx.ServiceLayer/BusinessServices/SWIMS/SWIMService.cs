@@ -172,9 +172,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 try
                 {
-                    var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
-                    //var existingLeg = existingFlightLegs.FirstOrDefault(
-                    //    x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
+                    //var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
+                    var existingLeg = existingFlightLegs.FirstOrDefault(
+                        x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
@@ -208,9 +208,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                             unrecognizedFlightLeg.Longitude = swimFlightLegDataDto.Longitude;
                             unrecognizedFlightLeg.XmlMessage = swimFlightLegDataDto.RawXmlMessage;
                         }
-
-                        //Temporarily commenting this out as the bulk insert/merge is taking 20+ seconds...
-                        //unrecognizedFlightLegsToInsert.Add(unrecognizedFlightLeg);
+                        
+                        unrecognizedFlightLegsToInsert.Add(unrecognizedFlightLeg);
 
                         continue;
                     }
