@@ -394,6 +394,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Bulk update and insert all legs that need it
             if (existingFlightLegsToUpdate.Count > 0)
             {
+                existingFlightLegsToUpdate.ForEach(x => x.LastUpdated = DateTime.UtcNow);
                 await _SwimFlightLegService.BulkUpdate(existingFlightLegsToUpdate);
             }
 
