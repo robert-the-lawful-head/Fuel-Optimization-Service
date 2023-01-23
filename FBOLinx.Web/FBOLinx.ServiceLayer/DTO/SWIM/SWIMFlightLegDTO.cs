@@ -10,7 +10,7 @@ namespace FBOLinx.ServiceLayer.DTO.SWIM
     public class SWIMFlightLegDTO : BaseEntityModelDTO<SWIMFlightLeg>, IEntityModelDTO<SWIMFlightLeg, int>
     {
         public int Oid { get; set; }
-        public string Gufi { get; set; }
+        public Guid Gufi { get; set; }
         public string AircraftIdentification { get; set; }
         public string DepartureICAO { get; set; }
         public string ArrivalICAO { get; set; }
