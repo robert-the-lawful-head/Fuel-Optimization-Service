@@ -1181,14 +1181,8 @@ namespace FBOLinx.Web.Controllers
                     var totalOrders = 0;
                     if (fuelerlinxCustomerFBOOrdersCount != null)
                         totalOrders = fuelerlinxCustomerFBOOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
-                    
-                    var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
 
-                    var conversionRateTotalOrders = 0;
-                    if (selectedCompanyFuelReqs != null && selectedCompanyFuelReqs.TotalOrders > 0)
-                        conversionRateTotalOrders = selectedCompanyFuelReqs.TotalOrders;
-                    if (totalOrders > 0)
-                        conversionRateTotalOrders += totalOrders;
+                    var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
 
                     var airportVisits = groupedAirportWatchHistoricalDataResponse.Where(a => a.Company.CompanyId == customer.CustomerId).Select(a => a.AirportVisis).FirstOrDefault();
 
@@ -1202,7 +1196,7 @@ namespace FBOLinx.Web.Controllers
                         CompanyQuotesTotal = companyQuotes,
                         DirectOrders = selectedCompanyFuelReqs == null ? 0 : selectedCompanyFuelReqs.TotalOrders,
                         ConversionRate = selectedCompanyFuelReqs == null || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(selectedCompanyFuelReqs.TotalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
-                        ConversionRateTotal = conversionRateTotalOrders == 0 || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(conversionRateTotalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
+                        ConversionRateTotal = totalOrders == 0 || companyQuotes == 0 ? 0 : Math.Round(decimal.Parse(totalOrders.ToString()) / decimal.Parse(companyQuotes.ToString()) * 100, 2),
                         TotalOrders = totalOrders,
                         AirportOrders = airportTotalOrders,
                         CustomerBusiness = airportTotalOrders == 0 ? 0 : Math.Round(decimal.Parse(totalOrders.ToString()) / decimal.Parse(airportTotalOrders.ToString()) * 100, 2),
