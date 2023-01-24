@@ -5,10 +5,10 @@ import { forEach } from "lodash";
 
 export abstract class VirtualScrollBase {
     start: number = 0;
-    limit: number = 10;
+    limit: number = 5;
     pageSize: number = 30;
     selectedRowIndex: number = null;
-    dataSource: MatTableDataSource<any> = new MatTableDataSource<any>(); //data source to be displayed on scroll
+    dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
 
     constructor() {}
 
