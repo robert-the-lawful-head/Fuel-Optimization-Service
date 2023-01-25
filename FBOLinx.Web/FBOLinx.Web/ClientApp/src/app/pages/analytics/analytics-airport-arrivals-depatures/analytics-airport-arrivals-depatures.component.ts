@@ -42,6 +42,7 @@ import {
     CsvExportModalComponent,
     ICsvExportModalData,
 } from '../../../shared/components/csv-export-modal/csv-export-modal.component';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 
 @Component({
@@ -49,7 +50,7 @@ import {
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
     templateUrl: './analytics-airport-arrivals-depatures.component.html',
 })
-export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
+export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBase implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -78,7 +79,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
     isCommercialInvisible = true;
 
     data: FlightWatchHistorical[];
-    dataSource: any;
 
     selectedCustomers: number[] = [];
     selectedTailNumbers: string[] = [];
@@ -151,6 +151,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private fbosService: FbosService
     ) {
+        super();
         this.filterStartDate = new Date(
             moment().add(-1, 'M').format('MM/DD/YYYY')
         );
@@ -188,7 +189,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
 
         this.refreshData();
     }
-
     getFboName() {
         if (this.fboName && this.fboName != "")
             return;
@@ -275,13 +275,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent implements OnInit {
                 aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
             }));
 
+        this.setVirtualScrollVariables(this.paginator,this.sort,data)
+
         if (!this.dataSource) {
-            this.dataSource = new MatTableDataSource(data);
-            this.dataSource.filterCollection = [];
+            this.dataSource.filteredData = [];
         }
-        this.dataSource.data = data;
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+
     }
 
     refreshSort() {
