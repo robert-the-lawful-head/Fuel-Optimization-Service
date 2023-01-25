@@ -2,149 +2,149 @@
     <mat-form-field>
         <input
             (keyup)="applyFilter($event.target.value)"
-            [value]="pricingTemplatesDataSource.filter"
+            [value]="dataSource.filter"
             matInput
             placeholder="Search by Name or Type"
         />
         <span matPrefix><i class="fa fa-search"></i></span>
     </mat-form-field>
+    <div class="table-container" (scroll)="onTableScroll($event)" >
+        <table [dataSource]="dataSource"
+            class="col-md-12"
+            mat-table
+            matSort
+            matSortActive="name"
+            matSortDirection="asc">
+            <ng-container matColumnDef="isInvalid">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    <ni-badge *ngIf="pricingTemplate.isInvalid"
+                            [arrow]="'right'"
+                            [borderRadius]="false"
+                            [color]="'danger'"
+                            [matTooltipPosition]="'after'"
+                            [matTooltip]="
+                            'The pricing used by this template has been hidden/disabled in the FBO Prices section.'
+                        ">
+                        Invalid
+                    </ni-badge>
+                </td>
+            </ng-container>
 
-    <table [dataSource]="pricingTemplatesDataSource"
-           class="col-md-12"
-           mat-table
-           matSort
-           matSortActive="name"
-           matSortDirection="asc">
-        <ng-container matColumnDef="isInvalid">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                <ni-badge *ngIf="pricingTemplate.isInvalid"
-                          [arrow]="'right'"
-                          [borderRadius]="false"
-                          [color]="'danger'"
-                          [matTooltipPosition]="'after'"
-                          [matTooltip]="
-                        'The pricing used by this template has been hidden/disabled in the FBO Prices section.'
-                    ">
-                    Invalid
-                </ni-badge>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="name">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    {{ pricingTemplate.name }}
+                    <sup *ngIf="pricingTemplate.default"
+                        style="color: green; font-weight: bold">Default</sup>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="name">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>Name</th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                {{ pricingTemplate.name }}
-                <sup *ngIf="pricingTemplate.default"
-                     style="color: green; font-weight: bold">Default</sup>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="marginTypeDescription">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Pricing Type
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    {{ pricingTemplate.marginTypeDescription }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="marginTypeDescription">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                Pricing Type
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                {{ pricingTemplate.marginTypeDescription }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="pricingFormula">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Pricing Formula
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    {{ pricingTemplate.pricingFormula }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="pricingFormula">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                Pricing Formula
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                {{ pricingTemplate.pricingFormula }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="allInPrice">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    All-In
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    <div class="allInPrice">
+                        {{ pricingTemplate.allInPrice > 0 ? (pricingTemplate.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
+                    </div>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="allInPrice">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                All-In
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                <div class="allInPrice">
-                    {{ pricingTemplate.allInPrice > 0 ? (pricingTemplate.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
-                </div>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="customersAssigned">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Customers Assigned
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    {{ pricingTemplate.customersAssigned }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="customersAssigned">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                Customers Assigned
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                {{ pricingTemplate.customersAssigned }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="aircraftsAssigned">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Aircraft Assigned
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    {{ pricingTemplate.aircraftsAssigned }}
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="aircraftsAssigned">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                Aircraft Assigned
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                {{ pricingTemplate.aircraftsAssigned }}
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="copy">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    <div class="pull-right">
+                        <button (click)="
+                                copyPricingTemplate(pricingTemplate);
+                                $event.stopPropagation()
+                            "
+                                [view]="'blank'"
+                                beforeIcon="fa fa-copy"
+                                ni-button
+                                size="small"
+                                style="border: 1px solid black; width: 70px !important">
+                            Copy
+                        </button>
+                    </div>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="copy">
-            <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                <div class="pull-right">
-                    <button (click)="
-                            copyPricingTemplate(pricingTemplate);
-                            $event.stopPropagation()
-                        "
-                            [view]="'blank'"
-                            beforeIcon="fa fa-copy"
-                            ni-button
-                            size="small"
-                            style="border: 1px solid black; width: 70px !important">
-                        Copy
-                    </button>
-                </div>
-            </td>
-        </ng-container>
+            <ng-container matColumnDef="delete">
+                <th *matHeaderCellDef mat-header-cell>
+                    <div class="pull-right">
+                        <button (click)="addNewPricingTemplate()"
+                                [view]="'accent'"
+                                beforeIcon="fa fa-plus"
+                                ni-button>
+                            Add New
+                        </button>
+                    </div>
+                </th>
+                <td *matCellDef="let pricingTemplate" mat-cell>
+                    <div class="pull-right">
+                        <button (click)="
+                                deletePricingTemplate(pricingTemplate);
+                                $event.stopPropagation()
+                            "
+                                [view]="'error'"
+                                beforeIcon="fa fa-trash"
+                                ni-button
+                                size="small">
+                            Delete
+                        </button>
+                    </div>
+                </td>
+            </ng-container>
 
-        <ng-container matColumnDef="delete">
-            <th *matHeaderCellDef mat-header-cell>
-                <div class="pull-right">
-                    <button (click)="addNewPricingTemplate()"
-                            [view]="'accent'"
-                            beforeIcon="fa fa-plus"
-                            ni-button>
-                        Add New
-                    </button>
-                </div>
-            </th>
-            <td *matCellDef="let pricingTemplate" mat-cell>
-                <div class="pull-right">
-                    <button (click)="
-                            deletePricingTemplate(pricingTemplate);
-                            $event.stopPropagation()
-                        "
-                            [view]="'error'"
-                            beforeIcon="fa fa-trash"
-                            ni-button
-                            size="small">
-                        Delete
-                    </button>
-                </div>
-            </td>
-        </ng-container>
-
-        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
-        <tr (click)="editPricingTemplate(row)"
-            *matRowDef="let row; columns: displayedColumns"
-            mat-row></tr>
-    </table>
-
-    <div>
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr (click)="editPricingTemplate(row)"
+                *matRowDef="let row; columns: displayedColumns"
+                mat-row></tr>
+        </table>
+    </div>
+    <div class="invisible">
         <mat-paginator
-            (page)="(pageIndexTemplate); onPageChanged($event)"
+            (page)="(0); onPageChanged($event)"
             [length]="pricingTemplatesData.length"
             [pageSizeOptions]="[10, 25, 50, 100]"
-            [pageSize]="pageSizeTemplate"
+            [pageSize]="pageSize"
         ></mat-paginator>
     </div>
 </div>
