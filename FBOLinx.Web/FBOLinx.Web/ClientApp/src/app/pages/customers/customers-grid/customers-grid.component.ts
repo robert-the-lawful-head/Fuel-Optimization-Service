@@ -133,8 +133,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     customerFilterType: number = 0;
     selectAll = false;
     selectedRows: number;
-    pageIndex = 0;
-    pageSize = 40;
     columns: ColumnType[] = [];
     airportWatchStartDate: Date = new Date();
 
@@ -201,18 +199,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         //this.airportWatchStartDate = new Date(date);
         //});
         this.airportWatchStartDate = new Date("10/6/2022");
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndex', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeValue',
-            this.paginator.pageSize.toString()
-        );
-        this.selectAll = false;
-        forEach(this.customersData, (customer) => {
-            customer.selectAll = false;
-        });
     }
 
     // Methods
@@ -724,12 +710,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
 
         this.sort.active = 'allInPrice';
 
-        this.setVirtualScrollVariables();
-    }
-    setVirtualScrollVariables(){
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-        this.dataSource.data = this.customersDataSource.data;
+        this.setVirtualScrollVariables(this.paginator, this.sort, this.customersDataSource.data);
     }
     private refreshSort() {
         const sortedColumn = this.columns.find(

@@ -355,7 +355,7 @@
         </table>
 
         <div class="invisible">
-            <mat-paginator (page)="(pageIndex); onPageChanged($event)" [length]="customersData.length"
+            <mat-paginator (page)="(0); onPageChanged($event)" [length]="customersData.length"
             [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
         </div>
 
