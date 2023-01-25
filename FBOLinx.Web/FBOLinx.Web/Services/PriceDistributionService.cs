@@ -450,10 +450,10 @@ namespace FBOLinx.Web.Services
                 {
                     string row = rowHTMLTemplate;
 
-                    if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
+                    if ((loopIndex + 1) < privateDomesticPricingResultsByProduct.Count)
                     {
                         row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                        var next = commercialInternationalPricingResults[loopIndex + 1];
+                        var next = privateDomesticPricingResultsByProduct[loopIndex + 1];
                         Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
 
                         if (maxValue > 999)
@@ -463,7 +463,7 @@ namespace FBOLinx.Web.Services
                         }
                         else
                         {
-                            row = row.Replace("%MAX_GALLON%", maxValue == 0 ? "+" : maxValue.ToString());
+                            row = row.Replace("%MAX_GALLON%", maxValue.ToString());
                         }
                     }
                     else
@@ -473,7 +473,7 @@ namespace FBOLinx.Web.Services
                         output = output + "+";
                         row = row.Replace("%MIN_GALLON%", output);
                         row = row.Replace("%MAX_GALLON%", "");
-                        row = row.Replace("-", "");
+                        row = row.Replace("&nbsp;-&nbsp;", "");
                     }
 
                     row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
