@@ -56,6 +56,8 @@ namespace FBOLinx.Web.Services
         private IFboService _fboService;
         private readonly IFboPricesService _fbopricesService;
 
+        private PriceBreakdownDisplayTypes _PriceBreakdownDisplayType;
+
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
             FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
@@ -248,9 +250,6 @@ namespace FBOLinx.Web.Services
                     return;
                 }
 
-                //Add the price breakdown as an image to prevent parsing
-                byte[] priceBreakdownImage = await GetPriceBreakdownImage(customer, validPricingTemplates);
-
                 //Add email content to MailMessage
                 FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
                 mailMessage.From = new MailAddress(MailService.GetFboLinxAddress(_Fbo.SenderAddress));
@@ -266,8 +265,6 @@ namespace FBOLinx.Web.Services
                 }
                 else
                     mailMessage.To.Add(_DistributePricingRequest.PreviewEmail);
-
-                mailMessage.InlineAttachmentBase64String = Convert.ToBase64String(priceBreakdownImage);
 
                 //Get additional attachments
                 if (_PricingTemplateFileAttachment != null)
@@ -285,6 +282,43 @@ namespace FBOLinx.Web.Services
                 }
 
                 //_DistributePricingRequest.PricingTemplate.Notes = Regex.Replace(_DistributePricingRequest.PricingTemplate.Notes, @"<[^>]*>", String.Empty);
+
+                // Add all of the images for the different products
+                //Add the price breakdown as an image to prevent parsing
+                Dictionary<string, byte[]> priceBreakdownImages = await GetPriceBreakdownImage(customer, validPricingTemplates);
+
+                var pricesForProducts = new List<PricesForProducts>();
+                foreach (var priceBreakdownImage in priceBreakdownImages)
+                {
+                    pricesForProducts.Add(new PricesForProducts() { cId = "cid:" + priceBreakdownImage.Key, imageBase64 = Convert.ToBase64String(priceBreakdownImage.Value) });
+                }
+
+                var pricingLeftRightPadding = 0;
+                if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+                {
+                    if (pricesForProducts.Count > 1)
+                    {
+                        var pricesForProductsCount = 1;
+                        foreach (var price in pricesForProducts)
+                        {
+                            if (pricesForProductsCount / pricesForProducts.Count == 1)
+                            {
+                                price.isLeftPosition = false;
+                            }
+                            pricesForProductsCount++;
+                        }
+                    }
+                    else
+                        pricingLeftRightPadding = 205;
+                }
+                else
+                {
+                    if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly || _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                        pricingLeftRightPadding = 110;
+                    else
+                        pricingLeftRightPadding = 70;
+                }
+
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
                 {
                     recipientCompanyName = _IsPreview ? _Fbo.Fbo : customer.Company,
@@ -298,7 +332,13 @@ namespace FBOLinx.Web.Services
                     fboZip = _Fbo.ZipCode,
                     Subject = HttpUtility.HtmlDecode(_EmailContent.Subject) ?? "Distribution pricing",
                     expiration = _ValidUntil,
-                    currentPostedRetail = _CurrentPostedRetail
+                    currentPostedRetail = _CurrentPostedRetail,
+                    pricesForProducts = pricesForProducts,
+                    isLogo = _Logo == null || _Logo.Oid == 0 ? false : true,
+                    isPricingDisplayTypeSingle = _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights ? true : false,
+                    isPricingDisplayTypeDouble = _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly || _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly ? true : false,
+                    isPricingDisplayTypeAllFour = _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.FourColumnsAllRules ? true : false,
+                    pricingLeftRightPadding = pricingLeftRightPadding == 0 ? 70 : pricingLeftRightPadding
                 };
                 mailMessage.SendGridDistributionTemplateData = dynamicTemplateData;
 
@@ -359,86 +399,109 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task<byte[]> GetPriceBreakdownImage(CustomerInfoByGroupDTO customer, List<PricingTemplate> pricingTemplates)
+        private async Task<Dictionary<string, byte[]>> GetPriceBreakdownImage(CustomerInfoByGroupDTO customer, List<PricingTemplate> pricingTemplates)
         {
-            StringBuilder result = new StringBuilder();
+            _PriceBreakdownDisplayType =
+                await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
+
+            Dictionary<string, byte[]> productImages = new Dictionary<string, byte[]>();
             foreach (var pricingTemplate in pricingTemplates)
             {
-                string html = await GetPriceBreakdownHTML(customer, pricingTemplate);
-                result.Append(html);
+                Dictionary<string, string> productsHtml = await GetPriceBreakdownHTML(customer, pricingTemplate);
+                foreach (var html in productsHtml)
+                {
+                    StringBuilder result = new StringBuilder();
+                    result.Append(html.Value);
+                    string priceBreakdownHTML = result.ToString();
+
+                    int width = 190;
+                    if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly || _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+                        width = 380;
+                    else if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.FourColumnsAllRules)
+                        width = 460;
+                    productImages.Add(html.Key, FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(priceBreakdownHTML, width));
+                }
             }
-            string priceBreakdownHTML = result.ToString();
-            return FBOLinx.Core.Utilities.HTML.CreateImageFromHTML(priceBreakdownHTML);
+
+            return productImages;
         }
 
-        private async Task<string> GetPriceBreakdownHTML(CustomerInfoByGroupDTO customer, PricingTemplate pricingTemplate)
+        private async Task<Dictionary<string, string>> GetPriceBreakdownHTML(CustomerInfoByGroupDTO customer, PricingTemplate pricingTemplate)
         {
+            var productImageHtml = new Dictionary<string, string>();
+
             var commercialInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
             var privateInternationalPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.InternationalOnly);
             var commercialDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Commercial, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
             var privateDomesticPricingResults = await _PriceFetchingService.GetCustomerPricingAsync(_DistributePricingRequest.FboId, _DistributePricingRequest.GroupId, customer.Oid, new List<int> { pricingTemplate.Oid }, FBOLinx.Core.Enums.FlightTypeClassifications.Private, FBOLinx.Core.Enums.ApplicableTaxFlights.DomesticOnly);
 
-            var priceBreakdownDisplayType =
-                await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
+            var products = privateDomesticPricingResults.GroupBy(p => p.Product).ToList();
 
-            privateDomesticPricingResults = privateDomesticPricingResults.OrderBy(s => s.MinGallons).ToList();
-
-            string priceBreakdownTemplate = GetPriceBreakdownTemplate(priceBreakdownDisplayType);
-            string rowHTMLTemplate = GetPriceBreakdownRowTemplate(priceBreakdownDisplayType);
-            StringBuilder rowsHTML = new StringBuilder();
-            int loopIndex = 0;
-
-            foreach (CustomerWithPricing model in privateDomesticPricingResults)
+            foreach (var product in products)
             {
-                string row = rowHTMLTemplate;
+                var privateDomesticPricingResultsByProduct = privateDomesticPricingResults.Where(p => p.Product == product.Key).OrderBy(s => s.MinGallons).ToList();
 
-                if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
+                string priceBreakdownTemplate = GetPriceBreakdownTemplate();
+                string rowHTMLTemplate = GetPriceBreakdownRowTemplate();
+                StringBuilder rowsHTML = new StringBuilder();
+                int loopIndex = 0;
+
+                foreach (CustomerWithPricing model in privateDomesticPricingResultsByProduct)
                 {
-                    row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
-                    var next = commercialInternationalPricingResults[loopIndex + 1];
-                    Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
+                    string row = rowHTMLTemplate;
 
-                    if (maxValue > 999)
+                    if ((loopIndex + 1) < commercialInternationalPricingResults.Count)
                     {
-                        string output = maxValue.ToString("#,##", CultureInfo.InvariantCulture);
-                        row = row.Replace("%MAX_GALLON%", output);
+                        row = row.Replace("%MIN_GALLON%", model.MinGallons.GetValueOrDefault().ToString());
+                        var next = commercialInternationalPricingResults[loopIndex + 1];
+                        Double maxValue = Convert.ToDouble(next.MinGallons) - 1;
+
+                        if (maxValue > 999)
+                        {
+                            string output = maxValue.ToString("#,##", CultureInfo.InvariantCulture);
+                            row = row.Replace("%MAX_GALLON%", output);
+                        }
+                        else
+                        {
+                            row = row.Replace("%MAX_GALLON%", maxValue == 0 ? "+" : maxValue.ToString());
+                        }
                     }
                     else
                     {
-                        row = row.Replace("%MAX_GALLON%", maxValue.ToString());
+                        string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
+
+                        output = output + "+";
+                        row = row.Replace("%MIN_GALLON%", output);
+                        row = row.Replace("%MAX_GALLON%", "");
+                        row = row.Replace("-", "");
                     }
-                }
-                else
-                {
-                    string output = Convert.ToDouble(model.MinGallons).ToString("#,##", CultureInfo.InvariantCulture);
 
-                    output = output + "+";
-                    row = row.Replace("%MIN_GALLON%", output);
-                    row = row.Replace("%MAX_GALLON%", "");
-                    row = row.Replace("-", "");
+                    row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
+                    row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResultsByProduct.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    rowsHTML.Append(row);
+
+                    loopIndex++;
                 }
 
-                row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
-                row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResults.Where(s => s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                rowsHTML.Append(row);
-                loopIndex++;
+                var genericProduct = product.Key.Contains("(") ? product.Key.Substring(0, Math.Max(product.Key.IndexOf('('), 0)).Trim() : product.Key;
+                productImageHtml.Add(genericProduct, priceBreakdownTemplate.Replace("%PRODUCT%", genericProduct).Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString()));
             }
 
-            return priceBreakdownTemplate.Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString());
+            return productImageHtml;
         }
 
-        private string GetPriceBreakdownTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
+        private string GetPriceBreakdownTemplate()
         {
-            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+            if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownSingleColumnAllFlights.html");
-            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+            else if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownTwoColumnsApplicableFlightTypesOnly.html");
-            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+            else if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownTwoColumnsDepartureOnly.html");
             else
@@ -446,15 +509,15 @@ namespace FBOLinx.Web.Services
                     "PriceBreakdownFourColumnsAllRules.html");
         }
 
-        private string GetPriceBreakdownRowTemplate(PriceBreakdownDisplayTypes priceBreakdownDisplayType)
+        private string GetPriceBreakdownRowTemplate()
         {
-            if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
+            if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.SingleColumnAllFlights)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowSingleColumnAllFlights.html");
-            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
+            else if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowTwoColumnsApplicableFlightTypesOnly.html");
-            else if (priceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
+            else if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
                 return _MailTemplateService.GetTemplatesFileContent("PriceDistribution",
                     "PriceBreakdownRowTwoColumnsDepartureOnly.html");
             else
@@ -721,6 +784,7 @@ namespace FBOLinx.Web.Services
         {
 
         }
+
         #endregion
     }
 }

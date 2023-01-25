@@ -40,5 +40,18 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public string expiration { get; set; }
 
         public string currentPostedRetail { get; set; }
+        public List<PricesForProducts> pricesForProducts { get; set; }
+        public bool isLogo { get; set; }
+        public bool isPricingDisplayTypeSingle { get; set; }
+        public bool isPricingDisplayTypeDouble { get; set; }
+        public bool isPricingDisplayTypeAllFour { get; set; }
+        public int pricingLeftRightPadding { get; set; } = 70;
+    }
+
+    public partial class PricesForProducts
+    {
+        public string cId { get; set; }
+        public string imageBase64 { get; set; }
+        public bool isLeftPosition { get; set; } = true;
     }
 }

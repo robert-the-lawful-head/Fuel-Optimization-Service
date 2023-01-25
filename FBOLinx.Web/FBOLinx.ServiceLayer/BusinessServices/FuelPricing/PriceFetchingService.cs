@@ -292,7 +292,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     domesticOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     domesticOptions.ForEach(x =>
                     {
-                        x.Product = "Jet A (Domestic Departure)";
+                        x.Product = x.Product + " (Domestic Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
@@ -309,7 +309,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x =>
                     {
-                        x.Product = "Jet A (International Departure)";
+                        x.Product = x.Product + " (International Departure)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
