@@ -97,8 +97,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             else if (HasArrivedAtDestination(flightWatchModel, mostRecentHistoricalRecord))
                 flightLegStatus = FlightLegStatus.Arrived;
 
-            flightWatchModel.Status = flightLegStatus;
-            
+            if (flightLegStatus != flightWatchModel.Status)
+            {
+                flightWatchModel.MarkSWIMFlightLegAsNeedingUpdate();
+                flightWatchModel.Status = flightLegStatus;
+            }
+
         }
 
         private bool IsTaxiingForDeparture(FlightWatchModel flightWatchModel, AirportWatchHistoricalDataDto mostRecentHistoricalRecord)
