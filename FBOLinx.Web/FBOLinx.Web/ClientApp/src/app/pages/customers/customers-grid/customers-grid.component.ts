@@ -5,6 +5,7 @@ import {
     Input,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -127,7 +128,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
 
-    customersDataSource: any = null;
     customersTableDataSource: MatTableDataSource<any> = new MatTableDataSource();
 
     customerFilterType: number = 0;
@@ -151,7 +151,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         private newCustomerDialog: MatDialog,
         private deleteCustomerDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
-        private customersService: CustomersService,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerMarginsService: CustomermarginsService,
@@ -160,7 +159,12 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         private dialog: MatDialog ,
         private route : ActivatedRoute
     ) { super(); }
-
+    ngOnChanges(changes: SimpleChanges): void {
+        if(changes.customersData){
+            this.setVirtualScrollVariables(this.paginator, this.sort, this.customersData);
+            this.refreshCustomerDataSource();
+        }
+    }
     ngOnInit() {
         /*this.initializeImporter();*/
         if (this.customerGridState.filterType) {
@@ -177,17 +181,11 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         } else {
             this.columns = initialColumns;
         }
-
-        this.refreshCustomerDataSource();
-
         if (this.customerGridState.filter) {
-            this.customersDataSource.filterCollection = JSON.parse(
+            this.dataSource.filterCollection = JSON.parse(
                 this.customerGridState.filter
             );
         }
-        // if (this.customerGridState.page) {
-        //     this.paginator.pageIndex = this.customerGridState.page;
-        // }
         if (this.customerGridState.order) {
             this.sort.active = this.customerGridState.order;
         }
@@ -195,9 +193,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             this.sort.direction = this.customerGridState
                 .orderBy as SortDirection;
         }
-        //this.airportWatchService.getStartDate().subscribe((date) => {
-        //this.airportWatchStartDate = new Date(date);
-        //});
         this.airportWatchStartDate = new Date("10/6/2022");
     }
 
@@ -227,16 +222,16 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
 
         this.editCustomerClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
-            filter: this.customersDataSource.filter,
+            filter: this.dataSource.filter,
             filterType: this.customerFilterType,
-            order: this.customersDataSource?.sort?.active,
-            orderBy: this.customersDataSource?.sort?.direction,
-            page: this.customersDataSource.paginator?.pageIndex,
+            order: this.dataSource?.sort?.active,
+            orderBy: this.dataSource?.sort?.direction,
+            page: this.dataSource.paginator?.pageIndex,
         });
     }
 
     selectAction() {
-        const pageCustomersData = this.customersDataSource.connect().value;
+        const pageCustomersData = this.dataSource.connect().value;
         forEach(pageCustomersData, (customer) => {
             customer.selectAll = this.selectAll;
         });
@@ -271,14 +266,14 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
 
     exportCustomersToExcel() {
         // Export the filtered results to an excel spreadsheet
-        const filteredList = this.customersDataSource.filteredData.filter(
+        const filteredList = this.dataSource.filteredData.filter(
             (item) => item.selectAll === true
         );
         let exportData;
         if (filteredList.length > 0) {
             exportData = filteredList;
         } else {
-            exportData = this.customersDataSource.filteredData;
+            exportData = this.dataSource.filteredData;
         }
         exportData = map(exportData, (item) => ({
             'Certificate Type': item.certificateTypeDescription,
@@ -354,8 +349,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
 
     bulkMarginTemplateUpdate(event: MatSelectChange) {
         const listCustomers = [];
-
-        forEach(this.customersData, (customer) => {
+        forEach(this.dataSource.filteredData, (customer) => {
             if (customer.selectAll === true) {
                 customer.needsAttention = event.value.default;
                 customer.pricingTemplateName = event.value.name;
@@ -672,11 +666,11 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     onCustomerPriceClicked(customer) {
         this.customerPriceClicked.emit({
             customerInfoByGroupId: customer.customerInfoByGroupId,
-            filter: this.customersDataSource.filter,
+            filter: this.dataSource.filter,
             filterType: this.customerFilterType,
-            order: this.customersDataSource?.sort?.active,
-            orderBy: this.customersDataSource?.sort?.direction,
-            page: this.customersDataSource.paginator?.pageIndex,
+            order: this.dataSource?.sort?.active,
+            orderBy: this.dataSource?.sort?.direction,
+            page: this.dataSource.paginator?.pageIndex,
             pricingTemplateId: customer.pricingTemplateId
         });
     }
@@ -692,13 +686,9 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
                         name: column.name,
                     }
             );
-            // this.paginator?.pageIndex = 0;
             this.saveSettings();
         });
-        if (!this.customersDataSource) {
-            this.customersDataSource = new MatTableDataSource();
-        }
-        this.customersDataSource.data = this.customersData.filter(
+        this.dataSource.data = this.customersData.filter(
             (element: any) => {
                if (this.customerFilterType != 1) {
                    return true;
@@ -709,8 +699,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         );
 
         this.sort.active = 'allInPrice';
-
-        this.setVirtualScrollVariables(this.paginator, this.sort, this.customersDataSource.data);
     }
     private refreshSort() {
         const sortedColumn = this.columns.find(
