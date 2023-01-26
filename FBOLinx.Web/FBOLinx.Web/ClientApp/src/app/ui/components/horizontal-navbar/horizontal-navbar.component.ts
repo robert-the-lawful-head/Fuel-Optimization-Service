@@ -32,6 +32,7 @@ import { AccountProfileComponent } from '../../../shared/components/account-prof
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 import * as moment from 'moment';
+import { UserRole } from 'src/app/enums/user-role';
 
 @Component({
     host: {
@@ -558,7 +559,17 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         //        });
         //    });
     }
-
+    public isLobbyViewVisible():boolean {
+        return this.currentUser &&
+        (this.currentUser.impersonatedRole ===  UserRole.Primary ||
+            this.currentUser.impersonatedRole ===  UserRole.CSR ||
+            this.currentUser.impersonatedRole ===  UserRole.Member ||
+            this.currentUser.impersonatedRole ===  UserRole.GroupAdmin
+        );
+    }
+    public get userRole(){
+        return UserRole;
+    }
     // Private Methods
     private isOnDashboard(): boolean {
         if (!this.Location) {
