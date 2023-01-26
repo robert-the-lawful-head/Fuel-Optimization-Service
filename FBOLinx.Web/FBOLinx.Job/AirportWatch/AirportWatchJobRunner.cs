@@ -20,6 +20,7 @@ namespace FBOLinx.Job.AirportWatch
         private bool _isPostingData = false;
         private DateTime? _LastPostDateTimeUTC;
         private List<string> _apiClientUrls;
+        private int _NewRowThreshold = 30000;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
@@ -56,7 +57,12 @@ namespace FBOLinx.Job.AirportWatch
             //Don't push more often than every 9 seconds to prevent consistent spikes
             if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(6))
                 return;
-            
+
+            if (_isPostingData && (!_LastPostDateTimeUTC.HasValue || _LastPostDateTimeUTC > DateTime.UtcNow.AddMinutes(-2)))
+            {
+                return;
+            }
+
             using var logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.File(_config["AirportWatchJobLog"])
@@ -64,14 +70,20 @@ namespace FBOLinx.Job.AirportWatch
 
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
-            if (_isPostingData)
-            {
-                logger.Information("Fbolinx api call delayed - previous POST still in progress.");
-                return;
-            }
+            if (_LastPostDateTimeUTC.HasValue && _LastPostDateTimeUTC < DateTime.UtcNow.AddMinutes(-2))
+                logger.Information("Fbolinx api call was delayed due to previous POST in progress.  Re-trying since 2 minutes have passed.");
+                
 
             _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
+
+            if (data.Count > _NewRowThreshold)
+            {
+                logger.Information("Amount of records to POST exceeded " + string.Format("{0:N}", _NewRowThreshold) + " (" + string.Format("{0:N}", data.Count) + ").  Jumping to end-of-file for next POST and skipping the current one.");
+                _isPostingData = false;
+                return;
+            }
+
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
 
             if (airportWatchData.Count > 0)

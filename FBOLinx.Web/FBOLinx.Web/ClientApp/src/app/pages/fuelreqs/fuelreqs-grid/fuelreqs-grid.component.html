@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col col-md-4">
-                <app-table-global-search [matDataSource]="fuelreqsDataSource"
+                <app-table-global-search [matDataSource]="dataSource"
                                          placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
             <div class="col-6 col-md-3">
@@ -69,8 +69,8 @@
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x: auto">
-        <table [dataSource]="fuelreqsDataSource"
+    <div class="w-100 table-container" style="overflow-x: auto" (scroll)="onTableScroll($event)">
+        <table [dataSource]="dataSource"
                class="col-12 mb-0"
                mat-table
                matSort>
@@ -213,11 +213,13 @@
                 mat-header-row></tr>
             <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
-        <mat-paginator
-            (page)="(pageIndex); onPageChanged($event)"
-            [length]="resultsLength"
-            [pageSizeOptions]="[10, 25, 50, 100]"
-            [pageSize]="pageSize"
-        ></mat-paginator>
+        <div class="invisible">
+            <mat-paginator
+                (page)="(0); onPageChanged($event)"
+                [length]="resultsLength"
+                [pageSizeOptions]="[10, 25, 50, 100]"
+                [pageSize]="pageSize"
+            ></mat-paginator>
+        </div>
     </div>
 </div>

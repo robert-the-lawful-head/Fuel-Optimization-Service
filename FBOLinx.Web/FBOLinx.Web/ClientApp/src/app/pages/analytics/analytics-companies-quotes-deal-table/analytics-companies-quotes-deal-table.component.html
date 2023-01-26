@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <div class="table-container mat-elevation-z8">
+        <div class="table-container mat-elevation-z8" (scroll)="onTableScroll($event)">
             <table [dataSource]="dataSource" mat-table matSort>
 
                 <ng-container matColumnDef="company">
@@ -254,8 +254,10 @@
                    bgsPosition="center-center"
                    bgsType="ball-spin"
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
-    <mat-paginator (page)="(pageIndex); onPageChanged($event)"
-                   [length]="dataLength"
-                   [pageSizeOptions]="[10, 25, 50, 100]"
-                   [pageSize]="pageSize"></mat-paginator>
+    <div class="invisible">
+        <mat-paginator (page)="(0); onPageChanged($event)"
+        [length]="dataLength"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageSize]="pageSize"></mat-paginator>
+    </div>
 </ni-card>

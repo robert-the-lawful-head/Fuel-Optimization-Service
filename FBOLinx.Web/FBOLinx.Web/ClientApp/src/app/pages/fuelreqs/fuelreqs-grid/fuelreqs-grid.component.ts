@@ -14,6 +14,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -94,7 +95,7 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./fuelreqs-grid.component.scss'],
     templateUrl: './fuelreqs-grid.component.html',
 })
-export class FuelreqsGridComponent implements OnInit, OnChanges {
+export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
@@ -104,9 +105,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
     @Input() filterEndDate: Date;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
-
-    pageIndex = 0;
-    pageSize = 100;
 
     fuelreqsDataSource: MatTableDataSource<any> = null;
     resultsLength = 0;
@@ -119,6 +117,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         private exportDialog: MatDialog,
         private tableSettingsDialog: MatDialog
     ) {
+        super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
     }
 
@@ -160,13 +159,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
             this.paginator.pageIndex = 0;
         }
 
-        if (sessionStorage.getItem('pageSizeValueFuelReqs')) {
-            this.pageSize = sessionStorage.getItem(
-                'pageSizeValueFuelReqs'
-            ) as any;
-        } else {
-            this.pageSize = 100;
-        }
 
         if (localStorage.getItem(this.tableLocalStorageKey)) {
             if (this.columns.length === 13) {
@@ -177,7 +169,7 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
                     localStorage.getItem(this.tableLocalStorageKey)
                 );
             }
-            
+
         } else {
             this.columns = initialColumns;
         }
@@ -206,6 +198,8 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
         this.resultsLength = this.fuelreqsData.length;
 
         this.refreshSort();
+
+        this.setVirtualScrollVariables(this.paginator, this.sort, this.fuelreqsDataSource.data);
     }
 
     refreshSort() {
@@ -251,14 +245,6 @@ export class FuelreqsGridComponent implements OnInit, OnChanges {
             }
             this.exportTriggered.emit(result);
         });
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndexFuelReqs', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeValueFuelReqs',
-            this.paginator.pageSize.toString()
-        );
     }
 
     openSettings() {

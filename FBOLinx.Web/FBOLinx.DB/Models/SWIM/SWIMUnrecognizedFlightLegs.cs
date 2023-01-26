@@ -11,9 +11,7 @@ namespace FBOLinx.DB.Models
     [Table("SWIMUnrecognizedFlightLegs")]
     public class SWIMUnrecognizedFlightLeg : FBOLinxBaseEntityModel<int>
     {
-        [Required]
-        [StringLength(42)]
-        public string Gufi { get; set; }
+        public Guid? Gufi { get; set; }
 
         [Required]
         [StringLength(10)]

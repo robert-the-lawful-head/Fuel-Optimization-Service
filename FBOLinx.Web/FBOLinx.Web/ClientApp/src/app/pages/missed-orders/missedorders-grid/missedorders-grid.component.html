@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource || !missedOrdersData}">
+    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource || !missedOrdersData}" (scroll)="onTableScroll($event)">
         <table [dataSource]="missedOrdersDataSource"
                class="col-12 mb-0"
                mat-table
@@ -123,10 +123,12 @@
                 mat-header-row></tr>
             <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
-        <mat-paginator (page)="(pageIndex); onPageChanged($event)"
-                       [length]="resultsLength"
-                       [pageSizeOptions]="[10, 25, 50, 100]"
-                       [pageSize]="pageSize"></mat-paginator>
+        <div class="invisible">
+            <mat-paginator (page)="(0); onPageChanged($event)"
+            [length]="resultsLength"
+            [pageSizeOptions]="[10, 25, 50, 100]"
+            [pageSize]="pageSize"></mat-paginator>
+        </div>
     </div>
 
     <div *ngIf="!missedOrdersData">

@@ -96,7 +96,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         public async Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId)
         {
             var customerAircraft = await GetSingleBySpec(new CustomerAircraftSpecification(customerAircraftId));
-            return customerAircraft.TailNumber;
+            return customerAircraft?.TailNumber;
         }
     }
 }

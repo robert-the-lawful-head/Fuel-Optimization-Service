@@ -1,4 +1,4 @@
-﻿@import "../../../../assets/sass/variable";
+@import "../../../../assets/sass/variable";
 
 :host {
     display: block;
@@ -21,4 +21,8 @@
             margin-top: 49px;
         }
     }
+}
+
+.after-breadcrumb {
+    padding-top: 4rem;
 }

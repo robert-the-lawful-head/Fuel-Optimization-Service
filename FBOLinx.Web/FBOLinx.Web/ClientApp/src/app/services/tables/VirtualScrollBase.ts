@@ -1,11 +1,14 @@
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { forEach } from "lodash";
 
 export abstract class VirtualScrollBase {
     start: number = 0;
-    limit: number = 20;
-    end: number = this.limit + this.start;
+    limit: number = 10;
+    pageSize: number = 30;
     selectedRowIndex: number = null;
-    dataSource: MatTableDataSource<any> = new MatTableDataSource<any>(); //data source to be displayed on scroll
+    dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
 
     constructor() {}
 
@@ -17,19 +20,39 @@ export abstract class VirtualScrollBase {
         // If the user has scrolled within 200px of the bottom, add more data
         const buffer = 200;
         const limit = tableScrollHeight - tableViewHeight - buffer;
-        if(this.end > this.dataSource.data.length) return;
+        if(this.pageSize > this.dataSource.data.length) return;
         if (scrollLocation > limit) {
             this.updateIndex();
-            this.dataSource.paginator.pageSize = this.end;
-            this.dataSource.paginator.page.emit({
-                length: 1,
-              pageIndex: 0,
-              pageSize: this.end,
-              })
+            this.setPagination(this.pageSize);
         }
     }
     updateIndex() {
-        this.start = this.end;
-        this.end = this.limit + this.start;
+        this.start = this.pageSize;
+        this.pageSize = this.limit + this.start;
+    }
+    setVirtualScrollVariables(paginator: MatPaginator, sort: MatSort, data: any[]){
+        this.dataSource.paginator = paginator;
+        this.dataSource.sort = sort;
+        this.dataSource.data = data;
+        this.setPagination(this.pageSize);
+    }
+    setPagination(paginationSize: number){
+        this.dataSource.paginator.pageSize = paginationSize;
+            this.dataSource.paginator.page.emit({
+                length: 1,
+              pageIndex: 0,
+              pageSize: paginationSize,
+              })
+    }
+    onPageChanged(event: any) {
+        // localStorage.setItem('pageIndex', event.pageIndex);
+        // sessionStorage.setItem(
+        //     'pageSizeValue',
+        //     this.dataSource.paginator.pageSize.toString()
+        // );
+        // this.selectAll = false;
+        // forEach(this.dataSource, (data) => {
+        //     data.selectAll = false;
+        // });
     }
 }
