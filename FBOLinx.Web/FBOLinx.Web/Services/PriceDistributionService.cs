@@ -309,14 +309,12 @@ namespace FBOLinx.Web.Services
                         }
                     }
                     else
-                        pricingLeftRightPadding = 205;
+                        pricingLeftRightPadding = 110;
                 }
                 else
                 {
                     if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly || _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
                         pricingLeftRightPadding = 110;
-                    else
-                        pricingLeftRightPadding = 70;
                 }
 
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
