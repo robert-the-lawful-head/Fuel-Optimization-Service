@@ -355,6 +355,10 @@
             <tr (click)="editCustomer(row)" *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
         </table>
 
+	<div class="invisible">
+            <mat-paginator (page)="(0); onPageChanged($event)" [length]="customersData.length"
+            [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+        </div>
         <popover-content #feeAndTaxPopover placement="left" title="Price Information" [closeOnClickOutside]="true">
             <price-breakdown #priceBreakdownPreview *ngIf="focusedCustomer"
                 [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId" [feeAndTaxDisplayMode]="2"

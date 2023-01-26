@@ -27,13 +27,15 @@ import * as SharedEvent from '../../../models/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { basename } from 'path';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
     templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
-export class AnalyticsCompaniesQuotesDealTableComponent
+export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBase
     implements OnInit, AfterViewInit, OnDestroy
 {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -59,13 +61,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         'visitsToFbo',
         'percentVisits',
     ];
-    dataSource: MatTableDataSource<any[]>;
-
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
 
-    pageIndex = 0;
-    pageSize = 10;
     dataLength = 0;
 
     constructor(
@@ -77,6 +75,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         private router: Router,
         private tableSettingsDialog: MatDialog
     ) {
+        super();
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -238,7 +237,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
             (data: any) => {
-                this.dataSource = new MatTableDataSource(data);
+                this.dataSource.data = data;
                  this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
@@ -348,14 +347,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         localStorage.setItem(
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
-        );
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndex', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeValue',
-            this.paginator.pageSize.toString()
         );
     }
 }

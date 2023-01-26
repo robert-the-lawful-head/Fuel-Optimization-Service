@@ -107,13 +107,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
         {
             sendGridMessageWithTemplate.SetTemplateData(message.SendGridDistributionTemplateData);
 
-            var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
-            pricesAttachment.Disposition = "inline";
-            pricesAttachment.Content = message.InlineAttachmentBase64String;
-            pricesAttachment.Filename = "prices.png";
-            pricesAttachment.Type = "image/png";
-            pricesAttachment.ContentId = "Prices";
-            sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
+            foreach (var pricesForProduct in message.SendGridDistributionTemplateData.pricesForProducts)
+            {
+                var pricesAttachment = new SendGrid.Helpers.Mail.Attachment();
+                pricesAttachment.Disposition = "inline";
+                pricesAttachment.Content = pricesForProduct.imageBase64;
+                pricesAttachment.Filename = pricesForProduct.cId.Replace("cid:","") + ".png";
+                pricesAttachment.Type = "image/png";
+                pricesAttachment.ContentId = pricesForProduct.cId.Replace("cid:", "");
+                sendGridMessageWithTemplate.AddAttachment(pricesAttachment);
+            }
 
             foreach (var attachment in message.AttachmentsCollection)
             {
@@ -134,10 +137,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 logoAttachment.Type = message.Logo.ContentType;
                 logoAttachment.ContentId = "Logo";
                 sendGridMessageWithTemplate.AddAttachment(logoAttachment);
-                sendGridMessageWithTemplate.TemplateId = "d-537f958228a6490b977e372ad8389b71";
             }
-            else
-                sendGridMessageWithTemplate.TemplateId = "d-0b5b34a824a34418b95931a39b21d385";
+
+            sendGridMessageWithTemplate.TemplateId = "d-53e251adc804497d8b2239f75de64aa4";
         }
 
         private void AddGroupCustomerPricingEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)

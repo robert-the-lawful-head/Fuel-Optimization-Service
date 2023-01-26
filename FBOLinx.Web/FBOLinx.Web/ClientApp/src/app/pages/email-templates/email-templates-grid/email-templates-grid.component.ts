@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -21,7 +22,7 @@ import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/compon
     styleUrls: ['./email-templates-grid.component.scss'],
     templateUrl: './email-templates-grid.component.html',
 })
-export class EmailTemplatesGridComponent implements OnInit {
+export class EmailTemplatesGridComponent extends VirtualScrollBase implements OnInit {
     @Output() editEmailTemplateClicked = new EventEmitter<any>();
     @Output() deleteEmailTemplateClicked = new EventEmitter<any>();
     @Output() copyEmailTemplateClicked = new EventEmitter<any>();
@@ -30,18 +31,18 @@ export class EmailTemplatesGridComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    public emailTemplatesDataSource: MatTableDataSource<any> = null;
+    public dataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = ['name', 'subject', 'copy', 'delete'];
 
-    public pageIndexTemplate = 0;
-    public pageSizeTemplate = 50;
 
     constructor(
         public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
         private sharedService: SharedService
-    ) {}
+    ) {
+        super();
+    }
 
     ngOnInit(): void {
         if (!this.emailTemplatesData) {
@@ -49,11 +50,11 @@ export class EmailTemplatesGridComponent implements OnInit {
         }
 
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.emailTemplatesDataSource = new MatTableDataSource(
+        this.dataSource = new MatTableDataSource(
             this.emailTemplatesData
         );
-        this.emailTemplatesDataSource.sort = this.sort;
-        this.emailTemplatesDataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
 
         //this.updateModel.currenttemplate = 0;
 
@@ -76,10 +77,10 @@ export class EmailTemplatesGridComponent implements OnInit {
     public editEmailTemplate(emailTemplate) {
         this.editEmailTemplateClicked.emit({
             emailTemplateId: emailTemplate.oid,
-            filter: this.emailTemplatesDataSource.filter,
-            order: this.emailTemplatesDataSource.sort.active,
-            orderBy: this.emailTemplatesDataSource.sort.direction,
-            page: this.emailTemplatesDataSource.paginator.pageIndex,
+            filter: this.dataSource.filter,
+            order: this.dataSource.sort.active,
+            orderBy: this.dataSource.sort.direction,
+            page: this.dataSource.paginator.pageIndex,
         });
     }
 
@@ -128,7 +129,7 @@ export class EmailTemplatesGridComponent implements OnInit {
     }
 
     public applyFilter(filterValue: string) {
-        this.emailTemplatesDataSource.filter = filterValue.trim().toLowerCase();
+        this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
     onPageChanged(event: any) {

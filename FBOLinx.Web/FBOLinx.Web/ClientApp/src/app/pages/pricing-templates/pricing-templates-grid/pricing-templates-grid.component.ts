@@ -11,6 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -35,7 +36,7 @@ export interface DefaultTemplateUpdate {
     styleUrls: ['./pricing-templates-grid.component.scss'],
     templateUrl: './pricing-templates-grid.component.html',
 })
-export class PricingTemplatesGridComponent implements OnInit {
+export class PricingTemplatesGridComponent extends VirtualScrollBase implements OnInit {
     // Input/Output Bindings
     @Output() editPricingTemplateClicked = new EventEmitter<any>();
     @Output() deletePricingTemplateClicked = new EventEmitter<any>();
@@ -46,7 +47,7 @@ export class PricingTemplatesGridComponent implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     // Public Members
-    public pricingTemplatesDataSource: MatTableDataSource<any> = null;
+    public dataSource: MatTableDataSource<any> = null;
     public displayedColumns: string[] = [
         'isInvalid',
         'name',
@@ -58,9 +59,6 @@ export class PricingTemplatesGridComponent implements OnInit {
         'copy',
         'delete',
     ];
-
-    public pageIndexTemplate = 0;
-    public pageSizeTemplate = 50;
 
     public updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
@@ -76,7 +74,9 @@ export class PricingTemplatesGridComponent implements OnInit {
         private sharedService: SharedService,
         public customCustomerService: CustomcustomertypesService,
         public pricingTemplatesService: PricingtemplatesService
-    ) {}
+    ) {
+        super();
+    }
 
     ngOnInit() {
         if (!this.pricingTemplatesData) {
@@ -84,17 +84,17 @@ export class PricingTemplatesGridComponent implements OnInit {
         }
 
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.pricingTemplatesDataSource = new MatTableDataSource(
+        this.dataSource = new MatTableDataSource(
             this.pricingTemplatesData
         );
-        this.pricingTemplatesDataSource.sort = this.sort;
-        this.pricingTemplatesDataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
 
         this.updateModel.currenttemplate = 0;
 
         this.store.select(getPricingTemplateState).subscribe((state) => {
             if (state.filter) {
-                this.pricingTemplatesDataSource.filter = state.filter;
+                this.dataSource.filter = state.filter;
             }
             if (state.page) {
                 this.paginator.pageIndex = state.page;
@@ -110,10 +110,10 @@ export class PricingTemplatesGridComponent implements OnInit {
 
     public editPricingTemplate(pricingTemplate) {
         this.editPricingTemplateClicked.emit({
-            filter: this.pricingTemplatesDataSource.filter,
-            order: this.pricingTemplatesDataSource.sort.active,
-            orderBy: this.pricingTemplatesDataSource.sort.direction,
-            page: this.pricingTemplatesDataSource.paginator.pageIndex,
+            filter: this.dataSource.filter,
+            order: this.dataSource.sort.active,
+            orderBy: this.dataSource.sort.direction,
+            page: this.dataSource.paginator.pageIndex,
             pricingTemplateId: pricingTemplate.oid,
         });
     }
@@ -190,16 +190,8 @@ export class PricingTemplatesGridComponent implements OnInit {
     }
 
     public applyFilter(filterValue: string) {
-        this.pricingTemplatesDataSource.filter = filterValue
+        this.dataSource.filter = filterValue
             .trim()
             .toLowerCase();
-    }
-
-    onPageChanged(event: any) {
-        localStorage.setItem('pageIndexTemplate', event.pageIndex);
-        sessionStorage.setItem(
-            'pageSizeValueTemplate',
-            this.paginator.pageSize.toString()
-        );
     }
 }

@@ -12,6 +12,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
+import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
@@ -24,7 +25,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
     styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
 })
-export class AircraftsGridComponent implements OnInit {
+export class AircraftsGridComponent extends VirtualScrollBase implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
@@ -45,7 +46,6 @@ export class AircraftsGridComponent implements OnInit {
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
-    public pageIndex = 0;
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -55,6 +55,7 @@ export class AircraftsGridComponent implements OnInit {
         private sharedService: SharedService ,
         private route : ActivatedRoute
     ) {
+        super();
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
             this.aircraftTypes = data;
@@ -74,16 +75,6 @@ export class AircraftsGridComponent implements OnInit {
         this.aircraftsDataSource = new MatTableDataSource(this.aircraftsData);
         this.aircraftsDataSource.sort = this.sort;
         this.aircraftsDataSource.paginator = this.paginator;
-
-        if (sessionStorage.getItem('pageIndex')) {
-            this.paginator.pageIndex = sessionStorage.getItem(
-                'pageIndex'
-            ) as any;
-            sessionStorage.removeItem('pageIndex');
-            sessionStorage.removeItem('isCustomerEdit');
-        } else {
-            this.paginator.pageIndex = 0;
-        }
 
         this.resultsLength = this.aircraftsData.length;
         this.aircraftsDataSource.sortingDataAccessor = (item, property) => {
@@ -133,6 +124,7 @@ export class AircraftsGridComponent implements OnInit {
                     return item[property];
             }
         };
+        this.setVirtualScrollVariables(this.paginator, this.sort, this.aircraftsDataSource.data);
     }
 
     public editCustomerAircraft(customerAircraft) {
@@ -219,7 +211,7 @@ export class AircraftsGridComponent implements OnInit {
     }
 
     public applyFilter(filterValue: string) {
-        this.aircraftsDataSource.filter = filterValue.trim().toLowerCase();
+        this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
     public onMarginChange(event: MatSelectChange, customerAircraft: any) {
@@ -250,9 +242,5 @@ export class AircraftsGridComponent implements OnInit {
             .subscribe((data: any) => {
                 customerAircraft.pricingTemplateId = event.value;
             });
-    }
-
-    onPageChanged(e: any) {
-        sessionStorage.setItem('pageIndex', e.pageIndex);
     }
 }
