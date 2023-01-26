@@ -11,10 +11,12 @@ namespace FBOLinx.DB.Models
     [Table("SWIMFlightLegs")]
     public class SWIMFlightLeg : FBOLinxBaseEntityModel<int>
     {
+        public string Gufi { get; set; }
+
         [Required]
         [StringLength(10)]
         public string AircraftIdentification { get; set; }
-
+        
         [Required]
         [StringLength(4)]
         public string DepartureICAO { get; set; }

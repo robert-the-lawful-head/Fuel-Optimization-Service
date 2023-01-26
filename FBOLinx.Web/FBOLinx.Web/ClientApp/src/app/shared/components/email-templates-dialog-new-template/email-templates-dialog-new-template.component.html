@@ -28,6 +28,8 @@
             [(ngModel)]="data.emailContentHtml"
             placeholder="Enter email body here..."
             [insertImageSettings]='insertImageSettings'
+            (imageSelected)='onImageSelected($event)'
+            (beforeImageDrop)='onImageDrop($event)'
         ></ejs-richtexteditor>
     </div>
 </div>

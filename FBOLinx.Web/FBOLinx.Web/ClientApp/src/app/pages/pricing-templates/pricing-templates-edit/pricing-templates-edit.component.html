@@ -237,41 +237,29 @@
                                                 pricingTemplateForm.value
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
-                                                    .discountType == 0">
-                                                    ${{
-                                                        jetACost + customerMargin.value.itp
-                                                            | number: "1.4-4"
-                                                    }}
+                                                    .discountType != 1">
+                                                    ${{ (jetACost-0) + (customerMargin.value.amount-0) | number: "1.4-4" }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    ${{
-                                                        jetACost + (jetACost * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
-                                                    }}
+                                                    ${{ (jetACost-0) + ((jetACost-0) * ((customerMargin.value.amount-0) / 100)) | number: "1.4-4" }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
-                                                    .discountType == 0">
-                                                    ${{
-                                                        jetARetail - customerMargin.value.amount
-                                                            | number: "1.4-4"
-                                                    }}
+                                                    .discountType != 1">
+                                                    ${{ (jetARetail-0) - (customerMargin.value.amount-0) | number: "1.4-4" }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    ${{
-                                                        jetARetail - (jetARetail * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
-                                                    }}
+                                                    ${{ (jetARetail-0) - ((jetARetail-0) * (customerMargin.value.amount-0) / 100) | number: "1.4-4" }}
                                                 </div>
                                             </div>
                                         </td>

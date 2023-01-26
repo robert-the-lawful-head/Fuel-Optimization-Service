@@ -9,7 +9,7 @@ namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
 {
     public class CustomerInfoByGroupByFboIdSpecification : Specification<Models.CustomerInfoByGroup>
     {
-        public CustomerInfoByGroupByFboIdSpecification(int groupId, int fboId) : base(x => x.GroupId == groupId! && (x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value))
+        public CustomerInfoByGroupByFboIdSpecification(int groupId, int fboId, int customerInfoByGroupId) : base(x => x.GroupId == groupId! && (customerInfoByGroupId == 0 || x.Oid == customerInfoByGroupId) && (!x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value))
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomCustomerType.Where(x => x.Fboid == fboId));

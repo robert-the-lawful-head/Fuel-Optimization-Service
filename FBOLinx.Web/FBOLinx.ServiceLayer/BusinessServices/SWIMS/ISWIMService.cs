@@ -12,5 +12,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao);
         Task SaveFlightLegData(IEnumerable<SWIMFlightLegDTO> flightLegs);
         Task SyncRecentAndUpcomingFlightLegs();
+        //Task<string> GetNearestAirportICAO(string[] gpsCoordinates);
     }
 }

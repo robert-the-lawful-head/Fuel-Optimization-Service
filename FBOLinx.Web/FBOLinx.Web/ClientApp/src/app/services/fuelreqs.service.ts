@@ -194,7 +194,7 @@ export class FuelreqsService {
             }
         );
     }
-    
+
     public getMarketShareAirport(
         fboId: number,
         startDate: Date,
@@ -214,12 +214,19 @@ export class FuelreqsService {
 
     public getFBOCustomersBreakdown(
         fboId: number,
+        groupId: number,
+        customerId: number,
         startDate: Date,
         endDate: Date,
         chartType: string
     ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
+            this.accessPointUrl + '/analysis/customers-breakdown/group/' +
+            groupId +
+            '/fbo/' +
+            fboId +
+            '/customer/' +
+            customerId,
             {
                 chartType,
                 endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
@@ -305,7 +312,7 @@ export class FuelreqsService {
             }
         );
     }
-    
+
     public getMarketShareFboAirport(
         fboId: number,
         startDate: Date,

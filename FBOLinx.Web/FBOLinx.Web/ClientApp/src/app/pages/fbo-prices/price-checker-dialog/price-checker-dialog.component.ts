@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, HostListener } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { PriceCheckerComponent } from '../../../shared/components/price-checker/price-checker.component';
@@ -12,6 +12,8 @@ import { PriceCheckerComponent } from '../../../shared/components/price-checker/
 })
 export class PriceCheckerDialogComponent {
     @ViewChild('priceChecker') private priceChecker: PriceCheckerComponent;
+    public getScreenWidth: any;
+    public getScreenHeight: any;
 
     constructor(
         private sharedService: SharedService,
@@ -21,7 +23,13 @@ export class PriceCheckerDialogComponent {
     }
 
     get isCsr() {
-        return this.sharedService.currentUser.role === 5;
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        if (this.getScreenWidth <= 543)
+            return true;
+        else
+            return this.sharedService.currentUser.role === 5;
     }
 
     public onCancelClick(): void {

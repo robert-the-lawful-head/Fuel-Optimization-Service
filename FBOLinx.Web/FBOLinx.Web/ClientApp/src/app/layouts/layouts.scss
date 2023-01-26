@@ -7,7 +7,7 @@
         .main-content {
             overflow-x: hidden;
             overflow-y: auto;
-            padding: $navbar-height 0 0 $vertical-navbar-width;
+            padding: 1rem 0 0 $vertical-navbar-width;
             transition: padding 0.2s $animation;
 
             &.full-width {
@@ -33,11 +33,19 @@
         }
 
         .sticky-panel {
-            position: absolute;
-            top: 4rem;
-            right: 55px;
+            position: relative;
+            top: 1rem;
             //background: $main-bg;
             z-index: 99998;
+            padding: 1rem 5rem 0 $vertical-navbar-width;
+
+            /*&.full-width {
+                padding-left: 0;
+            }*/
+
+            @media only screen and (max-width: 991px) {
+                padding-left: 80px;
+            }
         }
 
         &.open-sidebar {

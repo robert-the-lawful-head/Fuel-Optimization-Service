@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -47,6 +47,9 @@ export class DefaultLayoutComponent implements OnInit {
 
     hidePricesPanel: boolean;
     subscriptions: Subscription[] = [];
+
+    public getScreenWidth: any;
+    public getScreenHeight: any;
 
     constructor(
         private fboairportsService: FboairportsService,
@@ -148,7 +151,16 @@ export class DefaultLayoutComponent implements OnInit {
 
         this.LogUserForAnalytics();
 
-        if(!this.isSidebarInvisible()) this.sidebarState();
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onWindowResize() {
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
     }
 
     isPricePanelVisible() {
