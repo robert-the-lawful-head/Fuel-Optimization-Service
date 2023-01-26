@@ -186,7 +186,7 @@
                         </mat-list>
                     </li>
                     <li *ngIf="
-                            currentUser && currentUser.impersonatedRole === 1
+                            currentUser && currentUser.impersonatedRole === userRole.Primary
                         ">
                         <a (click)="stopManagingFBOClicked()"
                            style="cursor: pointer">
@@ -195,7 +195,7 @@
                         </a>
                     </li>
                     <li *ngIf="
-                            currentUser && currentUser.impersonatedRole === 2
+                            currentUser && currentUser.impersonatedRole === userRole.GroupAdmin
                         ">
                         <a (click)="stopManagingGroupClicked()"
                            style="cursor: pointer">
@@ -203,9 +203,7 @@
                             Stop Managing Group
                         </a>
                     </li>
-                    <li *ngIf="
-                            currentUser && currentUser.impersonatedRole === 1
-                        ">
+                    <li *ngIf="isLobbyViewVisible()">
                         <a target="_blank" [routerLink]="['/public-layout/lobby-view']"
                         style="cursor: pointer">
                             <span class="icon sli-map"></span>
