@@ -486,7 +486,7 @@ namespace FBOLinx.Web.Services
                     loopIndex++;
                 }
 
-                var genericProduct = product.Key.Contains("(") ? product.Key.Substring(0, Math.Max(product.Key.IndexOf('('), 0)).Trim() : product.Key;
+                var genericProduct = product.Key.Contains("(") ? product.Key.Substring(0, Math.Max(product.Key.IndexOf('('), 0)).Replace(" ", "").Trim() : product.Key.Replace(" ", "");
                 productImageHtml.Add(genericProduct, priceBreakdownTemplate.Replace("%PRODUCT%", genericProduct).Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString()));
             }
 
