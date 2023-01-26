@@ -8,7 +8,7 @@ export abstract class VirtualScrollBase {
     limit: number = 10;
     pageSize: number = 30;
     selectedRowIndex: number = null;
-    dataSource: MatTableDataSource<any> = new MatTableDataSource<any>(); //data source to be displayed on scroll
+    dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
 
     constructor() {}
 
