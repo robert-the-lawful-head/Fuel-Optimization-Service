@@ -93,7 +93,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if (changes.data && this.dataSource){
             if(this.hasChangeDefaultSort){
                 this.dataSource.data =  this.mapValuesToStrings(changes.data.currentValue);
-                this.refreshSort();
                 return;
             }
 
