@@ -10,7 +10,16 @@ export abstract class VirtualScrollBase {
     selectedRowIndex: number = null;
     dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
 
-    constructor() {}
+    constructor() {
+        this.dataSource.sortingDataAccessor = (item, property) => {
+            switch(property) {
+              case 'eta': return new Date(item.eta);
+              case 'etd': return new Date(item.etd);
+              case 'createdDate': return new Date(item.createdDate);
+              default: return item[property];
+            }
+          }
+    }
 
     onTableScroll(e): void {
         const tableViewHeight = e.target.offsetHeight; // viewport

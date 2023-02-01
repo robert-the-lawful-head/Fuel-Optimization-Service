@@ -142,14 +142,6 @@ export class MissedOrdersGridComponent extends VirtualScrollBase implements OnIn
         }
 
         this.refreshTable();
-
-        this.dataSource.sortingDataAccessor = (item, property) => {
-            switch(property) {
-              case 'eta': return new Date(item.eta);
-              case 'etd': return new Date(item.etd);
-              default: return item[property];
-            }
-          }
     }
 
     ngAfterViewInit() {
