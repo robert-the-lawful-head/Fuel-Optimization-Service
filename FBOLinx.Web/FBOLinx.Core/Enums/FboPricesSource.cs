@@ -6,7 +6,7 @@ namespace FBOLinx.Core.Enums
     {
         [Description("FBOLinx")]
         FboLinx = 0,
-        [Description("X-1")]
-        X1 = 1
+        [Description("Integration")]
+        Integration = 1
     }
 }
