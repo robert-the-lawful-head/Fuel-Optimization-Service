@@ -279,6 +279,21 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
+        /// <summary>
+        /// Update pricing into FBOLinx.
+        /// Accepts an object with the following properties:
+        /// Retail: double?
+        /// Cost: double?
+        /// EffectiveDate: DateTime?
+        /// ExpirationDate: DateTime?
+        /// TimeStandard: TimeStandards
+        /// TimeStandards:
+        /// 0: NotSet
+        /// 1: Zulu
+        /// 2: Local
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("update")]
         [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
