@@ -279,6 +279,21 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
+        /// <summary>
+        /// Add a new price into FBOLinx.
+        /// Accepts an object with the following properties:
+        /// Retail: double?
+        /// Cost: double?
+        /// EffectiveDate: DateTime?
+        /// ExpirationDate: DateTime?
+        /// TimeStandard: TimeStandards
+        /// TimeStandards:
+        /// 0: NotSet
+        /// 1: Zulu
+        /// 2: Local
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("update")]
         [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
@@ -324,6 +339,21 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a staged price into FBOLinx.
+        /// Accepts an object with the following properties:
+        /// Retail: double?
+        /// Cost: double?
+        /// EffectiveDate: DateTime?
+        /// ExpirationDate: DateTime?
+        /// TimeStandard: TimeStandards
+        /// TimeStandards:
+        /// 0: NotSet
+        /// 1: Zulu
+        /// 2: Local
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("update/stage")]
         [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdateStagePricing([FromBody] PricingUpdateRequest request)
