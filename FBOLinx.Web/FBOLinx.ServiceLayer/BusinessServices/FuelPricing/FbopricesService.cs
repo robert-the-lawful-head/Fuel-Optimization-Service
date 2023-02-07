@@ -48,7 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         public Task SuspendPricing(int oid);
         public Task<FboPricesUpdateGenerator> SuspendPricingGenerator(FboPricesUpdateGenerator fboPricesUpdateGenerator);
         public Task UpdateIntegrationPricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, DB.Models.User user, PricingUpdateRequest request);
-        public Task UpdateIntegrationStagePricing(PricingUpdateRequest request, int claimedId);
+        public Task UpdateIntegrationStagePricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, PricingUpdateRequest request, int claimedId);
 
     }
 
@@ -499,9 +499,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
         }
 
-        public async Task UpdateIntegrationStagePricing(PricingUpdateRequest request, int claimedId)
+        public async Task UpdateIntegrationStagePricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, PricingUpdateRequest request, int claimedId)
         {
             var user = await _userService.GetUserByClaimedId(claimedId);
+            integrationUpdatePricingLog.FboId = user.FboId;
+            integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
 
             var effectiveFrom = DateTime.UtcNow;
             if (request.EffectiveDate != null)
@@ -540,6 +542,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Product = "JetA Retail",
                     Price = request.Retail,
                     Fboid = user.FboId,
+                    Timestamp = DateTime.UtcNow,
                     Source = FboPricesSource.Integration
                 };
 
@@ -554,11 +557,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Product = "JetA Cost",
                     Price = request.Cost,
                     Fboid = user.FboId,
+                    Timestamp = DateTime.UtcNow,
                     Source = FboPricesSource.Integration
                 };
 
                 await AddAsync(costPrice);
             }
+            integrationUpdatePricingLog.Response = "Success";
+            await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
         }
 
         public async Task ExpireOldPricesByProduct(int fboId, string product, DateTime utcEffectiveFrom)
