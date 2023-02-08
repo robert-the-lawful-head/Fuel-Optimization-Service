@@ -101,8 +101,8 @@
                         <!--Retail Pap-->
                         <div class="col-12 col-md-2 border-bottom price-editor">
                             <div *ngIf="!pricing.isEdit" class="pt-md-1">
-                                ${{pricing.pricePap | number: "1.4-4"}}
-                            </div>
+                                <span *ngIf="pricing.priceCost != null">${{pricing.pricePap | number: "1.4-4"}}</span>
+</div>
                             <div *ngIf="pricing.isEdit">
                                 <mat-form-field class="price-form-input">
                                     <input (click)="$event.target.select()"
@@ -143,7 +143,7 @@
                         <!--Fuel Cost-->
                         <div class="col-12 col-md-2 border-bottom price-editor">
                             <div *ngIf="!pricing.isEdit;" class="pt-md-1">
-                                ${{pricing.priceCost | number: "1.4-4"}}
+                                <span *ngIf="pricing.priceCost != null">${{pricing.priceCost | number: "1.4-4"}}</span>
                             </div>
                             <div *ngIf="pricing.isEdit;">
                                 <mat-form-field class="price-form-input">

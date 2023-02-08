@@ -413,6 +413,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
 
             var effectiveFrom = DateTime.UtcNow;
+            var currentPrices = await GetCurrentPrices(user.FboId);
+            var currentRetailPrice = currentPrices.Where(p => p.Product == "JetA Retail" && p.Oid > 0).FirstOrDefault();
+            if (currentRetailPrice != null && currentRetailPrice.Oid > 0)
+                effectiveFrom = currentRetailPrice.EffectiveTo.Value.AddMinutes(1);
+
             if (request.EffectiveDate != null)
             {
                 if (request.TimeStandard == TimeStandards.Local)
