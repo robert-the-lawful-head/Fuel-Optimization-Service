@@ -322,6 +322,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     });
                 }
 
+                //Add price options for "never" type
+                List<CustomerWithPricing> neverOptions = new List<CustomerWithPricing>();
+                if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.Never) &&
+                     departureType == ApplicableTaxFlights.All))
+                {
+                    neverOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
+                    neverOptions.ForEach(x =>
+                    {
+                        var productName = x.Product;
+                        if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
+                            productName += " (Domestic Departure)";
+                        else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
+                            productName += " (International Departure)";
+                        x.Product = productName;
+                        x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.Never || fee.DepartureType == ApplicableTaxFlights.All)
+                            .ToList().Clone<FboFeesAndTaxes>().ToList();
+                    });
+                }
+
                 //Add price options for all departure types
                 List<CustomerWithPricing> allDepartureOptions = new List<CustomerWithPricing>();
                 if ((feesAndTaxes.Any(x => x.DepartureType == ApplicableTaxFlights.All) &&
@@ -346,6 +365,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 List<CustomerWithPricing> resultsWithFees = new List<CustomerWithPricing>();
                 resultsWithFees.AddRange(domesticOptions);
                 resultsWithFees.AddRange(internationalOptions);
+                resultsWithFees.AddRange(neverOptions);
                 resultsWithFees.AddRange(allDepartureOptions);
 
                 //Set the "IsOmitted" case for all fees that might be omitted from a pricing template or customer specifically
