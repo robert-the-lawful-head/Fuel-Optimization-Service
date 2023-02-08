@@ -1,7 +1,6 @@
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
-import { forEach } from "lodash";
 
 export abstract class VirtualScrollBase {
     start: number = 0;
@@ -16,6 +15,7 @@ export abstract class VirtualScrollBase {
               case 'eta': return new Date(item.eta);
               case 'etd': return new Date(item.etd);
               case 'createdDate': return new Date(item.createdDate);
+              case 'fuelOn': return (item.fuelOn == "Arrival" ? new Date(item.eta) : new Date(item.etd));
               default: return item[property];
             }
           }
