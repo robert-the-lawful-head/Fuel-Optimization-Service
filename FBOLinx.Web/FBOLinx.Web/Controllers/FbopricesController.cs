@@ -317,10 +317,10 @@ namespace FBOLinx.Web.Controllers
 
                 if (user.FboId > 0)
                 {
-                    await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, user, request);
+                    var message = await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, request, claimedId);
 
-                    return Ok(new { message = "Success" });
-                }
+                    return Ok(new { message = message });
+                    }
                 else
                 {
                     integrationUpdatePricingLog.Response = "Invalid user";
