@@ -128,8 +128,6 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
 
-    customersTableDataSource: MatTableDataSource<any> = new MatTableDataSource();
-
     customerFilterType: number = 0;
     selectAll = false;
     selectedRows: number;

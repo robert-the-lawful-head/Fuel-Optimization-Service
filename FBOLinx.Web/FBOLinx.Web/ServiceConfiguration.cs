@@ -28,6 +28,7 @@ using Newtonsoft.Json;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.TableStorage;
 using FBOLinx.TableStorage.EntityServices;
+using System.Text.Json.Serialization;
 
 namespace FBOLinx.Web
 {
@@ -38,6 +39,11 @@ namespace FBOLinx.Web
             services.AddControllers().AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
+
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
             services.ConfigureSwagger();

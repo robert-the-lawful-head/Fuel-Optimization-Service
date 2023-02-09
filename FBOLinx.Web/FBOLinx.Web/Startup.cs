@@ -30,13 +30,13 @@ namespace FBOLinx.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerDocumentation();
             }
             else
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseSwaggerDocumentation();
             app.UseExceptionHandlerMiddleware();
 
             //app.UseHttpsRedirection();
