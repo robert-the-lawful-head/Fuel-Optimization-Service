@@ -11,7 +11,8 @@ namespace FBOLinx.DB.Models
     [Table("SWIMFlightLegs")]
     public class SWIMFlightLeg : FBOLinxBaseEntityModel<int>
     {
-        public Guid? Gufi { get; set; }
+        [Column(TypeName = "varchar(50)")]
+        public string Gufi { get; set; }
 
         [Required]
         [StringLength(10)]

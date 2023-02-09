@@ -20,8 +20,8 @@ namespace FBOLinx.DB.Specifications.SWIM
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(IList<Guid> flightIdentifiers)
-            : base(x => x.Gufi != null && flightIdentifiers.Contains(x.Gufi.Value))
+        public SWIMFlightLegSpecification(IList<string> flightIdentifiers)
+            : base(x => x.Gufi != null && flightIdentifiers.Contains(x.Gufi))
         {
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
