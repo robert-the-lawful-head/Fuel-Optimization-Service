@@ -309,14 +309,12 @@ namespace FBOLinx.Web.Services
                         }
                     }
                     else
-                        pricingLeftRightPadding = 205;
+                        pricingLeftRightPadding = 110;
                 }
                 else
                 {
                     if (_PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsApplicableFlightTypesOnly || _PriceBreakdownDisplayType == PriceBreakdownDisplayTypes.TwoColumnsDomesticInternationalOnly)
                         pricingLeftRightPadding = 110;
-                    else
-                        pricingLeftRightPadding = 70;
                 }
 
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridDistributionTemplateData
@@ -440,6 +438,7 @@ namespace FBOLinx.Web.Services
             foreach (var product in products)
             {
                 var privateDomesticPricingResultsByProduct = privateDomesticPricingResults.Where(p => p.Product == product.Key).OrderBy(s => s.MinGallons).ToList();
+                var genericProduct = product.Key.Contains("(") ? product.Key.Substring(0, Math.Max(product.Key.IndexOf('('), 0)).Trim() : product.Key;
 
                 string priceBreakdownTemplate = GetPriceBreakdownTemplate();
                 string rowHTMLTemplate = GetPriceBreakdownRowTemplate();
@@ -477,17 +476,16 @@ namespace FBOLinx.Web.Services
                     }
 
                     row = row.Replace("%ALL_IN_PRICE%", String.Format("{0:C}", (model.AllInPrice.GetValueOrDefault())));
-                    row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
-                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResultsByProduct.Where(s => s.Product == product.Key && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_INT_COMM%", String.Format("{0:C}", (commercialInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", (privateInternationalPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", (commercialDomesticPricingResults.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
+                    row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", (privateDomesticPricingResultsByProduct.Where(s => s.Product.Contains(genericProduct) && s.MinGallons == model.MinGallons).Select(s => s.AllInPrice.GetValueOrDefault())).FirstOrDefault()));
                     rowsHTML.Append(row);
 
                     loopIndex++;
                 }
 
-                var genericProduct = product.Key.Contains("(") ? product.Key.Substring(0, Math.Max(product.Key.IndexOf('('), 0)).Trim() : product.Key;
-                productImageHtml.Add(genericProduct, priceBreakdownTemplate.Replace("%PRODUCT%", genericProduct).Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString()));
+                productImageHtml.Add(genericProduct.Replace(" ", ""), priceBreakdownTemplate.Replace("%PRODUCT%", genericProduct.Replace(" ", "")).Replace("%PRICE_BREAKDOWN_ROWS%", rowsHTML.ToString()));
             }
 
             return productImageHtml;

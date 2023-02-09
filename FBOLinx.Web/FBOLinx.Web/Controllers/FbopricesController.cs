@@ -279,6 +279,21 @@ namespace FBOLinx.Web.Controllers
             return Ok(null);
         }
 
+        /// <summary>
+        /// Add a new price into FBOLinx.
+        /// Accepts an object with the following properties:
+        /// Retail: double?
+        /// Cost: double?
+        /// EffectiveDate: DateTime?
+        /// ExpirationDate: DateTime?
+        /// TimeStandard: TimeStandards
+        /// TimeStandards:
+        /// 0: NotSet
+        /// 1: Zulu
+        /// 2: Local
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("update")]
         [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdatePricing([FromBody] PricingUpdateRequest request)
@@ -290,7 +305,7 @@ namespace FBOLinx.Web.Controllers
 
             var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var integrationUpdatePricingLog = new IntegrationUpdatePricingLogDto();
-            integrationUpdatePricingLog.Request = Newtonsoft.Json.JsonConvert.SerializeObject(request);
+            integrationUpdatePricingLog.Request = "/update " + Newtonsoft.Json.JsonConvert.SerializeObject(request);
             integrationUpdatePricingLog.DateTimeRecorded = DateTime.UtcNow;
 
             try
@@ -324,6 +339,21 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Add a staged price into FBOLinx.
+        /// Accepts an object with the following properties:
+        /// Retail: double?
+        /// Cost: double?
+        /// EffectiveDate: DateTime?
+        /// ExpirationDate: DateTime?
+        /// TimeStandard: TimeStandards
+        /// TimeStandards:
+        /// 0: NotSet
+        /// 1: Zulu
+        /// 2: Local
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("update/stage")]
         [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<IActionResult> UpdateStagePricing([FromBody] PricingUpdateRequest request)
@@ -332,16 +362,40 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(new { message = "Invalid body request!" });
             }
+
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            var integrationUpdatePricingLog = new IntegrationUpdatePricingLogDto();
+            integrationUpdatePricingLog.Request = "/update/stage " + Newtonsoft.Json.JsonConvert.SerializeObject(request);
+            integrationUpdatePricingLog.DateTimeRecorded = DateTime.UtcNow;
+
             try
             {
-                var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
                 var claimPrincipal = _jwtManager.GetPrincipal(token);
                 var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
 
-                await _fbopricesService.UpdateIntegrationStagePricing(request, claimedId);
+                var user = await _userService.GetUserByClaimedId(claimedId);
+
+                if (user.FboId > 0)
+                {
+                    await _fbopricesService.UpdateIntegrationStagePricing(integrationUpdatePricingLog, request, claimedId);
+                    return Ok(new { message = "Success" });
+                }
+                else
+                {
+                    integrationUpdatePricingLog.Response = "Invalid user";
+                    integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
+                    return BadRequest(new { message = "Invalid user" });
+                }
+
             }
             catch (Exception ex)
             {
+                integrationUpdatePricingLog.Response = ex.InnerException == null ? ex.Message : ex.InnerException.ToString();
+                if (integrationUpdatePricingLog.Oid > 0)
+                    await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
+                else
+                    await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
                 return BadRequest(ex);
             }
 

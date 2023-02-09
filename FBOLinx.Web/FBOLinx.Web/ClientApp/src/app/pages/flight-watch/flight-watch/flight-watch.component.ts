@@ -109,7 +109,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     setData(data: FlightWatchModelResponse[]):void{
         let currentFilter: SwimFilter = { filterText: this.filter, dataType: null };
 
-        this.arrivals = data?.filter((row: FlightWatchModelResponse) => { return row.arrivalICAO == row.focusedAirportICAO  && row.status != null });
+        this.arrivals = data?.filter((row: FlightWatchModelResponse) => { return row.arrivalICAO == row.focusedAirportICAO });
         this.departures = data?.filter((row: FlightWatchModelResponse) => { return row.departureICAO  == row.focusedAirportICAO && row.status != null });
 
         this.arrivalsAllRecords = this.arrivals;

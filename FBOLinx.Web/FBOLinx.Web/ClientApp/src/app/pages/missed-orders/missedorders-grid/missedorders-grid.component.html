@@ -57,8 +57,8 @@
         </div>
     </div>
 
-    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !missedOrdersDataSource || !missedOrdersData}" (scroll)="onTableScroll($event)">
-        <table [dataSource]="missedOrdersDataSource"
+    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !dataSource || !missedOrdersData}" (scroll)="onTableScroll($event)">
+        <table [dataSource]="dataSource"
                class="col-12 mb-0"
                mat-table
                matSort>
