@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Collections.Generic;
+using NSwag;
+using NSwag.Generation.Processors.Security;
+using System.Linq;
 
 namespace FBOLinx.Web.Extensions
 {
@@ -9,48 +10,31 @@ namespace FBOLinx.Web.Extensions
     {
         public static IServiceCollection ConfigureSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerDocument(document =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                document.Version = "v1";
+                document.Title = "FBOLinx API";
+                document.Description = "API to interact FBOLinx data";
+                document.AddSecurity("Bearer", Enumerable.Empty<string>(), new OpenApiSecurityScheme
                 {
-                    Version = "v1",
-                    Title = "FBOLinx API",
-                    Description = "API to interact FBOLinx data",
-                    Contact = new OpenApiContact
-                    {
-                        Name = "Irving Ramirez",
-                        Email = "iramirez@fuelerlinx.com"
-                    }
+                    Name = "Authorization",
+                    Type = OpenApiSecuritySchemeType.ApiKey,
+                    In = OpenApiSecurityApiKeyLocation.Header,
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'"
                 });
-                c.AddSecurityDefinition("Bearer", //Name the security scheme
-                    new OpenApiSecurityScheme
-                    {
-                        Description = "JWT Authorization header using the Bearer scheme.",
-                        Type = SecuritySchemeType.Http, 
-                        Scheme = "bearer"
-                    });
+                document.OperationProcessors.Add(
+                    new AspNetCoreOperationSecurityScopeProcessor("Bearer"));
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement{
-                    {
-                        new OpenApiSecurityScheme{
-                            Reference = new OpenApiReference{
-                                Id = "Bearer", 
-                                Type = ReferenceType.SecurityScheme
-                            }
-                        },new List<string>()
-                    }
-                });
             });
-            
+
             return services;
         }
         public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
-            });
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
 
             return app;
         }

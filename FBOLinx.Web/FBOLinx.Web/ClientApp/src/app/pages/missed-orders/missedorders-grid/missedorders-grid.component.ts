@@ -210,7 +210,6 @@ export class MissedOrdersGridComponent extends VirtualScrollBase implements OnIn
         this.applyFilter(this.searchText);
 
         this.setVirtualScrollVariables(this.paginator, this.sort, this.missedOrdersDataSource.data);
-
     }
 
     refreshSort() {

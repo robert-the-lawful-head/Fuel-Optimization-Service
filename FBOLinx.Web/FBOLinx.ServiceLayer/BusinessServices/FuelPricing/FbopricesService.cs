@@ -48,7 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         public Task SuspendPricing(int oid);
         public Task<FboPricesUpdateGenerator> SuspendPricingGenerator(FboPricesUpdateGenerator fboPricesUpdateGenerator);
         public Task UpdateIntegrationPricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, DB.Models.User user, PricingUpdateRequest request);
-        public Task UpdateIntegrationStagePricing(PricingUpdateRequest request, int claimedId);
+        public Task UpdateIntegrationStagePricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, PricingUpdateRequest request, int claimedId);
 
     }
 
@@ -250,7 +250,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1);
                             fboPricesUpdateGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesUpdateGenerator.EffectiveFrom.ToShortDateString()));
 
-                            if (currentRetailResult.Source == FboPricesSource.X1)
+                            if (currentRetailResult.Source == FboPricesSource.Integration)
                                 fboPricesUpdateGenerator.Source = 1;
                         }
                         else if (currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
@@ -412,8 +412,38 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             integrationUpdatePricingLog.FboId = user.FboId;
             integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
 
-            var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
-            var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
+            var effectiveFrom = DateTime.UtcNow;
+            var currentPrices = await GetCurrentPrices(user.FboId);
+            var currentRetailPrice = currentPrices.Where(p => p.Product == "JetA Retail" && p.Oid > 0).FirstOrDefault();
+            if (currentRetailPrice != null && currentRetailPrice.Oid > 0)
+                effectiveFrom = currentRetailPrice.EffectiveTo.Value.AddMinutes(1);
+
+            if (request.EffectiveDate != null)
+            {
+                if (request.TimeStandard == TimeStandards.Local)
+                {
+                    //Convert from local to Zulu
+                    effectiveFrom = await _dateTimeService.ConvertLocalTimeToUtc(user.FboId, request.EffectiveDate.Value);
+                }
+                else
+                {
+                    effectiveFrom = request.EffectiveDate.Value.ToUniversalTime();
+                }
+            }
+
+            var effectiveTo = DateTime.MaxValue;
+            if (request.ExpirationDate != null)
+            {
+                if (request.TimeStandard == TimeStandards.Local)
+                {
+                    //Convert from local to Zulu
+                    effectiveTo = await _dateTimeService.ConvertLocalTimeToUtc(user.FboId, request.ExpirationDate.Value);
+                }
+                else
+                { 
+                    effectiveTo = request.ExpirationDate.Value.ToUniversalTime();
+                }
+            }
 
             if (request.Retail != null)
             {
@@ -425,7 +455,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Price = request.Retail,
                     Fboid = user.FboId,
                     Timestamp = DateTime.UtcNow,
-                    Source = FboPricesSource.X1
+                    Source = FboPricesSource.Integration
                 };
                 List<FboPricesDTO> oldPrices = await GetFboPricesRecords(user.FboId);
                 oldPrices = oldPrices.Where(f => f.Product.Equals("JetA Retail")).ToList();
@@ -451,7 +481,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Price = request.Cost,
                     Fboid = user.FboId,
                     Timestamp = DateTime.UtcNow,
-                    Source = FboPricesSource.X1
+                    Source = FboPricesSource.Integration
                 };
                 List<FboPricesDTO> oldPrices = await GetFboPricesRecords(user.FboId);
                 oldPrices = oldPrices.Where(f => f.Product.Equals("JetA Cost")).ToList();
@@ -474,12 +504,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
         }
 
-        public async Task UpdateIntegrationStagePricing(PricingUpdateRequest request, int claimedId)
+        public async Task UpdateIntegrationStagePricing(IntegrationUpdatePricingLogDto integrationUpdatePricingLog, PricingUpdateRequest request, int claimedId)
         {
             var user = await _userService.GetUserByClaimedId(claimedId);
+            integrationUpdatePricingLog.FboId = user.FboId;
+            integrationUpdatePricingLog = await _integrationUpdatePricingLogService.InsertLog(integrationUpdatePricingLog);
 
-            var effectiveFrom = request.EffectiveDate != null ? request.EffectiveDate : DateTime.UtcNow;
-            var effectiveTo = request.ExpirationDate != null ? request.ExpirationDate : DateTime.MaxValue;
+            var effectiveFrom = DateTime.UtcNow;
+            if (request.EffectiveDate != null)
+            {
+                if (request.TimeStandard == TimeStandards.Local)
+                {
+                    //Convert from local to Zulu
+                    effectiveFrom = await _dateTimeService.ConvertLocalTimeToUtc(user.FboId, request.EffectiveDate.Value);
+                }
+                else
+                {
+                    effectiveFrom = request.EffectiveDate.Value.ToUniversalTime();
+                }
+            }
+
+            var effectiveTo = DateTime.MaxValue;
+            if (request.ExpirationDate != null)
+            {
+                if (request.TimeStandard == TimeStandards.Local)
+                {
+                    //Convert from local to Zulu
+                    effectiveTo = await _dateTimeService.ConvertLocalTimeToUtc(user.FboId, request.EffectiveDate.Value);
+                }
+                else
+                {
+                    effectiveTo = request.ExpirationDate.Value.ToUniversalTime();
+                }
+            }
 
             if (request.Retail != null)
             {
@@ -490,7 +547,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Product = "JetA Retail",
                     Price = request.Retail,
                     Fboid = user.FboId,
-                    Source = FboPricesSource.X1
+                    Timestamp = DateTime.UtcNow,
+                    Source = FboPricesSource.Integration
                 };
 
                 await AddAsync(retailPrice);
@@ -504,11 +562,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     Product = "JetA Cost",
                     Price = request.Cost,
                     Fboid = user.FboId,
-                    Source = FboPricesSource.X1
+                    Timestamp = DateTime.UtcNow,
+                    Source = FboPricesSource.Integration
                 };
 
                 await AddAsync(costPrice);
             }
+            integrationUpdatePricingLog.Response = "Success";
+            await _integrationUpdatePricingLogService.UpdateLog(integrationUpdatePricingLog);
         }
 
         public async Task ExpireOldPricesByProduct(int fboId, string product, DateTime utcEffectiveFrom)

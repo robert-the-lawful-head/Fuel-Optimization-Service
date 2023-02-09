@@ -952,7 +952,8 @@ namespace FBOLinx.Web.Controllers
                            join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
                            from cibf in leftJoinCIBF.DefaultIfEmpty()
                            where cibg.GroupId == groupId
-                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts }).ToListAsync();
+                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts,
+                           c.Email,c.FirstName,c.LastName}).ToListAsync();
 
                 //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
 
@@ -1001,6 +1002,8 @@ namespace FBOLinx.Web.Controllers
                             CertificateType = (cg.CertificateType ?? CertificateTypes.NotSet),
                             ContactExists = contactInfoByFboForAlerts.Any(c =>
                            (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
+                           Contact = contactInfoByFboForAlerts.FirstOrDefault(c =>
+                           (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
@@ -1025,6 +1028,9 @@ namespace FBOLinx.Web.Controllers
                             Active = resultsGroup.Key.Active,
                             CertificateType = resultsGroup.Key.CertificateType,
                             CustomerId = resultsGroup.Key.CustomerId,
+                            Email = resultsGroup.Key.Contact?.Email,
+                            FirstName = resultsGroup.Key.Contact?.FirstName,
+                            LastName = resultsGroup.Key.Contact?.LastName,
                             CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                             ContactExists = resultsGroup.Key.ContactExists,
                             Company = resultsGroup.Key.Company,
