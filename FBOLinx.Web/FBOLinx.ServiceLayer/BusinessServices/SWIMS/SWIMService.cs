@@ -167,9 +167,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //List<string> arrivalICAOs = swimFlightLegDTOs.Select(x => x.ArrivalICAO).Distinct().ToList();
             //List<SWIMFlightLeg> existingFlightLegs = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(departureICAOs, arrivalICAOs, atdMin, atdMax))).OrderByDescending(x => x.ATD).ToList();
 
-            List<Guid> flightIdentifiers = swimFlightLegDTOs.Where(x => x.Gufi.HasValue).Select(x => x.Gufi.GetValueOrDefault()).Distinct().ToList();
+            List<string> flightIdentifiers = swimFlightLegDTOs.Select(x => x.Gufi).Distinct().ToList();
             List<SWIMFlightLeg> existingFlightLegs = new List<SWIMFlightLeg>();
-            foreach (IEnumerable<Guid> gufiBatch in flightIdentifiers.Batch(1000))
+            foreach (IEnumerable<string> gufiBatch in flightIdentifiers.Batch(1000))
             {
                 var existingFlightLegsBatch = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(gufiBatch.ToList()))).ToList();
                 existingFlightLegs.AddRange(existingFlightLegsBatch);
