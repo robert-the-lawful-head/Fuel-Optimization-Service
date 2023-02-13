@@ -14,6 +14,9 @@ using Geolocation;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+// using Microsoft.Extensions.Logging;
+// using System.Diagnostics; // do we need Stopwatch in sync-flight-legs function
+
 
 namespace FBOLinx.Web.Controllers
 {
@@ -80,5 +83,28 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpPost("sync-flight-legs")]
+        public async Task<ActionResult> SyncFlightLegs([FromHeader] string xApiKey)
+        {            
+            
+            try
+            {
+                await _SWIMService.SyncRecentAndUpcomingFlightLegs();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _LoggingService.LogError(ex.Message, ex.StackTrace, LogLevel.Error, LogColorCode.Red);
+                return BadRequest(ex.Message);
+            }
+
+        }
+        
+
+        
     }
 }
