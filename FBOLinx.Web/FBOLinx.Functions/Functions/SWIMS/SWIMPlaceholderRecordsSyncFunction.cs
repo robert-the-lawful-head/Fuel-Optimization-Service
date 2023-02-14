@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net.Http; // for HttpClient
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Functions
 {
@@ -17,6 +18,7 @@ namespace FBOLinx.Functions
     {
         private readonly ISWIMService _SWIMService;
         static readonly HttpClient client = new HttpClient(); // is this where we should instantiate the HttpClient?
+        const string InternalAPIKey = "C82FFE95-848B-46AB-A8D6-5116BFA2AB07";
 
 
         public SWIMPlaceholderRecordsSyncFunction(ISWIMService swimService)
@@ -25,7 +27,7 @@ namespace FBOLinx.Functions
         }
         
         [FunctionName("SWIMRecentAndUpcomingFlightLegsSyncFunction")]
-        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo timer, ILogger log)
         {
 
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -35,23 +37,15 @@ namespace FBOLinx.Functions
 
             try
             {
-                // original code --------------------
-                // await _SWIMService.SyncRecentAndUpcomingFlightLegs();
-
-                // build out url to call sync-flight-legs function
-                var domain = System.Environment.GetEnvironmentVariable("WebApplicationUrl");
+                var domain = System.Environment.GetEnvironmentVariable("ConnectionStrings:WebApplicationUrl", EnvironmentVariableTarget.Process);
                 var endpoint = "/api/swim/sync-flight-legs";
-                var url = $"{domain}{endpoint}";
 
-                // append internal api key to url
-                var xApiKey = System.Environment.GetEnvironmentVariable("InternalAPIKey");
-                url += $"?x-api-key={xApiKey}";
-                
+                client.BaseAddress = new Uri(domain);
+                client.DefaultRequestHeaders.Add("x-api-key", InternalAPIKey);
+
                 // use HttpClient PostAsync to call sync-flight-legs function with url and InternalAPIKey
-                var response = await client.PostAsync(url, null);
-
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
+                client.PostAsync(endpoint, null);
+                
             }
             catch (Exception ex)
             {

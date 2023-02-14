@@ -87,7 +87,7 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("sync-flight-legs")]
-        public async Task<ActionResult> SyncFlightLegs([FromHeader] string xApiKey)
+        public async Task<ActionResult> SyncFlightLegs()
         {            
             
             try
