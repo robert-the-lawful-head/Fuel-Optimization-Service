@@ -41,9 +41,6 @@ namespace FBOLinx.Web.ViewModels
 
         public bool? Active { get; set; }
         public int AircraftsVisits { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
         public string CertificateTypeDescription
         {
             get
@@ -55,5 +52,12 @@ namespace FBOLinx.Web.ViewModels
         public List<string> FuelVendors { get; set; }
         public ICollection<CustomerTag> Tags { get; set; }
         public string PricingFormula { get; set; }
+        public List<ContactsViewModelProjection> Contacts { get; set; }
+    }
+    public class ContactsViewModelProjection
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
