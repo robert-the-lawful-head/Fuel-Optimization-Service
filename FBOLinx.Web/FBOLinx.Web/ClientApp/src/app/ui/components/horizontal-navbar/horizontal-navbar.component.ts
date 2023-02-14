@@ -561,10 +561,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
     public isLobbyViewVisible():boolean {
         return this.currentUser &&
-        (this.currentUser.impersonatedRole ===  UserRole.Primary ||
-            this.currentUser.impersonatedRole ===  UserRole.CSR ||
-            this.currentUser.impersonatedRole ===  UserRole.Member ||
-            this.currentUser.impersonatedRole ===  UserRole.GroupAdmin
+        (this.currentUser.role ===  UserRole.Primary ||
+            this.currentUser.role ===  UserRole.CSR ||
+            this.currentUser.role ===  UserRole.Member ||
+            this.currentUser.role ===  UserRole.GroupAdmin
         );
     }
     public get userRole(){
