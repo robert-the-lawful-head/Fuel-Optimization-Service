@@ -52,9 +52,9 @@ namespace FBOLinx.Web.ViewModels
         public List<string> FuelVendors { get; set; }
         public ICollection<CustomerTag> Tags { get; set; }
         public string PricingFormula { get; set; }
-        public List<ContactsViewModelProjection> Contacts { get; set; }
+        public List<CustomerGridContactsViewModel> Contacts { get; set; }
     }
-    public class ContactsViewModelProjection
+    public class CustomerGridContactsViewModel
     {
         public string Email { get; set; }
         public string FirstName { get; set; }

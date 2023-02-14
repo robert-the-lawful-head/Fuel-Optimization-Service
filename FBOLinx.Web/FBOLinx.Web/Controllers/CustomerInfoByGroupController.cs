@@ -1001,7 +1001,7 @@ namespace FBOLinx.Web.Controllers
                             CertificateType = (cg.CertificateType ?? CertificateTypes.NotSet),
                             ContactExists = contactInfoByFboForAlerts.Any(c =>
                            (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
-                            Contacts = contactInfoByFboForAlerts.Where(c => cg.Customer?.CustomerContacts?.Select(x=>x.ContactId).Contains(c.ContactId) ?? false).Select(x => new ContactsViewModelProjection() { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName }).ToList(),
+                            Contacts = contactInfoByFboForAlerts.Where(c => cg.Customer?.CustomerContacts?.Select(x=>x.ContactId).Contains(c.ContactId) ?? false).Select(x => new CustomerGridContactsViewModel() { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName }).ToList(),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
