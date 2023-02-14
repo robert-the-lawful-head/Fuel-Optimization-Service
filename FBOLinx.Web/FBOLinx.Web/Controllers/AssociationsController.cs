@@ -11,13 +11,14 @@ using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AssociationsController : ControllerBase
+    public class AssociationsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fcontext;
@@ -25,7 +26,7 @@ namespace FBOLinx.Web.Controllers
         public IServiceScopeFactory _serviceScopeFactory;
         private readonly AssociationsService _associationsService;
 
-        public AssociationsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AssociationsService associationsService)
+        public AssociationsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AssociationsService associationsService, ILoggingService logger) : base(logger)
         {
             _associationsService = associationsService;
             _context = context;

@@ -21,13 +21,14 @@ using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbosController : ControllerBase
+    public class FbosController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
@@ -52,7 +53,7 @@ namespace FBOLinx.Web.Controllers
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
-            IPricingTemplateService pricingTemplateService)
+            IPricingTemplateService pricingTemplateService, ILoggingService logger) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;

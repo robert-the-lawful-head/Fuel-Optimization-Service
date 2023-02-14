@@ -37,13 +37,14 @@ using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.Requests;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbopricesController : ControllerBase
+    public class FbopricesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -78,7 +79,7 @@ namespace FBOLinx.Web.Controllers
             IPricingTemplateService pricingTemplateService,
             ICompanyPricingLogService companyPricingLogService,
             ServiceLayer.BusinessServices.User.IUserService userService,
-            ICustomerService customerService)
+            ICustomerService customerService, ILoggingService logger) : base(logger)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;

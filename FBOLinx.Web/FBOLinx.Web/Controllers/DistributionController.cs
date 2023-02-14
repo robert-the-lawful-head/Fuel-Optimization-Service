@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +19,7 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class DistributionController : ControllerBase
+    public class DistributionController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fuelerLinxContext;
@@ -28,7 +29,7 @@ namespace FBOLinx.Web.Controllers
         private JwtManager _jwtManager;
         private IPriceDistributionService _PriceDistributionService;
 
-        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, IPriceDistributionService priceDistributionService)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, IPriceDistributionService priceDistributionService, ILoggingService logger) : base(logger)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;

@@ -17,13 +17,14 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerAircraftsController : ControllerBase
+    public class CustomerAircraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
@@ -33,7 +34,7 @@ namespace FBOLinx.Web.Controllers
         private AirportWatchService _AirportWatchService;
 
         public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, 
-            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService)
+            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService, ILoggingService logger) : base(logger)
         {
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;

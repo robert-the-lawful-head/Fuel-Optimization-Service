@@ -11,17 +11,18 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactInfoByGroupsController : ControllerBase
+    public class ContactInfoByGroupsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public ContactInfoByGroupsController(FboLinxContext context)
+        public ContactInfoByGroupsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

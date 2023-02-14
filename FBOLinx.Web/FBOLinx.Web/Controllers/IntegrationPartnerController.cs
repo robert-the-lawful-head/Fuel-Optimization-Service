@@ -8,6 +8,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.Requests.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class IntegrationPartnerController : ControllerBase
+    public class IntegrationPartnerController : FBOLinxControllerBase
     {
         private IIntegrationStatusService _IntegrationStatusService;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -28,7 +29,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private FbopricesService _fboPricesService;
 
-        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, FbopricesService fbopricesService)
+        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, FbopricesService fbopricesService, ILoggingService logger) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;

@@ -29,13 +29,14 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FuelReqsController : ControllerBase
+    public class FuelReqsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
@@ -48,8 +49,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IDemoFlightWatch _demoFlightWatch;
 
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, 
-            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch, ILoggingService logger) : base(logger)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
