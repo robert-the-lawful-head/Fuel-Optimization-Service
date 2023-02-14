@@ -159,6 +159,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
+            this.addContactToCustomerDataList();
             this.setVirtualScrollVariables(this.paginator, this.sort, this.customersData);
             this.refreshCustomerDataSource();
         }
@@ -195,6 +196,13 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     }
 
     // Methods
+    addContactToCustomerDataList(){
+        this.customersData.forEach(c => {
+            c['email'] = c.contacts.map(x => x.email).join(' ');
+            c['firstName'] = c.contacts.map(x => x.firstName).join(' ');
+            c['lastName'] = c.contacts.map(x => x.lastName).join(' ');
+        });
+    }
     deleteCustomer(customer) {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
