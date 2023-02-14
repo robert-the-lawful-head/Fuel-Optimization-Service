@@ -27,6 +27,9 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
+using NuGet.Packaging;
+using Microsoft.Extensions.Azure;
+using System.Text.RegularExpressions;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -952,11 +955,7 @@ namespace FBOLinx.Web.Controllers
                            join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
                            from cibf in leftJoinCIBF.DefaultIfEmpty()
                            where cibg.GroupId == groupId
-                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts,
-                           c.Email,c.FirstName,c.LastName}).ToListAsync();
-
-                //var historicalData = await _airportWatchService.GetHistoricalDataAssociatedWithGroupOrFbo(groupId, fboId, new AirportWatchHistoricalDataRequest { StartDateTime = null, EndDateTime = null });
-
+                           select new { cibg.ContactId, CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts, Email = cibg.Email, FirstName = cibg.FirstName, LastName = cibg.LastName }).ToListAsync();
                 var customerFuelVendors = await _fuelerLinxService.GetCustomerFuelVendors();
 
                 var customerMargins = await (from pt in _context.PricingTemplate
@@ -1002,8 +1001,7 @@ namespace FBOLinx.Web.Controllers
                             CertificateType = (cg.CertificateType ?? CertificateTypes.NotSet),
                             ContactExists = contactInfoByFboForAlerts.Any(c =>
                            (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
-                           Contact = contactInfoByFboForAlerts.FirstOrDefault(c =>
-                           (cg.Customer?.CustomerContacts?.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
+                            Contacts = contactInfoByFboForAlerts.Where(c => cg.Customer?.CustomerContacts?.Select(x=>x.ContactId).Contains(c.ContactId) ?? false).Select(x => new ContactsViewModelProjection() { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName }).ToList(),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
@@ -1028,9 +1026,7 @@ namespace FBOLinx.Web.Controllers
                             Active = resultsGroup.Key.Active,
                             CertificateType = resultsGroup.Key.CertificateType,
                             CustomerId = resultsGroup.Key.CustomerId,
-                            Email = resultsGroup.Key.Contact?.Email,
-                            FirstName = resultsGroup.Key.Contact?.FirstName,
-                            LastName = resultsGroup.Key.Contact?.LastName,
+                            Contacts = resultsGroup.Key.Contacts,
                             CustomerCompanyTypeName = resultsGroup.Key.CustomerCompanyTypeName,
                             ContactExists = resultsGroup.Key.ContactExists,
                             Company = resultsGroup.Key.Company,
