@@ -1,8 +1,6 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using FBOLinx.Functions;
-using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 
 [assembly: FunctionsStartup(typeof(Startup))]

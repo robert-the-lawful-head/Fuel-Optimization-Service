@@ -11,11 +11,11 @@ namespace FBOLinx.Functions
     public class SWIMPlaceholderRecordsSyncFunction
     {
         private readonly ISWIMService _SWIMService;
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _HttpClient;
         public SWIMPlaceholderRecordsSyncFunction(ISWIMService swimService, IHttpClientFactory httpClientFactory)
         {
             _SWIMService = swimService;
-            _httpClient = httpClientFactory.CreateClient("FBOLinx");
+            _HttpClient = httpClientFactory.CreateClient("FBOLinx");
         }
         
         [FunctionName("SWIMRecentAndUpcomingFlightLegsSyncFunction")]
@@ -31,7 +31,7 @@ namespace FBOLinx.Functions
             {
                 var endpoint = "/api/swim/sync-flight-legs";
                 
-                _httpClient.PostAsync(endpoint, null);
+                _HttpClient.PostAsync(endpoint, null);
             }
             catch (Exception ex)
             {

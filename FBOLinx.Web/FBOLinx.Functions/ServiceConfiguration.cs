@@ -1,28 +1,9 @@
-﻿using FBOLinx.DB.Context;
-using FBOLinx.DB.Extensions;
-using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
-using FBOLinx.ServiceLayer.BusinessServices.Customers;
-using FBOLinx.ServiceLayer.BusinessServices.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
-using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
-using FBOLinx.ServiceLayer.BusinessServices.Groups;
-using FBOLinx.ServiceLayer.BusinessServices.Integrations;
-using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
-using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
-using FBOLinx.ServiceLayer.BusinessServices.RampFee;
-using FBOLinx.ServiceLayer.BusinessServices.SWIM;
-using FBOLinx.ServiceLayer.EntityServices;
-using FBOLinx.ServiceLayer.EntityServices.SWIM;
+﻿using FBOLinx.DB.Extensions;
 using FBOLinx.ServiceLayer.Extensions;
-using FBOLinx.ServiceLayer.Logging;
-using Fuelerlinx.SDK;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using StackifyLib;
 
 namespace FBOLinx.Functions
 {
