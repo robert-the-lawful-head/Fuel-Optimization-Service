@@ -19,7 +19,7 @@ namespace FBOLinx.Functions
         }
         
         [FunctionName("SWIMRecentAndUpcomingFlightLegsSyncFunction")]
-        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo timer, ILogger log)
+        public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
         {
 
             log.LogInformation("C# HTTP trigger function processed a request.");

@@ -16,8 +16,13 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using FBOLinx.ServiceLayer.Extensions;
 using FBOLinx.ServiceLayer.Logging;
+using Fuelerlinx.SDK;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using StackifyLib;
 
 namespace FBOLinx.Functions
 {
@@ -31,8 +36,27 @@ namespace FBOLinx.Functions
             services.AddHttpClient("FBOLinx", client =>
             {
                 client.BaseAddress = new System.Uri(baseAddress);
-                client.DefaultRequestHeaders.Add("InternalAPIKey", internalAPIKey);
+                client.DefaultRequestHeaders.Add("x-api-key", internalAPIKey);
             });
+        }
+
+        public static void ConfigureForLocalSettings(IFunctionsHostBuilder builder, string degaDbConnectionString, string fbolinxDbConnectionString)
+        {
+            var configuration = BuildConfiguration(builder.GetContext().ApplicationRootPath);
+            builder.Services.Configure<AzureFunctionsSettings>(configuration.GetSection(nameof(AzureFunctionsSettings)));
+            Configure(builder.Services, degaDbConnectionString, fbolinxDbConnectionString, configuration.GetSection("AzureFunctionsSettings")["WebApplicationUrl"], configuration.GetSection("AzureFunctionsSettings")["InternalAPIKey"]);
+
+        }
+        private static IConfiguration BuildConfiguration(string applicationRootPath)
+        {
+            var config =
+                new ConfigurationBuilder()
+                    .SetBasePath(applicationRootPath)
+                    .AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+                    .AddEnvironmentVariables()
+                    .Build();
+
+            return config;
         }
     }
 }
