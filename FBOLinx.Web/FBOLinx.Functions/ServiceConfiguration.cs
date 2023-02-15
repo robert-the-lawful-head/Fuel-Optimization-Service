@@ -23,12 +23,16 @@ namespace FBOLinx.Functions
 {
     public static class ServiceConfiguration
     {
-        public static void Configure(IServiceCollection services, string degaDbConnectionString, string fbolinxDbConnectionString)
+        public static void Configure(IServiceCollection services, string degaDbConnectionString, string fbolinxDbConnectionString, string baseAddress, string internalAPIKey)
         {
             services.RegisterDBConnections(degaDbConnectionString, fbolinxDbConnectionString);
             services.RegisterEntityServices();
             services.RegisterBusinessServices();
-           
+            services.AddHttpClient("FBOLinx", client =>
+            {
+                client.BaseAddress = new System.Uri(baseAddress);
+                client.DefaultRequestHeaders.Add("InternalAPIKey", internalAPIKey);
+            });
         }
     }
 }

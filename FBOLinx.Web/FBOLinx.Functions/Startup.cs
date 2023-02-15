@@ -14,7 +14,7 @@ namespace FBOLinx.Functions
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
 
-            ServiceConfiguration.Configure(builder.Services, GetSqlConnectionString("DegaDB"), GetSqlConnectionString("ParagonTestDB"));
+            ServiceConfiguration.Configure(builder.Services, GetSqlConnectionString("DegaDB"), GetSqlConnectionString("ParagonTestDB"), GetCustomConnectionString("WebApplicationUrl"), GetCustomConnectionString("InternalAPIKey"));  
         }
 
         private static string GetSqlConnectionString(string name)
