@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.Job.Models;
 
 namespace FBOLinx.Job.AirportWatch
 {
@@ -21,11 +20,16 @@ namespace FBOLinx.Job.AirportWatch
         private DateTime? _LastPostDateTimeUTC;
         private List<string> _apiClientUrls;
         private int _NewRowThreshold = 30000;
+        private Serilog.Core.Logger logger;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
             _apiClientUrls = config["FBOLinxApiUrls"].ToString().Split(";").ToList();
+            logger = new LoggerConfiguration()
+                                .MinimumLevel.Debug()
+                                .WriteTo.File(_config["AirportWatchJobLog"])
+                                .CreateLogger();
         }
 
         public async Task Run()
@@ -63,28 +67,24 @@ namespace FBOLinx.Job.AirportWatch
                 return;
             }
 
-            using var logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(_config["AirportWatchJobLog"])
-                .CreateLogger();
-
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
             if (_LastPostDateTimeUTC.HasValue && _LastPostDateTimeUTC < DateTime.UtcNow.AddMinutes(-2))
-                logger.Information("Fbolinx api call was delayed due to previous POST in progress.  Re-trying since 2 minutes have passed.");
-                
+                logger.Information("Fbolinx api call was delayed due to previous POST in progress.  Re-trying since 2 minutes have passed."); 
 
             _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
 
             if (data.Count > _NewRowThreshold)
             {
-                logger.Information("Amount of records to POST exceeded " + string.Format("{0:N}", _NewRowThreshold) + " (" + string.Format("{0:N}", data.Count) + ").  Jumping to end-of-file for next POST and skipping the current one.");
+                logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold) } (records count{ string.Format("{0:N}", data.Count) }) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
                 _isPostingData = false;
                 return;
+                
             }
 
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
+            logger.Information($"csv records ({data.Count}) converted to DB model ({airportWatchData.Count}) !");
 
             if (airportWatchData.Count > 0)
             {
@@ -97,8 +97,9 @@ namespace FBOLinx.Job.AirportWatch
                         tasks.Add(
                             Task.Run(async () =>
                             {
-                                await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData, logger);
+                                await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData);
                             }));
+                        logger.Information($"set LastPostDateTimeUTC  to {DateTime.UtcNow}");
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
@@ -109,11 +110,10 @@ namespace FBOLinx.Job.AirportWatch
                 await Task.WhenAll(tasks);
                 logger.Information("Fbolinx api call succeed!");
             }
-
             _isPostingData = false;
         }
 
-        private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData, Serilog.Core.Logger logger)
+        private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData)
         {
             try
             {
@@ -136,6 +136,7 @@ namespace FBOLinx.Job.AirportWatch
             if (_lastWatchedFile != fileName)
             {
                 _lastWatchedFileRecordIndex = 0;
+                logger.Information($"file to read changed from {_lastWatchedFileRecordIndex} to {fileName} {_lastWatchedFileRecordIndex} set last watch file record index to {_lastWatchedFileRecordIndex}");
             }
 
             var data = new List<AirportWatchDataType>();
@@ -145,12 +146,16 @@ namespace FBOLinx.Job.AirportWatch
                 AirportWatchCsvParser csvParser = new AirportWatchCsvParser(filePath);
 
                 data = csvParser.GetRecords(_lastWatchedFileRecordIndex);
+                logger.Information($"records read for {filePath} are {data.Count} ");
 
                 _lastWatchedFileRecordIndex += data.Count;
                 _lastWatchedFile = fileName;
+
+                logger.Information($"for {_lastWatchedFile} last watch record index set to {_lastWatchedFileRecordIndex}");
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
+                logger.Error(ex,$"Error getting records from {filePath} last watch fiel record index remain on  {_lastWatchedFileRecordIndex}");
             }
 
             return data;
