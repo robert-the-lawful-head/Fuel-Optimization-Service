@@ -127,10 +127,15 @@ namespace FBOLinx.Job.AirportWatch
                 var apiClient = new ApiClient(apiClientUrl.Trim());
                 apiClient.PostAsync("airportwatch/post-live-data-to-table-storage", airportWatchLiveData); //fire and forget
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
-                if (result == null)
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " failed.  Attempted passing " + airportWatchLiveData.Count + " records.  No result received.");
-                else 
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                if (result.IsSuccessStatusCode)
+                {
+                    logger.Information($"Fbolinx api call to {apiClientUrl} completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                }
+                else
+                {
+                    logger.Error($"Fbolinx api call to {apiClientUrl} failed. response : {result.Content.ReadAsStringAsync().Result}");
+                }
+                    
             }
             catch (System.Exception exception)
             {
