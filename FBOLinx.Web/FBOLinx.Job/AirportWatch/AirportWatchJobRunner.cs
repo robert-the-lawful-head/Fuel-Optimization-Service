@@ -13,6 +13,7 @@ namespace FBOLinx.Job.AirportWatch
 {
     public class AirportWatchJobRunner : IJobRunner
     {
+        private bool _isNewInstance  = true;
         private string _lastWatchedFile = "";
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
@@ -34,6 +35,12 @@ namespace FBOLinx.Job.AirportWatch
 
         public async Task Run()
         {
+            if (_isNewInstance)
+            {
+                logger.Information($"Job has been deployed so new instance has been created _isNewInstance flag:{_isNewInstance}, variables current values are _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC} {_apiClientUrls}");
+                _isNewInstance = false;
+            }
+
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {
                 watcher.Path = _config["AirportWatchDataLocation"];
@@ -120,10 +127,15 @@ namespace FBOLinx.Job.AirportWatch
                 var apiClient = new ApiClient(apiClientUrl.Trim());
                 apiClient.PostAsync("airportwatch/post-live-data-to-table-storage", airportWatchLiveData); //fire and forget
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
-                if (result == null)
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " failed.  Attempted passing " + airportWatchLiveData.Count + " records.  No result received.");
-                else 
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                if (result.IsSuccessStatusCode)
+                {
+                    logger.Information($"Fbolinx api call to {apiClientUrl} completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                }
+                else
+                {
+                    logger.Error($"Fbolinx api call to {apiClientUrl} failed. response : {result.Content.ReadAsStringAsync().Result}");
+                }
+                    
             }
             catch (System.Exception exception)
             {
@@ -133,10 +145,17 @@ namespace FBOLinx.Job.AirportWatch
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)
         {
-            if (_lastWatchedFile != fileName)
+            if (_isNewInstance)
+            {
+                string[] lines = File.ReadAllLines(filePath);
+                logger.Information($"Running new instance of job, setting _lastWatchedFileRecordIndex to end of file (line {lines.Length}) to prevent memory overflow for big size files. and _isNewInstance flag to {!_isNewInstance}");
+                _lastWatchedFileRecordIndex = lines.Length;
+                _isNewInstance = !_isNewInstance;
+            }
+            else if (_lastWatchedFile != fileName )
             {
                 _lastWatchedFileRecordIndex = 0;
-                logger.Information($"file to read changed from {_lastWatchedFileRecordIndex} to {fileName} {_lastWatchedFileRecordIndex} set last watch file record index to {_lastWatchedFileRecordIndex}");
+                logger.Information($"file to read changed from {_lastWatchedFile} to {fileName} {_lastWatchedFileRecordIndex} set last watch file record index to {_lastWatchedFileRecordIndex}");
             }
 
             var data = new List<AirportWatchDataType>();
