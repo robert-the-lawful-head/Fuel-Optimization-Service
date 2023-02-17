@@ -118,6 +118,7 @@ namespace FBOLinx.Job.AirportWatch
                 logger.Information("Fbolinx api call succeed!");
             }
             _isPostingData = false;
+            airportWatchData = null;
         }
 
         private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData)
