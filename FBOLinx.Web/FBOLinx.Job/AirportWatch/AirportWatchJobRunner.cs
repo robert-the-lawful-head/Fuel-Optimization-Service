@@ -37,8 +37,7 @@ namespace FBOLinx.Job.AirportWatch
         {
             if (_isNewInstance)
             {
-                logger.Information($"Job has been deployed so new instance has been created _isNewInstance flag:{_isNewInstance}, variables current values are _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC} {_apiClientUrls}");
-                _isNewInstance = false;
+                logger.Information($"Job has been deployed so new instance has been created variables current values are  _isNewInstance:{_isNewInstance}, _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC.ToString()}, _apiClientUrls:{_apiClientUrls}");
             }
 
             using (FileSystemWatcher watcher = new FileSystemWatcher())
@@ -106,7 +105,7 @@ namespace FBOLinx.Job.AirportWatch
                             {
                                 await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData);
                             }));
-                        logger.Information($"set LastPostDateTimeUTC  to {DateTime.UtcNow}");
+                        logger.Information($"set LastPostDateTimeUTC  to {DateTime.UtcNow.ToString()}");
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
@@ -129,7 +128,7 @@ namespace FBOLinx.Job.AirportWatch
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
                 if (result.IsSuccessStatusCode)
                 {
-                    logger.Information($"Fbolinx api call to {apiClientUrl} completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                    logger.Information($"Fbolinx api call to {apiClientUrl} completed.  Passed " + airportWatchLiveData.Count + " records. ");
                 }
                 else
                 {
