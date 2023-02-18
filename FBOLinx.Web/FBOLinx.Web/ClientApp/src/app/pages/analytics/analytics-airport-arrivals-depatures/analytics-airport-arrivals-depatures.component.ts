@@ -9,7 +9,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
@@ -32,16 +31,11 @@ import { FbosService } from '../../../services/fbos.service';
 import { CustomersListType } from '../../../models/customer';
 import {
     FlightWatchHistorical,
-    FlightWatchStatus,
 } from '../../../models/flight-watch-historical';
 import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import {
-    CsvExportModalComponent,
-    ICsvExportModalData,
-} from '../../../shared/components/csv-export-modal/csv-export-modal.component';
 import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 
@@ -344,27 +338,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
     }
 
     exportCsv() {
-        let cols = this.columns.filter(col => !col.hidden);
-        let exportData = this.dataSource.filteredData.map((item) => {
-            let row = {};
-            cols.forEach( col => {
-                if(col.id == "aircraftTypeCode")
-                    row[col.name] = this.getAircraftLabel(item.aircraftTypeCode)
-                else
-                    row[col.name] = item[col.id]
-            });
-            return row;
-        });
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(
-            wb,
-            ws,
-            'Airport Departures and Arrivals'
-        );
-
-        /* save to file */
-        XLSX.writeFile(wb, 'Airport Departures and Arrivals.xlsx');
+        let fileName ='Airport Departures and Arrivals';
+        let sheetName = 'Airport Departures and Arrivals';
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "aircraftTypeCode")
+                    item[id] = this.getAircraftLabel(item[id]);
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,fileName,sheetName,computePropertyFnc);
 }
 
     clearAllFilters() {
