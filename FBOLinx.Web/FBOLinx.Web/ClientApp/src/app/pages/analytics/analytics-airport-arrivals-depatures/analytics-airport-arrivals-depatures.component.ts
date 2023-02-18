@@ -347,7 +347,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
                 return null;
         }
         this.exportCsvFile(this.columns,fileName,sheetName,computePropertyFnc);
-}
+    }
 
     clearAllFilters() {
         this.selectedCustomers = [];
