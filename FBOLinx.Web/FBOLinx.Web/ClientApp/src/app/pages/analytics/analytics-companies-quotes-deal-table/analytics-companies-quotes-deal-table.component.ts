@@ -27,7 +27,7 @@ import * as SharedEvent from '../../../models/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 import { basename } from 'path';
 
 @Component({
@@ -65,6 +65,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
     columns: ColumnType[] = [];
 
     dataLength = 0;
+
+    csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -278,15 +280,13 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
     }
 
     exportCsv() {
-        let fileName ='Customer Statistics.xlsx';
-        let sheetName = 'Customer Statistics';
         let computePropertyFnc = (item: any[], id: string): any => {
             if(id == "company")
                 return item[id];
             else
                 return null;
         }
-        this.exportCsvFile(this.columns,fileName,sheetName,computePropertyFnc);
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
 
     openSettings() {
