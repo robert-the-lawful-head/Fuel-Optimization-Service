@@ -7,7 +7,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -222,6 +222,7 @@ import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/p
 import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters/flight-watch-filters.component';
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
+import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 
 @NgModule({
     declarations: [
@@ -444,7 +445,10 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
         GetTimePipe,
         ToReadableDateTimePipe,
         ToReadableTimePipe,
-        BooleanToTextPipe
+        BooleanToTextPipe,
+        DatePipe,
+        CurrencyPipe,
+        NullOrEmptyToDefault
     ],
 })
 export class PagesModule { }

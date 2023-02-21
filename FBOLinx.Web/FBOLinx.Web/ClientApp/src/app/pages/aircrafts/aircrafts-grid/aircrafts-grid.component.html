@@ -34,7 +34,7 @@
                     <td (click)="editCustomerAircraft(aircraft)"
                         *matCellDef="let aircraft"
                         mat-cell>
-                        {{ aircraft.make }} {{ aircraft.model }}
+                        {{ getAircrafttypeDisplayString(aircraft) }}
                     </td>
                 </ng-container>
 
