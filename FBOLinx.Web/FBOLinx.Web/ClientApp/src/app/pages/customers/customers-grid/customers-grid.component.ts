@@ -13,22 +13,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-/*import FlatFileImporter from 'flatfile-csv-importer';*/
-import { find, forEach, map, sortBy } from 'lodash';
+import { find, forEach, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
 import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 import { TagsService } from 'src/app/services/tags.service';
-import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
-import { CustomersService } from '../../../services/customers.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
@@ -277,15 +273,31 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
 
     exportCustomersToExcel() {
         let computePropertyFnc = (item: any[], id: string): any => {
-            //remove select all,need atention, fuel vendors
             if(id == "allInPrice")
                 return this.getAllIPriceDisplayString(item);
             else if(id == "isFuelerLinxCustomer")
                 return this.getIsInNetworkDisplayString(item);
+            else if(id == "tags")
+                return  item[id].map(x => x.name).join(', ');
+            else if(id == "fuelVendors")
+                return  item[id].map(x => x.label).join(', ');
+            else if(id == "needsAttention"){
+                return this.getNeedsAttentionDisplayString(item);
+            }
             else
                 return null;
         }
         this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
+    }
+    getNeedsAttentionDisplayString(customer: any): any{
+        let message = '';
+        if(customer.needsAttention){
+            message = 'Needs Attention';
+        }
+        if(!customer.isFuelerLinxCustomer && !customer.contactExists){
+            message = message+' '+'This customer does not have any contacts setup to receive price distribution.';
+        }
+        return message;
     }
     getAllIPriceDisplayString(customer: any): any{
         return customer.allInPrice > 0 ? this.currencyPipe.transform(customer.allInPrice, "USD","symbol","1.2-2") : "Expired";

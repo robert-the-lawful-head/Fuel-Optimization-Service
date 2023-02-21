@@ -16,7 +16,6 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
-import * as XLSX from 'xlsx';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
