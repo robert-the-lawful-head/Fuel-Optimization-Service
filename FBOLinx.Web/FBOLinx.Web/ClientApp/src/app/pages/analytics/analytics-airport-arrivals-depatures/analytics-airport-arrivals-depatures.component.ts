@@ -36,7 +36,7 @@ import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 
 @Component({
@@ -134,6 +134,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
             name: 'Percent of Visits',
         },
     ];
+
+    csvFileOptions: csvFileOptions = { fileName: 'Airport Departures and Arrivals', sheetName: 'Airport Departures and Arrivals' };
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -338,15 +340,13 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
     }
 
     exportCsv() {
-        let fileName ='Airport Departures and Arrivals';
-        let sheetName = 'Airport Departures and Arrivals';
         let computePropertyFnc = (item: any[], id: string): any => {
             if(id == "aircraftTypeCode")
                     item[id] = this.getAircraftLabel(item[id]);
             else
                 return null;
         }
-        this.exportCsvFile(this.columns,fileName,sheetName,computePropertyFnc);
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
 
     clearAllFilters() {
