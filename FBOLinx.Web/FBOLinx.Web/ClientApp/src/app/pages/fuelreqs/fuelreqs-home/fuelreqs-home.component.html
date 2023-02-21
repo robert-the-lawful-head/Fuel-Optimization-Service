@@ -6,7 +6,6 @@
             <div *ngIf="isFuelOrdersShowing">
                 <div *ngIf="fuelreqsData">
                     <app-fuelreqs-grid (dateFilterChanged)="dateFilterChanged($event)"
-                                       (exportTriggered)="export($event)"
                                        [filterEndDate]="filterEndDate"
                                        [filterStartDate]="filterStartDate"
                                        [fuelreqsData]="fuelreqsData"></app-fuelreqs-grid>

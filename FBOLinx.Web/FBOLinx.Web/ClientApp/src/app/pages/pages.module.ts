@@ -7,7 +7,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -444,7 +444,9 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
         GetTimePipe,
         ToReadableDateTimePipe,
         ToReadableTimePipe,
-        BooleanToTextPipe
+        BooleanToTextPipe,
+        DatePipe,
+        CurrencyPipe,
     ],
 })
 export class PagesModule { }
