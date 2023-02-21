@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import {
     Component,
     ElementRef,
@@ -18,7 +19,7 @@ import { ActivatedRoute } from '@angular/router';
 import { find, forEach, map, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 import { TagsService } from 'src/app/services/tags.service';
 import * as XLSX from 'xlsx';
 
@@ -124,6 +125,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
     @Output() customerPriceClicked = new EventEmitter<any>();
+    @Output() exportAircraftClick = new EventEmitter<any>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -144,6 +146,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     feesAndTaxesSubscription: Subscription;
 
     /*private importer: FlatFileImporter;*/
+    customersCsvOptions: csvFileOptions = { fileName: 'Customers', sheetName: 'Customers' };
+    aircraftCsvOptions: csvFileOptions = { fileName: 'Aircraft', sheetName: 'Aircraft' };
 
     constructor(
         private newCustomerDialog: MatDialog,
@@ -155,7 +159,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private tagsService: TagsService,
         private dialog: MatDialog ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private currencyPipe: CurrencyPipe
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
@@ -271,54 +276,25 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     }
 
     exportCustomersToExcel() {
-        // Export the filtered results to an excel spreadsheet
-        const filteredList = this.dataSource.filteredData.filter(
-            (item) => item.selectAll === true
-        );
-        let exportData;
-        if (filteredList.length > 0) {
-            exportData = filteredList;
-        } else {
-            exportData = this.dataSource.filteredData;
+        let computePropertyFnc = (item: any[], id: string): any => {
+            //remove select all,need atention, fuel vendors
+            if(id == "allInPrice")
+                return this.getAllIPriceDisplayString(item);
+            else if(id == "isFuelerLinxCustomer")
+                return this.getIsInNetworkDisplayString(item);
+            else
+                return null;
         }
-        exportData = map(exportData, (item) => ({
-            'Certificate Type': item.certificateTypeDescription,
-            Company: item.company,
-            'Customer Type': item.customerCompanyTypeName,
-            'Fleet Size': item.fleetSize,
-            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
-            'ITP Margin Template': item.pricingTemplateName,
-            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
-            'Previous Visits': item.aircraftsVisits,
-        }));
-        exportData = sortBy(exportData, [(item) => item.Company.toLowerCase()]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-
-        /* save to file */
-        XLSX.writeFile(wb, 'Customers.xlsx');
+        this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
     }
-
+    getAllIPriceDisplayString(customer: any): any{
+        return customer.allInPrice > 0 ? this.currencyPipe.transform(customer.allInPrice, "USD","symbol","1.2-2") : "Expired";
+    }
+    getIsInNetworkDisplayString(customer: any): any{
+        return customer.isFuelerLinxCustomer ? "YES" : "NO"
+    }
     exportCustomerAircraftToExcel() {
-        // Export the filtered results to an excel spreadsheet
-        let exportData = map(this.aircraftData, (item) => ({
-            Company: item.company,
-            Tail: item.tailNumber,
-            Type: item.make + ' ' + item.model,
-            Size: item.aircraftSizeDescription,
-            'Company Pricing': item.pricingTemplateName,
-        }));
-        exportData = sortBy(exportData, [
-            (item) => item.Company?.toLowerCase(),
-            (item) => item.Tail?.toLowerCase(),
-        ]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Aircraft');
-
-        /* save to file */
-        XLSX.writeFile(wb, 'Aircraft.xlsx');
+        this.exportAircraftClick.emit();
     }
 
     customerFilterTypeChanged() {
