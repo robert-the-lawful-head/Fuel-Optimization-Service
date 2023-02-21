@@ -11,6 +11,7 @@
                     <app-customers-grid
                         (customerDeleted)="customerDeleted()"
                         (editCustomerClicked)="editCustomerClicked($event)"
+                        (exportAircraftClick)="exportAircraftClick($event)"
                         [aircraftData]="aircraftData"
                         [customerGridState]="customerGridState"
                         [customersData]="customersData"
