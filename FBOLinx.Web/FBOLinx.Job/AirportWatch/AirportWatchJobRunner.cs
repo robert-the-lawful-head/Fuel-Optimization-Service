@@ -110,7 +110,7 @@ namespace FBOLinx.Job.AirportWatch
                     }
                     catch (Exception ex)
                     {
-                        logger.Error(ex, $"Failed to call Fbolinx api!");
+                        logger.Error(ex, $"Failed async task Fbolinx api for client {apiClientUrl}");
                     }
                 }
                 await Task.WhenAll(tasks);
@@ -139,7 +139,7 @@ namespace FBOLinx.Job.AirportWatch
             }
             catch (System.Exception exception)
             {
-                logger.Error(exception, $"Failed to call Fbolinx api!");
+                logger.Error(exception, $"Failed to call Fbolinx api for client {apiClientUrl}!");
             }
         }
     
