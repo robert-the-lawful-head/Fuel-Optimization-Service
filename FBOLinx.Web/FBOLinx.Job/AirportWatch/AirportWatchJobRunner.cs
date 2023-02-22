@@ -2,6 +2,7 @@
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace FBOLinx.Job.AirportWatch
         {
             if (_isNewInstance)
             {
-                logger.Information($"Job has been deployed so new instance has been created variables current values are  _isNewInstance:{_isNewInstance}, _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC.ToString()}, _apiClientUrls:{_apiClientUrls}");
+                logger.Information($"Job has been deployed so new instance has been created variables current values are  _isNewInstance:{_isNewInstance}, _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC.ToString()}, _apiClientUrls:{string.Join(", ", _apiClientUrls)}");
             }
 
             using (FileSystemWatcher watcher = new FileSystemWatcher())
