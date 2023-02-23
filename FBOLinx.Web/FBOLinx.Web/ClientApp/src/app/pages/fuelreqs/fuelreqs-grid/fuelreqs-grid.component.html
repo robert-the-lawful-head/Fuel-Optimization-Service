@@ -61,7 +61,7 @@
                     class="switch-nested-menu-left-arrows"
                     xPosition="before"
                 >
-                    <button (click)="export()" mat-menu-item>Export</button>
+                    <button (click)="exportCsv()" mat-menu-item>Export</button>
                     <button (click)="openSettings()" mat-menu-item>
                         Settings
                     </button>
@@ -119,10 +119,7 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
                 <td *matCellDef="let fuelreq" mat-cell>
                     {{
-                        fuelreq.oid == 0
-                            ? "CONFIDENTIAL"
-                            : (fuelreq.quotedPpg
-                              | currency: "USD":"symbol":"1.4-4")
+                        getPPGDisplayString(fuelreq)
                     }}
                 </td>
             </ng-container>

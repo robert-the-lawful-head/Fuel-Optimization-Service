@@ -1,3 +1,4 @@
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -14,12 +15,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 // Shared components
-import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -99,7 +99,6 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
-    @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
@@ -112,10 +111,13 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
 
     dashboardSettings: any;
 
+    csvFileOptions: csvFileOptions = { fileName: 'FuelOrders', sheetName: 'Fuel Orders' };
+
     constructor(
         private sharedService: SharedService,
-        private exportDialog: MatDialog,
-        private tableSettingsDialog: MatDialog
+        private tableSettingsDialog: MatDialog,
+        private datePipe: DatePipe,
+        private currencyPipe: CurrencyPipe,
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -232,21 +234,22 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
         });
     }
 
-    export() {
-        const dialogRef = this.exportDialog.open(FuelReqsExportModalComponent, {
-            data: {
-                filterEndDate: this.filterEndDate,
-                filterStartDate: this.filterStartDate,
-            },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-            this.exportTriggered.emit(result);
-        });
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "eta" || id == "etd" || id == "dateCreated")
+                return this.datePipe.transform(item[id]);
+            else if(id == "quotedPpg")
+                return this.getPPGDisplayString(item);
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
-
+    getPPGDisplayString(fuelreq: any): any{
+        return fuelreq.oid == 0
+        ? "CONFIDENTIAL"
+        : this.currencyPipe.transform(fuelreq.quotedPpg,"USD","symbol","1.4-4");
+    }
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(
             TableSettingsComponent,

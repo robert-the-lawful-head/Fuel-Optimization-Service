@@ -94,39 +94,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.loadFuelReqs();
     }
 
-    public export(event) {
-        this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                event.filterStartDate,
-                event.filterEndDate
-            )
-            .subscribe((data: any) => {
-                const exportData = _.map(data, (item) => ({
-                    ETA: item.eta,
-                    ETD: item.etd,
-                    Email: item.email,
-                    'Flight Dept.': item.customerName,
-                    'Fuelerlinx ID': item.sourceId,
-                    ID: item.oid,
-                    'ITP Margin Template': item.pricingTemplateName,
-                    PPG: item.quotedPpg,
-                    Phone: item.phoneNumber,
-                    Source: item.source,
-                    'Tail #': item.tailNumber,
-                    'Transaction Status': item.cancelled ? 'Cancelled' : 'Live',
-                    'Volume (gal.)': item.quotedVolume,
-                }));
-                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-                const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Fuel Orders');
-
-                /* save to file */
-                XLSX.writeFile(wb, 'FuelOrders.xlsx');
-            });
-    }
-
     onTabClick(event) {
         if (event.tab.textLabel == "Fuel Orders") {
             this.isFuelOrdersShowing = true;

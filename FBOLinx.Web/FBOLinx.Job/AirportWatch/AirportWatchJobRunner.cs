@@ -2,18 +2,19 @@
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.Job.Models;
 
 namespace FBOLinx.Job.AirportWatch
 {
     public class AirportWatchJobRunner : IJobRunner
     {
+        private bool _isNewInstance  = true;
         private string _lastWatchedFile = "";
         private int _lastWatchedFileRecordIndex = 0;
         private readonly IConfiguration _config;
@@ -21,15 +22,25 @@ namespace FBOLinx.Job.AirportWatch
         private DateTime? _LastPostDateTimeUTC;
         private List<string> _apiClientUrls;
         private int _NewRowThreshold = 30000;
+        private Serilog.Core.Logger logger;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
             _config = config;
             _apiClientUrls = config["FBOLinxApiUrls"].ToString().Split(";").ToList();
+            logger = new LoggerConfiguration()
+                                .MinimumLevel.Debug()
+                                .WriteTo.File(_config["AirportWatchJobLog"])
+                                .CreateLogger();
         }
 
         public async Task Run()
         {
+            if (_isNewInstance)
+            {
+                logger.Information($"Job has been deployed so new instance has been created variables current values are  _isNewInstance:{_isNewInstance}, _lastWatchedFile: {_lastWatchedFile}, {_lastWatchedFileRecordIndex}, _isPostingData:{_isPostingData} _LastPostDateTimeUTC:{_LastPostDateTimeUTC.ToString()}, _apiClientUrls:{string.Join(", ", _apiClientUrls)}");
+            }
+
             using (FileSystemWatcher watcher = new FileSystemWatcher())
             {
                 watcher.Path = _config["AirportWatchDataLocation"];
@@ -63,28 +74,24 @@ namespace FBOLinx.Job.AirportWatch
                 return;
             }
 
-            using var logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(_config["AirportWatchJobLog"])
-                .CreateLogger();
-
             logger.Information($"File: {e.FullPath} {e.Name} {e.ChangeType}");
 
             if (_LastPostDateTimeUTC.HasValue && _LastPostDateTimeUTC < DateTime.UtcNow.AddMinutes(-2))
-                logger.Information("Fbolinx api call was delayed due to previous POST in progress.  Re-trying since 2 minutes have passed.");
-                
+                logger.Information("Fbolinx api call was delayed due to previous POST in progress.  Re-trying since 2 minutes have passed."); 
 
             _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
 
             if (data.Count > _NewRowThreshold)
             {
-                logger.Information("Amount of records to POST exceeded " + string.Format("{0:N}", _NewRowThreshold) + " (" + string.Format("{0:N}", data.Count) + ").  Jumping to end-of-file for next POST and skipping the current one.");
+                logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold) } (records count{ string.Format("{0:N}", data.Count) }) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
                 _isPostingData = false;
                 return;
+                
             }
 
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
+            logger.Information($"csv records ({data.Count}) converted to DB model ({airportWatchData.Count}) !");
 
             if (airportWatchData.Count > 0)
             {
@@ -97,45 +104,59 @@ namespace FBOLinx.Job.AirportWatch
                         tasks.Add(
                             Task.Run(async () =>
                             {
-                                await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData, logger);
+                                await PostAirportWatchData(apiClientUrl.Trim(), airportWatchData);
                             }));
+                        logger.Information($"set LastPostDateTimeUTC  to {DateTime.UtcNow.ToString()}");
                         _LastPostDateTimeUTC = DateTime.UtcNow;
                     }
                     catch (Exception ex)
                     {
-                        logger.Error(ex, $"Failed to call Fbolinx api!");
+                        logger.Error(ex, $"Failed async task Fbolinx api for client {apiClientUrl}");
                     }
                 }
                 await Task.WhenAll(tasks);
                 logger.Information("Fbolinx api call succeed!");
             }
-
             _isPostingData = false;
+            airportWatchData = null;
         }
 
-        private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData, Serilog.Core.Logger logger)
+        private async Task PostAirportWatchData(string apiClientUrl, List<AirportWatchLiveData> airportWatchLiveData)
         {
             try
             {
                 var apiClient = new ApiClient(apiClientUrl.Trim());
                 apiClient.PostAsync("airportwatch/post-live-data-to-table-storage", airportWatchLiveData); //fire and forget
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
-                if (result == null)
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " failed.  Attempted passing " + airportWatchLiveData.Count + " records.  No result received.");
-                else 
-                    logger.Information("Fbolinx api call to " + apiClientUrl + " completed.  Passed " + airportWatchLiveData.Count + " records. " + result);
+                if (result.IsSuccessStatusCode)
+                {
+                    logger.Information($"Fbolinx api call to {apiClientUrl} completed.  Passed " + airportWatchLiveData.Count + " records. ");
+                }
+                else
+                {
+                    logger.Error($"Fbolinx api call to {apiClientUrl} failed. response : {result.Content.ReadAsStringAsync().Result}");
+                }
+                    
             }
             catch (System.Exception exception)
             {
-                logger.Error(exception, $"Failed to call Fbolinx api!");
+                logger.Error(exception, $"Failed to call Fbolinx api for client {apiClientUrl}!");
             }
         }
     
         private List<AirportWatchDataType> GetCSVRecords(string filePath, string fileName)
         {
-            if (_lastWatchedFile != fileName)
+            if (_isNewInstance)
+            {
+                string[] lines = File.ReadAllLines(filePath);
+                logger.Information($"Running new instance of job, setting _lastWatchedFileRecordIndex to end of file (line {lines.Length}) to prevent memory overflow for big size files. and _isNewInstance flag to {!_isNewInstance}");
+                _lastWatchedFileRecordIndex = lines.Length;
+                _isNewInstance = !_isNewInstance;
+            }
+            else if (_lastWatchedFile != fileName )
             {
                 _lastWatchedFileRecordIndex = 0;
+                logger.Information($"file to read changed from {_lastWatchedFile} to {fileName} {_lastWatchedFileRecordIndex} set last watch file record index to {_lastWatchedFileRecordIndex}");
             }
 
             var data = new List<AirportWatchDataType>();
@@ -145,12 +166,16 @@ namespace FBOLinx.Job.AirportWatch
                 AirportWatchCsvParser csvParser = new AirportWatchCsvParser(filePath);
 
                 data = csvParser.GetRecords(_lastWatchedFileRecordIndex);
+                logger.Information($"records read for {filePath} are {data.Count} ");
 
                 _lastWatchedFileRecordIndex += data.Count;
                 _lastWatchedFile = fileName;
+
+                logger.Information($"for {_lastWatchedFile} last watch record index set to {_lastWatchedFileRecordIndex}");
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
+                logger.Error(ex,$"Error getting records from {filePath} last watch fiel record index remain on  {_lastWatchedFileRecordIndex}");
             }
 
             return data;

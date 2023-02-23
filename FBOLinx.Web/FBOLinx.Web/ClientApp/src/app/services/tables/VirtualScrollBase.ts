@@ -1,6 +1,13 @@
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatTableDataSource } from "@angular/material/table";
+import { ColumnType } from "src/app/shared/components/table-settings/table-settings.component";
+import * as XLSX from 'xlsx';
+
+export type csvFileOptions = {
+    fileName: string;
+    sheetName: string;
+}
 
 export abstract class VirtualScrollBase {
     start: number = 0;
@@ -63,5 +70,27 @@ export abstract class VirtualScrollBase {
         // forEach(this.dataSource, (data) => {
         //     data.selectAll = false;
         // });
+    }
+    exportCsvFile(columns: ColumnType[],fileName: string, sheetName: string, computePropertyFnc: any) {
+        let cols = columns.filter(col => !col.hidden || col.id == 'selectAll');
+        let exportData = this.dataSource.filteredData.map((item) => {
+            let row = {};
+            cols.forEach( col => {
+                let calculatedText =  computePropertyFnc(item, col.id);
+                row[col.name] = calculatedText ? calculatedText : item[col.id];
+            });
+            return row;
+        });
+        console.log("🚀 ~ file: VirtualScrollBase.ts:84 ~ VirtualScrollBase ~ exportData ~ this.dataSource.filteredData", this.dataSource.filteredData)
+        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
+        const wb: XLSX.WorkBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(
+            wb,
+            ws,
+            sheetName
+        );
+
+        /* save to file */
+        XLSX.writeFile(wb, fileName +'.xlsx');
     }
 }
