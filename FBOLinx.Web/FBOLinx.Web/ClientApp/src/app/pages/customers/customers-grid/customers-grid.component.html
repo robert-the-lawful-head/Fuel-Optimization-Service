@@ -175,7 +175,7 @@
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
-                    {{ customer.isFuelerLinxCustomer ? "YES" : "NO" }}
+                    {{ getIsInNetworkDisplayString(customer) }}
                 </td>
             </ng-container>
 
@@ -260,7 +260,7 @@
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <div (click)="onCustomerPriceClicked(customer)" class="allInPrice">
-                        {{ customer.allInPrice > 0 ? (customer.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
+                        {{ getAllIPriceDisplayString(customer) }}
                     </div>
                 </td>
             </ng-container>

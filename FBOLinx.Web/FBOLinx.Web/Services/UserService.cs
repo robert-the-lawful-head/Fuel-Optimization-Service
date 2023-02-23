@@ -36,7 +36,7 @@ namespace FBOLinx.Web.Services
         
         public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            User user = await _Context.User.SingleOrDefaultAsync(x => x.Username == username);
+            User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
             
             if (user == null)
             {

@@ -20,7 +20,7 @@ namespace FBOLinx.Job.Base
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<string> PostAsync(string endpoint, object request, string token = "")
+        public async Task<HttpResponseMessage> PostAsync(string endpoint, object request, string token = "")
         {
             _httpClient.DefaultRequestHeaders.Remove("Authorization");
 
@@ -30,17 +30,13 @@ namespace FBOLinx.Job.Base
             var json = JsonConvert.SerializeObject(request);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(endpoint, data);
-
-            var result = response.Content.ReadAsStringAsync().Result;
-
-            return result;
+            return await _httpClient.PostAsync(endpoint, data);
         }
 
         public async Task<T> PostAsync<T>(string endpoint, object request, string token = "")
         {
             var responseString = PostAsync(endpoint, request, token).Result;
-            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseString);
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseString.Content.ReadAsStringAsync().Result);
             return result;
         }
 

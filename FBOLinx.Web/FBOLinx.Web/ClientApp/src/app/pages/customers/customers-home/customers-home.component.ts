@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TagsService } from 'src/app/services/tags.service';
@@ -14,6 +14,7 @@ import { State } from '../../../store/reducers';
 import { CustomerGridState } from '../../../store/reducers/customer';
 import { getCustomerGridState } from '../../../store/selectors';
 import { MatTableDataSource } from '@angular/material/table';
+import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -32,6 +33,8 @@ const BREADCRUMBS: any[] = [
     templateUrl: './customers-home.component.html',
 })
 export class CustomersHomeComponent implements OnInit, OnDestroy {
+    @ViewChild(AircraftsGridComponent) aircraftsGridComponent:AircraftsGridComponent;
+
     // Public Members
     pageTitle = 'Customers';
     breadcrumb: any[] = BREADCRUMBS;
@@ -122,7 +125,9 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
             ])
             .then();
     }
-
+    exportAircraftClick($event){
+        this.aircraftsGridComponent.exportCsv();
+    }
     customerDeleted() {
         this.loadCustomers();
     }
