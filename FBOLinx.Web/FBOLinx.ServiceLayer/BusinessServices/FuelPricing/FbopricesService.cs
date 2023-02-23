@@ -86,7 +86,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
-            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
+            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && (f.Expired == null || f.Expired != true)).ToListAsync();
             foreach (var p in oldPrices)
             {
                 p.Expired = true;
