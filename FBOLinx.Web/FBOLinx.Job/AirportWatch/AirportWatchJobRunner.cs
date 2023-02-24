@@ -308,11 +308,11 @@ namespace FBOLinx.Job.AirportWatch
                 airportWatchData.Add(airportWatchRow);
             }
 
-            return airportWatchData;
-                //.OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-                //.GroupBy(row => new { row.AircraftHexCode, row.BoxName })
-                //.Select(grouped => grouped.First())
-                //.ToList();
+            return airportWatchData
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
+                .Select(grouped => grouped.First())
+                .ToList();
         }
     }
 }
