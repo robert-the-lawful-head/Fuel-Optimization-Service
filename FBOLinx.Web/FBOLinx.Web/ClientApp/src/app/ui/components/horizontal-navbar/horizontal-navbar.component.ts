@@ -564,7 +564,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         (this.currentUser.role ===  UserRole.Primary ||
             this.currentUser.role ===  UserRole.CSR ||
             this.currentUser.role ===  UserRole.Member ||
-            this.currentUser.role ===  UserRole.GroupAdmin
+            this.currentUser.role ===  UserRole.GroupAdmin ||
+            this.currentUser.role ===  UserRole.Conductor
         );
     }
     public get userRole(){
