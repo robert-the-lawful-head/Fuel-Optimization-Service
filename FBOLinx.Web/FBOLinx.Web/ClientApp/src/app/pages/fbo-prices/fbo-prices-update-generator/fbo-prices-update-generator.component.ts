@@ -408,8 +408,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                                     this.currentFboPriceJetARetail.price,
                                 SafCost: this.currentFboPriceSafCost.price,
                                 SafRetail: this.currentFboPriceSafRetail.price,
-                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceSafRetail.source == "1" ? "Updated via PoS Integration" : "Expires " + moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
-                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceJetARetail.source == "1" ? "Updated via PoS Integration" : "Expires " + moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationSaf: moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceSafRetail.source == "1" ? "Updated via " + (this.currentFboPriceSafRetail.integrationPartner == "" ? "PoS" : this.currentFboPriceSafRetail.integrationPartner) + " Integration" : "Expires " + moment(this.currentFboPriceSafRetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
+                                PriceExpirationJetA: moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY") == "12/31/99" || this.currentFboPriceJetARetail.source == "1" ? "Updated via " + (this.currentFboPriceJetARetail.integrationPartner == "" ? "PoS" : this.currentFboPriceJetARetail.integrationPartner) + " Integration" : "Expires " + moment(this.currentFboPriceJetARetail.effectiveTo).format("M/D/YY @ HH:mm") + " " + this.timezone,
                                 message: SharedEvents.fboPricesUpdatedEvent,
                             });
 
@@ -443,7 +443,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                         if (fboPrice.effectiveFrom && (fboPrice.oidPap == 0 || fboPrice.oidPap == undefined)) {
                             if (moment(fboPrice.effectiveTo).format("YYYY") == "9999" || fboPrice.source == "1") {
                                 fboPrice.effectiveFrom = moment(fboPrice.effectiveFrom).format("MM/DD/YYYY HH:mm");
-                                fboPrice.effectiveTo = "Updated via PoS Integration";
+                                fboPrice.effectiveTo = "Updated via " + (fboPrice.integrationPartner == "" ? "PoS" : fboPrice.integrationPartner)  + " Integration";
                                 fboPrice.submitStatus = "Automated";
                                 fboPrice.status = "Automated";
                                 fboPrice.isEdit = false;

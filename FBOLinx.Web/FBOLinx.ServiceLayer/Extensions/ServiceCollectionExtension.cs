@@ -138,6 +138,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboPricesEntityService, FboPricesEntityService>();
             services.AddTransient<IFboPreferencesEntityService, FboPreferencesEntityService>();
             services.AddTransient<TableStorageLogEntityService, TableStorageLogEntityService>();
+            services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
 
             return services;
         }
