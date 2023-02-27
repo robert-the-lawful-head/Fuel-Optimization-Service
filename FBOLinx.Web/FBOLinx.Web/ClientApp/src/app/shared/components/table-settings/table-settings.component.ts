@@ -26,7 +26,7 @@ export class TableSettingsComponent {
         private dialogRef: MatDialogRef<TableSettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ColumnType[]
     ) {
-        this.columns = [...data];
+        this.columns = [...data.filter((c) => c.id != 'selectAll')];
     }
 
     drop(event: CdkDragDrop<string[]>) {
