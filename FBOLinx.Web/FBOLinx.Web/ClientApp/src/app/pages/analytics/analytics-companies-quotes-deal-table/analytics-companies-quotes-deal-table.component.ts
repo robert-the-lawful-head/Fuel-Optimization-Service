@@ -27,7 +27,7 @@ import * as SharedEvent from '../../../models/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
 import { basename } from 'path';
 
 @Component({
@@ -65,6 +65,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
     columns: ColumnType[] = [];
 
     dataLength = 0;
+
+    csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -277,51 +279,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
      this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3}  });
     }
 
-    onExport() {
-        const dialogRef = this.exportDialog.open<
-            CsvExportModalComponent,
-            ICsvExportModalData,
-            ICsvExportModalData
-        >(CsvExportModalComponent, {
-            data: {
-                filterEndDate: this.filterEndDate,
-                filterStartDate: this.filterStartDate,
-                title: 'Export Customer Statistics',
-            },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.exportCsv(result.filterStartDate, result.filterEndDate);
-        });
-    }
-
-    exportCsv(startDate: Date, endDate: Date) {
-        this.fetchData(startDate, endDate).subscribe((data: any) => {
-            const exportData = data.map((item) => {
-                const row = {
-                    Company: item.company,
-                    'Conversion Rate': item.conversionRate + '%',
-                    'Direct Orders': item.directOrders,
-                    'Number of Quotes': item.companyQuotesTotal,
-                };
-                row[`Total Orders at ${this.fbo}`] = item.totalOrders;
-                row[`Total Orders at ${this.icao}`] = item.airportOrders;
-                row[`${this.icao} Last Quoted`] = item.lastPullDate;
-                row[`Arrivals`] = item.airportVisits;
-                row[`Visits to ${this.fbo}`] = item.visitsToFbo;
-                row[`% of visits to ${this.fbo}`] = item.percentVisits + '%';
-                return row;
-            });
-            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-            const wb: XLSX.WorkBook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Customer Statistics');
-
-            /* save to file */
-            XLSX.writeFile(wb, 'Customer Statistics.xlsx');
-        });
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "company")
+                return item[id];
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
 
     openSettings() {

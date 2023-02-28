@@ -45,10 +45,6 @@ export class FlightWatchSettingsComponent {
     ngOnInit(): void {
         this.initColumns();
     }
-    ngOnChanges(changes: SimpleChanges) {
-        if(!changes.arrivals?.previousValue && !changes.departures?.previousValue)
-        this.updateDrawerButtonPosition.emit();
-    }
 
     get aircraftTypes() {
         return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')

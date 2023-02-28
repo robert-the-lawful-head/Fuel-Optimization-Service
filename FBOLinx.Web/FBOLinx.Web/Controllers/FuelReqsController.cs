@@ -234,12 +234,12 @@ namespace FBOLinx.Web.Controllers
             if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
                 return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
 
-            var fuelReqs = _context.FuelReq.Where(f => f.SourceId > 0 && f.SourceId == request.SourceId).ToList();
+            var fuelReqs = await _context.FuelReq.Where(f => f.SourceId > 0 && f.SourceId == request.SourceId).ToListAsync();
 
             if (fuelReqs.Count == 0)
             {
                 var fuelReqsPt =
-                                (from c in _context.Customers
+                                await (from c in _context.Customers
                                  join cg in _context.CustomerInfoByGroup on
                                      new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
                                      equals
@@ -275,7 +275,7 @@ namespace FBOLinx.Web.Controllers
                                      request.FuelOn
                                  })
                                 .Distinct()
-                                .ToList();
+                                .ToListAsync();
 
                 fuelReqs = fuelReqsPt.Select(fr => new FuelReq
                 {
@@ -297,7 +297,7 @@ namespace FBOLinx.Web.Controllers
                     FuelOn = fr.FuelOn,
                 }).ToList();
 
-                _context.FuelReq.AddRange(fuelReqs);
+                await _context.FuelReq.AddRangeAsync(fuelReqs);
                 await _context.SaveChangesAsync();
 
                 List<FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
@@ -320,7 +320,7 @@ namespace FBOLinx.Web.Controllers
                             pricingTemplate.Email,
                             pricingTemplate.Subject,
                             pricingTemplate.Type,
-                            CustomerMargins = _context.CustomerMargins
+                            CustomerMargins = await _context.CustomerMargins
                                 .Where(cm => cm.TemplateId == pricingTemplate.Oid)
                                 .Select(cm => new
                                 {
@@ -328,11 +328,11 @@ namespace FBOLinx.Web.Controllers
                                     cm.PriceTierId,
                                     cm.TemplateId,
                                     cm.Amount
-                                }).ToList()
+                                }).ToListAsync()
                         }),
                     });
                 }
-                _context.FuelReqPricingTemplate.AddRange(fuelReqPricingTemplates);
+                await _context.FuelReqPricingTemplate.AddRangeAsync(fuelReqPricingTemplates);
             }
             else
             {
