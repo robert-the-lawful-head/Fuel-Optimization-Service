@@ -16,6 +16,7 @@ using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -24,7 +25,7 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class AirportFboGeofenceClustersController : ControllerBase
+    public class AirportFboGeofenceClustersController : FBOLinxControllerBase
     {
         private readonly DegaContext _degaContext;
         private readonly FboLinxContext _context;
@@ -35,7 +36,7 @@ namespace FBOLinx.Web.Controllers
         private IAirportService _airportService;
 
         public AirportFboGeofenceClustersController(DegaContext degaContext, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, AirportFboGeofenceClustersService airportFboGeofenceClustersService, AirportWatchService airportWatchService,
-            IAirportService airportService)
+            IAirportService airportService, ILoggingService logger) : base(logger)
         {
             _airportService = airportService;
             _degaContext = degaContext;

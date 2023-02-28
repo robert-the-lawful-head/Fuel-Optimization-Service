@@ -10,18 +10,19 @@ using FBOLinx.ServiceLayer.Dto.Requests;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using System;
 using Microsoft.AspNetCore.Http;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PricingTemplatesController : ControllerBase
+    public class PricingTemplatesController : FBOLinxControllerBase
     {
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
 
-        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, IPricingTemplateAttachmentService pricingTemplateAttachmentService)
+        public PricingTemplatesController(IPricingTemplateService pricingTemplateService, ICustomerMarginService customerMarginService, IPricingTemplateAttachmentService pricingTemplateAttachmentService, ILoggingService logger) : base(logger)
         {
             _pricingTemplateService = pricingTemplateService;
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;

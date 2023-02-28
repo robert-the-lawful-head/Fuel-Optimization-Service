@@ -10,19 +10,20 @@ using System;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class OAuthController : ControllerBase
+    public class OAuthController : FBOLinxControllerBase
     {
         private readonly IUserService _userService;
         private readonly FboLinxContext _context;
         private readonly OAuthService _oAuthService;
 
-        public OAuthController(IUserService userService, OAuthService oAuthService, FboLinxContext context)
+        public OAuthController(IUserService userService, OAuthService oAuthService, FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _userService = userService;
             _context = context;
