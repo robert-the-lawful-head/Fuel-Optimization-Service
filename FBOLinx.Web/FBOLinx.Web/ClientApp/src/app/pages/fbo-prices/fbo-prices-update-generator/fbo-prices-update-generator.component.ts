@@ -613,7 +613,6 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
             .getByFbo(this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
                 this.feesAndTaxes = response;
-                console.log(response)
                 if (this.retailFeeAndTaxBreakdown) {
                     this.retailFeeAndTaxBreakdown.feesAndTaxes =
                         this.feesAndTaxes;
@@ -715,7 +714,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
         this.pricingTemplateService
             .fixCustomCustomerTypes(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId)
             .subscribe((response: any) => {
-             
+
             });
     }
 }
