@@ -73,7 +73,7 @@ export abstract class VirtualScrollBase {
     }
     exportCsvFile(columns: ColumnType[],fileName: string, sheetName: string, computePropertyFnc: any,exportSelectedData: boolean = false) {
 
-        let cols = columns.filter(col => !col.hidden || col.id == 'selectAll');
+        let cols = columns.filter(col => (col.id == 'selectAll')? false : !col.hidden);
 
         let dataToExport = (exportSelectedData) ?
         this.dataSource.filteredData.filter(x => x.selectAll) :
