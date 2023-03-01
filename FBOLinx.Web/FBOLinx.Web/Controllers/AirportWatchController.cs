@@ -19,6 +19,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.Web.Auth;
 using Fuelerlinx.SDK;
+using FBOLinx.ServiceLayer.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,7 +27,7 @@ namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AirportWatchController : ControllerBase
+    public class AirportWatchController : FBOLinxControllerBase
     {
         private readonly AirportWatchService _airportWatchService;
         private readonly IAirportWatchLiveDataService _airportWatchLiveDataService;
@@ -34,7 +35,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService, IAirportWatchLiveDataService airportWatchLiveDataService)
+        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService, IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger) : base(logger)
         {
             _airportWatchService = airportWatchService;
             _fboService = fboService;

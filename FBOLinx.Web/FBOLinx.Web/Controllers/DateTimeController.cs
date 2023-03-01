@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +14,12 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class DateTimeController : ControllerBase
+    public class DateTimeController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly DateTimeService _dateTimeService;
 
-        public DateTimeController(FboLinxContext context, DateTimeService dateTimeService)
+        public DateTimeController(FboLinxContext context, DateTimeService dateTimeService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _dateTimeService = dateTimeService;

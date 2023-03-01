@@ -511,7 +511,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             //Mark old prices as expired
             var oldPrices = await _context.Fboprices.Where(f =>
-                    f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && f.Price != null && f.Expired != true)
+                    f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && (f.Expired == null || f.Expired != true))
                 .ToListAsync();
             await using var transaction = await _context.Database.BeginTransactionAsync();
             await _context.BulkUpdateAsync(oldPrices);

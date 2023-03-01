@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,10 @@ namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerTagsController : ControllerBase
+    public class CustomerTagsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        public CustomerTagsController(FboLinxContext context)
+        public CustomerTagsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

@@ -13,19 +13,20 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.ViewModels;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly AircraftService _aircraftService;
         private IFuelerLinxAccoutSyncingService _fuelerLinxAccoutSyncingService;
 
-        public CustomersController(FboLinxContext context, AircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService)
+        public CustomersController(FboLinxContext context, AircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService, ILoggingService logger) : base(logger)
         {
             _fuelerLinxAccoutSyncingService = fuelerLinxAccoutSyncingService;
             _context = context;

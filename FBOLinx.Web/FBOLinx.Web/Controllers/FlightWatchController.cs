@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,11 @@ namespace FBOLinx.Web.Controllers
     //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FlightWatchController : ControllerBase
+    public class FlightWatchController : FBOLinxControllerBase
     {
         private IFlightWatchService _FlightWatchService;
 
-        public FlightWatchController(IFlightWatchService flightWatchService)
+        public FlightWatchController(IFlightWatchService flightWatchService, ILoggingService logger) : base(logger)
         {
             _FlightWatchService = flightWatchService;
         }

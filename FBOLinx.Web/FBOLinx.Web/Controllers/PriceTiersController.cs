@@ -12,18 +12,19 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PriceTiersController : ControllerBase
+    public class PriceTiersController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
 
-        public PriceTiersController(FboLinxContext context, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService)
+        public PriceTiersController(FboLinxContext context, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, ILoggingService logger) : base(logger)
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _context = context;

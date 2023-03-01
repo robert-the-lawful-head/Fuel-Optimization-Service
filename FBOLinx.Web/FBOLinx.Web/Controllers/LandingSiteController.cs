@@ -6,18 +6,18 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.Web.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
-
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LandingSiteController : ControllerBase
+    public class LandingSiteController : FBOLinxControllerBase
     {
         private readonly IMailService _MailService;
         private readonly FboLinxContext _Context;
 
-        public LandingSiteController(FboLinxContext context, IMailService mailService)
+        public LandingSiteController(FboLinxContext context, IMailService mailService, ILoggingService logger) : base(logger)
         {
             _Context = context;
             _MailService = mailService;

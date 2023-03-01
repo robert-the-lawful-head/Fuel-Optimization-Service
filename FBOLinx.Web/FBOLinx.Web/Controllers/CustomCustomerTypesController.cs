@@ -11,16 +11,17 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomCustomerTypesController : ControllerBase
+    public class CustomCustomerTypesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomCustomerTypesController(FboLinxContext context)
+        public CustomCustomerTypesController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
