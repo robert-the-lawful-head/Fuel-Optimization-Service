@@ -12,6 +12,7 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
+import { FlightWatchMapService } from '../../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
@@ -45,7 +46,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public isShowTaxiwaysEnabled = true;
     public flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
 
-    constructor() {}
+    constructor(private flightWatchMapService: FlightWatchMapService) {}
 
     ngOnInit() {}
 
@@ -60,9 +61,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         data: FlightWatchModelResponse[]
     ): Dictionary<FlightWatchModelResponse> {
         let filtered = this.filterComercialFlights(data);
-        return keyBy(filtered, (fw) => {
-            return fw.tailNumber;
-        });
+        return this.flightWatchMapService.getDictionaryByTailNumberAsKey(filtered);
     }
     filterComercialFlights(
         flightWatch: FlightWatchModelResponse[]

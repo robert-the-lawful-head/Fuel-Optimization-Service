@@ -9,11 +9,10 @@ import { Subscription, timer } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
 import { SwimFilter } from 'src/app/models/filter';
-import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
-import { convertDMSToDEG } from 'src/utils/coordinates';
 import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
+import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 
 const BREADCRUMBS: any[] = [
@@ -73,7 +72,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     constructor(
         private flightWatchService: FlightWatchService,
-        private acukwikairportsService: AcukwikairportsService,
+        private flightWatchMapService: FlightWatchMapService,
         private sharedService: SharedService,
         public dialog: MatDialog,
         private cdref: ChangeDetectorRef)
@@ -87,13 +86,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        var selectedAirport = await this.acukwikairportsService.getAcukwikAirportByICAO(this.selectedICAO).toPromise();
-        if (!this.center) {
-            this.center = {
-                lat: convertDMSToDEG(selectedAirport.latitude),
-                lng: convertDMSToDEG(selectedAirport.longitude),
-            };
-        }
+        this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             this.loadAirportWatchData();
         });
