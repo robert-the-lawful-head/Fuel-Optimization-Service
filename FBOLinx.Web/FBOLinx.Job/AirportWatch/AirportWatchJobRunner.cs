@@ -2,7 +2,6 @@
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -126,7 +125,7 @@ namespace FBOLinx.Job.AirportWatch
             try
             {
                 var apiClient = new ApiClient(apiClientUrl.Trim());
-                apiClient.PostAsync("airportwatch/post-live-data-to-table-storage", airportWatchLiveData); //fire and forget
+
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
                 if (result.IsSuccessStatusCode)
                 {
