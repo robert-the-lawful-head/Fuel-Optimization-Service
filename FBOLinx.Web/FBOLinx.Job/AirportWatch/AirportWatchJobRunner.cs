@@ -81,19 +81,18 @@ namespace FBOLinx.Job.AirportWatch
             _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
 
-            if (data.Count > _NewRowThreshold)
-            {
-                logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold) } (records count{ string.Format("{0:N}", data.Count) }) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
-                _isPostingData = false;
-                return;
-                
-            }
-
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
             logger.Information($"csv records ({data.Count}) converted to DB model ({airportWatchData.Count}) !");
 
             if (airportWatchData.Count > 0)
             {
+                if (airportWatchData.Count > _NewRowThreshold)
+                {
+                    logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold)} (records count {string.Format("{0:N}", airportWatchData.Count)}) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
+                    _isPostingData = false;
+                    return;
+                }
+
                 List<Task> tasks = new List<Task>();
                 foreach (var apiClientUrl in _apiClientUrls)
                 {
