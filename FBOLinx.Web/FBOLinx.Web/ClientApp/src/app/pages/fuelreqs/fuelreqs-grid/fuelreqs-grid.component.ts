@@ -157,25 +157,35 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.paginator.pageIndex = 0;
         }
 
+        let savedColumns = this.getClientSavedColumns();
 
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            if (this.columns.length === 13) {
-                this.columns = initialColumns;
-            }
-            else {
-                this.columns = JSON.parse(
-                    localStorage.getItem(this.tableLocalStorageKey)
-                );
-            }
-
-        } else {
+        if(savedColumns?.length > 0)
+            this.columns = savedColumns;
+        else
             this.columns = initialColumns;
-        }
+
 
         this.allColumnsToDisplay = this.getVisibleColumns();
         this.dataColumnsToDisplay = this.getVisibleDataColumns();
 
         this.refreshTable();
+    }
+    private getClientSavedColumns(){
+        let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
+        let hasColumnUpdates :boolean = false;
+        if (localStorageColumns) {
+            let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
+            for(let col in storedCols){
+                let colName = storedCols[col].id;
+                if(initialColumns[colName] != undefined) continue;
+                hasColumnUpdates = true;
+                break;
+            }
+            if(!hasColumnUpdates){
+                return storedCols;
+            }
+        }
+        return null;
     }
     getVisibleDataColumns() {
         return this.columns
