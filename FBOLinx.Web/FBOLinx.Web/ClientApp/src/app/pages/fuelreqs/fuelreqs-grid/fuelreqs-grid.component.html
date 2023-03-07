@@ -103,10 +103,14 @@
                     Flight Dept.
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.customerName }}
-                    <ng-container *ngIf="fuelreq.customerOrderNotes">
-                        <mat-chip-option color="accent" selected>Order Note</mat-chip-option>
-                    </ng-container>
+                    <span  style="display: flex;">
+                        {{ fuelreq.customerName }} &nbsp;
+                        <ni-badge *ngIf="fuelreq.customerOrderNotes" [arrow]="'right'" [borderRadius]="false"
+                            [color]="'warning'"
+                            matTooltipPosition="after">
+                            Order Note
+                        </ni-badge>
+                    </span>
                 </td>
             </ng-container>
 
@@ -212,7 +216,6 @@
                                 <tr>
                                     <td>
                                         Customer Order Notes:
-                                        {{ element.customerOrderNotes }}
                                     </td>
                                     <td>ID: {{ element.oid }}</td>
                                     <td>
@@ -221,7 +224,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
+                                    <td rowspan="2">
+                                        {{ element.customerOrderNotes }}
                                     </td>
                                     <td>
                                         fuelerlinx ID:
@@ -239,7 +243,8 @@
                                         Transaction Status:
                                         {{ element.cancelled ? "Cancelled" : "Live" }}
                                     </td>
-                                    <td></td>
+                                    <td>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
