@@ -1,3 +1,4 @@
+import { trigger, state, style } from '@angular/animations';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
@@ -66,27 +67,7 @@ const initialColumns: ColumnType[] = [
     {
         id: 'email',
         name: 'Email',
-    },
-    {
-        id: 'oid',
-        name: 'ID',
-    },
-    {
-        id: 'sourceId',
-        name: 'Fuelerlinx ID',
-    },
-    {
-        id: 'cancelled',
-        name: 'Transaction Status',
-    },
-    {
-        id: 'dateCreated',
-        name: 'Created',
-    },
-    {
-        id: 'fuelOn',
-        name: 'Uplift Request',
-    },
+    }
 ];
 
 @Component({
@@ -94,6 +75,12 @@ const initialColumns: ColumnType[] = [
     selector: 'app-fuelreqs-grid',
     styleUrls: ['./fuelreqs-grid.component.scss'],
     templateUrl: './fuelreqs-grid.component.html',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
+            state('expanded', style({ height: '*' }))
+          ])
+    ]
 })
 export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -112,6 +99,13 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     dashboardSettings: any;
 
     csvFileOptions: csvFileOptions = { fileName: 'FuelOrders', sheetName: 'Fuel Orders' };
+
+    allColumnsToDisplay: string[];
+    dataColumnsToDisplay: string[];
+    columnsToDisplayDic = new Object();
+
+    columnsToDisplayWithExpand : any[];
+    expandedElement: any | null;
 
     constructor(
         private sharedService: SharedService,
@@ -133,6 +127,8 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
                 changes.fuelreqsData.previousValue
             )
         ) {
+            this.allColumnsToDisplay = this.getVisibleColumns();
+            this.dataColumnsToDisplay = this.getVisibleDataColumns();
             this.refreshTable();
         }
     }
@@ -175,17 +171,31 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
         } else {
             this.columns = initialColumns;
         }
+
+        this.allColumnsToDisplay = this.getVisibleColumns();
+        this.dataColumnsToDisplay = this.getVisibleDataColumns();
+
         this.refreshTable();
     }
-
-    getTableColumns() {
+    getVisibleDataColumns() {
         return this.columns
-            .filter((column) => !column.hidden)
+            .filter((column) => {
+                if(column.hidden) return false;
+                return true;
+            })
             .map((column) => {
                 if(column.id == 'customer')
                     return 'customerName'
                 return column.id
-            });
+            }) || [];
+    }
+    getVisibleColumns() {
+        var result = ['expand-icon'];
+        result.push(...
+            this.getVisibleDataColumns()
+        );
+
+        return result;
     }
 
     refreshTable() {
@@ -274,5 +284,8 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    getNoDataToDisplayString(){
+        return"No Fuel Request set on the selected range of dates";
     }
 }
