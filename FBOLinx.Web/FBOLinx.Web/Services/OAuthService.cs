@@ -15,6 +15,7 @@ using System.Security.Claims;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 
 namespace FBOLinx.Web.Services
 {
@@ -24,29 +25,15 @@ namespace FBOLinx.Web.Services
         private readonly JwtManager _jwtManager;
         private readonly IGroupService _groupService;
         private readonly IFboService _fboService;
+        private readonly IOAuthService _IOAuthService;
 
-        public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService)
+        public OAuthService(FboLinxContext context, JwtManager jwtManager, IGroupService groupService, IFboService fboService, IOAuthService oAuthService)
         {
             _context = context;
             _jwtManager = jwtManager;
             _groupService = groupService;
             _fboService = fboService;
-        }
-
-        public async Task<AccessTokens> GenerateAccessToken(User user, int expireMinutes = 60)
-        {
-            var accessToken = new AccessTokens
-            {
-                Oid = 0,
-                AccessToken = GetNewToken(),
-                CreatedAt = DateTime.UtcNow,
-                Expired = DateTime.UtcNow.AddMinutes(expireMinutes),
-                UserId = user.Oid
-            };
-            _context.AccessTokens.Add(accessToken);
-            await _context.SaveChangesAsync();
-
-            return accessToken;
+            _IOAuthService = oAuthService;
         }
 
         public async Task<AuthTokenResponse> GenerateAuthToken(string accessToken)
@@ -63,7 +50,7 @@ namespace FBOLinx.Web.Services
 
             var authToken =  _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
-            var refreshToken = await GenerateRefreshToken(user, token);
+            var refreshToken = await _IOAuthService.GenerateRefreshToken(user, token);
 
             var group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(user.GroupId.Value));
             var fbo = await _fboService.GetFbo(user.FboId);
@@ -93,11 +80,11 @@ namespace FBOLinx.Web.Services
 
             AccessTokens oldToken = await _context.AccessTokens.FindAsync(oldRefreshToken.AccessTokenId);
 
-            AccessTokens accessToken = await GenerateAccessToken(user, 10080);
+            AccessTokens accessToken = await _IOAuthService.GenerateAccessToken(user, 10080);
 
             string authToken = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 
-            RefreshTokens refreshToken = await GenerateRefreshToken(user, accessToken);
+            RefreshTokens refreshToken = await _IOAuthService.GenerateRefreshToken(user, accessToken);
 
             _context.AccessTokens.Remove(oldToken);
             _context.RefreshTokens.Remove(oldRefreshToken);
@@ -107,31 +94,6 @@ namespace FBOLinx.Web.Services
             var fbo = await _fboService.GetFbo(user.FboId);
 
             return new ExchangeRefreshTokenResponse(authToken, DateTime.UtcNow.AddMinutes(10080), refreshToken.Token, refreshToken.Expired, group.GroupName, user.GroupId.Value, user.Role, fbo.FboAirport.Icao, fbo.Fbo, true);
-        }
-
-        public async Task<RefreshTokens> GenerateRefreshToken(User user, AccessTokens token)
-        {
-            var refreshToken = new RefreshTokens
-            {
-                CreatedAt = DateTime.UtcNow,
-                Expired = DateTime.UtcNow.AddMonths(3),
-                Token = GetNewToken(),
-                UserId = user.Oid,
-                AccessTokenId = token.Oid
-            };
-            _context.RefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
-            return refreshToken;
-        }
-
-        public string GetNewToken(int size = 32)
-        {
-            var randomNumber = new byte[size];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
         }
     }
 }
