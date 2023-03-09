@@ -18,13 +18,15 @@ using FBOLinx.Web.DTO;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.DTO;
+using System.Net;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class GroupsController : ControllerBase
+    public class GroupsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fcontext;
@@ -34,7 +36,8 @@ namespace FBOLinx.Web.Controllers
         private readonly IGroupService _groupService;
         private readonly ICustomerService _customerService;
 
-        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, ICustomerService customerService, IGroupService groupService)
+
+        public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, ICustomerService customerService, IGroupService groupService, ILoggingService logger) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -62,110 +65,110 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group-fbo")]
         public async Task<IActionResult> GetGroupsAndFbos()
         {
-            await DisableExpiredAccounts();
+                await DisableExpiredAccounts();
 
-            var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
+                var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
 
-            var companyPricingLogs = await (from cpl in _context.CompanyPricingLog
-                                            join fa in _context.Fboairports on cpl.ICAO equals fa.Icao
-                                            join f in _context.Fbos on fa.Fboid equals f.Oid
-                                            where cpl.CreatedDate >= DateTime.UtcNow.AddDays(-30) && f.Active == true
-                                            select new
-                                            {
-                                                cpl.Oid,
-                                                FboId = f.Oid,
-                                                f.GroupId
-                                            }).ToListAsync();
+                var companyPricingLogs = await (from cpl in _context.CompanyPricingLog
+                                                join fa in _context.Fboairports on cpl.ICAO equals fa.Icao
+                                                join f in _context.Fbos on fa.Fboid equals f.Oid
+                                                where cpl.CreatedDate >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                                select new
+                                                {
+                                                    cpl.Oid,
+                                                    FboId = f.Oid,
+                                                    f.GroupId
+                                                }).ToListAsync();
 
-            var fuelReqs = await (from fr in _context.FuelReq
-                                  join f in _context.Fbos on fr.Fboid equals f.Oid
-                                  where (fr.Cancelled == null || fr.Cancelled == false) && fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
-                                  select new
+                var fuelReqs = await (from fr in _context.FuelReq
+                                      join f in _context.Fbos on fr.Fboid equals f.Oid
+                                      where (fr.Cancelled == null || fr.Cancelled == false) && fr.DateCreated >= DateTime.UtcNow.AddDays(-30) && f.Active == true
+                                      select new
+                                      {
+                                          fr.Oid,
+                                          fr.Fboid,
+                                          f.GroupId
+                                      }).ToListAsync();
+
+                var groups = await _context.Group
+                                .Where(x => !string.IsNullOrEmpty(x.GroupName))
+                                .Include(x => x.Users)
+                                .Include(x => x.Fbos)
+                                .OrderBy((x => x.GroupName))
+                                .Select(x => new GroupViewModel
+                                {
+                                    Oid = x.Oid,
+                                    GroupName = x.GroupName,
+                                    Username = x.Username,
+                                    Password = x.Password,
+                                    Isfbonetwork = x.Isfbonetwork,
+                                    Domain = x.Domain,
+                                    LoggedInHomePage = x.LoggedInHomePage,
+                                    Active = x.Active,
+                                    IsLegacyAccount = x.IsLegacyAccount,
+                                    Users = x.Users,
+                                    LastLogin = x.Fbos.Max(f => f.LastLogin),
+                                })
+                                .ToListAsync();
+
+                foreach (var group in groups)
+                {
+                    var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
+                    group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
+                    group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Oid);
+                    group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
+                }
+
+                var fboPrices = from f in _context.Fboprices
+                                where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
+                                group f by f.Fboid into g
+                                select new
+                                {
+                                    fboId = g.Key
+                                };
+
+                //FbosViewModel used to display FBO info in the grid
+                var fbos = await (from f in _context.Fbos
+                                  join fa in _context.Fboairports on f.Oid equals fa.Fboid into fas
+                                  from fairports in fas.DefaultIfEmpty()
+                                  join fp in fboPrices on f.Oid equals fp.fboId into fps
+                                  from fprices in fps.DefaultIfEmpty()
+                                  select new FbosGridViewModel
                                   {
-                                      fr.Oid,
-                                      fr.Fboid,
-                                      f.GroupId
+                                      Active = f.Active,
+                                      Fbo = f.Fbo,
+                                      Icao = fairports.Icao,
+                                      Oid = f.Oid,
+                                      GroupId = f.GroupId ?? 0,
+                                      PricingExpired = fprices.fboId == null,
+                                      LastLogin = f.LastLogin,
+                                      AccountExpired = f.Active != true
                                   }).ToListAsync();
 
-            var groups = await _context.Group
-                            .Where(x => !string.IsNullOrEmpty(x.GroupName))
-                            .Include(x => x.Users)
-                            .Include(x => x.Fbos)
-                            .OrderBy((x => x.GroupName))
-                            .Select(x => new GroupViewModel
-                            {
-                                Oid = x.Oid,
-                                GroupName = x.GroupName,
-                                Username = x.Username,
-                                Password = x.Password,
-                                Isfbonetwork = x.Isfbonetwork,
-                                Domain = x.Domain,
-                                LoggedInHomePage = x.LoggedInHomePage,
-                                Active = x.Active,
-                                IsLegacyAccount = x.IsLegacyAccount,
-                                Users = x.Users,
-                                LastLogin = x.Fbos.Max(f => f.LastLogin),
-                            })
-                            .ToListAsync();
+                var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
+                fbos.ForEach(f =>
+                {
+                    f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
+                    f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
+                    f.Quotes30Days = companyPricingLogs.Count(cpl => cpl.FboId == f.Oid);
+                    f.Orders30Days = fuelReqs.Count(fr => fr.Fboid == f.Oid);
+                });
 
-            foreach(var group in groups)
-            {
-                var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
-                group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
-                group.Quotes30Days = companyPricingLogs.Count(x => x.GroupId == group.Oid);
-                group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
+                groups.ForEach(g =>
+                {
+                    var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
+                    g.FboCount = groupFbos.Count();
+                    g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
+                    g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
+                    g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
+                });
+
+                return Ok(new GroupFboViewModel
+                {
+                    Groups = groups,
+                    Fbos = fbos
+                });
             }
-
-            var fboPrices = from f in _context.Fboprices
-                            where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Price != null && f.Expired != true
-                            group f by f.Fboid into g
-                            select new
-                            {
-                                fboId = g.Key
-                            };
-
-            //FbosViewModel used to display FBO info in the grid
-            var fbos = await (from f in _context.Fbos
-                              join fa in _context.Fboairports on f.Oid equals fa.Fboid into fas
-                              from fairports in fas.DefaultIfEmpty()
-                              join fp in fboPrices on f.Oid equals fp.fboId into fps
-                              from fprices in fps.DefaultIfEmpty()
-                              select new FbosGridViewModel
-                              {
-                                  Active = f.Active,
-                                  Fbo = f.Fbo,
-                                  Icao = fairports.Icao,
-                                  Oid = f.Oid,
-                                  GroupId = f.GroupId ?? 0,
-                                  PricingExpired = fprices.fboId == null,
-                                  LastLogin = f.LastLogin,
-                                  AccountExpired = f.Active != true
-                              }).ToListAsync();
-
-            var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
-            fbos.ForEach(f =>
-            {
-                f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
-                f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
-                f.Quotes30Days = companyPricingLogs.Count(cpl => cpl.FboId == f.Oid);
-                f.Orders30Days = fuelReqs.Count(fr => fr.Fboid == f.Oid);
-            });
-
-            groups.ForEach(g =>
-            {
-                var groupFbos = fbos.Where(f => f.GroupId == g.Oid).ToList();
-                g.FboCount = groupFbos.Count();
-                g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
-                g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
-                g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
-            });
-
-            return Ok(new GroupFboViewModel
-            {
-                Groups = groups,
-                Fbos = fbos
-            });
-        }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
@@ -195,6 +198,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch(Exception ex)
             {
+                HandleExceptionAsync(ex);
                 return Ok("Get error: " + ex.Message);
             }
             
@@ -294,6 +298,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
+                HandleExceptionAsync(ex);
                 return Ok(ex.Message);
             }
 
@@ -357,8 +362,9 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                HandleExceptionAsync(ex);
                 return Ok(new { Message = "" });
             }
         }
@@ -382,8 +388,9 @@ namespace FBOLinx.Web.Controllers
 
                 return Ok(new { Message = logoUrl });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                HandleExceptionAsync(ex);
                 return Ok(new { Message = "" });
             }
         }

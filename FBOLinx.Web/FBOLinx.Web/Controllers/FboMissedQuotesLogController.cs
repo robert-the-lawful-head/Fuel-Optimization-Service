@@ -4,17 +4,18 @@ using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FboMissedQuotesLogController : Controller
+    public class FboMissedQuotesLogController : FBOLinxControllerBase
     {
         private IMissedQuoteLogService _MissedQuoteService;
         private readonly IMissedOrderLogService _MissedOrderLogService;
 
-        public FboMissedQuotesLogController(IMissedOrderLogService missedOrderLogService, IMissedQuoteLogService missedQuoteLogService)
+        public FboMissedQuotesLogController(IMissedOrderLogService missedOrderLogService, IMissedQuoteLogService missedQuoteLogService, ILoggingService logger) : base(logger)
         {
             _MissedQuoteService = missedQuoteLogService;
             _MissedOrderLogService = missedOrderLogService;

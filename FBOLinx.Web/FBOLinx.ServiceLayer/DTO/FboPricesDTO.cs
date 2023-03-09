@@ -34,5 +34,6 @@ namespace FBOLinx.ServiceLayer.DTO
             }
         }
         public FboPricesSource Source { get; set; } = FboPricesSource.FboLinx;
+        public int? IntegrationPartnerId { get; set; }
     }
 }

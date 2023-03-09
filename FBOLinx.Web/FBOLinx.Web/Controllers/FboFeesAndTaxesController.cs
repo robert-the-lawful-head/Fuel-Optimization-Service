@@ -10,16 +10,17 @@ using FBOLinx.Web;
 using FBOLinx.Web.Data;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FboFeesAndTaxesController : ControllerBase
+    public class FboFeesAndTaxesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public FboFeesAndTaxesController(FboLinxContext context)
+        public FboFeesAndTaxesController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

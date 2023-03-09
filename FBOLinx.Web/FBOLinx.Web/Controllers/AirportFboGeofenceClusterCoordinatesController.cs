@@ -8,19 +8,19 @@ using FBOLinx.DB.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AirportFboGeofenceClusterCoordinatesController : ControllerBase
+    public class AirportFboGeofenceClusterCoordinatesController : FBOLinxControllerBase
     {
         private FboLinxContext _fboLinxContext;
         private readonly IHttpContextAccessor _HttpContextAccessor;
 
-        public AirportFboGeofenceClusterCoordinatesController(FboLinxContext fboLinxContext, IHttpContextAccessor httpContextAccessor)
+        public AirportFboGeofenceClusterCoordinatesController(FboLinxContext fboLinxContext, IHttpContextAccessor httpContextAccessor, ILoggingService logger) : base(logger)
         {
             _fboLinxContext = fboLinxContext;
             _HttpContextAccessor = httpContextAccessor;

@@ -10,17 +10,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersViewedByFbosController : ControllerBase
+    public class CustomersViewedByFbosController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomersViewedByFbosController(FboLinxContext context)
+        public CustomersViewedByFbosController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

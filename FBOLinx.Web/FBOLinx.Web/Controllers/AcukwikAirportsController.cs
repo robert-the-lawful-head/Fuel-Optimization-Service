@@ -14,19 +14,20 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AcukwikAirportsController : ControllerBase
+    public class AcukwikAirportsController : FBOLinxControllerBase
     {
         private readonly DegaContext _context;
         private IAirportService _AirportService;
 
 
-        public AcukwikAirportsController(DegaContext context, IAirportService airportService)
+        public AcukwikAirportsController(DegaContext context, IAirportService airportService, ILoggingService logger) : base(logger)
         {
             _AirportService = airportService;
             _context = context;

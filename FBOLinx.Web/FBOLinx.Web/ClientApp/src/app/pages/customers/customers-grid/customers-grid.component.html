@@ -61,7 +61,7 @@
                 </mat-form-field>
             </div>
             <div *ngIf="anySelected()" style="margin-top: 3px" class="col bulk-action-btn">
-                <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button size="small">
+                <button (click)="exportCustomersToExcel(true)" [view]="'accent'" ni-button size="small">
                     Export Selected
                 </button>
             </div>
