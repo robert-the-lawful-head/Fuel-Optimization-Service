@@ -61,6 +61,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerService _customerService;
         private readonly ICompanyPricingLogService _companyPricingLogService;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private IAPIKeyManager _apiKeyManager;
 
         public FbopricesController(
             FboLinxContext context,
@@ -79,7 +80,8 @@ namespace FBOLinx.Web.Controllers
             IPricingTemplateService pricingTemplateService,
             ICompanyPricingLogService companyPricingLogService,
             ServiceLayer.BusinessServices.User.IUserService userService,
-            ICustomerService customerService, ILoggingService logger) : base(logger)
+            ICustomerService customerService, ILoggingService logger, IAPIKeyManager apiKeyManager) : base(logger)
+            
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
@@ -96,6 +98,7 @@ namespace FBOLinx.Web.Controllers
             _companyPricingLogService = companyPricingLogService;
             _userService = userService;
             _customerService = customerService;
+            _apiKeyManager = apiKeyManager;
         }
 
         // GET: api/Fboprices/5
@@ -318,7 +321,9 @@ namespace FBOLinx.Web.Controllers
 
                 if (user.FboId > 0)
                 {
-                    var message = await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, request, claimedId);
+                    var apiKeyRecord = await _apiKeyManager.GetIntegrationPartner();
+
+                    var message = await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, request, claimedId, apiKeyRecord.Oid);
 
                     return Ok(new { message = message });
                     }
@@ -379,7 +384,9 @@ namespace FBOLinx.Web.Controllers
 
                 if (user.FboId > 0)
                 {
-                    await _fbopricesService.UpdateIntegrationStagePricing(integrationUpdatePricingLog, request, claimedId);
+                    var apiKeyRecord = await _apiKeyManager.GetIntegrationPartner();
+
+                    await _fbopricesService.UpdateIntegrationStagePricing(integrationUpdatePricingLog, request, claimedId, apiKeyRecord.Oid);
                     return Ok(new { message = "Success" });
                 }
                 else

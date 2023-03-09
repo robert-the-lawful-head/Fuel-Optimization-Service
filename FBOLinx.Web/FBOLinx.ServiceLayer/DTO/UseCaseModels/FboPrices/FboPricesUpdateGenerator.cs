@@ -20,5 +20,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FboPrices
         public int Source { get; set; }
         public bool IsStaged { get; set; } = false;
         public bool IsLive { get; set; } = false;
+        public string IntegrationPartner { get; set; }
     }
 }
