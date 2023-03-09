@@ -20,15 +20,15 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class SWIMController : ControllerBase
+    public class SWIMController : FBOLinxControllerBase
     {
         private readonly ISWIMService _SWIMService;
         private readonly ILoggingService _LoggingService;
 
-        public SWIMController(ISWIMService swimService, ILoggingService loggingService)
+        public SWIMController(ISWIMService swimService, ILoggingService logger) : base(logger)
         {
             _SWIMService = swimService;
-            _LoggingService = loggingService;
+            _LoggingService = logger;
         }
         
         [HttpGet("departures/{icao}/group/{groupId}/fbo/{fboId}")]

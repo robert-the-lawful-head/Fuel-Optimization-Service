@@ -2,7 +2,6 @@
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -82,19 +81,18 @@ namespace FBOLinx.Job.AirportWatch
             _isPostingData = true;
             List<AirportWatchDataType> data = GetCSVRecords(e.FullPath, e.Name);
 
-            if (data.Count > _NewRowThreshold)
-            {
-                logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold) } (records count{ string.Format("{0:N}", data.Count) }) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
-                _isPostingData = false;
-                return;
-                
-            }
-
             List<AirportWatchLiveData> airportWatchData = ConvertToDBModel(data);
             logger.Information($"csv records ({data.Count}) converted to DB model ({airportWatchData.Count}) !");
 
             if (airportWatchData.Count > 0)
             {
+                if (airportWatchData.Count > _NewRowThreshold)
+                {
+                    logger.Information($"Amount of records to POST exceeded {string.Format("{0:N}", _NewRowThreshold)} (records count {string.Format("{0:N}", airportWatchData.Count)}) ( data count{string.Format("{0:N}", data.Count)}) ( last watch file record index{string.Format("{0:N}", _lastWatchedFileRecordIndex)}).  Jumping to end-of-file for next POST and skipping the current one.");
+                    _isPostingData = false;
+                    return;
+                }
+
                 List<Task> tasks = new List<Task>();
                 foreach (var apiClientUrl in _apiClientUrls)
                 {
@@ -126,7 +124,7 @@ namespace FBOLinx.Job.AirportWatch
             try
             {
                 var apiClient = new ApiClient(apiClientUrl.Trim());
-                apiClient.PostAsync("airportwatch/post-live-data-to-table-storage", airportWatchLiveData); //fire and forget
+
                 var result = await apiClient.PostAsync("airportwatch/list", airportWatchLiveData);
                 if (result.IsSuccessStatusCode)
                 {
@@ -308,11 +306,11 @@ namespace FBOLinx.Job.AirportWatch
                 airportWatchData.Add(airportWatchRow);
             }
 
-            return airportWatchData;
-                //.OrderByDescending(row => row.AircraftPositionDateTimeUtc)
-                //.GroupBy(row => new { row.AircraftHexCode, row.BoxName })
-                //.Select(grouped => grouped.First())
-                //.ToList();
+            return airportWatchData
+                .OrderByDescending(row => row.AircraftPositionDateTimeUtc)
+                .GroupBy(row => new { row.AircraftHexCode, row.BoxName })
+                .Select(grouped => grouped.First())
+                .ToList();
         }
     }
 }

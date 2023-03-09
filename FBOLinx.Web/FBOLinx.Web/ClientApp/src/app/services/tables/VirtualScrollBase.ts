@@ -71,9 +71,15 @@ export abstract class VirtualScrollBase {
         //     data.selectAll = false;
         // });
     }
-    exportCsvFile(columns: ColumnType[],fileName: string, sheetName: string, computePropertyFnc: any) {
-        let cols = columns.filter(col => !col.hidden || col.id == 'selectAll');
-        let exportData = this.dataSource.filteredData.map((item) => {
+    exportCsvFile(columns: ColumnType[],fileName: string, sheetName: string, computePropertyFnc: any,exportSelectedData: boolean = false) {
+
+        let cols = columns.filter(col => (col.id == 'selectAll')? false : !col.hidden);
+
+        let dataToExport = (exportSelectedData) ?
+        this.dataSource.filteredData.filter(x => x.selectAll) :
+        this.dataSource.filteredData;
+
+        let exportData = dataToExport.map((item) => {
             let row = {};
             cols.forEach( col => {
                 let calculatedText =  computePropertyFnc(item, col.id);
@@ -81,7 +87,6 @@ export abstract class VirtualScrollBase {
             });
             return row;
         });
-        console.log("🚀 ~ file: VirtualScrollBase.ts:84 ~ VirtualScrollBase ~ exportData ~ this.dataSource.filteredData", this.dataSource.filteredData)
         const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
         const wb: XLSX.WorkBook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(

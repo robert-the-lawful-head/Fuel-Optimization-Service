@@ -27,6 +27,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.Logging;
 using NuGet.Packaging;
 using Microsoft.Extensions.Azure;
 using System.Text.RegularExpressions;
@@ -36,7 +37,7 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerInfoByGroupController : ControllerBase
+    public class CustomerInfoByGroupController : FBOLinxControllerBase
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly FboLinxContext _context;
@@ -53,7 +54,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
         private ICustomerInfoByGroupService _customerInfoByGroupService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService, ILoggingService logger) : base(logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;

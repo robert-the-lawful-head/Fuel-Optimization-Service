@@ -11,19 +11,19 @@ using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
 using FBOLinx.Web.Models.Requests;
 using System;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmailContentsController : ControllerBase
+    public class EmailContentsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private IHttpContextAccessor _HttpContextAccessor;
         private EmailContentService _emailContentService;
 
-        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            EmailContentService emailContentService)
+        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, EmailContentService emailContentService, ILoggingService logger) : base(logger)
         {
             _emailContentService = emailContentService;
             _HttpContextAccessor = httpContextAccessor;

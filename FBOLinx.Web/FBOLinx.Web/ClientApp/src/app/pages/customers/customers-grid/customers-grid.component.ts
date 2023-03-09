@@ -275,7 +275,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         });
     }
 
-    exportCustomersToExcel() {
+    exportCustomersToExcel(exportSelectedCustomers: boolean = false) {
         let computePropertyFnc = (item: any[], id: string): any => {
             if(id == "allInPrice")
                 return this.getAllIPriceDisplayString(item);
@@ -291,7 +291,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             else
                 return null;
         }
-        this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
+        this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc,exportSelectedCustomers);
     }
     getNeedsAttentionDisplayString(customer: any): any{
         let message = '';

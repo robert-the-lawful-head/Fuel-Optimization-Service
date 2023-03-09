@@ -161,7 +161,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var customerAircraftAssignments = await GetCustomerAircrafts(groupId, fboId);
 
             //Separate inner queries first for FBO Prices and Margin Tiers
-            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
+            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && (f.Expired == null || f.Expired != true)).ToListAsync();
             foreach (var p in oldPrices)
             {
                 p.Expired = true;

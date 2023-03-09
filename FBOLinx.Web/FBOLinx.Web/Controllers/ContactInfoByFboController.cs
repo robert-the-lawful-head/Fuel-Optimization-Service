@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +15,11 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    public class ContactInfoByFboController : ControllerBase
+    public class ContactInfoByFboController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public ContactInfoByFboController(FboLinxContext context)
+        public ContactInfoByFboController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

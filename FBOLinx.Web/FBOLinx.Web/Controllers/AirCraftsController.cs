@@ -14,20 +14,21 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AirCraftsController : ControllerBase
+    public class AirCraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly AircraftService _aircraftService;
 
        
        
-        public AirCraftsController(FboLinxContext context, AircraftService aircraftService)
+        public AirCraftsController(FboLinxContext context, AircraftService aircraftService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _aircraftService = aircraftService;
