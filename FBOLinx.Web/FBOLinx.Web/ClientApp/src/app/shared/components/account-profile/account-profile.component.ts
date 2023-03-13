@@ -64,6 +64,7 @@ export class AccountProfileComponent {
     systemContactsForm: FormGroup;
     emailDistributionForm: FormGroup;
     productsForm: FormGroup;
+    companyForm: FormGroup;
     theFile: any = null;
     logoUrl: string;
     isUploadingLogo: boolean;
@@ -104,6 +105,12 @@ export class AccountProfileComponent {
             enableJetA: new FormControl(),
             enableSaf: new FormControl()
         });
+
+        this.companyForm = new FormGroup({
+            orderNotifications: new FormControl(),
+        });
+
+
         this.loadFboInfo();
         this.loadFboPreferences();
         this.loadAvailableRoles();
@@ -206,6 +213,16 @@ export class AccountProfileComponent {
             this.fboPricesService.removePricing(this.sharedService.currentUser.fboId, product).subscribe(() => {
                 this.productChanged.emit(this.fboPreferencesData);
             });
+        });
+    }
+
+    onOrderNotificationsChange() {
+        this.fboPreferencesData.OrderNotificationsEnabled = !this.companyForm.value.orderNotifications;
+
+        this.fboPreferencesService.update(this.fboPreferencesData).subscribe((data: any) => {
+            console.log(data);
+        }, (error: any) => {
+            console.log(error);
         });
     }
 
@@ -323,6 +340,9 @@ export class AccountProfileComponent {
                 this.productsForm.setValue({
                     enableJetA: this.fboPreferencesData.enableJetA,
                     enableSaf: this.fboPreferencesData.enableSaf
+                });
+                this.companyForm.setValue({
+                    orderNotifications: this.fboPreferencesData.orderNotificationsEnabled
                 });
             });
     }
