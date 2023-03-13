@@ -348,6 +348,8 @@ namespace FBOLinx.Web.Controllers
                 fuelReqs[0].Email = request.Email;
                 fuelReqs[0].PhoneNumber = request.PhoneNumber;
                 fuelReqs[0].FuelOn = request.FuelOn;
+                fuelReqs[0].CustomerNotes = request.CustomerNotes;
+                fuelReqs[0].PaymentMethod = request.PaymentMethod;
             }
             await _context.SaveChangesAsync();
 
