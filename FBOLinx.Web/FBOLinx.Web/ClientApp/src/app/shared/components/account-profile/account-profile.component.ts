@@ -342,7 +342,7 @@ export class AccountProfileComponent {
                     enableSaf: this.fboPreferencesData.enableSaf
                 });
                 this.companyForm.setValue({
-                    orderNotifications: this.fboPreferencesData.orderNotificationsEnabled
+                    orderNotifications: this.fboPreferencesData.orderNotificationsEnabled ?? true
                 });
             });
     }
