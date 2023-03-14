@@ -38,5 +38,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 
         [JsonProperty("customOrderNotes")]
         public string customOrderNotes { get; set; }
+        [JsonProperty("buttonUrl")]
+        public string buttonUrl { get; set; }
+        [JsonProperty("paymentMethod")]
+        public string paymentMethod { get; set; }
     }
 }

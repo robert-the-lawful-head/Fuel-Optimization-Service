@@ -40,7 +40,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboPricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private readonly IAuthService _AuthService;
-        private readonly HttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FbosController(
             FboLinxContext context,
@@ -51,7 +51,7 @@ namespace FBOLinx.Web.Controllers
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
-            IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, HttpContextAccessor httpContextAccessor) : base(logger)
+            IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IHttpContextAccessor httpContextAccessor) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;

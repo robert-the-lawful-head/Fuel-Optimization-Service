@@ -74,7 +74,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                 importedFboEmail.Email = fbo.FuelDeskEmail;
             }
 
-            var user = await _context.User.Where(x => x.FboId == fbo.Oid && x.Role == Core.Enums.UserRoles.NonRev).FirstOrDefaultAsync();
+            var user = await _context.User.Where(x => x.FboId == fbo.Oid && (x.Role == Core.Enums.UserRoles.Primary || x.Role == Core.Enums.UserRoles.NonRev)).FirstOrDefaultAsync();
 
             //Return URL with authentication for 7 days
             AccessTokens accessToken = await _OAuthService.GenerateAccessToken(user, 10080);

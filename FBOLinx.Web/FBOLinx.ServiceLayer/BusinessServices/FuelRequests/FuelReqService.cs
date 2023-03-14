@@ -66,7 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IAirportTimeService _AirportTimeService;
         private IMailService _MailService;
         private readonly IAuthService _AuthService;
-        private readonly HttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context, DegaContext degaContext,
             IFboEntityService fboEntityService,
@@ -75,7 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IAirportTimeService airportTimeService,
             IMailService mailService,
             IAuthService authService,
-            HttpContextAccessor httpContextAccessor) : base(fuelReqEntityService)
+            IHttpContextAccessor httpContextAccessor) : base(fuelReqEntityService)
         {
             _AirportTimeService = airportTimeService;
             _MemoryCache = memoryCache;
@@ -289,14 +289,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
             {
-                var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
+                var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId;
                 var fboEmails = authentication.FboEmails;
 
                 await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, fuelReq);
             }
         }
-
-        
 
         private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, FuelReqRequest fuelReq)
         {
@@ -322,7 +320,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     departureDate = fuelReq.Etd.ToString(),
                     fuelVolume = fuelReq.FuelEstWeight.ToString(),
                     fuelVendor = fuelReq.FuelVendor,
-                    customOrderNotes = fuelReq.CustomerNotes
+                    customOrderNotes = fuelReq.CustomerNotes,
+                    buttonUrl = link,
+                    paymentMethod = fuelReq.PaymentMethod
                 };
                 mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicTemplateData;
 
