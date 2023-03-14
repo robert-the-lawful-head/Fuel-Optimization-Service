@@ -17,6 +17,8 @@ using Fuelerlinx.SDK;
 using Microsoft.Extensions.Caching.Memory;
 using Azure.Core;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
+using FBOLinx.Core.Utilities.DatesAndTimes;
+using Microsoft.Extensions.Logging;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -55,14 +57,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IMemoryCache _MemoryCache;
         private IAirportService _AirportService;
         private IAirportTimeService _AirportTimeService;
+        private readonly AcukwikAirportEntityService _AcukwikAirportEntityService;
+        private readonly ILogger _logger;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IMemoryCache memoryCache,
-            IAirportTimeService airportTimeService
+            IMemoryCache memoryCache, 
+            IAirportTimeService airportTimeService,
+            AcukwikAirportEntityService acukwikAirportEntityService,
+            ILogger<FuelReqService> logger
             ) : base(fuelReqEntityService)
         {
+            _logger = logger;
+            _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
             _MemoryCache = memoryCache;
             _CustomerInfoByGroupEntityService = customerInfoByGroupEntityService;
@@ -139,21 +147,45 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             List<FuelReqDto> fuelReqsFromFuelerLinx = new List<FuelReqDto>();
 
 
-            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault());
+
+                fuelRequest.Eta = await GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
+                fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
+
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
 
             var directOrders = await GetDirectOrdersFromDatabase(fboId, startDateTime, endDateTime, customers);
-            
+
+            foreach(FuelReqDto order in directOrders)
+            {
+                AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == order.Icao).FirstOrDefaultAsync();
+                order.Eta = await GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport.Oid);
+                order.DateCreated = await GetAirportLocalTime(order.DateCreated.GetValueOrDefault(), airport.Oid);
+            }
 
             result.AddRange(fuelReqsFromFuelerLinx);
             result.AddRange(directOrders);
 
             return result;
         }
+        private async Task<DateTime?> GetAirportLocalTime(DateTime date, int airportId)
+        {
+            try
+            {
+                AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(airportId);
 
+                return DateTimeHelper.GetLocalTime(
+                    date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error getting airport local time for airport id {airportId} returning default UTC default dateTime", ex.InnerException);
+                return date;
+            }   
+        }
         private async Task<List<FuelReqDto>> GetUpcomingOrdersFromCache(int groupId, int fboId)
         {
             try
