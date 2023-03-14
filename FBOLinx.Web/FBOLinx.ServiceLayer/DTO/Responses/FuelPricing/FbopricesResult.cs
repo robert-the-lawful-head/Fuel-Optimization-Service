@@ -31,5 +31,7 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
             }
         }
         public FboPricesSource Source { get; set; }
+        public int? IntegrationPartnerId { get; set; }
+        public string IntegrationPartner { get; set; }
     }
 }
