@@ -81,7 +81,7 @@ namespace FBOLinx.Service.Mapping.Dto
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
         {
-            Oid = 0;
+            Oid = item.Id;
             ActualPpg = 0;
             ActualVolume = item.InvoicedVolume.Amount;
             Archived = item.Archived;
