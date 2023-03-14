@@ -168,7 +168,7 @@ namespace FBOLinx.Web.Controllers
         
         // POST: api/FuelReqs/group/3/fbo/5/daterange
         [HttpPost("group/{groupId}/fbo/{fboId}/daterange")]
-        public async Task<IActionResult> GetFuelReqsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
+        public async Task<ActionResult<List<FuelReqDto>>> GetFuelReqsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsByFboAndDateRangeRequest request)
         {
             if (!ModelState.IsValid)
             {
