@@ -30,6 +30,7 @@ using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
+using FBOLinx.DB.Specifications.Fbo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -47,9 +48,9 @@ namespace FBOLinx.Web.Controllers
         private readonly AirportWatchService _airportWatchService;
         private readonly IFuelReqService _fuelReqService;
         private readonly IDemoFlightWatch _demoFlightWatch;
+        private readonly IFboPreferencesService _FboPreferencesService;
 
-
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch, ILoggingService logger) : base(logger)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch, ILoggingService logger, IFboPreferencesService fboPreferencesService) : base(logger)
         {
             _fuelerLinxService = fuelerLinxService;
             _context = context;
@@ -60,6 +61,7 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _fuelReqService = fuelReqService;
             _demoFlightWatch = demoFlightWatch;
+            _FboPreferencesService = fboPreferencesService;
         }
 
         // GET: api/FuelReqs/5
@@ -355,7 +357,9 @@ namespace FBOLinx.Web.Controllers
                 await _context.SaveChangesAsync();
 
                 // CODE TO SEND EMAIL IF SETTING IS ON
-                await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+                if (fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value)
+                    await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
 
                 return Ok(fuelReqs);
             }
@@ -363,7 +367,12 @@ namespace FBOLinx.Web.Controllers
             {
                 // CODE TO SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
                 var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-                if (fbo == null)
+
+                var fboPreferences = new FboPreferencesDTO();
+                if (fbo != null && fbo.Oid > 0)
+                    fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+
+                if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value))
                     await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
 
                 return Ok();
