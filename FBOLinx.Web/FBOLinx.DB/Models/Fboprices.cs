@@ -44,5 +44,6 @@ namespace FBOLinx.DB.Models
         //public Fbos Fbo { get; set; }
 
         public FboPricesSource Source { get; set; } = FboPricesSource.FboLinx;
+        public int? IntegrationPartnerId { get; set; }
     }
 }
