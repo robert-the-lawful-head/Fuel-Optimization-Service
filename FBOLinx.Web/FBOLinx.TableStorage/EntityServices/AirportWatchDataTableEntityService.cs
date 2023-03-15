@@ -51,6 +51,17 @@ namespace FBOLinx.TableStorage.EntityServices
             return result.OrderByDescending(x => x.BoxTransmissionDateTimeUtc).ToList();
         }
 
+        public async Task<IEnumerable<AirportWatchDataTableEntity>> GetAirportWatchDataRecords(DateTime day)
+        {
+            string partitionKey = CreatePartitionKeyFunc(day);
+            string filter = GetTableQueryFilterForPartitionKeys(new List<string>(){ partitionKey });
+            IEnumerable<AirportWatchDataTableEntity> result = await GetAll(filter);
+
+            await RestoreReferencedData(result);
+
+            return result;
+        }
+
         public override async Task BatchInsert(IList<AirportWatchDataTableEntity> entities)
         {
             foreach (AirportWatchDataTableEntity entity in entities)

@@ -16,6 +16,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
@@ -36,6 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
 
         Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate);
+        Task<AirportWatchIntegrityCheckResult> CheckAirportWatchDataIntegrity(DateTime day);
         Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data);
     }
 
@@ -144,7 +146,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             }
             return result;
         }
-        
+
+        public async Task<AirportWatchIntegrityCheckResult> CheckAirportWatchDataIntegrity(DateTime day)
+        {
+            var airportWatchDataTableEntities = await _airportWatchDataTableEntityService.GetAirportWatchDataRecords(day);
+            List<AirportWatchLiveDataDto> airportWatchLiveDataRecords = new List<AirportWatchLiveDataDto>();
+            foreach (AirportWatchDataTableEntity airportWatchDataTableEntity in airportWatchDataTableEntities)
+            {
+                airportWatchLiveDataRecords.AddRange(ConvertToDTO(airportWatchDataTableEntity.DataBlob.Split(Environment.NewLine).ToList()));
+            }
+
+            AirportWatchIntegrityCheckResult result = new AirportWatchIntegrityCheckResult();
+            var airportWatchRecordGroupings = airportWatchLiveDataRecords.GroupBy(x => new { x.BoxTransmissionDateTimeUtc, x.AircraftHexCode, x.BoxName });
+            result.DistinctRecordsCount = airportWatchRecordGroupings.Count();
+            result.DuplicateRecordsCount = airportWatchRecordGroupings.Count(x => x.Count() > 1);
+            return result;
+        }
+
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
         {
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();

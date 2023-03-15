@@ -15,6 +15,7 @@ using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.Web.Auth;
@@ -96,6 +97,21 @@ namespace FBOLinx.Web.Controllers
             {
                 List<AirportWatchLiveDataDto> result = await _airportWatchLiveDataService.GetAirportWatchLiveDataRecordsFromTableStorage(boxNames, startDate, endDate);
                 return Ok(new AirportWatchLiveDataResponse(result));
+            }
+            catch (Exception exception)
+            {
+                return Ok(new AirportWatchLiveDataResponse(false, exception.Message));
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("check-airport-watch-data-integrity/{day}")]
+        public async Task<ActionResult<AirportWatchIntegrityCheckResult>> CheckAirportWatchDataIntegrity([FromRoute] DateTime day)
+        {
+            try
+            {
+                AirportWatchIntegrityCheckResult result = await _airportWatchLiveDataService.CheckAirportWatchDataIntegrity(day);
+                return Ok(result);
             }
             catch (Exception exception)
             {
