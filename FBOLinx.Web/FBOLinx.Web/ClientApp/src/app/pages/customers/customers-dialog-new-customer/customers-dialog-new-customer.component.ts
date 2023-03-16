@@ -267,6 +267,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     }
 
     async submit() {
+        debugger;
         this.submitting = true;
         const customer = await this.customersService
             .add(this.companyFormGroup.value)
@@ -310,9 +311,9 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                     this.sharedService.currentUser.fboId,
                     customer.oid,
                     this.aircraftFormArray.value.map((v) => ({
-                        aircraftId: v.aircraft.aircraftId,
+                        aircraftId: v.aircraft?.aircraftId ?? 0,
                         pricingTemplateId: v.aircraftPricingTemplate,
-                        size: v.aircraft.size,
+                        size: v.aircraft?.size ?? 0,
                         tailNumber: v.tailNumber,
                     }))
                 )
