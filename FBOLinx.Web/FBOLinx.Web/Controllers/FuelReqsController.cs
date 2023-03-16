@@ -26,7 +26,6 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO;
-using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 using FBOLinx.ServiceLayer.Logging;
@@ -219,7 +218,7 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpPost("fbo/{fboId}/create")]
-        public async Task<IActionResult> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
+        public async Task<ActionResult<List<FuelReq>>> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -272,7 +271,9 @@ namespace FBOLinx.Web.Controllers
                                      request.Email,
                                      request.PhoneNumber,
                                      PricingTemplate = pt,
-                                     request.FuelOn
+                                     request.FuelOn,
+                                     request.CustomerNotes,
+                                     request.PaymentMethod
                                  })
                                 .Distinct()
                                 .ToListAsync();
@@ -295,6 +296,8 @@ namespace FBOLinx.Web.Controllers
                     Email = fr.Email,
                     PhoneNumber = fr.PhoneNumber,
                     FuelOn = fr.FuelOn,
+                    CustomerNotes = fr.CustomerNotes,
+                    PaymentMethod = fr.PaymentMethod,
                 }).ToList();
 
                 await _context.FuelReq.AddRangeAsync(fuelReqs);
@@ -345,6 +348,8 @@ namespace FBOLinx.Web.Controllers
                 fuelReqs[0].Email = request.Email;
                 fuelReqs[0].PhoneNumber = request.PhoneNumber;
                 fuelReqs[0].FuelOn = request.FuelOn;
+                fuelReqs[0].CustomerNotes = request.CustomerNotes;
+                fuelReqs[0].PaymentMethod = request.PaymentMethod;
             }
             await _context.SaveChangesAsync();
 
