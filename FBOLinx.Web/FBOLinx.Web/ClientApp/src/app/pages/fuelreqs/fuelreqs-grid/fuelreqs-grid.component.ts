@@ -105,7 +105,7 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     columnsToDisplayDic = new Object();
 
     columnsToDisplayWithExpand : any[];
-    expandedElement: any | null;
+    expandedElement: any[] = [];
 
     constructor(
         private sharedService: SharedService,
@@ -297,5 +297,18 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     }
     getNoDataToDisplayString(){
         return"No Fuel Request set on the selected range of dates";
+    }
+    isRowExpanded(elementId: any){
+        return this.expandedElement.includes(elementId);
+    }
+    toogleExpandedRows(elementId: any){
+        if(this.isRowExpanded(elementId)){
+            this.expandedElement = this.expandedElement.filter(function(item) {
+                return item !== elementId
+            })
+        }else{
+            this.expandedElement.push(elementId);
+        }
+
     }
 }
