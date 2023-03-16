@@ -267,7 +267,6 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
     }
 
     async submit() {
-        debugger;
         this.submitting = true;
         const customer = await this.customersService
             .add(this.companyFormGroup.value)
