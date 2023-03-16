@@ -173,18 +173,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         }
         private async Task<DateTime?> GetAirportLocalTime(DateTime date, int airportId)
         {
-            try
-            {
                 AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(airportId);
-
+                if (airport == null)
+                    return date;
                 return DateTimeHelper.GetLocalTime(
-                    date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error getting airport local time for airport id {airportId} returning default UTC default dateTime", ex.InnerException);
-                return date;
-            }   
+                    date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");  
         }
         private async Task<List<FuelReqDto>> GetUpcomingOrdersFromCache(int groupId, int fboId)
         {
