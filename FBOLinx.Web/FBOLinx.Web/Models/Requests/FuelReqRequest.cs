@@ -21,5 +21,8 @@ namespace FBOLinx.Web.Models.Requests
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string FuelOn { get; set; }
+        public string CustomerNotes { get; set; }
+        public string PaymentMethod { get; set; }
+
     }
 }
