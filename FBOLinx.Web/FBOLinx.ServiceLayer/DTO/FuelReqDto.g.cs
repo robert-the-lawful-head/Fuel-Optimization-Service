@@ -33,7 +33,8 @@ namespace FBOLinx.Service.Mapping.Dto
         public string PhoneNumber { get; set; }
         public string FuelOn { get; set; } = "Departure";
         public string CustomerName { get; set; }
-
+        public string CustomerOrderNotes { get; set; }
+        public string PaymentMethod { get; set; }
         public string TailNumber
         {
             get
@@ -80,7 +81,7 @@ namespace FBOLinx.Service.Mapping.Dto
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
         {
-            Oid = 0;
+            Oid = item.Id;
             ActualPpg = 0;
             ActualVolume = item.InvoicedVolume.Amount;
             Archived = item.Archived;
