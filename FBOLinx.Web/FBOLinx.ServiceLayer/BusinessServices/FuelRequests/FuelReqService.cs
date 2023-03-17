@@ -26,6 +26,7 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -71,6 +72,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IMailService _MailService;
         private readonly IAuthService _AuthService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFboService _fboService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context, DegaContext degaContext,
             IFboEntityService fboEntityService,
@@ -81,8 +83,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ILogger<FuelReqService> logger,
             IMailService mailService,
             IAuthService authService,
+            IFboService fboService,
             IHttpContextAccessor httpContextAccessor) : base(fuelReqEntityService)
         {
+            _fboService = fboService;
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
@@ -172,6 +176,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 fuelRequest.Eta = await GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
                 fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
 
+                var fbo = (await _fboService.GetFbosByIcaos(transaction.Icao)).FirstOrDefault();
+                fuelRequest.TimeZone = await _fboService.GetAirportTimeZoneByFboId(fbo.Oid);
+
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
 
@@ -182,6 +189,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == order.Icao).FirstOrDefaultAsync();
                 order.Eta = await GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport.Oid);
                 order.DateCreated = await GetAirportLocalTime(order.DateCreated.GetValueOrDefault(), airport.Oid);
+
+                order.TimeZone = await _fboService.GetAirportTimeZoneByFboId((int)order.Fboid);
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);

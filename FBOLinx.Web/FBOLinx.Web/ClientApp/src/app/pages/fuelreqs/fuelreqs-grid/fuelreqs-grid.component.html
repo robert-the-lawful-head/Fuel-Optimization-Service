@@ -219,7 +219,7 @@
                                     <td>ID: {{ element.oid }}</td>
                                     <td>
                                         Created:
-                                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }}
+                                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -232,7 +232,7 @@
                                     </td>
                                     <td>
                                         Uplift Request:
-                                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }}
+                                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
                                     </td>
                                 </tr>
                                 <tr>
