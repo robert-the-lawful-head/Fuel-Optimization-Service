@@ -11,6 +11,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -21,9 +22,10 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly IUserService _userService;
         private readonly FboLinxContext _context;
-        private readonly OAuthService _oAuthService;
+        private readonly Services.OAuthService _oAuthService;
+        private readonly IOAuthService _iOAuthService;
 
-        public OAuthController(IUserService userService, OAuthService oAuthService, FboLinxContext context, ILoggingService logger) : base(logger)
+        public OAuthController(IUserService userService, Services.OAuthService oAuthService, FboLinxContext context, ILoggingService logger, IOAuthService iOAuthService) : base(logger)
         {
             _userService = userService;
             _context = context;
@@ -50,7 +52,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 10080);
+            AccessTokens accessToken = await _iOAuthService.GenerateAccessToken(user, 10080);
 
             return Ok(accessToken);
         }
