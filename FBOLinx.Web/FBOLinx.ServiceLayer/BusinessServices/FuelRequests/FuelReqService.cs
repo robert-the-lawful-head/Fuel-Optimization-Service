@@ -19,6 +19,13 @@ using Azure.Core;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using Microsoft.Extensions.Logging;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using System.Net.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using System.Web;
+using Microsoft.AspNetCore.Http;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -40,6 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime);
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
+        Task SendFuelOrderNotificationEmail(int handlerId, FuelReqRequest fuelReq);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -52,6 +60,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private FuelReqEntityService _FuelReqEntityService;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly FboLinxContext _context;
+        private readonly DegaContext _degaContext;
         private IFboEntityService _FboEntityService;
         private ICustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
@@ -59,15 +68,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IAirportTimeService _AirportTimeService;
         private readonly AcukwikAirportEntityService _AcukwikAirportEntityService;
         private readonly ILogger _logger;
+        private IMailService _MailService;
+        private readonly IAuthService _AuthService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
+        public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context, DegaContext degaContext,
             IFboEntityService fboEntityService,
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IMemoryCache memoryCache, 
             IAirportTimeService airportTimeService,
             AcukwikAirportEntityService acukwikAirportEntityService,
-            ILogger<FuelReqService> logger
-            ) : base(fuelReqEntityService)
+            ILogger<FuelReqService> logger,
+            IMailService mailService,
+            IAuthService authService,
+            IHttpContextAccessor httpContextAccessor) : base(fuelReqEntityService)
         {
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
@@ -78,6 +92,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _FuelReqEntityService = fuelReqEntityService;
             _fuelerLinxService = fuelerLinxService;
             _context = context;
+            _degaContext = degaContext;
+            _MailService = mailService;
+            _AuthService = authService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -288,6 +306,58 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 });
             }
             return chartData;
+        }
+
+        public async Task SendFuelOrderNotificationEmail(int handlerId, FuelReqRequest fuelReq)
+        {
+            var authentication = await _AuthService.CreateAuthenticatedLink(handlerId);
+
+            if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
+            {
+                var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId;
+                var fboEmails = authentication.FboEmails;
+
+                await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, fuelReq);
+            }
+        }
+
+        private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, FuelReqRequest fuelReq)
+        {
+            try
+            {
+                //Add email content to MailMessage
+                FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
+                mailMessage.From = new MailAddress("donotreply@fbolinx.com");
+                    foreach (string fboEmail in fboEmails.Split(';'))
+                    {
+                        if (_MailService.IsValidEmailRecipient(fboEmail))
+                            mailMessage.To.Add(fboEmail);
+                    }
+
+                var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridAutomatedFuelOrderNotificationTemplateData
+                {
+                    aircraftTailNumber = fuelReq.TailNumber,
+                    fboName = fbo,
+                    flightDepartment = fuelReq.FlightDepartment,
+                    aircraftMakeModel = fuelReq.AircraftMakeModel,
+                    airportICAO = fuelReq.Icao,
+                    arrivalDate = fuelReq.Eta.ToString(),
+                    departureDate = fuelReq.Etd.ToString(),
+                    fuelVolume = fuelReq.FuelEstWeight.ToString(),
+                    fuelVendor = fuelReq.FuelVendor,
+                    customOrderNotes = fuelReq.CustomerNotes,
+                    buttonUrl = link,
+                    paymentMethod = fuelReq.PaymentMethod
+                };
+                mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicTemplateData;
+
+                //Send email
+                var result = _MailService.SendAsync(mailMessage).Result;
+            }
+            catch (System.Exception exception)
+            {
+             
+            }
         }
     }
 }

@@ -1,18 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FBOLinx.DB.Context;
+﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
-using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FBOLinx.Web.Services
+namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 {
-    public class GroupFboService
+    public interface IGroupFboService
+    {
+        Task<Group> CreateNewGroup(string groupName);
+        Task<Fbos> CreateNewFbo(SingleFboRequest request);
+        Task DeleteFbo(int fboId);
+        Task DeleteFbos(List<int> fboIds);
+    }
+    public class GroupFboService : IGroupFboService
     {
         private FboLinxContext _context;
         private IServiceScopeFactory _serviceScopeFactory;
@@ -181,7 +188,7 @@ namespace FBOLinx.Web.Services
             var distributionEmailsBodies = _context.DistributionEmailsBody.Where(c => c.Fboid.Equals(fboId));
             _context.DistributionEmailsBody.RemoveRange(distributionEmailsBodies);
 
-            var fbocustomerPricings  = _context.FbocustomerPricing.Where(c => c.Fboid.Equals(fboId));
+            var fbocustomerPricings = _context.FbocustomerPricing.Where(c => c.Fboid.Equals(fboId));
             _context.FbocustomerPricing.RemoveRange(fbocustomerPricings);
 
             var fbologos = _context.Fbologos.Where(c => c.Fboid.Equals(fboId));

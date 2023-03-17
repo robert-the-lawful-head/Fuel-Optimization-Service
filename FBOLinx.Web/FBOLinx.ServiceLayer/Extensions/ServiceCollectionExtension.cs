@@ -15,6 +15,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
@@ -101,6 +102,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IFboPreferencesService, FboPreferencesService>();
             services.AddTransient<IDemoFlightWatch, DemoFlightWatch>();
+            services.AddTransient<IOAuthService, OAuthService>();
+            services.AddTransient<IGroupFboService, GroupFboService>();
+            services.AddTransient<IAuthService, AuthService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
