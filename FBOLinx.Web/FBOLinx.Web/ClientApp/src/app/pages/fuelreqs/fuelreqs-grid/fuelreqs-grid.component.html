@@ -84,14 +84,14 @@
                         mat-icon-button
                         aria-label="expand row"
                         (click)="
-                            toogleExpandedRows(element.oid);
+                            toogleExpandedRows(element.sourceId);
                             $event.stopPropagation()
                         "
                     >
-                        <mat-icon *ngIf="!isRowExpanded(element.oid)"
+                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)"
                             >keyboard_arrow_down</mat-icon
                         >
-                        <mat-icon *ngIf="isRowExpanded(element.oid)"
+                        <mat-icon *ngIf="isRowExpanded(element.sourceId)"
                             >keyboard_arrow_up</mat-icon
                         >
                     </button>
@@ -207,7 +207,7 @@
                     <div
                         class="example-element-detail"
                         [@detailExpand]="
-                        isRowExpanded(element.oid) ? 'expanded' : 'collapsed'
+                        isRowExpanded(element.sourceId) ? 'expanded' : 'collapsed'
                         "
                     >
                         <div class="example-element-description">
@@ -260,9 +260,9 @@
             mat-row
             *matRowDef="let element; columns: allColumnsToDisplay"
             class="example-element-row"
-            [class.example-expanded-row]="isRowExpanded(element.oid)"
+            [class.example-expanded-row]="isRowExpanded(element.sourceId)"
             (click)="
-            toogleExpandedRows(element.oid)
+            toogleExpandedRows(element.sourceId)
             "
         ></tr>
         <tr
