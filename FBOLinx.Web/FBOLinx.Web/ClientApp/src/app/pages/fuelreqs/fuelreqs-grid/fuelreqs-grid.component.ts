@@ -266,7 +266,7 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
         this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
     getPPGDisplayString(fuelreq: any): any{
-        return fuelreq.oid == 0
+        return fuelreq.oid == 0 || fuelreq.quotedPpg == 0
         ? "CONFIDENTIAL"
         : this.currencyPipe.transform(fuelreq.quotedPpg,"USD","symbol","1.4-4");
     }
