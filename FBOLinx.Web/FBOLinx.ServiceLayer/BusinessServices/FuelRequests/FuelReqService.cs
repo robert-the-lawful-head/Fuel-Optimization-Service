@@ -71,6 +71,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IMailService _MailService;
         private readonly IAuthService _AuthService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IFboContactsEntityService _FboContactsEntityService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context, DegaContext degaContext,
             IFboEntityService fboEntityService,
@@ -81,7 +82,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ILogger<FuelReqService> logger,
             IMailService mailService,
             IAuthService authService,
-            IHttpContextAccessor httpContextAccessor) : base(fuelReqEntityService)
+            IHttpContextAccessor httpContextAccessor,
+            IFboContactsEntityService fboContactsEntityService) : base(fuelReqEntityService)
         {
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
@@ -96,6 +98,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _MailService = mailService;
             _AuthService = authService;
             _httpContextAccessor = httpContextAccessor;
+            _FboContactsEntityService = fboContactsEntityService;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -314,11 +317,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
             {
+                var fbo = await _context.Fbos.Where(f => f.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+
+                var fboContacts = await GetFboContacts(fbo.Oid);
+                var userContacts = await GetUserContacts(fbo);
+
                 var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId;
-                var fboEmails = authentication.FboEmails;
+                var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
 
                 await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, fuelReq);
             }
+        }
+
+        private async Task<string> GetFboContacts(int fboId)
+        {
+            var fboContacts = await _FboContactsEntityService.GetFboContactsByFboId(fboId);
+            var fboContactsToEmail = fboContacts.Where(f => f.CopyOrders.HasValue && f.CopyOrders.Value)
+                                       .Select(f => new Contacts()
+                                       {
+                                           Email = f.Email,
+                                       })
+                                       .ToList();
+
+            if (fboContactsToEmail.Count == 0)
+                return "";
+            return String.Join(";", fboContacts);
+        }
+
+        private async Task<string> GetUserContacts(Fbos fbo)
+        {
+            List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyOrders.HasValue && x.CopyOrders.Value).Select(x => x.Username).AsNoTracking().ToListAsync();
+            if (alertEmailAddressesUsers.Count == 0)
+                return "";
+            return String.Join(";", alertEmailAddressesUsers);
         }
 
         private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, FuelReqRequest fuelReq)

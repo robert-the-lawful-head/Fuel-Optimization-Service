@@ -375,13 +375,19 @@ namespace FBOLinx.Web.Controllers
                 if (!request.DemoMode)
                 {
                     var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
+                    var fboHandlerId = 0;
 
                     var fboPreferences = new FboPreferencesDTO();
                     if (fbo != null && fbo.Oid > 0)
+                    {
                         fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+                        fboHandlerId = fbo.AcukwikFBOHandlerId.GetValueOrDefault();
+                    }
+                    else
+                        fboHandlerId = request.FboHandlerId;
 
                     if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                        await _fuelReqService.SendFuelOrderNotificationEmail(fboHandlerId, request);
                 }
 
                 return Ok();
