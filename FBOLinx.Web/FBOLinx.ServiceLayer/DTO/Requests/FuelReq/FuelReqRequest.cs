@@ -27,5 +27,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.FuelReq
         public string FuelVendor { get; set; }
         public string FlightDepartment { get; set; }
         public string AircraftMakeModel { get; set; }
+        public bool DemoMode { get; set; } = true;
     }
 }

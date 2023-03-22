@@ -18,7 +18,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool? Omit100LLCost { get; set; }
         public bool? EnableJetA { get; set; }
         public bool? EnableSaf { get; set; }
-        public bool? OrderNotificationsEnabled { get; set; }
+        public bool? OrderNotificationsEnabled { get; set; } = true;
 
     }
 }
