@@ -84,15 +84,14 @@
                         mat-icon-button
                         aria-label="expand row"
                         (click)="
-                            expandedElement =
-                                expandedElement === element.oid ? null : element.oid;
+                            toogleExpandedRows(element.sourceId);
                             $event.stopPropagation()
                         "
                     >
-                        <mat-icon *ngIf="expandedElement !== element.oid"
+                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)"
                             >keyboard_arrow_down</mat-icon
                         >
-                        <mat-icon *ngIf="expandedElement === element.oid"
+                        <mat-icon *ngIf="isRowExpanded(element.sourceId)"
                             >keyboard_arrow_up</mat-icon
                         >
                     </button>
@@ -208,7 +207,7 @@
                     <div
                         class="example-element-detail"
                         [@detailExpand]="
-                            element.oid == expandedElement ? 'expanded' : 'collapsed'
+                        isRowExpanded(element.sourceId) ? 'expanded' : 'collapsed'
                         "
                     >
                         <div class="example-element-description">
@@ -220,7 +219,7 @@
                                     <td>ID: {{ element.oid }}</td>
                                     <td>
                                         Created:
-                                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }}
+                                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -228,12 +227,12 @@
                                         {{ element.customerOrderNotes }}
                                     </td>
                                     <td>
-                                        fuelerlinx ID:
+                                        FuelerLinx ID:
                                         {{ element.sourceId }}
                                     </td>
                                     <td>
                                         Uplift Request:
-                                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }}
+                                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
                                     </td>
                                 </tr>
                                 <tr>
@@ -261,9 +260,9 @@
             mat-row
             *matRowDef="let element; columns: allColumnsToDisplay"
             class="example-element-row"
-            [class.example-expanded-row]="expandedElement === element.oid"
+            [class.example-expanded-row]="isRowExpanded(element.sourceId)"
             (click)="
-                expandedElement = expandedElement === element.oid ? null : element.oid
+            toogleExpandedRows(element.sourceId)
             "
         ></tr>
         <tr
