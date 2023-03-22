@@ -37,6 +37,7 @@ import { FboGeofencingHomeComponent } from './pages/fbo-geofencing/fbo-geofencin
 import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-status-home/antenna-status-home.component';
 import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
+import { AboutFbolinxComponent } from './pages/about-fbolinx/about-fbolinx.component';
 
 const defaultRoutes: Routes = [
     {
@@ -198,6 +199,14 @@ const defaultRoutes: Routes = [
         canActivate: [AuthGuard],
         component: FlightWatchComponent,
         path: 'flight-watch',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: AboutFbolinxComponent,
+        data: {
+            expectedRoles: [6],
+        },
+        path: 'about-fbolinx',
     },
     {
         canActivate: [AuthGuard],
