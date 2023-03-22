@@ -184,6 +184,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     openUpdate() {
+        if(this.sharedService.currentUser.role == 6) return;
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
