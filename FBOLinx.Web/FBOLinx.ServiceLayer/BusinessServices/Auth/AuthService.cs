@@ -56,7 +56,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                 }
 
-
                 var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
                 if (importedFboEmail != null)
@@ -64,14 +63,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                     var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Core.Enums.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
                     fbo = await _GroupFboService.CreateNewFbo(newFbo);
 
-                    DB.Models.User newUser = new DB.Models.User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
+                    DB.Models.User newUser = new DB.Models.User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
                     await _context.User.AddAsync(newUser);
                     await _context.SaveChangesAsync();
                 }
             }
             else
             {
-                importedFboEmail.Email = fbo.FuelDeskEmail;
+                importedFboEmail.Email = fbo.FuelDeskEmail.Trim();
             }
 
             var user = await _context.User.Where(x => x.FboId == fbo.Oid && (x.Role == Core.Enums.UserRoles.Primary || x.Role == Core.Enums.UserRoles.NonRev)).FirstOrDefaultAsync();
