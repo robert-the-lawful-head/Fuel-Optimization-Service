@@ -354,29 +354,35 @@ namespace FBOLinx.Web.Controllers
                     fuelReqs[0].Email = request.Email;
                     fuelReqs[0].PhoneNumber = request.PhoneNumber;
                     fuelReqs[0].FuelOn = request.FuelOn;
-                fuelReqs[0].CustomerNotes = request.CustomerNotes;
-                fuelReqs[0].PaymentMethod = request.PaymentMethod;
+                    fuelReqs[0].CustomerNotes = request.CustomerNotes;
+                    fuelReqs[0].PaymentMethod = request.PaymentMethod;
                 }
                 await _context.SaveChangesAsync();
 
-                // CODE TO SEND EMAIL IF SETTING IS ON
-                var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
-                if (fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value)
-                    await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                // CODE TO SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON 
+                if (!request.DemoMode)
+                {
+                    var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+                    if (fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value)
+                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                }
 
                 return Ok(fuelReqs);
             }
             else
             {
-                // CODE TO SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
-                var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
+                // CODE TO SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON OR NOT FBOLINX CUSTOMER
+                if (!request.DemoMode)
+                {
+                    var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
 
-                var fboPreferences = new FboPreferencesDTO();
-                if (fbo != null && fbo.Oid > 0)
-                    fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+                    var fboPreferences = new FboPreferencesDTO();
+                    if (fbo != null && fbo.Oid > 0)
+                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
 
-                if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value))
-                    await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                    if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value))
+                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
+                }
 
                 return Ok();
             }
