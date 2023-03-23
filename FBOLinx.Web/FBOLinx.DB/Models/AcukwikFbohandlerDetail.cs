@@ -37,6 +37,8 @@ namespace FBOLinx.DB.Models
         public string Avcard { get; set; }
         [Column("Acukwik_ID")]
         public double? AcukwikId { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         #region Relationships
         [ForeignKey("AirportId")]
