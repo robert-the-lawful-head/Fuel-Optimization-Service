@@ -33,7 +33,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string PhoneNumber { get; set; }
         public string FuelOn { get; set; } = "Departure";
         public string CustomerName { get; set; }
-        public string CustomerOrderNotes { get; set; }
+        public string CustomerNotes { get; set; }
         public string PaymentMethod { get; set; }
         public string TimeZone { get; set; }
         public string TailNumber
