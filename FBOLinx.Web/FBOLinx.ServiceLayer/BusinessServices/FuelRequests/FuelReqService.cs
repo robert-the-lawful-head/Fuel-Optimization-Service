@@ -174,7 +174,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 fuelRequest.Eta = await GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
                 fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
 
-                fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport.IntlTimeZone, airport.AirportCity);
+                fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -187,7 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 order.Eta = await GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport);
                 order.DateCreated = await GetAirportLocalTime(order.DateCreated.GetValueOrDefault(), airport);
 
-                order.TimeZone = DateTimeHelper.GetLocalTimeZone(order.DateCreated ?? DateTime.Now, airport.IntlTimeZone, airport.AirportCity);
+                order.TimeZone = DateTimeHelper.GetLocalTimeZone(order.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
 
             }
 
