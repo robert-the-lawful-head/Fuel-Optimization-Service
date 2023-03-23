@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOLinx.Web.Models.Requests
+namespace FBOLinx.ServiceLayer.DTO.Requests.FuelReq
 {
     public class FuelReqRequest
     {
@@ -21,5 +21,12 @@ namespace FBOLinx.Web.Models.Requests
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string FuelOn { get; set; }
+        public string CustomerNotes { get; set; }
+        public string PaymentMethod { get; set; }
+        public int FboHandlerId { get; set; }
+        public string FuelVendor { get; set; }
+        public string FlightDepartment { get; set; }
+        public string AircraftMakeModel { get; set; }
+        public bool DemoMode { get; set; } = true;
     }
 }

@@ -56,6 +56,23 @@ namespace FBOLinx.TableStorage
             return string.Empty;
         }
 
+        public async Task<bool> BlobExists<TContainer>(string directoryName, string blobName)
+        {
+            try
+            {
+                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(typeof(TContainer).Name.ToLowerInvariant());
+                BlobClient blobClient = blobContainerClient.GetBlobClient($"{directoryName}/{blobName}");
+
+                return await blobClient.ExistsAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+
+            return false;
+        }
+
         // public async Task<string> DownloadAllBlobs<TContainer>(string containerName)
         // {
         //     try

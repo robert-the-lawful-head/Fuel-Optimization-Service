@@ -143,7 +143,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                             allin: [0],
                             amount: [Number(0).toFixed(4)],
                             itp: [0],
-                            max: [99999],
+                            max: [{value: '99999', disabled:true}],
                             min: [1],
                         },
                         {
@@ -187,7 +187,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                         min: [1],
                     },
                     {
-                        updateOn: 'blur',
+                        updateOn: 'blur'
                     }
                 ),
             ])
