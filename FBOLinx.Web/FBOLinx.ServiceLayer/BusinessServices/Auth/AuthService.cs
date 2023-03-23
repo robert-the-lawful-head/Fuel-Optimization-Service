@@ -39,22 +39,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
         {
             var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
             var importedFboEmail = new ImportedFboEmails();
+            var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
 
             if (fbo == null)
             {
-                var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
                 if (acukwikFbo == null)
                 {
                     importedFboEmail.Email = "FBO not found";
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                 }
 
-                importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
-                if (importedFboEmail == null || importedFboEmail.Oid == 0)
+                if (String.IsNullOrEmpty(acukwikFbo.Email))
                 {
                     importedFboEmail.Email = "No email found";
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                 }
+
+                importedFboEmail.Email = acukwikFbo.Email;
 
                 var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
 
@@ -65,6 +66,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
                     DB.Models.User newUser = new DB.Models.User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
                     await _context.User.AddAsync(newUser);
+
+                    Fbopreferences fbopreferences = new Fbopreferences();
+                    fbopreferences = new Fbopreferences() { Fboid = fbo.Oid, EnableJetA = true, EnableSaf = false, OrderNotificationsEnabled = true };
+                    await _context.Fbopreferences.AddAsync(fbopreferences);
+
                     await _context.SaveChangesAsync();
                 }
             }
@@ -74,12 +80,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                     importedFboEmail.Email = fbo.FuelDeskEmail;
                 else
                 {
-                    importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
-                    if (importedFboEmail == null || importedFboEmail.Oid == 0)
+                    if (acukwikFbo.Email == "")
                     {
                         importedFboEmail.Email = "No email found";
                         return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                     }
+                    importedFboEmail.Email = acukwikFbo.Email;
                 }
             }
 
