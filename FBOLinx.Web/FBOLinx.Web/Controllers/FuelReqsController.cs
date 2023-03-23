@@ -258,7 +258,7 @@ namespace FBOLinx.Web.Controllers
                                            join ca in _context.CustomerAircrafts on
                                            new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
                                            equals
-                                           new { TailNumber = ca.TailNumber.Trim(), ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
+                                           new { ca.TailNumber, ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
                                            select new
                                            {
                                                Fboid = fboId,

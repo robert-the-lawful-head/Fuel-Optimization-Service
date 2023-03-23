@@ -4,6 +4,17 @@
         "groupTitle": true
     },
     {
+        "title": "About FBOLinx",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Know more about FBOLinx.",
+        "routing": "/default-layout/about-fbolinx",
+        "roles": [ 6 ]
+    },
+    {
         "title": "Dashboard",
         "icon": {
             "class": "fa fa-home",

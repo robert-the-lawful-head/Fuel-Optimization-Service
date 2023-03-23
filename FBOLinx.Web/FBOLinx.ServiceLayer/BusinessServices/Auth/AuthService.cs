@@ -75,14 +75,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
             }
             else
             {
-                importedFboEmail.Email = fbo.FuelDeskEmail.Trim();
+                if (!String.IsNullOrEmpty(fbo.FuelDeskEmail))
+                    importedFboEmail.Email = fbo.FuelDeskEmail;
+                else
+                {
+                    importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+                    if (importedFboEmail == null || importedFboEmail.Oid == 0)
+                    {
+                        importedFboEmail.Email = "No email found";
+                        return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
+                    }
+                }
             }
 
             var user = await _context.User.Where(x => x.FboId == fbo.Oid && (x.Role == Core.Enums.UserRoles.Primary || x.Role == Core.Enums.UserRoles.NonRev)).FirstOrDefaultAsync();
 
             //Return URL with authentication for 7 days
             AccessTokens accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
-            return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email, Fbo = fbo.Fbo };
+            return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };
         }
     }
 }

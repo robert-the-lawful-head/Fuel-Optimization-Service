@@ -169,7 +169,8 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/fbos',
             '/default-layout/group-analytics',
             '/default-layout/fbo-geofencing',
-            '/default-layout/group-customers'
+            '/default-layout/group-customers',
+            '/default-layout/about-fbolinx'
         ];
         if (
             blacklist.findIndex((v) =>
@@ -180,7 +181,19 @@ export class DefaultLayoutComponent implements OnInit {
         }
         return !this.isCsr;
     }
-
+    isAdditionNavBarVisible() {
+        const blacklist = [
+            '/default-layout/about-fbolinx'
+        ];
+        if (
+            blacklist.findIndex((v) =>
+                window.location.pathname.startsWith(v)
+            ) >= 0
+        ) {
+            return false;
+        }
+        return true;
+    }
     getClasses() {
         const menu: string = this.menuStyle;
 
@@ -388,7 +401,10 @@ export class DefaultLayoutComponent implements OnInit {
                             )
                             .subscribe(
                                 (result: any) => {
+                                    console.log("🚀 ~ file: default.component.ts:391 ~ DefaultLayoutComponent ~ LogUserForAnalytics ~ result:", result);
                                     this.LogAnalytics(fbo.fbo, result.icao);
+                                    this.sharedService.currentUser.icao = result.icao;
+                                    localStorage.setItem("ICAO", result.icao);
                                 }
                         );
                     }
