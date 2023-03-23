@@ -72,8 +72,8 @@ namespace FBOLinx.Web.Controllers
                 customerAircraft.TailNumber,
                 customerAircraft.GroupId,
                 customerAircraft.CustomerId,
-                aircraft.Make,
-                aircraft.Model,
+                aircraft?.Make,
+                aircraft?.Model,
                 customerAircraft.Size
             };
 

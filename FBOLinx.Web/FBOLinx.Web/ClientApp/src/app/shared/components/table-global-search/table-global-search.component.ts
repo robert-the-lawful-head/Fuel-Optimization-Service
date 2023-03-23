@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
 @Component({
@@ -15,8 +16,11 @@ export class TableGlobalSearchComponent implements OnInit {
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
     private page: string = "";
+    private idParam: string = "";
 
-    constructor() {}
+    constructor(
+        private route: ActivatedRoute,
+    ) { }
 
     ngOnInit(): void {
         //if (!this.column) {
@@ -54,7 +58,15 @@ export class TableGlobalSearchComponent implements OnInit {
             this.page = "customer-manager-filters";
         else
             this.page = "fuel-orders-filters";
-        this.matDataSource.filter = localStorage.getItem(this.page);
+
+        this.route.queryParamMap.subscribe((params) => {
+            this.idParam = params.get('id');
+        });
+
+        if (this.page == "fuel-orders-filters" && this.idParam != null)
+            this.matDataSource.filter = "[{ \"filterValue\":\"" + this.idParam + "\", \"isGlobal\": true }]";
+        else
+            this.matDataSource.filter = localStorage.getItem(this.page);
 
         if (this.matDataSource.filter != null) {
             for (const filter of JSON.parse(this.matDataSource.filter)) {
