@@ -380,7 +380,7 @@ namespace FBOLinx.Web.Controllers
                     var fboPreferences = new FboPreferencesDTO();
                     if (fbo != null && fbo.Oid > 0)
                     {
-                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
+                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fbo.Oid));
                         fboHandlerId = fbo.AcukwikFBOHandlerId.GetValueOrDefault();
                     }
                     else

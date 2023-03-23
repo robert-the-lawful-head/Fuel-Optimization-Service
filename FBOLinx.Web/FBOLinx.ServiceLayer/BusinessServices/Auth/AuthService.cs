@@ -65,6 +65,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
                     DB.Models.User newUser = new DB.Models.User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
                     await _context.User.AddAsync(newUser);
+
+                    Fbopreferences fbopreferences = new Fbopreferences();
+                    fbopreferences = new Fbopreferences() { Fboid = fbo.Oid, EnableJetA = true, EnableSaf = false, OrderNotificationsEnabled = true };
+                    await _context.Fbopreferences.AddAsync(fbopreferences);
+
                     await _context.SaveChangesAsync();
                 }
             }
