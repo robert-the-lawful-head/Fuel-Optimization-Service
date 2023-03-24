@@ -178,7 +178,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 if (transaction.TransactionDetails.CopyFbo.HasValue && transaction.TransactionDetails.CopyFbo.Value)
                 {
                     var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
-                    fuelRequest.CustomerNotes = fboNotes.Note;
+                    if (fboNotes != null)
+                        fuelRequest.CustomerNotes = fboNotes.Note;
 
                     if (transaction.TransactionDetails.SendPaymentToFbo.HasValue && transaction.TransactionDetails.SendPaymentToFbo.Value)
                         fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
