@@ -26,7 +26,6 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
-using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -168,22 +167,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault());
                 AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(transaction.AirportId.GetValueOrDefault());
 
-                fuelRequest.Eta = await GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
-                fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
-
-                fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
-                if (transaction.TransactionDetails.CopyFbo.HasValue && transaction.TransactionDetails.CopyFbo.Value)
-                {
-                    var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
-                    if (fboNotes != null)
-                        fuelRequest.CustomerNotes = fboNotes.Note;
-
-                    if (transaction.TransactionDetails.SendPaymentToFbo.HasValue && transaction.TransactionDetails.SendPaymentToFbo.Value)
-                        fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
-                }
+                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -193,24 +179,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             foreach(FuelReqDto order in directOrders)
             {
                 AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == order.Icao).FirstOrDefaultAsync();
-                order.Eta = await GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport);
-                order.DateCreated = await GetAirportLocalTime(order.DateCreated.GetValueOrDefault(), airport);
-
-                order.TimeZone = DateTimeHelper.GetLocalTimeZone(order.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
-
+                FuelReqDto.SetAirportLocalTimes(order,airport);
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);
             result.AddRange(directOrders);
 
             return result;
-        }
-        private async Task<DateTime?> GetAirportLocalTime(DateTime date, AcukwikAirport airport)
-        {
-                if (airport == null)
-                    return date;
-                return DateTimeHelper.GetLocalTime(
-                    date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");  
         }
         private async Task<List<FuelReqDto>> GetUpcomingOrdersFromCache(int groupId, int fboId)
         {

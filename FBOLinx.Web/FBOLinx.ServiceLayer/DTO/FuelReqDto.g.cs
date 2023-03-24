@@ -1,5 +1,10 @@
 using System;
+using System.Linq;
+using EllipticCurve.Utils;
+using FBOLinx.Core.Utilities.DatesAndTimes;
+using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
 
 namespace FBOLinx.Service.Mapping.Dto
@@ -107,11 +112,41 @@ namespace FBOLinx.Service.Mapping.Dto
             CustomerName = companyName;
         }
 
-        public static FuelReqDto Cast(TransactionDTO fuelerlinxTransaction, string companyName)
+        public static FuelReqDto Cast(TransactionDTO transaction, string companyName, AcukwikAirport airport)
         {
-            FuelReqDto result = new FuelReqDto();
-            result.CastFromFuelerLinxTransaction(fuelerlinxTransaction, companyName);
-            return result;
+            FuelReqDto fuelRequest = new FuelReqDto();
+            fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
+
+            SetAirportLocalTimes(fuelRequest,airport);
+            SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
+
+            return fuelRequest;
+        }
+        private static void SetCustomerNotesAndPaymentMethod(TransactionDTO transaction, FuelReqDto fuelRequest)
+        {
+            if (transaction.TransactionDetails.CopyFbo.HasValue && transaction.TransactionDetails.CopyFbo.Value)
+            {
+                var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
+                if (fboNotes != null)
+                    fuelRequest.CustomerNotes = fboNotes.Note;
+
+                if (transaction.TransactionDetails.SendPaymentToFbo.HasValue && transaction.TransactionDetails.SendPaymentToFbo.Value)
+                    fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
+            }
+        }
+        public static void SetAirportLocalTimes(FuelReqDto fuelRequest, AcukwikAirport airport)
+        {
+            fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
+            fuelRequest.DateCreated = GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
+            fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
+
+        }
+        public static DateTime GetAirportLocalTime(DateTime date, AcukwikAirport airport)
+        {
+            if (airport == null)
+                return date;
+            return DateTimeHelper.GetLocalTime(
+                date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
         }
     }
 }
