@@ -147,7 +147,7 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
 
             var timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains("(US & Canada)"));
             if (timeZone == null)
-                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity));
+                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity ?? string.Empty));
 
             var shortenedTimeZone = "";
             if (timeZone != null)
