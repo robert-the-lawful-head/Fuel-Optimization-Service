@@ -175,6 +175,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
 
                 fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
+                if (transaction.TransactionDetails.CopyFbo.HasValue && transaction.TransactionDetails.CopyFbo.Value)
+                {
+                    var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
+                    fuelRequest.CustomerNotes = fboNotes.Note;
+
+                    if (transaction.TransactionDetails.SendPaymentToFbo.HasValue && transaction.TransactionDetails.SendPaymentToFbo.Value)
+                        fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
+                }
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
