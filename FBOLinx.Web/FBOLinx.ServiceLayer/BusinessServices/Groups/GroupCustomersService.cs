@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
@@ -80,7 +81,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 }
 
                 if (customerInfoByGroupToInsert.Count > 0)
-                    await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert);
+                    await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0
+                    });
 
                 var existingCustomerAircraftRecordsForGroup =
                     await _CustomerAircraftEntityService.GetListBySpec(
@@ -109,7 +115,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 }
 
                 if (customerAircraftsToInsert.Count > 0)
-                    await _CustomerAircraftEntityService.BulkInsert(customerAircraftsToInsert);
+                    await _CustomerAircraftEntityService.BulkInsert(customerAircraftsToInsert, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0
+                    });
             }
             catch (Exception ex)
             {
