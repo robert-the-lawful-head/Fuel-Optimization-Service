@@ -19,6 +19,7 @@ import { StatisticsTotalOrdersComponent } from '../../../shared/components/stati
 import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 
 @Component({
+    providers: [SharedService],
     selector: 'app-dashboard-fbo-updated',
     styleUrls: ['./dashboard-fbo-updated.component.scss'],
     templateUrl: './dashboard-fbo-updated.component.html',
@@ -84,7 +85,18 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                 title: 'CSR Dashboard',
             });
         }
-        this.selectedICAO = (this.sharedService.currentUser.icao)? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+
+        this.sharedService.valueChanged$.subscribe((value: any) => {
+            if(!value.icao) return;
+
+            this.selectedICAO = (this.sharedService.currentUser.icao)? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+
+            this.flightWatchMapService.getMapCenter(this.selectedICAO).then((data) => {
+                this.center = data;
+                this.loadAirportWatchData();
+             });
+        });
+
     }
 
     get isCsr() {
@@ -95,10 +107,12 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         return this.sharedService.currentUser.role === 4;
     }
     async ngOnInit() {
-        this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
+        if(this.selectedICAO)
+            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
 
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
-            this.loadAirportWatchData();
+            if(this.selectedICAO)
+                this.loadAirportWatchData();
         });
     }
 
