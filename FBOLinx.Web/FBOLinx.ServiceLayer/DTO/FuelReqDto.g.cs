@@ -137,6 +137,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public static void SetAirportLocalTimes(FuelReqDto fuelRequest, AcukwikAirport airport)
         {
             fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
+            fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);
             fuelRequest.DateCreated = GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
             fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
 
