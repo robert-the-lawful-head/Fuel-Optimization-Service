@@ -180,7 +180,10 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
         {
             return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, airportCity);
         }
-
+        public static DateTime GetUtcTimeNow()
+        {
+            return GetLocalTime(DateTime.UtcNow, null, true);
+        }
         public static DateTime GetNextTuesdayDate(DateTime date)
         {
             DayOfWeek day = DayOfWeek.Tuesday;
