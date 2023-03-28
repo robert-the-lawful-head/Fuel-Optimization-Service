@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FBOLinx.Core.Enums;
 using Itenso.TimePeriod;
 
 namespace FBOLinx.Core.Utilities.DatesAndTimes
@@ -192,7 +193,14 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
                 daysToAdd = 7;
             return DateTime.SpecifyKind(date.AddDays(daysToAdd).AddMinutes(1), DateTimeKind.Unspecified);
         }
-
+        public static string GetTimeStandardOffset(TimeFormats timeStandard)
+        {
+            return timeStandard == TimeFormats.Zulu ? "Z" : "L";
+        }
+        public static string GetTimeStandardOffset(string timeStandard)
+        {
+            return timeStandard == "0" && timeStandard == "Z" && timeStandard == "z" ? "Z" : "L";
+        }
         #region Objects
 
         public class DateRange

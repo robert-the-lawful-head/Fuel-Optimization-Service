@@ -103,7 +103,7 @@ namespace FBOLinx.Service.Mapping.Dto
             QuotedVolume = item.DispatchedVolume.Amount;
             Source = item.FuelVendor;
             SourceId = item.Id;
-            TimeStandard = item.TimeStandard.ToString() == "0" ? "Z" : "L";
+            TimeStandard = DateTimeHelper.GetTimeStandardOffset((Core.Enums.TimeFormats)item.TimeStandard);
             TailNumber = item.TailNumber;
             FboName = item.Fbo;
             Email = "";
@@ -135,11 +135,19 @@ namespace FBOLinx.Service.Mapping.Dto
             }
         }
         public static void SetAirportLocalTimes(FuelReqDto fuelRequest, AcukwikAirport airport)
-        {
-            fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
-            fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);
+
+        {   
+            if (DateTimeHelper.GetTimeStandardOffset(fuelRequest.TimeStandard) == TimeFormats.Zulu.ToString())
+            {
+                fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
+                fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);            }
+            else
+            {
+                fuelRequest.Eta = fuelRequest.Eta.GetValueOrDefault();
+                fuelRequest.Etd = fuelRequest.Etd.GetValueOrDefault();
+            }
             fuelRequest.DateCreated = GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
-            fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.Now, airport?.IntlTimeZone, airport?.AirportCity);
+            fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.UtcNow, airport?.IntlTimeZone, airport?.AirportCity);
 
         }
         public static DateTime GetAirportLocalTime(DateTime date, AcukwikAirport airport)
