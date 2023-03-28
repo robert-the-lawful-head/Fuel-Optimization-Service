@@ -24,6 +24,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<Fboairports> GetAirportForFboId(int fboId);
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
         Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds);
+        Task<AcukwikAirport> GetAirportByAirportIdentifier(string airportIdentifier);
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
         Task<AirportPosition> GetAirportPositionForFbo(int fboId);
         Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
@@ -68,6 +69,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         {
             var airports = await _degaContext.AcukwikAirports.Where(x => acukwikAirportIds.Contains(x.Oid)).Include(x => x.AcukwikFbohandlerDetailCollection).ToListAsync();
             return airports;
+        }
+
+        public async Task<AcukwikAirport> GetAirportByAirportIdentifier(string airportIdentifier)
+        {
+            return (await GetAirportsByAirportIdentifier(new List<string>() { airportIdentifier })).FirstOrDefault();
         }
 
         public async Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers)
