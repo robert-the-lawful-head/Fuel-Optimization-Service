@@ -74,8 +74,7 @@ namespace FBOLinx.Web.Controllers
                 var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
 
                 var companyPricingLogs =
-                    await _CompanyPricingLogService.GetCompanyPricingLogCountByDateRange(DateTime.UtcNow.AddDays(-30),
-                        DateTime.UtcNow);
+                    await _CompanyPricingLogService.GetCompanyPricingLogCountLast30Days();
 
                 var fuelReqs = await (from fr in _context.FuelReq
                                       join f in _context.Fbos on fr.Fboid equals f.Oid

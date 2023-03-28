@@ -44,7 +44,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 join f in context.Fbos on fa.Fboid equals f.Oid
                 where cpl.CreatedDate >= startDate 
                       && cpl.CreatedDate <= endDate
-                      && f.Active == true
                       && (!fuelerlinxCompanyId.HasValue || cpl.CompanyId == fuelerlinxCompanyId.Value)
                 group cpl by new { FboID = f.Oid, GroupID = f.GroupId } into g
                 select new CompanyPricingLogCountByDateRange()

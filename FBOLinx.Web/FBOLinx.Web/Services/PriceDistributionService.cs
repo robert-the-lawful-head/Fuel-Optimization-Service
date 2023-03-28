@@ -40,7 +40,7 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private string _CurrentPostedRetail = "";
         private string _ValidUntil = "";
-        private Fbos _Fbo;
+        private FbosDto _Fbo;
         private FboLinxImageFileData _Logo;
         private FbolinxPricingTemplateFileAttachmentDto _PricingTemplateFileAttachment;
         private IHttpContextAccessor _HttpContextAccessor;
@@ -729,7 +729,7 @@ namespace FBOLinx.Web.Services
                 _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
             }
 
-            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId);
+            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId, false);
 
             _Logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == _Fbo.Oid).FirstOrDefaultAsync();
 
