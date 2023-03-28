@@ -30,8 +30,8 @@ using FBOLinx.ServiceLayer.Demo;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
-using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.Core.Utilities.DatesAndTimes;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -271,7 +271,7 @@ namespace FBOLinx.Web.Controllers
                                                QuotedVolume = request.FuelEstWeight,
                                                request.TimeStandard,
                                                CustomerId = c.Oid,
-                                               DateCreated = DateTime.Now,
+                                               DateCreated = DateTimeHelper.GetUtcTimeNow(),
                                                Source = "FuelerLinx",
                                                request.SourceId,
                                                request.Email,
