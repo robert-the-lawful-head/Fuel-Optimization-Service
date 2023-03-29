@@ -117,11 +117,16 @@ namespace FBOLinx.Service.Mapping.Dto
         {
             FuelReqDto fuelRequest = new FuelReqDto();
             fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
-
+            fuelRequest.DateCreated = GetUtcTimeFromFuelerLinxServerTime(fuelRequest.DateCreated ?? DateTime.UtcNow);
             SetAirportLocalTimes(fuelRequest,airport);
             SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
 
             return fuelRequest;
+        }
+        private static DateTime GetUtcTimeFromFuelerLinxServerTime(DateTime pacificDateime)
+        {
+            TimeZoneInfo pstZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+            return TimeZoneInfo.ConvertTimeToUtc(pacificDateime, pstZone);
         }
         private static void SetCustomerNotesAndPaymentMethod(TransactionDTO transaction, FuelReqDto fuelRequest)
         {
