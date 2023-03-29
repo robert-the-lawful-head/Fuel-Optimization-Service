@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Linq;
 using EllipticCurve.Utils;
 using FBOLinx.Core.Utilities.DatesAndTimes;
@@ -135,12 +136,13 @@ namespace FBOLinx.Service.Mapping.Dto
             }
         }
         public static void SetAirportLocalTimes(FuelReqDto fuelRequest, AcukwikAirport airport)
+        {
 
-        {   
-            if (DateTimeHelper.GetTimeStandardOffset(fuelRequest.TimeStandard) == TimeFormats.Zulu.ToString())
+            if (fuelRequest.TimeStandard == "Z")
             {
                 fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
-                fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);            }
+                fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);            
+            }
             else
             {
                 fuelRequest.Eta = fuelRequest.Eta.GetValueOrDefault();
