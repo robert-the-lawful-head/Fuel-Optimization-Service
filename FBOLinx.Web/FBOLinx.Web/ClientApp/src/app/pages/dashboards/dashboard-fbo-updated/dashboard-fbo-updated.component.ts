@@ -86,6 +86,8 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
             });
         }
 
+        this.selectedICAO = (this.sharedService.currentUser.icao) ? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+
         this.sharedService.valueChanged$.subscribe((value: any) => {
             if(!value.icao) return;
 

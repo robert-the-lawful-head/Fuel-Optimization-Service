@@ -73,8 +73,8 @@ namespace FBOLinx.Web.Controllers
 
                 var customersNeedAttention = await _customerService.GetNeedsAttentionCustomersCountByGroupFbo();
 
-                var companyPricingLogs =
-                    await _CompanyPricingLogService.GetCompanyPricingLogCountLast30Days();
+                //var companyPricingLogs =
+                //    await _CompanyPricingLogService.GetCompanyPricingLogCountLast30Days();
 
                 var fuelReqs = await (from fr in _context.FuelReq
                                       join f in _context.Fbos on fr.Fboid equals f.Oid
@@ -111,7 +111,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     var needingAttentions = customersNeedAttention.Where(c => c.GroupId == group.Oid).ToList();
                     group.NeedAttentionCustomers = needingAttentions.Count > 0 ? needingAttentions.Sum(c => c.CustomersNeedingAttention) : 0;
-                    group.Quotes30Days = (companyPricingLogs.Where(x => x.GroupId == group.Oid)?.Sum(x => x.QuoteCount)).GetValueOrDefault();
+                    //group.Quotes30Days = (companyPricingLogs.Where(x => x.GroupId == group.Oid)?.Sum(x => x.QuoteCount)).GetValueOrDefault();
                     group.Orders30Days = fuelReqs.Count(x => x.GroupId == group.Oid);
                 }
 
@@ -146,7 +146,7 @@ namespace FBOLinx.Web.Controllers
                 {
                     f.Users = users.Where(u => u.Key == f.Oid).SelectMany(u => u).ToList();
                     f.NeedAttentionCustomers = customersNeedAttention.Where(c => c.FboId == f.Oid).Sum(c => c.CustomersNeedingAttention);
-                    f.Quotes30Days = (companyPricingLogs.FirstOrDefault(x => x.FboId == f.Oid)?.QuoteCount).GetValueOrDefault();
+                    //f.Quotes30Days = (companyPricingLogs.FirstOrDefault(x => x.FboId == f.Oid)?.QuoteCount).GetValueOrDefault();
                     f.Orders30Days = fuelReqs.Count(fr => fr.Fboid == f.Oid);
                 });
 
