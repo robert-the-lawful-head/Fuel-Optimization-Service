@@ -17,7 +17,6 @@ using Fuelerlinx.SDK;
 using Microsoft.Extensions.Caching.Memory;
 using Azure.Core;
 using FBOLinx.ServiceLayer.DTO.Responses.Analitics;
-using FBOLinx.Core.Utilities.DatesAndTimes;
 using Microsoft.Extensions.Logging;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
@@ -167,7 +166,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(transaction.AirportId.GetValueOrDefault());
+                AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == transaction.Icao).FirstOrDefaultAsync();
 
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
 
@@ -328,7 +327,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             if (fboContactsToEmail.Count == 0)
                 return "";
-            return String.Join(";", fboContacts);
+            return System.String.Join(";", fboContacts);
         }
 
         private async Task<string> GetUserContacts(Fbos fbo)
@@ -336,7 +335,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             List<string> alertEmailAddressesUsers = await _context.User.Where(x => x.GroupId == fbo.GroupId && (x.FboId == 0 || x.FboId == fbo.Oid) && x.CopyOrders.HasValue && x.CopyOrders.Value).Select(x => x.Username).AsNoTracking().ToListAsync();
             if (alertEmailAddressesUsers.Count == 0)
                 return "";
-            return String.Join(";", alertEmailAddressesUsers);
+            return System.String.Join(";", alertEmailAddressesUsers);
         }
 
         private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, FuelReqRequest fuelReq)
