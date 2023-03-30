@@ -7,8 +7,6 @@ import { UserService } from '../../services/user.service';
 // Components
 import { ForgotPasswordDialogComponent } from '../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
 import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
-import { RequestDemoModalComponent } from '../../shared/components/request-demo-modal/request-demo-modal.component';
-import { RequestDemoSuccessComponent } from '../../shared/components/request-demo-success/request-demo-success.component';
 // Services
 import { SharedService } from '../shared-service';
 
@@ -47,10 +45,8 @@ export class LandingSiteLayoutComponent {
     paragonSmallLogoImage = '../../../assets/content/paragon-2c-logo_small.png';
     fuelerlinxLogo = '../../../assets/img/FuelerLinxLogo.png';
     x1fboLogo = '../../../assets/img/X1.png';
-    millionAirLogo = '../../../assets/img/million-air.png';
     flightAwareLogo = '../../../assets/img/FlightAware.png';
     titanLogo = '../../../assets/img/titan.png';
-    jetAviation = '../../../assets/img/JetAviation.png';
     amstatLogo = '../../../assets/img/Amstat.png';
     fbodirectorLogo = '../../../assets/img/fbodirector.png';
     fbopartnersLogo = '../../../assets/img/fbopartners.png';
@@ -63,8 +59,8 @@ export class LandingSiteLayoutComponent {
     ];
 
     integrationPartners: Array<any> = [
-        [this.fuelerlinxLogo, this.x1fboLogo, this.millionAirLogo],
-        [this.flightAwareLogo, this.titanLogo, this.jetAviation],
+        [this.fuelerlinxLogo, this.x1fboLogo],
+        [this.flightAwareLogo, this.titanLogo],
         [this.amstatLogo, this.fbodirectorLogo, this.fbopartnersLogo],
     ];
 
@@ -81,8 +77,6 @@ export class LandingSiteLayoutComponent {
         private forgotPasswordDialog: MatDialog,
         private userService: UserService,
         private loginDialog: MatDialog,
-        private requestDemoDialog: MatDialog,
-        private requestDemoSuccessDialog: MatDialog
     ) {}
 
     @HostListener('window:scroll', ['$event'])
@@ -194,8 +188,8 @@ export class LandingSiteLayoutComponent {
         switch (Number(event.value)) {
             case 0:
                 this.integrationPartners = [
-                    [this.fuelerlinxLogo, this.x1fboLogo, this.millionAirLogo],
-                    [this.flightAwareLogo, this.titanLogo, this.jetAviation],
+                    [this.fuelerlinxLogo, this.x1fboLogo],
+                    [this.flightAwareLogo, this.titanLogo],
                     [
                         this.amstatLogo,
                         this.fbodirectorLogo,
@@ -224,7 +218,7 @@ export class LandingSiteLayoutComponent {
                 break;
             case 3:
                 this.integrationPartners = [
-                    [this.titanLogo, this.millionAirLogo, this.jetAviation],
+                    [this.titanLogo],
                 ];
                 break;
             default:
