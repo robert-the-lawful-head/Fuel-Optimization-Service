@@ -66,7 +66,10 @@ namespace FBOLinx.Job.AirportWatch
         {
             //If server time is ahead for some reason and returns to normal, set the last post time to now so that it can post again
             if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow.AddHours(1) < _LastPostDateTimeUTC.GetValueOrDefault())
+            {
+                logger.Information($"_LastPostDateTimeUTC is ahead for more than one hour, set _LastPostDateTimeUTC to server time {DateTime.UtcNow} ");
                 _LastPostDateTimeUTC = DateTime.UtcNow;
+            }
 
             //Don't push more often than every 9 seconds to prevent consistent spikes
             if (_LastPostDateTimeUTC.HasValue && DateTime.UtcNow < _LastPostDateTimeUTC.GetValueOrDefault().AddSeconds(6))
