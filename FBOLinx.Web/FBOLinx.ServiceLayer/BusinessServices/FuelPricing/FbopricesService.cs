@@ -172,10 +172,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                   IntegrationPartnerId = f?.IntegrationPartnerId
                               }).ToList();
 
-                return result;
+                return result; //EXPIRED PRICES AREN'T SHOWING EXPIRED
             }
             else
-                return new List<FbopricesResult>();
+            {
+                var noPrices = new List<FbopricesResult>();
+                noPrices.Add(new FbopricesResult() { Product = "JetA Retail" });
+                noPrices.Add(new FbopricesResult() { Product = "JetA Cost" });
+                noPrices.Add(new FbopricesResult() { Product = "SAF Retail" });
+                noPrices.Add(new FbopricesResult() { Product = "SAF Cost" });
+                return noPrices;
+            }
         }
         public async Task<PriceLookupResponse> GetFuelPricesForCustomer(PriceLookupRequest request)
         {
@@ -361,7 +368,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
+            var filteredResult = new List<FbopricesResult>();
+            filteredResult = result.Where(f => f.Oid > 0 && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).ToList();
 
             foreach (var price in filteredResult)
             {
@@ -372,6 +380,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     price.IntegrationPartner = await GetIntegrationPartnerName(price.IntegrationPartnerId);
                 }
             }
+            if (filteredResult.Count == 0)
+                filteredResult = result;
 
             return filteredResult;
         }
@@ -386,7 +396,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         public async Task<FboPricesDTO> GetCurrentCostPrice(int fboId)
         {
             var currentPrices = await GetListbySpec(new CurrentFboPricesByFboIdSpecification(fboId));
-            var costPrice = currentPrices.Where(s => s.Product == "JetA Cost").FirstOrDefault();
+            var costPrice = new FboPricesDTO();
+            costPrice = currentPrices.Where(s => s.Product == "JetA Cost").FirstOrDefault();
+
             return costPrice;
         }
 
@@ -394,7 +406,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null).ToList();
+            var filteredResult = result.Where(f => f.Oid > 0 && (f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null)).ToList();
 
             return filteredResult;
         }
@@ -726,16 +738,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
             // Populate correct dates if necessary
             var result = await GetPrices(fboPricesGenerator.Fboid);
-            var currentRetailResult = result.Where(f => f.Product == fboPricesGenerator.Product + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-
-            fboPricesGenerator.EffectiveFrom = new DateTime();
-            fboPricesGenerator.EffectiveTo = new DateTime();
-            fboPricesGenerator.IsLive = false;
-            if (currentRetailResult != null && currentRetailResult.Oid > 0)
+            if (result.Count > 0)
             {
-                fboPricesGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesGenerator.Fboid);
-                fboPricesGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesGenerator.EffectiveFrom.ToShortDateString()));
-                fboPricesGenerator.IsLive = true;
+                var currentRetailResult = result.Where(f => f.Product == fboPricesGenerator.Product + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
+
+                fboPricesGenerator.EffectiveFrom = new DateTime();
+                fboPricesGenerator.EffectiveTo = new DateTime();
+                fboPricesGenerator.IsLive = false;
+                if (currentRetailResult != null && currentRetailResult.Oid > 0)
+                {
+                    fboPricesGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesGenerator.Fboid);
+                    fboPricesGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesGenerator.EffectiveFrom.ToShortDateString()));
+                    fboPricesGenerator.IsLive = true;
+                }
             }
 
             return fboPricesGenerator;
