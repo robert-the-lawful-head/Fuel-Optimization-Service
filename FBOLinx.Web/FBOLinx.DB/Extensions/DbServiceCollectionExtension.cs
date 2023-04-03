@@ -24,6 +24,7 @@ namespace FBOLinx.DB.Extensions
                 services.AddDbContext<DegaContext>(options => {
                     options.UseSqlServer(degaDbConnectionString);
                     // options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                    
                 });
 
             if (!string.IsNullOrEmpty(fbolinxDbConnectionString))

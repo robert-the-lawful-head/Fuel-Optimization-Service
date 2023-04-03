@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
@@ -126,6 +127,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
             await _customerInfoByGroupEntityService.BulkUpdate(customerInfoByGroupRecords.Where(x => x.Oid > 0).ToList());
             await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList());
+            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList(), new BulkConfig()
+            {
+                BatchSize = 500,
+                SetOutputIdentity = false,
+                BulkCopyTimeout = 0
+            });
         }
 
         private async Task UpdateFleetStatus()
