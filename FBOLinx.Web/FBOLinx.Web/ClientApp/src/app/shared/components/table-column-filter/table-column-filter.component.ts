@@ -11,6 +11,19 @@ import * as moment from 'moment';
 import { EnumOptions } from "../../../models/enum-options";
 import { StringFilterConditions } from "../../../enums/string-filter-conditions";
 
+enum tableFilterColumnFormat {
+    Text = 0,
+    Number = 1,
+    Date = 2,Time = 3,
+    DateTime = 4,
+    Currency = 5,
+    Weight = 6,
+    TimeStandard = 7,
+    YesNo = 8,
+    EmptyNotEmpty = 9,
+    Multiselect = 10,
+    ManyToManyMultiselect = 11
+}
 @Component({
     animations: [
         trigger('openClose', [
@@ -40,7 +53,7 @@ import { StringFilterConditions } from "../../../enums/string-filter-conditions"
 export class TableColumnFilterComponent implements OnInit {
     @Input() columnId: string;
     @Input() column: any;
-    @Input() columnFormat = 0; // Text = 0,Number = 1,Date = 2,Time = 3,DateTime = 4,Currency = 5,Weight = 6,TimeStandard = 7, YesNo = 8, EmptyNotEmpty = 9, Multiselect = 10, Many-to-Many Multiselect = 11,
+    @Input() columnFormat: tableFilterColumnFormat = tableFilterColumnFormat.Text;
     @Input() propertyName: string;
     @Input() matDataSource: any = null;
     @Input() matSort: MatSort;
@@ -291,7 +304,8 @@ export class TableColumnFilterComponent implements OnInit {
                     if ([10].indexOf(element.columnFormat) > -1) {
                         return (
                             !element.filter.optionsFilter.length ||
-                            element.filter.optionsFilter.includes(columnValue)
+                            (element.filter.optionsFilter.includes(columnValue) && element.filter.filterStringCondition == StringFilterConditions.Contains) ||
+                            (!element.filter.optionsFilter.includes(columnValue) && element.filter.filterStringCondition == StringFilterConditions.DoesNotContain)
                         );
                     }
 
