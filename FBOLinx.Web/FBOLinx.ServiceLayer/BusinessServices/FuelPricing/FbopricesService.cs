@@ -157,7 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                   Oid = f?.Oid ?? 0,
                                   Fboid = fboId,
                                   Product = p.Description,
-                                  Price = f?.Price,
+                                  Price = f?.Price == null ? 0 : f?.Price,
                                   EffectiveFrom = f?.EffectiveFrom ?? DateTime.UtcNow,
                                   EffectiveTo = f?.EffectiveTo ?? null,
                                   TimeStamp = f?.Timestamp,
@@ -369,17 +369,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             var result = await GetPrices(fboId);
 
             var filteredResult = new List<FbopricesResult>();
-            filteredResult = result.Where(f => f.Oid > 0 && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).ToList();
+            filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
 
             foreach (var price in filteredResult)
             {
-                if (price.Price != null)
+                if (price.Price != null && price.Price > 0)
                 {
                     price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
                     price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
                     price.IntegrationPartner = await GetIntegrationPartnerName(price.IntegrationPartnerId);
                 }
             }
+
             if (filteredResult.Count == 0)
                 filteredResult = result;
 
@@ -406,7 +407,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.Oid > 0 && (f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null)).ToList();
+            var filteredResult = result.Where(f => f.EffectiveFrom > DateTime.UtcNow || f.EffectiveTo == null).ToList();
 
             return filteredResult;
         }
