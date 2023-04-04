@@ -113,6 +113,9 @@ export class FlightWatchMapComponent
         super();
         this.fboId = this.sharedService.currentUser.fboId;
         this.groupId = this.sharedService.currentUser.groupId;
+        this.icao = (this.icao == null) ?
+            (this.sharedService.currentUser.icao) ? this.sharedService.currentUser.icao : localStorage.getItem('icao')
+            :  this.icao;
     }
     ngOnInit(): void {
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
@@ -431,7 +434,7 @@ export class FlightWatchMapComponent
     getFbosAndLoad() {
         if (this.clusters) return;
         this.airportFboGeoFenceClustersService
-            .getClustersByIcao(this.sharedService.currentUser.icao)
+            .getClustersByIcao(this.icao)
             .subscribe((response: any) => {
                 this.clusters = [];
                 if (!response) return;
@@ -522,7 +525,7 @@ export class FlightWatchMapComponent
         );
     }
     goToCurrentIcao(){
-        this.goToAirport(this.sharedService.currentUser.icao);
+        this.goToAirport(this.icao);
     }
     toggleLayer(type: LayerType) {
         const layers = this.getLayersFromType(type);
