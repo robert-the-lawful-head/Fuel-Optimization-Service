@@ -172,7 +172,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                   IntegrationPartnerId = f?.IntegrationPartnerId
                               }).ToList();
 
-                return result; //EXPIRED PRICES AREN'T SHOWING EXPIRED
+                return result;
             }
             else
             {
@@ -301,6 +301,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                         {
                             fboPricesUpdateGenerator.Product = product.ToString();
                             fboPricesUpdateGenerator.Fboid = fboId;
+                        }
+
+                        if(fboPricesUpdateGenerator.OidCost==0)
+                        {
                             fboPricesUpdateGenerator.EffectiveFrom = filteredResultRetail.EffectiveFrom;
                             fboPricesUpdateGenerator.EffectiveTo = filteredResultRetail.EffectiveTo;
                         }
@@ -380,6 +384,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     price.IntegrationPartner = await GetIntegrationPartnerName(price.IntegrationPartnerId);
                 }
             }
+
+            if (filteredResult.Where(f => f.Product == "JetA Retail").ToList().Count == 0)
+                filteredResult.Add(new FbopricesResult() { Product = "JetA Retail" });
+
+            if (filteredResult.Where(f => f.Product == "SAF Retail").ToList().Count == 0)
+                filteredResult.Add(new FbopricesResult() { Product = "SAF Retail" });
 
             if (filteredResult.Count == 0)
                 filteredResult = result;

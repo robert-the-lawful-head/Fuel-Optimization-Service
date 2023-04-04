@@ -133,8 +133,7 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="company"
-                                                         propertyName="company"
-                                                         [columnFormat]="9"></app-table-column-filter>
+                                                         propertyName="company"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
@@ -149,8 +148,7 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="tailNumber"
-                                                         propertyName="tailNumber"
-                                                         [columnFormat]="9"></app-table-column-filter>
+                                                         propertyName="tailNumber"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
@@ -195,8 +193,7 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="aircraftType"
-                                                         propertyName="aircraftType"
-                                                         [columnFormat]="9"></app-table-column-filter>
+                                                         propertyName="aircraftType"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
@@ -261,7 +258,8 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="pastVisits"
-                                                         propertyName="pastVisits"></app-table-column-filter>
+                                                         propertyName="pastVisits"
+                                                         [columnFormat]="1"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
@@ -276,7 +274,8 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="visitsToMyFbo"
-                                                         propertyName="visitsToMyFbo"></app-table-column-filter>
+                                                         propertyName="visitsToMyFbo"
+                                                         [columnFormat]="1"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
@@ -291,7 +290,8 @@
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
                                                          columnId="percentOfVisits"
-                                                         propertyName="percentOfVisits"></app-table-column-filter>
+                                                         propertyName="percentOfVisits"
+                                                         [columnFormat]="1"></app-table-column-filter>
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
