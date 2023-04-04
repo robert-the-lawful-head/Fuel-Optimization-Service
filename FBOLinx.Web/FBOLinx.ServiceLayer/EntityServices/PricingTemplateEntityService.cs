@@ -436,7 +436,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                          join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                          join co in _context.Contacts on custc.ContactId equals co.Oid
                                          join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                                         join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = co.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                         join cibf in _context.ContactInfoByFbo on new { ContactId = (int?) co.Oid, FboId = (int?) fboId } equals new { ContactId = cibf.ContactId, FboId = cibf.FboId } into leftJoinCIBF
                                          from cibf in leftJoinCIBF.DefaultIfEmpty()
                                          where (cg.Active ?? false)
                                          && cc.CustomerType == t.Oid
