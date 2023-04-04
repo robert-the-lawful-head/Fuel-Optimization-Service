@@ -13,6 +13,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
     public interface ICompanyPricingLogEntityService : IRepository<CompanyPricingLog, FboLinxContext>
     {
         Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuotesByAirport(string icao);
+
+        Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountByDateRange(
+            DateTime startDate, DateTime endDate, int? fuelerlinxCompanyId);
     }
 
     public class CompanyPricingLogEntityService : Repository<CompanyPricingLog, FboLinxContext>, ICompanyPricingLogEntityService
@@ -29,6 +32,26 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     FuelerLinxCompanyId = x.Key.CompanyId,
                     Icao = x.Key.ICAO,
                     MostRecentQuoteDateTime = x.Max(x => x.CreatedDate)
+                }).ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountByDateRange(
+            DateTime startDate, DateTime endDate, int? fuelerlinxCompanyId)
+        {
+            var result = await (from cpl in context.CompanyPricingLog
+                join fa in context.Fboairports on cpl.ICAO equals fa.Icao
+                join f in context.Fbos on fa.Fboid equals f.Oid
+                where cpl.CreatedDate >= startDate 
+                      && cpl.CreatedDate <= endDate
+                      && f.Active == true
+                      && (!fuelerlinxCompanyId.HasValue || cpl.CompanyId == fuelerlinxCompanyId.Value)
+                group cpl by new { FboID = f.Oid, GroupID = f.GroupId } into g
+                select new CompanyPricingLogCountByDateRange()
+                {
+                    QuoteCount = g.Count(),
+                    FboId = g.Key.FboID,
+                    GroupId = g.Key.GroupID.GetValueOrDefault()
                 }).ToListAsync();
             return result;
         }

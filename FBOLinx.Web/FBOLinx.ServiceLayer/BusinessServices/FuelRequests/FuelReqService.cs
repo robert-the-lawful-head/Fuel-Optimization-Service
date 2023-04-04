@@ -26,7 +26,6 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
-using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -61,21 +60,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private FuelReqEntityService _FuelReqEntityService;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly FboLinxContext _context;
-        private readonly DegaContext _degaContext;
         private IFboEntityService _FboEntityService;
         private ICustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private IMemoryCache _MemoryCache;
-        private IAirportService _AirportService;
         private IAirportTimeService _AirportTimeService;
         private readonly AcukwikAirportEntityService _AcukwikAirportEntityService;
         private readonly ILogger _logger;
         private IMailService _MailService;
         private readonly IAuthService _AuthService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IFboService _fboService;
         private readonly IFboContactsEntityService _FboContactsEntityService;
 
-        public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context, DegaContext degaContext,
+        public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IMemoryCache memoryCache, 
@@ -84,11 +80,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             ILogger<FuelReqService> logger,
             IMailService mailService,
             IAuthService authService,
-            IFboService fboService,
             IHttpContextAccessor httpContextAccessor,
             IFboContactsEntityService fboContactsEntityService) : base(fuelReqEntityService)
         {
-            _fboService = fboService;
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
@@ -98,7 +92,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _FuelReqEntityService = fuelReqEntityService;
             _fuelerLinxService = fuelerLinxService;
             _context = context;
-            _degaContext = degaContext;
             _MailService = mailService;
             _AuthService = authService;
             _httpContextAccessor = httpContextAccessor;
@@ -174,13 +167,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault());
+                AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(transaction.AirportId.GetValueOrDefault());
 
-                fuelRequest.Eta = await GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
-                fuelRequest.DateCreated = await GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(),transaction.AirportId.GetValueOrDefault());
-
-                var fbo = (await _fboService.GetFbosByIcaos(transaction.Icao)).FirstOrDefault();
-                fuelRequest.TimeZone = await _fboService.GetAirportTimeZoneByFboId(fbo.Oid);
+                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -190,24 +179,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             foreach(FuelReqDto order in directOrders)
             {
                 AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == order.Icao).FirstOrDefaultAsync();
-                order.Eta = await GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport.Oid);
-                order.DateCreated = await GetAirportLocalTime(order.DateCreated.GetValueOrDefault(), airport.Oid);
-
-                order.TimeZone = await _fboService.GetAirportTimeZoneByFboId((int)order.Fboid);
+                FuelReqDto.SetAirportLocalTimes(order,airport);
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);
             result.AddRange(directOrders);
 
             return result;
-        }
-        private async Task<DateTime?> GetAirportLocalTime(DateTime date, int airportId)
-        {
-                AcukwikAirport airport = await _AcukwikAirportEntityService.GetAsync(airportId);
-                if (airport == null)
-                    return date;
-                return DateTimeHelper.GetLocalTime(
-                    date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");  
         }
         private async Task<List<FuelReqDto>> GetUpcomingOrdersFromCache(int groupId, int fboId)
         {
