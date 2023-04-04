@@ -104,7 +104,7 @@
                 <td *matCellDef="let fuelreq" mat-cell>
                     <span  style="display: flex;">
                         {{ fuelreq.customerName }} &nbsp;
-                        <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
+                        <ni-badge *ngIf="fuelreq.customerOrderNotes" [arrow]="'right'" [borderRadius]="false"
                             [color]="'warning'"
                             matTooltipPosition="after">
                             Order Note
@@ -224,7 +224,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        {{ element.customerNotes }}
+                                        {{ element.customerOrderNotes }}
                                     </td>
                                     <td>
                                         FuelerLinx ID:

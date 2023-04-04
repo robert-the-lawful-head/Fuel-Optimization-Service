@@ -389,7 +389,7 @@ export class AdditionNavbarComponent
             (r) => r.product === 'JetA Cost'
         )?.[0].price;
 
-        if (this.sharedService.currentUser.role != 6 && !this.retailPrice && !this.costPrice) {
+        if (!this.retailPrice && !this.costPrice) {
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'Your fuel pricing has expired. Please update your cost/retail values.',

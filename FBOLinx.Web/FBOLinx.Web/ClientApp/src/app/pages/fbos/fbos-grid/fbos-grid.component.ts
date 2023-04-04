@@ -270,7 +270,7 @@ export class FbosGridComponent implements OnInit {
         this.fboPricesService
             .checkFboExpiredPricingGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
-                if (this.sharedService.currentUser.role != 6 && data && data.length) {
+                if (data && data.length) {
                     const dialogRef = this.checkPricingDialog.open(
                         PricingExpiredNotificationGroupComponent,
                         {

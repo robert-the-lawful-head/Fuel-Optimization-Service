@@ -21,9 +21,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
         Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuoteDatesForAirport(string icao,
             bool useCache = true);
         public Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID);
-
-        Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountByDateRange(DateTime startDate,
-            DateTime endDate, int? fuelerlinxCompanyId = null);
     }
 
     public class CompanyPricingLogService : BaseDTOService<CompanyPricingLogDto, DB.Models.CompanyPricingLog, FboLinxContext>, ICompanyPricingLogService
@@ -82,11 +79,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             }
 
             await BulkInsert(companyPricingLogs);
-        }
-
-        public async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountByDateRange(DateTime startDate, DateTime endDate, int? fuelerlinxCompanyId = null)
-        {
-            return await _CompanyPricingLogEntityService.GetCompanyPricingLogCountByDateRange(startDate, endDate, fuelerlinxCompanyId);
         }
 
         private async Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuotesForAirportFromCache(
