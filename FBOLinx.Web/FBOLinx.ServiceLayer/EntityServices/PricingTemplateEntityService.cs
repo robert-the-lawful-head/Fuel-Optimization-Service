@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -430,19 +431,16 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             foreach (var t in templatesWithEmailContent)
             {
-                t.CustomerEmails = await(from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                t.CustomerEmails = await(from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId && x.Active.HasValue && x.Active.Value))
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                                         join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId && x.CustomerType == t.Oid) on cg.CustomerId equals cc.CustomerId
                                          join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                          join co in _context.Contacts on custc.ContactId equals co.Oid
-                                         join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                                         join cibg in _context.ContactInfoByGroup on new {ContactId = co.Oid, GroupId = groupId} equals new {ContactId = cibg.ContactId, GroupId = cibg.GroupId}
                                          join cibf in _context.ContactInfoByFbo on new { ContactId = (int?) co.Oid, FboId = (int?) fboId } equals new { ContactId = cibf.ContactId, FboId = cibf.FboId } into leftJoinCIBF
                                          from cibf in leftJoinCIBF.DefaultIfEmpty()
-                                         where (cg.Active ?? false)
-                                         && cc.CustomerType == t.Oid
-                                         && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
+                                         where ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                          && !string.IsNullOrEmpty(cibg.Email)
-                                         && cibg.GroupId == groupId
                                          && (c.Suspended ?? false) == false
                                          select cibg.Email
                                 ).ToListAsync();
