@@ -199,6 +199,8 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].submitStatus = "Stage";
                         }
                         else {
+                            if (_this.fboPricesUpdateGridData[currentUpdatedPrice].priceCost == null)
+                                _this.fboPricesUpdateGridData[currentUpdatedPrice].priceCost = 0;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidPap = data.oidPap;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].oidCost = data.oidCost;
                             _this.fboPricesUpdateGridData[currentUpdatedPrice].effectiveFrom = event.effectiveFrom;

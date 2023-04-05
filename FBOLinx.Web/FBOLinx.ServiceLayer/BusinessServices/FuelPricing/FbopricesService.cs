@@ -157,7 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                   Oid = f?.Oid ?? 0,
                                   Fboid = fboId,
                                   Product = p.Description,
-                                  Price = f?.Price,
+                                  Price = f?.Price == null ? 0 : f?.Price,
                                   EffectiveFrom = f?.EffectiveFrom ?? DateTime.UtcNow,
                                   EffectiveTo = f?.EffectiveTo ?? null,
                                   TimeStamp = f?.Timestamp,
@@ -175,7 +175,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 return result;
             }
             else
-                return new List<FbopricesResult>();
+            {
+                var noPrices = new List<FbopricesResult>();
+                noPrices.Add(new FbopricesResult() { Product = "JetA Retail" });
+                noPrices.Add(new FbopricesResult() { Product = "JetA Cost" });
+                noPrices.Add(new FbopricesResult() { Product = "SAF Retail" });
+                noPrices.Add(new FbopricesResult() { Product = "SAF Cost" });
+                return noPrices;
+            }
         }
         public async Task<PriceLookupResponse> GetFuelPricesForCustomer(PriceLookupRequest request)
         {
@@ -294,6 +301,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                         {
                             fboPricesUpdateGenerator.Product = product.ToString();
                             fboPricesUpdateGenerator.Fboid = fboId;
+                        }
+
+                        if(fboPricesUpdateGenerator.OidCost==0)
+                        {
                             fboPricesUpdateGenerator.EffectiveFrom = filteredResultRetail.EffectiveFrom;
                             fboPricesUpdateGenerator.EffectiveTo = filteredResultRetail.EffectiveTo;
                         }
@@ -361,17 +372,27 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             var result = await GetPrices(fboId);
 
-            var filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
+            var filteredResult = new List<FbopricesResult>();
+            filteredResult = result.Where(f => f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null).ToList();
 
             foreach (var price in filteredResult)
             {
-                if (price.Price != null)
+                if (price.Price != null && price.Price > 0)
                 {
                     price.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveFrom, fboId);
                     price.EffectiveTo = await _fboService.GetAirportLocalDateTimeByUtcFboId(price.EffectiveTo.GetValueOrDefault(), fboId);
                     price.IntegrationPartner = await GetIntegrationPartnerName(price.IntegrationPartnerId);
                 }
             }
+
+            if (filteredResult.Where(f => f.Product == "JetA Retail").ToList().Count == 0)
+                filteredResult.Add(new FbopricesResult() { Product = "JetA Retail" });
+
+            if (filteredResult.Where(f => f.Product == "SAF Retail").ToList().Count == 0)
+                filteredResult.Add(new FbopricesResult() { Product = "SAF Retail" });
+
+            if (filteredResult.Count == 0)
+                filteredResult = result;
 
             return filteredResult;
         }
@@ -386,7 +407,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         public async Task<FboPricesDTO> GetCurrentCostPrice(int fboId)
         {
             var currentPrices = await GetListbySpec(new CurrentFboPricesByFboIdSpecification(fboId));
-            var costPrice = currentPrices.Where(s => s.Product == "JetA Cost").FirstOrDefault();
+            var costPrice = new FboPricesDTO();
+            costPrice = currentPrices.Where(s => s.Product == "JetA Cost").FirstOrDefault();
+
             return costPrice;
         }
 
@@ -726,16 +749,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
             // Populate correct dates if necessary
             var result = await GetPrices(fboPricesGenerator.Fboid);
-            var currentRetailResult = result.Where(f => f.Product == fboPricesGenerator.Product + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
-
-            fboPricesGenerator.EffectiveFrom = new DateTime();
-            fboPricesGenerator.EffectiveTo = new DateTime();
-            fboPricesGenerator.IsLive = false;
-            if (currentRetailResult != null && currentRetailResult.Oid > 0)
+            if (result.Count > 0)
             {
-                fboPricesGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesGenerator.Fboid);
-                fboPricesGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesGenerator.EffectiveFrom.ToShortDateString()));
-                fboPricesGenerator.IsLive = true;
+                var currentRetailResult = result.Where(f => f.Product == fboPricesGenerator.Product + " Retail" && (f.EffectiveFrom <= DateTime.UtcNow || f.EffectiveTo == null)).FirstOrDefault();
+
+                fboPricesGenerator.EffectiveFrom = new DateTime();
+                fboPricesGenerator.EffectiveTo = new DateTime();
+                fboPricesGenerator.IsLive = false;
+                if (currentRetailResult != null && currentRetailResult.Oid > 0)
+                {
+                    fboPricesGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(currentRetailResult.EffectiveTo.GetValueOrDefault().AddMinutes(1), fboPricesGenerator.Fboid);
+                    fboPricesGenerator.EffectiveTo = DateTimeHelper.GetNextTuesdayDate(DateTime.Parse(fboPricesGenerator.EffectiveFrom.ToShortDateString()));
+                    fboPricesGenerator.IsLive = true;
+                }
             }
 
             return fboPricesGenerator;
