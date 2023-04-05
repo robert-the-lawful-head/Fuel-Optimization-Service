@@ -8,14 +8,17 @@ using FBOLinx.Core.Utilities.Enums;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 {
@@ -33,20 +36,29 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
             int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
         Task<List<AirportPosition>> GetAirportPositions();
+        Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
+        Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
     }
 
     //TODO: Convert this to a DTO and Entity Service!
     public class AirportService : IAirportService
     {
         private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
+        private string _GeneralAirportInfoCacheKey = "AirportWatchService_AllAirports_GeneralAirportInfo";
         private FboLinxContext _fboLinxContext;
         private DegaContext _degaContext;
         private IMemoryCache _MemoryCache;
         private List<AirportPosition> _AirportPositions;
         private IFboEntityService _FboEntityService;
+        private AcukwikAirportEntityService _AcukwikAirportEntityService;
+        private FuelerLinxApiService _FuelerLinxApiService;
 
-        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService)
+        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
+            AcukwikAirportEntityService acukwikAirportEntityService,
+            FuelerLinxApiService fuelerLinxApiService)
         {
+            _FuelerLinxApiService = fuelerLinxApiService;
+            _AcukwikAirportEntityService = acukwikAirportEntityService;
             _FboEntityService = fboEntityService;
             _MemoryCache = memoryCache;
             _degaContext = degaContext;
@@ -157,7 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             if (_AirportPositions?.Count > 0)
                 return _AirportPositions;
 
-            _AirportPositions = LookupAirportRecordsByFromCache();
+            _AirportPositions = LookupAirportPositionRecordsByFromCache();
 
             if (_AirportPositions == null)
             {
@@ -203,6 +215,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return _AirportPositions;
         }
 
+        public async Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier)
+        {
+            var generalInfoList = await GetGeneralAirportInformationList();
+            airportIdentifier = airportIdentifier?.ToUpper();
+            return generalInfoList?.FirstOrDefault(x =>
+                x.ProperAirportIdentifier?.ToUpper() == airportIdentifier);
+        }
+
+        public async Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList()
+        {
+            var cachedResult = GetGeneralAirportInfoListFromCache();
+            if (cachedResult != null && cachedResult.Count > 0)
+                return cachedResult;
+
+            cachedResult = await _FuelerLinxApiService.GetAllAirportGeneralInformation();
+
+            //Store in cache before returning
+            var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
+            _MemoryCache.Set(_GeneralAirportInfoCacheKey, cachedResult, cacheEntryOptions);
+            return cachedResult;
+        }
+
         private Tuple<double, double> GetGeoLocationFromGPS(string lat, string lng)
         {
             var latDirection = lat.Substring(0, 1);
@@ -219,12 +253,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return new Tuple<double, double>(latitude, longitude);
         }
 
-        private List<AirportPosition> LookupAirportRecordsByFromCache()
+        private List<AirportPosition> LookupAirportPositionRecordsByFromCache()
         {
             List<AirportPosition> result = null;
             if (_MemoryCache.TryGetValue(_AllAirportsPositioningCacheKey, out result))
                 return result;
             return result;
+        }
+
+
+        private List<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInfoListFromCache()
+        {
+            try
+            {
+                List<Fuelerlinx.SDK.GeneralAirportInformation> result;
+                if (_MemoryCache.TryGetValue(_GeneralAirportInfoCacheKey, out result))
+                    return result;
+                return null;
+            }
+            catch (System.Exception exception)
+            {
+                return null;
+            }
         }
     }
 }

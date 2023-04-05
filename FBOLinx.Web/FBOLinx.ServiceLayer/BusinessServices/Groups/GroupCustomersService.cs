@@ -85,7 +85,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                     {
                         BatchSize = 500,
                         SetOutputIdentity = false,
-                        BulkCopyTimeout = 0
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
                     });
 
                 var existingCustomerAircraftRecordsForGroup =
