@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public class SWIMFlightLegData : FBOLinxBaseEntityModel<int>
+    public class SWIMFlightLegData : FBOLinxBaseEntityModel<long>
     {
         [Required]
         public DateTime ETA { get; set; }

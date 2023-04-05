@@ -35,7 +35,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         }
         public string FAARegisteredOwner => _SwimFlightLeg?.FAARegisteredOwner;
         public int? AirportWatchLiveDataId => _AirportWatchLiveData?.Oid;
-        public int? SWIMFlightLegId => _SwimFlightLeg?.Oid;
+        public long? SWIMFlightLegId => _SwimFlightLeg?.Oid;
 
         public int VisitsToMyFBO { get; set; }
         public int Arrivals { get; set; }
