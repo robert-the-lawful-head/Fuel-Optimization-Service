@@ -17,14 +17,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
     public class AirportTimeService : IAirportTimeService
     {
-        private FuelerLinxApiService _FuelerLinxApiService;
-        private List<GeneralAirportInformation> _AirportGeneralInformationList;
         private IAirportService _AirportService;
 
-        public AirportTimeService(FuelerLinxApiService fuelerLinxApiService, IAirportService airportService)
+        public AirportTimeService(IAirportService airportService)
         {
             _AirportService = airportService;
-            _FuelerLinxApiService = fuelerLinxApiService;
         }
 
         public async Task<DateTime> GetAirportLocalDateTime(int fboId, DateTime? utcDateTime = null)
@@ -70,12 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
         private async Task<GeneralAirportInformation> GetAirportGeneralInformation(string icao)
         {
-            icao = icao?.ToUpper();
-
-            if (_AirportGeneralInformationList == null)
-                _AirportGeneralInformationList = await _FuelerLinxApiService.GetAllAirportGeneralInformation();
-
-            return _AirportGeneralInformationList.FirstOrDefault(x => x.ProperAirportIdentifier != null && x.ProperAirportIdentifier.ToUpper() == icao);
+            return await _AirportService.GetGeneralAirportInformation(icao);
         }
     }
 }

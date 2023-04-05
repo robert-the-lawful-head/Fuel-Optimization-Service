@@ -113,7 +113,7 @@ namespace FBOLinx.Service.Mapping.Dto
             CustomerName = companyName;
         }
 
-        public static FuelReqDto Cast(TransactionDTO transaction, string companyName, AcukwikAirport airport)
+        public static FuelReqDto Cast(TransactionDTO transaction, string companyName, Fuelerlinx.SDK.GeneralAirportInformation airport)
         {
             FuelReqDto fuelRequest = new FuelReqDto();
             fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
@@ -140,7 +140,7 @@ namespace FBOLinx.Service.Mapping.Dto
                     fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
             }
         }
-        public static void SetAirportLocalTimes(FuelReqDto fuelRequest, AcukwikAirport airport)
+        public static void SetAirportLocalTimes(FuelReqDto fuelRequest, Fuelerlinx.SDK.GeneralAirportInformation airport)
         {
 
             if (fuelRequest.TimeStandard == "Z")
@@ -157,12 +157,12 @@ namespace FBOLinx.Service.Mapping.Dto
             fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.UtcNow, airport?.IntlTimeZone, airport?.AirportCity);
 
         }
-        public static DateTime GetAirportLocalTime(DateTime date, AcukwikAirport airport)
+        public static DateTime GetAirportLocalTime(DateTime date, Fuelerlinx.SDK.GeneralAirportInformation airport)
         {
             if (airport == null)
                 return date;
             return DateTimeHelper.GetLocalTime(
-                date, airport.IntlTimeZone, airport.DaylightSavingsYn?.ToLower() == "y");
+                date, airport.IntlTimeZone, airport.RespectDaylightSavings);
         }
     }
 }

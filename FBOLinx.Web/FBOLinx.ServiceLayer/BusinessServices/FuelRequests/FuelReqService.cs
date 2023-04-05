@@ -69,6 +69,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IAuthService _AuthService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboContactsEntityService _FboContactsEntityService;
+        private IAirportService _AirportService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -80,8 +81,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IMailService mailService,
             IAuthService authService,
             IHttpContextAccessor httpContextAccessor,
-            IFboContactsEntityService fboContactsEntityService) : base(fuelReqEntityService)
+            IFboContactsEntityService fboContactsEntityService,
+            IAirportService airportService) : base(fuelReqEntityService)
         {
+            _AirportService = airportService;
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
@@ -166,7 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == transaction.Icao).FirstOrDefaultAsync();
+                var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
 
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
 
@@ -177,7 +180,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(FuelReqDto order in directOrders)
             {
-                AcukwikAirport airport = await _AcukwikAirportEntityService.Where(x => x.Icao == order.Icao).FirstOrDefaultAsync();
+                var airport = await _AirportService.GetGeneralAirportInformation(order.Icao);
                 FuelReqDto.SetAirportLocalTimes(order,airport);
             }
 
