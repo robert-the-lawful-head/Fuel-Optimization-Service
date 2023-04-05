@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
@@ -139,7 +140,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             coveredAircraft.AddRange(missingCoverage);
 
             //Add them to the CustomerAircrafts table and update covered aircraft with the make/model
-            await _customerAircraftEntityService.BulkInsert(coveredAircraft);
+            await _customerAircraftEntityService.BulkInsert(coveredAircraft, new BulkConfig()
+            {
+                BatchSize = 500,
+                SetOutputIdentity = false,
+                BulkCopyTimeout = 0,
+                WithHoldlock = false
+            });
         }
 
         private async Task PrepareDataForSync()
