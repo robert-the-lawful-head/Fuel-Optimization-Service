@@ -1,15 +1,5 @@
 use [paragon_test]
 
-DROP INDEX CustomerAircrafts.INX_GroupID;
-
-GO
-
-DROP INDEX [INX_CustomerAircrafts_TailNumber] ON [paragon_test].[dbo].[CustomerAircrafts];
-GO
-
-DROP INDEX [INX_CA_ID] ON [paragon_test].[dbo].[CustomerAircrafts];
-GO
-
 CREATE NONCLUSTERED INDEX [indx_DistributionQueue_GroupID_FBOID_CustomerID] ON [dbo].[DistributionQueue]
 (
 	[GroupID] ASC,
