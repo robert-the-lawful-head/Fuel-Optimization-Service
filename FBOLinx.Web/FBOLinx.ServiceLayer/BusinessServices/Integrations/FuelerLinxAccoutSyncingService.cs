@@ -9,7 +9,9 @@ using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Mapping;
@@ -37,13 +39,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomerService _customerService;
+        private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly IFboService _fboService;
 
         public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
             ICustomersEntityService customerEntityService,
             IGroupService groupService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
-            ICustomerService customerService)
+            ICustomerService customerService,
+            IPricingTemplateService pricingTemplateService,
+            IFboService fboService
+            )
         {
             _customerAircraftEntityService = customerAircraftEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
@@ -51,6 +58,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _customerService = customerService;
+            _pricingTemplateService = pricingTemplateService;
+            _fboService = fboService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -70,6 +79,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             await UpdateCustomerInfoByGroupRecords();
 
             await UpdateFleetStatus();
+
+            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
+
+            foreach (var fbo in fbos)
+            {
+                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId.Value, fbo.Oid);
+            }
         }
 
         private async Task UpdateCustomerRecord()
