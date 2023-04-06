@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
@@ -17,7 +16,7 @@ namespace FBOLinx.DB.Models
         
         public string RawXmlMessage { get; set; }
 
-        public int SWIMFlightLegId { get; set; }
+        public long SWIMFlightLegId { get; set; }
         public virtual SWIMFlightLeg SWIMFlightLeg { get; set; }
 
         public virtual ICollection<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
