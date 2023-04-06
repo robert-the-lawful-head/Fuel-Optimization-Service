@@ -48,7 +48,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
     @Input() customers: CustomersListType[] = [];
-    @Input() tailNumbers: any[] = [];
     @Output() refreshCustomers = new EventEmitter();
 
     chartName = 'airport-arrivals-depatures-table';
@@ -85,6 +84,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
     columns: ColumnType[] = [];
 
     fboName: string = "";
+
+    tailNumbers: any[] = [];
 
     initialColumns: ColumnType[] = [
         {
@@ -274,8 +275,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
 
         if (!this.dataSource) {
             this.dataSource.filteredData = [];
-        }
+        }        
 
+        this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
+            .map(x => x.tailNumber))]
+            .map(tailNumber => this.data.find(x => x.tailNumber === tailNumber));
     }
 
     refreshSort() {

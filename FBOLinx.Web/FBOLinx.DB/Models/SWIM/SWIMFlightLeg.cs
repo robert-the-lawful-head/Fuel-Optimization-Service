@@ -9,7 +9,7 @@ using FBOLinx.Core.Enums;
 namespace FBOLinx.DB.Models
 {
     [Table("SWIMFlightLegs")]
-    public class SWIMFlightLeg : FBOLinxBaseEntityModel<int>
+    public class SWIMFlightLeg : FBOLinxBaseEntityModel<long>
     {
         [Column(TypeName = "varchar(50)")]
         public string Gufi { get; set; }

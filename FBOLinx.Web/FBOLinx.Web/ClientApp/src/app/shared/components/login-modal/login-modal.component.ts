@@ -59,6 +59,7 @@ export class LoginModalComponent {
                             } else if (data.role === 5) {
                                 this.sharedService.currentUser.icao =
                                     data.fbo.fboAirport.icao;
+                                    localStorage.setItem('icao', data.fbo.fboAirport.icao);
                                 this.router.navigate([
                                     '/default-layout/dashboard-csr/',
                                 ]);

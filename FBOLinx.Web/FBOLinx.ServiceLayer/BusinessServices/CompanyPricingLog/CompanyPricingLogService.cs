@@ -21,12 +21,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
         Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuoteDatesForAirport(string icao,
             bool useCache = true);
         public Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID);
+
+        Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30Days(
+            int? fuelerlinxCompanyId = null, bool useCache = true);
     }
 
     public class CompanyPricingLogService : BaseDTOService<CompanyPricingLogDto, DB.Models.CompanyPricingLog, FboLinxContext>, ICompanyPricingLogService
     {
         private int _CacheLifeSpanInMinutes = 10;
         private string _MostRecentQuotesCacheKey = "CompanyPricingLog_MostRecentQuotes_";
+        private const string _QuotesCountCacheKey = "CompanyPricingLog_QuoteCount_";
         private ICompanyPricingLogEntityService _CompanyPricingLogEntityService;
         private IMemoryCache _MemoryCache;
 
@@ -58,7 +62,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
                 var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
                 _MemoryCache.Set(_MostRecentQuotesCacheKey + icao, result, cacheEntryOptions);
             }
-            
+
             return result;
         }
 
@@ -81,6 +85,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             await BulkInsert(companyPricingLogs);
         }
 
+        public async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30Days(int? fuelerlinxCompanyId = null, bool useCache = true)
+        {
+            if (useCache)
+                return await GetCompanyPricingLogCountLast30DaysFromCache(fuelerlinxCompanyId);
+            return await GetCompanyPricingLogCountLast30DaysFromDatabase(fuelerlinxCompanyId);
+        }
+
         private async Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuotesForAirportFromCache(
             string icao)
         {
@@ -95,6 +106,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             {
                 return null;
             }
+        }
+
+        private async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30DaysFromCache(int? fuelerlinxCompanyId = null)
+        {
+            var result = await _MemoryCache.GetOrCreateAsync(_QuotesCountCacheKey + fuelerlinxCompanyId.GetValueOrDefault(),
+                async entry =>
+                {
+                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(120);
+                    return await GetCompanyPricingLogCountLast30DaysFromDatabase(fuelerlinxCompanyId);
+                });
+            return result;
+        }
+
+        private async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30DaysFromDatabase(int? fuelerlinxCompanyId = null)
+        {
+            return await _CompanyPricingLogEntityService.GetCompanyPricingLogCountByDateRange(DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, fuelerlinxCompanyId);
         }
     }
 }

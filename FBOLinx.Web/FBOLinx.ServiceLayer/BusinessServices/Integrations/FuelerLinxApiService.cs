@@ -23,13 +23,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private AppPartnerSDKSettings.FuelerlinxSDKSettings _fuelerlinxSdkSettings;
         private IOptions<AppSettings> _appSettings;
         private HttpClient _httpClient;
-        private IAirportService _airportService;
 
         #endregion
 
-        public FuelerLinxApiService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings, IAirportService airportService)
+        public FuelerLinxApiService(IOptions<AppSettings> appSettings, IOptions<AppPartnerSDKSettings> appPartnerSDKSettings)
         {
-            _airportService = airportService;
             _appSettings = appSettings;
             _fuelerlinxSdkSettings = appPartnerSDKSettings?.Value?.FuelerLinx;
             _APIKey = _fuelerlinxSdkSettings?.APIKey;
@@ -193,13 +191,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             return result.Result;
         }
 
-        public async Task ClearQuoteCacheForFbo(int fboId)
+        public async Task ClearQuoteCacheForFbo(string icao)
         {
-            var apiClient = await GetApiClient();
-            var airport = await _airportService.GetAirportForFboId(fboId);
-            if (airport == null)
+            if (string.IsNullOrEmpty(icao))
                 return;
-            await ClearQuoteCacheForAirports(new List<string>() { airport.Icao });
+            await ClearQuoteCacheForAirports(new List<string>() { icao });
         }
 
         public async Task ClearQuoteCacheForAirports(List<string> airportIdentifiers)

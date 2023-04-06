@@ -401,10 +401,7 @@ export class DefaultLayoutComponent implements OnInit {
                             )
                             .subscribe(
                                 (result: any) => {
-                                    console.log("🚀 ~ file: default.component.ts:391 ~ DefaultLayoutComponent ~ LogUserForAnalytics ~ result:", result);
                                     this.LogAnalytics(fbo.fbo, result.icao);
-                                    this.sharedService.currentUser.icao = result.icao;
-                                    localStorage.setItem("ICAO", result.icao);
                                 }
                         );
                     }

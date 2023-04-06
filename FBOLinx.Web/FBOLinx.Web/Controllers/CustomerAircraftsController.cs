@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
+using Azure.Core;
+using System.Security.Cryptography;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -250,6 +252,8 @@ namespace FBOLinx.Web.Controllers
 
                 await _context.SaveChangesAsync();
 
+                _CustomerAircraftService.ClearCache(request.GroupId.GetValueOrDefault(), fboid);
+
                 return Ok(custAircraft);
             }
             catch (Exception)
@@ -275,6 +279,7 @@ namespace FBOLinx.Web.Controllers
           
             _context.CustomerAircrafts.Add(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
+            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId.GetValueOrDefault());
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
@@ -313,6 +318,8 @@ namespace FBOLinx.Web.Controllers
             }
 
             await _context.SaveChangesAsync();
+
+            _CustomerAircraftService.ClearCache(groupId, fboId);
 
             return Ok();
         }
@@ -368,6 +375,8 @@ namespace FBOLinx.Web.Controllers
                 _context.SaveChanges();
 
                 await transaction.CommitAsync();
+
+                _CustomerAircraftService.ClearCache(request.GroupId, request.FboId);
 
                 return Ok(customerInfoByGroup);
             }

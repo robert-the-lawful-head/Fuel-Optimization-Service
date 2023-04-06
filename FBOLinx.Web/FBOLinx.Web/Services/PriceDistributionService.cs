@@ -40,7 +40,7 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private string _CurrentPostedRetail = "";
         private string _ValidUntil = "";
-        private Fbos _Fbo;
+        private FbosDto _Fbo;
         private FboLinxImageFileData _Logo;
         private FbolinxPricingTemplateFileAttachmentDto _PricingTemplateFileAttachment;
         private IHttpContextAccessor _HttpContextAccessor;
@@ -729,7 +729,7 @@ namespace FBOLinx.Web.Services
                 _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
             }
 
-            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId);
+            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId, false);
 
             _Logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == _Fbo.Oid).FirstOrDefaultAsync();
 
@@ -740,7 +740,9 @@ namespace FBOLinx.Web.Services
 
         private async Task GetEmailContent()
         {
-            if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0)
+            _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
+
+            if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0 || _EmailContent == null)
             {
                 List<PricingTemplate> pricingTemplates = await _context.Set<PricingTemplate>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToListAsync();
                 PricingTemplate pricingTemplate = pricingTemplates.FirstOrDefault();
@@ -756,8 +758,6 @@ namespace FBOLinx.Web.Services
 
                 pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
             }
-
-            _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
         }
         private async Task LogDistributionRecord()
         {

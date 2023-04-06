@@ -84,7 +84,8 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                 title: 'CSR Dashboard',
             });
         }
-        this.selectedICAO = (this.sharedService.currentUser.icao)? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+        this.selectedICAO = (this.sharedService.currentUser.icao) ? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+
     }
 
     get isCsr() {
@@ -95,10 +96,12 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         return this.sharedService.currentUser.role === 4;
     }
     async ngOnInit() {
-        this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
+        if(this.selectedICAO)
+            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
 
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
-            this.loadAirportWatchData();
+            if(this.selectedICAO)
+                this.loadAirportWatchData();
         });
     }
 

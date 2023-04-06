@@ -128,7 +128,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.initForm();
         this.loadEmailContentTemplate();
     }
-
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
@@ -193,13 +192,20 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             ])
         );
     }
+    updateCustomerMarginPreviousValue(index){
+        let previousIndex = index - 1;
+        let minValue = this.customerMarginsFormArray.at(index).value.min
+        this.customerMarginsFormArray.at(previousIndex).patchValue({
+            max: minValue - 1,
+        });
+    }
 
     addCustomerMargin() {
         const customerMargin = {
             allin: 0,
             amount: Number(0).toFixed(4),
             itp: 0,
-            max: 99999,
+            max:  [{value: '99999', disabled:true}],
             min: 1,
         };
         if (this.customerMarginsFormArray.length > 0) {
