@@ -192,6 +192,13 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             ])
         );
     }
+    updateCustomerMarginPreviousValue(index){
+        let previousIndex = index - 1;
+        let minValue = this.customerMarginsFormArray.at(index).value.min
+        this.customerMarginsFormArray.at(previousIndex).patchValue({
+            max: minValue - 1,
+        });
+    }
 
     addCustomerMargin() {
         const customerMargin = {
