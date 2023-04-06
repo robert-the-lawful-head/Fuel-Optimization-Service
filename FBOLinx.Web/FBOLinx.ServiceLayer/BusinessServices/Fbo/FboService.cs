@@ -18,6 +18,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using Geolocation;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
@@ -27,7 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId);
         Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId);
         Task<string> GetAirportTimeZoneByFboId(int fboId);
-        Task<Fbos> GetFbo(int fboId);
+        Task<FbosDto> GetFbo(int fboId, bool useCache = true);
         Task<Coordinate> GetFBOLocation(int fboid);
         Task DoLegacyGroupTransition(int groupId);
         Task<string> UploadLogo(FboLogoRequest fboLogoRequest);
@@ -35,13 +36,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task DeleteLogo(int fboId);
         Task<string> GetFBOIcao(int fboId);
         Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
-        Task<List<FbosDTO>> GetFbosByIcaos(string icaos);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
-        Task<FbosDto> GetFboByFboId(int fboId);
         public Task<List<FbosDto>> GetFbosByGroupId(int groupId);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
+        private const string _FboCacheKey = "Fbo_";
+        private const string _FboAcukwikAirportCacheKey = "Fbo_AcukwikAirport_";
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
         private IMailService _MailService;
@@ -51,13 +52,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         private readonly FilestorageContext _fileStorageContext;
         private readonly IServiceProvider _services;
         private IAirportService _AirportService;
+        private IMemoryCache _MemoryCache;
 
         public FboService(IFboEntityService fboEntityService, FboLinxContext context, DegaContext degaContext, IMailService mailService, 
             IFboContactsEntityService fboContactsEntityService,
             IAcukwikFbohandlerDetailEntityService acukwikFbohandlerDetailEntityService, IServiceProvider services,
             FilestorageContext fileStorageContext,
-            IAirportService airportService) : base(fboEntityService)
+            IAirportService airportService,
+            IMemoryCache memoryCache) : base(fboEntityService)
         {
+            _MemoryCache = memoryCache;
             _AirportService = airportService;
             _fboEntityService = fboEntityService;
             _context = context;
@@ -71,9 +75,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         
         public async Task<DateTime> GetAirportLocalDateTimeByUtcFboId(DateTime utcDateTime, int fboId)
         {
-            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
-
-            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
+            var acukwikAirport = await GetAcukwikAirportForFboFromCache(fboId);
 
             if (acukwikAirport == null)
                 return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
@@ -83,18 +85,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             return result;
         }
 
-        public async Task<Fbos> GetFbo(int fboId)
+        public async Task<FbosDto> GetFbo(int fboId, bool useCache = true)
         {
-            var result = await _context.Fbos.Where(x => x.Oid == fboId).Include(x => x.Group)
-                .Include(x => x.FboAirport).FirstOrDefaultAsync();
-            return result;
+            if (useCache)
+                return await GetFboFromCache(fboId);
+            return await GetSingleBySpec(new FboByIdSpecification(fboId));
         }
 
         public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
         {
-            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
-
-            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
+            var acukwikAirport = await GetAcukwikAirportForFboFromCache(fboId);
 
             if (acukwikAirport == null)
                 return DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified);
@@ -106,9 +106,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
         public async Task<string> GetAirportTimeZoneByFboId(int fboId)
         {
-            var fboAcukwikId = await _fboEntityService.GetFboAcukwikId(fboId);
-
-            var acukwikAirport = await _AcukwikFbohandlerDetailEntityService.GetAcukwikAirport(fboAcukwikId);
+            var acukwikAirport = await GetAcukwikAirportForFboFromCache(fboId);
 
             if (acukwikAirport == null)
                 return "";
@@ -119,13 +117,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
                 timeZone = "UTC" + acukwikAirport.IntlTimeZone;
 
             return timeZone;
-        }
-
-        public async Task<List<FbosDTO>> GetFbosByIcaos(string icaos)
-        {
-            var fbos = await _fboEntityService.GetFbosByIcaos(icaos);
-
-            return fbos;
         }
 
         public async Task<List<string>> GetToEmailsForEngagementEmails(int fboId)
@@ -170,13 +161,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             //Send email
             var result = await _MailService.SendAsync(mailMessage);
         }
-
-        public async Task<FbosDto> GetFboByFboId(int fboId)
-        {
-            var fbo = await GetSingleBySpec(new FboByIdSpecification(fboId));
-            return fbo;
-        }
-
+        
         public async Task DoLegacyGroupTransition(int groupId)
         {
             var customerMargins = await (from cm in _context.CustomerMargins
@@ -202,7 +187,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
         public async Task<Coordinate> GetFBOLocation(int fboid)
         {
-            var position = await _AirportService.GetAirportPositionForFbo(fboid);
+            var fbo = await GetFbo(fboid);
+            var position = await _AirportService.GetAirportPositionByAirportIdentifier(fbo?.FboAirport?.Icao);
 
             return (position?.GetFboCoordinate()).GetValueOrDefault();
         }
@@ -259,15 +245,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
         public async Task<string> GetFBOIcao(int fboId)
         {
-            var fboAirport = await _context.Fboairports.Where(fa => fa.Fboid == fboId).FirstOrDefaultAsync();
+            var fbo = await GetFboFromCache(fboId);
 
-            return fboAirport.Icao;
+            return fbo?.FboAirport?.Icao;
         }
 
         public async Task<List<FbosDto>> GetFbosByGroupId(int groupId)
         {
             var fbos = await GetListbySpec(new AllFbosByGroupIdSpecification(groupId));
             return fbos;
+        }
+
+        private async Task<FbosDto> GetFboFromCache(int fboId)
+        {
+            var result = await _MemoryCache.GetOrCreateAsync(_FboCacheKey + fboId, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30);
+                var fbo = await GetSingleBySpec(new FboByIdSpecification(fboId));
+                return fbo;
+            });
+            return result;
+        }
+        
+        private async Task<AcukwikAirport> GetAcukwikAirportForFboFromCache(int fboId)
+        {
+            var result = await _MemoryCache.GetOrCreateAsync(_FboAcukwikAirportCacheKey + fboId, async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60);
+                var fbo = await GetFbo(fboId);
+
+                return (await _AirportService.GetAirportByAirportIdentifier(fbo?.FboAirport?.Icao));
+            });
+
+            return result;
         }
     }
 }

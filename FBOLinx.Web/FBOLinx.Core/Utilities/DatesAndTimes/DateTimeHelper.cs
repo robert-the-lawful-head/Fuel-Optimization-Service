@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using FBOLinx.Core.Enums;
 using Itenso.TimePeriod;
 
 namespace FBOLinx.Core.Utilities.DatesAndTimes
@@ -147,7 +148,7 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
 
             var timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains("(US & Canada)"));
             if (timeZone == null)
-                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity));
+                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity ?? string.Empty));
 
             var shortenedTimeZone = "";
             if (timeZone != null)
@@ -180,7 +181,10 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
         {
             return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, airportCity);
         }
-
+        public static DateTime GetUtcTimeNow()
+        {
+            return GetLocalTime(DateTime.UtcNow, null, true);
+        }
         public static DateTime GetNextTuesdayDate(DateTime date)
         {
             DayOfWeek day = DayOfWeek.Tuesday;
@@ -189,7 +193,14 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
                 daysToAdd = 7;
             return DateTime.SpecifyKind(date.AddDays(daysToAdd).AddMinutes(1), DateTimeKind.Unspecified);
         }
-
+        public static string GetTimeStandardOffset(TimeFormats timeStandard)
+        {
+            return timeStandard == TimeFormats.Zulu ? "Z" : "L";
+        }
+        public static string GetTimeStandardOffset(string timeStandard)
+        {
+            return timeStandard == "0" && timeStandard == "Z" && timeStandard == "z" ? "Z" : "L";
+        }
         #region Objects
 
         public class DateRange

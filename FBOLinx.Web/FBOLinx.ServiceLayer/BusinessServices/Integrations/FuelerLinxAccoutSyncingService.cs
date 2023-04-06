@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
@@ -8,7 +9,9 @@ using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.Mapping;
@@ -36,13 +39,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomerService _customerService;
+        private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly IFboService _fboService;
 
         public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
             ICustomersEntityService customerEntityService,
             IGroupService groupService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
-            ICustomerService customerService)
+            ICustomerService customerService,
+            IPricingTemplateService pricingTemplateService,
+            IFboService fboService
+            )
         {
             _customerAircraftEntityService = customerAircraftEntityService;
             _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
@@ -50,6 +58,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _customerService = customerService;
+            _pricingTemplateService = pricingTemplateService;
+            _fboService = fboService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -69,6 +79,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             await UpdateCustomerInfoByGroupRecords();
 
             await UpdateFleetStatus();
+
+            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
+
+            foreach (var fbo in fbos)
+            {
+                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId.Value, fbo.Oid);
+            }
         }
 
         private async Task UpdateCustomerRecord()
@@ -125,7 +142,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Update/Insert all records from above
             var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
             await _customerInfoByGroupEntityService.BulkUpdate(customerInfoByGroupRecords.Where(x => x.Oid > 0).ToList());
-            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList());
+            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList(), new BulkConfig()
+            {
+                BatchSize = 500,
+                SetOutputIdentity = false,
+                BulkCopyTimeout = 0,
+                WithHoldlock = false
+            });
         }
 
         private async Task UpdateFleetStatus()
@@ -191,7 +214,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 .ToList();
 
             if (aircraftToAdd?.Count > 0)
-                await _customerAircraftEntityService.BulkInsert(aircraftToAdd);
+                await _customerAircraftEntityService.BulkInsert(aircraftToAdd, new BulkConfig()
+                {
+                    BatchSize = 500,
+                    SetOutputIdentity = false,
+                    BulkCopyTimeout = 0,
+                    WithHoldlock = false
+                });
 
             //Find aircrafts to remove customer association
             var aircraftToRemove = (from ca in customerAircraftList
