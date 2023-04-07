@@ -254,7 +254,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (string.IsNullOrEmpty(flightWatchModel.TailNumber))
                 return;
             var orders =
-                await _FuelReqService.GetUpcomingDirectAndContractOrdersForTailNumber(_Fbo.GroupId.GetValueOrDefault(),
+                await _FuelReqService.GetUpcomingDirectAndContractOrdersForTailNumber(_Fbo.GroupId,
                     _Fbo.Oid, flightWatchModel.TailNumber, true);
 
             //[#31pb4b8] Changed to mark the aircraft as green if it has any upcoming orders, even if it's not for the current leg.
@@ -271,7 +271,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 return;
             if (_CustomerAircrafts == null)
                 _CustomerAircrafts = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(
-                    _Fbo.GroupId.GetValueOrDefault(),
+                    _Fbo.GroupId,
                     _Fbo.Oid,
                     0,
                     _DistinctTailNumbers,

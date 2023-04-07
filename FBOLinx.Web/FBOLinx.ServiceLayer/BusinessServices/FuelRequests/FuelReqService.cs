@@ -144,7 +144,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             var customers =
                 await _CustomerInfoByGroupEntityService.GetListBySpec(
-                    new CustomerInfoByGroupByGroupIdSpecification(fboRecord.GroupId.GetValueOrDefault()));
+                    new CustomerInfoByGroupByGroupIdSpecification(fboRecord.GroupId));
 
             return await GetDirectOrdersFromDatabase(fboId, startDate, endDate, customers);
         }

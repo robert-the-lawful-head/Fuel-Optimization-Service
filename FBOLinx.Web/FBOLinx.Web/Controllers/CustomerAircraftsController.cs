@@ -278,8 +278,8 @@ namespace FBOLinx.Web.Controllers
             }
           
             _context.CustomerAircrafts.Add(customerAircrafts);
-            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
-            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId.GetValueOrDefault());
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
+            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId);
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
@@ -466,7 +466,7 @@ namespace FBOLinx.Web.Controllers
 
            
             _context.CustomerAircrafts.Remove(customerAircrafts);
-            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
 
             return Ok(customerAircrafts);
         }
