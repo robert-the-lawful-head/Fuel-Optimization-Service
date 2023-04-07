@@ -83,7 +83,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                           TailNumber = c.TailNumber,
                                           Size = c.Size
                                       }).ToList();
-                    await _customerAircraftEntityService.BulkUpdate(coveredAircraft);
+                    await _customerAircraftEntityService.BulkUpdate(coveredAircraft, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
                 }
 
                 return;
@@ -111,7 +117,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         }).ToList();
 
                 if (newAircraftToAdd?.Count > 0)
-                    await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList());
+                    await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList(), new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
 
                 coveredAircraft = newAircraftToAdd;
             }
