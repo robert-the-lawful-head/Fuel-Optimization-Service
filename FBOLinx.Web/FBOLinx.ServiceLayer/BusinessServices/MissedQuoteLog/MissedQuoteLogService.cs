@@ -55,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             var recentMissedQuotes = await GetRecentMissedQuotes(fboId, true);
 
             var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
-            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId, fboId);
 
             var recentMissedQuotesGroupedList = recentMissedQuotes.GroupBy(r => r.CustomerId).Select(g => new
             {
@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                     if (!result.Any(r => r.Icao == icao && r.Fbo == fbo.Fbo))
                     {
                         List<MissedQuoteLogDTO> missedQuotesToLog = new List<MissedQuoteLogDTO>();
-                        var customerGroup = await _CustomerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId.Value));
+                        var customerGroup = await _CustomerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId));
 
                         if (customerGroup != null && customerGroup.Oid > 0)
                         {

@@ -84,7 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             foreach (var fbo in fbos)
             {
-                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId.Value, fbo.Oid);
+                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId, fbo.Oid);
             }
         }
 
@@ -169,7 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var newAircraftToAdd = (from t in tailNumbers
                                     join g in groupIds on 1 equals 1
                                     join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g } equals new
-                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
+                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId }
                                     //    into leftJoinCustomerAircrafts
                                     //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                                     select new CustomerAircrafts()
@@ -196,7 +196,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var aircraftToAdd = (from t in tailNumbers
                 join g in groupIds on 1 equals 1
                 join ca in customerAircraftList on new { TailNumber = t.ToLower(), GroupId = g, CustomerId = _customerRecord.Oid } equals new
-                        { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
+                        { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId, CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                 where ca is null

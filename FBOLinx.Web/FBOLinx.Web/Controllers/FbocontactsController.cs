@@ -182,7 +182,7 @@ namespace FBOLinx.Web.Controllers
             FBOLinxFuelVendorUpdateRequest request = new FBOLinxFuelVendorUpdateRequest
             {
                 EmailToCC = ccemail,
-                GroupId = fbo.GroupId.GetValueOrDefault(),
+                GroupId = fbo.GroupId,
                 Email = fbo.FuelDeskEmail
             };
 

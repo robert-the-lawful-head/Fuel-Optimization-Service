@@ -40,7 +40,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
             if (customerAircraft == null)
                 return null;
 
-            var rampFees = await GetRampFeesForFbo(fboId, fbo.GroupId.GetValueOrDefault());
+            var rampFees = await GetRampFeesForFbo(fboId, fbo.GroupId);
             if (rampFees == null)
                 return null;
 

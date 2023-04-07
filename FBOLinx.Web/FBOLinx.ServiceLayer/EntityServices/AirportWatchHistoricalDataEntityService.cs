@@ -22,10 +22,10 @@ namespace FBOLinx.ServiceLayer.EntityServices
             string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
             var result = await (from hd in context.AirportWatchHistoricalData
-                                join cad in context.CustomerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId } equals new { cad.TailNumber, GroupId = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) }
+                                join cad in context.CustomerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId } equals new { cad.TailNumber, GroupId = cad.GroupId }
                                                                   into leftJoinedCustomerAircrafts
                                 from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
-                                join cig in context.CustomerInfoByGroup on new { CustomerId = cad.CustomerId, GroupID = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) } equals new { CustomerId = cig.CustomerId, GroupID = cig.GroupId }
+                                join cig in context.CustomerInfoByGroup on new { CustomerId = cad.CustomerId, GroupID = cad.GroupId } equals new { CustomerId = cig.CustomerId, GroupID = cig.GroupId }
                                     into leftJoinCustomerInfoByGroup
                                 from cig in leftJoinCustomerInfoByGroup.DefaultIfEmpty()
                                 where hd.AirportICAO == airportIcao
