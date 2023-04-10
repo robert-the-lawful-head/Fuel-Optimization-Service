@@ -961,7 +961,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         private async Task CommitChanges()
         {
-            var bulkConfig = new BulkConfig() {WithHoldlock = false, BatchSize = 5000};
+            var bulkConfig = new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    };
             
             await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert, bulkConfig);
             await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate, bulkConfig);
