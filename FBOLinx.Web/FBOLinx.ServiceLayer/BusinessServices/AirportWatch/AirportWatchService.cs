@@ -511,7 +511,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
                     airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
             }
-            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
+            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
 
             airportWatchDistinctBoxes = airportWatchDistinctBoxes.Where(a => a.AirportICAO != null || a.Latitude != null).ToList();
 

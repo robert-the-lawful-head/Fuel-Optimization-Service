@@ -331,7 +331,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegEntityService.BulkInsert(flightLegsToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
             
@@ -340,7 +341,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
 
@@ -351,7 +353,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (unrecognizedFlightLegsToInsert.Count > 0)
             {
-                await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert);
+                await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
             }
 
             //stopwatch.Stop();
@@ -400,7 +408,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (placeholderRecordsToInsert.Count > 0)
             {
-                await _SwimFlightLegService.BulkInsert(placeholderRecordsToInsert);
+                await _SwimFlightLegService.BulkInsert(placeholderRecordsToInsert, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
             }
         }
 
