@@ -23,7 +23,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { GridBase } from 'src/app/services/tables/GridBase';
 
 const initialColumns: ColumnType[] = [
     {
@@ -63,7 +63,7 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./missedorders-grid.component.scss'],
     templateUrl: './missedorders-grid.component.html',
 })
-export class MissedOrdersGridComponent extends VirtualScrollBase implements OnInit {
+export class MissedOrdersGridComponent extends GridBase implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 

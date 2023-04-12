@@ -21,14 +21,14 @@ import * as SharedEvent from '../../../models/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
     templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
-export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBase
+export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     implements OnInit, AfterViewInit, OnDestroy
 {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;

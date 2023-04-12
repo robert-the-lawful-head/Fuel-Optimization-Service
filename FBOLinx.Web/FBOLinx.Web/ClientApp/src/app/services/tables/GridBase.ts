@@ -9,7 +9,7 @@ export type csvFileOptions = {
     sheetName: string;
 }
 
-export abstract class VirtualScrollBase {
+export abstract class GridBase {
     start: number = 0;
     limit: number = 10;
     pageSize: number = 30;

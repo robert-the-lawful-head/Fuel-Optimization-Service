@@ -35,7 +35,7 @@ import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 
 @Component({
@@ -43,7 +43,7 @@ import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/Virtu
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
     templateUrl: './analytics-airport-arrivals-depatures.component.html',
 })
-export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBase implements OnInit {
+export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 

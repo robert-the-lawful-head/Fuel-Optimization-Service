@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -22,7 +22,7 @@ import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/compon
     styleUrls: ['./email-templates-grid.component.scss'],
     templateUrl: './email-templates-grid.component.html',
 })
-export class EmailTemplatesGridComponent extends VirtualScrollBase implements OnInit {
+export class EmailTemplatesGridComponent extends GridBase implements OnInit {
     @Output() editEmailTemplateClicked = new EventEmitter<any>();
     @Output() deleteEmailTemplateClicked = new EventEmitter<any>();
     @Output() copyEmailTemplateClicked = new EventEmitter<any>();

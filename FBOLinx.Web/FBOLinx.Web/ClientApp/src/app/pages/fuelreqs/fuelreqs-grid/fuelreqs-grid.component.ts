@@ -16,7 +16,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -82,7 +82,7 @@ const initialColumns: ColumnType[] = [
           ])
     ]
 })
-export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, OnChanges {
+export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();

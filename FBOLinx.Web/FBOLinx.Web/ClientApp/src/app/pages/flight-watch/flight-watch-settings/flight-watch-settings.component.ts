@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
 import { swimTableColumns, swimTableColumnsDisplayText } from 'src/app/models/swim';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { GridBase } from 'src/app/services/tables/GridBase';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -16,7 +16,7 @@ import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/f
     styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
-export class FlightWatchSettingsComponent extends VirtualScrollBase {
+export class FlightWatchSettingsComponent extends GridBase {
     @Input() arrivals: FlightWatchModelResponse[];
     @Input() departures: FlightWatchModelResponse[];
     @Input() icao: string;
