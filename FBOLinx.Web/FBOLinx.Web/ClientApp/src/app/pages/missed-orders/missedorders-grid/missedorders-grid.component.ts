@@ -133,13 +133,8 @@ export class MissedOrdersGridComponent extends VirtualScrollBase implements OnIn
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-        } else {
-            this.columns = initialColumns;
-        }
+
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
 
         this.refreshTable();
     }

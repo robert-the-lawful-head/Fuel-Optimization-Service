@@ -171,16 +171,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             this.customerFilterType = this.customerGridState.filterType;
         }
 
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-            if (this.columns.length !== initialColumns.length) {
-                this.columns = initialColumns;
-            }
-        } else {
-            this.columns = initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
+
         if (this.customerGridState.filter) {
             this.dataSource.filterCollection = JSON.parse(
                 this.customerGridState.filter

@@ -223,17 +223,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
 
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
-
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-            if (this.columns.length !== this.initialColumns.length) {
-                this.columns = this.initialColumns;
-            }
-        } else {
-            this.columns = this.initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.initialColumns);
     }
 
     refreshData() {
@@ -275,7 +265,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
 
         if (!this.dataSource) {
             this.dataSource.filteredData = [];
-        }        
+        }
 
         this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
             .map(x => x.tailNumber))]

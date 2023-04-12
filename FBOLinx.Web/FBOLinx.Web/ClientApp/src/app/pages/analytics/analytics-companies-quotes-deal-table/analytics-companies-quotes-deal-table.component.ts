@@ -9,18 +9,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import {
-    CsvExportModalComponent,
-    ICsvExportModalData,
-} from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
 import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
-import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
@@ -28,7 +22,6 @@ import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
-import { basename } from 'path';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
@@ -190,21 +183,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
         ];
 
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey));
-
-            if (this.columns.length === 9) {
-                this.columns = initialColumns;
-            }
-            else {
-                this.columns = JSON.parse(
-                    localStorage.getItem(this.tableLocalStorageKey)
-                );
-            }
-        } else {
-            this.columns = initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
     }
 
     fetchData(startDate: Date, endDate: Date) {
