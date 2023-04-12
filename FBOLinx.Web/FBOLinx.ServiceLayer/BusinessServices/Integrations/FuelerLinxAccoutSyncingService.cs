@@ -142,13 +142,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Update/Insert all records from above
             var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
             await _customerInfoByGroupEntityService.BulkUpdate(customerInfoByGroupRecords.Where(x => x.Oid > 0).ToList());
-            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList(), new BulkConfig()
-            {
-                BatchSize = 500,
-                SetOutputIdentity = false,
-                BulkCopyTimeout = 0,
-                WithHoldlock = false
-            });
+            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList());
         }
 
         private async Task UpdateFleetStatus()
@@ -214,13 +208,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 .ToList();
 
             if (aircraftToAdd?.Count > 0)
-                await _customerAircraftEntityService.BulkInsert(aircraftToAdd, new BulkConfig()
-                {
-                    BatchSize = 500,
-                    SetOutputIdentity = false,
-                    BulkCopyTimeout = 0,
-                    WithHoldlock = false
-                });
+                await _customerAircraftEntityService.BulkInsert(aircraftToAdd);
 
             //Find aircrafts to remove customer association
             var aircraftToRemove = (from ca in customerAircraftList

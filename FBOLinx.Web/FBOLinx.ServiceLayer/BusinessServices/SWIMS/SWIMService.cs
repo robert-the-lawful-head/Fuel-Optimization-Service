@@ -331,7 +331,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegEntityService.BulkInsert(flightLegsToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
             
@@ -340,7 +341,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
 
