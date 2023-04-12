@@ -17,7 +17,7 @@ import { ActivatedRoute } from '@angular/router';
 import { find, forEach, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -103,7 +103,7 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./customers-grid.component.scss'],
     templateUrl: './customers-grid.component.html',
 })
-export class CustomersGridComponent extends VirtualScrollBase implements OnInit {
+export class CustomersGridComponent extends GridBase implements OnInit {
     @ViewChild('priceBreakdownPreview')
     priceBreakdownPreview: PriceBreakdownComponent;
     @ViewChild('customerTableContainer') table: ElementRef;
@@ -171,16 +171,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             this.customerFilterType = this.customerGridState.filterType;
         }
 
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-            if (this.columns.length !== initialColumns.length) {
-                this.columns = initialColumns;
-            }
-        } else {
-            this.columns = initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
+
         if (this.customerGridState.filter) {
             this.dataSource.filterCollection = JSON.parse(
                 this.customerGridState.filter

@@ -254,11 +254,11 @@
             </ng-container>
             <tr
             mat-header-row
-            *matHeaderRowDef="allColumnsToDisplay; sticky: true"
+            *matHeaderRowDef="getVisibleColumns(); sticky: true"
         ></tr>
         <tr
             mat-row
-            *matRowDef="let element; columns: allColumnsToDisplay"
+            *matRowDef="let element; columns: getVisibleColumns()"
             class="example-element-row"
             [class.example-expanded-row]="isRowExpanded(element.sourceId)"
             (click)="

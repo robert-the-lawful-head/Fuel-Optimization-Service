@@ -12,7 +12,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
 import { NullOrEmptyToDefault } from 'src/app/shared/pipes/null/NullOrEmptyToDefault.pipe';
 
@@ -27,7 +27,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
     styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
 })
-export class AircraftsGridComponent extends VirtualScrollBase implements OnInit {
+export class AircraftsGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
