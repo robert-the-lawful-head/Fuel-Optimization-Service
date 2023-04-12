@@ -101,10 +101,7 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     csvFileOptions: csvFileOptions = { fileName: 'FuelOrders', sheetName: 'Fuel Orders' };
 
     allColumnsToDisplay: string[];
-    dataColumnsToDisplay: string[];
-    columnsToDisplayDic = new Object();
 
-    columnsToDisplayWithExpand : any[];
     expandedElement: any[] = [];
 
     constructor(
@@ -128,7 +125,6 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             )
         ) {
             this.allColumnsToDisplay = this.getVisibleColumns();
-            this.dataColumnsToDisplay = this.getVisibleDataColumns();
             this.refreshTable();
         }
     }
@@ -157,42 +153,15 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.paginator.pageIndex = 0;
         }
 
-        let savedColumns = this.getClientSavedColumns();
-
-        if(savedColumns?.length > 0)
-            this.columns = savedColumns;
-        else
-            this.columns = initialColumns;
-
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
 
         this.allColumnsToDisplay = this.getVisibleColumns();
-        this.dataColumnsToDisplay = this.getVisibleDataColumns();
 
         this.refreshTable();
     }
-    private getClientSavedColumns(){
-        let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
-        let hasColumnUpdates :boolean = false;
-        if (localStorageColumns) {
-            let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
-            for(let col in storedCols){
-                let colName = storedCols[col].id;
-                if(initialColumns[colName] != undefined) continue;
-                hasColumnUpdates = true;
-                break;
-            }
-            if(!hasColumnUpdates){
-                return storedCols;
-            }
-        }
-        return null;
-    }
     getVisibleDataColumns() {
         return this.columns
-            .filter((column) => {
-                if(column.hidden) return false;
-                return true;
-            })
+            .filter((column) => !column.hidden)
             .map((column) => {
                 if(column.id == 'customer')
                     return 'customerName'
