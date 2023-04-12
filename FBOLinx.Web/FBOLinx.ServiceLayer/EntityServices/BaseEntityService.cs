@@ -195,7 +195,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
         protected virtual async Task BulkInsertOrUpdateEntities(List<T> entities)
         {
             await using var transaction = await _Context.Database.BeginTransactionAsync();
-            await _Context.BulkInsertOrUpdateAsync(entities, config => config.SetOutputIdentity = true);
+            await _Context.BulkInsertOrUpdateAsync(entities, config => {
+                config.BatchSize = 500;
+                config.SetOutputIdentity = false;
+                config.BulkCopyTimeout = 0;
+                config.WithHoldlock = false;
+        });
             await transaction.CommitAsync();
         }
 

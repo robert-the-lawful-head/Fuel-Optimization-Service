@@ -511,13 +511,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
                     airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
             }
-            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd, new BulkConfig()
-                    {
-                        BatchSize = 500,
-                        SetOutputIdentity = false,
-                        BulkCopyTimeout = 0,
-                        WithHoldlock = false
-                    });
+            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
 
             airportWatchDistinctBoxes = airportWatchDistinctBoxes.Where(a => a.AirportICAO != null || a.Latitude != null).ToList();
 
@@ -960,20 +954,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         }
 
         private async Task CommitChanges()
-        {
-            var bulkConfig = new BulkConfig()
-                    {
-                        BatchSize = 500,
-                        SetOutputIdentity = false,
-                        BulkCopyTimeout = 0,
-                        WithHoldlock = false
-                    };
-            
-            await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert, bulkConfig);
-            await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate, bulkConfig);
-            await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete, bulkConfig);
-            await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert, bulkConfig);
-            await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate, bulkConfig);
+        {     
+            await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert);
+            await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate);
+            await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete);
+            await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert);
+            await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate);
         }
 
         private async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataFromDatabase(List<string> aircraftHexCodes, DateTime aircraftPositionDateTime)
