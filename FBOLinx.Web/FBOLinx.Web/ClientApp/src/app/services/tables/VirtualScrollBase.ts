@@ -98,4 +98,19 @@ export abstract class VirtualScrollBase {
         /* save to file */
         XLSX.writeFile(wb, fileName +'.xlsx');
     }
+    public getClientSavedColumns(tableLocalStorageKey: string, initialColumns: ColumnType[]): ColumnType[]{
+        let localStorageColumns: string = localStorage.getItem(tableLocalStorageKey);
+
+        if (!localStorageColumns) return initialColumns;
+
+        let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
+
+        return initialColumns.map(initialCol => {
+            const storedColumn = storedCols.find(storedCol => initialCol.id === storedCol.id);
+            if(storedColumn){
+                initialCol.hidden = storedColumn.hidden;
+            }
+            return initialCol;
+        });
+    }
 }
