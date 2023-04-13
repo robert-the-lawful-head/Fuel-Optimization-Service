@@ -148,11 +148,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 where (c?.Oid).GetValueOrDefault() == 0
                 select f).ToList();
 
-            coveredAircraft.ForEach(x => x.AircraftId = _fuelerlinxAircraft.AircraftId.GetValueOrDefault());
-            coveredAircraft.AddRange(missingCoverage);
-
-            //Add them to the CustomerAircrafts table and update covered aircraft with the make/model
-            await _customerAircraftEntityService.BulkInsert(coveredAircraft);
+            //Add them to the CustomerAircrafts table 
+            await _customerAircraftEntityService.BulkInsert(missingCoverage);
         }
 
         private async Task PrepareDataForSync()
