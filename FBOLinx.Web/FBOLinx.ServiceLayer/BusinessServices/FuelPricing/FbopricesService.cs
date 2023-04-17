@@ -270,6 +270,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                         else if (currentRetailResult.EffectiveTo.ToString().Contains("12/31/99"))
                         {
                             fboPricesUpdateGenerator.EffectiveFrom = currentRetailResult.TimeStamp == null ? DateTime.UtcNow : currentRetailResult.TimeStamp.GetValueOrDefault();
+                            fboPricesUpdateGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
+
                             fboPricesUpdateGenerator.EffectiveTo = DateTime.Parse("12/31/9999");
                             fboPricesUpdateGenerator.PricePap = currentRetailResult.Price;
                             fboPricesUpdateGenerator.Source = 1;
@@ -309,15 +311,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fboPricesUpdateGenerator.EffectiveTo = filteredResultRetail.EffectiveTo;
                         }
                     }
+
+                    if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault()))
+                        fboPricesUpdateGenerator.EffectiveTo =
+                            await _fboService.GetAirportLocalDateTimeByUtcFboId(
+                                fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
                 }
 
                 if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveFrom))
                     fboPricesUpdateGenerator.EffectiveFrom = await _fboService.GetAirportLocalDateTimeByUtcFboId(fboPricesUpdateGenerator.EffectiveFrom, fboId);
-
-                if (!DateTimeHelper.IsDateNothing(fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault()))
-                    fboPricesUpdateGenerator.EffectiveTo =
-                        await _fboService.GetAirportLocalDateTimeByUtcFboId(
-                            fboPricesUpdateGenerator.EffectiveTo.GetValueOrDefault(), fboId);
 
                 prices.Add(fboPricesUpdateGenerator);
             }
