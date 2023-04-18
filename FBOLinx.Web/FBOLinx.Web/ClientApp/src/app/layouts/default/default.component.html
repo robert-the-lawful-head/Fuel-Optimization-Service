@@ -24,7 +24,7 @@
         </div>
     </div>
     <ng-container *ngIf="isAdditionNavBarVisible()">
-        <div *ngIf="pricingTemplatesData">
+        <div *ngIf="pricingTemplatesData && isNotGroupAdmin">
             <app-addition-navbar #insideElement
                                 [templatelst]="pricingTemplatesData"></app-addition-navbar>
         </div>
