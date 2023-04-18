@@ -1184,7 +1184,7 @@ namespace FBOLinx.Web.Controllers
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, customeridval).ToListAsync();
 
-                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime);
+                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime, null);
 
                 var fbo = await _fboService.GetFbo(fboId);
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, request.StartDateTime, request.EndDateTime);
