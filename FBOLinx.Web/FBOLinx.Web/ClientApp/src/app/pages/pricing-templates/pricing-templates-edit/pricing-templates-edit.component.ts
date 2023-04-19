@@ -159,7 +159,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 this.jetARetail = jetARetailRecords[0].price;
 
             }
-            console.log("entro update margin 262");
 
             this.pricingTemplate.customerMargins = this.updateMargins(
                 customerMarginsData,
@@ -218,7 +217,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             // Margin type change event
             this.pricingTemplateForm.controls.marginType.valueChanges.subscribe(
                 (type) => {
-                    console.log("entro update margin 218");
                     const updatedMargins = this.updateMargins(
                         this.pricingTemplateForm.value.customerMargins,
                         type ,
@@ -236,7 +234,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
             this.pricingTemplateForm.controls.customerMargins.valueChanges.subscribe(
                 (margins) => {
-                    console.log("entro update margin 235");
                     const updatedMargins = this.updateMargins(
                         margins,
                         this.pricingTemplateForm.value.marginType ,
@@ -256,7 +253,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         //When Discount Type Change event
         this.pricingTemplateForm.controls.discountType.valueChanges.subscribe(
             (type) => {
-                console.log("entro update margin 254");
                  const updatedMargins = this.updateMargins(
                     this.pricingTemplateForm.value.customerMargins,
                     this.pricingTemplateForm.value.marginType,
