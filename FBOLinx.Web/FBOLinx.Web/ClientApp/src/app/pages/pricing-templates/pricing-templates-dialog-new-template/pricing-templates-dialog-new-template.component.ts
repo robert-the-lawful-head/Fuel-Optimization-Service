@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
     MAT_DIALOG_DATA,
     MatDialog,
@@ -17,15 +17,14 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 
 export interface NewPricingTemplateMargin {
-    min?: number;
-    amount?: number;
-    itp?: number;
-    max?: number;
-    templatesId?: number;
-    allin?: number;
-
+    allin: FormControl;
+    amount: FormControl;
+    itp: FormControl;
+    max: FormControl;
+    min: FormControl;
 }
 
 @Component({
@@ -75,7 +74,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private sharedService: SharedService,
         private emailContentService: EmailcontentService,
         public newTemplateDialog: MatDialog,
-        private marginLessThanOneDialog: MatDialog
+        private marginLessThanOneDialog: MatDialog,
+        private pricingTemplateCalcService: PricingTemplateCalcService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -137,13 +137,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             }),
             secondStep: this.formBuilder.group({
                 customerMargins: this.formBuilder.array([
-                    this.formBuilder.group(
-                        {
-                            allin: [0],
-                            amount: [Number(0).toFixed(4)],
-                            itp: [0],
-                            max: [{value: '99999', disabled:true}],
-                            min: [1],
+                    this.formBuilder.group({
+                            allin: new FormControl(0),
+                            amount: new FormControl(Number(0).toFixed(4)),
+                            itp: new FormControl(0),
+                            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                            min: new FormControl(1),
                         },
                         {
                             updateOn: 'blur',
@@ -177,13 +176,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         secondStep.setControl(
             'customerMargins',
             this.formBuilder.array([
-                this.formBuilder.group(
-                    {
-                        allin: [0],
-                        amount: [Number(0).toFixed(4)],
-                        itp: [0],
-                        max: [99999],
-                        min: [1],
+                this.formBuilder.group({
+                        allin: new FormControl(0),
+                        amount: new FormControl(Number(0).toFixed(4)),
+                        itp: new FormControl(0),
+                        max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                        min: new FormControl(1),
                     },
                     {
                         updateOn: 'blur'
@@ -192,30 +190,28 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             ])
         );
     }
-    updateCustomerMarginPreviousValue(index){
-        let previousIndex = index - 1;
-        let minValue = this.customerMarginsFormArray.at(index).value.min
-        this.customerMarginsFormArray.at(previousIndex).patchValue({
-            max: minValue - 1,
-        });
+    updateCustomerMarginVolumeValues(index: number){
+        this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
+        this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
 
     addCustomerMargin() {
-        const customerMargin = {
-            allin: 0,
-            amount: Number(0).toFixed(4),
-            itp: 0,
-            max:  [{value: '99999', disabled:true}],
-            min: 1,
+        const customerMargin: NewPricingTemplateMargin = {
+            allin: new FormControl(0),
+            amount: new FormControl(Number(0).toFixed(4)),
+            itp: new FormControl(0),
+            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+            min: new FormControl(1),
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
-            customerMargin.min =
+
+            customerMargin.min.setValue(
                 Math.abs(
                     this.customerMarginsFormArray.at(lastIndex).value.min
-                ) + 250;
+                ) + 250);
             this.customerMarginsFormArray.at(lastIndex).patchValue({
-                max: Math.abs(customerMargin.min) - 1,
+                max: Math.abs(customerMargin.min.value) - 1,
             });
         }
 
@@ -375,10 +371,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     private updateMargins(oldMargins, marginType , discountType) {
         const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
-            if (i > 0) {
-                margins[i - 1].max = Math.abs(margins[i].min - 1);
-            }
-
             if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
