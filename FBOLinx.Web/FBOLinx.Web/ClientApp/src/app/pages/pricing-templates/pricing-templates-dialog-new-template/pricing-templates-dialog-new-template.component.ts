@@ -17,6 +17,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
 import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 
 export interface NewPricingTemplateMargin {
     allin: FormControl;
@@ -73,7 +74,8 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private sharedService: SharedService,
         private emailContentService: EmailcontentService,
         public newTemplateDialog: MatDialog,
-        private marginLessThanOneDialog: MatDialog
+        private marginLessThanOneDialog: MatDialog,
+        private pricingTemplateCalcService: PricingTemplateCalcService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -188,62 +190,9 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             ])
         );
     }
-    updateCustomerMarginPreviousValue(index: number){
-        this.adjustCustomerMarginPreviousValues(index);
-        this.adjustCustomerMarginNextValues(index);
-    }
-    private adjustCustomerMarginNextValues(index: number): void {
-        for(let i: number = index; i < this.customerMarginsFormArray.length ; i++){
-            let minValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('min').value);
-            let currentMaxValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('max').value);
-
-
-            if(i == index){
-                if(minValue < currentMaxValue) break;
-                this.customerMarginsFormArray.at(i).patchValue({
-                    max: minValue + 1,
-                });
-                continue;
-            }
-
-            let currentMinValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('min').value);
-            let previousMaxValue: number = parseFloat(this.customerMarginsFormArray.at(i-1).get('max').value);
-
-            if(currentMinValue > previousMaxValue) break;
-
-            this.customerMarginsFormArray.at(i).patchValue({
-                min: previousMaxValue + 1,
-            });
-
-            minValue = this.customerMarginsFormArray.at(i).get('min').value;
-
-            this.customerMarginsFormArray.at(i).patchValue({
-                max: minValue + 1,
-            });
-        }
-    }
-    private adjustCustomerMarginPreviousValues(index: number): void {
-        for(let i: number = index; i > 0 ; i--){
-            let previousIndex: number = i - 1;
-            let modifedMinValue: number = this.customerMarginsFormArray.at(i).get('min').value;
-            let previousValueMax: number = this.customerMarginsFormArray.at(previousIndex).get('max').value;
-
-
-            if(modifedMinValue > previousValueMax) break;
-
-            this.customerMarginsFormArray.at(previousIndex).patchValue({
-                max: modifedMinValue - 1,
-            });
-
-            let previousValueMin: number = this.customerMarginsFormArray.at(previousIndex).get('min').value;
-            previousValueMax = this.customerMarginsFormArray.at(previousIndex).get('max').value;
-
-            if(previousValueMin >= previousValueMax){
-                this.customerMarginsFormArray.at(previousIndex).patchValue({
-                    min: previousValueMax - 1,
-                });
-            }
-        }
+    updateCustomerMarginVolumeValues(index: number){
+        this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
+        this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
 
     addCustomerMargin() {
@@ -422,10 +371,6 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     private updateMargins(oldMargins, marginType , discountType) {
         const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
-            if (i > 0) {
-                margins[i - 1].max = Math.abs(margins[i].min - 1);
-            }
-
             if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
                        if(discountType == 0)
