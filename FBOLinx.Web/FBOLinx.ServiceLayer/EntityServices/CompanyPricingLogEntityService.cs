@@ -50,7 +50,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 {
                     QuoteCount = g.Count(),
                     FboId = g.Key.FboID,
-                    GroupId = g.Key.GroupID.GetValueOrDefault()
+                    GroupId = g.Key.GroupID
                 }).ToListAsync();
             return result;
         }

@@ -11,7 +11,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public int Oid { get; set; }
         [StringLength(255)]
         public string Fbo { get; set; }
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         [StringLength(50)]
         public string Username { get; set; }
         [StringLength(50)]

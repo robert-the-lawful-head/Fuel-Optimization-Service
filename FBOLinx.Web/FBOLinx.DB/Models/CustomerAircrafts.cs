@@ -8,7 +8,7 @@ namespace FBOLinx.DB.Models
     public partial class CustomerAircrafts : FBOLinxBaseEntityModel<int>
     {
         [Column("GroupID")]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         [Column("CustomerID")]
         public int CustomerId { get; set; }
         [Column("AircraftID")]

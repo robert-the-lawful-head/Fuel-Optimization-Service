@@ -110,7 +110,7 @@ namespace FBOLinx.Web.Controllers
                         oldValue.CustomerType = customCustomerTypes.CustomerType;
                         oldValue.Fboid = customCustomerTypes.Fboid;
                         _context.CustomCustomerTypes.Update(oldValue);
-                        await _context.SaveChangesAsync(userId, customCustomerTypes.CustomerId, fbo.GroupId.GetValueOrDefault(), customCustomerTypes.Fboid);
+                        await _context.SaveChangesAsync(userId, customCustomerTypes.CustomerId, fbo.GroupId, customCustomerTypes.Fboid);
                     }
                 }
                

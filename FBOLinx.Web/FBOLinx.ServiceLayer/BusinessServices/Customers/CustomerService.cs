@@ -40,7 +40,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public async Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId)
         {
             var query = await (from f in _context.Fbos
-                join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId ?? 0, Active = true} equals new
+                join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId, Active = true} equals new
                         {cg.GroupId, Active = cg.Active ?? false}
                     into leftJoinCg
                 from cg in leftJoinCg.DefaultIfEmpty()
@@ -64,7 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 where cg.GroupId == groupId && f.Oid == fboId && c.Suspended != true
                 select new
                 {
-                    GroupId = f.GroupId ?? 0,
+                    GroupId = f.GroupId,
                     FboId = f.Oid,
                     CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
                     Company = cg == null ? null : cg.Company,
@@ -99,7 +99,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             var result = await (
                     from f in _context.Fbos
-                    join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId ?? 0, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
+                    join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
                     into leftJoinCg
                     from cg in leftJoinCg.DefaultIfEmpty()
                     join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -120,7 +120,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                     where c.Suspended != true
                     select new
                     {
-                        GroupId = f.GroupId ?? 0,
+                        GroupId = f.GroupId,
                         FboId = f.Oid,
                         CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
                         PricingTemplateId = pt == null ? 0 : pt.Oid,

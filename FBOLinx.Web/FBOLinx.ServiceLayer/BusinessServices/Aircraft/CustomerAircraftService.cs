@@ -24,7 +24,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
     public interface ICustomerAircraftService : IBaseDTOService<CustomerAircraftsDto, CustomerAircrafts>
     {
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0,
-            int customerId = 0, List<string> tailNumbers = null, bool useCache = true);
+            int customerId = 0, List<string> tailNumbers = null, bool useCache = false);
         Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId);
         Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId);
         void ClearCache(int groupId, int fboId = 0);
