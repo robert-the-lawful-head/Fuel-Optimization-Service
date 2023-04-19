@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {
     MAT_DIALOG_DATA,
     MatDialog,
@@ -19,13 +19,11 @@ import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/compon
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 
 export interface NewPricingTemplateMargin {
-    min?: number;
-    amount?: number;
-    itp?: number;
-    max?: number;
-    templatesId?: number;
-    allin?: number;
-
+    allin: FormControl;
+    amount: FormControl;
+    itp: FormControl;
+    max: FormControl;
+    min: FormControl;
 }
 
 @Component({
@@ -137,13 +135,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             }),
             secondStep: this.formBuilder.group({
                 customerMargins: this.formBuilder.array([
-                    this.formBuilder.group(
-                        {
-                            allin: [0],
-                            amount: [Number(0).toFixed(4)],
-                            itp: [0],
-                            max: [{value: '99999', disabled:true}],
-                            min: [1],
+                    this.formBuilder.group({
+                            allin: new FormControl(0),
+                            amount: new FormControl(Number(0).toFixed(4)),
+                            itp: new FormControl(0),
+                            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                            min: new FormControl(1),
                         },
                         {
                             updateOn: 'blur',
@@ -177,13 +174,12 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         secondStep.setControl(
             'customerMargins',
             this.formBuilder.array([
-                this.formBuilder.group(
-                    {
-                        allin: [0],
-                        amount: [Number(0).toFixed(4)],
-                        itp: [0],
-                        max: [99999],
-                        min: [1],
+                this.formBuilder.group({
+                        allin: new FormControl(0),
+                        amount: new FormControl(Number(0).toFixed(4)),
+                        itp: new FormControl(0),
+                        max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                        min: new FormControl(1),
                     },
                     {
                         updateOn: 'blur'
@@ -192,30 +188,81 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
             ])
         );
     }
-    updateCustomerMarginPreviousValue(index){
-        let previousIndex = index - 1;
-        let minValue = this.customerMarginsFormArray.at(index).value.min
-        this.customerMarginsFormArray.at(previousIndex).patchValue({
-            max: minValue - 1,
-        });
+    updateCustomerMarginPreviousValue(index: number){
+        this.adjustCustomerMarginPreviousValues(index);
+        this.adjustCustomerMarginNextValues(index);
+    }
+    private adjustCustomerMarginNextValues(index: number): void {
+        for(let i: number = index; i < this.customerMarginsFormArray.length ; i++){
+            let minValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('min').value);
+            let currentMaxValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('max').value);
+
+
+            if(i == index){
+                if(minValue < currentMaxValue) break;
+                this.customerMarginsFormArray.at(i).patchValue({
+                    max: minValue + 1,
+                });
+                continue;
+            }
+
+            let currentMinValue: number = parseFloat(this.customerMarginsFormArray.at(i).get('min').value);
+            let previousMaxValue: number = parseFloat(this.customerMarginsFormArray.at(i-1).get('max').value);
+
+            if(currentMinValue > previousMaxValue) break;
+
+            this.customerMarginsFormArray.at(i).patchValue({
+                min: previousMaxValue + 1,
+            });
+
+            minValue = this.customerMarginsFormArray.at(i).get('min').value;
+
+            this.customerMarginsFormArray.at(i).patchValue({
+                max: minValue + 1,
+            });
+        }
+    }
+    private adjustCustomerMarginPreviousValues(index: number): void {
+        for(let i: number = index; i > 0 ; i--){
+            let previousIndex: number = i - 1;
+            let modifedMinValue: number = this.customerMarginsFormArray.at(i).get('min').value;
+            let previousValueMax: number = this.customerMarginsFormArray.at(previousIndex).get('max').value;
+
+
+            if(modifedMinValue > previousValueMax) break;
+
+            this.customerMarginsFormArray.at(previousIndex).patchValue({
+                max: modifedMinValue - 1,
+            });
+
+            let previousValueMin: number = this.customerMarginsFormArray.at(previousIndex).get('min').value;
+            previousValueMax = this.customerMarginsFormArray.at(previousIndex).get('max').value;
+
+            if(previousValueMin >= previousValueMax){
+                this.customerMarginsFormArray.at(previousIndex).patchValue({
+                    min: previousValueMax - 1,
+                });
+            }
+        }
     }
 
     addCustomerMargin() {
-        const customerMargin = {
-            allin: 0,
-            amount: Number(0).toFixed(4),
-            itp: 0,
-            max:  [{value: '99999', disabled:true}],
-            min: 1,
+        const customerMargin: NewPricingTemplateMargin = {
+            allin: new FormControl(0),
+            amount: new FormControl(Number(0).toFixed(4)),
+            itp: new FormControl(0),
+            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+            min: new FormControl(1),
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
-            customerMargin.min =
+
+            customerMargin.min.setValue(
                 Math.abs(
                     this.customerMarginsFormArray.at(lastIndex).value.min
-                ) + 250;
+                ) + 250);
             this.customerMarginsFormArray.at(lastIndex).patchValue({
-                max: Math.abs(customerMargin.min) - 1,
+                max: Math.abs(customerMargin.min.value) - 1,
             });
         }
 
