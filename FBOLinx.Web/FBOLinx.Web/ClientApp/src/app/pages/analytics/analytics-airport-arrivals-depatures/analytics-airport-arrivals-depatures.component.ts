@@ -35,7 +35,7 @@ import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 
 @Component({
@@ -43,7 +43,7 @@ import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/Virtu
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
     templateUrl: './analytics-airport-arrivals-depatures.component.html',
 })
-export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBase implements OnInit {
+export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase implements OnInit {
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -223,17 +223,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
 
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
-
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-            if (this.columns.length !== this.initialColumns.length) {
-                this.columns = this.initialColumns;
-            }
-        } else {
-            this.columns = this.initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.initialColumns);
     }
 
     refreshData() {
@@ -275,7 +265,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends VirtualScrollBas
 
         if (!this.dataSource) {
             this.dataSource.filteredData = [];
-        }        
+        }
 
         this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
             .map(x => x.tailNumber))]

@@ -106,6 +106,7 @@ import { FlightWatchService } from './services/flightwatch.service';
 import { FlightWatchHelper } from './pages/flight-watch/FlightWatchHelper.service';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
 import { FileHelper } from './helpers/files/file.helper';
+import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTemplateCalc.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -227,7 +228,8 @@ import { FileHelper } from './helpers/files/file.helper';
         SwimService,
         FlightWatchService,
         FlightWatchHelper,
-        FileHelper
+        FileHelper,
+        PricingTemplateCalcService,
     ],
 })
 export class AppModule { }

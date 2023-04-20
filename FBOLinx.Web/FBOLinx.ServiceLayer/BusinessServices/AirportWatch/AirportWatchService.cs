@@ -954,14 +954,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         }
 
         private async Task CommitChanges()
-        {
-            var bulkConfig = new BulkConfig() {WithHoldlock = false, BatchSize = 5000};
-            
-            await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert, bulkConfig);
-            await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate, bulkConfig);
-            await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete, bulkConfig);
-            await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert, bulkConfig);
-            await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate, bulkConfig);
+        {     
+            await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert);
+            await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate);
+            await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete);
+            await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert);
+            await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate);
         }
 
         private async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataFromDatabase(List<string> aircraftHexCodes, DateTime aircraftPositionDateTime)

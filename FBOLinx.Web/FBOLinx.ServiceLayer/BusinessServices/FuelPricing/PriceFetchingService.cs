@@ -82,16 +82,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                             .Where(x => x.Oid == fboAirport.Fboid)
                                             .AsNoTracking()
                                             .FirstOrDefaultAsync();
-                CustomerInfoByGroupDTO customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, fbo.GroupId.Value));
+                CustomerInfoByGroupDTO customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, fbo.GroupId));
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
-                List<DB.Models.PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId.GetValueOrDefault(), 0, isAnalytics);
+                List<DB.Models.PricingTemplate> templates = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customerInfoByGroup, fbo.Oid, fbo.GroupId, 0, isAnalytics);
                 if (templates == null)
                     continue;
 
                 List<CustomerWithPricing> pricing =
-                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId.GetValueOrDefault(), customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
+                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
                 List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).AsNoTracking().ToListAsync();
 
@@ -477,7 +477,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 Fbo = f.Fbo,
                 Icao = f.Icao,
                 Oid = f.Oid,
-                GroupId = f.GroupId ?? 0
+                GroupId = f.GroupId
             }).ToList();
 
             return fbosWithExpiredPricing;

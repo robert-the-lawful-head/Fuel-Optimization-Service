@@ -98,7 +98,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
             Fbos fbo = new Fbos
             {
                 Fbo = request.Fbo.Trim(),
-                GroupId = request.GroupId,
+                GroupId = request.GroupId.GetValueOrDefault(),
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
                 Active = true,
                 DateActivated = DateTime.Now,

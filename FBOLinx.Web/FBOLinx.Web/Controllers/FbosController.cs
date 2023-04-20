@@ -86,7 +86,7 @@ namespace FBOLinx.Web.Controllers
                                 Icao = fa.Icao,
                                 Iata = fa.Iata,
                                 Oid = f.Oid,
-                                GroupId = f.GroupId ?? 0,
+                                GroupId = f.GroupId,
                             }).ToListAsync();
 
             foreach (var fbo in fbos)
@@ -124,7 +124,7 @@ namespace FBOLinx.Web.Controllers
                 Fbo = f.Fbo,
                 Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
-                GroupId = f.GroupId ?? 0,
+                GroupId = f.GroupId,
                 Users = f.Users
             }).ToList();
             return Ok(fbosVM);

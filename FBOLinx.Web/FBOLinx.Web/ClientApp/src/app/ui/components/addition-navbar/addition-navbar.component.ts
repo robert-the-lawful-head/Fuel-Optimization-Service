@@ -229,23 +229,10 @@ export class AdditionNavbarComponent
             ({ oid }) => oid === templateId
         );
 
-        await this.checkExpiredPrices();
+        await this.checkExpiredPrices(filteredTemplate.marginTypeProduct);
 
         if (!this.pricesExpired) {
             this.checkCustomerContacts(filteredTemplate);
-
-            if (!filteredTemplate.emailContent) {
-                const dialogRef = this.templateDialog.open(
-                    NotificationComponent,
-                    {
-                        data: {
-                            text: 'Please assign an Email Template to this ITP Template before proceeding.',
-                        },
-                    }
-                );
-
-                dialogRef.afterClosed().subscribe();
-            }
         }
     }
 
@@ -282,11 +269,25 @@ export class AdditionNavbarComponent
                     return;
                 }
 
-                this.previewEmail = result;
-                const request = this.GetSendDistributionRequest(template);
-                this.distributionService
-                    .previewDistribution(request)
-                    .subscribe(() => {});
+                if (!template.emailContent) {
+                    const dialogRef = this.templateDialog.open(
+                        NotificationComponent,
+                        {
+                            data: {
+                                text: 'Please assign an Email Template to this ITP Template before proceeding.',
+                            },
+                        }
+                    );
+
+                    dialogRef.afterClosed().subscribe();
+                }
+                else {
+                    this.previewEmail = result;
+                    const request = this.GetSendDistributionRequest(template);
+                    this.distributionService
+                        .previewDistribution(request)
+                        .subscribe(() => { });
+                }
             });
         } else {
             const dialogRef = this.templateDialog.open(NotificationComponent, {
@@ -301,7 +302,7 @@ export class AdditionNavbarComponent
 
     async confirmSendEmails() {
         this.pricesExpired = false;
-        await this.checkExpiredPrices();
+        //await this.checkExpiredPrices();
 
         if (!this.pricesExpired) {
             this.sendEmails();
@@ -377,7 +378,7 @@ export class AdditionNavbarComponent
         };
     }
 
-    private async checkExpiredPrices() {
+    private async checkExpiredPrices(marginTypeProduct) {
         const data: any = await this.fboPricesService
             .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .toPromise();
@@ -389,7 +390,9 @@ export class AdditionNavbarComponent
             (r) => r.product === 'JetA Cost'
         )?.[0].price;
 
-        if (!this.retailPrice && !this.costPrice) {
+        if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
+            this.pricesExpired = true;
+
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'Your fuel pricing has expired. Please update your cost/retail values.',
@@ -399,7 +402,9 @@ export class AdditionNavbarComponent
 
             dialogRef.afterClosed().subscribe();
         }
-        if (this.retailPrice && !this.costPrice) {
+        else if (marginTypeProduct == "Cost" && this.costPrice == 0) {
+            this.pricesExpired = true;
+
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'You need to add a posted cost price to distribute',
@@ -409,7 +414,9 @@ export class AdditionNavbarComponent
 
             dialogRef.afterClosed().subscribe();
         }
-        if (!this.retailPrice && this.costPrice) {
+        else if (marginTypeProduct == "Retail" && this.retailPrice == 0) {
+            this.pricesExpired = true;
+
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'You need to add a posted retail price to distribute',
@@ -419,8 +426,6 @@ export class AdditionNavbarComponent
 
             dialogRef.afterClosed().subscribe();
         }
-
-        this.pricesExpired = !this.retailPrice || !this.costPrice;
     }
 
     private prepareDataSource(): void {

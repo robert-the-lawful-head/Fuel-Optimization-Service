@@ -135,7 +135,7 @@ namespace FBOLinx.Web.Controllers
                                   Fbo = f.Fbo,
                                   Icao = fairports.Icao,
                                   Oid = f.Oid,
-                                  GroupId = f.GroupId ?? 0,
+                                      GroupId = f.GroupId,
                                   PricingExpired = fprices.fboId == null,
                                   LastLogin = f.LastLogin,
                                   AccountExpired = f.Active != true

@@ -234,4 +234,8 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
             }, 100);
         });
     }
+
+    public onFilterInput(event: any, fieldName: string, operator: string): void {
+        this.grid.filterByColumn(fieldName, operator, event.target.value);
+    }      
 }

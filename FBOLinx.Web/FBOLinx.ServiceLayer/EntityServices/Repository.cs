@@ -146,8 +146,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (bulkConfig == null)
             {
                 bulkConfig = new BulkConfig();
-                bulkConfig.SetOutputIdentity = true;
+                bulkConfig.BatchSize = 500;
+                bulkConfig.SetOutputIdentity = false;
+                bulkConfig.BulkCopyTimeout = 0;
+                bulkConfig.WithHoldlock = false;
             }
+
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkInsertAsync(entities, bulkConfig);
             await transaction.CommitAsync();
@@ -158,7 +162,10 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (bulkConfig == null)
             {
                 bulkConfig = new BulkConfig();
-                bulkConfig.SetOutputIdentity = true;
+                bulkConfig.BatchSize = 500;
+                bulkConfig.SetOutputIdentity = false;
+                bulkConfig.BulkCopyTimeout = 0;
+                bulkConfig.WithHoldlock = false;
             }
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkUpdateAsync(entities);

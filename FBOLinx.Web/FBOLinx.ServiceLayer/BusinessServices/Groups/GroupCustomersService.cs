@@ -81,13 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 }
 
                 if (customerInfoByGroupToInsert.Count > 0)
-                    await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert, new BulkConfig()
-                    {
-                        BatchSize = 500,
-                        SetOutputIdentity = false,
-                        BulkCopyTimeout = 0,
-                        WithHoldlock = false
-                    });
+                    await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert);
 
                 var existingCustomerAircraftRecordsForGroup =
                     await _CustomerAircraftEntityService.GetListBySpec(
@@ -116,13 +110,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 }
 
                 if (customerAircraftsToInsert.Count > 0)
-                    await _CustomerAircraftEntityService.BulkInsert(customerAircraftsToInsert, new BulkConfig()
-                    {
-                        BatchSize = 500,
-                        SetOutputIdentity = false,
-                        BulkCopyTimeout = 0,
-                        WithHoldlock = false
-                    });
+                    await _CustomerAircraftEntityService.BulkInsert(customerAircraftsToInsert);
             }
             catch (Exception ex)
             {

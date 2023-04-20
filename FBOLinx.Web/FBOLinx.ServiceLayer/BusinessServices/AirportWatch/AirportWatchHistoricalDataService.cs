@@ -73,7 +73,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             //Join the historical and customer aircraft data together
             var result = (from hd in historicalData
-                                join cad in customerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId.GetValueOrDefault() } equals new { cad.TailNumber, GroupId = (cad.GroupId.HasValue ? cad.GroupId.Value : 0) }
+                                join cad in customerAircrafts on new { TailNumber = hd.TailNumber, GroupId = groupId.GetValueOrDefault() } equals new { cad.TailNumber, GroupId =  cad.GroupId }
                                                                   into leftJoinedCustomerAircrafts
                                 from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
                                 group hd by new

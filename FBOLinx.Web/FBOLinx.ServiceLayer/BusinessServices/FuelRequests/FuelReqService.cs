@@ -43,7 +43,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<List<ChartDataResponse>> GetCustomersBreakdown(int fboId, int groupId, int? customerId, DateTime startDateTime, DateTime endDateTime);
         Task<IEnumerable<FuelReqTotalsProjection>> GetValidFuelRequestTotals(int fboId, DateTime startDateTime, DateTime endDateTime);
         IQueryable<ValidCustomersProjection> GetValidCustomers(int groupId, int? customeridval);
-        Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime);
+        Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime, string fbo);
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
         Task SendFuelOrderNotificationEmail(int handlerId, FuelReqRequest fuelReq);
@@ -144,7 +144,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             var customers =
                 await _CustomerInfoByGroupEntityService.GetListBySpec(
-                    new CustomerInfoByGroupByGroupIdSpecification(fboRecord.GroupId.GetValueOrDefault()));
+                    new CustomerInfoByGroupByGroupIdSpecification(fboRecord.GroupId));
 
             return await GetDirectOrdersFromDatabase(fboId, startDate, endDate, customers);
         }
@@ -245,12 +245,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                                    })
                                   .Distinct();
         }
-        public async Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime)
+        public async Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime, string fbo)
         {
             FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
             fbolinxOrdersRequest.StartDateTime = startDateTime;
             fbolinxOrdersRequest.EndDateTime = endDateTime;
             fbolinxOrdersRequest.Icao = icao;
+            if (fbo != null)
+                fbolinxOrdersRequest.Fbo = fbo;
 
             FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest);
             return response.Result;
@@ -277,12 +279,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         public async Task<List<ChartDataResponse>> GetCustomersBreakdown(int fboId, int groupId, int? customerId, DateTime startDateTime, DateTime endDateTime)
         {
             string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
 
             var fuelReqs = await GetValidFuelRequestTotals(fboId, startDateTime, endDateTime);
 
             var customers = await GetValidCustomers(groupId, customerId).ToListAsync();
 
-            var fuelerlinxCustomerOrdersCount = await GetCustomerTransactionsCountForAirport(icao, startDateTime, endDateTime);
+            var fuelerlinxCustomerOrdersCount = await GetCustomerTransactionsCountForAirport(icao, startDateTime, endDateTime, fbo.Fbo);
 
             List<ChartDataResponse> chartData = new List<ChartDataResponse>();
             foreach (var customer in customers)

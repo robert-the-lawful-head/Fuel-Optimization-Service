@@ -22,11 +22,13 @@ export type ColumnType = {
 export class TableSettingsComponent {
     columns: ColumnType[] = [];
     isSaveButtonDisabled = false;
+    hasSelectAllColumn = false;
     constructor(
         private dialogRef: MatDialogRef<TableSettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ColumnType[]
     ) {
-        this.columns = [...data].filter((c) => c.id != 'selectAll');
+        this.columns = [...data].filter((c) => c.id != 'selectAll')
+        this.hasSelectAllColumn = this.columns.length == data.length ? false : true;
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -78,10 +80,12 @@ export class TableSettingsComponent {
     }
 
     onSave() {
-        this.columns = [{
-            id: 'selectAll',
-            name: 'Select All',
-        },...this.columns]
+        if(this.hasSelectAllColumn){
+            this.columns = [{
+                id: 'selectAll',
+                name: 'Select All',
+            },...this.columns]
+        }
         this.dialogRef.close(this.columns);
     }
 
