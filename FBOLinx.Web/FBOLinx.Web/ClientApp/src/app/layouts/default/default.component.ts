@@ -86,7 +86,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     get isNotGroupAdmin() {
-        return this.sharedService.currentUser.role !== 2;
+        return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
     }
 
     ngOnInit() {
