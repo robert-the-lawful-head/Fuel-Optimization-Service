@@ -9,7 +9,7 @@ namespace FBOLinx.Service.Mapping.Dto
     {
         public int Oid { get; set; }
         public string Fbo { get; set; }
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public double? PostedRetail { get; set; }

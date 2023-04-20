@@ -12,7 +12,7 @@ namespace FBOLinx.DB.Models
         [StringLength(255)]
         public string Fbo { get; set; }
         [Column("GroupID")]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         [StringLength(50)]
         public string Username { get; set; }
         [StringLength(50)]

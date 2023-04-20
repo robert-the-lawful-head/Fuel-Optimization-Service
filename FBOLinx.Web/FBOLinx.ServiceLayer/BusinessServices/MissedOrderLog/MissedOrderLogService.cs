@@ -64,9 +64,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
-            var customers = await _CustomerInfoByGroupService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customers = await _CustomerInfoByGroupService.GetCustomersByGroupAndFbo(fbo.GroupId, fboId);
 
-            var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId, fboId);
 
             var allFboLinxTransactions = new List<FuelReqDto>();
             foreach (var otherFbo in fbos.Where(f => f.Oid != fboId))

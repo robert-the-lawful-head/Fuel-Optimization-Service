@@ -108,6 +108,7 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
             });
 
         this.tab = 'customer';
+        this.priceCheckerLookupType = 0;
     }
 
     ngOnDestroy(): void {
@@ -207,7 +208,13 @@ export class PriceCheckerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     public onOptionChange(event: any): void {
         this.tab = event.value;
-        this.priceCheckerLookupType = event.index;
+
+        var index = 0;
+        if (this.tab == "tail")
+            index = 1;
+        else if (this.tab == "template")
+            index = 2;
+        this.priceCheckerLookupType = index;
         this.priceLookupInfo = null;
         this.sampleCalculation = null;
         this.lookupPricing();

@@ -257,6 +257,7 @@ export class CustomersEditComponent implements OnInit {
 
         this.loadCustomerFeesAndTaxes();
         this.loadCustomerTags();
+        this.checkAircraftsForCompanyPricing();
     }
 
     loadCustomerHistory()
@@ -632,5 +633,13 @@ export class CustomersEditComponent implements OnInit {
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
             });
+    }
+
+    private checkAircraftsForCompanyPricing(): void {
+        this.customerAircraftsData.forEach((result) => {
+            if (result.isCompanyPricing) {
+                result.pricingTemplateId = null;
+            }
+        });
     }
 }

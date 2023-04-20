@@ -24,7 +24,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                                            } equals new
                                            {
                                                fboId = f.Oid,
-                                               groupId = f.GroupId ?? 0
+                                               groupId = f.GroupId
                                            }
                                            select ap)
                                               .ToListAsync();

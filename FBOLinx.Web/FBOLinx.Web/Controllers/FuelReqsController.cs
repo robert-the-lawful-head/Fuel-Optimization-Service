@@ -252,13 +252,13 @@ namespace FBOLinx.Web.Controllers
                                            join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
                                            join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
                                            join f in _context.Fbos on
-                                           new { cg.GroupId, FboId = fboId, Active = true }
+                                           new { GroupId = cg.GroupId, FboId = fboId, Active = true }
                                            equals
-                                           new { GroupId = (f.GroupId ?? 0), FboId = f.Oid, Active = f.Active ?? false }
+                                           new { GroupId = f.GroupId, FboId = f.Oid, Active = f.Active ?? false}
                                            join ca in _context.CustomerAircrafts on
                                            new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
                                            equals
-                                           new { ca.TailNumber, ca.CustomerId, GroupId = (ca.GroupId ?? 0) }
+                                           new { ca.TailNumber, ca.CustomerId, GroupId = ca.GroupId }
                                            select new
                                            {
                                                Fboid = fboId,
@@ -1185,7 +1185,7 @@ namespace FBOLinx.Web.Controllers
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, customeridval).ToListAsync();
 
-                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime);
+                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, request.StartDateTime, request.EndDateTime, null);
 
                 var fbo = await _fboService.GetFbo(fboId);
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, request.StartDateTime, request.EndDateTime);

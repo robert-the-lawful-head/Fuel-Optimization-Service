@@ -16,7 +16,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
-import { csvFileOptions, VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -82,7 +82,7 @@ const initialColumns: ColumnType[] = [
           ])
     ]
 })
-export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, OnChanges {
+export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
@@ -101,10 +101,7 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
     csvFileOptions: csvFileOptions = { fileName: 'FuelOrders', sheetName: 'Fuel Orders' };
 
     allColumnsToDisplay: string[];
-    dataColumnsToDisplay: string[];
-    columnsToDisplayDic = new Object();
 
-    columnsToDisplayWithExpand : any[];
     expandedElement: any[] = [];
 
     constructor(
@@ -128,7 +125,6 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             )
         ) {
             this.allColumnsToDisplay = this.getVisibleColumns();
-            this.dataColumnsToDisplay = this.getVisibleDataColumns();
             this.refreshTable();
         }
     }
@@ -157,42 +153,15 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.paginator.pageIndex = 0;
         }
 
-        let savedColumns = this.getClientSavedColumns();
-
-        if(savedColumns?.length > 0)
-            this.columns = savedColumns;
-        else
-            this.columns = initialColumns;
-
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
 
         this.allColumnsToDisplay = this.getVisibleColumns();
-        this.dataColumnsToDisplay = this.getVisibleDataColumns();
 
         this.refreshTable();
     }
-    private getClientSavedColumns(){
-        let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
-        let hasColumnUpdates :boolean = false;
-        if (localStorageColumns) {
-            let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
-            for(let col in storedCols){
-                let colName = storedCols[col].id;
-                if(initialColumns[colName] != undefined) continue;
-                hasColumnUpdates = true;
-                break;
-            }
-            if(!hasColumnUpdates){
-                return storedCols;
-            }
-        }
-        return null;
-    }
     getVisibleDataColumns() {
         return this.columns
-            .filter((column) => {
-                if(column.hidden) return false;
-                return true;
-            })
+            .filter((column) => !column.hidden)
             .map((column) => {
                 if(column.id == 'customer')
                     return 'customerName'

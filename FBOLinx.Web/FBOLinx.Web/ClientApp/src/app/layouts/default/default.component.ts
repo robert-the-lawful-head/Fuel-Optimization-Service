@@ -237,7 +237,7 @@ export class DefaultLayoutComponent implements OnInit {
                 this.fboPricesService
                     .checkFboExpiredPricing(this.sharedService.currentUser.fboId)
                     .subscribe((data: any) => {
-                        if (!data) {
+                        if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !data) {
                             const dialogRef = this.expiredPricingDialog.open(
                                 PricingExpiredNotificationComponent,
                                 {

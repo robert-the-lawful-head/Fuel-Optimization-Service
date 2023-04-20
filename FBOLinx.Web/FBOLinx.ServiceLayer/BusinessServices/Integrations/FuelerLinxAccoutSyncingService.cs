@@ -84,7 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             foreach (var fbo in fbos)
             {
-                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId.Value, fbo.Oid);
+                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId, fbo.Oid);
             }
         }
 
@@ -142,13 +142,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Update/Insert all records from above
             var customerInfoByGroupRecords = _customerInfoByGroupRecords.Select(x => x.Map<CustomerInfoByGroup>()).ToList();
             await _customerInfoByGroupEntityService.BulkUpdate(customerInfoByGroupRecords.Where(x => x.Oid > 0).ToList());
-            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList(), new BulkConfig()
-            {
-                BatchSize = 500,
-                SetOutputIdentity = false,
-                BulkCopyTimeout = 0,
-                WithHoldlock = false
-            });
+            await _customerInfoByGroupEntityService.BulkInsert(customerInfoByGroupRecords.Where(x => x.Oid <= 0).ToList());
         }
 
         private async Task UpdateFleetStatus()
@@ -169,7 +163,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var newAircraftToAdd = (from t in tailNumbers
                                     join g in groupIds on 1 equals 1
                                     join ca in nonCustomerAircraftList on new { TailNumber = t.ToLower(), GroupId = g } equals new
-                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault() }
+                                    { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId }
                                     //    into leftJoinCustomerAircrafts
                                     //from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                                     select new CustomerAircrafts()
@@ -196,7 +190,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             var aircraftToAdd = (from t in tailNumbers
                 join g in groupIds on 1 equals 1
                 join ca in customerAircraftList on new { TailNumber = t.ToLower(), GroupId = g, CustomerId = _customerRecord.Oid } equals new
-                        { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId.GetValueOrDefault(), CustomerId = ca.CustomerId }
+                        { TailNumber = ca.TailNumber.ToLower(), GroupId = ca.GroupId, CustomerId = ca.CustomerId }
                     into leftJoinCustomerAircrafts
                 from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                 where ca is null
@@ -214,13 +208,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 .ToList();
 
             if (aircraftToAdd?.Count > 0)
-                await _customerAircraftEntityService.BulkInsert(aircraftToAdd, new BulkConfig()
-                {
-                    BatchSize = 500,
-                    SetOutputIdentity = false,
-                    BulkCopyTimeout = 0,
-                    WithHoldlock = false
-                });
+                await _customerAircraftEntityService.BulkInsert(aircraftToAdd);
 
             //Find aircrafts to remove customer association
             var aircraftToRemove = (from ca in customerAircraftList
