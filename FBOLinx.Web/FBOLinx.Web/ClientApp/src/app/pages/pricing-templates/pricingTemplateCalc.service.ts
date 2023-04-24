@@ -46,9 +46,6 @@ export class PricingTemplateCalcService {
             let modifedMinValue: number = customerMarginsFormArray.at(i).get('min').value;
             let previousValueMax: number = customerMarginsFormArray.at(previousIndex).get('max').value;
 
-
-            if(modifedMinValue > previousValueMax) break;
-
             customerMarginsFormArray.at(previousIndex).patchValue({
                 max: modifedMinValue - 1,
             });
