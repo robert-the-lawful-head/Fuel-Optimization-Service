@@ -238,7 +238,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="text-right mat-cell" *ngIf="i > 0">
+                                    <td class="text-right mat-cell" *ngIf="customerMarginsFormArray.length > 1">
                                         <button (click)="deleteCustomerMargin(i)"
                                                 [view]="'error'"
                                                 beforeIcon="fa fa-trash"

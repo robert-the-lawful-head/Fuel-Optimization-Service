@@ -67,9 +67,16 @@ export class PricingTemplateCalcService {
         }
     }
     public adjustCustomerMarginValuesOnDelete(deletedIndex: number, customerMarginsFormArray: FormArray): void {
-        if(deletedIndex == 0) return;
-
         customerMarginsFormArray.removeAt(deletedIndex);
+
+        if(deletedIndex == 0) {
+            customerMarginsFormArray
+                .at(deletedIndex)
+                .patchValue({
+                    min: 1,
+                });
+            return;
+        };
 
         if(deletedIndex == customerMarginsFormArray.length) {
             customerMarginsFormArray
