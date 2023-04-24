@@ -66,4 +66,24 @@ export class PricingTemplateCalcService {
             }
         }
     }
+    public adjustCustomerMarginValuesOnDelete(deletedIndex: number, customerMarginsFormArray: FormArray): void {
+        if(deletedIndex == 0) return;
+
+        customerMarginsFormArray.removeAt(deletedIndex);
+
+        if(deletedIndex == customerMarginsFormArray.length) {
+            customerMarginsFormArray
+                .at(deletedIndex -1)
+                .patchValue({
+                    max: 99999,
+                });
+            return;
+        };
+
+        let previousMaxValue : number = parseFloat(customerMarginsFormArray.at(deletedIndex - 1).get('max').value);
+
+        customerMarginsFormArray.at(deletedIndex).patchValue({
+            min: previousMaxValue + 1,
+        });
+    }
 }

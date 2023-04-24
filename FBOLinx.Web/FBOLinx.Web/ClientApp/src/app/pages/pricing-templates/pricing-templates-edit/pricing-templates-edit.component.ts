@@ -424,14 +424,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     deleteCustomerMargin(index: number) {
-        this.customerMarginsFormArray.removeAt(index);
-        if (this.customerMarginsFormArray.length) {
-            this.customerMarginsFormArray
-                .at(this.customerMarginsFormArray.length - 1)
-                .patchValue({
-                    max: 99999,
-                });
-        }
+        this.pricingTemplateCalcService.adjustCustomerMarginValuesOnDelete(index, this.customerMarginsFormArray);
     }
 
     addCustomerMargin() {
