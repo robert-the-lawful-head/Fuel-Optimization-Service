@@ -39,8 +39,11 @@ namespace FBOLinx.Web.Controllers
         private readonly FuelerLinxApiService _fuelerLinxApiService;
         private readonly IFboPricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly ILoggingService logger;
         private readonly IAuthService _AuthService;
+        private readonly IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
 
         public FbosController(
             FboLinxContext context,
@@ -51,7 +54,8 @@ namespace FBOLinx.Web.Controllers
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
-            IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IHttpContextAccessor httpContextAccessor) : base(logger)
+            IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
+            IHttpContextAccessor httpContextAccessor) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -62,7 +66,9 @@ namespace FBOLinx.Web.Controllers
             _fuelerLinxApiService = fuelerLinxApiService;
             _fbopricesService = fbopricesService;
             _pricingTemplateService = pricingTemplateService;
+            this.logger = logger;
             _AuthService = authService;
+            _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -198,6 +204,8 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(id);
             }
             catch (DbUpdateConcurrencyException)
             {
