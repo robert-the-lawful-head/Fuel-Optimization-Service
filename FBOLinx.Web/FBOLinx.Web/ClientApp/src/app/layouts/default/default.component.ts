@@ -85,6 +85,10 @@ export class DefaultLayoutComponent implements OnInit {
         return this.sharedService.currentUser.role === 5;
     }
 
+    get isNotGroupAdmin() {
+        return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
+    }
+
     ngOnInit() {
         var isConductorRefresh = true;
         this.sharedService.changeEmitted$.subscribe((message) => {
