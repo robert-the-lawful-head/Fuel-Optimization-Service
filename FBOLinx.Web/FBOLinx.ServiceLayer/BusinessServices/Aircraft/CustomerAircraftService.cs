@@ -74,7 +74,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
         {
             List<CustomerAircraftsDto> result = new List<CustomerAircraftsDto>();
-            if (tailNumbers?.Count == 0)
+            if (tailNumbers?.Count == 0 || tailNumbers == null)
                 result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
             else
                 result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId, tailNumbers));

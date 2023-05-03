@@ -53,8 +53,9 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboPricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
         private ICustomerInfoByGroupService _customerInfoByGroupService;
+        private readonly ICustomerAircraftService _customerAircraftService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService, ILoggingService logger) : base(logger)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService, ILoggingService logger, ICustomerAircraftService customerAircraftService) : base(logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -70,6 +71,7 @@ namespace FBOLinx.Web.Controllers
             _fboPricesService = fbopricesService;
             _fboFeesAndTaxesService = fboFeesAndTaxesService;
             _customerInfoByGroupService = customerInfoByGroupService;
+            _customerAircraftService = customerAircraftService;
         }
 
 
@@ -930,18 +932,18 @@ namespace FBOLinx.Web.Controllers
 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
 
-                var customerAircraft =
-                    (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())
-                     where aircraftByCustomer.GroupId == groupId
-                     group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
-                     into results
-                     select new
-                     {
-                         results.Key.CustomerId,
-                         Tails = string.Join(",", results.Select(x => x.TailNumber)),
-                         Count = results.Count()
-                     }
-                     ).ToList();
+                var allCustomerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
+                var allCustomerAircraftsGrouped = (from aircraftByCustomer in allCustomerAircrafts
+                                                   group aircraftByCustomer by new { aircraftByCustomer.CustomerId }
+                                                   into results
+                                                   orderby results.Key.CustomerId
+                                                   select new
+                                                   {
+                                                       results.Key.CustomerId,
+                                                       Tails = string.Join(",", results.Select(x => x.TailNumber)),
+                                                       Count = results.Count()
+                                                   }
+                                                ).ToList();
 
                 var customerTags = await _context.CustomerTag.Where(x => x.GroupId == groupId).ToListAsync();
 
@@ -1006,8 +1008,8 @@ namespace FBOLinx.Web.Controllers
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = (cg.Active ?? false),
-                            Tails = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Tails,
-                            FleetSize = customerAircraft.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Count,
+                            Tails = allCustomerAircraftsGrouped.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Tails,
+                            FleetSize = allCustomerAircraftsGrouped.FirstOrDefault(x => x.CustomerId == cg.CustomerId)?.Count,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
                             Tags = customerTags.Where(x => x.CustomerId == cg.CustomerId),
