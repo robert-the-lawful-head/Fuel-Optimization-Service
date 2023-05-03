@@ -13,7 +13,7 @@ namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomCustomerType.Where(x => x.Fboid == fboId));
-            AddInclude(x => x.Customer.CustomerContacts);
+            //AddInclude(x => x.Customer.CustomerContacts);
         }
     }
 }
