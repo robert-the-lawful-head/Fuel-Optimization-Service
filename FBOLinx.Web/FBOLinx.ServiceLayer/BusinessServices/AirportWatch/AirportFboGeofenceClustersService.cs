@@ -127,7 +127,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         public async Task<List<AirportFboGeofenceClusterCoordinatesDto>> GetClusterCoordinatesByClusterId(int clusterId)
         {
             var cluster = await GetSingleBySpec(new AirportFboGeoFenceClusterSpecification(clusterId));
-            return cluster?.ClusterCoordinatesCollection?.ToList();
+            return cluster?.ClusterCoordinatesCollection?.OrderBy(c => c.Oid).ToList();
         }
     }
 }
