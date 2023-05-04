@@ -50,14 +50,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         }
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId)
         {
-            var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == "EULA").OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
+            var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
             var hasacceptedDocument = _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
 
             var documentToAccept = new DocumentsToAcceptDto()
             {
                 UserId = userId,
                 DocumentToAccept = eulaDocument,
-                hasPendingDocumentsToAccept = (eulaDocument == null) ? false : !hasacceptedDocument
+                hasPendingDocumentsToAccept = (eulaDocument == null || !eulaDocument.IsEnabled) ? false : !hasacceptedDocument
             };
             return documentToAccept;
         }
