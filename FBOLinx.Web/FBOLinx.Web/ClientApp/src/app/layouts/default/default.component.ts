@@ -87,33 +87,11 @@ export class DefaultLayoutComponent implements OnInit {
     get isCsr() {
         return this.sharedService.currentUser.role === 5;
     }
+    get isConductor() {
+        return this.sharedService.currentUser.role === 3;
+    }
     get isNotGroupAdmin() {
         return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
-    }
-    openAgreementsAndDocumentsModal(){
-        this.documentService
-                .getDocumentsToAccept(
-                    this.sharedService.currentUser.oid
-                )
-                .subscribe(
-                    (data: any) => {
-                        if(!data.hasPendingDocumentsToAccept) return;
-
-                        const config: MatDialogConfig = {
-                            disableClose: true,
-                            data: {
-                                userId: data.userId,
-                                eulaDocument: data.documentToAccept
-                             }
-                          };
-                        const dialogRef = this.templateDialog.open(
-                            AgreementsAndDocumentsModalComponent,
-                            config
-                        );
-
-                        dialogRef.afterClosed().subscribe();
-                    }
-                );
     }
     ngOnInit() {
         this.openAgreementsAndDocumentsModal();
@@ -194,7 +172,33 @@ export class DefaultLayoutComponent implements OnInit {
         this.getScreenWidth = window.innerWidth;
         this.getScreenHeight = window.innerHeight;
     }
+    openAgreementsAndDocumentsModal(){
+        if(this.isConductor) return;
 
+        this.documentService
+                .getDocumentsToAccept(
+                    this.sharedService.currentUser.oid
+                )
+                .subscribe(
+                    (data: any) => {
+                        if(!data.hasPendingDocumentsToAccept) return;
+
+                        const config: MatDialogConfig = {
+                            disableClose: true,
+                            data: {
+                                userId: data.userId,
+                                eulaDocument: data.documentToAccept
+                             }
+                          };
+                        const dialogRef = this.templateDialog.open(
+                            AgreementsAndDocumentsModalComponent,
+                            config
+                        );
+
+                        dialogRef.afterClosed().subscribe();
+                    }
+                );
+    }
     isPricePanelVisible() {
         const blacklist = [
             '/default-layout/groups',
