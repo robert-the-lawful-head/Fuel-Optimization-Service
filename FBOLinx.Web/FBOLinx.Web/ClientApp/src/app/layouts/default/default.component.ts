@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
@@ -19,6 +19,8 @@ import { customerGridClear } from '../../store/actions';
 import { State } from '../../store/reducers';
 import { SharedService } from '../shared-service';
 import { ProceedConfirmationComponent } from '../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { AgreementsAndDocumentsModalComponent } from 'src/app/shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { DocumentService } from 'src/app/services/documents.service';
 
 @Component({
     providers: [SharedService],
@@ -60,8 +62,9 @@ export class DefaultLayoutComponent implements OnInit {
         private expiredPricingDialog: MatDialog,
         private router: Router,
         private store: Store<State>,
-        private clearPricingDialog: MatDialog,
-        private fbosService: FbosService
+        private templateDialog: MatDialog,
+        private fbosService: FbosService,
+        private documentService: DocumentService
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -84,12 +87,37 @@ export class DefaultLayoutComponent implements OnInit {
     get isCsr() {
         return this.sharedService.currentUser.role === 5;
     }
-
     get isNotGroupAdmin() {
         return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
     }
+    openAgreementsAndDocumentsModal(){
+        this.documentService
+                .getDocumentsToAccept(
+                    this.sharedService.currentUser.oid
+                )
+                .subscribe(
+                    (data: any) => {
+                        if(!data.hasPendingDocumentsToAccept) return;
 
+                        const config: MatDialogConfig = {
+                            disableClose: true,
+                            data: {
+                                userId: data.userId,
+                                eulaDocument: data.documentToAccept
+                             }
+                          };
+                        const dialogRef = this.templateDialog.open(
+                            AgreementsAndDocumentsModalComponent,
+                            config
+                        );
+
+                        dialogRef.afterClosed().subscribe();
+                    }
+                );
+    }
     ngOnInit() {
+        this.openAgreementsAndDocumentsModal();
+
         var isConductorRefresh = true;
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
@@ -266,7 +294,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     public onClearFboPrice(event): void {
-        const dialogRef = this.clearPricingDialog.open(
+        const dialogRef = this.templateDialog.open(
             ProceedConfirmationComponent,
             {
                 autoFocus: false,
