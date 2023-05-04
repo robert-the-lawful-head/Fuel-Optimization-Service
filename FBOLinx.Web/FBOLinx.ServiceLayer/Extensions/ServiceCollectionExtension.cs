@@ -5,6 +5,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.BusinessServices.Documents;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
@@ -105,6 +106,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IOAuthService, OAuthService>();
             services.AddTransient<IGroupFboService, GroupFboService>();
             services.AddTransient<IAuthService, AuthService>();
+            services.AddTransient<IDocumentService, DocumentService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
