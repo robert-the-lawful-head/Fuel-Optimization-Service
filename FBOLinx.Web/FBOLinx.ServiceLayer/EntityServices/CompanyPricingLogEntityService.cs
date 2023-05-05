@@ -40,18 +40,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
             DateTime startDate, DateTime endDate, int? fuelerlinxCompanyId)
         {
             var result = await (from cpl in context.CompanyPricingLog
-                join fa in context.Fboairports on cpl.ICAO equals fa.Icao
-                join f in context.Fbos on fa.Fboid equals f.Oid
-                where cpl.CreatedDate >= startDate 
-                      && cpl.CreatedDate <= endDate
-                      && (!fuelerlinxCompanyId.HasValue || cpl.CompanyId == fuelerlinxCompanyId.Value)
-                group cpl by new { FboID = f.Oid, GroupID = f.GroupId } into g
-                select new CompanyPricingLogCountByDateRange()
-                {
-                    QuoteCount = g.Count(),
-                    FboId = g.Key.FboID,
+                                join fa in context.Fboairports on cpl.ICAO equals fa.Icao
+                                join f in context.Fbos on fa.Fboid equals f.Oid
+                                where cpl.CreatedDate >= startDate
+                                      && cpl.CreatedDate <= endDate
+                                      && (!fuelerlinxCompanyId.HasValue || cpl.CompanyId == fuelerlinxCompanyId.Value)
+                                group cpl by new { FboID = f.Oid, GroupID = f.GroupId } into g
+                                select new CompanyPricingLogCountByDateRange()
+                                {
+                                    QuoteCount = g.Count(),
+                                    FboId = g.Key.FboID,
                     GroupId = g.Key.GroupID
-                }).ToListAsync();
+                                }).ToListAsync();
             return result;
         }
     }

@@ -12,6 +12,7 @@ export class TableGlobalSearchComponent implements OnInit {
     @Input() matDataSource: any = null;
     @Input() SubmatDataSource : any = null
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
+    @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
     private page: string = "";
@@ -83,6 +84,7 @@ export class TableGlobalSearchComponent implements OnInit {
 
         this.applyFilter(this.globalFilter.filterValue);
     }
+
     public applyFilter(filterValue: any) {
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
@@ -127,6 +129,8 @@ export class TableGlobalSearchComponent implements OnInit {
         );
 
         this.filterApplied.emit(filterValue);
+
+        this.filteredDataSource.emit(this.matDataSource);
     }
 
     public clearAllFilters() {

@@ -118,7 +118,7 @@ namespace FBOLinx.Service.Mapping.Dto
             FuelReqDto fuelRequest = new FuelReqDto();
             fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
             fuelRequest.DateCreated = GetUtcTimeFromFuelerLinxServerTime(fuelRequest.DateCreated ?? DateTime.UtcNow);
-            SetAirportLocalTimes(fuelRequest,airport);
+            SetAirportLocalTimes(fuelRequest, airport);
             SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
 
             return fuelRequest;
@@ -146,7 +146,7 @@ namespace FBOLinx.Service.Mapping.Dto
             if (fuelRequest.TimeStandard == "Z")
             {
                 fuelRequest.Eta = GetAirportLocalTime(fuelRequest.Eta.GetValueOrDefault(), airport);
-                fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);            
+                fuelRequest.Etd = GetAirportLocalTime(fuelRequest.Etd.GetValueOrDefault(), airport);
             }
             else
             {

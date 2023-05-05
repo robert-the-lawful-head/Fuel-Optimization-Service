@@ -145,6 +145,10 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     customersCsvOptions: csvFileOptions = { fileName: 'Customers', sheetName: 'Customers' };
     aircraftCsvOptions: csvFileOptions = { fileName: 'Aircraft', sheetName: 'Aircraft' };
 
+    start: number = 0;
+    limit: number = 20;
+    end: number = this.limit + this.start;
+
     constructor(
         private newCustomerDialog: MatDialog,
         private deleteCustomerDialog: MatDialog,
@@ -714,5 +718,16 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
             });
+    }
+    loadFilteredDataSource(filteredDataSource: any){
+        console.log("🚀 ~ file: customers-grid.component.ts:770 ~ CustomersGridComponent ~ loadFilteredDataSource ~ filteredDataSource", filteredDataSource)
+        if(filteredDataSource.filter.length == 2){
+            this.refreshCustomerDataSource();
+            return;
+        }
+        this.dataSource = filteredDataSource;
+
+        this.start = 0;
+        this.limit = 20;
     }
 }

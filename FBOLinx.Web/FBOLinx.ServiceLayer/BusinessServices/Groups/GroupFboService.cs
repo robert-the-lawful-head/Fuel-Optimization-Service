@@ -120,10 +120,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
             return fbo;
         }
 
-public async Task DeleteFbo(int fboId)
+        public async Task DeleteFbo(int fboId)
         {
             await _context.Database.ExecuteSqlRawAsync("exec up_Delete_Fbo @OID = " + fboId);
-            }
+        }
         public async Task DeleteGroup(int id)
         {
             await _context.Database.ExecuteSqlRawAsync("exec up_Delete_Group @OID = " + id);
