@@ -39,8 +39,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomerService _customerService;
-        private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly IFboService _fboService;
+        private readonly ICustomerTypesEntityService _customerTypesEntityService;
 
         public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
             ICustomersEntityService customerEntityService,
@@ -48,8 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
             ICustomerService customerService,
-            IPricingTemplateService pricingTemplateService,
-            IFboService fboService
+            ICustomerTypesEntityService customerTypesEntityService
             )
         {
             _customerAircraftEntityService = customerAircraftEntityService;
@@ -58,8 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _customerService = customerService;
-            _pricingTemplateService = pricingTemplateService;
-            _fboService = fboService;
+            _customerTypesEntityService = customerTypesEntityService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -80,12 +77,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             await UpdateFleetStatus();
 
-            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
-
-            foreach (var fbo in fbos)
-            {
-                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId, fbo.Oid);
-            }
+            await _customerTypesEntityService.FixCustomCustomerTypesForAllGroups(_customerRecord.Oid);
         }
 
         private async Task UpdateCustomerRecord()

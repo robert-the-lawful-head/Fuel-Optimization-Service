@@ -31,6 +31,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
+        Task<List<PricingTemplate>> GetAllPricingTemplates();
     }
     
     public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService
@@ -513,6 +514,19 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                 select new PricingTemplate { Oid = pt.Oid, CustomerId = cg.CustomerId, Name = pt.Name }).ToListAsync();
 
             return result;
+        }
+
+        public async Task<List<PricingTemplate>> GetAllPricingTemplates()
+        {
+            var templates = await (from p in _context.PricingTemplate
+                                   select new PricingTemplate
+                                   {
+                                       Oid = p.Oid,
+                                       Fboid = p.Fboid,
+                                       Default = p.Default
+                                   }).ToListAsync();
+
+            return templates;
         }
 
         #region Private Methods
