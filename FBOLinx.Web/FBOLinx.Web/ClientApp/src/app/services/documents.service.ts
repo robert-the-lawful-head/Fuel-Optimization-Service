@@ -1,5 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { DocumentsToAcceptDto } from '../models/DocumentsToAcceptDto';
+import { GroupPolicyAndAgreementDocuments } from '../models/GroupPolicyAndAgreementDocuments';
+import { UserAcceptedPolicyAndAgreements } from '../models/UserAcceptedPolicyAndAgreements';
 
 @Injectable()
 export class DocumentService {
@@ -13,12 +16,12 @@ export class DocumentService {
         this.accessPointUrl = baseUrl + 'api/documents';
     }
     acceptDocument(userId: number, documentId: number) {
-        return this.http.post(this.accessPointUrl + '/' + documentId + '/user/' + userId + '/accept-policies-and-agreements', {}, {
+        return this.http.post<UserAcceptedPolicyAndAgreements[]>(this.accessPointUrl + '/' + documentId + '/user/' + userId + '/accept-policies-and-agreements', {}, {
             headers: this.headers,
         });
     }
     getDocumentsToAccept(userId: number) {
-        return this.http.get(this.accessPointUrl + '/user/' + userId + '/documents-to-accept', {
+        return this.http.get<DocumentsToAcceptDto>(this.accessPointUrl + '/user/' + userId + '/documents-to-accept', {
             headers: this.headers,
         });
     }
@@ -27,7 +30,7 @@ export class DocumentService {
             headers: this.headers,
         });
     }
-    updateExemptedDocuments(groupId:number, payload: any[]) {
+    updateExemptedDocuments(groupId:number, payload: GroupPolicyAndAgreementDocuments[]) {
         return this.http.post(this.accessPointUrl+`/group/${groupId}/toogle-document-exemption`,payload, {
             headers: this.headers,
         });
