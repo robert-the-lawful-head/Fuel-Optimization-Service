@@ -46,11 +46,14 @@ export class PricingTemplateCalcService {
             let modifedMinValue: number = customerMarginsFormArray.at(i).get('min').value;
             let previousValueMax: number = customerMarginsFormArray.at(previousIndex).get('max').value;
 
-
-            if(modifedMinValue > previousValueMax) break;
+            if(modifedMinValue < 1){
+                customerMarginsFormArray.at(i).patchValue({
+                    min: 0,
+                });
+            }
 
             customerMarginsFormArray.at(previousIndex).patchValue({
-                max: modifedMinValue - 1,
+                max: (modifedMinValue < 1) ? 0: modifedMinValue - 1,
             });
 
             let previousValueMin: number = customerMarginsFormArray.at(previousIndex).get('min').value;
@@ -58,9 +61,36 @@ export class PricingTemplateCalcService {
 
             if(previousValueMin >= previousValueMax){
                 customerMarginsFormArray.at(previousIndex).patchValue({
-                    min: previousValueMax - 1,
+                    min: (previousValueMax < 1) ? 0:  previousValueMax - 1,
                 });
             }
         }
+    }
+    public adjustCustomerMarginValuesOnDelete(deletedIndex: number, customerMarginsFormArray: FormArray): void {
+        customerMarginsFormArray.removeAt(deletedIndex);
+
+        if(deletedIndex == 0) {
+            customerMarginsFormArray
+                .at(deletedIndex)
+                .patchValue({
+                    min: 1,
+                });
+            return;
+        };
+
+        if(deletedIndex == customerMarginsFormArray.length) {
+            customerMarginsFormArray
+                .at(deletedIndex -1)
+                .patchValue({
+                    max: 99999,
+                });
+            return;
+        };
+
+        let previousMaxValue : number = parseFloat(customerMarginsFormArray.at(deletedIndex - 1).get('max').value);
+
+        customerMarginsFormArray.at(deletedIndex).patchValue({
+            min: previousMaxValue + 1,
+        });
     }
 }

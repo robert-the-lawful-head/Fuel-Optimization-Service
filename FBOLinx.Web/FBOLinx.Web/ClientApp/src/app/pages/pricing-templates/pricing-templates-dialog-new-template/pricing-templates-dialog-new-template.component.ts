@@ -221,7 +221,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     }
 
     deleteCustomerMargin(index) {
-        this.customerMarginsFormArray.removeAt(index);
+        this.pricingTemplateCalcService.adjustCustomerMarginValuesOnDelete(index,this.customerMarginsFormArray);
     }
 
     addTemplateClicked() {

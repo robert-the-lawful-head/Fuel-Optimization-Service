@@ -191,16 +191,20 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPut("canceluncancel/id/{id}")]
-        public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id)
+        public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id, bool? isCancelled = null)
         {
             var fuelReq = await _context.FuelReq.Where(f => f.Oid == id).FirstOrDefaultAsync();
 
             if (fuelReq != null)
             {
-                if (fuelReq.Cancelled == null)
-                    fuelReq.Cancelled = false;
+                if (!isCancelled.HasValue)
+                    isCancelled = !fuelReq.Cancelled.GetValueOrDefault();
 
-                fuelReq.Cancelled = !fuelReq.Cancelled;
+                //No need to do anything if the value already matches what was passed in
+                if (fuelReq.Cancelled == isCancelled)
+                    return Ok(fuelReq);
+
+                fuelReq.Cancelled = isCancelled;
                 await _context.SaveChangesAsync();
             }
 

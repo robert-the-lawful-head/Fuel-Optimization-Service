@@ -102,11 +102,19 @@
                     Flight Dept.
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    <span  style="display: flex;">
+                    <div style="position: absolute; left: 0;">
+                        <ni-badge *ngIf="fuelreq.cancelled" [arrow]="'left'" [borderRadius]="false"
+                                  [color]="'danger'"
+                                  matTooltipPosition="after">
+                            Cancelled
+                        </ni-badge>
+                    </div>
+
+                    <span style="display: flex;">
                         {{ fuelreq.customerName }} &nbsp;
-                        <ni-badge *ngIf="fuelreq.customerOrderNotes" [arrow]="'right'" [borderRadius]="false"
-                            [color]="'warning'"
-                            matTooltipPosition="after">
+                        <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
+                                  [color]="'warning'"
+                                  matTooltipPosition="after">
                             Order Note
                         </ni-badge>
                     </span>

@@ -224,6 +224,7 @@ import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
+import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
 
 @NgModule({
     declarations: [
@@ -369,7 +370,8 @@ import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
         AircraftLegendComponent,
         FlightWatchFiltersComponent,
         LobbyViewComponent,
-        AboutFbolinxComponent
+        AboutFbolinxComponent,
+        AgreementsAndDocumentsModalComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
