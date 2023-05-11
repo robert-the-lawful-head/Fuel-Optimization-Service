@@ -1129,7 +1129,7 @@ namespace FBOLinx.Web.Controllers
                     var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && (y.Cancelled == null || y.Cancelled == false) && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
                     var airportOrder = order == null ? 0 : order?.AirportOrders;
                     var fboOrder = (order == null ? 0 : order?.FboOrders);
-                    var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder + (double)yourOrder) / (double)airportOrder) * 100);
+                    var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder) / (double)airportOrder) * 100);
 
                     return new
                     {

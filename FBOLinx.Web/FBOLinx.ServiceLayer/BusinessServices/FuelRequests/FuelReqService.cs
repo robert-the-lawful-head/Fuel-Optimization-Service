@@ -162,7 +162,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fboRecord.FboAirport?.Icao, Fbo = fboRecord.Fbo, IsEtaOnly = true});
+            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fboRecord.FboAirport?.Icao, Fbo = fboRecord.Fbo});
 
             List<FuelReqDto> fuelReqsFromFuelerLinx = new List<FuelReqDto>();
 
