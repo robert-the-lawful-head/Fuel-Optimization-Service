@@ -67,6 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Cookie)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Privacy)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.RemoveAll(item => item == null);
 
             var exemptions = await _policyAndAgreementGroupExemptionsRepo.Where(x => x.GroupId == groupId).ToListAsync();
 
