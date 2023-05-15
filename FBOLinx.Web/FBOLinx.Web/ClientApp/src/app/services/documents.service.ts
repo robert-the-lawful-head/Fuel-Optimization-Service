@@ -20,8 +20,8 @@ export class DocumentService {
             headers: this.headers,
         });
     }
-    getDocumentsToAccept(userId: number) {
-        return this.http.get<DocumentsToAcceptDto>(this.accessPointUrl + '/user/' + userId + '/documents-to-accept', {
+    getDocumentsToAccept(userId: number, groupId: number) {
+        return this.http.get<DocumentsToAcceptDto>(this.accessPointUrl +`group/${groupId}/user/${userId}/documents-to-accept`, {
             headers: this.headers,
         });
     }
