@@ -21,7 +21,7 @@ export class DocumentService {
         });
     }
     getDocumentsToAccept(userId: number, groupId: number) {
-        return this.http.get<DocumentsToAcceptDto>(this.accessPointUrl +`group/${groupId}/user/${userId}/documents-to-accept`, {
+        return this.http.get<DocumentsToAcceptDto>(this.accessPointUrl +`/group/${groupId}/user/${userId}/documents-to-accept`, {
             headers: this.headers,
         });
     }
