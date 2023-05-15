@@ -177,7 +177,8 @@ export class DefaultLayoutComponent implements OnInit {
 
         this.documentService
                 .getDocumentsToAccept(
-                    this.sharedService.currentUser.oid
+                    this.sharedService.currentUser.oid,
+                    this.sharedService.currentUser.groupId
                 )
                 .subscribe(
                     (data: any) => {

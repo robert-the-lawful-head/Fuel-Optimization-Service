@@ -16,7 +16,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
     public interface IDocumentService
     {
         Task<UserAcceptedPolicyAndAgreements> AcceptPolicyAndAgreement(int userId, int documentId);
-        Task<DocumentsToAcceptDto> DocumentsToAccept(int userId);
+        Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId);
         Task<List<GroupPolicyAndAgreementDocuments>> GetAllGroupDocuments(int groupId);
         Task AcceptPolicyAndAgreement(int userId, int[] documentIdList);
         Task ToogleDocumentExemption(int groupId, List<GroupPolicyAndAgreementDocuments> documents);
@@ -48,16 +48,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
 
             return insertedRecord;
         }
-        public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId)
+        public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
             var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
             var hasacceptedDocument = _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
+            var isDocumentExempted = _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
 
             var documentToAccept = new DocumentsToAcceptDto()
             {
                 UserId = userId,
                 DocumentToAccept = eulaDocument,
-                hasPendingDocumentsToAccept = (eulaDocument == null || !eulaDocument.IsEnabled) ? false : !hasacceptedDocument
+                hasPendingDocumentsToAccept = (eulaDocument == null || !eulaDocument.IsEnabled || isDocumentExempted) ? false : !hasacceptedDocument
             };
             return documentToAccept;
         }
@@ -67,6 +68,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Cookie)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Privacy)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.RemoveAll(item => item == null);
 
             var exemptions = await _policyAndAgreementGroupExemptionsRepo.Where(x => x.GroupId == groupId).ToListAsync();
 

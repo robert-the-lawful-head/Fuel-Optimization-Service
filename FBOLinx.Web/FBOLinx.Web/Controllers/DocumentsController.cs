@@ -29,11 +29,11 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(insertedRecord);
         }
-        // GET: api/documents/user/10/documents-to-accept
-        [HttpGet("user/{userId}/documents-to-accept")]
-        public async Task<ActionResult<DocumentsToAcceptDto>> DocumentsToAccept([FromRoute] int userId)
+        // GET: api/documents/group/30/user/10/documents-to-accept
+        [HttpGet("group/{groupId}/user/{userId}/documents-to-accept")]
+        public async Task<ActionResult<DocumentsToAcceptDto>> DocumentsToAccept([FromRoute] int userId, [FromRoute] int groupId)
         {
-            var documentToAccept = await _documentService.DocumentsToAccept(userId);
+            var documentToAccept = await _documentService.DocumentsToAccept(userId, groupId);
             return Ok(documentToAccept);
         }
         // GET: api/documents/group/5
