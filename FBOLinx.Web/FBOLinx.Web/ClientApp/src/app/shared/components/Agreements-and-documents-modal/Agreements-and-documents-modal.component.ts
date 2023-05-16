@@ -28,16 +28,16 @@ export class AgreementsAndDocumentsModalComponent implements OnInit {
     accept() {
         this.documentService.acceptDocument(this.data.userId,this.data.eulaDocument.oid).subscribe(
             (data: any) => {
-                this.dialogRef.close();
+                this.dialogRef.close(true);
             },
             (err: any) => {
                 console.log(err);
-                this.dialogRef.close();
+                this.dialogRef.close(false);
             }
         );
     }
     decline(){
-        this.dialogRef.close();
+        this.dialogRef.close(false);
         this.authenticationService.logout();
         this.router.navigate(['/landing-site-layout']);
     }
