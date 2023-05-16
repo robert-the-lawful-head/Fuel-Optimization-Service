@@ -1,8 +1,8 @@
-import { DocumentAcceptanceFlag } from "../enums/documents..enum";
+import { DocumentAcceptanceFlag, DocumentTypeEnum } from "../enums/documents..enum";
 
 export interface GroupPolicyAndAgreementDocuments {
     oid: number;
-    documentType: string;
+    documentType: DocumentTypeEnum;
     documentVersion: string;
     document: string;
     acceptanceFlag: DocumentAcceptanceFlag;
