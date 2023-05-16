@@ -9,3 +9,9 @@ export enum DocumentTypeEnum {
     Cookie = 1,
     Privacy = 2
 }
+
+export const DocumentTypeEnumDescription: Record<DocumentTypeEnum, string> = {
+    [DocumentTypeEnum.EULA]: "EULA",
+    [DocumentTypeEnum.Cookie]: "Cookie Policy",
+    [DocumentTypeEnum.Privacy]: "Privacy Policy"
+  };

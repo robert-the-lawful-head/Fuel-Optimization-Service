@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DocumentTypeEnum, DocumentTypeEnumDescription } from 'src/app/enums/documents..enum';
 import { DocumentService } from 'src/app/services/documents.service';
 
 // Services
@@ -73,5 +74,8 @@ export class GroupsEditComponent implements OnInit {
 
     public cancelEdit() {
         this.router.navigate(['/default-layout/groups/']);
+    }
+    public getDocumentType(documentType: DocumentTypeEnum){
+        return DocumentTypeEnumDescription[documentType];
     }
 }

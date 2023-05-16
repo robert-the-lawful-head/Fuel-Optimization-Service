@@ -60,7 +60,7 @@
                             <h5>Select documents to exempt:</h5>
                             <p *ngFor="let doc of documents">
                                 <mat-checkbox [(ngModel)]="doc.isExempted">
-                                {{doc.documentType}}
+                                {{getDocumentType(doc.documentType)}}
                                 </mat-checkbox>
                             </p>
                             </section>

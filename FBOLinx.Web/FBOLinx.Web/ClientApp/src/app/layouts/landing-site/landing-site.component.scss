@@ -1,3 +1,5 @@
+@import "../../../../src/assets/sass/variable";
+
 body {
     height: 100%;
     width: 100%;
@@ -271,6 +273,10 @@ div.citation-background {
 
     .page-footer {
         margin: 0 auto;
+
+        .policy-links a {
+            color: $footer-color;
+        }
     }
     .zpcontainer {
         padding: 1em;
