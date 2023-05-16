@@ -53,6 +53,8 @@ export class DefaultLayoutComponent implements OnInit {
     public getScreenWidth: any;
     public getScreenHeight: any;
 
+    isExpiredPricingDialogBlocked: boolean = true;
+
     constructor(
         private fboairportsService: FboairportsService,
         private sharedService: SharedService,
@@ -93,9 +95,47 @@ export class DefaultLayoutComponent implements OnInit {
     get isNotGroupAdmin() {
         return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
     }
-    ngOnInit() {
-        this.openAgreementsAndDocumentsModal();
+    async ngOnInit() {
+        if(this.isConductor) {
+            this.isExpiredPricingDialogBlocked = false;
+        }
+        else{
+            await this.openAgreementsAndDocumentsModal();
+        }
 
+        if (!this.isExpiredPricingDialogBlocked){
+            this.triggerPrices();
+        }
+
+        this.sharedService.valueChanged$.subscribe((value: any) => {
+            if (!this.canUserSeePricing()) {
+                return;
+            }
+            if (value.message === SharedEvents.fboPricesUpdatedEvent) {
+                this.costJetA = value.JetACost;
+                this.retailJetA = value.JetARetail;
+                this.costSaf = value.SafCost;
+                this.retailSaf = value.SafRetail;
+                this.effectiveToSaf = value.PriceExpirationSaf;
+                this.effectiveToJetA = value.PriceExpirationJetA;
+            }
+
+            if (value.message === SharedEvents.fboProductPreferenceChangeEvent) {
+                this.enableJetA = value.EnableJetA;
+                this.enableSaf = value.EnableSaf;
+            }
+        });
+
+        this.layoutClasses = this.getClasses();
+
+        this.LogUserForAnalytics();
+
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
+    }
+    private triggerPrices(){
         var isConductorRefresh = true;
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
@@ -136,69 +176,39 @@ export class DefaultLayoutComponent implements OnInit {
                     }
                 );
         }
-
-
-        this.sharedService.valueChanged$.subscribe((value: any) => {
-            if (!this.canUserSeePricing()) {
-                return;
-            }
-            if (value.message === SharedEvents.fboPricesUpdatedEvent) {
-                this.costJetA = value.JetACost;
-                this.retailJetA = value.JetARetail;
-                this.costSaf = value.SafCost;
-                this.retailSaf = value.SafRetail;
-                this.effectiveToSaf = value.PriceExpirationSaf;
-                this.effectiveToJetA = value.PriceExpirationJetA;
-            }
-
-            if (value.message === SharedEvents.fboProductPreferenceChangeEvent) {
-                this.enableJetA = value.EnableJetA;
-                this.enableSaf = value.EnableSaf;
-            }
-        });
-
-        this.layoutClasses = this.getClasses();
-
-        this.LogUserForAnalytics();
-
-        this.getScreenWidth = window.innerWidth;
-        this.getScreenHeight = window.innerHeight;
-
-        if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
     }
-
     @HostListener('window:resize', ['$event'])
     onWindowResize() {
         this.getScreenWidth = window.innerWidth;
         this.getScreenHeight = window.innerHeight;
     }
-    openAgreementsAndDocumentsModal(){
-        if(this.isConductor) return;
+    async openAgreementsAndDocumentsModal(){
+        let data = await this.documentService
+        .getDocumentsToAccept(
+            this.sharedService.currentUser.oid,
+            this.sharedService.currentUser.groupId
+        ).toPromise();
+        if(!data.hasPendingDocumentsToAccept){
+            this.isExpiredPricingDialogBlocked = false;
+            return;
+        }
 
-        this.documentService
-                .getDocumentsToAccept(
-                    this.sharedService.currentUser.oid,
-                    this.sharedService.currentUser.groupId
-                )
-                .subscribe(
-                    (data: any) => {
-                        if(!data.hasPendingDocumentsToAccept) return;
+        const config: MatDialogConfig = {
+            disableClose: true,
+            data: {
+                userId: data.userId,
+                eulaDocument: data.documentToAccept
+             }
+          };
+        const dialogRef = this.templateDialog.open(
+            AgreementsAndDocumentsModalComponent,
+            config
+        );
 
-                        const config: MatDialogConfig = {
-                            disableClose: true,
-                            data: {
-                                userId: data.userId,
-                                eulaDocument: data.documentToAccept
-                             }
-                          };
-                        const dialogRef = this.templateDialog.open(
-                            AgreementsAndDocumentsModalComponent,
-                            config
-                        );
-
-                        dialogRef.afterClosed().subscribe();
-                    }
-                );
+        dialogRef.afterClosed().subscribe(result => {
+            if(result)
+            this.triggerPrices();
+        });
     }
     isPricePanelVisible() {
         const blacklist = [
