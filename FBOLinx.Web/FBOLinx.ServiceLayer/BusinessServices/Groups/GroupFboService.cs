@@ -16,7 +16,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
     {
         Task<Group> CreateNewGroup(string groupName);
         Task<Fbos> CreateNewFbo(SingleFboRequest request);
-        Task DeleteFbo(int fboId);
+       // Task DeleteFbo(int fboId);
         Task DeleteFbos(List<int> fboIds);
     }
     public class GroupFboService : IGroupFboService

@@ -50,7 +50,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         }
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
-            var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA) && x.IsEnabled && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted  ).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
+            var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.IsEnabled && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted  ).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
             var hasacceptedDocument = _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
             var isDocumentExempted = _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
 
@@ -65,9 +65,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<List<GroupPolicyAndAgreementDocuments>> GetAllGroupDocuments(int groupId)
         {
             var documents = new List<PolicyAndAgreementDocuments>();
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.EULA)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Cookie)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == EnumHelper.GetDescription(DocumentTypeEnum.Privacy)).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType ==DocumentTypeEnum.Cookie).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.Privacy).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.RemoveAll(item => item == null);
 
             var exemptions = await _policyAndAgreementGroupExemptionsRepo.Where(x => x.GroupId == groupId).ToListAsync();
