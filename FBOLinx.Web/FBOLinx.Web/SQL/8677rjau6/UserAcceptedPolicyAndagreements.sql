@@ -1,7 +1,7 @@
-USE [paragon_test_Local]
+USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[UserAcceptedPolicyAndAgreements]    Script Date: 5/4/2023 5:04:15 PM ******/
+/****** Object:  Table [dbo].[UserAcceptedPolicyAndAgreements]    Script Date: 5/15/2023 9:16:10 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -26,5 +26,3 @@ GO
 
 ALTER TABLE [dbo].[UserAcceptedPolicyAndAgreements] CHECK CONSTRAINT [FK_UserAcceptedPolicyAndAgreements_PolicyAndAgreementDocuments]
 GO
-
-

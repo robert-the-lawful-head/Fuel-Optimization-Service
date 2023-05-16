@@ -1,7 +1,7 @@
-USE [paragon_test_Local]
+USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[PolicyAndAgreementDocuments]    Script Date: 5/4/2023 5:17:46 PM ******/
+/****** Object:  Table [dbo].[PolicyAndAgreementDocuments]    Script Date: 5/15/2023 9:33:44 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -9,8 +9,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE TABLE [dbo].[PolicyAndAgreementDocuments](
-	[OID] [int] NOT NULL,
-	[DocumentType] [varchar](50) NULL,
+	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[DocumentType] [smallint] NULL,
 	[DocumentVersion] [varchar](50) NULL,
 	[Document] [varchar](255) NULL,
 	[AcceptanceFlag] [smallint] NULL,

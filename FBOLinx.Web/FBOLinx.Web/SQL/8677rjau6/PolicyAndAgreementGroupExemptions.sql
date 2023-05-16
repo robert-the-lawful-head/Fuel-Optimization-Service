@@ -1,7 +1,7 @@
-USE [paragon_test_Local]
+USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[PolicyAndAgreementGroupExemptions]    Script Date: 5/4/2023 5:08:54 PM ******/
+/****** Object:  Table [dbo].[PolicyAndAgreementGroupExemptions]    Script Date: 5/15/2023 9:26:18 PM ******/
 SET ANSI_NULLS ON
 GO
 
