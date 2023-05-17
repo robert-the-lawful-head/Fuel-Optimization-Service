@@ -25,7 +25,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
             return entity;
         }
-
+        public async Task<List<TEntity>> AddRangeAsync(List<TEntity> entity)
+        {
+            context.Set<TEntity>().AddRangeAsync(entity);
+            await context.SaveChangesAsync();
+            return entity;
+        }
         public async Task DeleteAsync(TEntity entity)
         {
             context.Set<TEntity>().Remove(entity);

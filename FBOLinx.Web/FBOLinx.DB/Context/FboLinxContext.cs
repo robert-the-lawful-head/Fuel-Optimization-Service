@@ -154,6 +154,9 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
         public virtual DbSet<AirportWatchDistinctBoxes> AirportWatchDistinctBoxes { get; set; }
         public virtual DbSet<IntegrationStatus> IntegrationStatus { get; set; }
+        public virtual DbSet<UserAcceptedPolicyAndAgreements> UserAcceptedPolicyAndAgreements { get; set; }
+        public virtual DbSet<PolicyAndAgreementDocuments> PolicyAndAgreementDocuments { get; set; }
+        public virtual DbSet<PolicyAndAgreementGroupExemptions> PolicyAndAgreementGroupExemptions { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

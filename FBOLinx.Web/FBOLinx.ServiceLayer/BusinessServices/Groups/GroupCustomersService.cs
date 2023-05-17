@@ -45,7 +45,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 var existingCustomerInfoByGroupRecords =
                     await _CustomerInfoByGroupEntityService.GetListBySpec(
                         new CustomerInfoByGroupByGroupIdSpecification(groupId));
-                    
+
                 List<CustomerInfoByGroup> customerInfoByGroupToInsert = new List<CustomerInfoByGroup>();
 
                 foreach (var cust in listWithCustomers)
