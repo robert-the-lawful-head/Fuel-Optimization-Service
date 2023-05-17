@@ -25,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
     public interface IMissedQuoteLogService : IBaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog>
     {
         Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId);
-        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO customer);
+        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomersDto customer);
     }
 
     public class MissedQuoteLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedQuoteLogService
@@ -83,7 +83,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             return missedQuotesLogList;
         }
 
-        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO  customer)
+        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomersDto  customer)
         {
             foreach (var icao in icaos.Split(',').Select(x => x.Trim()))
             {

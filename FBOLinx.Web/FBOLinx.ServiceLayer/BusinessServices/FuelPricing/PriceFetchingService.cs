@@ -21,6 +21,7 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.Customers;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -82,7 +83,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                             .Where(x => x.Oid == fboAirport.Fboid)
                                             .AsNoTracking()
                                             .FirstOrDefaultAsync();
-                CustomerInfoByGroupDTO customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, fbo.GroupId));
+                var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, fbo.GroupId));
                 if (customerInfoByGroup == null || customerInfoByGroup.Active != true)
                     continue;
 
@@ -91,7 +92,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     continue;
 
                 List<CustomerWithPricing> pricing =
-                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
+                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.CustomerId, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
 
                 List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).AsNoTracking().ToListAsync();
 
@@ -152,7 +153,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
-                var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroupAndFbo(groupId, fboId, customerInfoByGroupId);
+                var customer = await _CustomerService.GetListbySpec(new CustomersCustomerAircraftsByGroupSpecification(groupId, fboId, customerInfoByGroupId));
+                var customerInfoByGroup = await _customerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerInfoByGroupId, groupId));
+                var customCustomerTypes = await _CustomerService.GetCustomCustomerTypes(fboId);
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {
@@ -209,11 +212,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 //Fetch the customer pricing results
                 var customerPricingResults = (from cg in customerInfoByGroup
+                                              join c in customer on customerInfoByGroupId equals c.Oid
                                               join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
                                               from pt in leftJoinPT.DefaultIfEmpty()
                                               join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
                                                   into leftJoinPPT
                                               from ppt in leftJoinPPT.DefaultIfEmpty()
+                                              join cct in customCustomerTypes on cg.CustomerId equals cct.CustomerId into leftJoinCCT
+                                              from cct in leftJoinCCT.DefaultIfEmpty()
                                               join fp in fboPrices on new
                                               {
                                                   fboId = (pt != null ? pt.Fboid : 0),
@@ -231,14 +237,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   fboId = tmp.FboId
                                               } into leftJoinTMP
                                               from tmp in leftJoinTMP.DefaultIfEmpty()
-                                              join cvf in customersViewedByFbo on new { cg.CustomerId, Fboid = _FboId } equals new
+                                              join cvf in customersViewedByFbo on new { CustomerId = cg.CustomerId, Fboid = _FboId } equals new
                                               {
                                                   cvf.CustomerId,
                                                   cvf.Fboid
                                               } into letJoinCVF
                                               from cvf in letJoinCVF.DefaultIfEmpty()
                                               join ccot in customerCompanyTypes on new
-                                              { CustomerCompanyType = cg.CustomerCompanyType ?? 0, cg.GroupId } equals new
+                                              { CustomerCompanyType = cg.CustomerCompanyType.GetValueOrDefault(), GroupId = cg.GroupId } equals new
                                               { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
                                                   into leftJoinCCOT
                                               from ccot in leftJoinCCOT.DefaultIfEmpty()
@@ -248,7 +254,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   CustomerInfoByGroupId = cg.Oid,
                                                   Company = cg.Company,
                                                   PricingTemplateId = (pt == null ? 0 : pt.Oid),
-                                                  DefaultCustomerType = cg.CustomerType,
+                                                  DefaultCustomerType = cct.CustomerType,
                                                   MarginType = (pt == null ? 0 : pt.MarginType),
                                                   DiscountType = (pt == null ? 0 : pt.DiscountType),
                                                   FboPrice = (fp == null ? 0 : fp.Price),
@@ -258,7 +264,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                       : (ppt == null ? 0 : ppt.Amount)),
                                                   amount = ppt == null ? 0 : ppt.Amount,
                                                   Suspended = cg.Suspended,
-                                                  FuelerLinxId = (cg.Customer == null ? 0 : cg.Customer.FuelerlinxId),
+                                                  FuelerLinxId = (c == null ? 0 : c.FuelerlinxId),
                                                   Network = cg.Network,
                                                   GroupId = cg.GroupId,
                                                   FboId = (pt == null ? 0 : pt.Fboid),
@@ -383,7 +389,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                         }
 
                         if ((fee.OmitsByCustomer != null && fee.OmitsByCustomer.Any(o =>
-                            o.CustomerId == customerInfoByGroup.FirstOrDefault()?.CustomerId)))
+                            o.CustomerId == customerInfoByGroup?.FirstOrDefault().CustomerId)))
                         {
                             fee.IsOmitted = true;
                             fee.OmittedFor = "C";

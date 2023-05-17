@@ -8,6 +8,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
@@ -25,14 +26,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         private FuelerLinxApiService _fuelerLinxApiService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
         private CustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
+        private CustomersEntityService _CustomersEntityService;
 
         #region Constructors
-        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService)
+        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomersEntityService customerEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService)
         {
-            _CustomerInfoByGroupEntityService = customerInfoByGroupEntityService;
+            _CustomersEntityService = customerEntityService;
             _CustomerAircraftEntityService = customerAircraftEntityService;
             _context = context;
             _fuelerLinxApiService = fuelerLinxApiService;
+            _CustomerInfoByGroupEntityService = customerInfoByGroupEntityService;
         }
         #endregion
 
@@ -43,14 +46,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 var listWithCustomers = await _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToListAsync();
                 var aircrafts = await _fuelerLinxApiService.GetAircraftsFromFuelerinx();
                 var existingCustomerInfoByGroupRecords =
-                    await _CustomerInfoByGroupEntityService.GetListBySpec(
-                        new CustomerInfoByGroupByGroupIdSpecification(groupId));
+                    await _CustomersEntityService.GetListBySpec(
+                        new CustomersCustomerAircraftsByGroupSpecification(groupId));
                     
                 List<CustomerInfoByGroup> customerInfoByGroupToInsert = new List<CustomerInfoByGroup>();
 
                 foreach (var cust in listWithCustomers)
                 {
-                    if (existingCustomerInfoByGroupRecords.Any(x => x.CustomerId == cust.Oid))
+                    var existingCustomerInfoByGroupRecord = existingCustomerInfoByGroupRecords.Select(c => c.Oid == cust.Oid).ToList();
+                    if (existingCustomerInfoByGroupRecord.Count == 0)
                     {
                         continue;
                     }
@@ -84,13 +88,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                     await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert);
 
                 var existingCustomerAircraftRecordsForGroup =
-                    await _CustomerAircraftEntityService.GetListBySpec(
-                        new CustomerAircraftsByGroupSpecification(groupId));
+                    existingCustomerInfoByGroupRecords.SelectMany(a => a.CustomerAircrafts);
                 List<CustomerAircrafts> customerAircraftsToInsert = new List<CustomerAircrafts>();
 
                 foreach (var cust in listWithCustomers)
                 {
-                    var existingCustomerAircrafts = existingCustomerAircraftRecordsForGroup.Where(s => s.GroupId == groupId && s.CustomerId == cust.Oid);
+                    var existingCustomerAircrafts = existingCustomerAircraftRecordsForGroup.Where(s => s.CustomerId == cust.Oid);
 
                     var filteredAircraftsByCompany = aircrafts.Result.Where(s => s.CompanyId == cust.FuelerlinxId).ToList();
 

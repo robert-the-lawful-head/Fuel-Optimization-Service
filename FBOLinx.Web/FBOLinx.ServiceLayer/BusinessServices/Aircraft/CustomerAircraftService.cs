@@ -9,8 +9,10 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
@@ -18,6 +20,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
@@ -35,13 +38,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private AircraftService _AircraftService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private IMemoryCache _MemoryCache;
+        private readonly ICustomerService _CustomerService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
 
         public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, AircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
-            IMemoryCache memoryCache) : base(customerAircraftEntityService)
+            IMemoryCache memoryCache, ICustomerService customerService) : base(customerAircraftEntityService)
         {
             _MemoryCache = memoryCache;
+            _CustomerService = customerService;
             _AircraftService = aircraftService;
             _pricingTemplateService = pricingTemplateService;
         }
@@ -73,12 +78,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
         {
-            List<CustomerAircraftsDto> result = new List<CustomerAircraftsDto>();
-            if (tailNumbers?.Count == 0 || tailNumbers == null)
-                result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId));
-            else
-                result = await GetListbySpec(new CustomerAircraftsByGroupSpecification(groupId, tailNumbers));
-            return result?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
+            var customers = await _CustomerService.GetCustomers(groupId, tailNumbers);
+            var aircrafts = customers.SelectMany(a => a.CustomerAircrafts).Where(c => c.GroupId == groupId && c.CustomerId > 0 && c.Customer.CustomerInfoByGroup != null).ToList();
+            return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomAircraftWithDetailsFromCache(int groupId,

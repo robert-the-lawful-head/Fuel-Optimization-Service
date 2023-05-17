@@ -43,6 +43,8 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.Core.Utilities.Geography;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.Extensions.Customer;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -75,6 +77,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly SWIMFlightLegEntityService _SWIMFlightLegEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
+        private readonly ICustomerService _CustomerService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -89,9 +92,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             SWIMFlightLegEntityService swimFlightLegEntityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
-            IAirportService airportService)
+            IAirportService airportService,
+            ICustomerService CustomerService)
         {
             _AirportService = airportService;
+            _CustomerService = CustomerService;
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
@@ -190,17 +195,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
 
-            var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            //var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
+            var customers = await _CustomerService.GetCustomers(groupId);
+            var allCustomerAircrafts = customers.SelectMany(ca => ca.CustomerAircrafts).ToList();
 
             var airportWatchLiveData =
                 await _AirportWatchLiveDataService.GetListbySpec(
                     new AirportWatchLiveDataSpecification(airportWatchLiveDataMinimumDateTime, DateTime.UtcNow));
 
             var airportWatchDataWithCustomers = (from awhd in airportWatchLiveData
-                                                 join ca in customerAircrafts on awhd.TailNumber equals ca.TailNumber
+                                                 join ca in allCustomerAircrafts on awhd.TailNumber equals ca.TailNumber
                      into leftJoinedCustomers
                  from ca in leftJoinedCustomers.DefaultIfEmpty()
-                 select new { awhd, ca })
+                 join c in customers on ca.CustomerId equals c.Oid
+                 select new { awhd, ca, c })
                 .Where(x => x.awhd.AircraftPositionDateTimeUtc >= airportWatchLiveDataMinimumDateTime)
                 .Where(x =>
                 !(x.awhd.Latitude < boundaries.MinLatitude || x.awhd.Latitude > boundaries.MaxLatitude || x.awhd.Longitude < boundaries.MinLongitude ||
@@ -234,11 +242,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                   FuelOrder = fo,
-                                  IsInNetwork = fr.ca.IsInNetwork(),
-                                  IsOutOfNetwork = fr.ca.IsOutOfNetwork(),
+                                  IsInNetwork = fr.c.IsInNetwork(),
+                                  IsOutOfNetwork = fr.c.IsOutOfNetwork(),
                                   IsActiveFuelRelease = fo.IsActiveFuelRelease(),
-                                  IsFuelerLinxClient = fr.ca.IsFuelerLinxClient(),
-                                  IsFuelerLinxCustomer = fr.ca.isFuelerLinxCustomer(),
+                                  IsFuelerLinxClient = fr.c.IsFuelerLinxClient(),
+                                  IsFuelerLinxCustomer = fr.c.isFuelerLinxCustomer(),
                                   TailNumber = fr.awhd.TailNumber
                               })
                               .ToList();

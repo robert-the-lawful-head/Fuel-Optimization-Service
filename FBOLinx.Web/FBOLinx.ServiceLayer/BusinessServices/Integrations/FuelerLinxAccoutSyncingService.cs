@@ -8,6 +8,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
@@ -33,9 +34,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
-        private CustomerDTO _customerRecord;
+        private CustomersDto _customerRecord;
         private CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
-        private List<CustomerInfoByGroupDTO> _customerInfoByGroupRecords;
+        private List<CustomerInfoByGroupDto> _customerInfoByGroupRecords;
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomerService _customerService;
@@ -103,7 +104,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 .Where(x => x.CustomerInfoByGroup == null
                 && _fuelerlinxCompany.Active.GetValueOrDefault())
                 .Select(x =>
-                    new CustomerInfoByGroupDTO()
+                    new CustomerInfoByGroupDto()
                     {
                         GroupId = x.GroupId,
                         CustomerId = _customerRecord.Oid,
@@ -256,7 +257,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
             if (_customerRecord == null)
-                _customerRecord = await _customerService.AddAsync(new CustomerDTO()
+                _customerRecord = await _customerService.AddAsync(new CustomersDto()
                 {
                     Action = false,
                     Margin = 0,
@@ -276,7 +277,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                       join g in _existingGroupRecords on r.GroupId equals g.Oid
                       select r).ToList();
 
-            _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
+            _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDto>>();
         }
     }
 }

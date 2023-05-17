@@ -27,8 +27,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplateGrid>> GetCostPlusPricingTemplates(int fboId);
         Task<List<PricingTemplateGrid>> GetPricingTemplatesWithEmailContent(int fboId, int groupId);
         Task<PricingTemplate> CopyPricingTemplate(int? currentPricingTemplateId, string pricingTemplateName);
-        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
-        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
         Task<List<PricingTemplate>> GetAllPricingTemplates();
@@ -449,28 +449,29 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return templatesWithEmailContent;
         }
 
-        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
-            return await(from cg in _context.CustomerInfoByGroup
-                               join c in _context.Customers on cg.CustomerId equals c.Oid
-                               join cct in _context.CustomCustomerTypes on new
-                               {
-                                   customerId = cg.CustomerId,
-                                   fboId = fboId
-                               } equals new
-                               {
-                                   customerId = cct.CustomerId,
-                                   fboId = cct.Fboid
-                               }
-                               join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+            var templates = await (from cg in _context.CustomerInfoByGroup
+                                   join c in _context.Customers on cg.CustomerId equals c.Oid
+                                   join cct in _context.CustomCustomerTypes on new
+                                   {
+                                       customerId = cg.CustomerId,
+                                       fboId = fboId
+                                   } equals new
+                                   {
+                                       customerId = cct.CustomerId,
+                                       fboId = cct.Fboid
+                                   }
+                                   join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
 
-                               where cg.GroupId == groupId
-                                     && cg.CustomerId == customer.CustomerId
-                                     && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
-                               select pt).ToListAsync();
+                                   where cg.GroupId == groupId
+                                         && cg.CustomerId == customer.CustomerId
+                                         && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
+                                   select pt).ToListAsync();
+            return templates;
         }
 
-        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             var aircraftPricesResult = await(from ap in _context.AircraftPrices
                                              join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
