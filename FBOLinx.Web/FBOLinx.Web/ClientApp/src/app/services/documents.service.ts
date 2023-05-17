@@ -35,4 +35,9 @@ export class DocumentService {
             headers: this.headers,
         });
     }
+    getLastEulaVersion() {
+        return this.http.get(this.accessPointUrl+`/terms-of-service`, {
+            headers: this.headers,
+        });
+    }
 }
