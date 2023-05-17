@@ -60,5 +60,13 @@ namespace FBOLinx.Web.Controllers
 
             return NoContent();
         }
+        // GET: api/documents/terms-of-service
+        [HttpGet("terms-of-service")]
+        [AllowAnonymous]
+        public async Task<ActionResult<PolicyAndAgreementDocuments>> GetLastEulaVsion ()
+        {
+            var doc = await _documentService.GetLastEulaVersion();
+            return Ok(doc);
+        }
     }
 }

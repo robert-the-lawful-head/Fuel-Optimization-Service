@@ -1,5 +1,4 @@
 ﻿using FBOLinx.Core.Enums;
-using FBOLinx.Core.Utilities.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO;
@@ -20,6 +19,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         Task<List<GroupPolicyAndAgreementDocuments>> GetAllGroupDocuments(int groupId);
         Task AcceptPolicyAndAgreement(int userId, int[] documentIdList);
         Task ToogleDocumentExemption(int groupId, List<GroupPolicyAndAgreementDocuments> documents);
+        Task<PolicyAndAgreementDocuments> GetLastEulaVersion();
+
     }
     public class DocumentService : IDocumentService
     {
@@ -123,6 +124,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
                     }
                 }
             }
+        }
+        public async Task<PolicyAndAgreementDocuments> GetLastEulaVersion()
+        {
+            return await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
         }
     }
 }
