@@ -74,7 +74,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IMemoryCache memoryCache, 
+            IMemoryCache memoryCache,
             IAirportTimeService airportTimeService,
             AcukwikAirportEntityService acukwikAirportEntityService,
             ILogger<FuelReqService> logger,
@@ -159,7 +159,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var customers =
                 await _CustomerInfoByGroupEntityService.GetListBySpec(
                     new CustomerInfoByGroupByGroupIdSpecification(groupId));
-            
+
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
             { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fboRecord.FboAirport?.Icao, Fbo = fboRecord.Fbo});
@@ -167,7 +167,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             List<FuelReqDto> fuelReqsFromFuelerLinx = new List<FuelReqDto>();
 
 
-            foreach(TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
                 var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
 
@@ -178,10 +178,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             var directOrders = await GetDirectOrdersFromDatabase(fboId, startDateTime, endDateTime, customers);
 
-            foreach(FuelReqDto order in directOrders)
+            foreach (FuelReqDto order in directOrders)
             {
                 var airport = await _AirportService.GetGeneralAirportInformation(order.Icao);
-                FuelReqDto.SetAirportLocalTimes(order,airport);
+                FuelReqDto.SetAirportLocalTimes(order, airport);
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);
@@ -213,7 +213,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return requests;
         }
 
-        public async Task<IEnumerable<FuelReqTotalsProjection>> GetValidFuelRequestTotals(int fboId,DateTime startDateTime, DateTime endDateTime)
+        public async Task<IEnumerable<FuelReqTotalsProjection>> GetValidFuelRequestTotals(int fboId, DateTime startDateTime, DateTime endDateTime)
         {
             var validTransactions = await _context.FuelReq.Where(fr =>
             (fr.Cancelled == null || fr.Cancelled == false) && fr.Etd >= startDateTime && fr.Etd <= endDateTime && fr.Fboid.HasValue && fr.Fboid.Value == fboId).ToListAsync();
@@ -257,7 +257,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             FboLinxCustomerTransactionsCountAtAirportResponse response = await _fuelerLinxService.GetCustomerTransactionsCountForAirport(fbolinxOrdersRequest);
             return response.Result;
         }
-        public async Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo,string icao, DateTime startDateTime, DateTime endDateTime)
+        public async Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime)
         {
             FBOLinxOrdersRequest fbolinxOrdersRequest = new FBOLinxOrdersRequest();
             fbolinxOrdersRequest.StartDateTime = startDateTime;
@@ -269,7 +269,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             return response.Result;
         }
-        public int GetairportTotalOrders(int fuelerLinxCustomerID,ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount)
+        public int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount)
         {
             var airportTotalOrders = 0;
             if (fuelerlinxCustomerOrdersCount != null)
@@ -351,11 +351,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 //Add email content to MailMessage
                 FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
                 mailMessage.From = new MailAddress("donotreply@fbolinx.com");
-                    foreach (string fboEmail in fboEmails.Split(';'))
-                    {
-                        if (_MailService.IsValidEmailRecipient(fboEmail))
-                            mailMessage.To.Add(fboEmail);
-                    }
+                foreach (string fboEmail in fboEmails.Split(';'))
+                {
+                    if (_MailService.IsValidEmailRecipient(fboEmail))
+                        mailMessage.To.Add(fboEmail);
+                }
 
                 var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridAutomatedFuelOrderNotificationTemplateData
                 {
@@ -379,7 +379,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
             catch (System.Exception exception)
             {
-             
+
             }
         }
     }

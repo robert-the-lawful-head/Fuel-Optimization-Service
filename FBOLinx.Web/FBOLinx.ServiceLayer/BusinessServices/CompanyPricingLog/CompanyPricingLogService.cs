@@ -62,7 +62,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
                 var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(_CacheLifeSpanInMinutes));
                 _MemoryCache.Set(_MostRecentQuotesCacheKey + icao, result, cacheEntryOptions);
             }
-            
+
             return result;
         }
 
@@ -87,7 +87,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
 
         public async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30Days(int? fuelerlinxCompanyId = null, bool useCache = true)
         {
-            if (useCache) 
+            if (useCache)
                 return await GetCompanyPricingLogCountLast30DaysFromCache(fuelerlinxCompanyId);
             return await GetCompanyPricingLogCountLast30DaysFromDatabase(fuelerlinxCompanyId);
         }

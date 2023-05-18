@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { DocumentTypeEnum, DocumentTypeEnumDescription } from 'src/app/enums/documents..enum';
+import { DocumentService } from 'src/app/services/documents.service';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -34,11 +36,14 @@ export class GroupsEditComponent implements OnInit {
     public breadcrumb: any[] = BREADCRUMBS;
     public currentContact: any;
     public contactsData: any;
+    public documents: any;
+    public policyAndAgreementGroupExemptions: any;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private groupsService: GroupsService,
+        private documentService: DocumentService,
         private snackBar: MatSnackBar
     ) {}
 
@@ -48,24 +53,29 @@ export class GroupsEditComponent implements OnInit {
             this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
+            this.documentService.getRecentsAvailableDocuments(Number(id)).subscribe((data: any) => {
+                this.documents = data;
+            });
         }
         if (sessionStorage.getItem('isNewFbo')) {
             sessionStorage.removeItem('isNewFbo');
         }
     }
-
     // Public Methods
-    public saveEdit() {
-        this.groupsService.update(this.groupInfo).subscribe(() => {
-            this.snackBar.open('Successfully updated!', '', {
-                duration: 2000,
-                panelClass: ['blue-snackbar'],
-            });
-            this.router.navigate(['/default-layout/groups/']);
+    public async saveEdit() {
+        await this.groupsService.update(this.groupInfo).toPromise();
+        await this.documentService.updateExemptedDocuments(this.groupInfo.oid, this.documents).toPromise();
+        this.snackBar.open('Successfully updated!', '', {
+            duration: 2000,
+            panelClass: ['blue-snackbar'],
         });
+        this.router.navigate(['/default-layout/groups/']);
     }
 
     public cancelEdit() {
         this.router.navigate(['/default-layout/groups/']);
+    }
+    public getDocumentType(documentType: DocumentTypeEnum){
+        return DocumentTypeEnumDescription[documentType];
     }
 }

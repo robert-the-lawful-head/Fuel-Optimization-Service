@@ -55,6 +55,16 @@
                                 </mat-slide-toggle>
                             </div>
                         </div>
+                        <div class="row">
+                            <section class="example-section">
+                            <h5>Select documents to exempt:</h5>
+                            <p *ngFor="let doc of documents">
+                                <mat-checkbox [(ngModel)]="doc.isExempted">
+                                {{getDocumentType(doc.documentType)}}
+                                </mat-checkbox>
+                            </p>
+                            </section>
+                        </div>
                         <div class="row mt-4 mb-5 pull-right">
                             <button
                                 (click)="saveEdit()"

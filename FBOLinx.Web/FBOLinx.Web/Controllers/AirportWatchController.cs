@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.Models.Requests;
 using FBOLinx.DB.Context;
 using FBOLinx.Service.Mapping.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +16,6 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
-using FBOLinx.Web.Auth;
-using Fuelerlinx.SDK;
 using FBOLinx.ServiceLayer.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -76,65 +72,31 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("list")]
         public async Task<ActionResult<AirportWatchDataPostResponse>> PostDataList([FromBody] List<AirportWatchLiveDataDto> data)
         {
-            try
-            {
-                await _airportWatchService.ProcessAirportWatchData(data);
-                return Ok(new AirportWatchDataPostResponse(true));
-            }
-            catch (Exception exception)
-            {
-                if (exception.InnerException != null)
-                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
-                else
-                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
-            }
+            await _airportWatchService.ProcessAirportWatchData(data);
+            return Ok(new AirportWatchDataPostResponse(true));
         }
         
         [HttpGet("get-airport-watch-live-data-from-table-storage")]
         public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage([FromQuery] IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
         {
-            try
-            {
-                List<AirportWatchLiveDataDto> result = await _airportWatchLiveDataService.GetAirportWatchLiveDataRecordsFromTableStorage(boxNames, startDate, endDate);
-                return Ok(new AirportWatchLiveDataResponse(result));
-            }
-            catch (Exception exception)
-            {
-                return Ok(new AirportWatchLiveDataResponse(false, exception.Message));
-            }
+            List<AirportWatchLiveDataDto> result = await _airportWatchLiveDataService.GetAirportWatchLiveDataRecordsFromTableStorage(boxNames, startDate, endDate);
+            return Ok(new AirportWatchLiveDataResponse(result));
         }
 
         [AllowAnonymous]
         [HttpGet("check-airport-watch-data-integrity/{day}")]
         public async Task<ActionResult<AirportWatchIntegrityCheckResult>> CheckAirportWatchDataIntegrity([FromRoute] DateTime day)
         {
-            try
-            {
-                AirportWatchIntegrityCheckResult result = await _airportWatchLiveDataService.CheckAirportWatchDataIntegrity(day);
-                return Ok(result);
-            }
-            catch (Exception exception)
-            {
-                return Ok(new AirportWatchLiveDataResponse(false, exception.Message));
-            }
+            AirportWatchIntegrityCheckResult result = await _airportWatchLiveDataService.CheckAirportWatchDataIntegrity(day);
+            return Ok(result);
         }
 
         [AllowAnonymous]
         [HttpPost("post-live-data-to-table-storage")]
         public async Task<ActionResult<AirportWatchDataPostResponse>> PostAirportWatchLiveDataToTableStorage([FromBody] List<AirportWatchLiveDataDto> data)
         {
-            try
-            {
-                await _airportWatchLiveDataService.SaveAirportWatchLiveDataToTableStorage(data);
-                return Ok(new AirportWatchDataPostResponse(true));
-            }
-            catch (Exception exception)
-            {
-                if (exception.InnerException != null)
-                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace));
-                else
-                    return Ok(new AirportWatchDataPostResponse(false, exception.Message + "****" + exception.StackTrace));
-            }
+            await _airportWatchLiveDataService.SaveAirportWatchLiveDataToTableStorage(data);
+            return Ok(new AirportWatchDataPostResponse(true));
         }
 
         [HttpGet("start-date")]
@@ -149,20 +111,13 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<List<AirportWatchHistoricalDataDto>>> GetParkingOccurrencesByAirportIcao(
             [FromRoute] string icao, DateTime? startDateTime, DateTime? endDateTime)
         {
-            try
-            {
-                if (startDateTime == null)
-                    startDateTime = DateTime.UtcNow.AddDays(-7);
-                if (endDateTime == null)
-                    endDateTime = DateTime.UtcNow;
-                var result = await _airportWatchService.GetParkingOccurencesByAirport(icao,
-                    startDateTime.GetValueOrDefault(), endDateTime.GetValueOrDefault());
-                return result.Take(50).ToList();
-            }
-            catch (System.Exception exception)
-            {
-                return Ok(new List<AirportWatchHistoricalData>());
-            }
+            if (startDateTime == null)
+                startDateTime = DateTime.UtcNow.AddDays(-7);
+            if (endDateTime == null)
+                endDateTime = DateTime.UtcNow;
+            var result = await _airportWatchService.GetParkingOccurencesByAirport(icao,
+                startDateTime.GetValueOrDefault(), endDateTime.GetValueOrDefault());
+            return result.Take(50).ToList();
         }
         [HttpGet("aircraftLiveData/{groupId}/{fboId}/{tailNumber}")]
         public async Task<ActionResult<AircraftWatchLiveData>> GetAircraftLiveData(int groupId,int fboId, string tailNumber)
@@ -187,12 +142,5 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(unassignedAntennas);
         }
-
-        //[HttpGet("test")]
-        //public async Task<ActionResult> Test()
-        //{
-        //    await _airportWatchService.GetAirportWatchTestData();
-        //    return Ok();
-        //}
     }
 }

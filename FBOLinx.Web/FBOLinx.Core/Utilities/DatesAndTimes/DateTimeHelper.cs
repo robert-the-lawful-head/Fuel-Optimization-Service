@@ -148,7 +148,7 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
 
             var timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains("(US & Canada)"));
             if (timeZone == null)
-                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity ?? string.Empty));
+                timeZone = allTimeZones.FirstOrDefault(x => x.BaseUtcOffset == new TimeSpan(offSet, 0, 0) && x.DisplayName.Contains(airportCity));
 
             var shortenedTimeZone = "";
             if (timeZone != null)
@@ -181,10 +181,7 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
         {
             return GetLocalTimeZone(DateTime.UtcNow, intlTimeZone, airportCity);
         }
-        public static DateTime GetUtcTimeNow()
-        {
-            return GetLocalTime(DateTime.UtcNow, null, true);
-        }
+
         public static DateTime GetNextTuesdayDate(DateTime date)
         {
             DayOfWeek day = DayOfWeek.Tuesday;

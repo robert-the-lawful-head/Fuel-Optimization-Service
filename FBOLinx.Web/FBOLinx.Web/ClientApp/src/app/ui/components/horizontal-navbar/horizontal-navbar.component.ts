@@ -205,11 +205,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     logout() {
-        localStorage.removeItem('impersonatedrole');
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('groupId');
-        localStorage.removeItem('conductorFbo');
         this.authenticationService.logout();
         this.router.navigate(['/landing-site-layout']);
     }

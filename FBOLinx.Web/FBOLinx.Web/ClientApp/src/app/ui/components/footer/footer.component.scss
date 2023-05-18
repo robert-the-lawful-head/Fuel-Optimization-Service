@@ -27,5 +27,8 @@
                 padding-right: ($module-rem * 2);
             }
         }
+        a{
+            color: $footer-color;
+        }
     }
 }
