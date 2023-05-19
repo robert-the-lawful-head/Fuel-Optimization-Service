@@ -38,15 +38,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private AircraftService _AircraftService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private IMemoryCache _MemoryCache;
-        private readonly ICustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
 
         public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, AircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
-            IMemoryCache memoryCache, ICustomerService customerService) : base(customerAircraftEntityService)
+            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService) : base(customerAircraftEntityService)
         {
             _MemoryCache = memoryCache;
-            _CustomerService = customerService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
             _AircraftService = aircraftService;
             _pricingTemplateService = pricingTemplateService;
         }
@@ -78,7 +78,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
         {
-            var customers = await _CustomerService.GetCustomers(groupId, tailNumbers);
+            var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
             var aircrafts = customers.SelectMany(a => a.CustomerAircrafts).Where(c => c.GroupId == groupId && c.CustomerId > 0 && c.Customer.CustomerInfoByGroup != null).ToList();
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }

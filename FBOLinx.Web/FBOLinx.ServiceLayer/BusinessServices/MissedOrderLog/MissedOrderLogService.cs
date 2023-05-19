@@ -66,7 +66,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
-            var customers = await _CustomerService.GetCustomersByGroupAndFbo(fbo.GroupId, fboId);
+            var customers = await _CustomerInfoByGroupService.GetCustomersByGroup(fbo.GroupId);
 
             var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId, fboId);
 
@@ -87,7 +87,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             foreach (var transaction in allFboLinxTransactions.Where(a => a.Cancelled == null || a.Cancelled == false).OrderByDescending(f => f.DateCreated))
             {
-                var customer = customers.Where(c => c.CustomerInfoByGroup.SingleOrDefault().CustomerId == transaction.CustomerId).FirstOrDefault();
+                var customer = customers.Where(c => c.CustomerId == transaction.CustomerId).FirstOrDefault();
 
                 if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
                 {
@@ -106,7 +106,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     var customerAircraftPricingTemplate = customerAircraftsPricingTemplates.Where(c => c.TailNumber == missedQuotesLogViewModel.TailNumber).FirstOrDefault();
                     missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate?.PricingTemplateName;
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
-                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.CustomerInfoByGroup.SingleOrDefault().CustomerId).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedAllFboLinxTransactions.Where(g => g.CustomerId == customer.CustomerId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }
@@ -125,7 +125,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
             {
-                var customer = customers.Where(c => c.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
+                var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
 
                 if (customer != null && !missedOrdersLogList.Any(x => x.CustomerName == customer.Company))
                 {
@@ -145,7 +145,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     if (customerAircraftPricingTemplate != null)
                         missedQuotesLogViewModel.ItpMarginTemplate = customerAircraftPricingTemplate.PricingTemplateName;
                     missedQuotesLogViewModel.CustomerInfoByGroupId = customer.Oid;
-                    missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
+                    missedQuotesLogViewModel.MissedQuotesCount = groupedFuelerLinxContractFuelOrders.Where(g => g.CompanyId == customer.Customer.FuelerlinxId).Select(m => m.MissedQuoteCount).FirstOrDefault();
                     missedOrdersLogList.Add(missedQuotesLogViewModel);
                 }
             }

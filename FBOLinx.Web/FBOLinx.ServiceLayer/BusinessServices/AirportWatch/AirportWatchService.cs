@@ -77,7 +77,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly SWIMFlightLegEntityService _SWIMFlightLegEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
-        private readonly ICustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -93,10 +93,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ICustomerService CustomerService)
+            ICustomerInfoByGroupService customerInfoByGroupService)
         {
             _AirportService = airportService;
-            _CustomerService = CustomerService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
@@ -196,8 +196,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var fuelOrders = await _FuelReqService.GetUpcomingDirectAndContractOrders(groupId, fboId, true);
 
             //var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
-            var customers = await _CustomerService.GetCustomers(groupId);
-            var allCustomerAircrafts = customers.SelectMany(ca => ca.CustomerAircrafts).ToList();
+            var customerInfoByGroup = await _CustomerInfoByGroupService.GetCustomers(groupId);
+            var allCustomerAircrafts = customerInfoByGroup.SelectMany(ca => ca.CustomerAircrafts).ToList();
 
             var airportWatchLiveData =
                 await _AirportWatchLiveDataService.GetListbySpec(
@@ -207,7 +207,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                                  join ca in allCustomerAircrafts on awhd.TailNumber equals ca.TailNumber
                      into leftJoinedCustomers
                  from ca in leftJoinedCustomers.DefaultIfEmpty()
-                 join c in customers on ca.CustomerId equals c.Oid
+                 join c in customerInfoByGroup on ca.CustomerId equals c.CustomerId
                  select new { awhd, ca, c })
                 .Where(x => x.awhd.AircraftPositionDateTimeUtc >= airportWatchLiveDataMinimumDateTime)
                 .Where(x =>
@@ -242,11 +242,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                   AircraftTypeCode = fr.awhd.AircraftTypeCode,
                                   AltitudeInStandardPressure = fr.awhd.AltitudeInStandardPressure,
                                   FuelOrder = fo,
-                                  IsInNetwork = fr.c.IsInNetwork(),
-                                  IsOutOfNetwork = fr.c.IsOutOfNetwork(),
+                                  IsInNetwork = fr.c.Customer.IsInNetwork(),
+                                  IsOutOfNetwork = fr.c.Customer.IsOutOfNetwork(),
                                   IsActiveFuelRelease = fo.IsActiveFuelRelease(),
-                                  IsFuelerLinxClient = fr.c.IsFuelerLinxClient(),
-                                  IsFuelerLinxCustomer = fr.c.isFuelerLinxCustomer(),
+                                  IsFuelerLinxClient = fr.c.Customer.IsFuelerLinxClient(),
+                                  IsFuelerLinxCustomer = fr.c.Customer.isFuelerLinxCustomer(),
                                   TailNumber = fr.awhd.TailNumber
                               })
                               .ToList();

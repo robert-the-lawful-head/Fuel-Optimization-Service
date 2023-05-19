@@ -36,18 +36,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private AircraftService _AircraftService;
         private IFboEntityService _FboEntityService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
-        private readonly ICustomerService _CustomerService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
         public AirportWatchHistoricalDataService(IRepository<AirportWatchHistoricalData, FboLinxContext> entityService, 
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
             AircraftService aircraftService,
             IFboEntityService fboEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
-            ICustomerService customerService
+            ICustomerInfoByGroupService customerInfoByGroupService
             ) : base(entityService)
         {
             _CustomerAircraftEntityService = customerAircraftEntityService;
-            _CustomerService = customerService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
             _FboEntityService = fboEntityService;
             _AircraftService = aircraftService;
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
@@ -70,7 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var distinctTailsFromHistoricalData = historicalData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber)
                 .Distinct().ToList();
 
-            var customerInfoByGroupCollection = await _CustomerService.GetCustomers(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData);
+            var customerInfoByGroupCollection = await _CustomerInfoByGroupService.GetCustomers(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData);
             var customerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.CustomerAircrafts).ToList();
 
 

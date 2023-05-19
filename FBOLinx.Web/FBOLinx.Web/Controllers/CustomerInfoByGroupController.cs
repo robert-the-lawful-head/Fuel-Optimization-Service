@@ -936,14 +936,12 @@ namespace FBOLinx.Web.Controllers
 
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
-                var customerInfoByGroupCollection = await _customerService.GetCustomersByGroupAndFbo(groupId, fboId);
-                customerInfoByGroupCollection = customerInfoByGroupCollection.OrderBy(c => c.Company).ToList();
-
-                var customerInfoByGroup = customerInfoByGroupCollection.SelectMany(c => c.CustomerInfoByGroup).ToList();
+                var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroup(groupId);
+                customerInfoByGroup = customerInfoByGroup.OrderBy(c => c.Company).ToList();
 
                 var allCustomCustomerTypes = await _customerService.GetCustomCustomerTypes(fboId);
 
-                var allCustomerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.CustomerAircrafts).ToList();
+                var allCustomerAircrafts = customerInfoByGroup.SelectMany(ca => ca.CustomerAircrafts).ToList();
                 var allCustomerAircraftsGrouped = (from all in allCustomerAircrafts
                                                    group all by new { all.CustomerId }
                                                    into results
@@ -983,7 +981,6 @@ namespace FBOLinx.Web.Controllers
 
                 List<CustomersGridViewModel> customerGridVM = (
                         from cg in customerInfoByGroup
-                        join c in customerInfoByGroupCollection on cg.CustomerId equals c.Oid
                         join ccot in companyTypes on (cg == null ? 0 : cg.CustomerCompanyType.GetValueOrDefault()) equals ccot.Oid into leftJoinCCOT
                         from ccot in leftJoinCCOT.DefaultIfEmpty()
                         join cct in allCustomCustomerTypes on cg.CustomerId equals cct.CustomerId into leftJoinCCT
@@ -1001,17 +998,17 @@ namespace FBOLinx.Web.Controllers
                         from cm in leftJoinCm.DefaultIfEmpty()
                             //join hd in historicalData on cg.CustomerId equals hd.CustomerId into leftJoinHd
                             //from hd in leftJoinHd.DefaultIfEmpty()
-                        join cv in customerFuelVendors on c.FuelerlinxId.GetValueOrDefault() equals cv.FuelerLinxId into leftJoinCv
+                        join cv in customerFuelVendors on cg.Customer.FuelerlinxId.GetValueOrDefault() equals cv.FuelerLinxId into leftJoinCv
                         from cv in leftJoinCv.DefaultIfEmpty()
-                        where (cg == null ? 0 : cg.GroupId) == groupId && !(c.Suspended ?? false)
+                        where (cg == null ? 0 : cg.GroupId) == groupId && !(cg.Customer.Suspended ?? false)
 
                         group new { cg } by new //, hd 
                         {
-                            Oid = c.Oid
+                            Oid = cg.Oid
                             ,
-                            CustomerInfoByGroupId = cg == null ? 0 : cg.Oid,
+                            CustomerInfoByGroupId = cg == null ? 0 : cg.CustomerId,
                             cg.Company,
-                            FuelerLinxId = c.FuelerlinxId.GetValueOrDefault(),
+                            FuelerLinxId = cg.Customer.FuelerlinxId.GetValueOrDefault(),
                             CustomerCompanyTypeName = ccot?.Name,
                             CertificateType = cg.CertificateType == null ? CertificateTypes.NotSet : cg.CertificateType.GetValueOrDefault()
                              ,

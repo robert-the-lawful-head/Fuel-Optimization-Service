@@ -46,8 +46,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 var listWithCustomers = await _context.Customers.Where(s => s.FuelerlinxId > 0 && s.Company != null && s.GroupId == null).ToListAsync();
                 var aircrafts = await _fuelerLinxApiService.GetAircraftsFromFuelerinx();
                 var existingCustomerInfoByGroupRecords =
-                    await _CustomersEntityService.GetListBySpec(
-                        new CustomersCustomerAircraftsByGroupSpecification(groupId));
+                    await _CustomerInfoByGroupEntityService.GetListBySpec(
+                        new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
                     
                 List<CustomerInfoByGroup> customerInfoByGroupToInsert = new List<CustomerInfoByGroup>();
 

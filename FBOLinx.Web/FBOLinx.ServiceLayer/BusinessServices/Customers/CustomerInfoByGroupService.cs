@@ -19,6 +19,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
     public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDto, CustomerInfoByGroup>
     {
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
+        Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
+        Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0);
     }
 
     public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDto, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
@@ -42,6 +44,29 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 .ToList();
 
             return customerInfoByGroupList;
+        }
+
+        public async Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null)
+        {
+            List<CustomerInfoByGroupDto> result = new List<CustomerInfoByGroupDto>();
+            if (tailNumbers?.Count == 0 || tailNumbers == null)
+                result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+            else
+                result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId, tailNumbers));
+
+            return result;
+        }
+        public async Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0)
+        {
+            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
+            var customers = new List<CustomerInfoByGroupDto>();
+            if (customerInfoByGroupId == 0)
+                customers = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+            else
+                customers = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId, customerInfoByGroupId));
+            customers.RemoveAll(x => x == null);
+
+            return customers;
         }
     }
 }

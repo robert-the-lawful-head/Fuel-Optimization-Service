@@ -8,6 +8,7 @@
     <Compile Remove="Specifications\CustomerAircrafts\CustomerAircraftByCustomerIdSpecification.cs" />
     <Compile Remove="Specifications\CustomerAircrafts\CustomerAircraftByTailSpecification.cs" />
     <Compile Remove="Specifications\CustomerAircrafts\CustomerAircraftsByGroupSpecification.cs" />
+    <Compile Remove="Specifications\Customers\CustomersCustomerAircraftsByGroupSpecification.cs" />
   </ItemGroup>
 
   <ItemGroup>

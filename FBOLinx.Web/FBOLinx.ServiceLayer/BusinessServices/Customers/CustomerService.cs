@@ -24,8 +24,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId);
         Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId);
         Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId);
-        Task<List<CustomersDto>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
-        Task<List<CustomersDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
     }
 
         public class CustomerService : BaseDTOService<CustomersDto, DB.Models.Customers, FboLinxContext>, ICustomerService
@@ -200,30 +198,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             var result = await _context.CustomCustomerTypes
                     .Where(x => x.Fboid == fboId).ToListAsync();
-            return result;
-        }
-
-        public async Task<List<CustomersDto>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
-        {
-            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customers = new List<CustomersDto>();
-            if (customerInfoByGroupId == 0)
-                customers = await GetListbySpec(new CustomersCustomerAircraftsByGroupSpecification(groupId, fboId));
-            else
-                customers = await GetListbySpec(new CustomersCustomerAircraftsByGroupSpecification(groupId, fboId, customerInfoByGroupId));
-            customers.RemoveAll(x => x == null);
-
-            return customers;
-        }
-
-        public async Task<List<CustomersDto>> GetCustomers(int groupId, List<string> tailNumbers = null)
-        {
-            List<CustomersDto> result = new List<CustomersDto>();
-            if (tailNumbers?.Count == 0 || tailNumbers == null)
-                result = await GetListbySpec(new CustomersCustomerAircraftsByGroupSpecification(groupId));
-            else
-                result = await GetListbySpec(new CustomersCustomerAircraftsByGroupSpecification(groupId, tailNumbers));
-
             return result;
         }
         #endregion
