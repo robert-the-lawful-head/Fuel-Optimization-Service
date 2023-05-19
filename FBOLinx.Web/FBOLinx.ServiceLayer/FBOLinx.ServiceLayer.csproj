@@ -37,6 +37,8 @@
 	  <Generated Remove="Dto\AuditDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />
