@@ -54,7 +54,7 @@ export abstract class GridBase {
     }
     setPagination(paginationSize: number){
         this.dataSource.paginator.pageSize = paginationSize;
-            this.dataSource.paginator.page.emit({
+        this.dataSource.paginator.page.emit({
                 length: 1,
               pageIndex: 0,
               pageSize: paginationSize,

@@ -29,8 +29,8 @@
                     </button>
                     <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
                         <!--<button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
-                    Import
-                </button>-->
+                            Import
+                        </button>-->
                         <button [matMenuTriggerFor]="exportActions" mat-menu-item>
                             Export
                         </button>
@@ -321,7 +321,7 @@
             <ng-container matColumnDef="pricingFormula">
                 <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
                     <div>
-                       Pricing Formula
+                        Pricing Formula
                     </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter [columnFormat]="0" [matDataSource]="dataSource"
@@ -356,14 +356,14 @@
 
         <div class="invisible">
             <mat-paginator (page)="(0); onPageChanged($event)" [length]="customersData.length"
-            [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+                           [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
         </div>
 
         <popover-content #feeAndTaxPopover placement="left" title="Price Information" [closeOnClickOutside]="true">
             <price-breakdown #priceBreakdownPreview *ngIf="focusedCustomer"
-                [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId" [feeAndTaxDisplayMode]="2"
-                [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="focusedCustomer.pricingTemplateId"
-                [hideTooltips]="true"></price-breakdown>
+                             [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId" [feeAndTaxDisplayMode]="2"
+                             [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="focusedCustomer.pricingTemplateId"
+                             [hideTooltips]="true"></price-breakdown>
         </popover-content>
     </div>
 </div>

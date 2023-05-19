@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
 import * as moment from 'moment';
@@ -19,6 +19,8 @@ import { customerGridClear } from '../../store/actions';
 import { State } from '../../store/reducers';
 import { SharedService } from '../shared-service';
 import { ProceedConfirmationComponent } from '../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { AgreementsAndDocumentsModalComponent } from 'src/app/shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { DocumentService } from 'src/app/services/documents.service';
 
 @Component({
     providers: [SharedService],
@@ -51,6 +53,8 @@ export class DefaultLayoutComponent implements OnInit {
     public getScreenWidth: any;
     public getScreenHeight: any;
 
+    isExpiredPricingDialogBlocked: boolean = true;
+
     constructor(
         private fboairportsService: FboairportsService,
         private sharedService: SharedService,
@@ -60,8 +64,9 @@ export class DefaultLayoutComponent implements OnInit {
         private expiredPricingDialog: MatDialog,
         private router: Router,
         private store: Store<State>,
-        private clearPricingDialog: MatDialog,
-        private fbosService: FbosService
+        private templateDialog: MatDialog,
+        private fbosService: FbosService,
+        private documentService: DocumentService
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -84,12 +89,53 @@ export class DefaultLayoutComponent implements OnInit {
     get isCsr() {
         return this.sharedService.currentUser.role === 5;
     }
-
+    get isConductor() {
+        return this.sharedService.currentUser.role === 3;
+    }
     get isNotGroupAdmin() {
         return this.sharedService.currentUser.role !== 2 || (this.sharedService.currentUser.role == 2 && this.sharedService.currentUser.fboId > 0);
     }
+    async ngOnInit() {
+        if(this.isConductor) {
+            this.isExpiredPricingDialogBlocked = false;
+        }
+        else{
+            await this.openAgreementsAndDocumentsModal();
+        }
 
-    ngOnInit() {
+        if (!this.isExpiredPricingDialogBlocked){
+            this.triggerPrices();
+        }
+
+        this.sharedService.valueChanged$.subscribe((value: any) => {
+            if (!this.canUserSeePricing()) {
+                return;
+            }
+            if (value.message === SharedEvents.fboPricesUpdatedEvent) {
+                this.costJetA = value.JetACost;
+                this.retailJetA = value.JetARetail;
+                this.costSaf = value.SafCost;
+                this.retailSaf = value.SafRetail;
+                this.effectiveToSaf = value.PriceExpirationSaf;
+                this.effectiveToJetA = value.PriceExpirationJetA;
+            }
+
+            if (value.message === SharedEvents.fboProductPreferenceChangeEvent) {
+                this.enableJetA = value.EnableJetA;
+                this.enableSaf = value.EnableSaf;
+            }
+        });
+
+        this.layoutClasses = this.getClasses();
+
+        this.LogUserForAnalytics();
+
+        this.getScreenWidth = window.innerWidth;
+        this.getScreenHeight = window.innerHeight;
+
+        if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
+    }
+    private triggerPrices(){
         var isConductorRefresh = true;
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (!this.canUserSeePricing()) {
@@ -130,43 +176,40 @@ export class DefaultLayoutComponent implements OnInit {
                     }
                 );
         }
-
-
-        this.sharedService.valueChanged$.subscribe((value: any) => {
-            if (!this.canUserSeePricing()) {
-                return;
-            }
-            if (value.message === SharedEvents.fboPricesUpdatedEvent) {
-                this.costJetA = value.JetACost;
-                this.retailJetA = value.JetARetail;
-                this.costSaf = value.SafCost;
-                this.retailSaf = value.SafRetail;
-                this.effectiveToSaf = value.PriceExpirationSaf;
-                this.effectiveToJetA = value.PriceExpirationJetA;
-            }
-
-            if (value.message === SharedEvents.fboProductPreferenceChangeEvent) {
-                this.enableJetA = value.EnableJetA;
-                this.enableSaf = value.EnableSaf;
-            }
-        });
-
-        this.layoutClasses = this.getClasses();
-
-        this.LogUserForAnalytics();
-
-        this.getScreenWidth = window.innerWidth;
-        this.getScreenHeight = window.innerHeight;
-
-        if (!this.isSidebarInvisible() && this.getScreenWidth >= 768) this.sidebarState();
     }
-
     @HostListener('window:resize', ['$event'])
     onWindowResize() {
         this.getScreenWidth = window.innerWidth;
         this.getScreenHeight = window.innerHeight;
     }
+    async openAgreementsAndDocumentsModal(){
+        let data = await this.documentService
+        .getDocumentsToAccept(
+            this.sharedService.currentUser.oid,
+            this.sharedService.currentUser.groupId
+        ).toPromise();
+        if(!data.hasPendingDocumentsToAccept){
+            this.isExpiredPricingDialogBlocked = false;
+            return;
+        }
 
+        const config: MatDialogConfig = {
+            disableClose: true,
+            data: {
+                userId: data.userId,
+                eulaDocument: data.documentToAccept
+             }
+          };
+        const dialogRef = this.templateDialog.open(
+            AgreementsAndDocumentsModalComponent,
+            config
+        );
+
+        dialogRef.afterClosed().subscribe(result => {
+            if(result)
+            this.triggerPrices();
+        });
+    }
     isPricePanelVisible() {
         const blacklist = [
             '/default-layout/groups',
@@ -266,7 +309,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     public onClearFboPrice(event): void {
-        const dialogRef = this.clearPricingDialog.open(
+        const dialogRef = this.templateDialog.open(
             ProceedConfirmationComponent,
             {
                 autoFocus: false,

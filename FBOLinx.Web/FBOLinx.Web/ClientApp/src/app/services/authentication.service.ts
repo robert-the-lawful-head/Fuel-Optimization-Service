@@ -73,19 +73,7 @@ export class AuthenticationService {
     }
 
     preAuth(token) {
-        const tempUser = {
-            fboId: 0,
-            firstName: '',
-            groupId: 0,
-            impersonatedRole: null,
-            lastName: '',
-            managerGroupId: 0,
-            oid: 0,
-            password: '',
-            role: 0,
-            token,
-            username: '',
-        };
+        const tempUser : User = new User();
         this.currentUserSubject.next(tempUser);
 
         //call prepare session controller method
@@ -121,6 +109,11 @@ export class AuthenticationService {
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');
+        localStorage.removeItem('impersonatedrole');
+        localStorage.removeItem('fboId');
+        localStorage.removeItem('managerGroupId');
+        localStorage.removeItem('groupId');
+        localStorage.removeItem('conductorFbo');
         this.currentUserSubject.next(null);
     }
 }

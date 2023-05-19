@@ -39,7 +39,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
         {
             var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
             var importedFboEmail = new ImportedFboEmails();
-            importedFboEmail.Email = "";
             var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
 
             if (fbo == null)
@@ -79,8 +78,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
             {
                 if (!String.IsNullOrEmpty(fbo.FuelDeskEmail))
                     importedFboEmail.Email = fbo.FuelDeskEmail;
-                else if (!String.IsNullOrEmpty(acukwikFbo.Email))
+                else
+                {
+                    if (acukwikFbo.Email == "")
+                    {
+                        importedFboEmail.Email = "No email found";
+                        return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
+                    }
                     importedFboEmail.Email = acukwikFbo.Email;
+                }
             }
 
             var user = await _context.User.Where(x => x.FboId == fbo.Oid && (x.Role == Core.Enums.UserRoles.Primary || x.Role == Core.Enums.UserRoles.NonRev)).FirstOrDefaultAsync();
