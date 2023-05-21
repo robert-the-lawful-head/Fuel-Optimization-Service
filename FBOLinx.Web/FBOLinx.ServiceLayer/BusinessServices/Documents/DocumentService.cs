@@ -38,6 +38,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         }
         public async Task<UserAcceptedPolicyAndAgreements> AcceptPolicyAndAgreement(int userId, int documentId)
         {
+            var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.AnyAsync(x => x.UserId == userId);
+
+            return (acceptedDocument)?
+                await UpdateUserAcceptedPolicyAndAgreements(userId, documentId):
+                await CreateUserAcceptedPolicyAndAgreements(userId, documentId);
+        }
+        public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, int documentId)
+        {
             var newUserAcceptedPolicyAndAgreements = new UserAcceptedPolicyAndAgreements()
             {
                 UserId = userId,
@@ -45,9 +53,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
                 AcceptedDateTime = DateTime.UtcNow
             };
 
-            var insertedRecord = await _userAcceptedPolicyAndAgreementsRepo.AddAsync(newUserAcceptedPolicyAndAgreements);
+            return await _userAcceptedPolicyAndAgreementsRepo.AddAsync(newUserAcceptedPolicyAndAgreements);
+        }
+        public async Task<UserAcceptedPolicyAndAgreements> UpdateUserAcceptedPolicyAndAgreements(int userId,int documentId)
+        {
+            var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
-            return insertedRecord;
+            acceptedDocument.AcceptedDateTime = DateTime.UtcNow;
+            acceptedDocument.DocumentId = documentId;
+
+            await _userAcceptedPolicyAndAgreementsRepo.UpdateAsync(acceptedDocument);
+            return acceptedDocument;
         }
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
