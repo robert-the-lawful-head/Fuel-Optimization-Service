@@ -1,0 +1,68 @@
+<mat-drawer-container class="" autosize>
+    <mat-drawer #serviceOrderDrawer class="" mode="side">
+        <app-service-orders-item-list serviceOrderItemListData="@selectedServiceOrder.serviceOrderItems"></app-service-orders-item-list>
+    </mat-drawer>
+
+    
+    <div *ngFor="let order of inCompleteServiceOrders;" class="row">
+        <div class="col-12 cursor-pointer">
+            <div class="row" (click)="serviceOrderDrawer.toggle()">
+                <div class="col-6">
+                    <div>
+                        {{order.serviceDateTimeUtc}} - {{order.tailNumber}}
+                    </div>
+                </div>
+                <div class="col-6 text-right">
+                    <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash"ni-button size="small">
+                        Delete
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <mat-accordion >
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Completed
+                </mat-panel-title>
+                <mat-panel-description>
+                    Service orders that have been completed.
+                </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div *ngFor="let order of completeServiceOrders;" class="row">
+                <div class="col-12 cursor-pointer">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                {{order.serviceDateTimeUtc}} - {{order.tailNumber}}
+                            </div>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div>
+                                <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+
+</mat-drawer-container>

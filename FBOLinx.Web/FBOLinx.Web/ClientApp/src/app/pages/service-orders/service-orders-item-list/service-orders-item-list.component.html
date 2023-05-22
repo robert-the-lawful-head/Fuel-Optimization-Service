@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-6">
+        {{customerInfoByGroup.company}}
+    </div>
+    <div class="col-6">
+        {{serviceOrder.tailNumber}}
+    </div>
+</div>
+
+<div class="row" *ngFor="let item of serviceOrder.serviceOrderItems">
+    <div class="col-2">
+        <mat-checkbox [(ngModel)]="item.isCompleted"></mat-checkbox>
+    </div>
+    <div class="col-10">
+        {{item.ServiceName}}
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <button (click)="addServiceOrderItemClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
+                ni-button size="small">
+            Add New
+        </button>
+    </div>
+</div>

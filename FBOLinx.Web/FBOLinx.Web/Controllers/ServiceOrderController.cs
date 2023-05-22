@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Specifications.ServiceOrder;
 using FBOLinx.DB.Specifications.ServiceOrderItem;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.ServiceOrder;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.Web.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
 {
+    [APIKey(IntegrationPartnerTypes.Internal, IntegrationPartnerTypes.OtherSoftware)]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceOrderController : FBOLinxControllerBase
@@ -24,7 +28,13 @@ namespace FBOLinx.Web.Controllers
             _ServiceOrderService = serviceOrderService;
         }
 
-        //Returns a list of service orders for a given FBO
+        /// <summary>
+        /// Fetches a list of service orders for a given fbo id
+        /// </summary>
+        /// <param name="fboId"></param>
+        /// <param name="startDateTimeUtc"></param>
+        /// <param name="endDateTimeUtc"></param>
+        /// <returns></returns>
         [HttpGet("list/fbo/{fboId}")]
         public async Task<ActionResult<ServiceOrderListResponse>> GetServiceOrdersForFbo([FromRoute] int fboId, DateTime? startDateTimeUtc, DateTime? endDateTimeUtc)
         {
@@ -39,7 +49,11 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Returns a service order for a given service order id
+        /// <summary>
+        /// Fetch a service order by a given service order id
+        /// </summary>
+        /// <param name="serviceOrderId"></param>
+        /// <returns></returns>
         [HttpGet("id/{serviceOrderId}")]
         public async Task<ActionResult<ServiceOrderResponse>> GetServiceOrder([FromRoute] int serviceOrderId)
         {
@@ -54,7 +68,11 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Post a new service order
+        /// <summary>
+        /// Post a new service order
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<ServiceOrderResponse>> PostServiceOrder([FromBody] ServiceOrderDto request)
         {
@@ -69,7 +87,11 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Update a service order
+        /// <summary>
+        /// Update a passed in service order
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPut]
         public async Task<ActionResult<ServiceOrderResponse>> PutServiceOrder([FromBody] ServiceOrderDto request)
         {
@@ -84,7 +106,11 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Delete a service order
+        /// <summary>
+        /// Delete a service order by a given service order id
+        /// </summary>
+        /// <param name="serviceOrderId"></param>
+        /// <returns></returns>
         [HttpDelete("{serviceOrderId}")]
         public async Task<ActionResult<ServiceOrderResponse>> DeleteServiceOrder([FromRoute] int serviceOrderId)
         {
@@ -104,7 +130,11 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Get a list of service order items for a given service order
+        /// <summary>
+        /// Fetch a list of service order items for a given service order id
+        /// </summary>
+        /// <param name="serviceOrderId"></param>
+        /// <returns></returns>
         [HttpGet("items/{serviceOrderId}")]
         public async Task<ActionResult<ServiceOrderItemListResponse>> GetServiceOrderItems(
             [FromRoute] int serviceOrderId)
@@ -121,8 +151,12 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Get a service order item for a given service order item id
-        [HttpGet("items/id/{serviceOrderItemId}")]
+        /// <summary>
+        /// Fetch a service order item by a given service order item id
+        /// </summary>
+        /// <param name="serviceOrderItemId"></param>
+        /// <returns></returns>
+        [HttpGet("item/id/{serviceOrderItemId}")]
         public async Task<ActionResult<ServiceOrderItemResponse>> GetServiceOrderItem(
             [FromRoute] int serviceOrderItemId)
         {
@@ -139,8 +173,12 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Post a new service order item
-        [HttpPost("items")]
+        /// <summary>
+        /// Post a new service order item
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("item")]
         public async Task<ActionResult<ServiceOrderItemResponse>> PostServiceOrderItem(
             [FromBody] ServiceOrderItemDto request)
         {
@@ -155,8 +193,12 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Update a passed in service order item
-        [HttpPut("items")]
+        /// <summary>
+        /// Update a passed in service order item
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPut("item")]
         public async Task<ActionResult<ServiceOrderItemResponse>> PutServiceOrderItem(
             [FromBody] ServiceOrderItemDto request)
         {
@@ -171,8 +213,12 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        //Delete a service order item
-        [HttpDelete("items/{serviceOrderItemId}")]
+        /// <summary>
+        /// Delete a service order item by a given service order item id
+        /// </summary>
+        /// <param name="serviceOrderItemId"></param>
+        /// <returns></returns>
+        [HttpDelete("item/{serviceOrderItemId}")]
         public async Task<ActionResult<ServiceOrderItemResponse>> DeleteServiceOrderItem(
             [FromRoute] int serviceOrderItemId)
         {
@@ -194,5 +240,7 @@ namespace FBOLinx.Web.Controllers
                 return Ok(new ServiceOrderItemResponse(false, exception.Message));
             }
         }
+
+        
     }
 }

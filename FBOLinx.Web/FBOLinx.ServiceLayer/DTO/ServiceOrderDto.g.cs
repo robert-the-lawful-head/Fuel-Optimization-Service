@@ -23,6 +23,14 @@ namespace FBOLinx.ServiceLayer.DTO
         public string TailNumber { get; set; }
         public int? AssociatedFuelOrderId { get; set; }
 
+        public int NumberOfCompletedItems
+        {
+            get
+            {
+                return (ServiceOrderItems?.Where(x => x.IsCompleted == true).Count()).GetValueOrDefault();
+            }
+        }
+
         #region Relationships
         
         public List<ServiceOrderItem> ServiceOrderItems { get; set; }

@@ -225,6 +225,9 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
+import {ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
 
 @NgModule({
     declarations: [
@@ -371,7 +374,10 @@ import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agree
         FlightWatchFiltersComponent,
         LobbyViewComponent,
         AboutFbolinxComponent,
-        AgreementsAndDocumentsModalComponent
+        AgreementsAndDocumentsModalComponent,
+        ServiceOrdersListComponent,
+        ServiceOrdersHomeComponent,
+        ServiceOrdersItemListComponent        
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

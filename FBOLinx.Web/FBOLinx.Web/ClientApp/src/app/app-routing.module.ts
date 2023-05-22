@@ -38,6 +38,7 @@ import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-statu
 import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
 import { AboutFbolinxComponent } from './pages/about-fbolinx/about-fbolinx.component';
+import { ServiceOrdersHomeComponent } from './pages/service-orders/service-orders-home/service-orders-home.component';
 
 const defaultRoutes: Routes = [
     {
@@ -213,6 +214,11 @@ const defaultRoutes: Routes = [
         component: DashboardHomeComponent,
         path: '**',
     },
+    {
+        canActivate: [AuthGuard],
+        component: ServiceOrdersHomeComponent,
+        path: 'service-orders',
+    }
 ];
 
 const outsideTheGateRoutes: Routes = [

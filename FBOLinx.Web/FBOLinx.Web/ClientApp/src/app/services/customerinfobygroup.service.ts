@@ -21,6 +21,17 @@ export class CustomerinfobygroupService {
         });
     }
 
+    public getCustomerInfoByGroupAndCustomerId(groupId, customerId) {
+        return this.http.get(this.accessPointUrl + '/group/' +
+            groupId +
+            '/customer/' +
+            customerId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public getByGroupAndFbo(groupId, fboId) {
         return this.http.get(
             this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId,
