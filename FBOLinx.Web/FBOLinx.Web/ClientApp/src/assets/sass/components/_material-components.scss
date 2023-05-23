@@ -137,6 +137,17 @@ body {
         }
     }
 
+    .mat-selection-list {
+        .mat-list-item {
+            background-color: white;
+            margin-bottom: 5px;
+        }
+
+        .mat-list-item[aria-selected="true"] {
+            background-color: #b4eaff80;
+        }
+    }
+
     .mat-progress-bar,
     .mat-progress-circle,
     .mat-spinner {
@@ -288,14 +299,13 @@ body {
             width: 56px;
         }
     }
-
-    .mat-pseudo-checkbox-checked {
+    /*.mat-pseudo-checkbox-checked {
         &:after {
             height: 6px;
             left: 2px;
             width: 13px;
         }
-    }
+    }*/
 
     .mat-snack-bar-container {
         background-color: #a96666;

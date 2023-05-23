@@ -227,7 +227,8 @@ import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
 import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
 import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
-import {ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
+import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
+import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
 
 @NgModule({
     declarations: [
@@ -377,7 +378,8 @@ import {ServiceOrdersItemListComponent } from './service-orders/service-orders-i
         AgreementsAndDocumentsModalComponent,
         ServiceOrdersListComponent,
         ServiceOrdersHomeComponent,
-        ServiceOrdersItemListComponent        
+        ServiceOrdersItemListComponent,
+        ServiceOrdersDialogNewComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

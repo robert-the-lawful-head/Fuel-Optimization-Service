@@ -106,6 +106,20 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerInfoByGroup);
         }
 
+        [HttpGet("group/{groupId}/list")]
+        public async Task<IActionResult> GetCustomerInfoByGroupByGroupId([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _customerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(groupId));
+
+            return Ok(result);
+        }
+
+
         /// <summary>
         /// Get a customerInfoByGroup record by group id and customer id
         /// </summary>
@@ -171,8 +185,8 @@ namespace FBOLinx.Web.Controllers
         }
 
 
-        [HttpGet("group/{groupId}")]
-        public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
+        [HttpGet("group/{groupId}/viewmodel")]
+        public async Task<IActionResult> GetCustomerInfoByGroupListByGroupId([FromRoute] int groupId)
         {
             var customerAircraft =
                     (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())

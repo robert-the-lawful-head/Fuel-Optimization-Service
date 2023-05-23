@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
 {
-    [APIKey(IntegrationPartnerTypes.Internal, IntegrationPartnerTypes.OtherSoftware)]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServiceOrderController : FBOLinxControllerBase

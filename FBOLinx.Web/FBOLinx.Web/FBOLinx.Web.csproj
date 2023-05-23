@@ -53,7 +53,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <None Remove="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <None Remove="ClientApp\src\app\enums\certificate-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <None Remove="ClientApp\src\app\enums\flight-type-classifications.ts" />
@@ -65,6 +67,7 @@
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\customer-aircraft.ts" />
     <None Remove="ClientApp\src\app\models\customer-info-by-group.ts" />
     <None Remove="ClientApp\src\app\models\entity-response-message.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
@@ -146,7 +149,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\certificate-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\flight-type-classifications.ts" />
@@ -158,6 +163,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\entity-response-message.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />

@@ -22,9 +22,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
             entityService)
         {
         }
-
-        public ServiceOrderItemService(IUserService entityService) : base(entityService)
-        {
-        }
     }
 }

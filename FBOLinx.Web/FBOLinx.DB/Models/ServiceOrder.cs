@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FBOLinx.DB.Models
 {
     [Index("AssociatedFuelOrderId", Name = "INX_ServiceOrders_AssociatedFuelOrderID")]
-    [Index("CustomerId", "ServiceDateTimeUtc", Name = "INX_ServiceOrders_CustomerID_ServiceDateTimeUTC")]
+    [Index("CustomerInfoByGroupId", "ServiceDateTimeUtc", Name = "INX_ServiceOrders_CustomerInfoByGroupID_ServiceDateTimeUTC")]
     [Index("Fboid", "ServiceDateTimeUtc", Name = "INX_ServiceOrders_FBOID_ServiceDateTimeUTC")]
     [Table("ServiceOrders")]
     public partial class ServiceOrder
@@ -22,14 +22,14 @@ namespace FBOLinx.DB.Models
         public int Fboid { get; set; }
         [Column("GroupID")]
         public int GroupId { get; set; }
-        [Column("CustomerID")]
-        public int CustomerId { get; set; }
+        [Column("CustomerInfoByGroupID")]
+        public int CustomerInfoByGroupId { get; set; }
         [Column("ServiceDateTimeUTC", TypeName = "datetime")]
         public DateTime ServiceDateTimeUtc { get; set; }
-        [Required]
-        [StringLength(50)]
-        [Unicode(false)]
-        public string TailNumber { get; set; }
+        [Column("ServiceDateTimeLocal", TypeName = "datetime")]
+        public DateTime ServiceDateTimeLocal { get; set; }
+        [Column("CustomerAircraftID")]
+        public int CustomerAircraftId { get; set; }
         [Column("AssociatedFuelOrderID")]
         public int? AssociatedFuelOrderId { get; set; }
 
@@ -40,6 +40,14 @@ namespace FBOLinx.DB.Models
 
         [InverseProperty(nameof(ServiceOrderItem.ServiceOrder))]
         public ICollection<ServiceOrderItem> ServiceOrderItems { get; set; }
+
+        [ForeignKey(nameof(CustomerInfoByGroupId))]
+        [InverseProperty(nameof(Models.CustomerInfoByGroup.ServiceOrders))]
+        public CustomerInfoByGroup CustomerInfoByGroup { get; set; }
+
+        [ForeignKey(nameof(CustomerAircraftId))]
+        [InverseProperty(nameof(Models.CustomerAircrafts.ServiceOrders))]
+        public CustomerAircrafts CustomerAircraft { get; set; }
         #endregion
     }
 }

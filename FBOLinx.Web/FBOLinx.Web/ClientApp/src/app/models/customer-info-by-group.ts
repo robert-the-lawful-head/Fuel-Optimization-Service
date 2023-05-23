@@ -1,4 +1,4 @@
-import { CertificateType } from "./certificate-type";
+import {CertificateTypes } from '../enums/certificate-types';
 
 export type CustomerInfoByGroup = {
     oid: number;
@@ -25,7 +25,7 @@ export type CustomerInfoByGroup = {
     customerType?: number;
     emailSubscription?: boolean;
     sfid: string;
-    certificateType?: CertificateType;
+    certificateType?: CertificateTypes;
     customerCompanyType?: number;
     pricingTemplateRemoved?: boolean;
     mergeRejected?: boolean;

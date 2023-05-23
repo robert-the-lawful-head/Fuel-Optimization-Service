@@ -1,25 +1,48 @@
-<div class="row">
-    <div class="col-6">
-        {{customerInfoByGroup.company}}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 font-weight-bold">
+            {{serviceOrder.customerInfoByGroup?.company}}
+        </div>
+        <div class="col-12">
+            {{serviceOrder.customerAircraft?.tailNumber}}
+        </div>
+        <div class="col-12">
+            {{serviceOrder.serviceDateTimeLocal}}
+        </div>
     </div>
-    <div class="col-6">
-        {{serviceOrder.tailNumber}}
+
+    <mat-selection-list #serviceOrderItemsSelectionList>
+        <mat-list-option *ngFor="let item of serviceOrder.serviceOrderItems" [value]="item.isCompleted">
+            <div class="row">
+                <div class="col-8">
+                    {{item.serviceName}}
+                </div>
+                <div class="col-4">
+                    
+                </div>
+            </div>
+        </mat-list-option>
+    </mat-selection-list>
+
+    <div class="row">
+        <div class="col-8">
+            <mat-form-field>
+                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" />
+            </mat-form-field>
+        </div>
+        <div class="col-4">
+            <button (click)="addServiceOrderItemClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
+                    ni-button size="small" [disabled]="newServiceOrderItem.serviceName == ''"
+                    style="position: absolute; top: 35%;">
+                Add
+            </button>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="">
+
+        </div>
     </div>
 </div>
 
-<div class="row" *ngFor="let item of serviceOrder.serviceOrderItems">
-    <div class="col-2">
-        <mat-checkbox [(ngModel)]="item.isCompleted"></mat-checkbox>
-    </div>
-    <div class="col-10">
-        {{item.ServiceName}}
-    </div>
-</div>
-<div class="row">
-    <div class="col-12">
-        <button (click)="addServiceOrderItemClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
-                ni-button size="small">
-            Add New
-        </button>
-    </div>
-</div>

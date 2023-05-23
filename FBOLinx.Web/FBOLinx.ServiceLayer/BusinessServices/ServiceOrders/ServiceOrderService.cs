@@ -21,9 +21,5 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
         public ServiceOrderService(IRepository<ServiceOrder, FboLinxContext> entityService) : base(entityService)
         {
         }
-
-        public ServiceOrderService(IUserService entityService) : base(entityService)
-        {
-        }
     }
 }

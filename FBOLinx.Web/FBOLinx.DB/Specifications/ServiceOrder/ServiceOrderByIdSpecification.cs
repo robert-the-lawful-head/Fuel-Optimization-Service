@@ -13,6 +13,8 @@ namespace FBOLinx.DB.Specifications.ServiceOrder
         public ServiceOrderByIdSpecification(int id) : base(x => x.Oid == id)
         {
             AddInclude(x => x.ServiceOrderItems);
+            AddInclude(x => x.CustomerInfoByGroup);
+            AddInclude(x => x.CustomerAircraft);
         }
     }
 }

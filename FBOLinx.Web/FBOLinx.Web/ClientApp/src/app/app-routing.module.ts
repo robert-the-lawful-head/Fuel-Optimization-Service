@@ -167,11 +167,6 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
-        component: FuelreqsHomeComponent,
-        path: 'fuelreqs',
-    },
-    {
-        canActivate: [AuthGuard],
         component: RampFeesHomeComponent,
         path: 'rampfees',
     },
@@ -211,14 +206,14 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
-        component: DashboardHomeComponent,
-        path: '**',
+        component: ServiceOrdersHomeComponent,
+        path: 'service-orders',
     },
     {
         canActivate: [AuthGuard],
-        component: ServiceOrdersHomeComponent,
-        path: 'service-orders',
-    }
+        component: DashboardHomeComponent,
+        path: '**',
+    }    
 ];
 
 const outsideTheGateRoutes: Routes = [

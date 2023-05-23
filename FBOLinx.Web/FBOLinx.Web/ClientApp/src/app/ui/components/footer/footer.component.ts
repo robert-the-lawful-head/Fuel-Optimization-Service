@@ -35,7 +35,7 @@ export class FooterComponent implements OnInit {
 
     private getEULALastVersion() {
         this.documentService.getLastEulaVersion().subscribe((data: any) => {
-            this.eulaLink = data.document;
+            this.eulaLink = data?.document;
         });
     }
 }

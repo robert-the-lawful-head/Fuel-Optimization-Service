@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -16,8 +16,10 @@ import { CustomerInfoByGroup } from 'src/app/models/customer-info-by-group';
 })
 export class ServiceOrdersItemListComponent implements OnInit {
     @Input() serviceOrder: ServiceOrder;
+    @Output() serviceOrderItemsChanged: EventEmitter<ServiceOrder> = new EventEmitter();
 
     public customerInfoByGroup: CustomerInfoByGroup;
+    public newServiceOrderItem: ServiceOrderItem;
 
     constructor(private router: Router,
         private serviceOrderService: ServiceOrderService,
@@ -26,17 +28,19 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.resetNewServiceOrderItem();
         if (this.serviceOrder.serviceOrderItems == null)
             this.loadServiceOrderItems();
-        this.loadCustomerInfo();
     }
 
     public addServiceOrderItemClicked() {
-        var newServiceOrderItem: ServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
-        this.serviceOrderService.createServiceOrderItem(newServiceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
+        
+        this.serviceOrderService.createServiceOrderItem(this.newServiceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
             if (!response.success)
                 alert('Error creating service order item: ' + response.message);
             this.serviceOrder.serviceOrderItems.push(response.result);
+            this.serviceOrderItemsChanged.emit(this.serviceOrder);
+            this.resetNewServiceOrderItem();
         });
     }
 
@@ -44,6 +48,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
         this.serviceOrderService.updateServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
             if (!response.success)
                 alert('Error updating service order item: ' + response.message);
+            this.serviceOrderItemsChanged.emit(this.serviceOrder);
         });
     }
 
@@ -56,9 +61,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
         });
     }
 
-    private loadCustomerInfo() {
-        this.customerInfoByGroupService.getCustomerInfoByGroupAndCustomerId(this.serviceOrder.customerId, this.serviceOrder.groupId).subscribe((response: CustomerInfoByGroup) => {
-            this.customerInfoByGroup = response;
-        });
+    private resetNewServiceOrderItem() {
+        this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
     }
 }
