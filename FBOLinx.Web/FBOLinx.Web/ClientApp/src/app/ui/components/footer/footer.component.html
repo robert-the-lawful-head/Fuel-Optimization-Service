@@ -2,5 +2,5 @@
 <div class="copyright" ><a target="_blank" href="https://www.iubenda.com/privacy-policy/15357855">Privacy Policy</a></div>
 <div class="copyright"><a target="_blank" href="https://www.iubenda.com/privacy-policy/15357855/cookie-policy">Cookie Policy</a></div>
 <div class="copyright"><a target="_blank" href="{{eulaLink}}">Terms of Service</a></div>
-<div *ngIf="!isLandingPage" class="version">Version {{ version }}</div>
+<div *ngIf="!isLandingPage && hasEulaLink()" class="version">Version {{ version }}</div>
 
