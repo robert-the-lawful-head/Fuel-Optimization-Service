@@ -40,9 +40,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         {
             var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.AnyAsync(x => x.UserId == userId);
 
-            return (acceptedDocument)?
-                await UpdateUserAcceptedPolicyAndAgreements(userId, documentId):
-                await CreateUserAcceptedPolicyAndAgreements(userId, documentId);
+            return await CreateUserAcceptedPolicyAndAgreements(userId, documentId);
         }
         public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, int documentId)
         {
@@ -68,8 +66,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
             var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.IsEnabled && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted  ).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
-            var hasacceptedDocument = _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
-            var isDocumentExempted = _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
+            var hasacceptedDocument = (eulaDocument == null) ? true: _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
+            var isDocumentExempted = (eulaDocument == null) ? true : _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
 
             var documentToAccept = new DocumentsToAcceptDto()
             {
