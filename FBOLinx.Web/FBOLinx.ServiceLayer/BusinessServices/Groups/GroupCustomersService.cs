@@ -88,7 +88,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                     await _CustomerInfoByGroupEntityService.BulkInsert(customerInfoByGroupToInsert);
 
                 var existingCustomerAircraftRecordsForGroup =
-                    existingCustomerInfoByGroupRecords.SelectMany(a => a.CustomerAircrafts);
+                    existingCustomerInfoByGroupRecords.SelectMany(a => a.Customer.CustomerAircrafts);
                 List<CustomerAircrafts> customerAircraftsToInsert = new List<CustomerAircrafts>();
 
                 foreach (var cust in listWithCustomers)

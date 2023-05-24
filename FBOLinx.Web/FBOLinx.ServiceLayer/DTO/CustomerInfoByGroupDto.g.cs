@@ -35,6 +35,5 @@ namespace FBOLinx.Service.Mapping.Dto
         public bool? MergeRejected { get; set; }
         public int Oid { get; set; }
         public CustomersDto Customer { get; set; }
-        public ICollection<CustomerAircraftsDto> CustomerAircrafts { get; set; }
     }
 }

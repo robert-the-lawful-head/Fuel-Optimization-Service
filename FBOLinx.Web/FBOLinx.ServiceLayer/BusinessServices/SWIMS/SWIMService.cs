@@ -563,7 +563,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(aircraftIdentifications);
             //var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId, aircraftIdentifications));
             var customerInfoByGroup = await _CustomerInfoByGroupService.GetCustomers(groupId);
-            var customerAircrafts = customerInfoByGroup.SelectMany(ca => ca.CustomerAircrafts).ToList();
+            var customerAircrafts = customerInfoByGroup.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
 
             List<AirportWatchHistoricalData> antennaHistoricalData = null;
             List<AcukwikAirport> airports = null;

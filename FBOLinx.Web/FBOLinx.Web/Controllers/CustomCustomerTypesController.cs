@@ -205,8 +205,10 @@ namespace FBOLinx.Web.Controllers
                     .Select(s => s.CustomerId)
                     .ToListAsync();
 
-                    var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == updateTemplate.fboid).GroupId;
-                    _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
+                    var groupInfo = await _context.Fbos.FirstOrDefaultAsync(s => s.Oid == updateTemplate.fboid);
+                    var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo.GroupId).ToListAsync();
+
+                    customerInfoByGroup.ForEach(s => s.PricingTemplateRemoved = true);
 
                     var customCustomerTypes = await _context.CustomCustomerTypes
                         .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))

@@ -79,7 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
         {
             var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
-            var aircrafts = customers.SelectMany(a => a.CustomerAircrafts).Where(c => c.GroupId == groupId && c.CustomerId > 0 && c.Customer.CustomerInfoByGroup != null).ToList();
+            var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
 

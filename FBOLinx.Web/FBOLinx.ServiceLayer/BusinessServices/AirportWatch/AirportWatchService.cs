@@ -197,7 +197,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             //var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId));
             var customerInfoByGroup = await _CustomerInfoByGroupService.GetCustomers(groupId);
-            var allCustomerAircrafts = customerInfoByGroup.SelectMany(ca => ca.CustomerAircrafts).ToList();
+            var allCustomerAircrafts = customerInfoByGroup.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
 
             var airportWatchLiveData =
                 await _AirportWatchLiveDataService.GetListbySpec(

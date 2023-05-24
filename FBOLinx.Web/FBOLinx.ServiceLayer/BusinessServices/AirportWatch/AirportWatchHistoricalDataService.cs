@@ -71,7 +71,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 .Distinct().ToList();
 
             var customerInfoByGroupCollection = await _CustomerInfoByGroupService.GetCustomers(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData);
-            var customerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.CustomerAircrafts).ToList();
+            var customerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
 
 
             //var customerAircrafts =
