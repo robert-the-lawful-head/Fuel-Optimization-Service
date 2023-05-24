@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +13,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 {
     public interface IFboContactsEntityService : IRepository<Fbos, FboLinxContext>
     {
-        Task<List<ContactsDTO>> GetFboContactsByFboId(int fboId);
+        Task<List<ContactsDto>> GetFboContactsByFboId(int fboId);
     }
 
     public class FboContactsEntityService : Repository<Fbos, FboLinxContext>, IFboContactsEntityService
@@ -23,12 +24,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             _context = context;
         }
 
-        public async Task<List<ContactsDTO>> GetFboContactsByFboId(int fboId)
+        public async Task<List<ContactsDto>> GetFboContactsByFboId(int fboId)
         {
             var fboContacts = await _context.Fbocontacts
                                .Include("Contact")
                                .Where(x => x.Fboid == fboId && !string.IsNullOrEmpty(x.Contact.Email))
-                               .Select(f => new ContactsDTO
+                               .Select(f => new ContactsDto
                                {
                                    FirstName = f.Contact.FirstName,
                                    LastName = f.Contact.LastName,

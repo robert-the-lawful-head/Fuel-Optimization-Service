@@ -1,5 +1,6 @@
 ﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Web.Models.Requests;
 
@@ -45,9 +46,9 @@ namespace FBOLinx.ServiceLayer.Test
             return distributePricingRequest;
         }
 
-        public static CustomerInfoByGroupDTO CreateCustomerInfoByGroup()
+        public static CustomerInfoByGroupDto CreateCustomerInfoByGroup()
         {
-            CustomerInfoByGroupDTO customerInfoByGroup = new CustomerInfoByGroupDTO();
+            CustomerInfoByGroupDto customerInfoByGroup = new CustomerInfoByGroupDto();
             customerInfoByGroup.Oid = 1;
             customerInfoByGroup.CustomerId = 1;
 
