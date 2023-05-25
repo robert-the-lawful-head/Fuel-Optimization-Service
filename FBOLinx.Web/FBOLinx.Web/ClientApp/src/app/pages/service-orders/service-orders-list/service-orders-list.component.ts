@@ -62,7 +62,7 @@ export class ServiceOrdersListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result: ServiceOrder) => {
             if (!result)
-                return;
+                return;                
             this.serviceOrdersData.push(result);
             this.arrangeServiceOrders();
         });
@@ -118,12 +118,12 @@ export class ServiceOrdersListComponent implements OnInit {
     private arrangeServiceOrders() {
         var filter = this.globalFilter.toUpperCase();
         this.inCompleteServiceOrders = this.serviceOrdersData.filter(x =>
-            (x.serviceOrderItems.length == 0 || x.serviceOrderItems.filter(item => item.isCompleted).length != x.serviceOrderItems.length)
+            (x.serviceOrderItems == null || x.serviceOrderItems.length == 0 || x.serviceOrderItems.filter(item => item.isCompleted).length != x.serviceOrderItems.length)
             && (filter == '' || x.customerAircraft?.tailNumber?.toUpperCase().indexOf(filter) > -1 || x.customerInfoByGroup?.company?.toUpperCase().indexOf(filter) > -1)
         );
 
         this.completeServiceOrders = this.serviceOrdersData.filter(x =>
-            (x.serviceOrderItems.length > 0 && x.serviceOrderItems.filter(item => item.isCompleted).length == x.serviceOrderItems.length)
+            (x.serviceOrderItems == null || x.serviceOrderItems.length > 0 && x.serviceOrderItems.filter(item => item.isCompleted).length == x.serviceOrderItems.length)
             && (filter == '' || x.customerAircraft?.tailNumber?.toUpperCase().indexOf(filter) > -1 || x.customerInfoByGroup?.company?.toUpperCase().indexOf(filter) > -1)
         );
     }

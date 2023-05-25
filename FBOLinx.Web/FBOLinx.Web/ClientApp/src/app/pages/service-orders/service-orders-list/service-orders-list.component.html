@@ -39,7 +39,9 @@
                     <div class="row">
                         <div class="col-6">
                             <div>
-                                {{order.serviceDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} - {{order.customerAircraft.tailNumber}} - {{order.customerInfoByGroup.company}}
+                                <div class="col-12 col-sm"><label>Customer:</label> {{order.customerInfoByGroup.company}}</div>
+                                <div class="col-12 col-sm"><label>Tail: </label> {{order.customerAircraft.tailNumber}}</div>
+                                <div class="col-12 col-sm"><label>ETA: </label> {{order.serviceDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (local)</div>
                             </div>
                         </div>
                         <div class="col-6 text-right">
