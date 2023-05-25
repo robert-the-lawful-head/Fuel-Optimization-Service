@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog
 {
-    public class CompanyPricingLogCountByDateRange
+    public class CompanyPricingLogCountGroupAndFbo
     {
         public int GroupId { get; set; }
         public int FboId { get; set; }
