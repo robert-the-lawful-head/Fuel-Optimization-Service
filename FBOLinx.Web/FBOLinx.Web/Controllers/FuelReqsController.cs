@@ -1067,8 +1067,8 @@ namespace FBOLinx.Web.Controllers
 
                 request.Icao = icao;
 
-                string fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefaultAsync();
-                request.Fbo = fbo;
+                var fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).FirstOrDefaultAsync();
+                //request.Fbo = fbo;
 
                 FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = await _fuelerLinxService.GetFBOsTransactionsCountForAirport(request);
 
@@ -1077,10 +1077,10 @@ namespace FBOLinx.Web.Controllers
                 int i = 1;
                 foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
                 {
-                    if (vendor.Fbo == "Competitor FBO")
+                    if (vendor.AcukwikFboHandlerId != fbo.AcukwikFBOHandlerId)
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = vendor.Fbo + " " + i;
+                        chartItemType.Name = "Competitor FBO " + i;
                         chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                         i++;
