@@ -1,46 +1,64 @@
-<mat-drawer-container class="" style="min-height: 400px;">
+<mat-drawer-container class="" style="min-height: 500px;">
     <mat-drawer #serviceOrderDrawer class="" mode="side">
         <div *ngIf="selectedServiceOrder">
-            <app-service-orders-item-list [serviceOrder]="selectedServiceOrder"></app-service-orders-item-list>
+            <app-service-orders-item-list [serviceOrder]="selectedServiceOrder" (serviceOrderItemsChanged)="serviceOrderItemsChanged($event)"></app-service-orders-item-list>
         </div>
     </mat-drawer>
 
     <div class="container-fluid">
-        <div class="row" *ngIf="!inCompleteServiceOrders || inCompleteServiceOrders.length == 0">
-            <div class="col-12 text-center">
-                No upcoming service orders.  You can <a (click)="addServiceOrderClicked()">add one to begin</a>.
+
+        <div class="row">
+            <div class="col">
+                <app-table-global-search (filterApplied)="filterChanged($event)"
+                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
         </div>
 
-        <mat-selection-list #incompletedServiceOrders>
-            <mat-list-option *ngFor="let order of inCompleteServiceOrders" [value]="order">
-                <div class="row" (click)="serviceOrderDrawer.toggle();serviceOrderClicked(order);" clickStopPropagation>
-                    <div class="col-6">
-                        <div>
-                            {{order.serviceDateTimeUtc}} - {{order.customerAircraft.tailNumber}} - {{order.customerInfoByGroup.company}}
-                        </div>
-                    </div>
-                    <div class="col-6 text-right">
-                        <!--<button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
-                            Delete
-                        </button>-->
-                    </div>
+        <div class="row" *ngIf="allowAddingNew">
+            <div class="col-12 text-right">
+                <div>
+                    <button (click)="addServiceOrderClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                            ni-button size="small">
+                        Add Order
+                    </button>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div>
-                            <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
-                        </div>
-                    </div>
-                </div>
-            </mat-list-option>
-        </mat-selection-list>
-
-        <!--<div *ngFor="let order of inCompleteServiceOrders;" class="row">
-            <div class="col-12 cursor-pointer">
                 
             </div>
-        </div>-->
+        </div>
+
+
+        <div class="row" *ngIf="!inCompleteServiceOrders || inCompleteServiceOrders.length == 0">
+            <div class="col-12 text-center">
+                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link" (click)="addServiceOrderClicked()">add one to begin</a>.</span> 
+            </div>
+        </div>
+
+        <mat-selection-list #incompletedServiceOrders (selectionChange)="inCompleteServiceToggleChanged($event)">
+            <mat-list-option *ngFor="let order of inCompleteServiceOrders" [value]="order" [selected]="order.isCompleted">
+                <div clickStopPropagation (click)="serviceOrderClicked(order);serviceOrderDrawer.toggle();">
+                    <div class="row">
+                        <div class="col-6">
+                            <div>
+                                {{order.serviceDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} - {{order.customerAircraft.tailNumber}} - {{order.customerInfoByGroup.company}}
+                            </div>
+                        </div>
+                        <div class="col-6 text-right">
+                            <!--<button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                            Delete
+                        </button>-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div>
+                                <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </mat-list-option>
+        </mat-selection-list>
 
 
         <div *ngIf="completeServiceOrders && completeServiceOrders.length > 0">
@@ -48,7 +66,7 @@
                 <mat-expansion-panel>
                     <mat-expansion-panel-header>
                         <mat-panel-title>
-                            Completed
+                            Completed ({{completeServiceOrders.length}})
                         </mat-panel-title>
                         <mat-panel-description>
                             Service orders that have been completed.
@@ -59,19 +77,17 @@
                             <div class="row">
                                 <div class="col-6">
                                     <div>
-                                        {{order.serviceDateTimeUtc}} - {{order.tailNumber}}
+                                        {{order.serviceDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} - {{order.customerAircraft.tailNumber}} - {{order.customerInfoByGroup.company}}
+                                    </div>
+                                    <div>
+                                        <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
                                     </div>
                                 </div>
                                 <div class="col-6 text-right">
-                                    <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
-                                        Delete
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div>
-                                        <sub>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</sub>
+                                    <div class="pt-1">
+                                        <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
                             </div>

@@ -7,12 +7,18 @@
             {{serviceOrder.customerAircraft?.tailNumber}}
         </div>
         <div class="col-12">
-            {{serviceOrder.serviceDateTimeLocal}}
+            {{serviceOrder.serviceDateTimeLocal | date: "MMM d, yyyy, HH:mm"}}
         </div>
     </div>
-
-    <mat-selection-list #serviceOrderItemsSelectionList>
-        <mat-list-option *ngFor="let item of serviceOrder.serviceOrderItems" [value]="item.isCompleted">
+    <div class="row">
+        <div class="col-12">
+            <div class="pt-1">
+                <hr />
+            </div>
+        </div>
+    </div>
+    <mat-selection-list #serviceOrderItemsSelectionList (selectionChange)="serviceItemToggleChanged($event)">
+        <mat-list-option *ngFor="let item of serviceOrder.serviceOrderItems" [value]="item" [selected]="item.isCompleted">
             <div class="row">
                 <div class="col-8">
                     {{item.serviceName}}
@@ -27,7 +33,7 @@
     <div class="row">
         <div class="col-8">
             <mat-form-field>
-                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" />
+                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" (keyup.enter)="addServiceOrderItemClicked()" />
             </mat-form-field>
         </div>
         <div class="col-4">

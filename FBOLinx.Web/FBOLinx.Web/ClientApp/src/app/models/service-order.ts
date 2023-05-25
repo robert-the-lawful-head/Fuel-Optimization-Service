@@ -13,9 +13,11 @@ export type ServiceOrder = {
     serviceDateTimeLocal: Date;
     customerAircraftId: number;
     associatedFuelOrderId: number;
+    isCompleted: boolean;
     numberOfCompletedItems: number;
 
     serviceOrderItems: ServiceOrderItem[]
     customerInfoByGroup: CustomerInfoByGroup;
     customerAircraft: CustomerAircraft;
+        
 }

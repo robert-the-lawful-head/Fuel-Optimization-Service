@@ -32,6 +32,14 @@ namespace FBOLinx.ServiceLayer.DTO
             }
         }
 
+        public bool IsCompleted
+        {
+            get
+            {
+                return (ServiceOrderItems?.Where(x => x.IsCompleted == false).Count()).GetValueOrDefault() == 0;
+            }
+        }
+
         #region Relationships
 
         [AdaptIgnore(MemberSide.Source)]

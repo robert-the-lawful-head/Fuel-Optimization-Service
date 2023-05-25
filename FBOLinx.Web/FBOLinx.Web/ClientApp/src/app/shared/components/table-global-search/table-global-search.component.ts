@@ -48,6 +48,9 @@ export class TableGlobalSearchComponent implements OnInit {
         //    this.matDataSource.filterCollection.push(this.filter);
         //}
 
+        if (!this.matDataSource)
+            return;
+
         this.setupFilterPredicate();
         if (!this.matDataSource.filterCollection) {
             this.matDataSource.filterCollection = [];
@@ -86,6 +89,11 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
+        if (!this.matDataSource) {
+            this.filterApplied.emit(filterValue);
+            return;
+        }
+
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];

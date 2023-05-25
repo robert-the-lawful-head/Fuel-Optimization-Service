@@ -45,11 +45,13 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public serviceOrderItemEdited(serviceOrderItem: ServiceOrderItem) {
-        this.serviceOrderService.updateServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
-            if (!response.success)
-                alert('Error updating service order item: ' + response.message);
-            this.serviceOrderItemsChanged.emit(this.serviceOrder);
-        });
+        this.saveServiceOrderItem(serviceOrderItem);
+    }
+
+    public serviceItemToggleChanged(event: any) {        
+        event.option._value.isCompleted = event.option._selected;
+        this.saveServiceOrderItem(event.option._value);
+        this.serviceOrderItemsChanged.emit(this.serviceOrder);
     }
 
     private loadServiceOrderItems() {
@@ -63,5 +65,15 @@ export class ServiceOrdersItemListComponent implements OnInit {
 
     private resetNewServiceOrderItem() {
         this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
+    }
+
+    private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {        
+        this.serviceOrderService.updateServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
+            if (!response.success)
+                alert('Error saving service order item: ' + response.message);
+            else {
+                this.serviceOrderItemsChanged.emit(this.serviceOrder);
+            }
+        });
     }
 }
