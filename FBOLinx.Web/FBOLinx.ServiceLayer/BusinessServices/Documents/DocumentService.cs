@@ -82,8 +82,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<List<GroupPolicyAndAgreementDocuments>> GetAllGroupDocuments(int groupId)
         {
             var documents = new List<PolicyAndAgreementDocuments>();
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType ==DocumentTypeEnum.Cookie).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.Cookie).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.Privacy).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.RemoveAll(item => item == null);
 
