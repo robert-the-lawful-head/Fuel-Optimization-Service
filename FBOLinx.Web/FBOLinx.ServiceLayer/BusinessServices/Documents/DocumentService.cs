@@ -41,9 +41,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
             var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.AnyAsync(x => x.UserId == userId);
             var document = await _policyAndAgreementDocumentsRepo.FindAsync(documentId);
 
-            return (acceptedDocument) ?
-                await UpdateUserAcceptedPolicyAndAgreements(userId, document) :
-                await CreateUserAcceptedPolicyAndAgreements(userId, document);
+            return await CreateUserAcceptedPolicyAndAgreements(userId, document);
         }
         public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, PolicyAndAgreementDocuments document)
         {
