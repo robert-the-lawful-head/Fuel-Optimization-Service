@@ -39,26 +39,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<UserAcceptedPolicyAndAgreements> AcceptPolicyAndAgreement(int userId, int documentId)
         {
             var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.AnyAsync(x => x.UserId == userId);
+            var document = await _policyAndAgreementDocumentsRepo.FindAsync(documentId);
 
-            return await CreateUserAcceptedPolicyAndAgreements(userId, documentId);
+            return (acceptedDocument) ?
+                await UpdateUserAcceptedPolicyAndAgreements(userId, document) :
+                await CreateUserAcceptedPolicyAndAgreements(userId, document);
         }
-        public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, int documentId)
+        public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, PolicyAndAgreementDocuments document)
         {
             var newUserAcceptedPolicyAndAgreements = new UserAcceptedPolicyAndAgreements()
             {
                 UserId = userId,
-                DocumentId = documentId,
+                DocumentId = document.Oid,
+                DocumentVersion =  document.DocumentVersion,
                 AcceptedDateTime = DateTime.UtcNow
             };
 
             return await _userAcceptedPolicyAndAgreementsRepo.AddAsync(newUserAcceptedPolicyAndAgreements);
         }
-        public async Task<UserAcceptedPolicyAndAgreements> UpdateUserAcceptedPolicyAndAgreements(int userId,int documentId)
+        public async Task<UserAcceptedPolicyAndAgreements> UpdateUserAcceptedPolicyAndAgreements(int userId, PolicyAndAgreementDocuments document)
         {
             var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
             acceptedDocument.AcceptedDateTime = DateTime.UtcNow;
-            acceptedDocument.DocumentId = documentId;
+            acceptedDocument.DocumentVersion = document.DocumentVersion;
 
             await _userAcceptedPolicyAndAgreementsRepo.UpdateAsync(acceptedDocument);
             return acceptedDocument;
@@ -66,7 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
             var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.IsEnabled && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted  ).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
-            var hasacceptedDocument = (eulaDocument == null) ? true: _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
+            var hasacceptedDocument = (eulaDocument == null) ? true: _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.DocumentVersion == eulaDocument.DocumentVersion && x.UserId == userId).Any();
             var isDocumentExempted = (eulaDocument == null) ? true : _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
 
             var documentToAccept = new DocumentsToAcceptDto()
