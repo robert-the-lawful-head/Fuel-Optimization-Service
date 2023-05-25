@@ -15,6 +15,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
+using Mapster;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
@@ -23,6 +24,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         IAirportWatchHistoricalDataService : IBaseDTOService<AirportWatchHistoricalDataDto,
             DB.Models.AirportWatchHistoricalData>
     {
+        Task<List<AirportWatchHistoricalDataDto>> GetHistoricalData(DateTime aircraftPositionStateDateUtc,
+            DateTime aircraftPositionEndDateUtc,
+            List<string> airportIcaos = null, List<string> aircraftHexCodes = null, List<string> tailNumbers = null, List<string> atcFlightNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
             string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
@@ -36,17 +40,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFboEntityService _FboEntityService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
 
-        public AirportWatchHistoricalDataService(IRepository<AirportWatchHistoricalData, FboLinxContext> entityService, 
-            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
+        public AirportWatchHistoricalDataService(AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
             AircraftService aircraftService,
             IFboEntityService fboEntityService,
             CustomerAircraftEntityService customerAircraftEntityService
-            ) : base(entityService)
+            ) : base(airportWatchHistoricalDataEntityService)
         {
             _CustomerAircraftEntityService = customerAircraftEntityService;
             _FboEntityService = fboEntityService;
             _AircraftService = aircraftService;
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+        }
+
+        public async Task<List<AirportWatchHistoricalDataDto>> GetHistoricalData(DateTime aircraftPositionStateDateUtc,
+            DateTime aircraftPositionEndDateUtc,
+            List<string> airportIcaos = null, List<string> aircraftHexCodes = null, List<string> tailNumbers = null, List<string> atcFlightNumbers = null)
+        {
+            var result = await _AirportWatchHistoricalDataEntityService.GetHistoricalData(aircraftPositionStateDateUtc,
+                aircraftPositionEndDateUtc, airportIcaos, aircraftHexCodes, tailNumbers, atcFlightNumbers);
+            return result == null ? null : result.Adapt<List<AirportWatchHistoricalDataDto>>();
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
@@ -60,7 +72,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
             //Fetch historical data for the provided tails
-            var historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec<AirportWatchHistoricalDataSimplifiedProjection>(new AirportWatchHistoricalDataByIcaoSpecification(airportIcao, startDateTimeUtc, endDateTimeUtc, tailNumbers));
+            var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalData(startDateTimeUtc, endDateTimeUtc, new List<string>() {airportIcao}, null, tailNumbers) ;
             
             //Retrieve relevant customer aircraft information
             var distinctTailsFromHistoricalData = historicalData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber)

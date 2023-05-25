@@ -952,7 +952,7 @@ namespace FBOLinx.Web.Controllers
                 request.Fbo = fbo;
 
                 FboLinxContractFuelVendorsCountResponse response = await _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request);
-                ICollection<FbolinxContractFuelVendorTransactionsCountAtAirport> fuelerlinxContractFuelVendorOrdersCount = response.Result;
+                ICollection<FbolinxContractFuelVendorTransactionsCountByAirport> fuelerlinxContractFuelVendorOrdersCount = response.Result;
 
 
                 List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
@@ -964,7 +964,7 @@ namespace FBOLinx.Web.Controllers
                                 }
                             };
 
-                foreach (FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
+                foreach (FbolinxContractFuelVendorTransactionsCountByAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
                     if (vendor.ContractFuelVendor != null && !vendor.ContractFuelVendor.ToLower().Contains("fbolinx") && !vendor.ContractFuelVendor.Contains(fbo) && !vendor.ContractFuelVendor.Contains(" - " + icao))
                     {
