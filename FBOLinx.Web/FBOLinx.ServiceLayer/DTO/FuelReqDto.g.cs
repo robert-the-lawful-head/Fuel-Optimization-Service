@@ -5,6 +5,7 @@ using EllipticCurve.Utils;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
 
@@ -85,6 +86,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public CustomerAircraftsDto CustomerAircraft { get; set; }
         public FbosDto Fbo { get; set; }
         public FuelReqPricingTemplateDto FuelReqPricingTemplate { get; set; }
+        public ServiceOrderDto ServiceOrder { get; set; }
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
         {

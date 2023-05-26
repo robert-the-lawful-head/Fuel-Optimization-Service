@@ -103,6 +103,7 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
     <None Remove="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
     <None Remove="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />
@@ -200,6 +201,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />

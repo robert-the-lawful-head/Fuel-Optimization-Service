@@ -75,25 +75,19 @@
                multiTemplateDataRows
                mat-table
                matSort>
-               <ng-container matColumnDef="expand-icon">
+            <ng-container matColumnDef="expand-icon">
                 <th mat-header-cell *matHeaderCellDef aria-label="row actions">
                     &nbsp;
                 </th>
                 <td mat-cell *matCellDef="let element">
-                    <button
-                        mat-icon-button
-                        aria-label="expand row"
-                        (click)="
+                    <button mat-icon-button
+                            aria-label="expand row"
+                            (click)="
                             toogleExpandedRows(element.sourceId);
                             $event.stopPropagation()
-                        "
-                    >
-                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)"
-                            >keyboard_arrow_down</mat-icon
-                        >
-                        <mat-icon *ngIf="isRowExpanded(element.sourceId)"
-                            >keyboard_arrow_up</mat-icon
-                        >
+                        ">
+                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)">keyboard_arrow_down</mat-icon>
+                        <mat-icon *ngIf="isRowExpanded(element.sourceId)">keyboard_arrow_up</mat-icon>
                     </button>
                 </td>
             </ng-container>
@@ -194,6 +188,17 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="services">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>Services</th>
+                <td *matCellDef="let fuelreq"
+                    [matTooltip]="'This order has additional services requested'"
+                    mat-cell>
+                    <span *ngIf="fuelreq.serviceOrder != null">
+                        <a class="btn-link" (click)="manageServiceOrderClicked(fuelreq)" clickStopPropagation>Manage</a>
+                    </span>
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="delete">
                 <th *matHeaderCellDef mat-header-cell>
                     <div class="pull-right">
@@ -207,17 +212,13 @@
                 </td>
             </ng-container>
             <ng-container matColumnDef="expandedDetail">
-                <td
-                    mat-cell
+                <td mat-cell
                     *matCellDef="let element"
-                    [attr.colspan]="allColumnsToDisplay.length"
-                >
-                    <div
-                        class="example-element-detail"
-                        [@detailExpand]="
+                    [attr.colspan]="allColumnsToDisplay.length">
+                    <div class="example-element-detail"
+                         [@detailExpand]="
                         isRowExpanded(element.sourceId) ? 'expanded' : 'collapsed'
-                        "
-                    >
+                        ">
                         <div class="example-element-description">
                             <table class="description-table">
                                 <tr>
@@ -260,29 +261,23 @@
                     </div>
                 </td>
             </ng-container>
-            <tr
-            mat-header-row
-            *matHeaderRowDef="getVisibleColumns(); sticky: true"
-        ></tr>
-        <tr
-            mat-row
-            *matRowDef="let element; columns: getVisibleColumns()"
-            class="example-element-row"
-            [class.example-expanded-row]="isRowExpanded(element.sourceId)"
-            (click)="
+            <tr mat-header-row
+                *matHeaderRowDef="getVisibleColumns(); sticky: true"></tr>
+            <tr mat-row
+                *matRowDef="let element; columns: getVisibleColumns()"
+                class="example-element-row"
+                [class.example-expanded-row]="isRowExpanded(element.sourceId)"
+                (click)="
             toogleExpandedRows(element.sourceId)
-            "
-        ></tr>
-        <tr
-            mat-row
-            *matRowDef="let row; columns: ['expandedDetail']"
-            class="example-detail-row"
-        ></tr>
-        <tr class="mat-row" *matNoDataRow>
-            <td class="mat-cell" [attr.colspan]="columns.length">
-                {{ getNoDataToDisplayString() }}
-            </td>
-        </tr>
+            "></tr>
+            <tr mat-row
+                *matRowDef="let row; columns: ['expandedDetail']"
+                class="example-detail-row"></tr>
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" [attr.colspan]="columns.length">
+                    {{ getNoDataToDisplayString() }}
+                </td>
+            </tr>
         </table>
         <div class="invisible">
             <mat-paginator

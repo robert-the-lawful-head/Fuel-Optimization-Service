@@ -107,6 +107,10 @@
             padding: $module-rem * 2;
             position: relative;
 
+            @media only screen and (max-width: 991px) {
+                padding: $module-rem / 2;
+            }
+
             &.tiny-content {
                 padding: 0.3rem 1rem !important;
             }
@@ -133,6 +137,7 @@
         &.dark-card {
             background: main-color(200);
             border-color: main-color(200);
+
             &:not(.outline-card) {
                 color: #fff;
             }

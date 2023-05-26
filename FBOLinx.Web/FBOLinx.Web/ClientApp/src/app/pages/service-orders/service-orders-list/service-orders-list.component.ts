@@ -95,7 +95,7 @@ export class ServiceOrdersListComponent implements OnInit {
         });        
     }
 
-    public inCompleteServiceToggleChanged(event: any) {
+    public serviceOrderToggleChanged(event: any) {
         var serviceOrder: ServiceOrder = event.option._value;
         for (const item of serviceOrder.serviceOrderItems) {
             item.isCompleted = event.option._selected;

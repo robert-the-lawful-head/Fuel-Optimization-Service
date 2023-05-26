@@ -1,66 +1,38 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
-    <mat-tab-group>
-        <mat-tab label="Current &amp; Upcoming Orders">
-            <div>
-                <div class="row">
-                    <div class="col-12" *ngIf="!currentOrdersData">
-                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                    </div>
-                    <div class="col-12" *ngIf="currentOrdersData">
-                        <app-service-orders-list [serviceOrdersData]="currentOrdersData"></app-service-orders-list>
-                    </div>
+    <ni-card [headerBgColor]="'#CF8B7C'" title="Service Orders">
+        <div *ngIf="!serviceOrdersData">
+            <div class="row">
+                <div class="col-12">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </div>
             </div>
-        </mat-tab>
-        <mat-tab label="Past Orders">
-            <div>
-                <div class="row">
-                    <!--<div class="col col-md-4">
-                        <app-table-global-search (filterApplied)="currentOrdersFilterChanged($event)" 
-                                                 placeholder="Search by Company, Tail, etc."></app-table-global-search>
-                    </div>-->
-                    <!--<div class="col-6 col-md-3">
-                        <mat-form-field>
-                            <input (dateChange)="applyDateFilterChange()"
-                                   (focus)="pastOrdersStartDateFilter.open()"
-                                   [(ngModel)]="pastOrdersfilterStartDate"
-                                   [matDatepicker]="pastOrdersStartDateFilter"
-                                   [max]="pastOrdersEndDate"
-                                   matInput
-                                   placeholder="Start Date" />
-                            <mat-datepicker-toggle [for]="pastOrdersStartDateFilter"
-                                                   matSuffix></mat-datepicker-toggle>
-                            <mat-datepicker #pastOrdersStartDateFilter
-                                            disabled="false"></mat-datepicker>
-                        </mat-form-field>
+        </div>
+        <div *ngIf="serviceOrdersData">
+            <app-service-orders-list [serviceOrdersData]="serviceOrdersData"></app-service-orders-list>
+        </div>
+    </ni-card>
+
+
+        <!--<mat-tab-group>
+            <mat-tab label="Service Orders">
+                
+            </mat-tab>
+            <mat-tab label="Past Orders">
+                <div>
+                    <div class="row">
+
                     </div>
-                    <div class="col-6 col-md-3">
-                        <mat-form-field>
-                            <input (dateChange)="applyDateFilterChange()"
-                                   (focus)="pastOrdersEndDateFilter.open()"
-                                   [(ngModel)]="pastOrdersEndDate"
-                                   [matDatepicker]="pastOrdersEndDateFilter"
-                                   [min]="pastOrdersfilterStartDate"
-                                   matInput
-                                   placeholder="End Date" />
-                            <mat-datepicker-toggle [for]="pastOrdersEndDateFilter"
-                                                   matSuffix></mat-datepicker-toggle>
-                            <mat-datepicker #pastOrdersEndDateFilter
-                                            disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                    </div>-->
-                </div>
-                <div class="row">
-                    <div class="col-12" *ngIf="!pastOrdersData">
-                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                    </div>
-                    <div class="col-12" *ngIf="pastOrdersData">
-                        <app-service-orders-list [serviceOrdersData]="pastOrdersData" [allowAddingNew]="false"></app-service-orders-list>
+                    <div class="row">
+                        <div class="col-12" *ngIf="!pastOrdersData">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        </div>
+                        <div class="col-12" *ngIf="pastOrdersData">
+                            <app-service-orders-list [serviceOrdersData]="pastOrdersData" [allowAddingNew]="false"></app-service-orders-list>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+            </mat-tab>
+        </mat-tab-group>-->
 </div>

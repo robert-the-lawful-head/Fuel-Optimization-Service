@@ -229,6 +229,7 @@ import { ServiceOrdersListComponent } from './service-orders/service-orders-list
 import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
 import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
 import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
+import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 
 @NgModule({
     declarations: [
@@ -379,7 +380,8 @@ import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders
         ServiceOrdersListComponent,
         ServiceOrdersHomeComponent,
         ServiceOrdersItemListComponent,
-        ServiceOrdersDialogNewComponent
+        ServiceOrdersDialogNewComponent,
+        ServiceOrdersDialogOrderItemsComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

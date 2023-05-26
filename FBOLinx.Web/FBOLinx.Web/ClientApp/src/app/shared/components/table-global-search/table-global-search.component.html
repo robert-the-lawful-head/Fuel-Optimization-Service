@@ -16,9 +16,9 @@
                 (click)="clearAllFilters(); $event.stopPropagation()"
                 [view]="'error'"
                 ni-button
-                size="small"
-            >
-                Clear All Filters
+                size="small">
+                <span class="d-none d-md-block">Clear All Filters</span>
+                <span class="d-block d-md-none">Clear</span>
             </button>
         </div>
     </div>
