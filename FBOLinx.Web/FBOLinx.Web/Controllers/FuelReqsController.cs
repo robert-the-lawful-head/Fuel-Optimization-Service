@@ -33,6 +33,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -52,9 +53,17 @@ namespace FBOLinx.Web.Controllers
         private readonly IDemoFlightWatch _demoFlightWatch;
         private readonly IFboPreferencesService _FboPreferencesService;
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
+        private ICompanyPricingLogService _CompanyPricingLogService;
 
-        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, FuelerLinxApiService fuelerLinxService, AircraftService aircraftService, AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService, AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch, ILoggingService logger, IFboPreferencesService fboPreferencesService, ICustomerInfoByGroupService customerInfoByGroupService) : base(logger)
+        public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
+            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
+            AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
+            ILoggingService logger, IFboPreferencesService fboPreferencesService,
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ICompanyPricingLogService companyPricingLogService) : base(logger)
         {
+            _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
             _context = context;
             _HttpContextAccessor = httpContextAccessor;
@@ -955,7 +964,7 @@ namespace FBOLinx.Web.Controllers
                 request.Fbo = fbo;
 
                 FboLinxContractFuelVendorsCountResponse response = await _fuelerLinxService.GetContractFuelVendorsTransactionsCountForAirport(request);
-                ICollection<FbolinxContractFuelVendorTransactionsCountAtAirport> fuelerlinxContractFuelVendorOrdersCount = response.Result;
+                ICollection<FbolinxContractFuelVendorTransactionsCountByAirport> fuelerlinxContractFuelVendorOrdersCount = response.Result;
 
 
                 List<NgxChartBarChartItemType> chartData = new List<NgxChartBarChartItemType>()
@@ -967,7 +976,7 @@ namespace FBOLinx.Web.Controllers
                                 }
                             };
 
-                foreach (FbolinxContractFuelVendorTransactionsCountAtAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
+                foreach (FbolinxContractFuelVendorTransactionsCountByAirport vendor in fuelerlinxContractFuelVendorOrdersCount)
                 {
                     if (vendor.ContractFuelVendor != null && !vendor.ContractFuelVendor.ToLower().Contains("fbolinx") && !vendor.ContractFuelVendor.Contains(fbo) && !vendor.ContractFuelVendor.Contains(" - " + icao))
                     {
@@ -1062,8 +1071,8 @@ namespace FBOLinx.Web.Controllers
 
                 request.Icao = icao;
 
-                string fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).Select(f => f.Fbo).FirstOrDefaultAsync();
-                request.Fbo = fbo;
+                var fbo = await _context.Fbos.Where(f => f.Oid.Equals(fboId)).FirstOrDefaultAsync();
+                //request.Fbo = fbo;
 
                 FboLinxFbosTransactionsCountResponse fuelerlinxFBOsOrdersCount = await _fuelerLinxService.GetFBOsTransactionsCountForAirport(request);
 
@@ -1072,10 +1081,10 @@ namespace FBOLinx.Web.Controllers
                 int i = 1;
                 foreach (GroupedTransactionCountByFBOAtAirport vendor in fuelerlinxFBOsOrdersCount.Result)
                 {
-                    if (vendor.Fbo == "Competitor FBO")
+                    if (vendor.AcukwikFboHandlerId != fbo.AcukwikFBOHandlerId)
                     {
                         NgxChartBarChartItemType chartItemType = new NgxChartBarChartItemType();
-                        chartItemType.Name = vendor.Fbo + " " + i;
+                        chartItemType.Name = "Competitor FBO " + i;
                         chartItemType.Value = vendor.Count;
                         chartData.Add(chartItemType);
                         i++;
@@ -1133,7 +1142,7 @@ namespace FBOLinx.Web.Controllers
                     var yourOrder = yourOrderCount.Count(y => y.Icao == f.Icao && (y.Cancelled == null || y.Cancelled == false) && y.Etd >= request.StartDateTime && y.Etd < request.EndDateTime.AddDays(1));
                     var airportOrder = order == null ? 0 : order?.AirportOrders;
                     var fboOrder = (order == null ? 0 : order?.FboOrders);
-                    var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder + (double)yourOrder) / (double)airportOrder) * 100);
+                    var marketShare = (double)(airportOrder == 0 ? 0 : (((double)fboOrder) / (double)airportOrder) * 100);
 
                     return new
                     {
@@ -1179,15 +1188,9 @@ namespace FBOLinx.Web.Controllers
             {
                 string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
                 var fuelReqs = await _fuelReqService.GetValidFuelRequestTotals(fboId, request.StartDateTime, request.EndDateTime);
-                var pricingLogs = await (from cpl in _context.CompanyPricingLog
-                                         join c in _context.Customers on cpl.CompanyId equals c.FuelerlinxId
-                                         join cibg in _context.CustomerInfoByGroup on c.Oid equals cibg.CustomerId
-                                         where cibg.GroupId == groupId && cpl.ICAO == icao
-                                         select new
-                                         {
-                                             cibg.CustomerId,
-                                             cpl.CreatedDate
-                                         }).ToListAsync();
+                var groupedPricingLogs =
+                    await _CompanyPricingLogService.GetCompanyPricingLogCountByAirport(request.StartDateTime,
+                        request.EndDateTime, icao);
                 int? customeridval = request.customerId;
 
                 var customers = await _fuelReqService.GetValidCustomers(groupId, customeridval).ToListAsync();
@@ -1225,8 +1228,8 @@ namespace FBOLinx.Web.Controllers
                 {
                     var fuelerLinxCustomerID = Math.Abs((customer.Customer?.FuelerlinxId).GetValueOrDefault());
                     var selectedCompanyFuelReqs = fuelReqs.Where(f => f.CustomerId.Equals(customer.CustomerId)).FirstOrDefault();
-                    var companyQuotes = pricingLogs.Where(c => c.CreatedDate >= request.StartDateTime && c.CreatedDate <= request.EndDateTime && c.CustomerId.Equals(customer.CustomerId)).Count();
-                    var companyPricingLog = pricingLogs.Where(c => c.CustomerId.Equals(customer.CustomerId)).OrderByDescending(c => c.CreatedDate).FirstOrDefault();
+                    var matchingPriceLog = groupedPricingLogs.Where(x => x.CustomerId == customer.CustomerId)?.FirstOrDefault();
+                    var companyQuotes = (matchingPriceLog?.QuoteCount).GetValueOrDefault();
 
                     var totalOrders = 0;
                     if (fuelerlinxCustomerFBOOrdersCount != null)
@@ -1250,7 +1253,7 @@ namespace FBOLinx.Web.Controllers
                         TotalOrders = totalOrders,
                         AirportOrders = airportTotalOrders,
                         CustomerBusiness = airportTotalOrders == 0 ? 0 : Math.Round(decimal.Parse(totalOrders.ToString()) / decimal.Parse(airportTotalOrders.ToString()) * 100, 2),
-                        LastPullDate = companyPricingLog == null ? "N/A" : companyPricingLog.CreatedDate.ToString(),
+                        LastPullDate = matchingPriceLog == null || !matchingPriceLog.LastQuoteDate.HasValue ? "N/A" : matchingPriceLog.LastQuoteDate.ToString(),
                         AirportICAO = icao,
                         AirportVisits = airportVisits == null ? 0 : airportVisits,
                         VisitsToFbo = visitsToFbo == null ? 0 : visitsToFbo,

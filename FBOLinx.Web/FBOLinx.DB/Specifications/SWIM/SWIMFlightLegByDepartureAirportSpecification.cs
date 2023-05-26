@@ -16,9 +16,9 @@ namespace FBOLinx.DB.Specifications.SWIM
         {
         }
 
-        public SWIMFlightLegByDepartureAirportSpecification(List<string> airportIcaos, DateTime minArrivalOrDepartureDateUTC) : base(x => ((x.ATD > minArrivalOrDepartureDateUTC) || (x.ETA.HasValue && x.ETA.Value > minArrivalOrDepartureDateUTC))
-            && ((!string.IsNullOrEmpty(x.DepartureICAO) && airportIcaos.Contains(x.DepartureICAO))))
-        {
-        }
+        //public SWIMFlightLegByDepartureAirportSpecification(List<string> airportIcaos, DateTime minArrivalOrDepartureDateUTC) : base(x => ((x.ATD > minArrivalOrDepartureDateUTC) || (x.ETA.HasValue && x.ETA.Value > minArrivalOrDepartureDateUTC))
+        //    && ((!string.IsNullOrEmpty(x.DepartureICAO) && airportIcaos.Contains(x.DepartureICAO))))
+        //{
+        //}
     }
 }

@@ -44,6 +44,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
@@ -74,10 +75,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly AFSAircraftEntityService _AFSAircraftEntityService;
         private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
-        private readonly SWIMFlightLegEntityService _SWIMFlightLegEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegService _SwimFlightLegService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -89,12 +90,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService,
-            SWIMFlightLegEntityService swimFlightLegEntityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegService swimFlightLegService)
         {
+            _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;
             _CustomerInfoByGroupService = customerInfoByGroupService;
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
@@ -114,7 +116,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _LoggingService = loggingService;
             _AFSAircraftEntityService = afsAircraftEntityService;
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
-            _SWIMFlightLegEntityService = swimFlightLegEntityService;
             _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
@@ -809,9 +810,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             try
             {
-                var historicalData = await _AirportWatchHistoricalDataService.GetListbySpec(
-                    new AirportWatchHistoricalDataByIcaoSpecification(icao, startDateTimeUtc, endDateTimeUtc));
-                    
+                var historicalData = await _AirportWatchHistoricalDataService.GetHistoricalData(startDateTimeUtc, endDateTimeUtc, new List<string>() {icao});
 
                 var occurrences = historicalData.Where(x =>
                     x.AircraftStatus == AircraftStatusType.Parking).ToList();
@@ -845,7 +844,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var missingAircrafts = aircrafts.Where(x => x.Latitude == null && x.Longitude == null).ToList();
             if (missingAircrafts.Any())
             {
-                var latestSWIMRecords = await _SWIMFlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(missingAircrafts.Select(x => x.TailNumber).ToList(), DateTime.UtcNow.AddDays(-7), false));
+                var latestSWIMRecords = await _SwimFlightLegService.GetSwimFlightLegs(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null, missingAircrafts.Select(x => x.TailNumber).ToList(), false);
                 if (latestSWIMRecords.Any())
                 {
                     foreach (IGrouping<string, SWIMFlightLeg> grouping in latestSWIMRecords.GroupBy(x => x.AircraftIdentification))
@@ -979,7 +978,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         private async Task<List<AirportWatchHistoricalDataDto>> GetAirportWatchHistoricalDataFromDatabase(List<string> aircraftHexCodes, DateTime aircraftPositionDateTime)
         {
-            var result = await _AirportWatchHistoricalDataService.GetListbySpec(new AirportWatchHistoricalDataByHexCodeSpecification(aircraftHexCodes, aircraftPositionDateTime));
+            var result = await _AirportWatchHistoricalDataService.GetHistoricalData(aircraftPositionDateTime,
+                DateTime.UtcNow, null, aircraftHexCodes);
 
             return result;
         }

@@ -14,18 +14,6 @@ namespace FBOLinx.DB.Specifications.SWIM
             AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(IList<string> departureICAOs, IList<string> arrivalICAOs, DateTime atdMin, DateTime atdMax)
-            : base(x => (departureICAOs.Contains(x.DepartureICAO) && arrivalICAOs.Contains(x.ArrivalICAO) && x.ATD >= atdMin && x.ATD <= atdMax))
-        {
-            //AddInclude(x => x.SWIMFlightLegDataMessages);
-        }
-
-        public SWIMFlightLegSpecification(IList<string> flightIdentifiers)
-            : base(x => x.Gufi != null && flightIdentifiers.Contains(x.Gufi))
-        {
-            //AddInclude(x => x.SWIMFlightLegDataMessages);
-        }
-
         public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startETADate, List<FlightLegStatus> statusesToExclude)
             : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) &&
                         x.ETA != null && x.ETA > startETADate && x.Status != null && !statusesToExclude.Contains(x.Status.Value))
@@ -33,28 +21,8 @@ namespace FBOLinx.DB.Specifications.SWIM
             //AddInclude(x => x.SWIMFlightLegDataMessages);
         }
 
-        public SWIMFlightLegSpecification(string departureICAO, string arrivalICAO, DateTime startDate, DateTime endDate)
-            : base(x => ((departureICAO != null && departureICAO == x.DepartureICAO) || (arrivalICAO != null && arrivalICAO == x.ArrivalICAO)) && x.ETA >= startDate && x.ETA <= endDate)
-        {
-        }
-
-        public SWIMFlightLegSpecification(IList<string> tailNumbers, DateTime minATD, bool isPlaceholder)
-            : base(x => tailNumbers.Contains(x.AircraftIdentification) && x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
-        {
-        }
-
         public SWIMFlightLegSpecification(string departureIcao, DateTime minATD, bool isPlaceholder)
             : base(x => x.DepartureICAO == departureIcao &&  x.ATD > minATD && x.IsPlaceholder == isPlaceholder)
-        {
-        }
-
-        public SWIMFlightLegSpecification(DateTime startETADate) 
-            : base(x => x.ETA > startETADate && x.ArrivalICAO != null) // x.ArrivalICAO != null - skip placeholder records
-        {
-        }
-
-        public SWIMFlightLegSpecification(DateTime startETADate, bool includeOnlyNewRecords)
-            : base(x => x.ETA > startETADate && x.ArrivalICAO != null && !x.IsProcessed) // x.ArrivalICAO != null - skip placeholder records
         {
         }
     }

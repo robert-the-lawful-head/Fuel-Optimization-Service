@@ -3,6 +3,9 @@ using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Entities;
+using System.Linq;
+using System;
 
 namespace FBOLinx.DB.Context
 {
@@ -1054,6 +1057,15 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Longitude).IsUnicode(false);
             });
+
+            modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
+            {
+                entity.HasNoKey();
+            });
         }
+
+        [DbFunction("fn_Split")]
+        public IQueryable<DatabaseStringSplitResult> SplitStringToTable(string inputString, string delimiter)
+            => throw new NotSupportedException();
     }
 }
