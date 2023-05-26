@@ -54,5 +54,8 @@ namespace FBOLinx.DB.Models
         [InverseProperty("CustomerInfoByGroup")]
         [ForeignKey("CustomerId")]
         public Customers Customer { get; set; }
+
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
     }
 }

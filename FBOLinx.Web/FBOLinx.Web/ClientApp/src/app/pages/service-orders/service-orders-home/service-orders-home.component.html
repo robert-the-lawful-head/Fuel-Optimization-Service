@@ -1,0 +1,38 @@
+<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+
+<div class="after-breadcrumb">
+    <ni-card [headerBgColor]="'#CF8B7C'" title="Service Orders">
+        <div *ngIf="!serviceOrdersData">
+            <div class="row">
+                <div class="col-12">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="serviceOrdersData">
+            <app-service-orders-list [serviceOrdersData]="serviceOrdersData"></app-service-orders-list>
+        </div>
+    </ni-card>
+
+
+        <!--<mat-tab-group>
+            <mat-tab label="Service Orders">
+                
+            </mat-tab>
+            <mat-tab label="Past Orders">
+                <div>
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-12" *ngIf="!pastOrdersData">
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        </div>
+                        <div class="col-12" *ngIf="pastOrdersData">
+                            <app-service-orders-list [serviceOrdersData]="pastOrdersData" [allowAddingNew]="false"></app-service-orders-list>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>-->
+</div>

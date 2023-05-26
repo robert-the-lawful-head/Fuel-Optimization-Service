@@ -321,6 +321,33 @@ button.mat-icon-button {
     padding: 10px;
 }
 
+/*Button positioning and layouts*/
+.vertical-aligned-button-container {
+    position: relative;
+    height: 100%;
+
+    button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+    }
+}
+
+.add-button-container {
+    @media only screen and (max-width: 991px) {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 99999;
+
+        button {
+            border-radius: 20px;
+        }
+    }
+}
+/*End Button positioning and layouts*/
+
 /*Tax and Fee Breakdown*/
 
 /*Price Lookup*/

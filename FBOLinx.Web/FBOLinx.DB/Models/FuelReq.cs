@@ -31,6 +31,8 @@ namespace FBOLinx.DB.Models
         public string PaymentMethod { get; set; }
 
 
+        #region Relationships
+
         [ForeignKey("CustomerId")]
         [InverseProperty("FuelReqs")]
         public Customers Customer { get; set; }
@@ -45,5 +47,10 @@ namespace FBOLinx.DB.Models
 
         [InverseProperty("FuelReq")]
         public FuelReqPricingTemplate FuelReqPricingTemplate { get; set; }
+
+        [InverseProperty("AssociatedFuelOrder")]
+        public ServiceOrder ServiceOrder { get; set; }
+
+        #endregion
     }
 }

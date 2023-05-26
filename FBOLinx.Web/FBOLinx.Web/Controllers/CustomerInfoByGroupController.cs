@@ -31,6 +31,7 @@ using FBOLinx.ServiceLayer.Logging;
 using NuGet.Packaging;
 using Microsoft.Extensions.Azure;
 using System.Text.RegularExpressions;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -55,7 +56,13 @@ namespace FBOLinx.Web.Controllers
         private ICustomerInfoByGroupService _customerInfoByGroupService;
         private readonly ICustomerAircraftService _customerAircraftService;
 
-        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context, ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService, AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService, FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService, AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService, IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService, ILoggingService logger, ICustomerAircraftService customerAircraftService) : base(logger)
+        public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context,
+            ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService,
+            AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService,
+            FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService,
+            AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService,
+            IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService,
+            ILoggingService logger, ICustomerAircraftService customerAircraftService) : base(logger)
         {
             _hostingEnvironment = hostingEnvironment;
             _context = context;
@@ -99,6 +106,40 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerInfoByGroup);
         }
 
+        [HttpGet("group/{groupId}/list")]
+        public async Task<IActionResult> GetCustomerInfoByGroupByGroupId([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _customerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(groupId));
+
+            return Ok(result);
+        }
+
+
+        /// <summary>
+        /// Get a customerInfoByGroup record by group id and customer id
+        /// </summary>
+        /// <param name="groupId"></param>
+        /// <returns></returns>
+        [HttpGet("group/{groupId}/customer/{customerId}")]
+        public async Task<ActionResult<CustomerInfoByGroupDTO>> GetCustomerInfoByGroupAndCustomerId([FromRoute] int groupId, [FromRoute] int customerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _customerInfoByGroupService.GetSingleBySpec(
+                new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, groupId));
+
+            return Ok(result);
+        }
+
+
         [HttpGet("group/{groupId}/customers-with-contacts")]
         public async Task<IActionResult> GetCustomersWithContactsByGroup([FromRoute] int groupId)
         {
@@ -141,8 +182,8 @@ namespace FBOLinx.Web.Controllers
         }
 
 
-        [HttpGet("group/{groupId}")]
-        public async Task<IActionResult> GetCustomersByGroup([FromRoute] int groupId)
+        [HttpGet("group/{groupId}/viewmodel")]
+        public async Task<IActionResult> GetCustomerInfoByGroupListByGroupId([FromRoute] int groupId)
         {
             var customerAircraft =
                     (from aircraftByCustomer in (await _context.CustomerAircrafts.Where(x => x.GroupId == groupId).ToListAsync())

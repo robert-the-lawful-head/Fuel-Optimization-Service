@@ -38,6 +38,7 @@ import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-statu
 import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
 import { AboutFbolinxComponent } from './pages/about-fbolinx/about-fbolinx.component';
+import { ServiceOrdersHomeComponent } from './pages/service-orders/service-orders-home/service-orders-home.component';
 
 const defaultRoutes: Routes = [
     {
@@ -166,11 +167,6 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
-        component: FuelreqsHomeComponent,
-        path: 'fuelreqs',
-    },
-    {
-        canActivate: [AuthGuard],
         component: RampFeesHomeComponent,
         path: 'rampfees',
     },
@@ -210,9 +206,14 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
+        component: ServiceOrdersHomeComponent,
+        path: 'service-orders',
+    },
+    {
+        canActivate: [AuthGuard],
         component: DashboardHomeComponent,
         path: '**',
-    },
+    }    
 ];
 
 const outsideTheGateRoutes: Routes = [

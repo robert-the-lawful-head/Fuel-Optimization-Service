@@ -153,6 +153,17 @@
         "roles": [ 1, 4, 5, 6 ]
     },
     {
+        "title": "Service Orders",
+        "icon": {
+            "class": "fa fa-tags",
+            "bg": "#CF8B7C",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "See your incoming service orders.",
+        "routing": "/default-layout/service-orders",
+        "roles": [ 1, 4, 5, 6 ]
+    },
+    {
         "title": "Ramp Fees",
         "icon": {
             "class": "fa fa-plane",

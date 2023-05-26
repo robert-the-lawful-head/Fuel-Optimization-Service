@@ -1,0 +1,133 @@
+<div class="add-button-container d-block d-md-none" *ngIf="allowAddingNew">
+    <button (click)="addServiceOrderClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+            ni-button>
+    </button>
+</div>
+
+<mat-drawer-container class="" style="min-height: 500px;">
+    <mat-drawer #serviceOrderDrawer class="" mode="side">
+        <div *ngIf="selectedServiceOrder">
+            <app-service-orders-item-list [serviceOrder]="selectedServiceOrder" (serviceOrderItemsChanged)="serviceOrderItemsChanged($event)"
+                                          (closeClicked)="serviceOrderDrawer.close()"></app-service-orders-item-list>
+        </div>
+    </mat-drawer>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col">
+                <app-table-global-search (filterApplied)="filterChanged($event)"
+                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
+            </div>
+        </div>
+
+        <div class="row d-none d-md-flex" *ngIf="allowAddingNew">
+            <div class="col-12 text-right">
+                
+                <div>
+                    <button (click)="addServiceOrderClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                            ni-button size="small">
+                        Add Order
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row" *ngIf="!inCompleteServiceOrders || inCompleteServiceOrders.length == 0">
+            <div class="col-12 text-center">
+                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link" (click)="addServiceOrderClicked()">add one to begin</a>.</span> 
+            </div>
+        </div>
+
+        <mat-selection-list #incompletedServiceOrders (selectionChange)="serviceOrderToggleChanged($event)">
+            <mat-list-option *ngFor="let order of inCompleteServiceOrders" [value]="order" [selected]="order.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after">
+                <div clickStopPropagation (click)="serviceOrderClicked(order);serviceOrderDrawer.open();">
+                    <div class="row">
+                        <div class="col-10">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
+                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
+                                    <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.serviceDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                </div>
+                                
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="small">
+                                        <span>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 text-right">
+                            <div class="vertical-aligned-button-container">
+                                <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </mat-list-option>
+        </mat-selection-list>
+
+
+        <div *ngIf="completeServiceOrders && completeServiceOrders.length > 0" class="mt-2">
+            <mat-accordion>
+                <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <strong>Completed ({{completeServiceOrders.length}})</strong>
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            Service orders that have been completed.
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <mat-selection-list #incompletedServiceOrders (selectionChange)="serviceOrderToggleChanged($event)">
+                        <mat-list-option *ngFor="let order of completeServiceOrders" [value]="order" [selected]="order.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after">
+                            <div clickStopPropagation (click)="serviceOrderClicked(order);serviceOrderDrawer.toggle();">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="row">
+                                            <div class="col">
+                                                <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
+                                                <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
+                                                <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.serviceDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="small">
+                                                    <span>Services: {{order.numberOfCompletedItems}} of {{order.serviceOrderItems.length}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 text-right">
+                                        <div class="vertical-aligned-button-container">
+                                            <button (click)="deleteServiceOrderClicked(order);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                                                <span>Delete</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </mat-list-option>
+                    </mat-selection-list>
+
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+    </div>
+
+   
+
+</mat-drawer-container>

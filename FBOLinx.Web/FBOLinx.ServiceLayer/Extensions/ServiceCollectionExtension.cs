@@ -19,6 +19,7 @@ using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.User;
@@ -107,6 +108,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IGroupFboService, GroupFboService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<IServiceOrderService, ServiceOrderService>();
+            services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -145,6 +148,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboPreferencesEntityService, FboPreferencesEntityService>();
             services.AddTransient<TableStorageLogEntityService, TableStorageLogEntityService>();
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
+            services.AddTransient<IServiceOrderEntityService, ServiceOrderEntityService>();
+            services.AddTransient<IServiceOrderItemEntityService, ServiceOrderItemEntityService>();
 
             return services;
         }

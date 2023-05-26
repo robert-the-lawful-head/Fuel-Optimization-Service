@@ -108,6 +108,7 @@ import { PublicViewComponent } from './layouts/public-view/public-view.component
 import { FileHelper } from './helpers/files/file.helper';
 import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTemplateCalc.service';
 import { DocumentService } from './services/documents.service';
+import { ServiceOrderService } from './services/serviceorder.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -231,7 +232,8 @@ import { DocumentService } from './services/documents.service';
         FlightWatchHelper,
         FileHelper,
         PricingTemplateCalcService,
-        DocumentService
+        DocumentService,
+        ServiceOrderService
     ],
 })
 export class AppModule { }
