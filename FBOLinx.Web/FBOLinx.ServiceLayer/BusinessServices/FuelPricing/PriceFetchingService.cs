@@ -142,8 +142,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             _GroupId = groupId;
             var feesAndTaxesPassedIn = feesAndTaxes;
 
-            //try
-            //{
+            try
+            {
                 //Prepare default values
                 if (flightTypeClassifications == FlightTypeClassifications.NotSet ||
                     flightTypeClassifications == FlightTypeClassifications.All)
@@ -213,9 +213,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
                 //Fetch the customer pricing results
                 var customerPricingResults = (from  c in customer
-                                              join pt in pricingTemplates on fboId equals pt.Fboid into leftJoinPT
-                                              from pt in leftJoinPT.DefaultIfEmpty()
-                                              join ppt in customerMargins on (pt != null ? pt.Oid : 0) equals ppt.TemplateId
+                                              join pt in pricingTemplates on fboId equals pt.Fboid
+                                              join ppt in customerMargins on pt.Oid equals ppt.TemplateId
                                                   into leftJoinPPT
                                               from ppt in leftJoinPPT.DefaultIfEmpty()
                                               join cct in customCustomerTypes on c.CustomerId equals cct.CustomerId into leftJoinCCT
@@ -248,7 +247,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                               { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
                                                   into leftJoinCCOT
                                               from ccot in leftJoinCCOT.DefaultIfEmpty()
-                                              where c.Oid == customerInfoByGroupId
+                                              where (c.Oid == customerInfoByGroupId) || (customerInfoByGroupId == 0)
                                               select new CustomerWithPricing()
                                               {
                                                   CustomerId = c.Customer.Oid,
@@ -288,8 +287,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A")
                                               }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
+                // If getting pricing by template for price checker, just use the first customer
+                if (customerInfoByGroupId == 0 && customerPricingResults.Count > 0)
+                {
+                    var customerId = customerPricingResults[0].CustomerId;
+                    customerPricingResults = customerPricingResults.Where(c => c.CustomerId == customerId).ToList();
+                }
+
                 if (feesAndTaxes.Count == 0)
+                {
                     return customerPricingResults;
+                }
 
                 //Add domestic-departure-only price options
                 List<CustomerWithPricing> domesticOptions = new List<CustomerWithPricing>();
@@ -398,12 +406,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     });
                 });
                 return resultsWithFees;
-            //}
-            //catch (System.Exception exception)
-            //{
-            //    var test = exception;
-            //    return new List<CustomerWithPricing>();
-            //}
+            }
+            catch (System.Exception exception)
+            {
+                var test = exception;
+                return new List<CustomerWithPricing>();
+            }
         }
 
         public async Task<PriceBreakdownDisplayTypes> GetPriceBreakdownDisplayType(int fboId)
