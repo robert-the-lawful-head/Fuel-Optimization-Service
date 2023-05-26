@@ -696,28 +696,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                                        })
                .OrderBy(x => x.TailNumber).ToList();
 
-            //List <CustomerAircraftsViewModel> result = await (
-            //   from ca in _context.CustomerAircrafts
-            //   join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-            //   join c in _context.Customers on cg.CustomerId equals c.Oid
-            //   where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
-            //   select new CustomerAircraftsViewModel
-            //   {
-            //       Oid = ca.Oid,
-            //       GroupId = ca.GroupId,
-            //       CustomerId = ca.CustomerId,
-            //       Company = cg.Company,
-            //       AircraftId = ca.AircraftId,
-            //       TailNumber = ca.TailNumber,
-            //       Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
-            //       BasedPaglocation = ca.BasedPaglocation,
-            //       NetworkCode = ca.NetworkCode,
-            //       AddedFrom = ca.AddedFrom ?? 0,
-            //       IsFuelerlinxNetwork = c.FuelerlinxId > 0
-            //   })
-            //   .OrderBy(x => x.TailNumber)
-            //   .ToListAsync();
-
             return result;
         }
         #endregion
