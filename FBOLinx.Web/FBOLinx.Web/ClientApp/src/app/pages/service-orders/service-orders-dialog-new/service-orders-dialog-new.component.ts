@@ -73,14 +73,30 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
 
     private loadCustomerInfoByGroupDataSource() {
         this.customerInfoByGroupService.getCustomerInfoByGroupListByGroupId(this.data.groupId).subscribe((response: CustomerInfoByGroup[]) => {
-                this.customerInfoByGroupDataSource = response;
+            this.customerInfoByGroupDataSource = response.sort((n1, n2) => {
+                if (n1.company > n2.company) {
+                    return 1;
+                }
+                if (n1.company < n2.company) {
+                    return -1;
+                }
+                return 0;
+            });
         });
     }
 
     private loadCustomerAircraftsDataSource() {
         this.customerAircraftsDataSource = [];
         this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.data.groupId, this.data.fboId, this.data.customerInfoByGroup.customerId).subscribe((response: CustomerAircraft[]) => {
-            this.customerAircraftsDataSource = response;
+            this.customerAircraftsDataSource = response.sort((n1, n2) => {
+                if (n1.tailNumber > n2.tailNumber) {
+                    return 1;
+                }
+                if (n1.tailNumber < n2.tailNumber) {
+                    return -1;
+                }
+                return 0;
+            });
         })
     }
 }
