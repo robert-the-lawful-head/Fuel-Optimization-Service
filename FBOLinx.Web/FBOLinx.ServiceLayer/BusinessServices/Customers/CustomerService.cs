@@ -6,6 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
@@ -14,17 +15,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
-    public interface ICustomerService : IBaseDTOService<CustomerDTO, DB.Models.Customers>
+    public interface ICustomerService : IBaseDTOService<CustomersDto, DB.Models.Customers>
     {
         Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
         Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
-        Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId);
+        Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId);
         bool CompareCustomers(CustomerInfoByGroup oldCustomer, CustomerInfoByGroup newCustomer);
         Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId);
         Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId);
+        Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId);
     }
 
-        public class CustomerService : BaseDTOService<CustomerDTO, DB.Models.Customers, FboLinxContext>, ICustomerService
+        public class CustomerService : BaseDTOService<CustomersDto, DB.Models.Customers, FboLinxContext>, ICustomerService
     {
         private FboLinxContext _context;
         private ICustomersEntityService _customerEntityService;
@@ -172,7 +174,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             oldCustomer.Website == newCustomer.Website;
         }
 
-        public async Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId)
+        public async Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId)
         {
             var result =
                 await GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
@@ -189,6 +191,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             var result = await _context.CustomerCompanyTypes
                     .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId)
+        {
+            var result = await _context.CustomCustomerTypes
+                    .Where(x => x.Fboid == fboId).ToListAsync();
             return result;
         }
         #endregion

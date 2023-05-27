@@ -25,6 +25,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -67,8 +68,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private readonly IFboService _fboService;
         private readonly IFboPreferencesService _fboPreferencesService;
         private readonly IIntegrationPartnersEntityService _integrationPartnersEntityService;
+        private readonly ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
 
-        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IFboPricesEntityService fboPricesEntityService, DateTimeService dateTimeService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, IUserService userService, IntegrationUpdatePricingLogService integrationUpdatePricingLogService, IFboService fboService, IFboPreferencesService fboPreferencesService, IIntegrationPartnersEntityService integrationPartnersEntityService) : base(fboPricesEntityService)
+        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IFboPricesEntityService fboPricesEntityService, DateTimeService dateTimeService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, IUserService userService, IntegrationUpdatePricingLogService integrationUpdatePricingLogService, IFboService fboService, IFboPreferencesService fboPreferencesService, IIntegrationPartnersEntityService integrationPartnersEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(fboPricesEntityService)
         {
             _context = context;
             _aircraftService = aircraftService;
@@ -82,6 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             _fboService = fboService;
             _fboPreferencesService = fboPreferencesService;
             _integrationPartnersEntityService = integrationPartnersEntityService;
+            _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
         }
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
@@ -190,11 +193,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
             if (!string.IsNullOrEmpty(request.TailNumber))
             {
-                var customerInfoByGroup = await _context.CustomerInfoByGroup.FirstOrDefaultAsync(c => c.Oid == request.CustomerInfoByGroupId);
+                var customerInfoByGroup = await _customerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(request.GroupID, request.CustomerInfoByGroupId, new List<string> { request.TailNumber }));
                 if (customerInfoByGroup == null)
                     return null;
 
-                var customerAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.TailNumber == request.TailNumber && s.GroupId == request.GroupID && s.CustomerId == customerInfoByGroup.CustomerId);
+                var customerAircraft = customerInfoByGroup.Customer.CustomerAircrafts.FirstOrDefault();
                 if (customerAircraft == null)
                     return null;
 
@@ -217,12 +220,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             }
             else
             {
-                var customerInfoByGroup = await _context.CustomerInfoByGroup
-                    .Where(x => x.GroupId == request.GroupID && ((x.Active.HasValue && x.Active.Value && request.CustomerInfoByGroupId == 0) || (request.CustomerInfoByGroupId > 0 && x.Oid == request.CustomerInfoByGroupId)))
-                    .Include(x => x.Customer)
-                    .Where(x => !x.Customer.Suspended.HasValue || !x.Customer.Suspended.Value)
-                    .FirstOrDefaultAsync();
-                validPricing.PricingList = await _priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, customerInfoByGroup?.Oid > 0 ? customerInfoByGroup.Oid : 0, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
+                validPricing.PricingList = await _priceFetchingService.GetCustomerPricingAsync(request.FBOID, request.GroupID, request.CustomerInfoByGroupId, new List<int>() { request.PricingTemplateID }, request.FlightTypeClassification, request.DepartureType, request.ReplacementFeesAndTaxes);
             }
 
             if (validPricing.PricingList == null || validPricing.PricingList.Count == 0)
