@@ -133,6 +133,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        throw new Exception("Something went wrong processing delete bulk operation", ex);
                     }
                 }
             });
@@ -174,6 +175,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        throw new Exception("Something went wrong processing insert bulk operation", ex);
                     }
                 }
             });
@@ -202,6 +204,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     catch (Exception ex)
                     {
                         transaction.Rollback();
+                        throw new Exception("Something went wrong processing update bulk operation", ex);
                     }
                 }
             });
