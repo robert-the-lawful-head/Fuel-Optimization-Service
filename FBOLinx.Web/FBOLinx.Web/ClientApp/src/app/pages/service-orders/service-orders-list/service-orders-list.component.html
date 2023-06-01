@@ -8,7 +8,7 @@
     <mat-drawer #serviceOrderDrawer class="" mode="side">
         <div *ngIf="selectedServiceOrder">
             <app-service-orders-item-list [serviceOrder]="selectedServiceOrder" (serviceOrderItemsChanged)="serviceOrderItemsChanged($event)"
-                                          (closeClicked)="serviceOrderDrawer.close()"></app-service-orders-item-list>
+                                          (closeClicked)="serviceOrderItemsCloseClicked()"></app-service-orders-item-list>
         </div>
     </mat-drawer>
 
@@ -41,17 +41,21 @@
         </div>
 
         <mat-selection-list #incompletedServiceOrders (selectionChange)="serviceOrderToggleChanged($event)">
-            <mat-list-option *ngFor="let order of inCompleteServiceOrders" [value]="order" [selected]="order.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after">
-                <div clickStopPropagation (click)="serviceOrderClicked(order);serviceOrderDrawer.open();">
+            <mat-list-option *ngFor="let order of inCompleteServiceOrders" [value]="order" [selected]="order.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after" [ngClass]="{'highlighted': selectedServiceOrder == order}">
+                <div clickStopPropagation (click)="serviceOrderClicked(order);">
                     <div class="row">
                         <div class="col-10">
                             <div class="row">
                                 <div class="col">
-                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
-                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
-                                    <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.serviceDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                    <div>
+                                        <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
+                                        <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
+                                    </div>
+                                    <div>
+                                        <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.arrivalDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                        <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETD: </span> {{order.departureDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                    </div>
                                 </div>
-                                
                             </div>
                             <div class="row">
                                 <div class="col">
@@ -95,9 +99,14 @@
                                     <div class="col-10">
                                         <div class="row">
                                             <div class="col">
-                                                <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
-                                                <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
-                                                <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.serviceDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                                <div>
+                                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Customer:</span> {{order.customerInfoByGroup.company}}</span>
+                                                    <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">Tail: </span> {{order.customerAircraft.tailNumber}}</span>
+                                                </div>
+                                                <div>
+                                                    <span class="pr-3 d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETA: </span> {{order.arrivalDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                                    <span class="d-block d-md-inline"><span class="font-weight-bold d-none d-md-inline">ETD: </span> {{order.departureDateTimeLocal | date: "MMM d, yyyy, @ HH:mm"}} (L)</span>
+                                                </div>
                                             </div>
 
                                         </div>

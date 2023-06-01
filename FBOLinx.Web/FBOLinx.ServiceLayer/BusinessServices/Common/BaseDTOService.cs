@@ -49,7 +49,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             return result == null ? default(TDTO) : result.Adapt<TDTO>();
         }
 
-        public async Task<TDTO> GetSingleBySpec(ISpecification<T> spec)
+        public virtual async Task<TDTO> GetSingleBySpec(ISpecification<T> spec)
         {
             var result = await _EntityService.GetSingleBySpec(spec);
             try
@@ -63,7 +63,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
             
         }
 
-        public async Task<List<TDTO>> GetListbySpec(ISpecification<T> spec)
+        public virtual async Task<List<TDTO>> GetListbySpec(ISpecification<T> spec)
         {
             var result = await _EntityService.GetListBySpec(spec);
             return result == null ? null : result.Adapt<List<TDTO>>();

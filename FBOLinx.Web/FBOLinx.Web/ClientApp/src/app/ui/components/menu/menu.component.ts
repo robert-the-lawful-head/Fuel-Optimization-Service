@@ -16,6 +16,8 @@ import { IMenuItem } from './menu-item';
 import { ServiceOrder } from 'src/app/models/service-order';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 
+import * as moment from 'moment';
+
 @Component({
     host: { class: 'app-menu' },
     providers: [MenuService],
@@ -46,6 +48,9 @@ export class MenuComponent implements OnInit, AfterViewInit {
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === 'fbo-prices-loaded') {
                 this.showTooltipsIfFirstLogin();
+                this.showPendingServiceOrders();
+            }
+            if (message === 'service-orders-changed') {
                 this.showPendingServiceOrders();
             }
         });
@@ -152,7 +157,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
         if (!serviceOrderMenuItemMatches || serviceOrderMenuItemMatches.length == 0)
             return;
         var serviceOrderMenuItem = serviceOrderMenuItemMatches[0];
-        this.serviceOrderService.getServiceOrdersForFbo(this.sharedService.currentUser.fboId).subscribe((response: EntityResponseMessage<Array<ServiceOrder>>) => {
+        this.serviceOrderService.getServiceOrdersForFbo(this.sharedService.currentUser.fboId, moment().add(-30, 'days').toDate(), moment().add(30, 'days').toDate()).subscribe((response: EntityResponseMessage<Array<ServiceOrder>>) => {
             if (response.success && response.result != null) {
                 var inCompleteItems = response.result.filter(x => !x.isCompleted).length;
                 if (inCompleteItems > 0) {

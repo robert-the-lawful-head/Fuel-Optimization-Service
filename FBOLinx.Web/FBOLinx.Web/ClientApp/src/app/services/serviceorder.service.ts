@@ -17,8 +17,11 @@ export class ServiceOrderService {
     }
 
     //Call the GetServiceOrdersForFbo method in the ServiceOrderController
-    public getServiceOrdersForFbo(fboId: number) {
-        return this.http.get(this.accessPointUrl + '/list/fbo/' + fboId);
+    public getServiceOrdersForFbo(fboId: number, startDateTimeUtc?: Date, endDateTimeUtc?: Date) {
+        if (startDateTimeUtc != null && endDateTimeUtc != null)
+            return this.http.get(this.accessPointUrl + '/list/fbo/' + fboId + '?startDateTimeUtc=' + startDateTimeUtc.toISOString() + '&endDate=' + endDateTimeUtc.toISOString());
+        else
+            return this.http.get(this.accessPointUrl + '/list/fbo/' + fboId);
     }
 
     //Call the GetServiceOrder method in the ServiceOrderController

@@ -11,8 +11,8 @@ namespace FBOLinx.DB.Specifications.ServiceOrder
     public sealed class ServiceOrderByFboSpecification : Specification<Models.ServiceOrder>
     {
         public ServiceOrderByFboSpecification(int fboId, DateTime? startDateTimeUtc, DateTime? endDateTimUtce) : base(x => x.Fboid == fboId 
-            && (!startDateTimeUtc.HasValue || x.ServiceDateTimeUtc >= startDateTimeUtc) 
-            && (!endDateTimUtce.HasValue || x.ServiceDateTimeUtc <= endDateTimUtce))
+            && (!startDateTimeUtc.HasValue || x.ArrivalDateTimeUtc >= startDateTimeUtc) 
+            && (!endDateTimUtce.HasValue || x.ArrivalDateTimeUtc <= endDateTimUtce))
         {
             AddInclude(x => x.ServiceOrderItems);
             AddInclude(x => x.CustomerInfoByGroup);

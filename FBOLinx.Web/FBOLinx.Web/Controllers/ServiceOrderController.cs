@@ -99,6 +99,8 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 await _ServiceOrderService.UpdateAsync(request);
+                if (request.ServiceOrderItems != null && request.ServiceOrderItems.Count > 0)
+                    await _ServiceOrderItemService.BulkUpdate(request.ServiceOrderItems);
                 return Ok(new ServiceOrderResponse(request));
             }
             catch (System.Exception exception)

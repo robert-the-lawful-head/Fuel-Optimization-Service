@@ -9,7 +9,10 @@
                     {{serviceOrder.customerAircraft?.tailNumber}}
                 </div>
                 <div class="col-12">
-                    {{serviceOrder.serviceDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                    {{serviceOrder.arrivalDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                </div>
+                <div class="col-12">
+                    {{serviceOrder.departureDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
                 </div>
             </div>
         </div>

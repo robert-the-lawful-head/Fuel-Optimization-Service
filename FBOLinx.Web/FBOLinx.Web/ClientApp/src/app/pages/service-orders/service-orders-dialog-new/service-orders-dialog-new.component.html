@@ -8,7 +8,7 @@
         <mat-form-field *ngIf="customerInfoByGroupDataSource && customerInfoByGroupDataSource.length > 0">
             <mat-select (selectionChange)="onCustomerInfoByGroupChanged()"
                         [(ngModel)]="data.customerInfoByGroup"
-                        id="newFbo"
+                        id="ddlCustomerInfoByGroup"
                         name="ddlCustomerInfoByGroup"
                         placeHolder="Customer">
                 <mat-option *ngFor="let customerInfoByGroup of customerInfoByGroupDataSource"
@@ -21,7 +21,7 @@
                         [required]="true"
                         (selectionChange)="onCustomerAircraftChanged()"
                         [(ngModel)]="data.customerAircraft"
-                        id="newFbo"
+                        id="ddlCustomerAircraft"
                         name="ddlCustomerAircraft"
                         placeHolder="Tail Number">
                 <mat-option *ngFor="let customerAircraft of customerAircraftsDataSource"
@@ -30,16 +30,30 @@
         </mat-form-field>
 
         <mat-form-field>
-            <input
-                   (ngModelChange)="onServiceDateTimeLocalChanged()"
-                   (focus)="serviceOrderLocalDate.open()"
-                   [(ngModel)]="data.serviceDateTimeLocal"
-                   [ngxMatDatetimePicker]="serviceOrderLocalDate"
+            <input (dateChange)="onArrivalDateTimeLocalChanged()"
+                   (focus)="arrivalDateTimeLocal.open()"
+                   [(ngModel)]="data.arrivalDateTimeLocal"
+                   [ngxMatDatetimePicker]="arrivalDateTimeLocal"
                    matInput
-                   placeholder="Service Date (Local)" />
-            <mat-datepicker-toggle [for]="serviceOrderLocalDate"
+                   name="arrivalDateTimeLocal"
+                   placeholder="Arrival Date (Local)" />
+            <mat-datepicker-toggle [for]="arrivalDateTimeLocal"
                                    matSuffix></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #serviceOrderLocalDate
+            <ngx-mat-datetime-picker #arrivalDateTimeLocal
+                                     disabled="false"></ngx-mat-datetime-picker>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input (dateChange)="onDepartureDateTimeLocalChanged()"
+                   (focus)="departureDateTimeLocal.open()"
+                   [(ngModel)]="data.departureDateTimeLocal"
+                   [ngxMatDatetimePicker]="departureDateTimeLocal"
+                   matInput
+                   name="departureDateTimeLocal"
+                   placeholder="Departure Date (Local)" />
+            <mat-datepicker-toggle [for]="departureDateTimeLocal"
+                                   matSuffix></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker #departureDateTimeLocal
                                      disabled="false"></ngx-mat-datetime-picker>
         </mat-form-field>
     </div>
@@ -52,7 +66,7 @@
     <button (click)="onSaveChanges()"
             class="mr-1"
             color="accent"
-            [disabled]="!data.serviceDateTimeLocal || !data.customerAircraft || !data.customerInfoByGroup"
+            [disabled]="!data.arrivalDateTimeLocal || !data.departureDateTimeLocal || !data.customerAircraft || !data.customerInfoByGroup"
             mat-flat-button>
         Add Service Order
     </button>
