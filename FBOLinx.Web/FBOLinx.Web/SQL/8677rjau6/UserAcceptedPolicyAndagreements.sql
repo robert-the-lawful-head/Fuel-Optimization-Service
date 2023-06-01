@@ -1,7 +1,7 @@
 USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[UserAcceptedPolicyAndAgreements]    Script Date: 5/15/2023 9:16:10 PM ******/
+/****** Object:  Table [dbo].[UserAcceptedPolicyAndAgreements]    Script Date: 5/24/2023 5:08:19 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[UserAcceptedPolicyAndAgreements](
 	[UserId] [int] NOT NULL,
 	[DocumentId] [int] NOT NULL,
 	[AcceptedDateTime] [datetime] NOT NULL,
+	[DocumentVersion] [varchar](50) NOT NULL,
  CONSTRAINT [PK_UserAcceptedPolicyAndAgreements] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
@@ -26,3 +27,5 @@ GO
 
 ALTER TABLE [dbo].[UserAcceptedPolicyAndAgreements] CHECK CONSTRAINT [FK_UserAcceptedPolicyAndAgreements_PolicyAndAgreementDocuments]
 GO
+
+
