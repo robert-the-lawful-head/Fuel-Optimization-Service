@@ -53,8 +53,8 @@ export class ServiceOrdersHomeComponent implements OnInit {
     private populateCurrentAndPastOrders() {
         var oneDayPast = moment().add(-1, 'day').toDate();
         this.currentOrdersData = this.serviceOrdersData
-            .filter(x => new Date(x.serviceDateTimeLocal) > oneDayPast);
+            .filter(x => new Date(x.arrivalDateTimeLocal) > oneDayPast);
         this.pastOrdersData = this.serviceOrdersData
-            .filter(x => new Date(x.serviceDateTimeLocal) <= oneDayPast);
+            .filter(x => new Date(x.arrivalDateTimeLocal) <= oneDayPast);
     }
 }

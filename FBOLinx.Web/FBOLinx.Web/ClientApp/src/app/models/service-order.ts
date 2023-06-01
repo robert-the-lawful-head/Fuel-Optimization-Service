@@ -9,10 +9,13 @@ export type ServiceOrder = {
     fboId: number;
     groupId: number;
     customerInfoByGroupId: number;
-    serviceDateTimeUtc: Date;
-    serviceDateTimeLocal: Date;
+    arrivalDateTimeUtc: Date;
+    arrivalDateTimeLocal: Date;
+    departureDateTimeUtc: Date;
+    departureDateTimeLocal: Date;
     customerAircraftId: number;
-    associatedFuelOrderId: number;
+    associatedFuelOrderId?: number;
+    FuelerLinxTransactionId?: number;
     isCompleted: boolean;
     numberOfCompletedItems: number;
 

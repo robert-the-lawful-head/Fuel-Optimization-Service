@@ -141,11 +141,17 @@ body {
         .mat-list-item {
             background-color: white;
             margin-bottom: 5px;
+            height: auto;
+            min-height: 48px;
 
             @media only screen and (max-width: 991px) {
-                height: auto;
                 margin-bottom: 15px;
             }
+        }
+
+        .mat-list-item.highlighted[aria-selected="false"] {
+            background: #e7e7e7;
+            outline: #b5b5b5 3px double;
         }
 
         .mat-list-item[aria-selected="true"] {

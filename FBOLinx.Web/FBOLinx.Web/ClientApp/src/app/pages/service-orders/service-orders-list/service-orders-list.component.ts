@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 
@@ -9,7 +9,9 @@ import { ServiceOrdersDialogNewComponent } from '../service-orders-dialog-new/se
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 import { ServiceOrder } from 'src/app/models/service-order';
+import { ServiceOrderItem } from 'src/app/models/service-order-item';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
     selector: 'app-service-orders-list',
@@ -18,6 +20,8 @@ import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 export class ServiceOrdersListComponent implements OnInit {
     @Input() serviceOrdersData: Array<ServiceOrder>;
     @Input() allowAddingNew: boolean = true;
+
+    @ViewChild('serviceOrderDrawer') serviceOrderDrawer: MatSidenav;
 
     public selectedServiceOrder: ServiceOrder;
     public inCompleteServiceOrders: Array<ServiceOrder>;
@@ -41,9 +45,12 @@ export class ServiceOrdersListComponent implements OnInit {
             oid: 0,
             fboId: this.sharedService.currentUser.fboId,
             serviceOrderItems: [],
-            serviceDateTimeUtc: new Date(Date.UTC(localServiceDate.getUTCFullYear(), localServiceDate.getUTCMonth(),
+            arrivalDateTimeUtc: new Date(Date.UTC(localServiceDate.getUTCFullYear(), localServiceDate.getUTCMonth(),
                 localServiceDate.getUTCDate(), localServiceDate.getUTCHours(), localServiceDate.getUTCMinutes(), localServiceDate.getUTCSeconds())),
-            serviceDateTimeLocal: localServiceDate,
+            arrivalDateTimeLocal: localServiceDate,
+            departureDateTimeUtc: new Date(Date.UTC(localServiceDate.getUTCFullYear(), localServiceDate.getUTCMonth(),
+                localServiceDate.getUTCDate(), localServiceDate.getUTCHours(), localServiceDate.getUTCMinutes(), localServiceDate.getUTCSeconds())),
+            departureDateTimeLocal: localServiceDate,
             groupId: this.sharedService.currentUser.groupId,
             customerInfoByGroupId: 0,
             customerAircraftId: 0,
@@ -65,17 +72,19 @@ export class ServiceOrdersListComponent implements OnInit {
                 return;                
             this.serviceOrdersData.push(result);
             this.arrangeServiceOrders();
+            this.serviceOrderClicked(result);
         });
     }
 
     public serviceOrderClicked(serviceOrder: ServiceOrder) {
         this.selectedServiceOrder = serviceOrder;
+        this.serviceOrderDrawer.open();
     }
 
     public serviceOrderItemsChanged(serviceOrder: ServiceOrder) {
         this.calculateCompletions(serviceOrder);
         this.arrangeServiceOrders();
-        this.saveOrder(serviceOrder);
+        this.sharedService.emitChange('service-orders-changed');
     }
 
     public deleteServiceOrderClicked(serviceOrder: ServiceOrder) {
@@ -110,6 +119,11 @@ export class ServiceOrdersListComponent implements OnInit {
         this.arrangeServiceOrders();
     }
 
+    public serviceOrderItemsCloseClicked() {
+        this.serviceOrderDrawer.close();
+        this.selectedServiceOrder = null;
+    }
+
     private calculateCompletions(serviceOrder: ServiceOrder) {        
         serviceOrder.numberOfCompletedItems = serviceOrder.serviceOrderItems.filter(x => x.isCompleted).length;
         serviceOrder.isCompleted = serviceOrder.numberOfCompletedItems == serviceOrder.serviceOrderItems.length;
@@ -132,6 +146,7 @@ export class ServiceOrdersListComponent implements OnInit {
         this.serviceOrderService.updateServiceOrder(serviceOrder).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
             if (!response.success)
                 alert('Error saving service order: ' + response.message);
+            this.sharedService.emitChange('service-orders-changed');
         });
     }
 
@@ -142,6 +157,7 @@ export class ServiceOrdersListComponent implements OnInit {
             else {
                 this.serviceOrdersData.splice(this.serviceOrdersData.indexOf(serviceOrder), 1);
                 this.arrangeServiceOrders();
+                this.sharedService.emitChange('service-orders-changed');
             }
         });
     }

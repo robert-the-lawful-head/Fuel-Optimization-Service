@@ -5,6 +5,7 @@ import {SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { CustomeraircraftsService } from 'src/app/services/customeraircrafts.service';
+import { AcukwikairportsService } from '../../../services/acukwikairports.service' ;
 
 import { ServiceOrder } from 'src/app/models/service-order';
 import { CustomerInfoByGroup } from 'src/app/models/customer-info-by-group';
@@ -26,7 +27,8 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerAircraftsService: CustomeraircraftsService,
         private serviceOrderService: ServiceOrderService,
-        private sharedService: SharedService) {
+        private sharedService: SharedService,
+        private acukwikAirportsService: AcukwikairportsService) {
 
 
     }
@@ -52,10 +54,18 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
            this.data.customerAircraftId = 0;
     }
 
-    public onServiceDateTimeLocalChanged(): void {
-        this.data.serviceDateTimeUtc = new Date(Date.UTC(this.data.serviceDateTimeLocal.getUTCFullYear(), this.data.serviceDateTimeLocal.getUTCMonth(),
-            this.data.serviceDateTimeLocal.getUTCDate(), this.data.serviceDateTimeLocal.getUTCHours(),
-            this.data.serviceDateTimeLocal.getUTCMinutes(), this.data.serviceDateTimeLocal.getUTCSeconds()));
+    public onArrivalDateTimeLocalChanged() {
+        this.acukwikAirportsService.getAirportZuluTime(this.sharedService.currentUser.icao, this.data.arrivalDateTimeLocal).subscribe((response: Date) => {
+            if (response)
+                this.data.arrivalDateTimeUtc = response;
+        });
+    }
+
+    public onDepartureDateTimeLocalChanged() {
+        this.acukwikAirportsService.getAirportZuluTime(this.sharedService.currentUser.icao, this.data.departureDateTimeLocal).subscribe((response: Date) => {
+            if (response)
+                this.data.departureDateTimeUtc = response;
+        });
     }
 
     public onCancelClick(): void {

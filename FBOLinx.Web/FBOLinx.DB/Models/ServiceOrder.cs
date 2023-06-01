@@ -9,9 +9,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.DB.Models
 {
+    [Index("FuelerLinxTransactionId", Name = "INX_ServiceOrders_FuelerLinxTransactionID")]
     [Index("AssociatedFuelOrderId", Name = "INX_ServiceOrders_AssociatedFuelOrderID")]
-    [Index("CustomerInfoByGroupId", "ServiceDateTimeUtc", Name = "INX_ServiceOrders_CustomerInfoByGroupID_ServiceDateTimeUTC")]
-    [Index("Fboid", "ServiceDateTimeUtc", Name = "INX_ServiceOrders_FBOID_ServiceDateTimeUTC")]
+    [Index("CustomerInfoByGroupId", "ArrivalDateTimeUtc", Name = "INX_ServiceOrders_CustomerInfoByGroupID_ArrivalDateTimeUTC")]
+    [Index("Fboid", "ArrivalDateTimeUtc", Name = "INX_ServiceOrders_FBOID_ArrivalDateTimeUTC")]
     [Table("ServiceOrders")]
     public partial class ServiceOrder
     {
@@ -24,14 +25,16 @@ namespace FBOLinx.DB.Models
         public int GroupId { get; set; }
         [Column("CustomerInfoByGroupID")]
         public int CustomerInfoByGroupId { get; set; }
-        [Column("ServiceDateTimeUTC", TypeName = "datetime")]
-        public DateTime ServiceDateTimeUtc { get; set; }
-        [Column("ServiceDateTimeLocal", TypeName = "datetime")]
-        public DateTime ServiceDateTimeLocal { get; set; }
+        [Column("ArrivalDateTimeUTC", TypeName = "datetime")]
+        public DateTime ArrivalDateTimeUtc { get; set; }
+        [Column("DepartureDateTimeUTC", TypeName = "datetime")]
+        public DateTime DepartureDateTimeUtc { get; set; }
         [Column("CustomerAircraftID")]
         public int CustomerAircraftId { get; set; }
         [Column("AssociatedFuelOrderID")]
         public int? AssociatedFuelOrderId { get; set; }
+        [Column("FuelerLinxTransactionID")]
+        public int? FuelerLinxTransactionId { get; set; }
 
         #region Relationships
         [ForeignKey(nameof(AssociatedFuelOrderId))]
