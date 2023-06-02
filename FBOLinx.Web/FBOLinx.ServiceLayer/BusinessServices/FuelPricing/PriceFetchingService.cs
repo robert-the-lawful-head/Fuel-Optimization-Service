@@ -312,6 +312,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
+
                     });
                 }
 
@@ -404,6 +405,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.OmittedFor = "C";
                         }
                     });
+
+                    //Add the flight type classification to the product name if any fees are applicable to that flight type
+                    x.Product += (x.FeesAndTaxes.Any(fee => !fee.IsOmitted && fee.FlightTypeClassification == flightTypeClassifications) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypeClassifications) + ")" : "");
                 });
                 return resultsWithFees;
             }
