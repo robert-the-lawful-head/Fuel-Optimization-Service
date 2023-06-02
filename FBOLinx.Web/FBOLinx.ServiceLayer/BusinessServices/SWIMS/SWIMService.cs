@@ -65,6 +65,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private readonly SWIMUnrecognizedFlightLegEntityService _SWIMUnrecognizedFlightLegEntityService;
         private readonly IAirportService _AirportService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegDataService _SwimFlightLegDataService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -78,8 +79,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             SWIMUnrecognizedFlightLegEntityService swimUnrecognizedFlightLegEntityService,
             SWIMFlightLegDataErrorEntityService swimFlightLegDataErrorEntityService,
             IAirportService airportService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegDataService swimFlightLegDataService)
         {
+            _SwimFlightLegDataService = swimFlightLegDataService;
             _SwimFlightLegService = swimFlightLegService;
             _AirportWatchFlightLegStatusService = airportWatchFlightLegStatusService;
             _FlightLegEntityService = flightLegEntityService;
@@ -489,13 +492,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 x.SWIMFlightLegId > 0 && x.GetSwimFlightLeg() != null).ToList();
 
             Stopwatch stopwatch = new Stopwatch();
-            List<SWIMFlightLegData> swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
+            var swimFlightLegIds = flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0)
+                .Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList();
+            List<SWIMFlightLegDataDTO> swimFlightLegMessages =
+                await _SwimFlightLegDataService.GetSwimFlightLegDataBySwimFlightLegIds(swimFlightLegIds);
+                //await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
             stopwatch.Stop();
             stopwatch.Restart();
             Parallel.ForEach(flightWatchModelsToProcess, flightWatchModel =>
             {
                 var swimFlightLeg = flightWatchModel.GetSwimFlightLeg();
-                SWIMFlightLegData latestSwimMessage =
+                SWIMFlightLegDataDTO latestSwimMessage =
                     swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
                 if (latestSwimMessage != null)

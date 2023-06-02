@@ -1,7 +1,10 @@
-﻿using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.BaseModels.Entities;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FBOLinx.DB.Context
@@ -1052,6 +1055,15 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Longitude).IsUnicode(false);
             });
+
+            modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
+            {
+                entity.HasNoKey();
+            });
         }
+
+        [DbFunction("fn_Split")]
+        public IQueryable<DatabaseStringSplitResult> SplitStringToTable(string inputString, string delimiter)
+            => throw new NotSupportedException();
     }
 }
