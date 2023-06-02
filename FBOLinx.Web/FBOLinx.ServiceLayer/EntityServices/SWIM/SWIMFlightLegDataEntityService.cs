@@ -4,6 +4,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using System.Linq;
+using FBOLinx.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
@@ -25,7 +26,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
             List<long> swimFlightLegIds)
         {
             var query = (from swimData in context.SWIMFlightLegData
-                join swimLegId in swimFlightLegIds on swimData.SWIMFlightLegId equals swimLegId
+                join swimLegId in context.AsTable(swimFlightLegIds) on swimData.SWIMFlightLegId equals System.Convert.ToInt64(swimLegId.Value)
                 select swimData);
 
             return query;
