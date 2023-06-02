@@ -25,13 +25,5 @@ namespace FBOLinx.Core.Extensions
             return context.Set<DatabaseStringSplitResult>()
                 .FromSqlInterpolated($"SELECT Value FROM dbo.fn_Split({commaDelimitedList}, {delimiter})");
         }
-
-        public static IQueryable<DatabaseStringSplitResult> AsTable(this DbContext context, List<long> listOfInts)
-        {
-            var commaDelimitedList = String.Join(",", listOfInts == null ? new List<long>() : listOfInts.Select(x => x.ToString()));
-            var delimiter = ",";
-            return context.Set<DatabaseStringSplitResult>()
-                .FromSqlInterpolated($"SELECT Value FROM dbo.fn_Split({commaDelimitedList}, {delimiter})");
-        }
     }
 }
