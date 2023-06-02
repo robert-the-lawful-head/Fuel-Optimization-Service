@@ -495,7 +495,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             var swimFlightLegIds = flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0)
                 .Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList();
             List<SWIMFlightLegDataDTO> swimFlightLegMessages =
-                await _SwimFlightLegDataService.GetSwimFlightLegDataBySwimFlightLegIds(swimFlightLegIds);
+                await _SwimFlightLegDataService.GetSwimFlightLegDataBySwimFlightLegIds(swimFlightLegIds, DateTime.UtcNow.AddMinutes(-2));
                 //await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
             stopwatch.Stop();
             stopwatch.Restart();

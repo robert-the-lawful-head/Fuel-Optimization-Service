@@ -6,6 +6,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using System.Linq;
 using FBOLinx.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 {
@@ -16,19 +17,20 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         }
 
         public async Task<List<SWIMFlightLegData>> GetSwimFlightLegData(
-            List<long> swimFlightLegIds)
+            List<long> swimFlightLegIds, DateTime? minMessageDateTimeUtc = null)
         {
-            var query = GetSwimFlightLegDataQueryable(swimFlightLegIds);
+            var query = GetSwimFlightLegDataQueryable(swimFlightLegIds, minMessageDateTimeUtc);
             return await query.ToListAsync();
         }
 
         private IQueryable<SWIMFlightLegData> GetSwimFlightLegDataQueryable(
-            List<long> swimFlightLegIds)
+            List<long> swimFlightLegIds, DateTime? minMessageDateTimeUtc = null)
         {
             var idsAsString = swimFlightLegIds.Select(x => x.ToString()).ToList();
             var query = (from swimData in context.SWIMFlightLegData
                 join swimLegId in context.AsTable(idsAsString) on swimData.SWIMFlightLegId.ToString() equals swimLegId.Value
-                select swimData);
+                         where (!minMessageDateTimeUtc.HasValue || swimData.MessageTimestamp >= minMessageDateTimeUtc)
+                         select swimData);
 
             return query;
         }

@@ -17,7 +17,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
     public interface ISWIMFlightLegDataService : IBaseDTOService<SWIMFlightLegDataDTO, DB.Models.SWIMFlightLegData>
     {
         Task<List<SWIMFlightLegDataDTO>> GetSwimFlightLegDataBySwimFlightLegIds(
-            List<long> swimFlightLegIds);
+            List<long> swimFlightLegIds, DateTime? minMessageDateTimeUtc = null);
     }
 
     public class SWIMFlightLegDataService : BaseDTOService<SWIMFlightLegDataDTO, DB.Models.SWIMFlightLegData, DegaContext>, ISWIMFlightLegDataService
@@ -29,7 +29,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         }
 
         public async Task<List<SWIMFlightLegDataDTO>> GetSwimFlightLegDataBySwimFlightLegIds(
-            List<long> swimFlightLegIds)
+            List<long> swimFlightLegIds, DateTime? minMessageDateTimeUtc = null)
         {
             var result = await _SwimFlightLegEntityService.GetSwimFlightLegData(swimFlightLegIds);
             return result == null ? default(List<SWIMFlightLegDataDTO>) : result.Adapt<List<SWIMFlightLegDataDTO>>();
