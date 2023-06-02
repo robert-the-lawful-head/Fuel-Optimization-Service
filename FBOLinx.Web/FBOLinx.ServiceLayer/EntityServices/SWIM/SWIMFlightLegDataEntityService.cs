@@ -27,7 +27,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         {
             var idsAsString = swimFlightLegIds.Select(x => x.ToString()).ToList();
             var query = (from swimData in context.SWIMFlightLegData
-                join swimLegId in context.AsTable(idsAsString) on swimData.SWIMFlightLegId equals System.Convert.ToInt64(swimLegId.Value)
+                join swimLegId in context.AsTable(idsAsString) on swimData.SWIMFlightLegId.ToString() equals swimLegId.Value
                 select swimData);
 
             return query;
