@@ -11,13 +11,14 @@ using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 {
     public interface IGroupCustomersService
     {
-        Task StartAircraftTransfer(int groupId);
+        Task StartAircraftTransfer(int groupId, bool resync = false);
     }
 
     public class GroupCustomersService : IGroupCustomersService
@@ -26,12 +27,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         private FuelerLinxApiService _fuelerLinxApiService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
         private CustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
-        private CustomersEntityService _CustomersEntityService;
+        private readonly ILoggingService _LoggingService;
+        private ICustomersEntityService _CustomersEntityService;
 
         #region Constructors
-        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomersEntityService customerEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService)
+        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService, ILoggingService loggingService, ICustomersEntityService customerEntityService)
         {
             _CustomersEntityService = customerEntityService;
+            _LoggingService = loggingService;
             _CustomerAircraftEntityService = customerAircraftEntityService;
             _context = context;
             _fuelerLinxApiService = fuelerLinxApiService;
@@ -39,7 +42,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         }
         #endregion
 
-        public async Task StartAircraftTransfer(int groupId)
+        public async Task StartAircraftTransfer(int groupId, bool resync = false)
         {
             try
             {
@@ -114,6 +117,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 
                 if (customerAircraftsToInsert.Count > 0)
                     await _CustomerAircraftEntityService.BulkInsert(customerAircraftsToInsert);
+
+                _LoggingService.LogError((resync ? "Resynced " : "") + "GroupID: " + groupId.ToString() + " ; Total customers added: " + customerInfoByGroupToInsert.Count().ToString() + " ; Total aircrafts added: " + customerAircraftsToInsert.Count().ToString(), "", LogLevel.Info, LogColorCode.Blue);
             }
             catch (Exception ex)
             {
