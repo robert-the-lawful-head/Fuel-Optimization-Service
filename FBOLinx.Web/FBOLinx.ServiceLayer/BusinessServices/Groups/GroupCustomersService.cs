@@ -28,10 +28,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
         private CustomerInfoByGroupEntityService _CustomerInfoByGroupEntityService;
         private readonly ILoggingService _LoggingService;
-        private CustomersEntityService _CustomersEntityService;
+        private ICustomersEntityService _CustomersEntityService;
 
         #region Constructors
-        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService, ILoggingService loggingService, CustomersEntityService customerEntityService)
+        public GroupCustomersService(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, CustomerAircraftEntityService customerAircraftEntityService, CustomerInfoByGroupEntityService customerInfoByGroupEntityService, ILoggingService loggingService, ICustomersEntityService customerEntityService)
         {
             _CustomersEntityService = customerEntityService;
             _LoggingService = loggingService;
