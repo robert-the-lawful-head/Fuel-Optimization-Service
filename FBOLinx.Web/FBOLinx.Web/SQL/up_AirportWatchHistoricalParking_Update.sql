@@ -90,6 +90,7 @@ BEGIN
 	from #AirportWatchHistoricalResults a
 	inner join #FBOGeoPolygons fboGeo on fboGeo.ICAO = a.ICAO and a.Longitude is not null and  fboGeo.GeoCoordinates.MakeValid().STContains(geography::STGeomFromText('POINT(' + convert(varchar, a.Longitude) + ' ' + convert(varchar, a.Latitude) + ')', 4326).MakeValid()) = 1
 	inner join [AirportWatchHistoricalParking] awp on awp.AirportWatchHistoricalDataID = a.OID
+	where awp.IsConfirmed is null
 
 	insert into [AirportWatchHistoricalParking] (AirportWatchHistoricalDataID, AcukwikFBOHandlerID, DateCalculatedUTC)
 	select a.OID, fboGeo.AcukwikFBOHandlerID, getutcdate()

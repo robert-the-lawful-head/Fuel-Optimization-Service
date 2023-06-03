@@ -160,6 +160,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<UserAcceptedPolicyAndAgreements> UserAcceptedPolicyAndAgreements { get; set; }
         public virtual DbSet<PolicyAndAgreementDocuments> PolicyAndAgreementDocuments { get; set; }
         public virtual DbSet<PolicyAndAgreementGroupExemptions> PolicyAndAgreementGroupExemptions { get; set; }
+        public virtual DbSet<AirportWatchHistoricalParking> AirportWatchHistoricalParking { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

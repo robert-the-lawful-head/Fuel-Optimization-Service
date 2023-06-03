@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[AirportWatchHistoricalParking](
 	[AirportWatchHistoricalDataID] [int] NOT NULL,
 	[AcukwikFBOHandlerID] [int] NOT NULL,
 	[DateCalculatedUTC] [datetime] NULL,
+	[IsConfirmed] [bit] NULL
  CONSTRAINT [PK_AirportWatchHistoricalParking] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
@@ -25,4 +26,4 @@ CREATE NONCLUSTERED INDEX [INX_AirportWatchHistoricalParking_AirportWatchHistori
 (
 	[AirportWatchHistoricalDataID]
 )
-INCLUDE ([AcukwikFBOHandlerID], [DateCalculatedUTC])
+INCLUDE ([AcukwikFBOHandlerID], [DateCalculatedUTC], [IsConfirmed])
