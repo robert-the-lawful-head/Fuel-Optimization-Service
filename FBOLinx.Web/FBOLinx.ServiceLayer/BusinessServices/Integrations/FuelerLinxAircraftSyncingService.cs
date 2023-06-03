@@ -10,6 +10,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
@@ -33,7 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
-        private CustomerDTO _customerRecord;
+        private CustomersDto _customerRecord;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private string _tailNumber;
         private ICustomerService _customerService;

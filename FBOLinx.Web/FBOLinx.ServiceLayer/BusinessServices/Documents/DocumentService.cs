@@ -38,22 +38,38 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         }
         public async Task<UserAcceptedPolicyAndAgreements> AcceptPolicyAndAgreement(int userId, int documentId)
         {
+            var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.AnyAsync(x => x.UserId == userId);
+            var document = await _policyAndAgreementDocumentsRepo.FindAsync(documentId);
+
+            return await CreateUserAcceptedPolicyAndAgreements(userId, document);
+        }
+        public async Task<UserAcceptedPolicyAndAgreements> CreateUserAcceptedPolicyAndAgreements(int userId, PolicyAndAgreementDocuments document)
+        {
             var newUserAcceptedPolicyAndAgreements = new UserAcceptedPolicyAndAgreements()
             {
                 UserId = userId,
-                DocumentId = documentId,
+                DocumentId = document.Oid,
+                DocumentVersion =  document.DocumentVersion,
                 AcceptedDateTime = DateTime.UtcNow
             };
 
-            var insertedRecord = await _userAcceptedPolicyAndAgreementsRepo.AddAsync(newUserAcceptedPolicyAndAgreements);
+            return await _userAcceptedPolicyAndAgreementsRepo.AddAsync(newUserAcceptedPolicyAndAgreements);
+        }
+        public async Task<UserAcceptedPolicyAndAgreements> UpdateUserAcceptedPolicyAndAgreements(int userId, PolicyAndAgreementDocuments document)
+        {
+            var acceptedDocument = await _userAcceptedPolicyAndAgreementsRepo.Where(x => x.UserId == userId).FirstOrDefaultAsync();
 
-            return insertedRecord;
+            acceptedDocument.AcceptedDateTime = DateTime.UtcNow;
+            acceptedDocument.DocumentVersion = document.DocumentVersion;
+
+            await _userAcceptedPolicyAndAgreementsRepo.UpdateAsync(acceptedDocument);
+            return acceptedDocument;
         }
         public async Task<DocumentsToAcceptDto> DocumentsToAccept(int userId, int groupId)
         {
             var eulaDocument = await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.IsEnabled && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted  ).OrderByDescending(b => b.Oid).FirstOrDefaultAsync();
-            var hasacceptedDocument = _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.UserId == userId).Any();
-            var isDocumentExempted = _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
+            var hasacceptedDocument = (eulaDocument == null) ? true: _userAcceptedPolicyAndAgreementsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.DocumentVersion == eulaDocument.DocumentVersion && x.UserId == userId).Any();
+            var isDocumentExempted = (eulaDocument == null) ? true : _policyAndAgreementGroupExemptionsRepo.Where(x => x.DocumentId == eulaDocument.Oid && x.GroupId == groupId).Any();
 
             var documentToAccept = new DocumentsToAcceptDto()
             {
@@ -66,8 +82,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Documents
         public async Task<List<GroupPolicyAndAgreementDocuments>> GetAllGroupDocuments(int groupId)
         {
             var documents = new List<PolicyAndAgreementDocuments>();
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
-            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType ==DocumentTypeEnum.Cookie).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.EULA && x.AcceptanceFlag == DocumentAcceptanceFlag.ForceAccepted).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
+            documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.Cookie).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.Add(await _policyAndAgreementDocumentsRepo.Where(x => x.DocumentType == DocumentTypeEnum.Privacy).OrderByDescending(b => b.Oid).FirstOrDefaultAsync());
             documents.RemoveAll(item => item == null);
 

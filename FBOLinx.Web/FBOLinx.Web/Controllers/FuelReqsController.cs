@@ -33,6 +33,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -52,13 +53,15 @@ namespace FBOLinx.Web.Controllers
         private readonly IDemoFlightWatch _demoFlightWatch;
         private readonly IFboPreferencesService _FboPreferencesService;
         private ICompanyPricingLogService _CompanyPricingLogService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
-            ICompanyPricingLogService companyPricingLogService) : base(logger)
+            ICompanyPricingLogService companyPricingLogService,
+            ICustomerInfoByGroupService customerInfoByGroupService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -71,6 +74,7 @@ namespace FBOLinx.Web.Controllers
             _fuelReqService = fuelReqService;
             _demoFlightWatch = demoFlightWatch;
             _FboPreferencesService = fboPreferencesService;
+            _customerInfoByGroupService = customerInfoByGroupService;
         }
 
         // GET: api/FuelReqs/5
@@ -1302,17 +1306,16 @@ namespace FBOLinx.Web.Controllers
                                            cpl.CreatedDate
                                        }).ToListAsync();
 
-                var customers = await _context.CustomerInfoByGroup
-                                        .Where(c => c.GroupId.Equals(groupId))
-                                        .Include(x => x.Customer)
-                                        .Where(x => (x.Customer != null && x.Customer.Suspended != true))
-                                        .Select(c => new
-                                        {
-                                            c.CustomerId,
-                                            Company = c.Company.Trim(),
-                                            Customer = c.Customer
-                                        })
-                                        .Distinct().ToListAsync();
+                var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroup(groupId);
+
+                var customers = customerInfoByGroup
+                                .Select(c => new
+                                {
+                                    c.CustomerId,
+                                    Company = c.Company.Trim(),
+                                    Customer = c.Customer
+                                })
+                                .Distinct().ToList();
 
                 FBOLinxOrdersForMultipleAirportsRequest fbolinxOrdersRequest = new FBOLinxOrdersForMultipleAirportsRequest();
                 fbolinxOrdersRequest.StartDateTime = request.StartDateTime;

@@ -12,6 +12,7 @@ using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
@@ -39,14 +40,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private AircraftService _AircraftService;
         private IFboEntityService _FboEntityService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
         public AirportWatchHistoricalDataService(AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
             AircraftService aircraftService,
             IFboEntityService fboEntityService,
-            CustomerAircraftEntityService customerAircraftEntityService
+            CustomerAircraftEntityService customerAircraftEntityService,
+            ICustomerInfoByGroupService customerInfoByGroupService
             ) : base(airportWatchHistoricalDataEntityService)
         {
             _CustomerAircraftEntityService = customerAircraftEntityService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
             _FboEntityService = fboEntityService;
             _AircraftService = aircraftService;
             _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
@@ -77,9 +81,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Retrieve relevant customer aircraft information
             var distinctTailsFromHistoricalData = historicalData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber)
                 .Distinct().ToList();
-            var customerAircrafts =
-                await _CustomerAircraftEntityService.GetListBySpec(
-                    new CustomerAircraftsByGroupSpecification(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData));
+
+            var customerInfoByGroupCollection = await _CustomerInfoByGroupService.GetCustomers(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData);
+            var customerAircrafts = customerInfoByGroupCollection.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
+
+
+            //var customerAircrafts =
+            //    await _CustomerAircraftEntityService.GetListBySpec(
+            //        new CustomerAircraftsByGroupSpecification(groupId.GetValueOrDefault(), distinctTailsFromHistoricalData));
 
 
 

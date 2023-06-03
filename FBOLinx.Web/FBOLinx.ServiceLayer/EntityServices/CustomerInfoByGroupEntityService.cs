@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.EntityServices.EntityViewModels;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {

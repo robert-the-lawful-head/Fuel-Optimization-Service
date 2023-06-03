@@ -1,7 +1,10 @@
-﻿using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.BaseModels.Entities;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.BaseModels.Entities;
 using System.Linq;

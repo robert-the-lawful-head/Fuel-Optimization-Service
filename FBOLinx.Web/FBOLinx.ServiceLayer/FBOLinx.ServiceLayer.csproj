@@ -29,6 +29,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="DTO\ContactsDTO.cs" />
+	  <Compile Remove="DTO\CustomerDTO.cs" />
+	  <Compile Remove="DTO\CustomerInfoByGroupDTO.cs" />
 	  <Compile Remove="DTO\FbopricesDto.g.cs" />
 	  <Compile Remove="DTO\FbosalesTaxDto.g.cs" />
 	</ItemGroup>

@@ -1,7 +1,17 @@
+drop table [dbo].[PolicyAndAgreementGroupExemptions],[dbo].[UserAcceptedPolicyAndAgreements], [dbo].[PolicyAndAgreementDocuments] 
+
 USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[PolicyAndAgreementDocuments]    Script Date: 5/15/2023 9:33:44 PM ******/
+ALTER TABLE [dbo].[PolicyAndAgreementDocuments] DROP CONSTRAINT [DF_PolicyAndAgreementDocuments_isEnabled]
+GO
+
+/****** Object:  Table [dbo].[PolicyAndAgreementDocuments]    Script Date: 5/24/2023 5:25:17 PM ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PolicyAndAgreementDocuments]') AND type in (N'U'))
+DROP TABLE [dbo].[PolicyAndAgreementDocuments]
+GO
+
+/****** Object:  Table [dbo].[PolicyAndAgreementDocuments]    Script Date: 5/24/2023 5:25:17 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -10,10 +20,10 @@ GO
 
 CREATE TABLE [dbo].[PolicyAndAgreementDocuments](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
-	[DocumentType] [smallint] NULL,
-	[DocumentVersion] [varchar](50) NULL,
-	[Document] [varchar](255) NULL,
-	[AcceptanceFlag] [smallint] NULL,
+	[DocumentType] [smallint] NOT NULL,
+	[DocumentVersion] [varchar](50) NOT NULL,
+	[Document] [varchar](255) NOT NULL,
+	[AcceptanceFlag] [smallint] NOT NULL,
 	[isEnabled] [bit] NOT NULL,
  CONSTRAINT [PK_PolicyAndAgreementDocuments] PRIMARY KEY CLUSTERED 
 (
@@ -24,5 +34,3 @@ GO
 
 ALTER TABLE [dbo].[PolicyAndAgreementDocuments] ADD  CONSTRAINT [DF_PolicyAndAgreementDocuments_isEnabled]  DEFAULT ((0)) FOR [isEnabled]
 GO
-
-

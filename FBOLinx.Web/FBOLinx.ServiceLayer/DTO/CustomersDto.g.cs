@@ -41,5 +41,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public ICollection<CustomerContactsDto> CustomerContacts { get; set; }
         public ICollection<CompanyPricingLogDto> CompanyPricingLogs { get; set; }
         public int Oid { get; set; }
+        public ICollection<CustomerAircraftsDto> CustomerAircrafts { get; set; }
     }
 }

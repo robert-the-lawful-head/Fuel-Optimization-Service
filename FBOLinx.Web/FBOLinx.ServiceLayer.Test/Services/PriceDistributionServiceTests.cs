@@ -20,6 +20,7 @@ using Microsoft.EntityFrameworkCore;
 using MockQueryable.Moq;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.Test.Services
 {
@@ -303,7 +304,7 @@ namespace FBOLinx.ServiceLayer.Test.Services
 
             var pricingTemplateServiceMock = new Mock<IPricingTemplateService>();
             pricingTemplateServiceMock.Setup(x => x.GetAllPricingTemplatesForCustomerAsync(
-                It.IsAny<CustomerInfoByGroupDTO>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
+                It.IsAny<CustomerInfoByGroupDto>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<bool>()))
                 .Returns(Task.FromResult(new List<PricingTemplate>() { new PricingTemplate() }));
             services.AddSingleton(pricingTemplateServiceMock.Object);
 

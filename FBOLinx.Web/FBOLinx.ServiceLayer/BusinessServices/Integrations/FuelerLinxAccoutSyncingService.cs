@@ -8,6 +8,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
@@ -33,14 +34,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
-        private CustomerDTO _customerRecord;
+        private CustomersDto _customerRecord;
         private CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
-        private List<CustomerInfoByGroupDTO> _customerInfoByGroupRecords;
+        private List<CustomerInfoByGroupDto> _customerInfoByGroupRecords;
         private ICollection<AircraftDataDTO> _fuelerlinxAircraftList;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private ICustomerService _customerService;
-        private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly IFboService _fboService;
+        private readonly ICustomerTypesEntityService _customerTypesEntityService;
 
         public FuelerLinxAccoutSyncingService(FuelerLinxApiService fuelerLinxApiService,
             ICustomersEntityService customerEntityService,
@@ -48,8 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
             ICustomerService customerService,
-            IPricingTemplateService pricingTemplateService,
-            IFboService fboService
+            ICustomerTypesEntityService customerTypesEntityService
             )
         {
             _customerAircraftEntityService = customerAircraftEntityService;
@@ -58,8 +57,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             _customerEntityService = customerEntityService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _customerService = customerService;
-            _pricingTemplateService = pricingTemplateService;
-            _fboService = fboService;
+            _customerTypesEntityService = customerTypesEntityService;
         }
 
         public async Task SyncFuelerLinxAccount(int fuelerLinxCompanyId)
@@ -80,12 +78,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             await UpdateFleetStatus();
 
-            var fbos = await _fboService.GetListbySpec(new AllFbosFromAllGroupsSpecification());
-
-            foreach (var fbo in fbos)
-            {
-                await _pricingTemplateService.FixCustomCustomerTypes(fbo.GroupId, fbo.Oid);
-            }
+            await _customerTypesEntityService.FixCustomCustomerTypesForAllGroups(_customerRecord.Oid);
         }
 
         private async Task UpdateCustomerRecord()
@@ -111,7 +104,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 .Where(x => x.CustomerInfoByGroup == null
                 && _fuelerlinxCompany.Active.GetValueOrDefault())
                 .Select(x =>
-                    new CustomerInfoByGroupDTO()
+                    new CustomerInfoByGroupDto()
                     {
                         GroupId = x.GroupId,
                         CustomerId = _customerRecord.Oid,
@@ -264,7 +257,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //If a customer record doesn't yet exist then create one for the FuelerLinx flight department
             if (_customerRecord == null)
-                _customerRecord = await _customerService.AddAsync(new CustomerDTO()
+                _customerRecord = await _customerService.AddAsync(new CustomersDto()
                 {
                     Action = false,
                     Margin = 0,
@@ -284,7 +277,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                       join g in _existingGroupRecords on r.GroupId equals g.Oid
                       select r).ToList();
 
-            _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDTO>>();
+            _customerInfoByGroupRecords = result.Map<List<CustomerInfoByGroupDto>>();
         }
     }
 }
