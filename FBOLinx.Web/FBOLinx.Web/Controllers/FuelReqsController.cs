@@ -52,16 +52,16 @@ namespace FBOLinx.Web.Controllers
         private readonly IFuelReqService _fuelReqService;
         private readonly IDemoFlightWatch _demoFlightWatch;
         private readonly IFboPreferencesService _FboPreferencesService;
-        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
         private ICompanyPricingLogService _CompanyPricingLogService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
-            ICustomerInfoByGroupService customerInfoByGroupService,
-            ICompanyPricingLogService companyPricingLogService) : base(logger)
+            ICompanyPricingLogService companyPricingLogService,
+            ICustomerInfoByGroupService customerInfoByGroupService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -1200,7 +1200,7 @@ namespace FBOLinx.Web.Controllers
                 var fbo = await _fboService.GetFbo(fboId);
                 var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, request.StartDateTime, request.EndDateTime);
 
-                List<AirportWatchHistoricalDataResponse> airportWatchHistoricalDataResponse = await _airportWatchService.GetArrivalsDepartures(groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = request.StartDateTime, EndDateTime = request.EndDateTime });
+                List<AirportWatchHistoricalDataResponse> airportWatchHistoricalDataResponse = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, new AirportWatchHistoricalDataRequest() { StartDateTime = request.StartDateTime, EndDateTime = request.EndDateTime });
                 var groupedAirportWatchHistoricalDataResponse = airportWatchHistoricalDataResponse.Where(g => g.Status == "Arrival").GroupBy(ah => new { ah.CompanyId }).Select(a => new
                 {
                     Company = a.Key,

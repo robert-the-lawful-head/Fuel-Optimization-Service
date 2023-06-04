@@ -34,6 +34,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
             //We use a projected version of AirportWatchHistoricalData that omits a few of the unused columns.  
             //This is done because the indexes are also ignoring these columns so it significantly improves performance.
             var query = (from hd in context.AirportWatchHistoricalData
+                    join parking in context.AirportWatchHistoricalParking on hd.Oid equals parking.AirportWatchHistoricalDataId 
+                        into parkingJoin
+                    from parking in parkingJoin.DefaultIfEmpty()
                     join icao in context.AsTable(airportIcaos) on hd.AirportICAO equals icao.Value
                         into icaoJoin
                     from icao in icaoJoin.DefaultIfEmpty()
@@ -75,6 +78,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                         //TransponderCode = hd.TransponderCode,
                         //VerticalSpeedKts = hd.VerticalSpeedKts,
                         //AltitudeInStandardPressure = hd.AltitudeInStandardPressure
+                        AirportWatchHistoricalParking = parking
                     }
                 );
             return query;

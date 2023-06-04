@@ -1,3 +1,5 @@
+import { AirportWatchHistoricalParking } from "./airport-watch-historical-parking";
+
 export enum FlightWatchStatus {
     Landing = 0,
     Takeoff = 1,
@@ -20,6 +22,8 @@ export type FlightWatchHistorical = {
     isFuelerlinx: boolean;
     visitsToMyFbo: number;
     percentOfVisits: number;
+    isConfirmedVisit: boolean;
+    airportWatchHistoricalParking: AirportWatchHistoricalParking;
 };
 
 export type AirportWatchHistoricalDataRequest = {

@@ -11,6 +11,7 @@ namespace FBOLinx.DB.Specifications.Fbo
     {
         public AllFbosByGroupIdSpecification(int groupId) : base(x => x.GroupId == groupId && x.Active == true)
         {
+            AddInclude(x => x.FboAirport);
         }
     }
 }

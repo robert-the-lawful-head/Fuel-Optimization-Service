@@ -948,6 +948,53 @@ div.price-checker-button-bottom {
     margin-left: 217px;
 }
 
+/*Group Analytics*/
+.group-analytics, .statistics-tab {
+    .chart-container {
+        width: 100%;
+    }
+
+    .table-container {
+        height: 250px;
+        overflow: auto;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .mat-form-field {
+        font-size: 14px;
+    }
+
+    .fbos-dropdown-filter {
+        .p-multiselect {
+            width: 100%;
+        }
+
+        ::ng-deep {
+            .p-multiselect {
+                width: 30rem;
+
+                .p-multiselect-panel {
+                    max-width: 100%;
+                }
+            }
+
+            .p-component {
+                font-size: 13px;
+            }
+        }
+    }
+
+    .actions {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
 /*Mobile Devices*/
 @media (max-width: 500px) {
 

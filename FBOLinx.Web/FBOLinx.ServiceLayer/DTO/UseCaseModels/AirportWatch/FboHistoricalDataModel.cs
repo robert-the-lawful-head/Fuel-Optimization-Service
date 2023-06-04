@@ -25,6 +25,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
         public string Model { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public AirportWatchHistoricalParkingDto AirportWatchHistoricalParking { get; set; }
 
         public string AircraftStatusDescription
         {

@@ -1,6 +1,7 @@
 ﻿using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -110,6 +111,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
+            services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
+            services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
+            services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -150,6 +154,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
             services.AddTransient<IServiceOrderEntityService, ServiceOrderEntityService>();
             services.AddTransient<IServiceOrderItemEntityService, ServiceOrderItemEntityService>();
+            services
+                .AddTransient<IAirportWatchHistoricalParkingEntityService,
+                    AirportWatchHistoricalParkingEntityService>();
 
             return services;
         }
