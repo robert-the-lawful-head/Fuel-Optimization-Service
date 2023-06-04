@@ -19,7 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
     }
 
-    public class AirportWatchHistoricalParkingService : BaseDTOService<AirportWatchHistoricalParkingDto, DB.Models.AirportWatchHistoricalParking, FboLinxContext>
+    public class AirportWatchHistoricalParkingService : BaseDTOService<AirportWatchHistoricalParkingDto, DB.Models.AirportWatchHistoricalParking, FboLinxContext>, IAirportWatchHistoricalParkingService
     {
         public AirportWatchHistoricalParkingService(IAirportWatchHistoricalParkingEntityService entityService) : base(entityService)
         {

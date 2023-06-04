@@ -179,7 +179,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     AirportICAO = h.AirportICAO,
                     CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                     Latitude = h.Latitude,
-                    Longitude = h.Longitude
+                    Longitude = h.Longitude,
+                    AirportWatchHistoricalParking = h.AirportWatchHistoricalParking
                 });
             return result.ToList();
         }

@@ -283,6 +283,26 @@
                         </td>
                     </ng-container>
 
+                    <ng-container matColumnDef="isConfirmedVisit">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Visit to {{fboName}}?</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="isConfirmedVisit"
+                                                         propertyName="isConfirmedVisit"
+                                                         [columnFormat]="8"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            <mat-slide-toggle *ngIf="info.status == 'Arrival'"
+                                              color="primary"
+                                              [(ngModel)]="info.isConfirmedVisit"
+                                              (change)="confirmedVisitToggled(info)">
+                            </mat-slide-toggle>
+                        </td>
+                    </ng-container>
+
                     <ng-container matColumnDef="percentOfVisits">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>
                             <span>Percent of Visits</span>

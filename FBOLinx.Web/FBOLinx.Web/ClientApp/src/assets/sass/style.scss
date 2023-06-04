@@ -922,7 +922,7 @@ div.price-checker-button-bottom {
 }
 
 /*Group Analytics*/
-.group-analytics {
+.group-analytics, .statistics-tab {
     .chart-container {
         width: 100%;
     }
@@ -941,6 +941,10 @@ div.price-checker-button-bottom {
     }
 
     .fbos-dropdown-filter {
+        .p-multiselect {
+            width: 100%;
+        }
+
         ::ng-deep {
             .p-multiselect {
                 width: 30rem;

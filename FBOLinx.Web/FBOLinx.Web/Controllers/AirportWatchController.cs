@@ -7,6 +7,7 @@ using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
 using FBOLinx.DB.Context;
+using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.Service.Mapping.Dto;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.Dto.Responses;
@@ -34,12 +35,15 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
         private IIntraNetworkAntennaDataReportService _IntraNetworkAntennaDataReportService;
+        private IAirportWatchHistoricalParkingService _AirportWatchHistoricalParkingService;
 
         public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService,
             FboLinxContext context, DBSCANService dBSCANService,
             IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger,
-            IIntraNetworkAntennaDataReportService intraNetworkAntennaDataReportService) : base(logger)
+            IIntraNetworkAntennaDataReportService intraNetworkAntennaDataReportService,
+            IAirportWatchHistoricalParkingService airportWatchHistoricalParkingService) : base(logger)
         {
+            _AirportWatchHistoricalParkingService = airportWatchHistoricalParkingService;
             _IntraNetworkAntennaDataReportService = intraNetworkAntennaDataReportService;
             _airportWatchService = airportWatchService;
             _fboService = fboService;
@@ -169,6 +173,41 @@ namespace FBOLinx.Web.Controllers
                 HandleException(ex);
                 return StatusCode(500, "Error getting intra network visits report for group {groupId}");
             }
+        }
+
+        [HttpGet("historical-parking/{id}")]
+        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> GetHistoricalParkingById([FromRoute] int id)
+        {
+            var result = await _AirportWatchHistoricalParkingService.GetSingleBySpec(new AirportWatchHistoricalParkingById(id));
+            return Ok(result);
+        }
+
+        [HttpPost("historical-parking")]
+        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> CreateHistoricalParking(
+            [FromBody] AirportWatchHistoricalParkingDto dto)
+        {
+            var result = await _AirportWatchHistoricalParkingService.AddAsync(dto);
+            return Ok(result);
+        }
+
+        [HttpPut("historical-parking")]
+        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> UpdateHistoricalParking(
+            [FromBody] AirportWatchHistoricalParkingDto dto)
+        {
+            await _AirportWatchHistoricalParkingService.UpdateAsync(dto);
+            return Ok();
+        }
+
+        [HttpDelete("historical-parking/{id}")]
+        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> DeleteHistoricalParking([FromRoute] int id)
+        {
+            var row = await _AirportWatchHistoricalParkingService.GetSingleBySpec(new AirportWatchHistoricalParkingById(id));
+            if (row == null || row.Oid == 0)
+            {
+                return NotFound();
+            }
+            await _AirportWatchHistoricalParkingService.DeleteAsync(row);
+            return Ok();
         }
     }
 }

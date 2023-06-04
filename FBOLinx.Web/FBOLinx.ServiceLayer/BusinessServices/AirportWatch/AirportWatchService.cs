@@ -407,6 +407,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                })
                .ToList();
 
+            var parkingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Parking).Where(x => x.AirportWatchHistoricalParking != null).ToList();
+
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
             var result = (from h in historicalData
@@ -428,7 +430,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                           AircraftTypeCode = h.AircraftTypeCode,
                           PastVisits = cv == null ? null : cv.PastVisits,
                           VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                          PercentOfVisits = cv == null ? null : cv.PercentOfVisits
+                          PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
+                          AirportWatchHistoricalParking = parkingEvents.FirstOrDefault(p => p.AircraftHexCode == h.AircraftHexCode && p.AirportICAO == h.AirportICAO && p.AircraftPositionDateTimeUtc > h.AircraftPositionDateTimeUtc && Math.Abs((p.AircraftPositionDateTimeUtc - h.AircraftPositionDateTimeUtc).TotalMinutes) <= 60)?.AirportWatchHistoricalParking
                       }).ToList();
 
             return result;

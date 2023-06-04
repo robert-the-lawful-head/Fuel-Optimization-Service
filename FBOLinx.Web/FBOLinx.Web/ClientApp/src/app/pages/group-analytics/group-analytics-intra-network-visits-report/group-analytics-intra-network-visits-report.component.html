@@ -33,6 +33,39 @@
                                     disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 260px">
+                <p-multiSelect class="fbos-dropdown-filter"
+                               [options]="fbos"
+                               [(ngModel)]="selectedFbos"
+                               optionLabel="fbo"
+                               display="chip"
+                               placeholder="Select FBOs"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50">
+                    <ng-template let-value pTemplate="selectedItems">
+                        <div class="p-multiselect-token"
+                             *ngFor="let fbo of selectedFbos">
+                            <span class="p-multiselect-token-label ng-tns-c52-5">
+                                {{ fbo.icao }} - {{ fbo.fbo }}
+                            </span>
+                            <span (click)="removeFboSelectionClicked(fbo)" class="
+                                    p-multiselect-token-icon
+                                    pi pi-times-circle
+                                "></span>
+                        </div>
+
+                        <div *ngIf="!selectedFbos || selectedFbos.length === 0">
+                            Select FBOs
+                        </div>
+                    </ng-template>
+                    <ng-template let-fbo pTemplate="item">
+                        <div class="fbo-item">
+                            <div>{{ fbo.icao }} - {{ fbo.fbo }}</div>
+                        </div>
+                    </ng-template>
+                </p-multiSelect>
+            </div>
             <div class="d-inline-block mr-2 ml-2">
                 <p-multiSelect class="airport-dropdown-filter"
                                [options]="customers"
@@ -59,13 +92,6 @@
                                [virtualScroll]="true"
                                itemSize="50"></p-multiSelect>
             </div>
-            <!--<div class="d-inline-block mr-2 ml-2">
-                <mat-slide-toggle color="primary"
-                                  [(ngModel)]="isCommercialInvisible"
-                                  (change)="filterChanged()">
-                    Hide Commercial Flights
-                </mat-slide-toggle>
-            </div>-->
             <div class="d-inline-block ml-2">
                 <button (click)="clearAllFilters()"
                         [view]="'error'"
@@ -85,9 +111,6 @@
                           class="switch-nested-menu-left-arrows"
                           xPosition="before">
                     <button (click)="exportCsv()" mat-menu-item>Export</button>
-                    <!--<button (click)="openSettings()" mat-menu-item>
-                        Settings
-                    </button>-->
                 </mat-menu>
             </div>
         </div>
@@ -131,7 +154,7 @@
 
                     <ng-container matColumnDef="aircraftType">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Aircraft Type</span>
+                            <span>Aircraft</span>
                             <span *ngIf="dataSource">
                                 <app-table-column-filter [matDataSource]="dataSource"
                                                          [matSort]="sort"
@@ -159,21 +182,6 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="aircraftSize">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Aircraft Size</span>
-                            <span *ngIf="dataSource">
-                                <app-table-column-filter [matDataSource]="dataSource"
-                                                         [matSort]="sort"
-                                                         columnId="aircraftSize"
-                                                         propertyName="aircraftSize"></app-table-column-filter>
-                            </span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.aircraftSize }}
-                        </td>
-                    </ng-container>
-
 
                     <ng-container matColumnDef="{{dynamicColumns[dynamicColumnIndex].id}}" *ngFor="let dynamicColumn of dynamicColumns; index as dynamicColumnIndex">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>
@@ -187,7 +195,7 @@
                             </span>
                         </th>
                         <td *matCellDef="let info" mat-cell>
-                            {{ info[dynamicColumns[dynamicColumnIndex].id] }}
+                            {{ !info[dynamicColumns[dynamicColumnIndex].id] ? 0 : info[dynamicColumns[dynamicColumnIndex].id] }}
                         </td>
                     </ng-container>
 

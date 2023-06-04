@@ -130,6 +130,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             name: 'Visits to My FBO',
         },
         {
+            id: 'isConfirmedVisit',
+            name: 'Visit to My FBO?'
+        },
+        {
             id: 'percentOfVisits',
             name: 'Percent of Visits',
         },
@@ -401,5 +405,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+
+    confirmedVisitToggled(row: FlightWatchHistorical) {
+        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
+        this.airportWatchService.updateHistoricalParking(row.airportWatchHistoricalParking).subscribe((response: any) => {
+            //Nothing to do
+        });
     }
 }

@@ -110,6 +110,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
             services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
+            services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
