@@ -98,4 +98,11 @@ export class AirportWatchService {
             { headers: this.headers }
         );
     }
+
+    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/intra-network/visits-report/${groupId}?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`,
+            { headers: this.headers }
+        );
+    }
 }

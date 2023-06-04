@@ -1,6 +1,6 @@
 <ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
 
-<div class="after-breadcrumb">
+<div class="after-breadcrumb group-analytics">
     <ng-container *ngIf="customers">
         <ni-card
             [headerBgColor]="'gray'"
@@ -45,6 +45,7 @@
         ></app-group-analytics-customer-statistics>
         <app-group-analytics-fuel-vendor-sources></app-group-analytics-fuel-vendor-sources>
         <app-group-analytics-market-share></app-group-analytics-market-share>
+        <app-analytics-intra-network-visits-report></app-analytics-intra-network-visits-report>
     </ng-container>
 
     <div *ngIf="!customers">

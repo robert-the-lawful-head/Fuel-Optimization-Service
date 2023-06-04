@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics
 {
-    public class IntraNetworkAntennaDataReportVisitsItem
+    public class IntraNetworkVisitsReportByAirportItem
     {
         public string Icao { get; set; }
-        public int AcuwkikFboHandlerId { get; set; }
+        public int AcukwikFboHandlerId { get; set; }
         public int VisitsToAirport { get; set; }
         public int VisitsToFbo { get; set; }
+        public string FboName { get; set; }
     }
 }

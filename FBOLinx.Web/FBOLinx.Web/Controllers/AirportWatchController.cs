@@ -16,7 +16,9 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -31,9 +33,14 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboService _fboService;
         private readonly FboLinxContext _context;
         private readonly DBSCANService _dBSCANService;
+        private IIntraNetworkAntennaDataReportService _IntraNetworkAntennaDataReportService;
 
-        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService, FboLinxContext context , DBSCANService dBSCANService, IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger) : base(logger)
+        public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService,
+            FboLinxContext context, DBSCANService dBSCANService,
+            IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger,
+            IIntraNetworkAntennaDataReportService intraNetworkAntennaDataReportService) : base(logger)
         {
+            _IntraNetworkAntennaDataReportService = intraNetworkAntennaDataReportService;
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
@@ -141,6 +148,27 @@ namespace FBOLinx.Web.Controllers
             var unassignedAntennas = await _airportWatchService.GetDistinctUnassignedAntennaBoxes(antennaName);
 
             return Ok(unassignedAntennas);
+        }
+
+        [HttpGet("intra-network/visits-report/{groupId}")]
+        public async Task<ActionResult<List<IntraNetworkVisitsReportItem>>> GetIntraNetworkVisitsReportForGroup(
+            [FromRoute] int groupId, DateTime? startDateTimeUtc = null, DateTime? endDateTimeUtc = null)
+        {
+            try
+            {
+                if (!startDateTimeUtc.HasValue || !endDateTimeUtc.HasValue)
+                {
+                    throw new Exception("Start and end date time are required.  Please provide startDateTimeUtc and endDateTimeUtc values in the querystring.");
+                }
+
+                var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId, startDateTimeUtc.Value, endDateTimeUtc.Value);
+                return Ok(result);
+            }
+            catch (System.Exception ex)
+            {
+                HandleException(ex);
+                return StatusCode(500, "Error getting intra network visits report for group {groupId}");
+            }
         }
     }
 }

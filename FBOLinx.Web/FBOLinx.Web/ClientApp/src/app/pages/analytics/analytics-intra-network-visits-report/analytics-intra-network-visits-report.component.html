@@ -1,0 +1,212 @@
+<ni-card [headerBgColor]="'gray'"
+         title="Intra-Network ADS-B Data"
+         class="mb-1">
+    <div class="chart-container">
+        <div class="flex mb-2 position-relative">
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input (dateChange)="refreshData()"
+                           (focus)="intraNetworkSettingsStartDateFilter.open()"
+                           [(ngModel)]="filterStartDate"
+                           [matDatepicker]="intraNetworkSettingsStartDateFilter"
+                           [max]="filterEndDate"
+                           matInput
+                           placeholder="Start Date" />
+                    <mat-datepicker-toggle [for]="intraNetworkSettingsStartDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #intraNetworkSettingsStartDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input (dateChange)="refreshData()"
+                           (focus)="intraNetworkEndDateFilter.open()"
+                           [(ngModel)]="filterEndDate"
+                           [matDatepicker]="intraNetworkEndDateFilter"
+                           [min]="filterStartDate"
+                           matInput
+                           placeholder="End Date" />
+                    <mat-datepicker-toggle [for]="intraNetworkEndDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #intraNetworkEndDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <p-multiSelect class="airport-dropdown-filter"
+                               [options]="customers"
+                               [(ngModel)]="selectedCustomers"
+                               optionLabel="company"
+                               optionValue="customerInfoByGroupID"
+                               display="chip"
+                               placeholder="Select Customers"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50"></p-multiSelect>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <p-multiSelect class="
+                        airport-dropdown-filter airport-dropdown-tails-filter
+                    "
+                               [options]="tailNumbers"
+                               [(ngModel)]="selectedTailNumbers"
+                               optionLabel="tailNumber"
+                               optionValue="tailNumber"
+                               display="chip"
+                               placeholder="Select Tail #"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50"></p-multiSelect>
+            </div>
+            <!--<div class="d-inline-block mr-2 ml-2">
+                <mat-slide-toggle color="primary"
+                                  [(ngModel)]="isCommercialInvisible"
+                                  (change)="filterChanged()">
+                    Hide Commercial Flights
+                </mat-slide-toggle>
+            </div>-->
+            <div class="d-inline-block ml-2">
+                <button (click)="clearAllFilters()"
+                        [view]="'error'"
+                        ni-button
+                        size="small"
+                        [disabled]="!data">
+                    Clear All Filters
+                </button>
+            </div>
+            <div class="actions">
+                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">more_vert</mat-icon>
+                </button>
+                <mat-menu #gridActions="matMenu"
+                          class="switch-nested-menu-left-arrows"
+                          xPosition="before">
+                    <button (click)="exportCsv()" mat-menu-item>Export</button>
+                    <!--<button (click)="openSettings()" mat-menu-item>
+                        Settings
+                    </button>-->
+                </mat-menu>
+            </div>
+        </div>
+
+        <div class="relative mat-elevation-z8">
+            <div class="table-container" (scroll)="onTableScroll($event)">
+                <table [dataSource]="dataSource"
+                       mat-table
+                       matSort
+                       matSortActive="dateTime"
+                       matSortDirection="desc">
+                    <ng-container matColumnDef="company">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Company</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="company"
+                                                         propertyName="company"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ info.company }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="tailNumber">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Tail #</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="tailNumber"
+                                                         propertyName="tailNumber"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ info.tailNumber }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="aircraftType">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Aircraft Type</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="aircraftType"
+                                                         propertyName="aircraftType"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ info.aircraftType }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="aircraftTypeCode">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Aircraft Type</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="aircraftTypeCode"
+                                                         propertyName="aircraftTypeCode"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ getAircraftLabel(info.aircraftTypeCode) }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="aircraftSize">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>Aircraft Size</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="aircraftSize"
+                                                         propertyName="aircraftSize"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ info.aircraftSize }}
+                        </td>
+                    </ng-container>
+
+
+                    <ng-container matColumnDef="{{dynamicColumns[dynamicColumnIndex].id}}" *ngFor="let dynamicColumn of dynamicColumns; index as dynamicColumnIndex">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            <span>{{dynamicColumns[dynamicColumnIndex].name}}</span>
+                            <span *ngIf="dataSource">
+                                <app-table-column-filter [matDataSource]="dataSource"
+                                                         [matSort]="sort"
+                                                         columnId="{{dynamicColumns[dynamicColumnIndex].id}}"
+                                                         propertyName="{{dynamicColumns[dynamicColumnIndex].id}}"
+                                                         [columnFormat]="1"></app-table-column-filter>
+                            </span>
+                        </th>
+                        <td *matCellDef="let info" mat-cell>
+                            {{ info[dynamicColumns[dynamicColumnIndex].id] }}
+                        </td>
+                    </ng-container>
+
+                    <tr *matHeaderRowDef="visibleColumns; sticky: true"
+                        mat-header-row></tr>
+                    <tr *matRowDef="let row; columns: visibleColumns"
+                        mat-row></tr>
+                </table>
+
+                <ngx-ui-loader [loaderId]="chartName"
+                               bgsColor="rgb(100, 181, 246)"
+                               bgsPosition="center-center"
+                               bgsType="ball-spin"
+                               overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+            </div>
+            <div class="invisible">
+                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]"
+                               showFirstLastButtons></mat-paginator>
+            </div>
+        </div>
+    </div>
+</ni-card>

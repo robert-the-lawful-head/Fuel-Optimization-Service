@@ -13,6 +13,7 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
@@ -29,7 +30,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             DateTime aircraftPositionEndDateUtc,
             List<string> airportIcaos = null, List<string> aircraftHexCodes = null, List<string> tailNumbers = null, List<string> atcFlightNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
-            string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
+            List<string> airportIcaos, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
             int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
     }
@@ -68,15 +69,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
             int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
-            var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId.GetValueOrDefault()));
-            return await GetHistoricalDataWithCustomerAndAircraftInfo(groupId, fbo?.FboAirport?.Icao, startDateTimeUtc, endDateTimeUtc, tailNumbers);
+            List<string> airportIcaos = null;
+            if (fboId.HasValue)
+            {
+                var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId.GetValueOrDefault()));
+                airportIcaos = new List<string>() { fbo?.FboAirport?.Icao };
+            }
+            else
+            {
+                var allFbos = await _FboEntityService.GetListBySpec(new AllFbosByGroupIdSpecification(groupId));
+                airportIcaos = allFbos.Select(x => x.FboAirport.Icao).Distinct().ToList();
+            }
+            
+            return await GetHistoricalDataWithCustomerAndAircraftInfo(groupId, airportIcaos, startDateTimeUtc, endDateTimeUtc, tailNumbers);
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
-            string airportIcao, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
+            List<string> airportIcaos, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
         {
             //Fetch historical data for the provided tails
-            var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalData(startDateTimeUtc, endDateTimeUtc, new List<string>() {airportIcao}, null, tailNumbers) ;
+            var historicalData = await _AirportWatchHistoricalDataEntityService.GetHistoricalData(startDateTimeUtc, endDateTimeUtc, airportIcaos, null, tailNumbers) ;
             
             //Retrieve relevant customer aircraft information
             var distinctTailsFromHistoricalData = historicalData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber)
@@ -131,7 +143,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                     AirportICAO = groupedResult.Key.AirportICAO,
                                     CustomerInfoByGroupID = groupedResult.Key.CustomerInfoByGroupID.GetValueOrDefault(),
                                     Latitude = groupedResult.Key.Latitude,
-                                    Longitude = groupedResult.Key.Longitude
+                                    Longitude = groupedResult.Key.Longitude,
+                                    AirportWatchHistoricalParking = groupedResult.FirstOrDefault(x => x.AirportWatchHistoricalParking != null)?.AirportWatchHistoricalParking.Adapt<AirportWatchHistoricalParkingDto>()
                                 })
                 .ToList();
 

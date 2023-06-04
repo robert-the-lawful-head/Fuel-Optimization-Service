@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics
 {
-    public class IntraNetworkAntennaDataReportItem
+    public class IntraNetworkVisitsReportItem
     {
+        public string GroupName { get; set; }
         public string TailNumber { get; set; }
         public string Company { get; set; }
         public string FaaRegisteredOwner { get; set; }
         public string AircraftType { get; set; }
-        public int CustomerId { get; set; }
+        public string AircraftTypeCode { get; set; }
         public int CustomerInfoByGroupId { get; set; }
 
-        public List<IntraNetworkAntennaDataReportVisitsItem> AntennaDataReportVisitsCollection { get; set; } =
-            new List<IntraNetworkAntennaDataReportVisitsItem>();
+        public List<IntraNetworkVisitsReportByAirportItem> VisitsByAirport { get; set; } =
+            new List<IntraNetworkVisitsReportByAirportItem>();
     }
 }
