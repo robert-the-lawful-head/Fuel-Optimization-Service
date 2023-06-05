@@ -378,7 +378,7 @@ import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service
         LobbyViewComponent,
         AboutFbolinxComponent,
         AgreementsAndDocumentsModalComponent,
-        GroupAnalyticsIntraNetworkVisitsReportComponent
+        GroupAnalyticsIntraNetworkVisitsReportComponent,
         ServiceOrdersListComponent,
         ServiceOrdersHomeComponent,
         ServiceOrdersItemListComponent,
