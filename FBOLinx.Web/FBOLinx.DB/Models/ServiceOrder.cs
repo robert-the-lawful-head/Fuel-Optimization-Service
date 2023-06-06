@@ -28,7 +28,7 @@ namespace FBOLinx.DB.Models
         [Column("ArrivalDateTimeUTC", TypeName = "datetime")]
         public DateTime ArrivalDateTimeUtc { get; set; }
         [Column("DepartureDateTimeUTC", TypeName = "datetime")]
-        public DateTime DepartureDateTimeUtc { get; set; }
+        public DateTime? DepartureDateTimeUtc { get; set; }
         [Column("CustomerAircraftID")]
         public int CustomerAircraftId { get; set; }
         [Column("AssociatedFuelOrderID")]

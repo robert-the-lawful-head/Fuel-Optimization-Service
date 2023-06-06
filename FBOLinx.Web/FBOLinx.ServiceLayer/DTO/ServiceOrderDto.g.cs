@@ -23,7 +23,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public int GroupId { get; set; }
         public int CustomerInfoByGroupId { get; set; }
         public DateTime ArrivalDateTimeUtc { get; set; }
-        public DateTime DepartureDateTimeUtc { get; set; }
+        public DateTime? DepartureDateTimeUtc { get; set; }
         public int CustomerAircraftId { get; set; }
         public int? AssociatedFuelOrderId { get; set; }
         public int? FuelerLinxTransactionId { get; set; }
@@ -61,7 +61,8 @@ namespace FBOLinx.ServiceLayer.DTO
         public async Task PopulateLocalTimes(IAirportTimeService airportTimeService)
         {
             _ArrivalDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, ArrivalDateTimeUtc);
-            _DepartureDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, DepartureDateTimeUtc);
+            if (DepartureDateTimeUtc.HasValue)
+                _DepartureDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, DepartureDateTimeUtc);
         }
     }
 }

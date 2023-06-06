@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[ServiceOrders](
 	[GroupID] [int] NOT NULL,
 	[CustomerInfoByGroupID] [int] NOT NULL,
 	[ArrivalDateTimeUTC] [datetime] NOT NULL,
-	[DepartureDateTimeUTC] [datetime] NOT NULL,
+	[DepartureDateTimeUTC] [datetime] NULL,
 	[CustomerAircraftID] [int] NOT NULL,
 	[AssociatedFuelOrderID] [int] NULL,
 	[FuelerLinxTransactionID] [int] NULL
