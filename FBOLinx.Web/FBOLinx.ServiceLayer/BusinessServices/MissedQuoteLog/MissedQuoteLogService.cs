@@ -80,7 +80,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                 }
             }
 
-            return missedQuotesLogList;
+            return missedQuotesLogList.OrderBy(m => m.CustomerName).ToList();
         }
 
         public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomersDto  customer)
@@ -157,6 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         {
             var daysBefore = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0));
             var recentMissedQuotes = await GetListbySpec(new MissedQuoteLogSpecification(fboId, daysBefore));
+            recentMissedQuotes = recentMissedQuotes.OrderByDescending(r => r.CreatedDate).ToList();
             var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
 
             foreach (MissedQuoteLogDTO missedQuoteLog in recentMissedQuotes)
