@@ -5,25 +5,75 @@
 </div>
 
 <mat-drawer-container class="" style="min-height: 500px;">
-    <mat-drawer #serviceOrderDrawer class="" mode="side">
+    <mat-drawer #serviceOrderDrawer class="" mode="side" style="width: 380px;">
         <div *ngIf="selectedServiceOrder">
             <app-service-orders-item-list [serviceOrder]="selectedServiceOrder" (serviceOrderItemsChanged)="serviceOrderItemsChanged($event)"
                                           (closeClicked)="serviceOrderItemsCloseClicked()"></app-service-orders-item-list>
         </div>
     </mat-drawer>
 
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="!serviceOrdersData">
+        <div class="row">
+            <div class="col-12">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" *ngIf="serviceOrdersData">
 
         <div class="row">
-            <div class="col">
+            <div class="col-6 col-md-3">
                 <app-table-global-search (filterApplied)="filterChanged($event)"
-                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
+                                         placeholder="Search by Company, Tail, etc."
+                                         [showClearButton]="false"></app-table-global-search>
             </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <mat-select (selectionChange)="sortTypeChanged()" [(ngModel)]="sortType"
+                                placeholder="Sort By">
+                        <mat-option [value]="'arrivalDateTimeLocal'">ETA</mat-option>
+                        <mat-option [value]="'departureDateTimeLocal'">ETD</mat-option>
+                        <mat-option [value]="'customerInfoByGroup.company'">Company</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input (dateChange)="applyDateFilterChange()"
+                           (focus)="serviceOrdersStartDateFilter.open()"
+                           [(ngModel)]="filterStartDate"
+                           [matDatepicker]="serviceOrdersStartDateFilter"
+                           [max]="filterEndDate"
+                           matInput
+                           placeholder="Start Date" />
+                    <mat-datepicker-toggle [for]="serviceOrdersStartDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #serviceOrdersStartDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-3">
+                <mat-form-field>
+                    <input (dateChange)="applyDateFilterChange()"
+                           (focus)="serviceOrdersEndDateFilter.open()"
+                           [(ngModel)]="filterEndDate"
+                           [matDatepicker]="serviceOrdersEndDateFilter"
+                           [min]="filterStartDate"
+                           matInput
+                           placeholder="End Date" />
+                    <mat-datepicker-toggle [for]="serviceOrdersEndDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #serviceOrdersEndDateFilter
+                                    disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
         </div>
 
         <div class="row d-none d-md-flex" *ngIf="allowAddingNew">
             <div class="col-12 text-right">
-                
+
                 <div>
                     <button (click)="addServiceOrderClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
                             ni-button size="small">
@@ -36,7 +86,7 @@
 
         <div class="row" *ngIf="!inCompleteServiceOrders || inCompleteServiceOrders.length == 0">
             <div class="col-12 text-center">
-                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link" (click)="addServiceOrderClicked()">add one to begin</a>.</span> 
+                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link" (click)="addServiceOrderClicked()">add one to begin</a>.</span>
             </div>
         </div>
 
@@ -73,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                 </div>
 
             </mat-list-option>
@@ -137,6 +187,6 @@
         </div>
     </div>
 
-   
+
 
 </mat-drawer-container>

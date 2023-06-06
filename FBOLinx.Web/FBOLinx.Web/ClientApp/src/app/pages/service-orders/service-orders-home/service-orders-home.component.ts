@@ -36,25 +36,7 @@ export class ServiceOrdersHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.loadServiceOrders();
+        
     }
 
-    private loadServiceOrders() {
-        this.serviceOrderService.getServiceOrdersForFbo(this.sharedService.currentUser.fboId).subscribe((response: EntityResponseMessage<Array<ServiceOrder>>) => {
-            if (!response.success)
-                alert('Error getting service orders: ' + response.message);
-            else {
-                this.serviceOrdersData = response.result;
-                this.populateCurrentAndPastOrders();
-            }
-        });
-    }
-
-    private populateCurrentAndPastOrders() {
-        var oneDayPast = moment().add(-1, 'day').toDate();
-        this.currentOrdersData = this.serviceOrdersData
-            .filter(x => new Date(x.arrivalDateTimeLocal) > oneDayPast);
-        this.pastOrdersData = this.serviceOrdersData
-            .filter(x => new Date(x.arrivalDateTimeLocal) <= oneDayPast);
-    }
 }

@@ -168,7 +168,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
                         };
                     });
                 }
-                
+                else {
+                    setTimeout(() => {
+                        serviceOrderMenuItem.badge = {};
+                    });
+                }
             }
         });
     }

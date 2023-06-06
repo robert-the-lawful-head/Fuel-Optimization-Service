@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <div class="row">
-        <div class="col-8">
+        <div [ngClass]="{'col-8': showClearButton, 'col-12': !showClearButton}" >
             <mat-form-field>
                 <input
                     (keyup)="applyFilter($event.target.value)"
@@ -11,7 +11,7 @@
                 <span matPrefix><i class="fa fa-search"></i></span>
             </mat-form-field>
         </div>
-        <div class="col-4" style="margin-top: 15px">
+        <div class="col-4" style="margin-top: 15px" *ngIf="showClearButton">
             <button
                 (click)="clearAllFilters(); $event.stopPropagation()"
                 [view]="'error'"

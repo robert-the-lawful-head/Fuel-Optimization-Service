@@ -2,15 +2,8 @@
 
 <div class="after-breadcrumb">
     <ni-card [headerBgColor]="'#CF8B7C'" title="Service Orders">
-        <div *ngIf="!serviceOrdersData">
-            <div class="row">
-                <div class="col-12">
-                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                </div>
-            </div>
-        </div>
-        <div *ngIf="serviceOrdersData">
-            <app-service-orders-list [serviceOrdersData]="serviceOrdersData"></app-service-orders-list>
+        <div>
+            <app-service-orders-list></app-service-orders-list>
         </div>
     </ni-card>
 

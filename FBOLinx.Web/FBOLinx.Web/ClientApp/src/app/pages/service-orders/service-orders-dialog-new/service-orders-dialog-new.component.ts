@@ -37,9 +37,10 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         this.loadCustomerInfoByGroupDataSource();
     }    
 
-    public onCustomerInfoByGroupChanged(): void {        
+    public onCustomerInfoByGroupChanged(selectedCustomerInfoByGroup: CustomerInfoByGroup): void {
+        this.data.customerInfoByGroup = selectedCustomerInfoByGroup;
         this.data.customerAircraft = null;
-        this.onCustomerAircraftChanged();
+        this.onCustomerAircraftChanged(null);
 
         this.data.customerInfoByGroupId = this.data.customerInfoByGroup.oid;
         if (this.data.customerInfoByGroupId > 0) {
@@ -47,7 +48,8 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         }
     }
 
-    public onCustomerAircraftChanged(): void {
+    public onCustomerAircraftChanged(customerAircraft: CustomerAircraft): void {
+        this.data.customerAircraft = customerAircraft;
         if (this.data.customerAircraft != null)
             this.data.customerAircraftId = this.data.customerAircraft.oid;
         else
@@ -81,6 +83,14 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         });
     }
 
+    public displayCustomerName(customer: CustomerInfoByGroup) {
+        return customer ? customer.company : customer;
+    }
+
+    public displayTailNumber(customerAircraft: CustomerAircraft) {
+        return customerAircraft ? customerAircraft.tailNumber : customerAircraft;
+    }
+
     private loadCustomerInfoByGroupDataSource() {
         this.customerInfoByGroupService.getCustomerInfoByGroupListByGroupId(this.data.groupId).subscribe((response: CustomerInfoByGroup[]) => {
             this.customerInfoByGroupDataSource = response.sort((n1, n2) => {
@@ -91,7 +101,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
                     return -1;
                 }
                 return 0;
-            });
+            });            
         });
     }
 

@@ -10,7 +10,8 @@ import * as moment from 'moment';
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
-    @Input() SubmatDataSource : any = null
+    @Input() SubmatDataSource: any = null
+    @Input() showClearButton: boolean = true;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
