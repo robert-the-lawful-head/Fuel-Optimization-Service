@@ -67,7 +67,7 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
-        component: DashboardFboComponent,
+        component: DashboardFboUpdatedComponent,
         path: 'dashboard-csr',
     },
     {
