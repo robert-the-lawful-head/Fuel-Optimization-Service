@@ -70,7 +70,7 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="marginType == 0">${{ aboveLineTax.amount | number: "1.4-4" }}</span>
+                <span *ngIf="marginType == 0">{{ aboveLineTax.amount | currency:'USD':true:'1.4-4' }}</span>
                 <span *ngIf="marginType == 1">Applied</span>
             </div>
         </div>
@@ -81,7 +81,7 @@
             <div class="col font-weight-bold">Sub-total</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
-                ${{ preMarginSubTotal | number: "1.4-4" }}
+                {{ preMarginSubTotal | currency:'USD':true:'1.4-4' }}
             </div>
         </div>
 
@@ -92,7 +92,7 @@
             <div class="col" *ngIf="marginType == 1">Discount</div>
             <div class="col"></div>
             <div class="col text-right">
-                $<span *ngIf="marginType == 1">-</span>{{ marginITP | number: "1.4-4" }}
+                <span *ngIf="marginType == 1">-</span>${{ marginITP | number: "1.4-4" }}
             </div>
         </div>
 
@@ -102,7 +102,7 @@
             <div class="col font-weight-bold">Sub-total w/ Margin</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
-                ${{ subTotalWithMargin | number: "1.4-4" }}
+                {{ subTotalWithMargin | currency:'USD':true:'1.4-4' }}
             </div>
         </div>
 
@@ -158,7 +158,7 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="belowLineTax.amount">${{ belowLineTax.amount | number: "1.4-4" }}</span>
+                <span *ngIf="belowLineTax.amount">{{ belowLineTax.amount | currency:'USD':true:'1.4-4' }}</span>
             </div>
         </div>
 
@@ -167,7 +167,7 @@
             <div *ngIf="displayMode == 1" class="col-1"></div>
             <div class="col">Total</div>
             <div class="col"></div>
-            <div class="col text-right">${{ total | number: "1.4-4" }}</div>
+            <div class="col text-right">{{ total | currency:'USD':true:'1.4-4' }}</div>
         </div>
     </div>
 
@@ -212,7 +212,7 @@
                                 aboveLineTax.calculationType == 0 &&
                                 aboveLineTax.amount
                             ">
-                            ${{ aboveLineTax.amount | number: "1.4-4" }}
+                            {{ aboveLineTax.amount | currency:'USD':true:'1.4-4' }}
                         </div>
                     </div>
                 </div>
@@ -263,7 +263,7 @@
                             belowLineTax.calculationType == 0 &&
                             belowLineTax.amount
                         ">
-                        ${{ belowLineTax.amount | number: "1.4-4" }}
+                        {{ belowLineTax.amount | number: "1.4-4" }}
                     </div>
                 </div>                
             </div>
