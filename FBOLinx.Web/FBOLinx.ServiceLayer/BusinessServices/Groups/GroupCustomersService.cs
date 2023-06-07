@@ -50,14 +50,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 var aircrafts = await _fuelerLinxApiService.GetAircraftsFromFuelerinx();
                 var existingCustomerInfoByGroupRecords =
                     await _CustomerInfoByGroupEntityService.GetListBySpec(
-                        new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+                        new CustomerInfoByGroupCustomerAircraftsByGroupIdNotCheckingSuspendedSpecification(groupId));
 
                 List<CustomerInfoByGroup> customerInfoByGroupToInsert = new List<CustomerInfoByGroup>();
 
                 foreach (var cust in listWithCustomers)
                 {
-                    var existingCustomerInfoByGroupRecord = existingCustomerInfoByGroupRecords.Select(c => c.Oid == cust.Oid).ToList();
-                    if (existingCustomerInfoByGroupRecord.Count == 0)
+                    var existingCustomerInfoByGroupRecord = existingCustomerInfoByGroupRecords.Where(c => c.CustomerId == cust.Oid).ToList();
+                    if (existingCustomerInfoByGroupRecord.Count > 0)
                     {
                         continue;
                     }
