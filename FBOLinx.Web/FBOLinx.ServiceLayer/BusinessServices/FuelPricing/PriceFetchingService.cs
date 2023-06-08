@@ -311,6 +311,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.DepartureType == ApplicableTaxFlights.DomesticOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
+
                     });
                 }
 
@@ -323,7 +324,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x =>
                     {
-                        x.Product = x.Product + " (International Departure)";
+                        x.Product = x.Product + " (International)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
@@ -346,9 +347,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     {
                         var productName = x.Product;
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
-                            productName += " (Domestic Departure)";
+                            productName += " (Domestic)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
-                            productName += " (International Departure)";
+                            productName += " (International)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.Never || fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
@@ -366,9 +367,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     {
                         var productName = x.Product;
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
-                            productName += " (Domestic Departure)";
+                            productName += " (Domestic)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
-                            productName += " (International Departure)";
+                            productName += " (International)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
                             .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
@@ -403,6 +404,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.OmittedFor = "C";
                         }
                     });
+
+                    //Add the flight type classification to the product name if any fees are applicable to that flight type
+                    x.Product += (x.FeesAndTaxes.Any(fee => !fee.IsOmitted && fee.FlightTypeClassification == flightTypeClassifications) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypeClassifications) + ")" : "");
                 });
                 return resultsWithFees;
             }
