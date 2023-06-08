@@ -9,14 +9,14 @@
     </div>
     <div *ngIf="domesticPrivatePricing && !isPricesExpired && isCustomerActive" class="row">
         <!--Fee and tax breakdown-->
-        <div class="col-12 fee-and-tax-breakdown-container mb-2"
+        <div class="col-xl-6 col-md-12 fee-and-tax-breakdown-container mb-2"
             *ngIf="
                 !hideFeeAndTaxGeneralBreakdown &&
                 domesticPrivatePricing &&
                 domesticPrivatePricing.pricingList &&
                 domesticPrivatePricing.pricingList.length > 0 &&
                 domesticPrivatePricing.pricingList[0].fboPrice
-            "            
+            "
         >
             <fee-and-tax-breakdown
                 #feeAndTaxBreakdown
@@ -525,10 +525,10 @@
                 </div>
 
                 <!--Popover combinations-->
-                <popover-content
+                <popover-content class="pop-over"
                     #feeAndTaxPopover
-                    [closeOnMouseOutside]="true"
-                    [placement]="tooltipPlacement"
+                    [closeOnClickOutside]="true"
+                   [placement]="tooltipPlacement"
                     title="Fee/Tax Breakdown"
                 >
                     <div
