@@ -325,7 +325,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     internationalOptions = customerPricingResults.Clone<CustomerWithPricing>().ToList();
                     internationalOptions.ForEach(x =>
                     {
-                        x.Product = x.Product + " (International Departure)";
+                        x.Product = x.Product + " (International)";
                         x.FeesAndTaxes = feesAndTaxes.Where(fee =>
                             fee.DepartureType == ApplicableTaxFlights.InternationalOnly ||
                             fee.DepartureType == ApplicableTaxFlights.All)
@@ -348,9 +348,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     {
                         var productName = x.Product;
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
-                            productName += " (Domestic Departure)";
+                            productName += " (Domestic)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
-                            productName += " (International Departure)";
+                            productName += " (International)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.Never || fee.DepartureType == ApplicableTaxFlights.All)
                             .ToList().Clone<FboFeesAndTaxes>().ToList();
@@ -368,9 +368,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     {
                         var productName = x.Product;
                         if (internationalOptions.Count > 0 && domesticOptions.Count == 0)
-                            productName += " (Domestic Departure)";
+                            productName += " (Domestic)";
                         else if (domesticOptions.Count > 0 && internationalOptions.Count == 0)
-                            productName += " (International Departure)";
+                            productName += " (International)";
                         x.Product = productName;
                         x.FeesAndTaxes = feesAndTaxes.Where(fee => fee.DepartureType == ApplicableTaxFlights.All)
                             .Where(fee => fee.OmitsByPricingTemplate == null || fee.OmitsByPricingTemplate.All(o => o.PricingTemplateId != x.PricingTemplateId))
