@@ -48,7 +48,7 @@ export class PriceBreakdownComponent implements OnInit {
     @Input() feeAndTaxDisplayMode: FeeAndTaxBreakdownDisplayModes =
         FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input() showFeeAndTaxLineSeparator = false;
-    @Input() tooltipPlacement = 'top-left';
+    @Input() tooltipPlacement = 'top-right';
     @Input() priceBreakdownLoader = 'price-breakdown-loader';
     @Input() hideTooltips = false;
     @Input() isMember: boolean;
