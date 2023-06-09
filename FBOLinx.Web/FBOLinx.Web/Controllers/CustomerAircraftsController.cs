@@ -20,6 +20,7 @@ using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
 using Azure.Core;
 using System.Security.Cryptography;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -34,9 +35,10 @@ namespace FBOLinx.Web.Controllers
         private ICustomerAircraftService _CustomerAircraftService;
         private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
         private AirportWatchService _AirportWatchService;
+        private readonly IGroupCustomersService _GroupCustomersService;
 
         public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, 
-            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService, ILoggingService logger) : base(logger)
+            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService, ILoggingService logger, IGroupCustomersService groupCustomersService) : base(logger)
         {
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
@@ -44,6 +46,7 @@ namespace FBOLinx.Web.Controllers
             _context = context;
             _aircraftService = aircraftService;
             _AirportWatchService = airportWatchService;
+            _GroupCustomersService = groupCustomersService;
         }
 
         [HttpGet]
@@ -471,6 +474,23 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerAircrafts);
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpPost("re-sync-group-customer-aircrafts/{groupId}")]
+        public async Task<IActionResult> ReSyncCustomerAircrafts([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _GroupCustomersService.StartAircraftTransfer(groupId, true);
+
+            return Ok();
+        }
+
+
+
         #region Integration Partner APIs
         [AllowAnonymous]
         [APIKey(IntegrationPartnerTypes.Internal)]
@@ -534,7 +554,6 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ex);
             }
         }
-
         #endregion
         
         private bool CustomerAircraftsExists(int id)

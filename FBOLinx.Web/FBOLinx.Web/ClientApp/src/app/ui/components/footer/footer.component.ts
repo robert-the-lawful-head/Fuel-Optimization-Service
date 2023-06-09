@@ -38,4 +38,7 @@ export class FooterComponent implements OnInit {
             this.eulaLink = data?.document;
         });
     }
+    public hasEulaLink(): boolean {
+        return this.eulaLink !== '';
+    }
 }

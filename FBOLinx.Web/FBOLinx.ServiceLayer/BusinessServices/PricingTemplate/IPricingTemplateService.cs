@@ -12,7 +12,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
     {
         Task FixCustomCustomerTypes(int groupId, int fboId);
         Task FixDefaultPricingTemplate(int fboId);
-        Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false);
+        Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0, bool isAnalytics = false);
         Task UpdatePricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<bool> PutPricingTemplate(int id, PricingTemplateDto pricingTemplate);
         Task<PricingTemplateDto> PostPricingTemplate(PricingTemplateDto pricingTemplate);

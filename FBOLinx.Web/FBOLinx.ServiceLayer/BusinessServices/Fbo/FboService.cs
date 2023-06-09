@@ -130,7 +130,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 
             var fboContacts = await _fboContactsEntityService.GetFboContactsByFboId(fboId);
 
-            foreach (ContactsDTO fboContact in fboContacts)
+            foreach (ContactsDto fboContact in fboContacts)
             {
                 if (fboContact.CopyAlerts.HasValue && fboContact.CopyAlerts.Value && !string.IsNullOrEmpty(fboContact.Email))
                     toEmails.Add(fboContact.Email);

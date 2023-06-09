@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.Customers;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO;
@@ -14,14 +16,15 @@ using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
-    public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDTO, CustomerInfoByGroup>
+    public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDto, CustomerInfoByGroup>
     {
         Task<CustomerInfoByGroupDTO> AddNewCustomerInfoByGroup(CustomerInfoByGroupDTO customerInfoByGroup);
-        Task<List<CustomerInfoByGroupDTO>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
+        Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
+        Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0);
     }
 
-    public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDTO, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
+    public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDto, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
     {
         private ICustomerService _CustomerService;
 
@@ -42,14 +45,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             return await AddAsync(customerInfoByGroup);
         }
 
-        public async Task<List<CustomerInfoByGroupDTO>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
-        {
-            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
-            var customerInfoByGroup = await GetListbySpec(new CustomerInfoByGroupByFboIdSpecification(groupId, fboId, customerInfoByGroupId));
-            customerInfoByGroup.RemoveAll(x => x == null);
-
-            return customerInfoByGroup;
-        }
 
         public async Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
@@ -66,6 +61,29 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 .ToList();
 
             return customerInfoByGroupList;
+        }
+
+        public async Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null)
+        {
+            List<CustomerInfoByGroupDto> result = new List<CustomerInfoByGroupDto>();
+            if (tailNumbers?.Count == 0 || tailNumbers == null)
+                result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+            else
+                result = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId, tailNumbers));
+
+            return result;
+        }
+        public async Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0)
+        {
+            //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group
+            var customers = new List<CustomerInfoByGroupDto>();
+            if (customerInfoByGroupId == 0)
+                customers = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+            else
+                customers = await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId, customerInfoByGroupId));
+            customers.RemoveAll(x => x == null);
+
+            return customers;
         }
     }
 }

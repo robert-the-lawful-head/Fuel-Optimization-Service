@@ -108,6 +108,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IGroupFboService, GroupFboService>();
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
 

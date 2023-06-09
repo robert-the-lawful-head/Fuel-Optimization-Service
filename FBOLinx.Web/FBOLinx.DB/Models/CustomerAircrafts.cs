@@ -7,8 +7,11 @@ namespace FBOLinx.DB.Models
 {
     public partial class CustomerAircrafts : FBOLinxBaseEntityModel<int>
     {
+        [ForeignKey("OID")]
         [Column("GroupID")]
         public int GroupId { get; set; }
+
+        [ForeignKey("OID")]
         [Column("CustomerID")]
         public int CustomerId { get; set; }
         [Column("AircraftID")]
