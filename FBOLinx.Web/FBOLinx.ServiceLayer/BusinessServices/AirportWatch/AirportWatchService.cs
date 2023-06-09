@@ -389,6 +389,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
                    return new AirportWatchHistoricalDataResponse
                    {
+                       AirportWatchHistoricalDataId = latest.AirportWatchHistoricalDataID,
                        CustomerInfoByGroupID = latest.CustomerInfoByGroupID,
                        CompanyId = latest.CustomerId,
                        Company = latest.Company,
@@ -417,6 +418,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                       from cv in leftJoinedCV.DefaultIfEmpty()
                       select new AirportWatchHistoricalDataResponse
                       {
+                          AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
                           CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                           CompanyId = h.CustomerId,
                           Company = h.Company,
@@ -444,6 +446,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 .Where(h => h.Company == null)
                 .Select(h => new AirportWatchHistoricalDataResponse
                 {
+                    AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
                     CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                     CompanyId = h.CustomerId,
                     Company = h.Company,
@@ -471,6 +474,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
                     return new AirportWatchHistoricalDataResponse
                     {
+                        AirportWatchHistoricalDataId = latest.AirportWatchHistoricalDataID,
                         CustomerInfoByGroupID = latest.CustomerInfoByGroupID,
                         CompanyId = latest.CustomerId,
                         Company = latest.Company,

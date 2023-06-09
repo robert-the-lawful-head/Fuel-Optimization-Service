@@ -4,6 +4,7 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
 {
     public class AirportWatchHistoricalDataResponse
     {
+        public int AirportWatchHistoricalDataId { get; set; }
         public int CustomerInfoByGroupID { get; set; }
         public int CompanyId { get; set; }
         public string Company { get; set; }

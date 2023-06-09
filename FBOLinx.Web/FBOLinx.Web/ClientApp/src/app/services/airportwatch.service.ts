@@ -107,6 +107,14 @@ export class AirportWatchService {
         );
     }
 
+    public createHistoricalParking(record: AirportWatchHistoricalParking) {
+        return this.http.post<AirportWatchHistoricalParking>(
+            `${this.accessPointUrl}/historical-parking`,
+            record,
+            { headers: this.headers }
+        );
+    }
+
     public updateHistoricalParking(record: AirportWatchHistoricalParking) {
         return this.http.put<any>(
             `${this.accessPointUrl}/historical-parking`,

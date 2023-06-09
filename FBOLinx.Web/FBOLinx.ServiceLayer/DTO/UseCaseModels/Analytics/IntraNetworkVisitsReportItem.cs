@@ -16,6 +16,16 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics
         public string AircraftTypeCode { get; set; }
         public int CustomerInfoByGroupId { get; set; }
 
+        public string CompanyDisplayName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(Company))
+                    return FaaRegisteredOwner;
+                return Company;
+            }
+        }
+
         public List<IntraNetworkVisitsReportByAirportItem> VisitsByAirport { get; set; } =
             new List<IntraNetworkVisitsReportByAirportItem>();
     }

@@ -33,7 +33,33 @@
                                     disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
-            <div class="d-inline-block mr-2 ml-2" style="width: 260px">
+            <div class="d-inline-block mr-2 ml-2">
+                <p-multiSelect class="airport-dropdown-filter"
+                               [options]="customers"
+                               [(ngModel)]="selectedCustomers"
+                               optionLabel="company"
+                               optionValue="customerInfoByGroupId"
+                               display="chip"
+                               placeholder="Select Customers"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50"></p-multiSelect>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
+                <p-multiSelect class="
+                        airport-dropdown-filter airport-dropdown-tails-filter
+                    "
+                               [options]="tailNumbers"
+                               [(ngModel)]="selectedTailNumbers"
+                               optionLabel="tailNumber"
+                               optionValue="tailNumber"
+                               display="chip"
+                               placeholder="Select Tail #"
+                               (onChange)="filterChanged()"
+                               [virtualScroll]="true"
+                               itemSize="50"></p-multiSelect>
+            </div>
+            <div class="d-inline-block mr-2 ml-2">
                 <p-multiSelect class="fbos-dropdown-filter"
                                [options]="fbos"
                                [(ngModel)]="selectedFbos"
@@ -66,32 +92,7 @@
                     </ng-template>
                 </p-multiSelect>
             </div>
-            <div class="d-inline-block mr-2 ml-2">
-                <p-multiSelect class="airport-dropdown-filter"
-                               [options]="customers"
-                               [(ngModel)]="selectedCustomers"
-                               optionLabel="company"
-                               optionValue="customerInfoByGroupID"
-                               display="chip"
-                               placeholder="Select Customers"
-                               (onChange)="filterChanged()"
-                               [virtualScroll]="true"
-                               itemSize="50"></p-multiSelect>
-            </div>
-            <div class="d-inline-block mr-2 ml-2">
-                <p-multiSelect class="
-                        airport-dropdown-filter airport-dropdown-tails-filter
-                    "
-                               [options]="tailNumbers"
-                               [(ngModel)]="selectedTailNumbers"
-                               optionLabel="tailNumber"
-                               optionValue="tailNumber"
-                               display="chip"
-                               placeholder="Select Tail #"
-                               (onChange)="filterChanged()"
-                               [virtualScroll]="true"
-                               itemSize="50"></p-multiSelect>
-            </div>
+
             <div class="d-inline-block ml-2">
                 <button (click)="clearAllFilters()"
                         [view]="'error'"
@@ -164,21 +165,6 @@
                         </th>
                         <td *matCellDef="let info" mat-cell>
                             {{ info.aircraftType }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="aircraftTypeCode">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Aircraft Type</span>
-                            <span *ngIf="dataSource">
-                                <app-table-column-filter [matDataSource]="dataSource"
-                                                         [matSort]="sort"
-                                                         columnId="aircraftTypeCode"
-                                                         propertyName="aircraftTypeCode"></app-table-column-filter>
-                            </span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ getAircraftLabel(info.aircraftTypeCode) }}
                         </td>
                     </ng-container>
 

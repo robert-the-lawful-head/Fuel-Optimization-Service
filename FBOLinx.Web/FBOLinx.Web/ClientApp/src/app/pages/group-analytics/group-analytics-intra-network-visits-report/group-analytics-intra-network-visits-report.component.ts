@@ -53,8 +53,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         { id: 'tailNumber', name: 'Tail Number' },
         { id: 'company', name: 'Company' },
         /*{ id: 'faaRegisteredOwner', name: 'FAA Registered Owner' },*/
-        { id: 'aircraftType', name: 'Aircraft' },
-        { id: 'aircraftTypeCode', name: 'Aircraft Type' }
+        { id: 'aircraftType', name: 'Aircraft' }
     ];
     dynamicColumns: ColumnType[] = [];
 
@@ -178,9 +177,10 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     //Builds the datasource from the data - creating dynamic columns for each distinct FBO and airport loaded
     private refreshDataSource() {
-        this.customers = [];
-        this.tailNumbers = [];
-        this.fbos = [];
+        var populateFilterDataSources = this.customers.length == 0;
+        //this.customers = [];
+        //this.tailNumbers = [];
+        //this.fbos = [];
         var dataSource = [];
         this.dynamicColumns = [];
 
@@ -188,11 +188,14 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
         for (let item of filteredData) {
 
-            this.populateCustomersFromReportItem(item);
-            this.populateTailNumbersFromReportItem(item);
+            if (populateFilterDataSources) {
+                this.populateCustomersFromReportItem(item);
+                this.populateTailNumbersFromReportItem(item);
+            }            
+                       
 
             var newRow = {
-                company: item.company,
+                company: !item.companyDisplayName,
                 tailNumber: item.tailNumber,
                 aircraftType: item.aircraftType,
                 aircraftTypeCode: item.aircraftTypeCode,
@@ -201,7 +204,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             
             for (let airport of item.visitsByAirport) {
 
-                this.populateFbosFromAirportVisitsItem(airport);
+                if (populateFilterDataSources)
+                    this.populateFbosFromAirportVisitsItem(airport);
 
                 if (this.selectedFbos.length > 0 && !this.selectedFbos.some(x => x.acukwikFboHandlerId == airport.acukwikFboHandlerId))
                     continue;
@@ -225,6 +229,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
         this.customers.sort((a, b) => a.company?.localeCompare(b.company));
         this.tailNumbers.sort((a, b) => a.tailNumber?.localeCompare(b.tailNumber));
+        this.fbos.sort((a, b) => (a.fbo)?.localeCompare(b.fbo));
     }
 
     private populateFbosFromAirportVisitsItem(airportVisitsItem: IntraNetworkVisitsReportByAirportItem) {
@@ -235,7 +240,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     private populateCustomersFromReportItem(item: IntraNetworkVisitsReportItem) {
         var customerOption = this.customers.find(x => x.customerInfoByGroupId == item.customerInfoByGroupId);
-        if (customerOption == null)
+        if (customerOption == null && item.company && item.company != '')
             this.customers.push({ company: item.company, customerInfoByGroupId: item.customerInfoByGroupId });
     }
 
