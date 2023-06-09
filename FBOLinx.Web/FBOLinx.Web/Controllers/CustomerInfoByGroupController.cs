@@ -126,7 +126,7 @@ namespace FBOLinx.Web.Controllers
         /// <param name="groupId"></param>
         /// <returns></returns>
         [HttpGet("group/{groupId}/customer/{customerId}")]
-        public async Task<ActionResult<CustomerInfoByGroupDTO>> GetCustomerInfoByGroupAndCustomerId([FromRoute] int groupId, [FromRoute] int customerId)
+        public async Task<ActionResult<CustomerInfoByGroupDto>> GetCustomerInfoByGroupAndCustomerId([FromRoute] int groupId, [FromRoute] int customerId)
         {
             if (!ModelState.IsValid)
             {

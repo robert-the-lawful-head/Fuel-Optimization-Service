@@ -4,8 +4,8 @@
     </button>
 </div>
 
-<mat-drawer-container class="" style="min-height: 500px;">
-    <mat-drawer #serviceOrderDrawer class="" mode="side" style="width: 380px;">
+<mat-drawer-container class="" style="min-height: 500px;" [hasBackdrop]="false">
+    <mat-drawer #serviceOrderDrawer class="" mode="over" style="width: 380px;" position="end">
         <div *ngIf="selectedServiceOrder">
             <app-service-orders-item-list [serviceOrder]="selectedServiceOrder" (serviceOrderItemsChanged)="serviceOrderItemsChanged($event)"
                                           (closeClicked)="serviceOrderItemsCloseClicked()"></app-service-orders-item-list>

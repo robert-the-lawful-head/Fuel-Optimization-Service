@@ -18,7 +18,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDto, CustomerInfoByGroup>
     {
-        Task<CustomerInfoByGroupDTO> AddNewCustomerInfoByGroup(CustomerInfoByGroupDTO customerInfoByGroup);
+        Task<CustomerInfoByGroupDto> AddNewCustomerInfoByGroup(CustomerInfoByGroupDto customerInfoByGroup);
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
         Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
         Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0);
@@ -33,15 +33,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             _CustomerService = customerService;
         }
 
-        public async Task<CustomerInfoByGroupDTO> AddNewCustomerInfoByGroup(CustomerInfoByGroupDTO customerInfoByGroup)
+        public async Task<CustomerInfoByGroupDto> AddNewCustomerInfoByGroup(CustomerInfoByGroupDto customerInfoByGroup)
         {
             if (customerInfoByGroup.CustomerId == 0)
             {
-                var customer = customerInfoByGroup.Customer == null ? new CustomerDTO() {Company = customerInfoByGroup.Company, Active = true, ShowJetA = true} : customerInfoByGroup.Customer;
+                var customer = customerInfoByGroup.Customer == null ? new CustomersDto() {Company = customerInfoByGroup.Company, Active = true, ShowJetA = true} : customerInfoByGroup.Customer;
                 customerInfoByGroup.Customer = await _CustomerService.AddNewCustomer(customer);
                 customerInfoByGroup.CustomerId = customerInfoByGroup.Customer.Oid;
             }
 
+            customerInfoByGroup.Customer = null;
             return await AddAsync(customerInfoByGroup);
         }
 

@@ -17,7 +17,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public interface ICustomerService : IBaseDTOService<CustomersDto, DB.Models.Customers>
     {
-        Task<CustomerDTO> AddNewCustomer(CustomerDTO customer);
+        Task<CustomersDto> AddNewCustomer(CustomersDto customer);
         Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
         Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
         Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId);
@@ -38,9 +38,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 
         #region Public Methods
 
-        public async Task<CustomerDTO> AddNewCustomer(CustomerDTO customer)
+        public async Task<CustomersDto> AddNewCustomer(CustomersDto customer)
         {
-            CustomerDTO record = null;
+            CustomersDto record = null;
             if (customer.FuelerlinxId.GetValueOrDefault() != 0)
                 record =
                     await GetSingleBySpec(

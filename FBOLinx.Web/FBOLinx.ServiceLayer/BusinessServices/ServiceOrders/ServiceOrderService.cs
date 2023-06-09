@@ -19,6 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
 {
     public interface IServiceOrderService : IBaseDTOService<ServiceOrderDto, DB.Models.ServiceOrder>
     {
+        Task<ServiceOrderDto> AddNewOrder(ServiceOrderDto serviceOrder);
     }
 
     public class ServiceOrderService : BaseDTOService<ServiceOrderDto, DB.Models.ServiceOrder, FboLinxContext>, IServiceOrderService
@@ -39,16 +40,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
 
         public async Task<ServiceOrderDto> AddNewOrder(ServiceOrderDto serviceOrder)
         {
-            //if (serviceOrder.CustomerInfoByGroup != null && serviceOrder.CustomerInfoByGroupId == 0)
-            //{
-            //    var customerInfoByGroup = await _CustomerInfoByGroupService.AddNewCustomerInfoByGroup(serviceOrder.CustomerInfoByGroup);
-            //    serviceOrder.CustomerInfoByGroupId = customerInfoByGroup.Oid;
-            //}
-
-            if (serviceOrder.CustomerAircraft != null)
+            if (serviceOrder.CustomerInfoByGroup != null && serviceOrder.CustomerInfoByGroupId == 0)
             {
-
+                serviceOrder.CustomerInfoByGroup = await _CustomerInfoByGroupService.AddNewCustomerInfoByGroup(serviceOrder.CustomerInfoByGroup);
+                serviceOrder.CustomerInfoByGroupId = serviceOrder.CustomerInfoByGroup.Oid;
             }
+
+            if (serviceOrder.CustomerAircraft != null && serviceOrder.CustomerAircraftId == 0)
+            {
+                serviceOrder.CustomerAircraft.CustomerId = serviceOrder.CustomerInfoByGroup.CustomerId;
+                var customerAircraft = await _CustomerAircraftService.AddAsync(serviceOrder.CustomerAircraft);
+                serviceOrder.CustomerAircraftId = customerAircraft.Oid;
+                
+            }
+
+            serviceOrder.CustomerAircraft = null;
+            serviceOrder.CustomerInfoByGroup = null;
+
+            return await AddAsync(serviceOrder);
         }
 
         public override async Task<List<ServiceOrderDto>> GetListbySpec(ISpecification<ServiceOrder> spec)

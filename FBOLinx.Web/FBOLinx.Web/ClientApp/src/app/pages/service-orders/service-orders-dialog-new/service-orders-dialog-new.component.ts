@@ -99,6 +99,10 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
                 this.data.serviceDateTimeLocal = this.data.arrivalDateTimeLocal;
                 this.data.serviceDateTimeUtc = this.data.arrivalDateTimeUtc;
             }
+            if (this.data.departureDateTimeUtc == null || this.data.arrivalDateTimeUtc > this.data.departureDateTimeUtc) {
+                this.data.departureDateTimeLocal = this.data.arrivalDateTimeLocal;
+                this.onDepartureDateTimeLocalChanged();
+            }
             this.setWarningMessage();
         });
     }

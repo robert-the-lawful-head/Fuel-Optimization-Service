@@ -78,7 +78,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                var result = await _ServiceOrderService.AddAsync(request);
+                var result = await _ServiceOrderService.AddNewOrder(request);
                 result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByIdSpecification(result.Oid));
                 return Ok(new ServiceOrderResponse(result));
             }
