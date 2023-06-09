@@ -922,18 +922,18 @@ div.price-checker-button-bottom {
 }
 
 /*Group Analytics*/
-.group-analytics, .statistics-tab {
+.group-analytics {
     .chart-container {
+        width: 100%;
+    }
+
+    table {
         width: 100%;
     }
 
     .table-container {
         height: 250px;
         overflow: auto;
-    }
-
-    table {
-        width: 100%;
     }
 
     .mat-form-field {
@@ -965,6 +965,30 @@ div.price-checker-button-bottom {
         right: 0;
         top: 50%;
         transform: translateY(-50%);
+    }
+}
+
+.statistics-tab {
+    .chart-container {
+        width: 100%;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .table-container {
+        position: relative;
+        height: 593px;
+        overflow: auto;
+    }
+
+    .p-component {
+        font-size: 13px;
+    }
+
+    .p-multiselect {
+        min-width: 15rem;
     }
 }
 

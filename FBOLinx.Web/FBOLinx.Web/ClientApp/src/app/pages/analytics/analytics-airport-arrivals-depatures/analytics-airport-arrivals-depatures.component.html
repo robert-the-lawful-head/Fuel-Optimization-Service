@@ -201,7 +201,7 @@
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="aircraftTypeCode">
+                    <!--<ng-container matColumnDef="aircraftTypeCode">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>
                             <span>Aircraft Type</span>
                             <span *ngIf="dataSource">
@@ -214,7 +214,7 @@
                         <td *matCellDef="let info" mat-cell>
                             {{ info.aircraftTypeCode }}
                         </td>
-                    </ng-container>
+                    </ng-container>-->
 
                     <ng-container matColumnDef="dateTime">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>
@@ -294,7 +294,7 @@
                                                          [columnFormat]="8"></app-table-column-filter>
                             </span>
                         </th>
-                        <td *matCellDef="let info" mat-cell>
+                        <td *matCellDef="let info" mat-cell clickStopPropagation>
                             <mat-slide-toggle *ngIf="info.status == 'Arrival'"
                                               color="primary"
                                               [(ngModel)]="info.isConfirmedVisit"

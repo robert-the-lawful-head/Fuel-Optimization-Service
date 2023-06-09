@@ -8,5 +8,6 @@ export type IntraNetworkVisitsReportItem = {
     aircraftType: string;
     aircraftTypeCode: string;
     customerInfoByGroupId: number;
+    companyDisplayName: string;
     visitsByAirport: IntraNetworkVisitsReportByAirportItem[];
 }

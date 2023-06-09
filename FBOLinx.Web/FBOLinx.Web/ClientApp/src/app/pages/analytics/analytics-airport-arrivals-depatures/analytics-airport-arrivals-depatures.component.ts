@@ -57,7 +57,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         'flightNumber',
         'hexCode',
         'aircraftType',
-        'aircraftTypeCode',
         'dateTime',
         'status',
         'pastVisits',
@@ -74,6 +73,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     selectedCustomers: number[] = [];
     selectedTailNumbers: string[] = [];
+    fbo: any;
 
     filtersChanged: Subject<any> = new Subject<any>();
 
@@ -103,15 +103,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         {
             id: 'hexCode',
             name: 'Hex #',
+            hidden: true
         },
         {
             id: 'aircraftType',
             name: `Aircraft`,
         },
-        {
-            id: 'aircraftTypeCode',
-            name: 'Aircraft Type',
-        },
+        //{
+        //    id: 'aircraftTypeCode',
+        //    name: 'Aircraft Type',
+        //},
         {
             id: 'dateTime',
             name: 'Date and Time',
@@ -197,6 +198,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 oid: this.sharedService.currentUser.fboId,
             })
             .subscribe((data: any) => {
+                this.fbo = data;
                 this.fboName = data.fbo;
             });
     }
@@ -318,18 +320,18 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 .subscribe((result: Partial<FlightWatchHistorical>) => {
                     if (result) {
                         // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
-                        for (let i = 0; i < this.data.length; i++) {
-                            if (
-                                this.data[i].flightNumber === row.flightNumber
-                            ) {
-                                this.data[i] = {
-                                    ...this.data[i],
-                                    ...result,
-                                    tailNumber: row.flightNumber,
-                                };
-                            }
-                        }
-                        this.refreshDataSource();
+                        //for (let i = 0; i < this.data.length; i++) {
+                        //    if (
+                        //        this.data[i].flightNumber === row.flightNumber
+                        //    ) {
+                        //        this.data[i] = {
+                        //            ...this.data[i],
+                        //            ...result,
+                        //            tailNumber: row.flightNumber,
+                        //        };
+                        //    }
+                        //}
+                        this.refreshData();
                         this.refreshCustomers.emit();
                     }
                 });
@@ -408,9 +410,24 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     confirmedVisitToggled(row: FlightWatchHistorical) {
-        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
-        this.airportWatchService.updateHistoricalParking(row.airportWatchHistoricalParking).subscribe((response: any) => {
-            //Nothing to do
-        });
+        var parkingRecord = row.airportWatchHistoricalParking;
+        if (parkingRecord == null) {
+            parkingRecord = {
+                airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
+                acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
+                oid: 0
+            }
+        }
+        parkingRecord.isConfirmed = row.isConfirmedVisit;
+        if (parkingRecord.oid > 0) {
+            this.airportWatchService.updateHistoricalParking(parkingRecord).subscribe((response: any) => {
+                //Nothing to do
+            });
+        } else {
+            this.airportWatchService.createHistoricalParking(parkingRecord).subscribe((response: any) => {
+                row.airportWatchHistoricalParking = response;
+            })
+        }
+        
     }
 }
