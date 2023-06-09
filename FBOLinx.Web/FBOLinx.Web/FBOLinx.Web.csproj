@@ -59,6 +59,7 @@
     <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <None Remove="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <None Remove="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
     <None Remove="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <None Remove="ClientApp\src\app\guards\auth.guard.ts" />
     <None Remove="ClientApp\src\app\guards\index.ts" />
@@ -156,6 +157,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\auth.guard.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\index.ts" />

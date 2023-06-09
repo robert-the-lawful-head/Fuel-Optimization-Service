@@ -13,11 +13,13 @@ CREATE TABLE [dbo].[ServiceOrders](
 	[FBOID] [int] NOT NULL,
 	[GroupID] [int] NOT NULL,
 	[CustomerInfoByGroupID] [int] NOT NULL,
+	[ServiceDateTimeUTC] [datetime] NOT NULL,
 	[ArrivalDateTimeUTC] [datetime] NOT NULL,
 	[DepartureDateTimeUTC] [datetime] NULL,
 	[CustomerAircraftID] [int] NOT NULL,
 	[AssociatedFuelOrderID] [int] NULL,
-	[FuelerLinxTransactionID] [int] NULL
+	[FuelerLinxTransactionID] [int] NULL,
+	[ServiceOn] [smallint] NULL
  CONSTRAINT [PK_ServiceOrders] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
@@ -28,17 +30,17 @@ GO
 CREATE NONCLUSTERED INDEX [INX_ServiceOrders_FBOID_ServiceDateTimeUTC] on [dbo].[ServiceOrders]
 (
 	FBOID,
-	ArrivalDateTimeUTC
+	ServiceDateTimeUTC
 )
-INCLUDE (GroupID, CustomerInfoByGroupID, CustomerAircraftID, AssociatedFuelOrderID, FuelerLinxTransactionId, DepartureDateTimeUTC)
+INCLUDE (GroupID, CustomerInfoByGroupID, CustomerAircraftID, AssociatedFuelOrderID, FuelerLinxTransactionId, ArrivalDateTimeUTC, DepartureDateTimeUTC, ServiceOn)
 GO
 
 CREATE NONCLUSTERED INDEX [INX_ServiceOrders_CustomerInfoByGroupID_ServiceDateTimeUTC] on [dbo].[ServiceOrders]
 (
 	CustomerInfoByGroupID,
-	ArrivalDateTimeUTC
+	ServiceDateTimeUTC
 )
-INCLUDE (FBOID, GroupID, CustomerAircraftID, AssociatedFuelOrderID, FuelerLinxTransactionId, DepartureDateTimeUTC)
+INCLUDE (FBOID, GroupID, CustomerAircraftID, AssociatedFuelOrderID, FuelerLinxTransactionId, ArrivalDateTimeUTC, DepartureDateTimeUTC, ServiceOn)
 GO
 
 CREATE NONCLUSTERED INDEX [INX_ServiceOrders_AssociatedFuelOrderID] on [dbo].[ServiceOrders]

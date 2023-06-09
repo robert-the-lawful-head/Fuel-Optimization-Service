@@ -15,6 +15,8 @@ CREATE TABLE [dbo].[ServiceOrderItems](
 	[Quantity] int NOT NULL,
 	[IsCompleted] [bit] NULL,
 	[CompletionDateTimeUtc] [datetime] NULL,
+	[CompletedByUserID] int NULL,
+	[CompletedByName] varchar(255) NULL
  CONSTRAINT [PK_ServiceOrderItems] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
@@ -29,5 +31,5 @@ CREATE NONCLUSTERED INDEX [INX_ServiceOrderItems_ServiceOrderID] on [dbo].[Servi
 (
 	ServiceOrderID
 )
-INCLUDE ([ServiceName], [Quantity], [IsCompleted], [CompletionDateTimeUtc])
+INCLUDE ([ServiceName], [Quantity], [IsCompleted], [CompletionDateTimeUtc], [CompletedByUserID], [CompletedByName])
 GO

@@ -7,7 +7,7 @@ export type CustomerAircraft = {
     aircraftId: number;
     tailNumber: string;
     size?: AircraftSizes;
-    basedPagLocation: string;
-    networkCode: string;
+    basedPagLocation?: string;
+    networkCode?: string;
     addedFrom?: number;
 };

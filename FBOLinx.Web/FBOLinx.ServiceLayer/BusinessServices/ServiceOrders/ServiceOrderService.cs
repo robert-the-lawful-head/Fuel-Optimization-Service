@@ -7,8 +7,10 @@ using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -22,10 +24,31 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
     public class ServiceOrderService : BaseDTOService<ServiceOrderDto, DB.Models.ServiceOrder, FboLinxContext>, IServiceOrderService
     {
         private IAirportTimeService _AirportTimeService;
+        private ICustomerAircraftService _CustomerAircraftService;
+        private ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
-        public ServiceOrderService(IRepository<ServiceOrder, FboLinxContext> entityService, IAirportTimeService airportTimeService) : base(entityService)
+        public ServiceOrderService(IRepository<ServiceOrder, FboLinxContext> entityService,
+            IAirportTimeService airportTimeService,
+            ICustomerAircraftService customerAircraftService,
+            ICustomerInfoByGroupService customerInfoByGroupService) : base(entityService)
         {
+            _CustomerInfoByGroupService = customerInfoByGroupService;
+            _CustomerAircraftService = customerAircraftService;
             _AirportTimeService = airportTimeService;
+        }
+
+        public async Task<ServiceOrderDto> AddNewOrder(ServiceOrderDto serviceOrder)
+        {
+            //if (serviceOrder.CustomerInfoByGroup != null && serviceOrder.CustomerInfoByGroupId == 0)
+            //{
+            //    var customerInfoByGroup = await _CustomerInfoByGroupService.AddNewCustomerInfoByGroup(serviceOrder.CustomerInfoByGroup);
+            //    serviceOrder.CustomerInfoByGroupId = customerInfoByGroup.Oid;
+            //}
+
+            if (serviceOrder.CustomerAircraft != null)
+            {
+
+            }
         }
 
         public override async Task<List<ServiceOrderDto>> GetListbySpec(ISpecification<ServiceOrder> spec)
@@ -45,5 +68,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
             await result.PopulateLocalTimes(_AirportTimeService);
             return result;
         }
+
+        
     }
 }

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FBOLinx.Service.Mapping.Dto;
 using Mapster;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
@@ -18,15 +19,18 @@ namespace FBOLinx.ServiceLayer.DTO
     {
         private DateTime? _ArrivalDateTimeLocal;
         private DateTime? _DepartureDateTimeLocal;
+        private DateTime? _ServiceDateTimeLocal;
         public int Oid { get; set; }
         public int Fboid { get; set; }
         public int GroupId { get; set; }
         public int CustomerInfoByGroupId { get; set; }
-        public DateTime ArrivalDateTimeUtc { get; set; }
+        public DateTime ServiceDateTimeUtc { get; set; }
+        public DateTime? ArrivalDateTimeUtc { get; set; }
         public DateTime? DepartureDateTimeUtc { get; set; }
         public int CustomerAircraftId { get; set; }
         public int? AssociatedFuelOrderId { get; set; }
         public int? FuelerLinxTransactionId { get; set; }
+        public ServiceOrderAppliedDateTypes? ServiceOn { get; set; }
 
         public int NumberOfCompletedItems
         {
@@ -60,6 +64,7 @@ namespace FBOLinx.ServiceLayer.DTO
 
         public async Task PopulateLocalTimes(IAirportTimeService airportTimeService)
         {
+            _ServiceDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, ServiceDateTimeUtc);
             _ArrivalDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, ArrivalDateTimeUtc);
             if (DepartureDateTimeUtc.HasValue)
                 _DepartureDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid, DepartureDateTimeUtc);

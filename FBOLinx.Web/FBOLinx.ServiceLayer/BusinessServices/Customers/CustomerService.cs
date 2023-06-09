@@ -16,6 +16,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public interface ICustomerService : IBaseDTOService<CustomerDTO, DB.Models.Customers>
     {
+        Task<CustomerDTO> AddNewCustomer(CustomerDTO customer);
         Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
         Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
         Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId);
@@ -27,15 +28,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         public class CustomerService : BaseDTOService<CustomerDTO, DB.Models.Customers, FboLinxContext>, ICustomerService
     {
         private FboLinxContext _context;
-        private ICustomersEntityService _customerEntityService;
 
         public CustomerService(FboLinxContext context, ICustomersEntityService customerEntityService) : base(customerEntityService)
         {
-            _customerEntityService = customerEntityService;
             _context = context;
         }
 
         #region Public Methods
+
+        public async Task<CustomerDTO> AddNewCustomer(CustomerDTO customer)
+        {
+            CustomerDTO record = null;
+            if (customer.FuelerlinxId.GetValueOrDefault() != 0)
+                record =
+                    await GetSingleBySpec(
+                        new CustomerByFuelerLinxIdSpecification(customer.FuelerlinxId.GetValueOrDefault()));
+            if (record == null || record.Oid == 0)
+                record = await GetSingleBySpec(new CustomerByCompanyName(customer.Company));
+            if (record != null && record.Oid != 0)
+            {
+                record.Company = customer.Company;
+                await UpdateAsync(record);
+                return record;
+            }
+            else
+            {
+                return await AddAsync(customer);
+            }
+        }
 
         public async Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId)
         {

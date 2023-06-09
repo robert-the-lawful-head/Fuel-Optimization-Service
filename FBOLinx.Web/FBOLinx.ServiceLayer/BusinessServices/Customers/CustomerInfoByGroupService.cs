@@ -16,15 +16,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDTO, CustomerInfoByGroup>
     {
+        Task<CustomerInfoByGroupDTO> AddNewCustomerInfoByGroup(CustomerInfoByGroupDTO customerInfoByGroup);
         Task<List<CustomerInfoByGroupDTO>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
     }
 
     public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDTO, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
     {
-        public CustomerInfoByGroupService(IRepository<CustomerInfoByGroup, FboLinxContext> entityService) : base(entityService)
+        private ICustomerService _CustomerService;
+
+        public CustomerInfoByGroupService(ICustomerInfoByGroupEntityService entityService, ICustomerService customerService) : base(entityService)
         {
+            _CustomerService = customerService;
         }
+
+        public async Task<CustomerInfoByGroupDTO> AddNewCustomerInfoByGroup(CustomerInfoByGroupDTO customerInfoByGroup)
+        {
+            if (customerInfoByGroup.CustomerId == 0)
+            {
+                var customer = customerInfoByGroup.Customer == null ? new CustomerDTO() {Company = customerInfoByGroup.Company, Active = true, ShowJetA = true} : customerInfoByGroup.Customer;
+                customerInfoByGroup.Customer = await _CustomerService.AddNewCustomer(customer);
+                customerInfoByGroup.CustomerId = customerInfoByGroup.Customer.Oid;
+            }
+
+            return await AddAsync(customerInfoByGroup);
+        }
+
         public async Task<List<CustomerInfoByGroupDTO>> GetCustomersByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {
             //Suspended at the "Customers" level means the customer has "HideInFBOLinx" enabled so should not be shown to any FBO/Group

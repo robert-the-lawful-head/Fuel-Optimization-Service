@@ -22,66 +22,103 @@
                                  [optionValue]="['company']"
                                  [options]="customerInfoByGroupDataSource"
                                  [displayFn]="displayCustomerName"
+                                 (filterChanged)="onCustomerFilterChanged($event)"
                                  (selectionChanged)="onCustomerInfoByGroupChanged($event)"></app-autocomplete-search>
 
         <app-autocomplete-search label="Tail Number"
                                  [optionValue]="['tailNumber']"
                                  [options]="customerAircraftsDataSource"
                                  [displayFn]="displayTailNumber"
+                                 (filterChanged)="onCustomerAircraftFilterChanged($event)"
                                  (selectionChanged)="onCustomerAircraftChanged($event)"></app-autocomplete-search>
 
+        <app-autocomplete-search *ngIf="!data.customerAircraft || data.customerAircraft.oid == 0"
+                                 [required]="true"
+                                 label="Aircraft Make/Model"
+                                 [optionValue]="['make', 'model']"
+                                 [options]="aircraftTypes"
+                                 [displayFn]="displayAircraft"
+                                 (selectionChanged)="onAircraftTypeChanged($event)"></app-autocomplete-search>
+
         <!--<mat-form-field>
-            <mat-select [disabled]="!data.customerInfoByGroup"
-                        [required]="true"
-                        (selectionChange)="onCustomerAircraftChanged()"
-                        [(ngModel)]="data.customerAircraft"
-                        id="ddlCustomerAircraft"
-                        name="ddlCustomerAircraft"
-                        placeHolder="Tail Number">
-                <mat-option *ngFor="let customerAircraft of customerAircraftsDataSource"
-                            [value]="customerAircraft">{{ customerAircraft.tailNumber }}</mat-option>
-            </mat-select>
-        </mat-form-field>-->
+        <mat-select [disabled]="!data.customerInfoByGroup"
+                    [required]="true"
+                    (selectionChange)="onCustomerAircraftChanged()"
+                    [(ngModel)]="data.customerAircraft"
+                    id="ddlCustomerAircraft"
+                    name="ddlCustomerAircraft"
+                    placeHolder="Tail Number">
+            <mat-option *ngFor="let customerAircraft of customerAircraftsDataSource"
+                        [value]="customerAircraft">{{ customerAircraft.tailNumber }}</mat-option>
+        </mat-select>
+    </mat-form-field>-->
 
-        <mat-form-field>
-            <input (dateChange)="onArrivalDateTimeLocalChanged()"
-                   [required]="true"
-                   (focus)="arrivalDateTimeLocal.open()"
-                   [(ngModel)]="data.arrivalDateTimeLocal"
-                   [ngxMatDatetimePicker]="arrivalDateTimeLocal"
-                   matInput
-                   name="arrivalDateTimeLocal"
-                   placeholder="Arrival Date (Local)" />
-            <mat-datepicker-toggle [for]="arrivalDateTimeLocal"
-                                   matSuffix></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #arrivalDateTimeLocal
-                                     disabled="false"></ngx-mat-datetime-picker>
-        </mat-form-field>
+        <div class="row">
+            <div class="col-12">
+                <mat-form-field>
+                    <mat-select (selectionChange)="serviceOnChanged()"
+                                [(ngModel)]="data.serviceOn"
+                                placeholder="Service On">
+                        <mat-option *ngFor="let appliedDate of appliedDateTypes"
+                                    [value]="appliedDate.value">
+                            {{ appliedDate.text }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
 
-        <mat-form-field>
-            <input (dateChange)="onDepartureDateTimeLocalChanged()"
-                   (focus)="departureDateTimeLocal.open()"
-                   [(ngModel)]="data.departureDateTimeLocal"
-                   [ngxMatDatetimePicker]="departureDateTimeLocal"
-                   matInput
-                   name="departureDateTimeLocal"
-                   placeholder="Departure Date (Local)" />
-            <mat-datepicker-toggle [for]="departureDateTimeLocal"
-                                   matSuffix></mat-datepicker-toggle>
-            <ngx-mat-datetime-picker #departureDateTimeLocal
-                                     disabled="false"></ngx-mat-datetime-picker>
-        </mat-form-field>
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <mat-form-field>
+                    <input (dateChange)="onArrivalDateTimeLocalChanged()"
+                           [required]="(data.serviceOn == 0)"
+                           (focus)="arrivalDateTimeLocal.open()"
+                           [(ngModel)]="data.arrivalDateTimeLocal"
+                           [ngxMatDatetimePicker]="arrivalDateTimeLocal"
+                           matInput
+                           name="arrivalDateTimeLocal"
+                           placeholder="Arrival Date (Local)" />
+                    <mat-datepicker-toggle [for]="arrivalDateTimeLocal"
+                                           matSuffix></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #arrivalDateTimeLocal
+                                             disabled="false"></ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6">
+                <mat-form-field>
+                    <input (dateChange)="onDepartureDateTimeLocalChanged()"
+                           [required]="(data.serviceOn == 1)"
+                           (focus)="departureDateTimeLocal.open()"
+                           [(ngModel)]="data.departureDateTimeLocal"
+                           [ngxMatDatetimePicker]="departureDateTimeLocal"
+                           matInput
+                           name="departureDateTimeLocal"
+                           placeholder="Departure Date (Local)" />
+                    <mat-datepicker-toggle [for]="departureDateTimeLocal"
+                                           matSuffix></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #departureDateTimeLocal
+                                             disabled="false"></ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+        </div>
+
+
+
     </div>
     
 </div>
 <div *ngIf="errorMessage != ''" class="mt-2 text-center" style="color: red">
     <p>{{errorMessage}}</p>
 </div>
+<div *ngIf="warningMessage != ''" class="mt-2 text-center" style="color: orange">
+    <p>{{warningMessage}}</p>
+</div>
 <div class="mt-2 text-center">
     <button (click)="onSaveChanges()"
             class="mr-1"
             color="accent"
-            [disabled]="!data.arrivalDateTimeLocal || !data.customerAircraft || !data.customerInfoByGroup"
+            [disabled]="(!data.arrivalDateTimeLocal && data.serviceOn == 0) || (!data.departureDateTimeLocal && data.serviceOn == 1) || !data.customerAircraft || data.customerAircraft.aircraftId == 0 || !data.customerInfoByGroup"
             mat-flat-button>
         Start Service Order
     </button>

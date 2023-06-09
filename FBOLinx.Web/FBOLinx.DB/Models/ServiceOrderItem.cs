@@ -25,6 +25,10 @@ namespace FBOLinx.DB.Models
         public bool? IsCompleted { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime? CompletionDateTimeUtc { get; set; }
+        [Column("CompletedByUserID")]
+        public int? CompletedByUserId { get; set; }
+        [StringLength(255)]
+        public string CompletedByName { get; set; }
 
         #region Relationships
         [ForeignKey(nameof(ServiceOrderId))]
