@@ -5,5 +5,7 @@ export type ServiceOrderItem = {
     serviceName: string;
     quantity: number;
     isCompleted: boolean;
-    completionDateTimeUtc: Date;
+    completionDateTimeUtc?: Date;
+    completedByUserId?: number;
+    completedByName?: string;
 }

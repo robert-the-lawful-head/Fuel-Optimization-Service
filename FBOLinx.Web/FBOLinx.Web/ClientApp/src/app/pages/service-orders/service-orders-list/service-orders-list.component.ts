@@ -14,6 +14,7 @@ import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 import { MatSidenav } from '@angular/material/sidenav';
 
 import * as moment from 'moment';
+import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 
 @Component({
     selector: 'app-service-orders-list',
@@ -48,21 +49,19 @@ export class ServiceOrdersListComponent implements OnInit {
     }
 
     public addServiceOrderClicked() {
-        var localServiceDate = new Date();
         var newServiceOrder: ServiceOrder = {
             oid: 0,
             fboId: this.sharedService.currentUser.fboId,
             serviceOrderItems: [],
-            arrivalDateTimeUtc: new Date(Date.UTC(localServiceDate.getUTCFullYear(), localServiceDate.getUTCMonth(),
-                localServiceDate.getUTCDate(), localServiceDate.getUTCHours(), localServiceDate.getUTCMinutes(), localServiceDate.getUTCSeconds())),
-            arrivalDateTimeLocal: localServiceDate,
-            departureDateTimeUtc: new Date(Date.UTC(localServiceDate.getUTCFullYear(), localServiceDate.getUTCMonth(),
-                localServiceDate.getUTCDate(), localServiceDate.getUTCHours(), localServiceDate.getUTCMinutes(), localServiceDate.getUTCSeconds())),
-            departureDateTimeLocal: localServiceDate,
+            arrivalDateTimeUtc: null,
+            arrivalDateTimeLocal: null,
+            departureDateTimeUtc: null,
+            departureDateTimeLocal: null,
             groupId: this.sharedService.currentUser.groupId,
             customerInfoByGroupId: 0,
             customerAircraftId: 0,
             associatedFuelOrderId: 0,
+            serviceOn: ServiceOrderAppliedDateTypes.Arrival,
             numberOfCompletedItems: 0,
             isCompleted: false,
             customerInfoByGroup: null,
@@ -117,6 +116,11 @@ export class ServiceOrdersListComponent implements OnInit {
         var serviceOrder: ServiceOrder = event.option._value;
         for (const item of serviceOrder.serviceOrderItems) {
             item.isCompleted = event.option._selected;
+            if (item.isCompleted) {
+                    item.completionDateTimeUtc = moment(new Date().toUTCString()).toDate();
+                    item.completedByUserId = this.sharedService.currentUser.oid;
+                    item.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
+            }
         }
         this.calculateCompletions(serviceOrder);
         this.arrangeServiceOrders();

@@ -39,6 +39,7 @@ export class AutocompleteSearchComponent
     @Input() disabled = false;
     @Input() required = false;
     @Output() selectionChanged = new EventEmitter();
+    @Output() filterChanged = new EventEmitter();
 
     filter = '';
     filteredOptions: Array<any> = [];
@@ -96,6 +97,7 @@ export class AutocompleteSearchComponent
             }
             return false;
         });
+        this.filterChanged.emit(this.filter);
     }
 
     optionSelected(event) {

@@ -12,6 +12,8 @@ import { ServiceOrderItem } from 'src/app/models/service-order-item';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 import { CustomerInfoByGroup } from 'src/app/models/customer-info-by-group';
 
+import * as moment from 'moment';
+
 @Component({
     selector: 'app-service-orders-item-list',
     templateUrl: './service-orders-item-list.component.html'
@@ -72,6 +74,11 @@ export class ServiceOrdersItemListComponent implements OnInit {
 
     public serviceItemToggleChanged(event: any) {        
         event.option._value.isCompleted = event.option._selected;
+        if (event.option._value.isCompleted) {
+            event.option._value.completionDateTimeUtc = moment(new Date().toUTCString()).format('YYYY-MM-DD HH:mm');
+            event.option._value.completedByUserId = this.sharedService.currentUser.oid;
+            event.option._value.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
+        }
         this.saveServiceOrderItem(event.option._value);
         this.serviceOrderItemsChanged.emit(this.serviceOrder);
     }
