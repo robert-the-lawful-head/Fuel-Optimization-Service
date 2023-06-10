@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.DB.Models;
 
-namespace FBOLinx.DB
+namespace FBOLinx.DB.Models
 {
     public partial class AircraftHexTailMapping : FBOLinxBaseEntityModel<int>
     {
@@ -14,9 +14,11 @@ namespace FBOLinx.DB
         [StringLength(25)]
         public string TailNumber { get; set; }
 
+        [Column("FAAAircraftMakeModelCode")]
         [StringLength(50)]
         public string FAAAircraftMakeModelCode { get; set; }
 
+        [Column("FAARegisteredOwner")]
         [StringLength(100)]
         public string FAARegisteredOwner { get; set; }
     }

@@ -278,25 +278,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             .map(tailNumber => this.data.find(x => x.tailNumber === tailNumber));
     }
 
-    refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
-    }
-
     filterChanged() {
         this.filtersChanged.next();
     }
@@ -384,22 +365,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(
-            TableSettingsComponent,
-            {
-                data: this.columns,
-            }
-        );
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.columns = [...result];
-
-            this.refreshSort();
-            this.saveSettings();
-        });
+        var _this = this;
+        this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
+            _this.columns = result;
+            _this.refreshSort(_this.sort, _this.columns);
+            _this.saveSettings();
+        });        
     }
 
     saveSettings() {

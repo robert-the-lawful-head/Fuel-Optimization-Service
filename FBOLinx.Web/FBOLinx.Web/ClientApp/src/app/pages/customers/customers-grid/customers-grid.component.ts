@@ -534,7 +534,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.columns = [...result];
-                this.refreshSort();
+                this.refreshSort(this.sort, this.columns);
                 this.saveSettings();
             }
         });
@@ -688,25 +688,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         );
 
         this.sort.active = 'allInPrice';
-    }
-    private refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
-    }
+    }    
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService
