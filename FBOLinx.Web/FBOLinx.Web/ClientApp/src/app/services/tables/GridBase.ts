@@ -1,7 +1,11 @@
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from "@angular/material/paginator";
-import { MatSort } from "@angular/material/sort";
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from "@angular/material/table";
-import { ColumnType } from "src/app/shared/components/table-settings/table-settings.component";
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from 'src/app/shared/components/table-settings/table-settings.component';
 import * as XLSX from 'xlsx';
 
 export type csvFileOptions = {
@@ -105,6 +109,12 @@ export abstract class GridBase {
 
         let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
 
+        initialColumns.sort((a, b) => {
+            var indexOfA = storedCols.findIndex(x => x.id == a.id);
+            var indexOfB = storedCols.findIndex(x => x.id == b.id);
+            return indexOfA - indexOfB;
+        });
+
         return initialColumns.map(initialCol => {
             const storedColumn = storedCols.find(storedCol => initialCol.id === storedCol.id);
             if(storedColumn){
@@ -112,5 +122,52 @@ export abstract class GridBase {
             }
             return initialCol;
         });
+    }
+
+    public openSettingsDialog(tableSettingsDialog: MatDialog, columns: ColumnType[], onCompletion) {
+        const dialogRef = tableSettingsDialog.open(
+            TableSettingsComponent,
+            {
+                data: columns,
+            }
+        );
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            columns = [...result];
+
+            if (onCompletion)
+                onCompletion(result);
+        });
+    }
+
+    public saveSettings(key: string, columns: ColumnType[]) {
+        localStorage.setItem(
+            key,
+            JSON.stringify(columns)
+        );
+    }
+
+    public refreshSort(sort: MatSort, columns: ColumnType[]) {
+        if (!sort)
+            return;
+        const sortedColumn = columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
 }

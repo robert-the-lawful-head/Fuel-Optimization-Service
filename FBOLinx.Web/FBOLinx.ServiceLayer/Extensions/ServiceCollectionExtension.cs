@@ -111,6 +111,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
             services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
             services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
+            services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -130,6 +131,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
             services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
+            services.AddTransient<IAircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
             services.AddTransient<IMissedQuoteLogEntityService, MissedQuoteLogEntityService>();

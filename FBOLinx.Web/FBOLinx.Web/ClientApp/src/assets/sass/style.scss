@@ -925,6 +925,13 @@ div.price-checker-button-bottom {
 .group-analytics {
     .chart-container {
         width: 100%;
+
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     }
 
     table {
@@ -971,6 +978,13 @@ div.price-checker-button-bottom {
 .statistics-tab {
     .chart-container {
         width: 100%;
+
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
     }
 
     table {

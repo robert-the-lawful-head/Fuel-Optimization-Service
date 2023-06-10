@@ -52,10 +52,10 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     availableColumns: ColumnType[] = [
         { id: 'tailNumber', name: 'Tail Number' },
         { id: 'company', name: 'Company' },
-        /*{ id: 'faaRegisteredOwner', name: 'FAA Registered Owner' },*/
         { id: 'aircraftType', name: 'Aircraft' }
     ];
     dynamicColumns: ColumnType[] = [];
+    columns: ColumnType[] = [];
 
     csvFileOptions: csvFileOptions = { fileName: 'Intra-Network ADS-B Data', sheetName: 'Intra-Network ADS-B Data' };
 
@@ -72,10 +72,12 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     filtersChanged: Subject<any> = new Subject<any>();
     aircraftTypes = AIRCRAFT_IMAGES;
+    tableLocalStorageKey: string;
 
     constructor(private airportWatchSerice: AirportWatchService,
         private sharedService: SharedService,
-        private ngxLoader: NgxUiLoaderService
+        private ngxLoader: NgxUiLoaderService,
+        private tableSettingsDialog: MatDialog
     ) {
         super();
         this.filterStartDate = new Date(
@@ -89,7 +91,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     get visibleColumns() {
         return (
-            (this.getAllColumns
+            (this.columns
                 .filter((column) => !column.hidden)
                 .map((column) => column.id) || [])
             );
@@ -101,7 +103,12 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     ngOnInit() {
-        this.refreshData();
+        this.refreshData(true);
+    }
+
+    public initColumns() {
+        this.tableLocalStorageKey = `group-analytics-intra-network-visits-report-${this.sharedService.currentUser.fboId}`;
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.getAllColumns);
     }
 
     public clearAllFilters() {
@@ -131,8 +138,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.filterChanged();
     }
 
-    public refreshData() {
-        this.ngxLoader.start();
+    public refreshData(initializeSavedColumns: boolean = false) {
+        this.ngxLoader.startLoader(this.chartName);
         this.airportWatchSerice
             .getIntraNetworkVisitsReport(
                 this.sharedService.currentUser.groupId,
@@ -142,7 +149,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             .subscribe((data: IntraNetworkVisitsReportItem[]) => {
                 this.data = data;
                 this.refreshDataSource();
-                this.ngxLoader.stop();
+                if (initializeSavedColumns)
+                    this.initColumns();
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 
@@ -174,6 +183,15 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.filterChanged();
     }
 
+    public openSettings() {
+        var _this = this;
+        this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
+            _this.columns = result;
+            _this.refreshSort(_this.sort, _this.columns);
+            _this.saveSettings(_this.tableLocalStorageKey, _this.columns);
+        });        
+    }
+
 
     //Builds the datasource from the data - creating dynamic columns for each distinct FBO and airport loaded
     private refreshDataSource() {
@@ -195,7 +213,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                        
 
             var newRow = {
-                company: !item.companyDisplayName,
+                company: item.company,
                 tailNumber: item.tailNumber,
                 aircraftType: item.aircraftType,
                 aircraftTypeCode: item.aircraftTypeCode,
