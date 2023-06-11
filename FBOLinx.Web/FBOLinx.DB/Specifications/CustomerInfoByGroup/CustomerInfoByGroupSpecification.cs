@@ -7,9 +7,9 @@ using FBOLinx.Core.BaseModels.Specifications;
 
 namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
 {
-    public sealed class CustomerInfoByGroupByGroupIdSpecification : Specification<Models.CustomerInfoByGroup>
+    public sealed class CustomerInfoByGroupSpecification : Specification<Models.CustomerInfoByGroup>
     {
-        public CustomerInfoByGroupByGroupIdSpecification(int groupId) : base(x => x.GroupId == groupId)
+        public CustomerInfoByGroupSpecification(int id) : base(x => x.Oid == id)
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Notes);

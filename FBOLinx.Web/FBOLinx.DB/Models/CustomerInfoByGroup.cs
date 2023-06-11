@@ -57,5 +57,7 @@ namespace FBOLinx.DB.Models
 
         [InverseProperty("CustomerInfoByGroup")]
         public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<CustomerInfoByGroupNote> Notes { get; set; }
     }
 }

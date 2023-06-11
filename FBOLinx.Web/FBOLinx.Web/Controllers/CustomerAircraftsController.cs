@@ -20,7 +20,10 @@ using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
 using Azure.Core;
 using System.Security.Cryptography;
+using FBOLinx.DB.Specifications.CustomerAircraftNote;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -36,10 +39,15 @@ namespace FBOLinx.Web.Controllers
         private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
         private AirportWatchService _AirportWatchService;
         private readonly IGroupCustomersService _GroupCustomersService;
+        private ICustomerAircraftNoteService _CustomerAircraftNoteService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, ICustomerAircraftService customerAircraftService, 
-            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService, ILoggingService logger, IGroupCustomersService groupCustomersService) : base(logger)
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
+            AircraftService aircraftService, ICustomerAircraftService customerAircraftService,
+            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService,
+            ILoggingService logger, IGroupCustomersService groupCustomersService,
+            ICustomerAircraftNoteService customerAircraftNoteService) : base(logger)
         {
+            _CustomerAircraftNoteService = customerAircraftNoteService;
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
             _HttpContextAccessor = httpContextAccessor;
@@ -489,6 +497,116 @@ namespace FBOLinx.Web.Controllers
             return Ok();
         }
 
+        [HttpGet("notes/{customerAircraftId}")]
+        public async Task<ActionResult<List<CustomerAircraftNoteDto>>> GetCustomerAircraftNotes([FromRoute] int customerAircraftId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircraftNotes = await _context.CustomerAircraftNotes.Where(s => s.CustomerAircraftId == customerAircraftId).ToListAsync();
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAsync(ex);
+                throw ex;
+            }
+        }
+
+        [HttpPost("notes")]
+        public async Task<ActionResult<CustomerAircraftNoteDto>> AddCustomerAircraftNotes(
+            [FromBody] CustomerAircraftNoteDto customerAircraftNotes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var existingRecords = await _CustomerAircraftNoteService.GetListbySpec(
+                    new CustomerAircraftNoteByCustomerAircraftIdSpecification(customerAircraftNotes
+                        .CustomerAircraftId));
+                var existingRecordForSameFbo =
+                    existingRecords.FirstOrDefault(x => x.Fboid == customerAircraftNotes.Fboid);
+
+                if (existingRecordForSameFbo != null)
+                    customerAircraftNotes.Oid = existingRecordForSameFbo.Oid;
+
+                if (customerAircraftNotes.Oid > 0)
+                {
+                    await _CustomerAircraftNoteService.UpdateAsync(customerAircraftNotes);
+                }
+                else
+                {
+                    await _CustomerAircraftNoteService.AddAsync(customerAircraftNotes);
+                }
+                
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAsync(ex);
+                throw ex;
+            }
+        }
+
+        [HttpPut("notes/{id}")]
+        public async Task<IActionResult> UpdateCustomerAircraftNotes([FromRoute] int id,
+            [FromBody] CustomerAircraftNoteDto customerAircraftNotes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != customerAircraftNotes.Oid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _CustomerAircraftNoteService.UpdateAsync(customerAircraftNotes);
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleExceptionAsync(ex);
+                throw ex;
+            }
+        }
+
+        [HttpDelete("notes/{id}")]
+        public async Task<IActionResult> DeleteCustomerAircraftNotes([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircraftNotes = await _CustomerAircraftNoteService.FindAsync(id);
+                if (customerAircraftNotes == null)
+                {
+                    return NotFound();
+                }
+
+                await _CustomerAircraftNoteService.DeleteAsync(customerAircraftNotes);
+
+                return Ok(customerAircraftNotes);
+            }
+            catch (System.Exception exception)
+            {
+                HandleExceptionAsync(exception);
+                throw exception;
+            }
+        }
 
 
         #region Integration Partner APIs

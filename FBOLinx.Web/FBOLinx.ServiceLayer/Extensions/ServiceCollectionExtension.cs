@@ -111,6 +111,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
+            services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
+            services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -151,6 +153,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
             services.AddTransient<IServiceOrderEntityService, ServiceOrderEntityService>();
             services.AddTransient<IServiceOrderItemEntityService, ServiceOrderItemEntityService>();
+            services.AddTransient<ICustomerAircraftNoteEntityService, CustomerAircraftNoteEntityService>();
+            services.AddTransient<ICustomerInfoByGroupNoteEntityService, CustomerInfoByGroupNoteEntityService>();
 
             return services;
         }
