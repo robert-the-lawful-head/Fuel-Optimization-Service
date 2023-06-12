@@ -111,7 +111,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                 from cad in leftJoinedCustomerAircrafts.DefaultIfEmpty()
                                 group hd by new
                                 {
-                                    AirportWatchHistoricalDataID = hd.Oid,
                                     hd.AircraftHexCode,
                                     hd.AtcFlightNumber,
                                     hd.AircraftPositionDateTimeUtc,
@@ -130,7 +129,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 into groupedResult
                                 select new FboHistoricalDataModel
                                 {
-                                    AirportWatchHistoricalDataID = groupedResult.Key.AirportWatchHistoricalDataID,
+                                    AirportWatchHistoricalDataID = groupedResult.Max(x => x.Oid),
                                     AircraftHexCode = groupedResult.Key.AircraftHexCode,
                                     AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
                                     AircraftPositionDateTimeUtc = groupedResult.Key.AircraftPositionDateTimeUtc,
@@ -166,6 +165,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 orderby h.AircraftPositionDateTimeUtc descending
                 select new FboHistoricalDataModel
                 {
+                    AirportWatchHistoricalDataID = h.AirportWatchHistoricalDataID,
                     CustomerId = h.CustomerId,
                     Company = h.Company,
                     AircraftPositionDateTimeUtc = h.AircraftPositionDateTimeUtc,

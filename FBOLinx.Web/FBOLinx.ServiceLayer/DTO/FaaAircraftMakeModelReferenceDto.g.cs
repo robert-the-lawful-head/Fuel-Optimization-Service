@@ -10,6 +10,7 @@ namespace FBOLinx.ServiceLayer.DTO
 {
     public class FaaAircraftMakeModelReferenceDto
     {
+        public int Oid { get; set; }
         public int? DegaAircraftID { get; set; }
 
         [StringLength(255)]
