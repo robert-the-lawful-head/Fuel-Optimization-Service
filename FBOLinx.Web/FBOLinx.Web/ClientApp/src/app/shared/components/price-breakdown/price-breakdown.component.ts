@@ -20,6 +20,8 @@ import {
     FeeAndTaxBreakdownComponent,
     FeeAndTaxBreakdownDisplayModes,
 } from '../fee-and-tax-breakdown/fee-and-tax-breakdown.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { FeeAndTaxBreakDown, FeeAndTaxBreakdownDialogWrapperComponent } from './fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 
 export enum PriceBreakdownDisplayTypes {
     SingleColumnAllFlights = 0,
@@ -79,13 +81,16 @@ export class PriceBreakdownComponent implements OnInit {
     public isCustomerActive = true;
     public isPricesExpired = false;
 
+    dialogRef: MatDialogRef<FeeAndTaxBreakdownDialogWrapperComponent>;
+
     constructor(
         private feesAndTaxesService: FbofeesandtaxesService,
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
         private NgxUiLoader: NgxUiLoaderService,
         private customerInfoByGroupService: CustomerinfobygroupService ,
-        private route :ActivatedRoute
+        private route :ActivatedRoute,
+        public dialog: MatDialog
     ) {
 
          this.priceTemplateId = this.route.snapshot.paramMap.get('id');
@@ -96,7 +101,26 @@ export class PriceBreakdownComponent implements OnInit {
         this.prepareDefaultSettings();
         this.performCalculations();
     }
+    public openFeeAndTaxBreakdownPopUp(){
+        const dialogData: FeeAndTaxBreakDown  = {
+            omitCheckChanged: this.omitChanged,
+            customerMargin: this.activeHoverPriceItem.customerMarginAmount,
+            displayMode: 0,
+            fboPrice: this.activeHoverPriceItem.fboPrice,
+            feesAndTaxes: this.feeAndTaxCloneForPopOver,
+            marginType: this.activeHoverPriceItem.marginType,
+            discountType: this.activeHoverPriceItem.discountType,
+            validDepartureTypes: this.activeHoverDeparturetypes,
+            validFlightTypes: this.activeHoverFlightTypes,
+        };
 
+        this.dialogRef = this.dialog.open(FeeAndTaxBreakdownDialogWrapperComponent, {
+            data: dialogData
+          });
+
+        this.dialogRef.afterClosed().subscribe(result => {
+          });
+    }
     public omitChanged(fee: any): void {
         if (fee.isOmitted) {
             fee.omittedFor = (this.feeAndTaxDisplayMode == FeeAndTaxBreakdownDisplayModes.CustomerOmitting && this.customerInfoByGroupId > 0 ? 'C' : 'P');
