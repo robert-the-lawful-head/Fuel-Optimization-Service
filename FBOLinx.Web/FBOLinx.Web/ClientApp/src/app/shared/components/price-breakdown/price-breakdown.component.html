@@ -91,9 +91,7 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -110,7 +108,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -166,9 +164,7 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -186,7 +182,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -200,9 +196,7 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -220,7 +214,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -277,9 +271,7 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -297,7 +289,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -312,9 +304,7 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -329,7 +319,7 @@
                                             <i
                                                 *ngIf="!hideTooltips"
                                                 aria-hidden="true"
-                                                class="fa fa-info-circle"
+                                                class="fa fa-external-link"
                                             ></i>
                                         </div>
                                     </td>
@@ -390,9 +380,7 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -410,7 +398,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -424,9 +412,7 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -444,7 +430,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -458,9 +444,7 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                                                        (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -478,7 +462,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -492,9 +476,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
                                         class="hover-mouseenter"
                                     >
                                         <div>
@@ -512,7 +495,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -523,37 +506,6 @@
 
                     </div>
                 </div>
-
-                <!--Popover combinations-->
-                <popover-content
-                    #feeAndTaxPopover
-                    [closeOnMouseOutside]="true"
-                    [placement]="tooltipPlacement"
-                    title="Fee/Tax Breakdown"
-                >
-                    <div
-                        *ngIf="
-                            activeHoverPriceItem &&
-                            activeHoverPriceItem.fboPrice &&
-                            feeAndTaxCloneForPopOver
-                        "
-                    >
-                        <fee-and-tax-breakdown
-                            #dynamicFeeAndTaxBreakdown
-                            (omitCheckChanged)="omitChanged($event)"
-                            [customerMargin]="
-                                activeHoverPriceItem.customerMarginAmount
-                            "
-                            [displayMode]="0"
-                            [fboPrice]="activeHoverPriceItem.fboPrice"
-                            [feesAndTaxes]="feeAndTaxCloneForPopOver"
-                            [marginType]="activeHoverPriceItem.marginType"
-                            [discountType]="activeHoverPriceItem.discountType"
-                            [validDepartureTypes]="activeHoverDeparturetypes"
-                            [validFlightTypes]="activeHoverFlightTypes"
-                        ></fee-and-tax-breakdown>
-                    </div>
-                </popover-content>
             </div>
        </div>
 
