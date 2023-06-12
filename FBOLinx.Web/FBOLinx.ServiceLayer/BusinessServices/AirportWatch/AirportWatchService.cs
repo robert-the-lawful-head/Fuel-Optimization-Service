@@ -46,6 +46,7 @@ using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -409,6 +410,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                .ToList();
 
             var parkingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Parking).Where(x => x.AirportWatchHistoricalParking != null).ToList();
+            var landingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Landing).ToList();
+            var parkingAndLandingAssociationList = (from parkingEvent in parkingEvents
+                    join landing in landingEvents on new
+                        {
+                            parkingEvent.AirportICAO, parkingEvent.AtcFlightNumber, parkingEvent.AircraftHexCode
+                        } equals
+                        new { landing.AirportICAO, landing.AtcFlightNumber, landing.AircraftHexCode }
+                    where parkingEvent.AircraftPositionDateTimeUtc > landing.AircraftPositionDateTimeUtc &&
+                          Math.Abs((parkingEvent.AircraftPositionDateTimeUtc - landing.AircraftPositionDateTimeUtc)
+                              .TotalMinutes) <= 60
+                    group new { parkingEvent, landing } by new { parkingEvent.AirportWatchHistoricalDataID }
+                    into groupedParkingEvent
+                    select new
+                    {
+                        ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
+                        LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
+                        ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent
+                    }
+                );
 
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
@@ -416,6 +436,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                       join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
                       into leftJoinedCV
                       from cv in leftJoinedCV.DefaultIfEmpty()
+                      join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
+                      into leftJoinedParkingAndLandingAssociation
+                      from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
                       select new AirportWatchHistoricalDataResponse
                       {
                           AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
@@ -433,9 +456,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                           PastVisits = cv == null ? null : cv.PastVisits,
                           VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
                           PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
-                          AirportWatchHistoricalParking = parkingEvents.FirstOrDefault(p => p.AircraftHexCode == h.AircraftHexCode && p.AirportICAO == h.AirportICAO && p.AircraftPositionDateTimeUtc > h.AircraftPositionDateTimeUtc && Math.Abs((p.AircraftPositionDateTimeUtc - h.AircraftPositionDateTimeUtc).TotalMinutes) <= 60)?.AirportWatchHistoricalParking
+                          AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking
                       }).ToList();
-
+            
             return result;
         }
         public async Task<List<AirportWatchHistoricalDataResponse>> GetVisits(int groupId, int fboId, AirportWatchHistoricalDataRequest request)

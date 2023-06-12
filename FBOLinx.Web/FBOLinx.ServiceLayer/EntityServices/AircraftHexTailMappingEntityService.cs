@@ -35,7 +35,14 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                     TailNumber = hexTailMapping.TailNumber,
                                     FAAAircraftMakeModelCode = hexTailMapping.FAAAircraftMakeModelCode,
                                     FAARegisteredOwner = hexTailMapping.FAARegisteredOwner,
-                                    FaaAircraftMakeModelReference = faaMakeModel == null ? null : faaMakeModel.Adapt<FaaAircraftMakeModelReferenceDto>()
+                                    FaaAircraftMakeModelReference = faaMakeModel == null ? null : new FaaAircraftMakeModelReferenceDto()
+                                    {
+                                        CODE = faaMakeModel.CODE,
+                                        MFR = faaMakeModel.MFR,
+                                        MODEL = faaMakeModel.MODEL,
+                                        Oid = faaMakeModel.Oid,
+                                        DegaAircraftID = faaMakeModel.DegaAircraftID
+                                    }
 
                                 }).ToListAsync();
             return result;

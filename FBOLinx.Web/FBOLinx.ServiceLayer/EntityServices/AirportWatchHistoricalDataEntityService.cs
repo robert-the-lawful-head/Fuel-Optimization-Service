@@ -59,7 +59,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
                           && (atcFlightNumbers == null || !string.IsNullOrEmpty(atcFlightNumber.Value))
                     select new AirportWatchHistoricalData()
                     {
-                        Oid = 0,
+                        Oid = hd.Oid,
                         AirportICAO = hd.AirportICAO,
                         AircraftHexCode = hd.AircraftHexCode,
                         TailNumber = hd.TailNumber,
