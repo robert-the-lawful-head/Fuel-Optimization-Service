@@ -77,7 +77,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     constructor(private airportWatchSerice: AirportWatchService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private tableSettingsDialog: MatDialog
+        private tableSettingsDialog: MatDialog,
+        private fboService: FbosService
     ) {
         super();
         this.filterStartDate = new Date(
@@ -103,7 +104,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     ngOnInit() {
-        this.refreshData(true);
+        this.loadFbos();        
     }
 
     public initColumns() {
@@ -187,20 +188,39 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         var _this = this;
         this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
             _this.columns = result;
+            var allColumns = _this.getAllColumns;
+            for (var i = 0; i < _this.columns.length; i++) {
+                try {
+                    allColumns.find(x => x.id == _this.columns[i].id).hidden = _this.columns[i].hidden;
+                }
+                catch (e) {
+
+                }                
+            }
             _this.refreshSort(_this.sort, _this.columns);
             _this.saveSettings(_this.tableLocalStorageKey, _this.columns);
         });        
     }
 
+    private loadFbos() {
+        this.fboService.getForGroup(this.sharedService.currentUser.groupId).subscribe((data: any[]) => {
+            this.fbos = data.map((x) => ({ fbo: x.fbo, acukwikFboHandlerId: x.acukwikFboHandlerId, icao: x.icao }));
+            for (let fbo of this.fbos) {
+                var columnForAirport: ColumnType = { id: fbo.icao, name: 'Visits to ' + fbo.icao };
+                var columnForFbo: ColumnType = { id: fbo.icao + fbo.acukwikFboHandlerId, name: 'Visits to ' + fbo.fbo + ' ' + fbo.icao };
+                this.dynamicColumns.push(columnForAirport);
+                this.dynamicColumns.push(columnForFbo);
+                this.refreshData(true);
+            }
+        });
+    }
 
     //Builds the datasource from the data - creating dynamic columns for each distinct FBO and airport loaded
     private refreshDataSource() {
-        var populateFbosDataSource = this.fbos.length == 0;
         var populateCustomersDataSource = this.customers.length == 0;
         var populateTailNumbersDataSource = this.tailNumbers.length == 0;
         //this.fbos = [];
         var dataSource = [];
-        this.dynamicColumns = [];
                 
             
 
@@ -226,18 +246,11 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             
             for (let airport of item.visitsByAirport) {
 
-                if (populateFbosDataSource)
-                    this.populateFbosFromAirportVisitsItem(airport);
-
                 if (this.selectedFbos.length > 0 && !this.selectedFbos.some(x => x.acukwikFboHandlerId == airport.acukwikFboHandlerId))
                     continue;
 
                 var columnForAirport: ColumnType = { id: airport.icao, name: 'Visits to ' + airport.icao };
-                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };
-                if (!this.dynamicColumns.some(x => x.id == columnForAirport.id)) {
-                    this.dynamicColumns.push(columnForAirport);
-                    this.dynamicColumns.push(columnForFbo);
-                }
+                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };                
                 newRow[columnForAirport.id] = !airport.visitsToAirport ? 0 : airport.visitsToAirport;
                 newRow[columnForFbo.id] = !airport.visitsToFbo ? 0 : airport.visitsToFbo;
             }
@@ -253,12 +266,6 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.tailNumbers.sort((a, b) => a.tailNumber?.localeCompare(b.tailNumber));
         this.fbos.sort((a, b) => (a.fbo)?.localeCompare(b.fbo));
         this.columns = this.getAllColumns;
-    }
-
-    private populateFbosFromAirportVisitsItem(airportVisitsItem: IntraNetworkVisitsReportByAirportItem) {
-        var fboOption = this.fbos.find(x => x.acukwikFboHandlerId == airportVisitsItem.acukwikFboHandlerId);
-        if (fboOption == null)
-            this.fbos.push({ fbo: airportVisitsItem.fboName, acukwikFboHandlerId: airportVisitsItem.acukwikFboHandlerId, icao: airportVisitsItem.icao });
     }
 
     private populateCustomersFromReportItem(item: IntraNetworkVisitsReportItem) {
