@@ -17,7 +17,7 @@ import {
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
 
-import { isCommercialAircraft } from '../../../../utils/aircraft';
+import { isCommercialAircraft, isCommercialAircraftInFlightNumbers } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 
 // Services
@@ -66,7 +66,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     tailNumbers: any[] = [];
     fbos: any[] = [];
     isCommercialInvisible = true;
-    selectedCustomers: number[] = [];
+    selectedCustomers: string[] = [];
     selectedTailNumbers: string[] = [];
     selectedFbos: any[] = [];
 
@@ -115,7 +115,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.selectedCustomers = [];
         this.selectedTailNumbers = [];
         this.selectedFbos = [];
-        //this.isCommercialInvisible = true;
+        this.isCommercialInvisible = true;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
@@ -164,9 +164,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             if (id == "aircraftTypeCode")
                 item[id] = this.getAircraftLabel(item[id]);
             else if (!item[id] && this.dynamicColumns.some(x => x.id == id))
-                return 0;
+                item[id] = 0;
         }
-        this.exportCsvFile(this.getAllColumns, this.csvFileOptions.fileName, this.csvFileOptions.sheetName, computePropertyFnc);
+        this.exportCsvFile(this.columns, this.csvFileOptions.fileName, this.csvFileOptions.sheetName, computePropertyFnc);
     }
 
     public getAircraftLabel(type: string) {
@@ -195,22 +195,26 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     //Builds the datasource from the data - creating dynamic columns for each distinct FBO and airport loaded
     private refreshDataSource() {
-        var populateFilterDataSources = this.customers.length == 0;
-        //this.customers = [];
-        //this.tailNumbers = [];
+        var populateFbosDataSource = this.fbos.length == 0;
+        var populateCustomersDataSource = this.customers.length == 0;
+        var populateTailNumbersDataSource = this.tailNumbers.length == 0;
         //this.fbos = [];
         var dataSource = [];
         this.dynamicColumns = [];
+                
+            
 
-        var filteredData = this.data.filter(x => (this.selectedCustomers.length == 0 || this.selectedCustomers.includes(x.customerInfoByGroupId)) && (this.selectedTailNumbers.length == 0 || this.selectedTailNumbers.includes(x.tailNumber)));
+        var filteredData = this.data.filter(x => (this.selectedCustomers.length == 0 || this.selectedCustomers.some(s => s.toLowerCase() == x.company.toLowerCase())) &&
+            (this.selectedTailNumbers.length == 0 || this.selectedTailNumbers.some(s => s.toLowerCase() == x.tailNumber.toLowerCase())) &&
+            (!this.isCommercialInvisible || !isCommercialAircraftInFlightNumbers(x.flightNumbers)));
 
         for (let item of filteredData) {
 
-            if (populateFilterDataSources) {
+            if (populateCustomersDataSource)
                 this.populateCustomersFromReportItem(item);
+            if (populateTailNumbersDataSource)
                 this.populateTailNumbersFromReportItem(item);
-            }            
-                       
+                      
 
             var newRow = {
                 company: item.company,
@@ -222,7 +226,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             
             for (let airport of item.visitsByAirport) {
 
-                if (populateFilterDataSources)
+                if (populateFbosDataSource)
                     this.populateFbosFromAirportVisitsItem(airport);
 
                 if (this.selectedFbos.length > 0 && !this.selectedFbos.some(x => x.acukwikFboHandlerId == airport.acukwikFboHandlerId))
@@ -234,10 +238,10 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                     this.dynamicColumns.push(columnForAirport);
                     this.dynamicColumns.push(columnForFbo);
                 }
-                newRow[columnForAirport.id] = airport.visitsToAirport;
-                newRow[columnForFbo.id] = airport.visitsToFbo;
+                newRow[columnForAirport.id] = !airport.visitsToAirport ? 0 : airport.visitsToAirport;
+                newRow[columnForFbo.id] = !airport.visitsToFbo ? 0 : airport.visitsToFbo;
             }
-            dataSource.push(newRow);            
+            dataSource.push(newRow);
         }
         this.setVirtualScrollVariables(this.paginator, this.sort, dataSource)
 
@@ -248,6 +252,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.customers.sort((a, b) => a.company?.localeCompare(b.company));
         this.tailNumbers.sort((a, b) => a.tailNumber?.localeCompare(b.tailNumber));
         this.fbos.sort((a, b) => (a.fbo)?.localeCompare(b.fbo));
+        this.columns = this.getAllColumns;
     }
 
     private populateFbosFromAirportVisitsItem(airportVisitsItem: IntraNetworkVisitsReportByAirportItem) {
@@ -257,9 +262,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     private populateCustomersFromReportItem(item: IntraNetworkVisitsReportItem) {
-        var customerOption = this.customers.find(x => x.customerInfoByGroupId == item.customerInfoByGroupId);
+        var customerOption = this.customers.find(x => x.company == item.company);
         if (customerOption == null && item.company && item.company != '')
-            this.customers.push({ company: item.company, customerInfoByGroupId: item.customerInfoByGroupId });
+            this.customers.push({ company: item.company });
     }
 
     private populateTailNumbersFromReportItem(item: IntraNetworkVisitsReportItem) {

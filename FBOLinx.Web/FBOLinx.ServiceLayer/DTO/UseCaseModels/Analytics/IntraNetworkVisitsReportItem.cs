@@ -14,6 +14,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics
         public string AircraftType { get; set; }
         public string AircraftTypeCode { get; set; }
         public int CustomerInfoByGroupId { get; set; }
+        public List<string> FlightNumbers { get; set; }
 
         public List<IntraNetworkVisitsReportByAirportItem> VisitsByAirport { get; set; } =
             new List<IntraNetworkVisitsReportByAirportItem>();
