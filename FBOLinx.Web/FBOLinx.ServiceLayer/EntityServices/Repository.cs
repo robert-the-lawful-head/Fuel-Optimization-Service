@@ -79,7 +79,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         => await context.Set<TEntity>().FindAsync(id);
         public virtual async Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec) => await GetEntitySingleBySpec(spec);
         
-        public async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
+        public virtual async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
         {
             var queryable = GetEntityListQueryable(spec);
             return await queryable.ToListAsync();

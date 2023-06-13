@@ -1,6 +1,7 @@
 ﻿using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -108,6 +109,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
+            services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
+            services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
+            services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -127,6 +131,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<AirportWatchLiveDataEntityService, AirportWatchLiveDataEntityService>();
             services.AddTransient<AirportWatchHistoricalDataEntityService, AirportWatchHistoricalDataEntityService>();
             services.AddTransient<AircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
+            services.AddTransient<IAircraftHexTailMappingEntityService, AircraftHexTailMappingEntityService>();
             services.AddTransient<AcukwikAirportEntityService, AcukwikAirportEntityService>();
             services.AddTransient<AircraftEntityService, AircraftEntityService>();
             services.AddTransient<IMissedQuoteLogEntityService, MissedQuoteLogEntityService>();
@@ -146,6 +151,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboPreferencesEntityService, FboPreferencesEntityService>();
             services.AddTransient<TableStorageLogEntityService, TableStorageLogEntityService>();
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
+            services
+                .AddTransient<IAirportWatchHistoricalParkingEntityService,
+                    AirportWatchHistoricalParkingEntityService>();
 
             return services;
         }

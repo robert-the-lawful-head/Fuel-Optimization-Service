@@ -179,7 +179,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<SWIMFlightLeg> existingFlightLegs = new List<SWIMFlightLeg>();
             foreach (IEnumerable<string> gufiBatch in flightIdentifiers.Batch(1000))
             {
-                var existingFlightLegsBatch = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(gufiBatch.ToList()))).ToList();
+                var existingFlightLegsBatch = (await _FlightLegEntityService.GetSWIMFlightLegs(gufiBatch.ToList()));
                 existingFlightLegs.AddRange(existingFlightLegsBatch);
             }
             existingFlightLegs = existingFlightLegs.OrderByDescending(x => x.ATD).ToList();
@@ -325,8 +325,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Console.WriteLine($"foreach {stopwatch.ElapsedMilliseconds}");
             //stopwatch.Restart();
 
-            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), DateTime.UtcNow.AddHours(-3), true));
+            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetSWIMFlightLegs(DateTime.UtcNow.AddHours(-3), DateTime.UtcNow, null, null, flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), true);
 
             if (existingPlaceholderRecordsToDelete.Count > 0)
             {

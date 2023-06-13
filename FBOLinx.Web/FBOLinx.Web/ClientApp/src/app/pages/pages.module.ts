@@ -225,6 +225,7 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 
 @NgModule({
     declarations: [
@@ -371,7 +372,8 @@ import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agree
         FlightWatchFiltersComponent,
         LobbyViewComponent,
         AboutFbolinxComponent,
-        AgreementsAndDocumentsModalComponent
+        AgreementsAndDocumentsModalComponent,
+        GroupAnalyticsIntraNetworkVisitsReportComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
