@@ -253,7 +253,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 (x) =>
                     (!this.isCommercialInvisible ||
                         !isCommercialAircraft(
-                            x.aircraftTypeCode
+                            x.flightNumber
                         )) &&
                     (!this.selectedCustomers.length ||
                         this.selectedCustomers.includes(

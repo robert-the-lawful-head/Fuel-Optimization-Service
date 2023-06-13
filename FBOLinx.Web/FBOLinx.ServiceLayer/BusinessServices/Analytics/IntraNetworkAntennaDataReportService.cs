@@ -90,7 +90,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
                         Company = string.IsNullOrEmpty(groupByIcaoAndTail.Key.Company) ? groupByIcaoAndTail.FirstOrDefault()?.AircraftHexData?.FAARegisteredOwner : groupByIcaoAndTail.Key.Company,
                         AircraftType = string.IsNullOrEmpty(groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.AircraftType) ? groupByIcaoAndTail.FirstOrDefault()?.AircraftHexData?.FaaAircraftMakeModelReference?.MakeModel : groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.AircraftType,
                         AircraftTypeCode = groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.AircraftTypeCode,
-                        CustomerInfoByGroupId = groupByIcaoAndTail.Key.CustomerInfoByGroupID
+                        CustomerInfoByGroupId = groupByIcaoAndTail.Key.CustomerInfoByGroupID,
+                        FlightNumbers = groupByIcaoAndTail.Select(x => x.AirportWatchData?.FlightNumber).Distinct().ToList(),
                     };
                     result.Add(item);
                 }
