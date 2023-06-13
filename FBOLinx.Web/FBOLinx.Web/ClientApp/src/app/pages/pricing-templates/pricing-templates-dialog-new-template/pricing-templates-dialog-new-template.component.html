@@ -124,13 +124,6 @@
                                             mat-header-cell
                                             text-lg-center
                                         ">
-                                        <span>Your ITP Margin</span>
-                                    </th>
-                                    <th class="
-                                            text-center
-                                            mat-header-cell
-                                            text-lg-center
-                                        ">
                                         <span>Total</span>
                                     </th>
                                     <th class="text-center mat-header-cell">
@@ -188,22 +181,6 @@
                                                       matSuffix>%</span>
                                             </mat-form-field>
                                         </div>
-                                    </td>
-                                    <td
-                                    *ngIf="form.value.secondStep.marginType === 1"
-                                    class="
-                                            mat-cell
-                                            text-center
-                                            font-weight-bold font-italic
-                                            text-right
-                                        ">
-                                        <div>
-                                            {{
-                                                customerMargin.value.itp
-                                                    | currency:'USD':true:'1.4-4'
-                                            }}
-                                        </div>
-
                                     </td>
                                     <td [formGroupName]="i"
                                         class="mat-cell text-center">
