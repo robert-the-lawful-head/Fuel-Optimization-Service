@@ -21,6 +21,7 @@ using FBOLinx.ServiceLayer.Logging;
 using Azure.Core;
 using System.Security.Cryptography;
 using FBOLinx.DB.Specifications.CustomerAircraftNote;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
@@ -72,38 +73,15 @@ namespace FBOLinx.Web.Controllers
             }
 
             var aircrafts = await _aircraftService.GetAllAircrafts();
-            var customAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).ToListAsync();
+            var customAircraft = await _CustomerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(id));
 
-            if (customAircraft == null || customAircraft.Count == 0)
+
+            if (customAircraft == null || customAircraft.Oid == 0)
                 return NotFound();
-            
-            var result = (from ca in customAircraft
-                                join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                           where ca.Oid == id
-                                           select new
-                                           {
-                                               ca.CustomerId,
-                                               ca.AircraftId,
-                                               Oid = ca.Oid,
-                                               Size = (ca.Size.HasValue && ca.Size.Value != AircraftSizes.NotSet) || ac == null
-                                                   ? ca.Size
-                                                   : (AircraftSizes)(ac.Size ?? 0),
-                                               ca.AddedFrom,
-                                               ca.NetworkCode,
-                                               ca.BasedPaglocation,
-                                               ca.TailNumber,
-                                               ca.GroupId,
-                                               ac.Make,
-                                               ac.Model
-                                           }).FirstOrDefault();
 
-            if (result == null)
-            {
-                return NotFound();
-            }
+            customAircraft.Aircraft = aircrafts.FirstOrDefault(x => x.AircraftId == customAircraft.AircraftId);
 
-            return Ok(result);
+            return Ok(customAircraft);
         }
 
         [HttpGet("group/{groupId}/fbo/{fboId}/customer/{customerId}")]
@@ -532,10 +510,12 @@ namespace FBOLinx.Web.Controllers
                     new CustomerAircraftNoteByCustomerAircraftIdSpecification(customerAircraftNotes
                         .CustomerAircraftId));
                 var existingRecordForSameFbo =
-                    existingRecords.FirstOrDefault(x => x.Fboid == customerAircraftNotes.Fboid);
+                    existingRecords.FirstOrDefault(x => x.FboId == customerAircraftNotes.FboId);
 
                 if (existingRecordForSameFbo != null)
                     customerAircraftNotes.Oid = existingRecordForSameFbo.Oid;
+
+                customerAircraftNotes.LastUpdatedUtc = DateTime.UtcNow;
 
                 if (customerAircraftNotes.Oid > 0)
                 {
@@ -571,6 +551,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
+                customerAircraftNotes.LastUpdatedUtc = DateTime.UtcNow;
                 await _CustomerAircraftNoteService.UpdateAsync(customerAircraftNotes);
                 return Ok(customerAircraftNotes);
             }

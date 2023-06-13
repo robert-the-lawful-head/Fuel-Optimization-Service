@@ -982,10 +982,12 @@ namespace FBOLinx.Web.Controllers
                     new CustomerInfoByGroupNoteByCustomerInfoByGroupIdSpecification(customerInfoByGroupNoteDto
                         .CustomerInfoByGroupId));
                 var existingRecordForSameFbo =
-                    existingRecords.FirstOrDefault(x => x.Fboid == customerInfoByGroupNoteDto.Fboid);
+                    existingRecords.FirstOrDefault(x => x.FboId == customerInfoByGroupNoteDto.FboId);
 
                 if (existingRecordForSameFbo != null)
                     customerInfoByGroupNoteDto.Oid = existingRecordForSameFbo.Oid;
+
+                customerInfoByGroupNoteDto.LastUpdatedUtc = DateTime.UtcNow;
 
                 if (customerInfoByGroupNoteDto.Oid > 0)
                     await _CustomerInfoByGroupNoteService.UpdateAsync(customerInfoByGroupNoteDto);
@@ -1018,6 +1020,7 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
+                customerInfoByGroupNoteDto.LastUpdatedUtc = DateTime.UtcNow;
                 await _CustomerInfoByGroupNoteService.UpdateAsync(customerInfoByGroupNoteDto);
             }
             catch (System.Exception exception)

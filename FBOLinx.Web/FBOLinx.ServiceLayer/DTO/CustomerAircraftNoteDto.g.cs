@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.DTO
     {
         public int Oid { get; set; }
         public int CustomerAircraftId { get; set; }
-        public int? Fboid { get; set; }
+        public int? FboId { get; set; }
         public string Notes { get; set; }
         public DateTime? LastUpdatedUtc { get; set; }
         public int? LastUpdatedByUserId { get; set; }

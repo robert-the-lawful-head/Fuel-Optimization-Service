@@ -18,7 +18,7 @@ namespace FBOLinx.DB.Models
         [Column("CustomerInfoByGroupID")]
         public int CustomerInfoByGroupId { get; set; }
         [Column("FBOID")]
-        public int? Fboid { get; set; }
+        public int? FboId { get; set; }
         [Unicode(false)]
         public string Notes { get; set; }
         [Column("LastUpdatedUTC", TypeName = "datetime")]
