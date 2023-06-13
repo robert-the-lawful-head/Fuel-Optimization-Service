@@ -102,6 +102,7 @@ export class PriceBreakdownComponent implements OnInit {
         this.performCalculations();
     }
     public openFeeAndTaxBreakdownPopUp(){
+        if(this.hideTooltips) return;
         const dialogData: FeeAndTaxBreakDown  = {
             omitCheckChanged: this.omitChanged,
             customerMargin: this.activeHoverPriceItem.customerMarginAmount,
