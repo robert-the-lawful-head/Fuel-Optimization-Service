@@ -26,6 +26,16 @@
         "roles": [ 1, 4 ]
     },
     {
+        "title": "CSR Dashboard",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-csr",
+        "roles": [ 5 ]
+    },
+    {
         "title": "Flight Watch",
         "icon": {
             "class": "fa fa-eye",
@@ -35,16 +45,6 @@
         "tooltip": "Flight Watch",
         "routing": "/default-layout/flight-watch",
         "roles": [ 1, 4, 5 ]
-    },
-    {
-        "title": "CSR Dashboard",
-        "icon": {
-            "class": "fa fa-home",
-            "bg": "#ea8080",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "routing": "/default-layout/dashboard-csr",
-        "roles": [ 5 ]
     },
     {
         "title": "FBO Group",
