@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using FBOLinx.ServiceLayer.DTO;
-
+using FBOLinx.Core.Extensions;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -73,6 +73,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
                 where c.FuelerlinxId == fuelerlinxCustomerId
                 select new AircraftLocation { AircraftId = ca.AircraftId, TailNumber = ca.TailNumber };
             return (await aircraftLocationsQueryable.ToListAsync()).DistinctBy(x => x.TailNumber).ToList();
+        }
+
+        public async Task<List<CustomerAircrafts>> GetCustomerAircraftsByGroupAndTail(List<int> groupIds, List<string> tailNumbers, int customerId)
+        {
+            var customerAircrafts = await (from ca in _context.CustomerAircrafts
+                                           join groupId in context.AsTable(groupIds) on ca.GroupId.ToString() equals groupId.Value
+                                           into groupIdJoin
+                                           from groupId in groupIdJoin.DefaultIfEmpty()
+                                           where ca.TailNumber != null && ca.TailNumber != "" && ca.CustomerId == customerId
+                                           select ca).ToListAsync();
+
+            return customerAircrafts;
         }
     }
 }
