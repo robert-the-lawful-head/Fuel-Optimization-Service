@@ -15,10 +15,27 @@ export class CustomerinfobygroupService {
         this.accessPointUrl = baseUrl + 'api/customerinfobygroup';
     }
 
-    public getByGroup(groupId) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
+    public getCustomerInfoByGroupListByGroupId(groupId) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/list', {
             headers: this.headers,
         });
+    }
+
+    public getCustomersViewModelByGroup(groupId) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/viewmodel', {
+            headers: this.headers,
+        });
+    }
+
+    public getCustomerInfoByGroupAndCustomerId(groupId, customerId) {
+        return this.http.get(this.accessPointUrl + '/group/' +
+            groupId +
+            '/customer/' +
+            customerId,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public getByGroupAndFbo(groupId, fboId) {

@@ -1,0 +1,71 @@
+<div class="container-fluid">
+    <div class="row pt-1">
+        <div class="col-10">
+            <div class="row">
+                <div class="col-12 font-weight-bold">
+                    {{serviceOrder.customerInfoByGroup?.company}}
+                </div>
+                <div class="col-12">
+                    {{serviceOrder.customerAircraft?.tailNumber}}
+                </div>
+                <div class="col-12">
+                    {{serviceOrder.arrivalDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                </div>
+                <div class="col-12">
+                    {{serviceOrder.departureDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                </div>
+            </div>
+        </div>
+        <div class="col-2">
+            <div *ngIf="showClose">
+                <button mat-icon-button (click)="onCloseClicked()">
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">close</mat-icon>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="pt-1">
+                <hr />
+            </div>
+        </div>
+    </div>
+    <mat-selection-list #serviceOrderItemsSelectionList (selectionChange)="serviceItemToggleChanged($event)">
+        <mat-list-option *ngFor="let item of serviceOrder.serviceOrderItems" [value]="item" [selected]="item.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after">
+            <div class="row">
+                <div class="col-8">
+                    {{item.serviceName}}
+                </div>
+                <div class="col-4 text-right">
+                    <button (click)="deleteServiceOrderItemClicked(item);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small"></button>
+                </div>
+            </div>
+        </mat-list-option>
+    </mat-selection-list>
+
+    <div class="row">
+        <div class="col-8">
+            <mat-form-field>
+                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" (keyup.enter)="addServiceOrderItemClicked()" />
+            </mat-form-field>
+        </div>
+        <div class="col-4">
+            <button (click)="addServiceOrderItemClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
+                    ni-button size="small" [disabled]="newServiceOrderItem.serviceName == ''"
+                    style="position: absolute; top: 35%;">
+                Add
+            </button>
+        </div>
+    </div>
+
+    <div class="">
+        <div class="">
+
+        </div>
+    </div>
+</div>
+

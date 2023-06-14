@@ -10,7 +10,8 @@ import * as moment from 'moment';
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
-    @Input() SubmatDataSource : any = null
+    @Input() SubmatDataSource: any = null
+    @Input() showClearButton: boolean = true;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
@@ -47,6 +48,9 @@ export class TableGlobalSearchComponent implements OnInit {
         //if (this.matDataSource.filterCollection.indexOf(this.filter) === -1) {
         //    this.matDataSource.filterCollection.push(this.filter);
         //}
+
+        if (!this.matDataSource)
+            return;
 
         this.setupFilterPredicate();
         if (!this.matDataSource.filterCollection) {
@@ -86,6 +90,11 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public applyFilter(filterValue: any) {
+        if (!this.matDataSource) {
+            this.filterApplied.emit(filterValue);
+            return;
+        }
+
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];

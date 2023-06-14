@@ -4,6 +4,7 @@ import { ApplicableTaxFlights } from '../enums/applicable-tax-flights';
 import { FeeCalculationApplyingTypes } from '../enums/fee-calculation-applying-types';
 import { FeeCalculationTypes } from '../enums/fee-calculation-types';
 import { FlightTypeClassifications } from '../enums/flight-type-classifications';
+import { ServiceOrderAppliedDateTypes } from '../enums/service-order-applied-date-types';
 import { StringFilterConditions } from '../enums/string-filter-conditions';
 
 export namespace EnumOptions {
@@ -67,4 +68,9 @@ export namespace EnumOptions {
             value: StringFilterConditions.DoesNotContain,
         }
     ];
+
+    export const serviceOrderAppliedDateTypeOptions: Array<EnumOption> = [
+        { text: 'Arrival', value: ServiceOrderAppliedDateTypes.Arrival },
+        { text: 'Departure', value: ServiceOrderAppliedDateTypes.Departure }
+    ]
 }

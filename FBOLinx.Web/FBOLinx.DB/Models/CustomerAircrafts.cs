@@ -37,5 +37,7 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("CustomerId")]
         public virtual Customers Customer { get; set; }
+        [InverseProperty("CustomerAircraft")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
     }
 }

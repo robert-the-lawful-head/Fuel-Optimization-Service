@@ -18,6 +18,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
     public interface ICustomerInfoByGroupService : IBaseDTOService<CustomerInfoByGroupDto, CustomerInfoByGroup>
     {
+        Task<CustomerInfoByGroupDto> AddNewCustomerInfoByGroup(CustomerInfoByGroupDto customerInfoByGroup);
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
         Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
         Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0);
@@ -25,9 +26,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 
     public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDto, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
     {
-        public CustomerInfoByGroupService(IRepository<CustomerInfoByGroup, FboLinxContext> entityService) : base(entityService)
+        private ICustomerService _CustomerService;
+
+        public CustomerInfoByGroupService(ICustomerInfoByGroupEntityService entityService, ICustomerService customerService) : base(entityService)
         {
+            _CustomerService = customerService;
         }
+
+        public async Task<CustomerInfoByGroupDto> AddNewCustomerInfoByGroup(CustomerInfoByGroupDto customerInfoByGroup)
+        {
+            if (customerInfoByGroup.CustomerId == 0)
+            {
+                var customer = customerInfoByGroup.Customer == null ? new CustomersDto() {Company = customerInfoByGroup.Company, Active = true, ShowJetA = true} : customerInfoByGroup.Customer;
+                customerInfoByGroup.Customer = await _CustomerService.AddNewCustomer(customer);
+                customerInfoByGroup.CustomerId = customerInfoByGroup.Customer.Oid;
+            }
+
+            customerInfoByGroup.Customer = null;
+            return await AddAsync(customerInfoByGroup);
+        }
+
 
         public async Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0)
         {

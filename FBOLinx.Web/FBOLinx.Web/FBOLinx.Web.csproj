@@ -53,10 +53,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <None Remove="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <None Remove="ClientApp\src\app\enums\certificate-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <None Remove="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <None Remove="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
     <None Remove="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <None Remove="ClientApp\src\app\guards\auth.guard.ts" />
     <None Remove="ClientApp\src\app\guards\index.ts" />
@@ -66,6 +69,9 @@
     <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
     <None Remove="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\customer-aircraft.ts" />
+    <None Remove="ClientApp\src\app\models\customer-info-by-group.ts" />
+    <None Remove="ClientApp\src\app\models\entity-response-message.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
@@ -73,6 +79,8 @@
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
     <None Remove="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\service-order-item.ts" />
+    <None Remove="ClientApp\src\app\models\service-order.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
@@ -99,6 +107,11 @@
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />
     <None Remove="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
     <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
@@ -111,6 +124,7 @@
     <None Remove="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
+    <None Remove="ClientApp\src\app\services\serviceorder.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
@@ -141,10 +155,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\certificate-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\auth.guard.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\index.ts" />
@@ -154,6 +171,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\entity-response-message.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
@@ -161,6 +181,8 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\service-order-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\service-order.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
@@ -188,6 +210,11 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
@@ -198,6 +225,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\serviceorder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
