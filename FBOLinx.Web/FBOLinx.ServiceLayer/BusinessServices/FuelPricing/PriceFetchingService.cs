@@ -91,8 +91,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 if (templates == null)
                     continue;
 
-                List<CustomerWithPricing> pricing =
-                    await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
+                bool hasFlightTypeSpecificFeesAndTaxes = false;
+                if (feesAndTaxes == null)
+                    hasFlightTypeSpecificFeesAndTaxes = await _context.FbofeesAndTaxes
+                        .Where(x => x.Fboid == fbo.Oid &&
+                                    (x.FlightTypeClassification == FlightTypeClassifications.Commercial ||
+                                     x.FlightTypeClassification == FlightTypeClassifications.Private)).AsNoTracking()
+                        .AnyAsync();
+                else
+                    hasFlightTypeSpecificFeesAndTaxes = feesAndTaxes.Where(x =>
+                        (x.FlightTypeClassification == FlightTypeClassifications.Commercial ||
+                         x.FlightTypeClassification == FlightTypeClassifications.Private)).Any();
+
+                List<CustomerWithPricing> pricing = new List<CustomerWithPricing>();
+
+                //If the user did not specify a flight type and the FBO has a separation of both, then we need to get pricing for both private and commercial flights
+                if ((flightTypeClassifications == FlightTypeClassifications.All ||
+                     flightTypeClassifications == FlightTypeClassifications.NotSet) &&
+                    hasFlightTypeSpecificFeesAndTaxes)
+                {
+                    var privatePricing = await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), FlightTypeClassifications.Private, departureType, feesAndTaxes);
+                    var commercialPricing = await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), FlightTypeClassifications.Commercial, departureType, feesAndTaxes);
+                    pricing.AddRange(privatePricing);
+                    pricing.AddRange(commercialPricing);
+                }
+                else
+                {
+                    pricing = await GetCustomerPricingAsync(fbo.Oid, fbo.GroupId, customerInfoByGroup.Oid, templates.Select(x => x.Oid).ToList(), flightTypeClassifications, departureType, feesAndTaxes);
+                }
 
                 List<string> alertEmailAddresses = await _context.Fbocontacts.Where(x => x.Fboid == fbo.Oid).Include(x => x.Contact).Where(x => x.Contact != null && x.Contact.CopyOrders.HasValue && x.Contact.CopyOrders.Value).Select(x => x.Contact.Email).AsNoTracking().ToListAsync();
 
@@ -141,6 +167,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             _FboId = fboId;
             _GroupId = groupId;
             var feesAndTaxesPassedIn = feesAndTaxes;
+            var flightTypePassedIn = flightTypeClassifications;
 
             try
             {
@@ -284,7 +311,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
                                                   PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A")
+                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A") + ((flightTypePassedIn == FlightTypeClassifications.Private || flightTypePassedIn == FlightTypeClassifications.Commercial) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypePassedIn) + ")" : "")
                                               }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
                 // If getting pricing by template for price checker, just use the first customer
@@ -405,9 +432,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                             fee.OmittedFor = "C";
                         }
                     });
-
-                    //Add the flight type classification to the product name if any fees are applicable to that flight type
-                    x.Product += (x.FeesAndTaxes.Any(fee => !fee.IsOmitted && fee.FlightTypeClassification == flightTypeClassifications) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypeClassifications) + ")" : "");
+                    
                 });
                 return resultsWithFees;
             }
