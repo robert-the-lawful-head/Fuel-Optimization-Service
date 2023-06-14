@@ -553,7 +553,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/CustomerInfoByGroup/5
         [HttpPut("{id}/{userId}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerInfoByGroupDto customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -568,32 +568,20 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerInfoByGroup oldCustomer = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == customerInfoByGroup.Oid);
+                //var existingRecord = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupSpecification(customerInfoByGroup.Oid));
+                
+                ////Check for any changed notes so we record who did it and when
+                //var changedNotes = customerInfoByGroup.Notes?.Where(x => existingRecord.Notes?.FirstOrDefault(e => e.Oid == x.Oid)?.Notes == x.Notes).ToList();
+                //if (changedNotes != null && changedNotes.Any())
+                //{
+                //    foreach (var changedNote in changedNotes)
+                //    {
+                //        changedNote.LastUpdatedByUserId = userId;
+                //        changedNote.LastUpdatedUtc = DateTime.UtcNow;
+                //    }
+                //}
 
-                if (oldCustomer != null)
-                {
-                    if (_customerService.CompareCustomers(oldCustomer, customerInfoByGroup) == false)
-                    {
-                        oldCustomer.Active = customerInfoByGroup.Active;
-                        oldCustomer.Address = customerInfoByGroup.Address;
-                        oldCustomer.CertificateType = customerInfoByGroup.CertificateType;
-                        oldCustomer.City = customerInfoByGroup.City;
-                        oldCustomer.Company = customerInfoByGroup.Company;
-                        oldCustomer.Country = customerInfoByGroup.Country;
-                        oldCustomer.CustomerCompanyType = customerInfoByGroup.CustomerCompanyType;
-                        oldCustomer.Distribute = customerInfoByGroup.Distribute;
-                        oldCustomer.EmailSubscription = customerInfoByGroup.EmailSubscription;
-                        oldCustomer.MainPhone = customerInfoByGroup.MainPhone;
-                        oldCustomer.Show100Ll = customerInfoByGroup.Show100Ll;
-                        oldCustomer.ShowJetA = customerInfoByGroup.ShowJetA;
-                        oldCustomer.State = customerInfoByGroup.State;
-                        oldCustomer.Website = customerInfoByGroup.Website;
-                        
-                        _context.CustomerInfoByGroup.Update(oldCustomer);
-
-                        await _context.SaveChangesAsync(userId, customerInfoByGroup.CustomerId, customerInfoByGroup.GroupId);
-                    }
-                }
+                await _customerInfoByGroupService.UpdateAsync(customerInfoByGroup);
 
             }
             catch (DbUpdateConcurrencyException)

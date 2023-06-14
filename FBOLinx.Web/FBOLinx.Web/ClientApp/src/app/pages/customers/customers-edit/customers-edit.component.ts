@@ -10,6 +10,7 @@ import { CustomermarginsService } from 'src/app/services/customermargins.service
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
+import { CustomerInfoByGroupNote } from '../../../models/customer-info-by-group-note';
 import { ContactinfobyfboService } from '../../../services/contactinfobyfbo.service';
 import { ContactinfobygroupsService } from '../../../services/contactinfobygroups.service';
 import { ContactsService } from '../../../services/contacts.service';
@@ -56,6 +57,7 @@ export class CustomersEditComponent implements OnInit {
     pageTitle = 'Edit Customer';
     breadcrumb = BREADCRUMBS;
     customerInfoByGroup: any;
+    customerInfoByGroupNote: CustomerInfoByGroupNote;
     contactsData: any[];
     pricingTemplatesData: any[];
     customerAircraftsData: any[];
@@ -117,6 +119,20 @@ export class CustomersEditComponent implements OnInit {
             .get({ oid: id })
             .toPromise();
         this.customerId = this.customerInfoByGroup.customerId;
+
+        //Grab the appropriate note
+        var notesForFbo = this.customerInfoByGroup?.notes?.filter(x => x.fboId == this.sharedService.currentUser.fboId);
+        this.customerInfoByGroupNote = notesForFbo && notesForFbo.length > 0 ? notesForFbo[0] : null;
+        if (this.customerInfoByGroupNote == null) {
+            this.customerInfoByGroupNote = {
+                oid: 0,
+                fboId: this.sharedService.currentUser.fboId,
+                customerInfoByGroupId: this.customerInfoByGroup.oid,
+                notes: '',
+                lastUpdatedByUserId: this.sharedService.currentUser.oid
+            };
+            this.customerInfoByGroup.notes.push(this.customerInfoByGroupNote);
+        }
 
         const results = await combineLatest([
             //0
@@ -185,7 +201,8 @@ export class CustomersEditComponent implements OnInit {
             state: [this.customerInfoByGroup.state],
             website: [this.customerInfoByGroup.website],
             zipCode: [this.customerInfoByGroup.zipCode],
-            customerTag: [this.customerInfoByGroup.customerTag]
+            customerTag: [this.customerInfoByGroup.customerTag],
+            editableNote: [this.customerInfoByGroupNote.notes]
         });
 
         this.customerForm.valueChanges
@@ -200,10 +217,13 @@ export class CustomersEditComponent implements OnInit {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
                     };
+                    //Null the notes collection to prevent EF from saving the entire collection
+                    customerInfoByGroup.notes = null;
+
                     this.customCustomerType.customerType =
                         this.customerForm.value.customerMarginTemplate;
 
-
+                    this.saveNotes();
 
                     await this.customerInfoByGroupService
                         .update(customerInfoByGroup ,  this.sharedService.currentUser.oid)
@@ -641,5 +661,18 @@ export class CustomersEditComponent implements OnInit {
                 result.pricingTemplateId = null;
             }
         });
+    }
+
+    private saveNotes(): void {
+        if (this.customerInfoByGroupNote == null)
+            return;
+        this.customerInfoByGroupNote.lastUpdatedByUserId = this.sharedService.currentUser.oid;
+        if (this.customerInfoByGroupNote.oid > 0) {
+            this.customerInfoByGroupService.updateCustomerInfoByGroupNote(this.customerInfoByGroupNote).subscribe((data: any) => { });
+        } else {
+            this.customerInfoByGroupService.addCustomerInfoByGroupNote(this.customerInfoByGroupNote).subscribe((data: any) => {
+                this.customerInfoByGroupNote.oid = data.oid;
+            });
+        }
     }
 }
