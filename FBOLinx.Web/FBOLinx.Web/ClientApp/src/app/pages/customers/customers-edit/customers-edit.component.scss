@@ -18,6 +18,22 @@
         display: inline;
     }
 
+    .notes-label {
+        padding-left: 15px;
+
+        label {
+            color: rgba(0, 0, 0, 0.54);
+        }
+    }
+
+    .notes-textarea {        
+        height: 340px;
+        width: 100%;
+        border: 1px solid lightgray;
+        margin-top: -25px;
+        padding: 5px;
+    }
+
     ::ng-deep {
         .mat-card-header-text {
             padding-bottom: 10px;

@@ -69,7 +69,9 @@
     <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <None Remove="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
     <None Remove="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\customer-aircraft-note.ts" />
     <None Remove="ClientApp\src\app\models\customer-aircraft.ts" />
+    <None Remove="ClientApp\src\app\models\customer-info-by-group-note.ts" />
     <None Remove="ClientApp\src\app\models\customer-info-by-group.ts" />
     <None Remove="ClientApp\src\app\models\entity-response-message.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
@@ -171,7 +173,9 @@
     <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft-note.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group-note.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\entity-response-message.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
