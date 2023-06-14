@@ -950,7 +950,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                HandleExceptionAsync(ex);
+                HandleException(ex);
                 throw ex;
             }
         }
@@ -985,7 +985,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (System.Exception exception)
             {
-                HandleExceptionAsync(exception);
+                HandleException(exception);
                 throw exception;
             }
 
@@ -1013,7 +1013,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (System.Exception exception)
             {
-                base.HandleExceptionAsync(exception);
+                base.HandleException(exception);
                 throw exception;
             }
 
@@ -1035,7 +1035,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (System.Exception exception)
             {
-                base.HandleExceptionAsync(exception);
+                base.HandleException(exception);
                 throw exception;
             }
 
