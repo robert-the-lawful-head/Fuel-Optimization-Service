@@ -1134,6 +1134,9 @@ namespace FBOLinx.Web.Controllers
                             //from hd in leftJoinHd.DefaultIfEmpty()
                         join cv in customerFuelVendors on cg.Customer.FuelerlinxId.GetValueOrDefault() equals cv.FuelerLinxId into leftJoinCv
                         from cv in leftJoinCv.DefaultIfEmpty()
+                        join cc in customerContacts on cg.CustomerId equals cc.CustomerId
+                        into leftJoinCc
+                        from cc in leftJoinCc.DefaultIfEmpty()
                         where (cg == null ? 0 : cg.GroupId) == groupId && !(cg.Customer.Suspended ?? false)
 
                         group new { cg } by new //, hd 
@@ -1146,9 +1149,8 @@ namespace FBOLinx.Web.Controllers
                             CustomerCompanyTypeName = ccot?.Name,
                             CertificateType = cg.CertificateType == null ? CertificateTypes.NotSet : cg.CertificateType.GetValueOrDefault()
                              ,
-                            ContactExists = contactInfoByFboForAlerts.Any(c =>
-                           (customerContacts.Any(cc => cc.ContactId == c.ContactId)) == true && c.CopyAlerts == true),
-                            Contacts = contactInfoByFboForAlerts.Where(c => customerContacts?.Select(x => x.ContactId).Contains(c.ContactId) ?? false).Select(x => new CustomerGridContactsViewModel() { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName }).ToList(),
+                            ContactExists = cc != null && contactInfoByFboForAlerts.Any(c => cc.ContactId == c.ContactId && c.CopyAlerts == true),
+                            Contacts = contactInfoByFboForAlerts.Where(c => cc != null && cc.ContactId == c.ContactId).Select(x => new CustomerGridContactsViewModel() { Email = x.Email, FirstName = x.FirstName, LastName = x.LastName }).ToList(),
                             PricingTemplateName = string.IsNullOrEmpty(ai?.Name) ? defaultPricingTemplate.Name : ai.Name,
                             IsPricingExpired = ai != null && ai.IsPricingExpired,
                             Active = cg == null ? false : cg.Active.GetValueOrDefault(),
