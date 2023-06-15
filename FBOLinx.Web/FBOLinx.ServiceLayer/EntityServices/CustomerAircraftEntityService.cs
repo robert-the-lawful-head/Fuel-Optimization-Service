@@ -79,9 +79,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         {
             var customerAircrafts = await (from ca in _context.CustomerAircrafts
                                            join groupId in context.AsTable(groupIds) on ca.GroupId.ToString() equals groupId.Value
-                                           into groupIdJoin
-                                           from groupId in groupIdJoin.DefaultIfEmpty()
-                                           where ca.TailNumber != null && ca.TailNumber != "" && ca.CustomerId == customerId
+                                           where ca.TailNumber != null && ca.TailNumber != "" && tailNumbers.Contains(ca.TailNumber) && ca.CustomerId == customerId
                                            select ca).ToListAsync();
 
             return customerAircrafts;
