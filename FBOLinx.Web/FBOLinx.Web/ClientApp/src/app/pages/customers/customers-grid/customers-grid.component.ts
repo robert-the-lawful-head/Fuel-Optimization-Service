@@ -234,11 +234,10 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
 
     selectAction() {
-        const pageCustomersData = this.dataSource.connect().value;
-        forEach(pageCustomersData, (customer) => {
+        forEach( this.dataSource.filteredData, (customer) => {
             customer.selectAll = this.selectAll;
         });
-        this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
+        this.selectedRows = this.selectAll ? this.dataSource.data.length : 0;
     }
 
     selectUnique() {
@@ -702,7 +701,6 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             });
     }
     loadFilteredDataSource(filteredDataSource: any){
-        console.log("🚀 ~ file: customers-grid.component.ts:770 ~ CustomersGridComponent ~ loadFilteredDataSource ~ filteredDataSource", filteredDataSource)
         if(filteredDataSource.filter.length == 2){
             this.refreshCustomerDataSource();
             return;
