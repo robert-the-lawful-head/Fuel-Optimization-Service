@@ -70,7 +70,7 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     public customerHistory: any;
     feesAndTaxes: Array<any>;
-    isEditing: boolean;
+    isEditing: boolean = false;
     public customerId: number;
     tags: any[];
     tagsSelected: any[] = [];
@@ -208,11 +208,11 @@ export class CustomersEditComponent implements OnInit {
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
-                    this.isEditing = true;
+                    
                 }),
                 debounceTime(500),
                 switchMap(async () => {
-
+                    this.isEditing = true;
                     const customerInfoByGroup = {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
