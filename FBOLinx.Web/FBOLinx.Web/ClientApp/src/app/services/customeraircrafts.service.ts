@@ -144,7 +144,7 @@ export class CustomeraircraftsService {
     }
 
     public updateCustomerAircraftNotes(payload: CustomerAircraftNote) {
-        return this.http.put(this.accessPointUrl + '/notes', payload, {
+        return this.http.put(this.accessPointUrl + '/notes/' + payload.oid, payload, {
             headers: this.headers,
         });
     }

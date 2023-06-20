@@ -83,9 +83,9 @@ export class CustomerAircraftsEditComponent implements OnInit {
             .subscribe((data: CustomerAircraft) => {
                 this.customerAircraftNote.customerAircraftId = data.oid;
                 if (this.customerAircraftNote.oid > 0) {
-                    this.customerAircraftsService.updateCustomerAircraftNotes(this.customerAircraftNote).subscribe((data: any) => { this.dialogRef.close(data); })
+                    this.customerAircraftsService.updateCustomerAircraftNotes(this.customerAircraftNote).subscribe((noteResponse: any) => { this.dialogRef.close(data); })
                 } else {
-                    this.customerAircraftsService.addCustomerAircraftNotes(this.customerAircraftNote).subscribe((data: any) => { this.dialogRef.close(data); })
+                    this.customerAircraftsService.addCustomerAircraftNotes(this.customerAircraftNote).subscribe((noteResponse: any) => { this.dialogRef.close(data); })
                 }
                 
             });
