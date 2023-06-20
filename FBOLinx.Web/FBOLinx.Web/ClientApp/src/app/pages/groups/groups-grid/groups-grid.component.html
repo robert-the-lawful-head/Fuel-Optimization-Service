@@ -81,10 +81,10 @@
         <e-column field="groupName" headerText="Group"></e-column>
         <e-column field="expiredFboPricingCount" headerText="Pricing Expired">
             <ng-template #template let-data>
-                <span [ngClass]="{ good: data.expiredFboPricingCount === 0 }"
+                <span [ngClass]="{ good: isValidPricing(data) }"
                       class="status">
                     {{
-                        data.expiredFboPricingCount === 0 && data.activeFboCount > 0
+                        isValidPricing(data)
                             ? "All Pricing Live"
                             : (data.activeFboCount > 0
                             ? (data.expiredFboPricingCount +
