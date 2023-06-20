@@ -258,9 +258,12 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     checkCurrentPrices() {
-        if (!this.sharedService.currentUser.fboId) {
-            return;
-        }
+        const currentRoute = this.router.url;
+
+        if (currentRoute == '/default-layout/groups') return;
+
+        if (!this.sharedService.currentUser.fboId) return;
+
         const remindMeLaterFlag = localStorage.getItem(
             'pricingExpiredNotification'
         );
@@ -275,9 +278,7 @@ export class DefaultLayoutComponent implements OnInit {
             remindMeLaterFlag &&
             moment(new Date(moment().format('L'))) <=
             moment(new Date(remindMeLaterFlag))
-        ) {
-            return;
-        }
+        ) return;
 
         return new Observable((observer) => {
             this.subscriptions.push(
