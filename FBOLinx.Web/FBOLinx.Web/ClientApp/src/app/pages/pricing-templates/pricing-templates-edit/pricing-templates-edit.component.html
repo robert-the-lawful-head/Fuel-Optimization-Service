@@ -110,6 +110,12 @@
                                         .marginType == 1">
                                             <div class="">Discount</div>
                                         </th>
+                                        <th *ngIf=" pricingTemplateForm.value
+                                        .marginType == 0">
+                                            <div class="volume-tiers-header">
+                                                ITP Margin
+                                            </div>
+                                        </th>
                                         <th>
                                             <div>
                                                 Total
@@ -143,7 +149,7 @@
                                             <div class="volume-tiers-width">
                                                 <mat-form-field class="">
                                                     <input formControlName="min"
-                                                            (blur)="updateCustomerMarginVolumeValues(i)"
+                                                           (blur)="updateCustomerMarginVolumeValues(i)"
                                                            matInput />
                                                 </mat-form-field>
                                             </div>
@@ -188,6 +194,32 @@
 
                                                 </mat-form-field>
                                             </div>
+                                        </td>
+                                        <!--ITP MARGIN-->
+                                        <td *ngIf=" pricingTemplateForm.value
+                                                .marginType == 0" [formGroupName]="i"
+                                            class="font-weight-bold font-italic">
+
+                                            <mat-form-field style="width:100px">
+                                                <input (click)="
+                                                            $event.target.select()
+                                                        "
+                                                       formControlName="amount"
+                                                       matInput
+                                                       step="0.01"
+                                                       type="number" />
+                                                <span *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 0 "
+                                                      class="prefixDollar"
+                                                      matPrefix>$</span>
+                                                <span *ngIf="
+                                                    pricingTemplateForm.value
+                                                        .discountType == 1 "
+                                                      class="prefixPercentage"
+                                                      matSuffix>%</span>
+
+                                            </mat-form-field>
                                         </td>
                                         <!--TOTAL-->
                                         <td [formGroupName]="i"
