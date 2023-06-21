@@ -882,12 +882,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             return aircrafts;
         }
         
-        public async Task GetAirportWatchTestData()
+        public async Task<int> ReProcessLatestRecords()
         {
-            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -10, 0));
+            var pastTenMinutes = DateTime.UtcNow.Add(new TimeSpan(0, -1, 0));
 
             var aircraftWatchLiveData = await _AirportWatchLiveDataService.GetListbySpec(new AirportWatchLiveDataSpecification(pastTenMinutes, DateTime.UtcNow));
             await ProcessAirportWatchData(aircraftWatchLiveData, true);
+
+            return _HistoricalDataToInsert.Count + _HistoricalDataToUpdate.Count + _LiveDataToUpdate.Count +
+                   _LiveDataToInsert.Count;
         }
 
         private async Task<List<AirportWatchAntennaStatusGrid>> GetDistinctAntennaBoxes()
@@ -944,7 +947,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 return;
 
             // If neither the old record nor the new one are on the ground then it can't be a parking
-            if (!oldAirportWatchHistoricalData.IsAircraftOnGround || !airportWatchHistoricalData.IsAircraftOnGround)
+            if (!airportWatchHistoricalData.IsAircraftOnGround)
                 return;
 
             //First confirm the last record we are comparing with was a landing or a parking
