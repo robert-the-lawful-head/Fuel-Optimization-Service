@@ -57,7 +57,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         'flightNumber',
         'hexCode',
         'aircraftType',
-        'aircraftTypeCode',
         'dateTime',
         'status',
         'pastVisits',
@@ -74,6 +73,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     selectedCustomers: number[] = [];
     selectedTailNumbers: string[] = [];
+    fbo: any;
 
     filtersChanged: Subject<any> = new Subject<any>();
 
@@ -103,15 +103,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         {
             id: 'hexCode',
             name: 'Hex #',
+            hidden: true
         },
         {
             id: 'aircraftType',
             name: `Aircraft`,
         },
-        {
-            id: 'aircraftTypeCode',
-            name: 'Aircraft Type',
-        },
+        //{
+        //    id: 'aircraftTypeCode',
+        //    name: 'Aircraft Type',
+        //},
         {
             id: 'dateTime',
             name: 'Date and Time',
@@ -128,6 +129,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         {
             id: 'visitsToMyFbo',
             name: 'Visits to My FBO',
+        },
+        {
+            id: 'isConfirmedVisit',
+            name: 'Visit to My FBO?'
         },
         {
             id: 'percentOfVisits',
@@ -193,6 +198,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 oid: this.sharedService.currentUser.fboId,
             })
             .subscribe((data: any) => {
+                this.fbo = data;
                 this.fboName = data.fbo;
             });
     }
@@ -247,7 +253,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 (x) =>
                     (!this.isCommercialInvisible ||
                         !isCommercialAircraft(
-                            x.aircraftTypeCode
+                            x.flightNumber
                         )) &&
                     (!this.selectedCustomers.length ||
                         this.selectedCustomers.includes(
@@ -270,25 +276,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
             .map(x => x.tailNumber))]
             .map(tailNumber => this.data.find(x => x.tailNumber === tailNumber));
-    }
-
-    refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
     }
 
     filterChanged() {
@@ -314,18 +301,18 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 .subscribe((result: Partial<FlightWatchHistorical>) => {
                     if (result) {
                         // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
-                        for (let i = 0; i < this.data.length; i++) {
-                            if (
-                                this.data[i].flightNumber === row.flightNumber
-                            ) {
-                                this.data[i] = {
-                                    ...this.data[i],
-                                    ...result,
-                                    tailNumber: row.flightNumber,
-                                };
-                            }
-                        }
-                        this.refreshDataSource();
+                        //for (let i = 0; i < this.data.length; i++) {
+                        //    if (
+                        //        this.data[i].flightNumber === row.flightNumber
+                        //    ) {
+                        //        this.data[i] = {
+                        //            ...this.data[i],
+                        //            ...result,
+                        //            tailNumber: row.flightNumber,
+                        //        };
+                        //    }
+                        //}
+                        this.refreshData();
                         this.refreshCustomers.emit();
                     }
                 });
@@ -378,22 +365,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(
-            TableSettingsComponent,
-            {
-                data: this.columns,
-            }
-        );
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.columns = [...result];
-
-            this.refreshSort();
-            this.saveSettings();
-        });
+        var _this = this;
+        this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
+            _this.columns = result;
+            _this.refreshSort(_this.sort, _this.columns);
+            _this.saveSettings();
+        });        
     }
 
     saveSettings() {
@@ -401,5 +378,27 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+
+    confirmedVisitToggled(row: FlightWatchHistorical) {
+        var parkingRecord = row.airportWatchHistoricalParking;
+        if (parkingRecord == null) {
+            parkingRecord = {
+                airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
+                acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
+                oid: 0
+            }
+        }
+        parkingRecord.isConfirmed = row.isConfirmedVisit;
+        if (parkingRecord.oid > 0) {
+            this.airportWatchService.updateHistoricalParking(parkingRecord).subscribe((response: any) => {
+                //Nothing to do
+            });
+        } else {
+            this.airportWatchService.createHistoricalParking(parkingRecord).subscribe((response: any) => {
+                row.airportWatchHistoricalParking = response;
+            })
+        }
+        
     }
 }

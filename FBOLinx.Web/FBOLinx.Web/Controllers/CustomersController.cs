@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
@@ -59,7 +60,13 @@ namespace FBOLinx.Web.Controllers
             return Ok(customers);
         }
 
-        // GET: api/Customers/getbyfuelerlinxid/5
+        /// <summary>
+        /// Fetch a customer by a given fuelerlinx id
+        /// </summary>
+        /// <param name="fuelerlinxid"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpGet("getbyfuelerlinxid/{fuelerlinxid}")]
         public async Task<IActionResult> GetCustomerByFuelerlinxId([FromRoute] int fuelerlinxid)
         {
@@ -68,7 +75,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customer = await _context.Customers.Where(x => x.FuelerlinxId == fuelerlinxid).FirstOrDefaultAsync();
+            var customer = await _context.Customers.Where(x => x.FuelerlinxId.HasValue && Math.Abs(x.FuelerlinxId.Value) == fuelerlinxid).FirstOrDefaultAsync();
 
             if (customer == null)
             {
@@ -78,6 +85,11 @@ namespace FBOLinx.Web.Controllers
             return Ok(customer);
         }
 
+        /// <summary>
+        /// Sync a customer from fuelerlinx by it's fuelerlinx id
+        /// </summary>
+        /// <param name="fuelerLinxCompanyId"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("sync-fuelerlinx-company/{fuelerLinxCompanyId}")]

@@ -26,6 +26,16 @@
         "roles": [ 1, 4 ]
     },
     {
+        "title": "CSR Dashboard",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/dashboard-csr",
+        "roles": [ 5 ]
+    },
+    {
         "title": "Flight Watch",
         "icon": {
             "class": "fa fa-eye",
@@ -35,16 +45,6 @@
         "tooltip": "Flight Watch",
         "routing": "/default-layout/flight-watch",
         "roles": [ 1, 4, 5 ]
-    },
-    {
-        "title": "CSR Dashboard",
-        "icon": {
-            "class": "fa fa-home",
-            "bg": "#ea8080",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "routing": "/default-layout/dashboard-csr",
-        "roles": [ 5 ]
     },
     {
         "title": "FBO Group",
@@ -151,6 +151,17 @@
         "tooltip": "See your incoming fuel orders.",
         "routing": "/default-layout/fuelreqs",
         "roles": [ 1, 4, 5, 6 ]
+    },
+    {
+        "title": "Service Orders",
+        "icon": {
+            "class": "fa fa-tags",
+            "bg": "#CF8B7C",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "See your incoming service orders.",
+        "routing": "/default-layout/service-orders",
+        "roles": [ 9999 ]
     },
     {
         "title": "Ramp Fees",

@@ -26,6 +26,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string AirportICAO { get; set; }
         public string AircraftHexCode { get; set; }
         public string TailNumber { get; set; }
+        public AirportWatchHistoricalParkingDto AirportWatchHistoricalParking { get; set; }
 
         public static AirportWatchHistoricalDataDto Cast(AirportWatchLiveDataDto liveDataRecord)
         {

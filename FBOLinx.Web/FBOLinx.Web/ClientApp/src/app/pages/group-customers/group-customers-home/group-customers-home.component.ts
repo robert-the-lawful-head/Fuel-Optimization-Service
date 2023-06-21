@@ -40,7 +40,7 @@ export class GroupCustomersHomeComponent implements OnInit {
     private loadCustomers() {
         this.customersData = null;
         this.customerInfoByGroupService
-            .getByGroup(this.sharedService.currentUser.groupId)
+            .getCustomersViewModelByGroup(this.sharedService.currentUser.groupId)
             .subscribe((data: any) => {
                 this.customersData = data;
             });

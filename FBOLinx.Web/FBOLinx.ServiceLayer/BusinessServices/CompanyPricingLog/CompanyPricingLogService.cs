@@ -15,15 +15,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
 {
     public interface ICompanyPricingLogService : IBaseDTOService<CompanyPricingLogDto, DB.Models.CompanyPricingLog>
     {
-        Task<List<CompanyPricingLogDto>> GetCompanyPricingLogs(int fuelerlinxCompanyId, DateTime startDate,
-            DateTime endDate);
+
+        Task<List<CompanyPricingLogCountByCustomer>> GetCompanyPricingLogCountByAirport(DateTime startDate,
+            DateTime endDate, string icao);
 
         Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuoteDatesForAirport(string icao,
             bool useCache = true);
         public Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID);
-
-        Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30Days(
-            int? fuelerlinxCompanyId = null, bool useCache = true);
+        
     }
 
     public class CompanyPricingLogService : BaseDTOService<CompanyPricingLogDto, DB.Models.CompanyPricingLog, FboLinxContext>, ICompanyPricingLogService
@@ -40,13 +39,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             _CompanyPricingLogEntityService = companyPricingLogEntityService;
         }
 
-        public async Task<List<CompanyPricingLogDto>> GetCompanyPricingLogs(int fuelerlinxCompanyId, DateTime startDate,
-            DateTime endDate)
+        public async Task<List<CompanyPricingLogCountByCustomer>> GetCompanyPricingLogCountByAirport(DateTime startDate,
+            DateTime endDate, string icao)
         {
-            var result =
-                await GetListbySpec(
-                    new CompanyPricingLogSpecification(fuelerlinxCompanyId, startDate, endDate));
-            return result;
+            return await _CompanyPricingLogEntityService.GetCompanyPricingLogCountByAirport(startDate, endDate, icao);
         }
 
         public async Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuoteDatesForAirport(string icao, bool useCache = true)
@@ -68,7 +64,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
 
         public async Task AddCompanyPricingLogs(string ICAO, int FuelerlinxCompanyID)
         {
-            //TODO: Refactoring: move this to a bulk insert method once we establish a service for CompanyPricingLog
             List<string> icaoList = ICAO.Split(',').Select(x => x.Trim())
                 .Where(x => !string.IsNullOrEmpty(x)).ToList();
             List<CompanyPricingLogDto> companyPricingLogs = new List<CompanyPricingLogDto>();
@@ -84,13 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
 
             await BulkInsert(companyPricingLogs);
         }
-
-        public async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30Days(int? fuelerlinxCompanyId = null, bool useCache = true)
-        {
-            if (useCache)
-                return await GetCompanyPricingLogCountLast30DaysFromCache(fuelerlinxCompanyId);
-            return await GetCompanyPricingLogCountLast30DaysFromDatabase(fuelerlinxCompanyId);
-        }
+        
 
         private async Task<List<CompanyPricingLogMostRecentQuoteModel>> GetMostRecentQuotesForAirportFromCache(
             string icao)
@@ -106,22 +95,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog
             {
                 return null;
             }
-        }
-
-        private async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30DaysFromCache(int? fuelerlinxCompanyId = null)
-        {
-            var result = await _MemoryCache.GetOrCreateAsync(_QuotesCountCacheKey + fuelerlinxCompanyId.GetValueOrDefault(),
-                async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(120);
-                    return await GetCompanyPricingLogCountLast30DaysFromDatabase(fuelerlinxCompanyId);
-                });
-            return result;
-        }
-
-        private async Task<List<CompanyPricingLogCountByDateRange>> GetCompanyPricingLogCountLast30DaysFromDatabase(int? fuelerlinxCompanyId = null)
-        {
-            return await _CompanyPricingLogEntityService.GetCompanyPricingLogCountByDateRange(DateTime.UtcNow.AddDays(-30), DateTime.UtcNow, fuelerlinxCompanyId);
         }
     }
 }

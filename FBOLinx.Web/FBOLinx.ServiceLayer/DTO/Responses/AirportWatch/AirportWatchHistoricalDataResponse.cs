@@ -4,6 +4,7 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
 {
     public class AirportWatchHistoricalDataResponse
     {
+        public int AirportWatchHistoricalDataId { get; set; }
         public int CustomerInfoByGroupID { get; set; }
         public int CompanyId { get; set; }
         public string Company { get; set; }
@@ -20,6 +21,16 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
         public int? VisitsToMyFbo { get; set; }
         public double? PercentOfVisits { get; set; }
 
+        public bool IsConfirmedVisit
+        {
+            get
+            {
+                if (AirportWatchHistoricalParking == null)
+                    return false;
+                return AirportWatchHistoricalParking.IsConfirmed.GetValueOrDefault(true);
+            }
+        }
 
+        public AirportWatchHistoricalParkingDto AirportWatchHistoricalParking { get; set; }
     }
 }

@@ -225,6 +225,13 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
+import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
+import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
+import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
+import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
+import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 
 @NgModule({
     declarations: [
@@ -371,7 +378,14 @@ import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agree
         FlightWatchFiltersComponent,
         LobbyViewComponent,
         AboutFbolinxComponent,
-        AgreementsAndDocumentsModalComponent
+        AgreementsAndDocumentsModalComponent,
+        GroupAnalyticsIntraNetworkVisitsReportComponent,
+        ServiceOrdersListComponent,
+        ServiceOrdersHomeComponent,
+        ServiceOrdersItemListComponent,
+        ServiceOrdersDialogNewComponent,
+        ServiceOrdersDialogOrderItemsComponent,
+        FeeAndTaxBreakdownDialogWrapperComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

@@ -11,7 +11,7 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -25,6 +25,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -67,6 +68,10 @@ const initialColumns: ColumnType[] = [
     {
         id: 'email',
         name: 'Email',
+    },
+    {
+        id: 'services',
+        name: 'Services',
     }
 ];
 
@@ -109,6 +114,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private tableSettingsDialog: MatDialog,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
+        private serviceOrderItemDialog: MatDialog
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -279,5 +285,13 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.expandedElement.push(elementId);
         }
 
+    }
+
+    manageServiceOrderClicked(fuelreq: any) {
+        const config: MatDialogConfig = {
+            disableClose: true,
+            data: fuelreq.serviceOrder
+        };
+        const dialogRef = this.serviceOrderItemDialog.open(ServiceOrdersDialogOrderItemsComponent, config);
     }
 }

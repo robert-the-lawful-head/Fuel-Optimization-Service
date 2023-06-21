@@ -5,6 +5,7 @@ using EllipticCurve.Utils;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
 
@@ -85,6 +86,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public CustomerAircraftsDto CustomerAircraft { get; set; }
         public FbosDto Fbo { get; set; }
         public FuelReqPricingTemplateDto FuelReqPricingTemplate { get; set; }
+        public ServiceOrderDto ServiceOrder { get; set; }
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
         {
@@ -117,7 +119,6 @@ namespace FBOLinx.Service.Mapping.Dto
         {
             FuelReqDto fuelRequest = new FuelReqDto();
             fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
-            fuelRequest.DateCreated = GetUtcTimeFromFuelerLinxServerTime(fuelRequest.DateCreated ?? DateTime.UtcNow);
             SetAirportLocalTimes(fuelRequest, airport);
             SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
 
@@ -153,8 +154,7 @@ namespace FBOLinx.Service.Mapping.Dto
                 fuelRequest.Eta = fuelRequest.Eta.GetValueOrDefault();
                 fuelRequest.Etd = fuelRequest.Etd.GetValueOrDefault();
             }
-            fuelRequest.DateCreated = GetAirportLocalTime(fuelRequest.DateCreated.GetValueOrDefault(), airport);
-            fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(fuelRequest.DateCreated ?? DateTime.UtcNow, airport?.IntlTimeZone, airport?.AirportCity);
+            fuelRequest.TimeZone = DateTimeHelper.GetLocalTimeZone(airport?.IntlTimeZone, airport?.AirportCity);
 
         }
         public static DateTime GetAirportLocalTime(DateTime date, Fuelerlinx.SDK.GeneralAirportInformation airport)

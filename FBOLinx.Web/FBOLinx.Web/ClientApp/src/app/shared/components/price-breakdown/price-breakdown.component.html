@@ -9,14 +9,14 @@
     </div>
     <div *ngIf="domesticPrivatePricing && !isPricesExpired && isCustomerActive" class="row">
         <!--Fee and tax breakdown-->
-        <div class="col-12 fee-and-tax-breakdown-container mb-2"
+        <div class="col-xl-6 col-md-12 fee-and-tax-breakdown-container mb-2"
             *ngIf="
                 !hideFeeAndTaxGeneralBreakdown &&
                 domesticPrivatePricing &&
                 domesticPrivatePricing.pricingList &&
                 domesticPrivatePricing.pricingList.length > 0 &&
                 domesticPrivatePricing.pricingList[0].fboPrice
-            "            
+            "
         >
             <fee-and-tax-breakdown
                 #feeAndTaxBreakdown
@@ -91,9 +91,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                    [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -110,7 +109,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -166,10 +165,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -186,7 +183,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -200,10 +197,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -220,7 +215,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -277,10 +272,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -297,7 +290,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -312,10 +305,8 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -329,7 +320,7 @@
                                             <i
                                                 *ngIf="!hideTooltips"
                                                 aria-hidden="true"
-                                                class="fa fa-info-circle"
+                                                class="fa fa-external-link"
                                             ></i>
                                         </div>
                                     </td>
@@ -348,7 +339,7 @@
                                         <div>Int/Comm</div>
                                     </th>
                                     <th>
-                                        <div>Int/Private</div>
+                                        <div>Int/Private prro</div>
                                     </th>
                                     <th>
                                         <div>Dom/Comm</div>
@@ -390,10 +381,8 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -410,7 +399,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circlee"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -424,10 +413,8 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -444,7 +431,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -458,10 +445,8 @@
                                                 [0, 2, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+                                                                        (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -478,7 +463,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -492,10 +477,9 @@
                                                 [0, 1, 3]
                                             )
                                         "
-                                        [popoverOnHover]="true"
-                                        [popover]="feeAndTaxPopover"
-                                        [popoverDisabled]="hideTooltips"
-                                        class="hover-mouseenter"
+
+                                    (click)="openFeeAndTaxBreakdownPopUp()"
+                                        [ngClass]="{'hover-mouseenter': !hideTooltips}"
                                     >
                                         <div>
                                             <div class="d-inline-block">
@@ -512,7 +496,7 @@
                                             >
                                                 <i
                                                     aria-hidden="true"
-                                                    class="fa fa-info-circle"
+                                                    class="fa fa-external-link"
                                                 ></i>
                                             </div>
                                         </div>
@@ -523,37 +507,6 @@
 
                     </div>
                 </div>
-
-                <!--Popover combinations-->
-                <popover-content
-                    #feeAndTaxPopover
-                    [closeOnMouseOutside]="true"
-                    [placement]="tooltipPlacement"
-                    title="Fee/Tax Breakdown"
-                >
-                    <div
-                        *ngIf="
-                            activeHoverPriceItem &&
-                            activeHoverPriceItem.fboPrice &&
-                            feeAndTaxCloneForPopOver
-                        "
-                    >
-                        <fee-and-tax-breakdown
-                            #dynamicFeeAndTaxBreakdown
-                            (omitCheckChanged)="omitChanged($event)"
-                            [customerMargin]="
-                                activeHoverPriceItem.customerMarginAmount
-                            "
-                            [displayMode]="0"
-                            [fboPrice]="activeHoverPriceItem.fboPrice"
-                            [feesAndTaxes]="feeAndTaxCloneForPopOver"
-                            [marginType]="activeHoverPriceItem.marginType"
-                            [discountType]="activeHoverPriceItem.discountType"
-                            [validDepartureTypes]="activeHoverDeparturetypes"
-                            [validFlightTypes]="activeHoverFlightTypes"
-                        ></fee-and-tax-breakdown>
-                    </div>
-                </popover-content>
             </div>
        </div>
 

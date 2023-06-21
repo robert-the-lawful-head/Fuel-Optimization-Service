@@ -1,8 +1,14 @@
-﻿using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.BaseModels.Entities;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Entities;
+using System.Linq;
+using System;
 
 namespace FBOLinx.DB.Context
 {
@@ -157,6 +163,9 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<UserAcceptedPolicyAndAgreements> UserAcceptedPolicyAndAgreements { get; set; }
         public virtual DbSet<PolicyAndAgreementDocuments> PolicyAndAgreementDocuments { get; set; }
         public virtual DbSet<PolicyAndAgreementGroupExemptions> PolicyAndAgreementGroupExemptions { get; set; }
+        public virtual DbSet<AirportWatchHistoricalParking> AirportWatchHistoricalParking { get; set; }
+        public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
+        public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1052,6 +1061,15 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Longitude).IsUnicode(false);
             });
+
+            modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
+            {
+                entity.HasNoKey();
+            });
         }
+
+        [DbFunction("fn_Split")]
+        public IQueryable<DatabaseStringSplitResult> SplitStringToTable(string inputString, string delimiter)
+            => throw new NotSupportedException();
     }
 }

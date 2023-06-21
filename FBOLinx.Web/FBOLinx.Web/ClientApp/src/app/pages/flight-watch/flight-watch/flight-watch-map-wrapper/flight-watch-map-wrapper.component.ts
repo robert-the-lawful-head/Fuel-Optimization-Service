@@ -69,7 +69,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         if (this.isCommercialVisible) return flightWatch;
 
         return flightWatch.filter(
-            (flightWatch) => !isCommercialAircraft(flightWatch.aircraftTypeCode)
+            (flightWatch) => !isCommercialAircraft(flightWatch.atcFlightNumber)
         );
     }
     toggleCommercial(event: MouseEvent) {

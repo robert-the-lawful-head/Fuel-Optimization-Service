@@ -591,8 +591,8 @@ namespace FBOLinx.Web.Controllers
                     return Ok(null);
 
                 
-                List<CustomerWithPricing> validPricing =
-                    await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification, Core.Enums.ApplicableTaxFlights.All, null, 0);
+                List<CustomerWithPricing> validPricing = await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications)request.FlightTypeClassification.GetValueOrDefault(), Core.Enums.ApplicableTaxFlights.All, null, 0);
+                    
                 if (validPricing == null)
                     return Ok(null);
 

@@ -16,6 +16,7 @@ namespace FBOLinx.DB.Specifications.FuelRequests
             AddInclude(x => x.CustomerAircraft);
             AddInclude(x => x.FuelReqPricingTemplate);
             AddInclude(x => x.Fbo);
+            AddInclude(x => x.ServiceOrder);
         }
     }
 }

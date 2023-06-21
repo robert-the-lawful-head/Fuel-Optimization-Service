@@ -38,14 +38,19 @@
             //background: $main-bg;
             z-index: 99998;
             padding: 1rem 5rem 0 $vertical-navbar-width;
-
             /*&.full-width {
                 padding-left: 0;
             }*/
 
             @media only screen and (max-width: 991px) {
                 padding-left: 80px;
+                top: 0;
             }
+        }
+
+        .sticky-panel-csr {
+            top: 2rem;
+            padding: 3rem 5rem 0 $vertical-navbar-width;
         }
 
         &.open-sidebar {

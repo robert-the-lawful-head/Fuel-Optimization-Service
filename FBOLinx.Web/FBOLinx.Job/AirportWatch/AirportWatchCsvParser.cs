@@ -4,6 +4,7 @@ namespace FBOLinx.Job.AirportWatch
 {
     public class AirportWatchCsvParser : ICsvReader<AirportWatchDataType>
     {
+
         public AirportWatchCsvParser(string filePath) : base(filePath)
         {
         }

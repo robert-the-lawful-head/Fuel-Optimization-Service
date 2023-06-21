@@ -124,13 +124,6 @@
                                             mat-header-cell
                                             text-lg-center
                                         ">
-                                        <span>Your ITP Margin</span>
-                                    </th>
-                                    <th class="
-                                            text-center
-                                            mat-header-cell
-                                            text-lg-center
-                                        ">
                                         <span>Total</span>
                                     </th>
                                     <th class="text-center mat-header-cell">
@@ -189,51 +182,35 @@
                                             </mat-form-field>
                                         </div>
                                     </td>
-                                    <td
-                                    *ngIf="form.value.secondStep.marginType === 1"
-                                    class="
-                                            mat-cell
-                                            text-center
-                                            font-weight-bold font-italic
-                                            text-right
-                                        ">
-                                        <div >
-                                            ${{
-                                                customerMargin.value.itp
-                                                    | number: "1.4-4"
-                                            }}
-                                        </div>
-
-                                    </td>
                                     <td [formGroupName]="i"
                                         class="mat-cell text-center">
                                         <div>
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 0">
-                                                ${{
+                                                {{
                                                         jetACost + customerMargin.value.amount / 1
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 1">
-                                                ${{
+                                                {{
                                                         jetACost + (jetACost * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 0">
-                                                ${{
+                                                {{
                                                         jetARetail - customerMargin.value.amount
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 1">
-                                                ${{
+                                                {{
                                                         jetARetail - (jetARetail * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                         </div>

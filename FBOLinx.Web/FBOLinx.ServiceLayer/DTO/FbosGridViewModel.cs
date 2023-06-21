@@ -21,5 +21,6 @@ namespace FBOLinx.ServiceLayer.DTO
         public int Orders30Days { get; set; }
         public double? CostPrice { get; set; }
         public double? RetailPrice { get; set; }
+        public int? AcukwikFboHandlerId { get; set; }
     }
 }
