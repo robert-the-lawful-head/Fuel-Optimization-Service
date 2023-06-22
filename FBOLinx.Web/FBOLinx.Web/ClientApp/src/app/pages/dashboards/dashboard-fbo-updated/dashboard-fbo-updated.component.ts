@@ -17,6 +17,7 @@ import { FlightWatchService } from 'src/app/services/flightwatch.service';
 // Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
 import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+import {localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-dashboard-fbo-updated',
@@ -84,7 +85,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                 title: 'CSR Dashboard',
             });
         }
-        this.selectedICAO = (this.sharedService.currentUser.icao) ? this.sharedService.currentUser.icao : localStorage.getItem('icao');
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
     }
 
@@ -96,9 +97,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         return this.sharedService.currentUser.role === 4;
     }
     async ngOnInit() {
-        if(this.selectedICAO)
-            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
-
+        await this.setFlightWatchMapCenter();
         this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
             if(this.selectedICAO)
                 this.loadAirportWatchData();
@@ -113,6 +112,9 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
                     this.isMapLoading = true;
                     this.loadAirportWatchData();
+                }else if(message == SharedEvents.icaoChangedEvent){
+                    this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                    this.setFlightWatchMapCenter();
                 }
             });
     }
@@ -122,6 +124,10 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
             this.locationChangedSubscription.unsubscribe();
         }
         if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
+    }
+    async setFlightWatchMapCenter(){
+        if(this.selectedICAO)
+            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
     }
     applyDateFilterChange() {
         this.statisticsTotalOrders.refreshData();
