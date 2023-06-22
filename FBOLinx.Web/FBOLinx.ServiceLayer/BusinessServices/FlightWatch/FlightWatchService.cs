@@ -107,7 +107,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
-                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 1, daysToCheckBackForHistoricalData);
+                await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 2, daysToCheckBackForHistoricalData);
 
             //Grab the airport to be considered for arrivals and departures.
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
