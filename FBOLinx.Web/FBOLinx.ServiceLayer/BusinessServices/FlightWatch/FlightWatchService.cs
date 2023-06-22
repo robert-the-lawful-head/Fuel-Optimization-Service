@@ -113,7 +113,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification) && x.LastUpdated.GetValueOrDefault() > DateTime.UtcNow.AddMinutes(-5));
+            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
             
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
@@ -333,6 +333,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 await _AirportService.GetAirportPositionByAirportIdentifier(flightWatchModel.ArrivalICAO);
 
             if (destinationAirportPosition == null)
+                return;
+
+            if (!flightWatchModel.Latitude.HasValue || !flightWatchModel.Longitude.HasValue)
                 return;
 
             flightWatchModel.SetTrackingDegree(

@@ -26,6 +26,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private AirportWatchLiveDataDto _AirportWatchLiveData;
         private FlightLegStatus? _Status;
         private bool _DoesSWIMFlightLegNeedUpdate = false;
+        private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-1);
 
         public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, SWIMFlightLegDTO swimFlightLeg)
         {
@@ -108,8 +109,31 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).HasValue && _SwimFlightLeg?.ETA.Value >= DateTime.UtcNow) ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
-        public double? Latitude => (_AirportWatchLiveData?.Latitude).HasValue ? _AirportWatchLiveData?.Latitude : _SwimFlightLeg?.Latitude;
-        public double? Longitude => (_AirportWatchLiveData?.Longitude).HasValue ? _AirportWatchLiveData?.Longitude : _SwimFlightLeg?.Longitude;
+        public double? Latitude
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Latitude).HasValue)
+                    return _AirportWatchLiveData?.Latitude;
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Latitude).HasValue)
+                    return _SwimFlightLeg?.Latitude;
+                return null;
+            }
+        }
+
+        public double? Longitude
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                    return _AirportWatchLiveData?.Longitude;
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Longitude).HasValue)
+                    return _SwimFlightLeg?.Longitude;
+                return null;
+            }
+        }
 
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround
