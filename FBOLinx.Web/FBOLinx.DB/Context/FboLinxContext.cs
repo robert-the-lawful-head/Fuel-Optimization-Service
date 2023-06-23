@@ -1,14 +1,12 @@
 ﻿using FBOLinx.Core.BaseModels.Entities;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Models.ServicesAndFees;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.Core.BaseModels.Entities;
-using System.Linq;
-using System;
 
 namespace FBOLinx.DB.Context
 {
@@ -166,6 +164,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchHistoricalParking> AirportWatchHistoricalParking { get; set; }
         public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
         public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
+        public virtual DbSet<FboCustomServicesAndFees> FboCustomServicesAndFees { get; set; }
+        public virtual DbSet<FboCustomServiceType> FboCustomServiceType { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
