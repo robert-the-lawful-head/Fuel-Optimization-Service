@@ -108,6 +108,7 @@ export class AccountProfileComponent {
 
         this.companyForm = new FormGroup({
             orderNotifications: new FormControl(),
+            directOrderNotifications: new FormControl(),
         });
 
 
@@ -218,6 +219,15 @@ export class AccountProfileComponent {
 
     onOrderNotificationsChange() {
         this.fboPreferencesData.OrderNotificationsEnabled = !this.companyForm.value.orderNotifications;
+
+        this.fboPreferencesService.update(this.fboPreferencesData).subscribe((data: any) => {
+            console.log(data);
+        }, (error: any) => {
+            console.log(error);
+        });
+    }
+    onDirectOrderNotificationsChange() {
+        this.fboPreferencesData.DirectOrderNotificationsEnabled = !this.companyForm.value.directOrderNotifications;
 
         this.fboPreferencesService.update(this.fboPreferencesData).subscribe((data: any) => {
             console.log(data);
@@ -342,7 +352,8 @@ export class AccountProfileComponent {
                     enableSaf: this.fboPreferencesData.enableSaf
                 });
                 this.companyForm.setValue({
-                    orderNotifications: this.fboPreferencesData.orderNotificationsEnabled ?? true
+                    orderNotifications: this.fboPreferencesData.orderNotificationsEnabled ?? true,
+                    directOrderNotifications: this.fboPreferencesData.directOrderNotificationsEnabled ?? true
                 });
             });
     }
