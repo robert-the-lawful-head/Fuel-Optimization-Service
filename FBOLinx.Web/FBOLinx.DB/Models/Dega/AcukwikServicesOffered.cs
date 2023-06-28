@@ -5,11 +5,11 @@ namespace FBOLinx.DB.Models.Dega
 {
     public class AcukwikServicesOffered
     {
-        [Column("Handler_ID")]
-        public float? HandlerId { get; set; }
+        [Key,Column("Handler_ID", Order = 0)]
+        public int HandlerId { get; set; }
 
-        [Column("ServiceOfferedID")]
-        public float? ServiceOfferedId { get; set; }
+        [Key,Column("ServiceOfferedID", Order = 1)]
+        public int ServiceOfferedId { get; set; }
 
         [StringLength(255)]
         public string Service { get; set; }

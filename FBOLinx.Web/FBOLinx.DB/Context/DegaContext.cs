@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 using FBOLinx.DB.Models.Dega;
+using System.Xml;
 
 namespace FBOLinx.DB.Context
 {
@@ -102,7 +103,7 @@ namespace FBOLinx.DB.Context
             });
 
             modelBuilder.Entity<AcukwikServicesOffered>()
-            .HasNoKey();
+           .HasKey(e => new { e.HandlerId, e.ServiceOfferedId });
         }
 
         [DbFunction("fn_Split")]
