@@ -3,6 +3,7 @@ using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
+using FBOLinx.DB.Models.Dega;
 
 namespace FBOLinx.DB.Context
 {
@@ -29,6 +30,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<SWIMFlightLegData> SWIMFlightLegData { get; set; }
         public virtual DbSet<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
         public virtual DbSet<SWIMUnrecognizedFlightLeg> SWIMUnrecognizedFlightLegs { get; set; }
+        public virtual DbSet<AcukwikServicesOffered> AcukwikServicesOffered { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -98,6 +100,9 @@ namespace FBOLinx.DB.Context
             {
                 entity.HasNoKey();
             });
+
+            modelBuilder.Entity<AcukwikServicesOffered>()
+            .HasNoKey();
         }
 
         [DbFunction("fn_Split")]
