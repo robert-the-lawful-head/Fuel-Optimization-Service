@@ -1,27 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models.ServicesAndFees
 {
     public class FboCustomServicesAndFees : FBOLinxBaseEntityModel<int>
     {
         [Required]
-        public short ServiceActionType { get; set; }
+        public ServiceActionType ServiceActionType { get; set; }
 
         [Required]
         public int FboId { get; set; }
-
-        [Required]
-        public int HandlerID { get; set; }
-
-        [Required]
+        public int? AcukwikServicesOfferedId { get; set; }
         [StringLength(100)]
         public string Service { get; set; }
-
         [Required]
-        public int FboCustomServiceTypeId { get; set; }
-
-        [ForeignKey("FboCustomServiceTypeId")]
-        public FboCustomServiceType FboCustomServiceType { get; set; }
+        [StringLength(100)]
+        public string ServiceType { get; set; }
     }
 }
