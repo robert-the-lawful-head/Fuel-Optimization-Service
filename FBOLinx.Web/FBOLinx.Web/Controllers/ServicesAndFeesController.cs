@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesAndFeesController : FBOLinxControllerBase
@@ -19,11 +19,17 @@ namespace FBOLinx.Web.Controllers
         {
             _fboServicesAndFeesService = fboServicesAndFeesService;
         }
-        // GET: api/ServicesAndFees
+        // GET: api/ServicesAndFees/fbo/3
         [HttpGet("fbo/{fboId}")]
-        public async Task<List<ServicesAndFeesDto>> Get(int fboId)
+        public async Task<List<ServicesAndFeesDto>> Get(int fboId, int? pageoffset, int? pageLimit)
         {
-            return await _fboServicesAndFeesService.Get(fboId);
+            return await _fboServicesAndFeesService.Get(fboId,pageoffset,pageLimit);
+        }
+        // GET: api/ServicesAndFees/fbo/5/serviceType/test service
+        [HttpGet("fbo/{fboId}/serviceType/{serviceType}")]
+        public async Task<List<ServicesAndFeesDto>> Get(int fboId, string serviceType, int? pageoffset, int? pageLimit)
+        {
+            return await _fboServicesAndFeesService.Get(fboId,serviceType,pageLimit,pageoffset);
         }
     }
 }
