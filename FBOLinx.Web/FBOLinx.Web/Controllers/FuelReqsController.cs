@@ -397,7 +397,7 @@ namespace FBOLinx.Web.Controllers
                 if (!request.DemoMode)
                 {
                     var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
-                    if (fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value)
+                    if (fboPreferences.DirectOrderNotificationsEnabled.HasValue && fboPreferences.DirectOrderNotificationsEnabled.Value)
                         await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
                 }
 
