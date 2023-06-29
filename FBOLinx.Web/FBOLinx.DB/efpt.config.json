@@ -15,11 +15,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[ServiceOrderItems]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ServiceOrders]",
+         "Name": "[dbo].[OrderDetails]",
          "ObjectType": 0
       }
    ],

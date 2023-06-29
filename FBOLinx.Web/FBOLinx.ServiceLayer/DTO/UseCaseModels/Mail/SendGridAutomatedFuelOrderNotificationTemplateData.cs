@@ -42,5 +42,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public string buttonUrl { get; set; }
         [JsonProperty("paymentMethod")]
         public string paymentMethod { get; set; }
+        [JsonProperty("services")]
+        public List<string> services { get; set; }
     }
 }

@@ -18,6 +18,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
@@ -115,6 +116,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
+            services.AddTransient<IEmailConfirmationService, OrderConfirmationService>();
+            services.AddTransient<IOrderDetailsService, OrderDetailsService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
