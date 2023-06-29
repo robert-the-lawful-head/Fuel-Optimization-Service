@@ -22,6 +22,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.User;
@@ -116,7 +117,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
-            services.AddTransient<IEmailConfirmationService, OrderConfirmationService>();
+            services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
+            services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
 
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();

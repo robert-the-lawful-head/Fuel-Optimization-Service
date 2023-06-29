@@ -59,7 +59,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboPreferencesService _FboPreferencesService;
         private ICompanyPricingLogService _CompanyPricingLogService;
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
-        private readonly IEmailConfirmationService _emailConfirmationService;
+        private readonly IOrderConfirmationService _orderConfirmationService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
@@ -68,7 +68,7 @@ namespace FBOLinx.Web.Controllers
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
             ICompanyPricingLogService companyPricingLogService,
             ICustomerInfoByGroupService customerInfoByGroupService,
-            IEmailConfirmationService emailConfirmationService) : base(logger)
+            IOrderConfirmationService orderConfirmationService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -83,7 +83,7 @@ namespace FBOLinx.Web.Controllers
             this.logger = logger;
             _FboPreferencesService = fboPreferencesService;
             _customerInfoByGroupService = customerInfoByGroupService;
-            _emailConfirmationService = emailConfirmationService;
+            _orderConfirmationService = orderConfirmationService;
         }
 
         // GET: api/FuelReqs/5
@@ -535,7 +535,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var success = await _emailConfirmationService.SendEmailConfirmation(fuelerlinxTransactionId);
+            var success = await _orderConfirmationService.SendEmailConfirmation(fuelerlinxTransactionId);
 
             return Ok(success);
         }

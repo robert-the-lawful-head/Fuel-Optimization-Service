@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 {
-    public interface IEmailConfirmationService
+    public interface IOrderConfirmationService
     {
         Task<bool> SendEmailConfirmation(int fuelerLinxId);
     }
-    public class OrderConfirmationService : IEmailConfirmationService
+    public class OrderConfirmationService : IOrderConfirmationService
     {
         private readonly IMailService _mailService;
         private readonly IFuelReqService _fuelReqService;

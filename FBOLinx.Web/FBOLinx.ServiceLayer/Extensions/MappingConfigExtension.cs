@@ -1,13 +1,12 @@
 ﻿using FBOLinx.DB.Models;
+using FBOLinx.DB.Models.Dega;
+using FBOLinx.DB.Models.ServicesAndFees;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
 using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StackifyLib;
 
 namespace FBOLinx.ServiceLayer.Extensions
 {
@@ -60,6 +59,14 @@ namespace FBOLinx.ServiceLayer.Extensions
                 .Map(dest => dest.Email, src => "")
                 .Map(dest => dest.PhoneNumber, src => "")
                 .Map(dest => dest.CustomerAircraft, src => new CustomerAircrafts() { TailNumber = src.TailNumber });
+                
+                TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
+                .NewConfig()
+                .Map(dest => dest.Oid, src => src.AcukwikServicesOfferedId);
+
+                TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesDto>
+                .NewConfig()
+                .Map(dest => dest.Oid, src => src.HandlerId.ToString()+src.ServiceOfferedId.ToString());
         }
     }
 }

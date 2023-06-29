@@ -1,13 +1,11 @@
 ﻿using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
-using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -49,7 +47,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return entity;
         }
         public async Task<TEntity> GetAsync(int id) => await context.Set<TEntity>().FindAsync(id);
-        
+
+        public IQueryable<TEntity> Get() => context.Set<TEntity>().AsQueryable();
+
         public async Task UpdateAsync(TEntity entity)
         {
             try
