@@ -119,6 +119,13 @@
                                         ">
                                         <span>Discount</span>
                                     </th>
+                                    <th *ngIf="form.value.secondStep.marginType === 0" class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        <span>ITP Margin</span>
+                                    </th>
                                     <th class="
                                             text-center
                                             mat-header-cell
@@ -160,8 +167,7 @@
                                                    matInput />
                                         </mat-form-field>
                                     </td>
-                                    <td
-                                        [formGroupName]="i"
+                                    <td [formGroupName]="i"
                                         class="mat-cell text-center">
                                         <div>
                                             <mat-form-field class="col-6">
@@ -172,11 +178,11 @@
                                                        matInput
                                                        step="0.01"
                                                        type="number" />
-                                                <span *ngIf="form.value.secondStep.discountType === 0"
+                                                <span *ngIf="form.value.secondStep.discountType == 0"
                                                       class="prefixDollar"
                                                       matPrefix>$</span>
 
-                                                <span *ngIf="form.value.secondStep.discountType === 1"
+                                                <span *ngIf="form.value.secondStep.discountType == 1"
                                                       class="prefixPercentage"
                                                       matSuffix>%</span>
                                             </mat-form-field>
