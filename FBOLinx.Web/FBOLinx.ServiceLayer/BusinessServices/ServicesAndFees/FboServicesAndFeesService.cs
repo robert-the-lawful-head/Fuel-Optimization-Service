@@ -7,7 +7,7 @@ using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
 using FBOLinx.ServiceLayer.EntityServices;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using NetTopologySuite.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,20 +17,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
     public interface IFboServicesAndFeesService
     {
         Task<List<ServicesAndFeesDto>> Get(int fboId);
-        Task<bool> Update(int ServiceAdnFeesId, ServicesAndFeesDto servicesAndFees);
+        Task<ServicesAndFeesDto> Create(int fboId, ServicesAndFeesDto servicesAndFees);
+        Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId);
+        Task<bool> Delete(int ServiceAdnFeesId, int? handlerId, int? serviceOfferedId);
     }
     public class FboServicesAndFeesService : IFboServicesAndFeesService
     {
         private IRepository<FboCustomServicesAndFees, FboLinxContext> _fboCustomServicesAndFeesRepo;
         private IFboEntityService _fboEntityService;
-        private IRepository<AcukwikServicesOffered, DegaContext> _acukwikServicesOfferedRepo;
+        private IAcukwikServicesOfferedEntityService _acukwikServicesOfferedEntityService;
         private const int defaultDataLimit = 5000;
         public FboServicesAndFeesService(
             IRepository<FboCustomServicesAndFees, FboLinxContext> fboCustomServicesAndFeesRepo,
-            IRepository<AcukwikServicesOffered, DegaContext> acukwikServicesOfferedRepo,
+            IAcukwikServicesOfferedEntityService acukwikServicesOfferedEntityService,
             IFboEntityService fboEntityService)
         {
-            _acukwikServicesOfferedRepo = acukwikServicesOfferedRepo;
+            _acukwikServicesOfferedEntityService = acukwikServicesOfferedEntityService;
             _fboCustomServicesAndFeesRepo = fboCustomServicesAndFeesRepo;
             _fboEntityService = fboEntityService;
         }
@@ -43,7 +45,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                 return null;
 
             var modifiedServices = _fboCustomServicesAndFeesRepo.Where(x => x.FboId == fboId);
-            var acukwikServicesOffered = _acukwikServicesOfferedRepo.Where(x => x.HandlerId == fbo.AcukwikFBOHandlerId);
+            var acukwikServicesOffered = _acukwikServicesOfferedEntityService.Where(x => x.HandlerId == (int)fbo.AcukwikFBOHandlerId);
             if (!modifiedServices.Any())
             {
                 return await GetfromAcukwikServicesOffered(acukwikServicesOffered);
@@ -74,10 +76,70 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 
             return notModifiedServiceResult.Concat(customModifiedServices).ToList();
         }
-
-        public Task<bool> Update(int ServiceAdnFeesId, ServicesAndFeesDto servicesAndFees)
+        public async Task<ServicesAndFeesDto> Create(int fboId, ServicesAndFeesDto servicesAndFees)
         {
-            throw new System.NotImplementedException();
+            var entity =  servicesAndFees.Adapt<FboCustomServicesAndFees>();
+            entity.ServiceActionType = ServiceActionType.New;
+            entity.FboId = fboId;
+            var createdEntity =  await _fboCustomServicesAndFeesRepo.AddAsync(entity);
+
+            return createdEntity.Adapt<ServicesAndFeesDto>();
+        }
+
+        public async Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId)
+        {
+            var customServiceAndfee = await _fboCustomServicesAndFeesRepo.FindAsync(servicesAndFees.Oid);
+
+            if(customServiceAndfee != null)
+            {
+                customServiceAndfee.Service = servicesAndFees.Service;
+                customServiceAndfee.ServiceType = servicesAndFees.ServiceType;
+                await _fboCustomServicesAndFeesRepo.UpdateAsync(customServiceAndfee);
+                return true;
+            }
+
+            if (handlerId == null && serviceOfferedId == null)
+                return false;
+
+            var defaultServiceAndFee = await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)handlerId,(int)serviceOfferedId);
+
+            if(defaultServiceAndFee != null)
+            {
+                var entity = servicesAndFees.Adapt<FboCustomServicesAndFees>();
+                entity.ServiceActionType = ServiceActionType.Updated;
+                entity.FboId = fboId;
+                entity.AcukwikServicesOfferedId = int.Parse(handlerId.ToString()+serviceOfferedId.ToString());
+                await _fboCustomServicesAndFeesRepo.AddAsync(entity);
+                return true;
+            }
+
+            return false;
+        }
+        public async Task<bool> Delete(int ServiceAdnFeesId,int? handlerId, int? serviceOfferedId)
+        {
+            if (await _fboCustomServicesAndFeesRepo.DeleteAsync(ServiceAdnFeesId) != null)
+            {
+                return true;
+            }
+
+            if(handlerId == null && serviceOfferedId == null)
+                return false;
+
+            var defaultServiceAndFee = await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)handlerId,(int)serviceOfferedId);
+
+            if (defaultServiceAndFee != null)
+            {
+                var entity = new FboCustomServicesAndFees()
+                {
+                    ServiceActionType = ServiceActionType.Deleted,
+                    AcukwikServicesOfferedId = ServiceAdnFeesId
+                };
+              
+                await _fboCustomServicesAndFeesRepo.AddAsync(entity);
+                return true;
+            }
+
+            return false;
         }
     }
 }

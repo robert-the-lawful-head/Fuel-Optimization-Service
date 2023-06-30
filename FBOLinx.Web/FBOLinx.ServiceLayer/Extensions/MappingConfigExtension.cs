@@ -59,10 +59,6 @@ namespace FBOLinx.ServiceLayer.Extensions
                 .Map(dest => dest.Email, src => "")
                 .Map(dest => dest.PhoneNumber, src => "")
                 .Map(dest => dest.CustomerAircraft, src => new CustomerAircrafts() { TailNumber = src.TailNumber });
-                
-                TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
-                .NewConfig()
-                .Map(dest => dest.Oid, src => src.AcukwikServicesOfferedId);
 
                 TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesDto>
                 .NewConfig()

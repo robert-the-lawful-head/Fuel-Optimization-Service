@@ -10,7 +10,7 @@ GO
 CREATE TABLE [dbo].[FboCustomServicesAndFees](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[ServiceActionType] [smallint] NOT NULL,
-	[FboId] [int] NOT NULL,
+	[FboId] [int] NULL,
 	[AcukwikServicesOfferedId] [int] NULL,
 	[Service] [varchar](100) NULL,
 	[ServiceType] [varchar](100) NULL,

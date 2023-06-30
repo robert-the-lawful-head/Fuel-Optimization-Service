@@ -30,5 +30,35 @@ namespace FBOLinx.Web.Controllers
             
             return Ok(result);
         }
+        // POST: api/ServicesAndFees/fbo/3
+        [HttpPost("fbo/{fboId}")]
+        public async Task<ActionResult<List<ServicesAndFeesDto>>> Post(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
+        {
+            var result = await _fboServicesAndFeesService.Create(fboId,servicesAndFees);
+
+            return Ok(result);
+        }
+        // PUT: api/ServicesAndFees/fbo/3
+        [HttpPut("fbo/{fboId}")]
+        public async Task<ActionResult<List<ServicesAndFeesDto>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId)
+        {
+            var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees, handlerId, serviceOfferedId);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok();
+        }
+        // Delete: api/ServicesAndFees/1234
+        [HttpDelete("{servicesAndFeesId}")]
+        public async Task<ActionResult<List<ServicesAndFeesDto>>> Delete(int servicesAndFeesId, int? handlerId, int? serviceOfferedId)
+        {
+            var result = await _fboServicesAndFeesService.Delete(servicesAndFeesId, handlerId, serviceOfferedId);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok();
+        }
     }
 }
