@@ -38,6 +38,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
     public pricingTemplates: Array<any>;
     public customerInfoByGroupId : any ;
     public customerAircraftNote: CustomerAircraftNote;
+    public isLoading: boolean = false;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -77,6 +78,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
         }
 
     public saveEdit() {
+        this.isLoading = true;
         console.log(this.data.customerGroupId)
         this.customerAircraftsService
             .update(this.customerAircraftInfo , this.sharedService.currentUser.oid)
@@ -87,7 +89,7 @@ export class CustomerAircraftsEditComponent implements OnInit {
                 } else {
                     this.customerAircraftsService.addCustomerAircraftNotes(this.customerAircraftNote).subscribe((noteResponse: any) => { this.dialogRef.close(data); })
                 }
-                
+                this.isLoading = false;
             });
     }
 
