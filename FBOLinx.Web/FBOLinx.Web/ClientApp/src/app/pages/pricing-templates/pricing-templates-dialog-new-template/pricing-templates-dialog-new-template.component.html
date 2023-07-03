@@ -119,12 +119,12 @@
                                         ">
                                         <span>Discount</span>
                                     </th>
-                                    <th class="
+                                    <th *ngIf="form.value.secondStep.marginType === 0" class="
                                             text-center
                                             mat-header-cell
                                             text-lg-center
                                         ">
-                                        <span>Your ITP Margin</span>
+                                        <span>ITP Margin</span>
                                     </th>
                                     <th class="
                                             text-center
@@ -167,8 +167,7 @@
                                                    matInput />
                                         </mat-form-field>
                                     </td>
-                                    <td
-                                        [formGroupName]="i"
+                                    <td [formGroupName]="i"
                                         class="mat-cell text-center">
                                         <div>
                                             <mat-form-field class="col-6">
@@ -179,61 +178,45 @@
                                                        matInput
                                                        step="0.01"
                                                        type="number" />
-                                                <span *ngIf="form.value.secondStep.discountType === 0"
+                                                <span *ngIf="form.value.secondStep.discountType == 0"
                                                       class="prefixDollar"
                                                       matPrefix>$</span>
 
-                                                <span *ngIf="form.value.secondStep.discountType === 1"
+                                                <span *ngIf="form.value.secondStep.discountType == 1"
                                                       class="prefixPercentage"
                                                       matSuffix>%</span>
                                             </mat-form-field>
                                         </div>
-                                    </td>
-                                    <td
-                                    *ngIf="form.value.secondStep.marginType === 1"
-                                    class="
-                                            mat-cell
-                                            text-center
-                                            font-weight-bold font-italic
-                                            text-right
-                                        ">
-                                        <div >
-                                            ${{
-                                                customerMargin.value.itp
-                                                    | number: "1.4-4"
-                                            }}
-                                        </div>
-
                                     </td>
                                     <td [formGroupName]="i"
                                         class="mat-cell text-center">
                                         <div>
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 0">
-                                                ${{
+                                                {{
                                                         jetACost + customerMargin.value.amount / 1
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 0 &&
                                                 form.value.secondStep.discountType == 1">
-                                                ${{
+                                                {{
                                                         jetACost + (jetACost * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 0">
-                                                ${{
+                                                {{
                                                         jetARetail - customerMargin.value.amount
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                             <div *ngIf="form.value.secondStep.marginType == 1 &&
                                                 form.value.secondStep.discountType == 1">
-                                                ${{
+                                                {{
                                                         jetARetail - (jetARetail * customerMargin.value.amount / 100)
-                                                            | number: "1.4-4"
+                                                            | currency:'USD':true:'1.4-4'
                                                 }}
                                             </div>
                                         </div>

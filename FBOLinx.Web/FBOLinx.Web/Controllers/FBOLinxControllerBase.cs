@@ -16,7 +16,7 @@ namespace FBOLinx.Web.Controllers
             _logger = logger;
         }
 
-        protected void HandleExceptionAsync(Exception exception)
+        protected void HandleException(Exception exception)
         {
             _logger.LogError(exception.Message + (exception.InnerException != null ? ". Inner exception: " + exception.InnerException.Message + "***" + exception.InnerException.StackTrace : ""), exception.Message + (exception.InnerException != null ? ". Inner exception: " + exception.InnerException.Message + "***" + exception.InnerException.StackTrace : ""), ServiceLayer.Logging.LogLevel.Error, LogColorCode.Red);
         }

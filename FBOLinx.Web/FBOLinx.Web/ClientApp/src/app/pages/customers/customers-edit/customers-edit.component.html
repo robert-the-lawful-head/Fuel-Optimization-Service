@@ -193,7 +193,7 @@
                                 </tbody>
                             </table>
 
-                            <div *ngIf="feesAndTaxes" class="sub-widget col-4">
+                            <div *ngIf="feesAndTaxes" class="sub-widget">
                                 <price-breakdown #priceBreakdownPreview (omitCheckChanged)="
                                         omitFeeAndTaxCheckChanged($event)
                                     " [customerInfoByGroupId]="

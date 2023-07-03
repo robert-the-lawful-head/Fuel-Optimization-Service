@@ -93,6 +93,7 @@ namespace FBOLinx.Web.Controllers
                                 Iata = fa.Iata,
                                 Oid = f.Oid,
                                 GroupId = f.GroupId,
+                                AcukwikFboHandlerId = f.AcukwikFBOHandlerId
                             }).ToListAsync();
 
             foreach (var fbo in fbos)

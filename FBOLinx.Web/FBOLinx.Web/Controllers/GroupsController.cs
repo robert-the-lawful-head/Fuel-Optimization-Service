@@ -194,7 +194,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                HandleExceptionAsync(ex);
+                HandleException(ex);
                 return Ok("Get error: " + ex.Message);
             }
 
@@ -294,7 +294,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                HandleExceptionAsync(ex);
+                HandleException(ex);
                 return Ok(ex.Message);
             }
 
@@ -360,7 +360,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                HandleExceptionAsync(ex);
+                HandleException(ex);
                 return Ok(new { Message = "" });
             }
         }
@@ -386,7 +386,7 @@ namespace FBOLinx.Web.Controllers
             }
             catch (Exception ex)
             {
-                HandleExceptionAsync(ex);
+                HandleException(ex);
                 return Ok(new { Message = "" });
             }
         }

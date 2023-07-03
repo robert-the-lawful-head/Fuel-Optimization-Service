@@ -179,7 +179,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<SWIMFlightLeg> existingFlightLegs = new List<SWIMFlightLeg>();
             foreach (IEnumerable<string> gufiBatch in flightIdentifiers.Batch(1000))
             {
-                var existingFlightLegsBatch = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(gufiBatch.ToList()))).ToList();
+                var existingFlightLegsBatch = (await _FlightLegEntityService.GetSWIMFlightLegs(gufiBatch.ToList()));
                 existingFlightLegs.AddRange(existingFlightLegsBatch);
             }
             existingFlightLegs = existingFlightLegs.OrderByDescending(x => x.ATD).ToList();
@@ -325,8 +325,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Console.WriteLine($"foreach {stopwatch.ElapsedMilliseconds}");
             //stopwatch.Restart();
 
-            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), DateTime.UtcNow.AddHours(-3), true));
+            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetSWIMFlightLegs(DateTime.UtcNow.AddHours(-3), DateTime.UtcNow, null, null, flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), true);
 
             if (existingPlaceholderRecordsToDelete.Count > 0)
             {
@@ -404,7 +403,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Bulk update and insert all legs that need it
             if (existingFlightLegsToUpdate.Count > 0)
             {
-                existingFlightLegsToUpdate.ForEach(x => x.LastUpdated = DateTime.UtcNow);
+                //#8684wjdxy - Do not mark the record as LastUpdated when it's just updating the status.  Save this for position updates only.
+                //existingFlightLegsToUpdate.ForEach(x => x.LastUpdated = DateTime.UtcNow);
                 await _SwimFlightLegService.BulkUpdate(existingFlightLegsToUpdate);
             }
 
@@ -503,7 +503,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             {
                 var swimFlightLeg = flightWatchModel.GetSwimFlightLeg();
                 SWIMFlightLegDataDTO latestSwimMessage =
-                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
+                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null && x.MessageTimestamp >= DateTime.UtcNow.AddMinutes(-1)).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
                 if (latestSwimMessage != null)
                 {

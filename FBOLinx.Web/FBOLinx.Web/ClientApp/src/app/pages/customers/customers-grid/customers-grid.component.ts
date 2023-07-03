@@ -234,11 +234,10 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
 
     selectAction() {
-        const pageCustomersData = this.dataSource.connect().value;
-        forEach(pageCustomersData, (customer) => {
+        forEach( this.dataSource.filteredData, (customer) => {
             customer.selectAll = this.selectAll;
         });
-        this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
+        this.selectedRows = this.selectAll ? this.dataSource.data.length : 0;
     }
 
     selectUnique() {
@@ -535,7 +534,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.columns = [...result];
-                this.refreshSort();
+                this.refreshSort(this.sort, this.columns);
                 this.saveSettings();
             }
         });
@@ -689,25 +688,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         );
 
         this.sort.active = 'allInPrice';
-    }
-    private refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
-    }
+    }    
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService
@@ -720,7 +701,6 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             });
     }
     loadFilteredDataSource(filteredDataSource: any){
-        console.log("🚀 ~ file: customers-grid.component.ts:770 ~ CustomersGridComponent ~ loadFilteredDataSource ~ filteredDataSource", filteredDataSource)
         if(filteredDataSource.filter.length == 2){
             this.refreshCustomerDataSource();
             return;

@@ -29,6 +29,11 @@ namespace FBOLinx.DB.Models
         [Column(TypeName = "varchar")]
         public string AirportICAO { get; set; }
 
+        #region Relationships
+        [InverseProperty("AirportWatchHistoricalData")]
+        public AirportWatchHistoricalParking AirportWatchHistoricalParking { get; set; }
+        #endregion
+
         public static AirportWatchHistoricalData ConvertFromAirportWatchLiveData(AirportWatchLiveData entity)
         {
             return new AirportWatchHistoricalData

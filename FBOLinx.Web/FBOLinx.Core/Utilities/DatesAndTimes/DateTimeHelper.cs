@@ -2,11 +2,15 @@
 using System.Linq;
 using FBOLinx.Core.Enums;
 using Itenso.TimePeriod;
+using Microsoft.Extensions.Logging;
 
 namespace FBOLinx.Core.Utilities.DatesAndTimes
 {
     public class DateTimeHelper
     {
+        private static readonly ILogger Logger =
+               LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger(typeof(DateTimeHelper));
+
         public static System.DateTime UnixTimeStampToDateTime(double unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
@@ -117,13 +121,21 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
         {
             TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
             bool isDaylightSavingTime = tst.IsDaylightSavingTime(utcDateTime);
-            DateTime localTime = utcDateTime.AddHours(intlTimeZone.GetValueOrDefault());
-
-            if (isDaylightSavingTime && respectDaylightSavings)
+            try
             {
-                localTime = localTime.AddHours(1);
+                DateTime localTime = utcDateTime.AddHours(intlTimeZone.GetValueOrDefault());
+                if (isDaylightSavingTime && respectDaylightSavings)
+                {
+                    localTime = localTime.AddHours(1);
+                }
+                return DateTime.SpecifyKind(localTime, DateTimeKind.Unspecified);
+
             }
-            return DateTime.SpecifyKind(localTime, DateTimeKind.Unspecified);
+            catch (Exception ex) 
+            {
+                Logger.LogWarning($"Invalid Date Range {utcDateTime.ToShortDateString} adding {intlTimeZone.GetValueOrDefault()} hours returning utcDateTime",ex.Message);
+                return DateTime.SpecifyKind(utcDateTime, DateTimeKind.Unspecified);
+            }
         }
 
         public static DateTime GetUtcTime(DateTime localDateTime, double? intlTimeZone, bool respectDaylightSavings)

@@ -24,9 +24,6 @@ CREATE TABLE [dbo].[ServiceOrderItems](
 ) ON [PRIMARY]
 GO
 
-DROP INDEX [INX_ServiceOrderItems_ServiceOrderID] on [dbo].[ServiceOrderItems]
-GO
-
 CREATE NONCLUSTERED INDEX [INX_ServiceOrderItems_ServiceOrderID] on [dbo].[ServiceOrderItems]
 (
 	ServiceOrderID

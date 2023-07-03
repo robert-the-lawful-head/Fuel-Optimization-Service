@@ -16,12 +16,14 @@ namespace FBOLinx.Job.AirportWatch
         private bool _isNewInstance  = true;
         private string _lastWatchedFile = "";
         private int _lastWatchedFileRecordIndex = 0;
+        private long _lastWatchedFileNumberOfBytesRead = 0;
         private readonly IConfiguration _config;
         private bool _isPostingData = false;
         private DateTime? _LastPostDateTimeUTC;
         private List<string> _apiClientUrls;
         private int _NewRowThreshold = 30000;
         private Serilog.Core.Logger logger;
+        private AirportWatchCsvParser _CsvParser;
 
         public AirportWatchJobRunner(IConfiguration config)
         {
@@ -153,14 +155,15 @@ namespace FBOLinx.Job.AirportWatch
         {
             if (_isNewInstance)
             {
-                string[] lines = File.ReadAllLines(filePath);
-                logger.Information($"Running new instance of job, setting _lastWatchedFileRecordIndex to end of file (line {lines.Length}) to prevent memory overflow for big size files. and _isNewInstance flag to {!_isNewInstance}");
-                _lastWatchedFileRecordIndex = lines.Length;
+                _CsvParser = new AirportWatchCsvParser(filePath);
+                _CsvParser.JumpToEnd();
+                logger.Information($"Running new instance of job, jumping to end of file to prevent memory overflow for big size files. Set _isNewInstance flag to {!_isNewInstance}");
                 _isNewInstance = !_isNewInstance;
             }
             else if (_lastWatchedFile != fileName )
             {
-                _lastWatchedFileRecordIndex = 0;
+                _CsvParser = new AirportWatchCsvParser(filePath);
+                _CsvParser.JumpToEnd();
                 logger.Information($"file to read changed from {_lastWatchedFile} to {fileName} {_lastWatchedFileRecordIndex} set last watch file record index to {_lastWatchedFileRecordIndex}");
             }
 
@@ -168,19 +171,19 @@ namespace FBOLinx.Job.AirportWatch
 
             try
             {
-                AirportWatchCsvParser csvParser = new AirportWatchCsvParser(filePath);
-
-                data = csvParser.GetRecords(_lastWatchedFileRecordIndex);
+                if (_CsvParser == null)
+                    _CsvParser = new AirportWatchCsvParser(filePath);
+                
+                data = _CsvParser.GetRecords();
                 logger.Information($"records read for {filePath} are {data.Count} ");
-
-                _lastWatchedFileRecordIndex += data.Count;
+                
                 _lastWatchedFile = fileName;
-
-                logger.Information($"for {_lastWatchedFile} last watch record index set to {_lastWatchedFileRecordIndex}");
+                
             }
             catch (Exception ex) {
                 Console.WriteLine(ex.Message);
-                logger.Error(ex,$"Error getting records from {filePath} last watch fiel record index remain on  {_lastWatchedFileRecordIndex}");
+                _CsvParser.JumpToEnd();
+                logger.Error(ex,$"Error getting records from {filePath}.  Jumping to end of file.");
             }
 
             return data;

@@ -31,6 +31,7 @@ export class AnalyticsHomeComponent implements OnInit {
     public pastThirtyDaysStartDate: Date;
     public customers: CustomersListType[] = [];
     public tailNumbers: any[] = [];
+    public authenticatedIcao: string = '';
 
     constructor(
         private customerInfoByGroupService: CustomerinfobygroupService,
@@ -45,6 +46,7 @@ export class AnalyticsHomeComponent implements OnInit {
             moment().add(-30, 'days').format('MM/DD/YYYY')
         );
         this.sharedService.titleChange(this.pageTitle);
+        this.authenticatedIcao = this.sharedService.currentUser.icao;
     }
 
     ngOnInit() {
