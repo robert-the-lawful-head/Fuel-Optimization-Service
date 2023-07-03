@@ -133,12 +133,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.subscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (!this.canUserSeePricing()) {
+                    this.fuelOrders.length = 0;
                     return;
                 }
                 if (message === fboChangedEvent) {
                     this.loadLocations();
                     this.loadFboInfo();
                     this.loadNeedsAttentionCustomers();
+                    this.loadUpcomingOrders();
                 }
                 if (message === customerUpdatedEvent) {
                     this.loadNeedsAttentionCustomers();
@@ -269,6 +271,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
+        this.sharedService.emitChange(fboChangedEvent);
         this.close();
         if (this.sharedService.currentUser.conductorFbo) {
             localStorage.removeItem('conductorFbo');

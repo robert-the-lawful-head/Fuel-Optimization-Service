@@ -114,7 +114,6 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
             services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
             services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
-            
             services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
             services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();

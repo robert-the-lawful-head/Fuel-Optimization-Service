@@ -84,6 +84,7 @@
     <None Remove="ClientApp\src\app\models\service-order-item.ts" />
     <None Remove="ClientApp\src\app\models\service-order.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
+    <None Remove="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
     <None Remove="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />
@@ -188,6 +189,7 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\service-order-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\service-order.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />

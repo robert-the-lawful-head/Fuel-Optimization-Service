@@ -1,4 +1,4 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
+<ni-breadcrumb [menu]="breadcrumb" *ngIf="showBreadCrumb"></ni-breadcrumb>
 
 <div class="after-breadcrumb">
     <div *ngIf="!customerForm">
@@ -14,7 +14,7 @@
                         <span class="card-header-title">{{
                             customerForm.value.company
                             }}</span>
-                        <button [disabled]="isEditing" (click)="cancelCustomerEdit()" class="float-right close-btn"
+                        <button [disabled]="isEditing" (click)="cancelCustomerEdit()" class="float-right close-btn" *ngIf="showClose"
                             mat-icon-button>
                             <mat-icon aria-hidden="false">close</mat-icon>
                         </button>
@@ -152,7 +152,7 @@
                         </div>
                     </mat-tab>
 
-                    <mat-tab label="Aircraft" >
+                    <mat-tab label="Aircraft" *ngIf="showAircraftTab">
                         <!--Customer Aircraft Grid-->
                         <div *ngIf="customerAircraftsData && customerInfoByGroup">
                             <app-customer-aircrafts-grid (updateCustomerPricingTemplate)="
@@ -162,7 +162,7 @@
                         </div>
                     </mat-tab>
 
-                    <mat-tab label="Pricing" >
+                    <mat-tab label="Pricing" *ngIf="showPricingTab">
                         <div class="container-fluid">
                             <h5>Price & Margin Information</h5>
                             <table>
@@ -207,12 +207,12 @@
                         </div>
                     </mat-tab>
 
-                    <mat-tab label="Customer Analytics">
+                    <mat-tab label="Customer Analytics" *ngIf="showAnalyticsTab">
                         <app-customers-analytics [customerId]="customerId"></app-customers-analytics>
                    </mat-tab>
 
 
-                    <mat-tab label="History">
+                    <mat-tab label="History" *ngIf="showHistoryTab">
                         <div *ngIf="!isLoadingHistory">
                             <app-customer-history [customerHistory]="customerHistory">
 

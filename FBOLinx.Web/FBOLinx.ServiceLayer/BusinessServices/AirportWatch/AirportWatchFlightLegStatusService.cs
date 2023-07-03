@@ -129,6 +129,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                                                                        mostRecentHistoricalRecord.AircraftPositionDateTimeUtc).TotalMinutes) < 10)
                 return false;
 
+            if (!flightWatchModel.Latitude.HasValue || !flightWatchModel.Longitude.HasValue)
+                return false;
+
             //Ensure the aircraft has moved from it's parking position
             if (Math.Abs(flightWatchModel.Latitude.GetValueOrDefault() - mostRecentHistoricalRecord.Latitude) < 0.00001
                 && Math.Abs(flightWatchModel.Longitude.GetValueOrDefault() - mostRecentHistoricalRecord.Longitude) < 0.00001)
@@ -174,6 +177,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //If the arrival airport of the leg is not our nearest airport then we can't assume we are within landing range yet
             if (flightWatchModel.ArrivalICAO !=
                 flightWatchModel.GetAirportPosition().GetProperAirportIdentifier())
+                return false;
+
+            if (!flightWatchModel.Latitude.HasValue || !flightWatchModel.Longitude.HasValue)
                 return false;
 
             var distanceFromAirport =
