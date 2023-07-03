@@ -29,6 +29,7 @@ namespace FBOLinx.Web.Controllers
         {
             _userService = userService;
             _context = context;
+            _iOAuthService = iOAuthService;
             _oAuthService = oAuthService;
         }
 

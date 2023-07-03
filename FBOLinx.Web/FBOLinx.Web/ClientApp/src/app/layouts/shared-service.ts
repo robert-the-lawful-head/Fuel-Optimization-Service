@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 import { User } from '../models/User';
 import { AuthenticationService } from '../services/authentication.service';
+import { localStorageAccessConstant } from '../models/LocalStorageAccessConstant';
 
 export interface ActiveUser {
     fboId: number;
@@ -63,26 +64,26 @@ export class SharedService {
     // Public Members
     get currentUser(): User {
         if (this._currentUser != null) {
-            if (!this._currentUser.fboId && localStorage.getItem('fboId')) {
-                this._currentUser.fboId = Number(localStorage.getItem('fboId'));
+            if (!this._currentUser.fboId && localStorage.getItem(localStorageAccessConstant.fboId)) {
+                this._currentUser.fboId = Number(localStorage.getItem(localStorageAccessConstant.fboId));
             }
             if (
                 !this._currentUser.managerGroupId &&
-                localStorage.getItem('managerGroupId')
+                localStorage.getItem(localStorageAccessConstant.managerGroupId)
             ) {
                 this._currentUser.managerGroupId = Number(
-                    localStorage.getItem('managerGroupId')
+                    localStorage.getItem(localStorageAccessConstant.managerGroupId)
                 );
             }
             if (
                 !this._currentUser.impersonatedRole &&
-                localStorage.getItem('impersonatedrole')
+                localStorage.getItem(localStorageAccessConstant.impersonatedrole)
             ) {
                 this._currentUser.impersonatedRole = Number(
-                    localStorage.getItem('impersonatedrole')
+                    localStorage.getItem(localStorageAccessConstant.impersonatedrole)
                 );
             }
-            const sessionGroupId = localStorage.getItem('groupId');
+            const sessionGroupId = localStorage.getItem(localStorageAccessConstant.groupId);
             if (
                 sessionGroupId &&
                 (!this._currentUser.groupId ||
@@ -90,15 +91,15 @@ export class SharedService {
             ) {
                 this._currentUser.groupId = Number(sessionGroupId);
             }
-            if (!this._currentUser.groupId && localStorage.getItem('groupId')) {
-                this._currentUser.groupId = Number(localStorage.getItem('groupId'));
+            if (!this._currentUser.groupId && localStorage.getItem(localStorageAccessConstant.groupId)) {
+                this._currentUser.groupId = Number(localStorage.getItem(localStorageAccessConstant.groupId));
             }
             if (
                 !this._currentUser.conductorFbo &&
-                localStorage.getItem('conductorFbo')
+                localStorage.getItem(localStorageAccessConstant.conductorFbo)
             ) {
                 this._currentUser.conductorFbo = Boolean(
-                    localStorage.getItem('conductorFbo')
+                    localStorage.getItem(localStorageAccessConstant.conductorFbo)
                 );
             }
             return this._currentUser;
@@ -130,5 +131,12 @@ export class SharedService {
         return (this.currentUser.groupId > 0 &&
             this.currentUser.managerGroupId > 0 &&
             this.currentUser.groupId != this.currentUser.managerGroupId);
+    }
+    setLocationStorageValues(icao: string): void{
+        this.currentUser.icao = icao;
+        localStorage.setItem(localStorageAccessConstant.icao, icao);
+    }
+    getCurrentUserPropertyValue(property: string): string{
+        return (this.currentUser[property]) ? this.currentUser[property] : localStorage.getItem(property);
     }
 }

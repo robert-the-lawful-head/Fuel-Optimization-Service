@@ -233,6 +233,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     refreshData() {
+        this.filterEndDate = this.getEndOfDayTime(this.filterEndDate);
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
             (data: any[]) => {
@@ -370,7 +371,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             _this.columns = result;
             _this.refreshSort(_this.sort, _this.columns);
             _this.saveSettings();
-        });        
+        });
     }
 
     saveSettings() {
@@ -399,6 +400,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 row.airportWatchHistoricalParking = response;
             })
         }
-        
+
     }
 }
