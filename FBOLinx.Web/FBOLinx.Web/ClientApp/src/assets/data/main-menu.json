@@ -142,7 +142,7 @@
         "roles": [ 1, 4 ]
     },
     {
-        "title": "Fuel Orders",
+        "title": "Orders",
         "icon": {
             "class": "fa fa-tags",
             "bg": "#B3E5FC",
@@ -164,14 +164,14 @@
         "roles": [ 9999 ]
     },
     {
-        "title": "Ramp Fees",
+        "title": "FBO Services & Fees",
         "icon": {
             "class": "fa fa-plane",
             "bg": "rgb(255, 224, 130)",
             "color": "rgba(0,0,0,.87)"
         },
         "tooltip": "Enter and manage your fees.",
-        "routing": "/default-layout/rampfees",
+        "routing": "/default-layout/services-and-fees",
         "roles": [ 1, 4, 6 ]
     },
     {
