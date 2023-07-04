@@ -232,6 +232,7 @@ import { ServiceOrdersItemListComponent } from './service-orders/service-orders-
 import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
 import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
+import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.component';
 
 @NgModule({
     declarations: [
@@ -352,7 +353,7 @@ import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/p
         CsvExportModalComponent,
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
-       CustomerInfoByGroupHistoryComponent,
+        CustomerInfoByGroupHistoryComponent,
         AssociationsDialogNewAssociationComponent,
         CustomerContactHistoryComponent,
         CustomerAircraftHistoryComponent,
@@ -385,7 +386,8 @@ import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/p
         ServiceOrdersItemListComponent,
         ServiceOrdersDialogNewComponent,
         ServiceOrdersDialogOrderItemsComponent,
-        FeeAndTaxBreakdownDialogWrapperComponent
+        FeeAndTaxBreakdownDialogWrapperComponent,
+        ServicesAndFeesComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

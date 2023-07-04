@@ -81,6 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             var entity =  servicesAndFees.Adapt<FboCustomServicesAndFees>();
             entity.ServiceActionType = ServiceActionType.New;
             entity.FboId = fboId;
+            entity.Oid = 0;
             var createdEntity =  await _fboCustomServicesAndFeesRepo.AddAsync(entity);
 
             return createdEntity.Adapt<ServicesAndFeesDto>();
