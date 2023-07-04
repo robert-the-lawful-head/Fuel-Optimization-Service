@@ -27,7 +27,11 @@ export abstract class GridBase {
               case 'etd': return new Date(item.etd);
               case 'createdDate': return new Date(item.createdDate);
               case 'fuelOn': return (item.fuelOn == "Arrival" ? new Date(item.eta) : new Date(item.etd));
-              default: return item[property];
+              default:
+                if (typeof item[property] === 'string') {
+                    return item[property].toLocaleLowerCase();
+                }
+                return item[property];
             }
           }
     }

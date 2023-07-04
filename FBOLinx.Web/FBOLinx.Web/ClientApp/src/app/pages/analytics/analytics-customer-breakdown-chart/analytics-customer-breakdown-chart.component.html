@@ -56,10 +56,11 @@
     <mat-button-toggle-group
         (change)="changeType($event)"
         appearance="legacy"
-        class="chart-type-toggle"
+        class="chart-type-toggle d-none"
         value="order"
     >
         <mat-button-toggle value="order">Orders</mat-button-toggle>
+        <mat-button-toggle value="volume">Volume</mat-button-toggle>
     </mat-button-toggle-group>
     <ngx-ui-loader
         [loaderId]="chartName"
