@@ -64,6 +64,12 @@ export class ServicesAndFeesComponent implements OnInit {
         this.addItemToServiceType(newItem,true,true);
     }
     saveItem(serviceAndfee:  ServicesAndFeesGridItem): void {
+       if(serviceAndfee.isNewItem)
+            this.add(serviceAndfee);
+        else
+            this.update(serviceAndfee);
+    }
+    add(serviceAndfee:  ServicesAndFeesGridItem): void {
         serviceAndfee.service = serviceAndfee.editedValue;
         let newItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
         this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, newItem)
@@ -76,20 +82,21 @@ export class ServicesAndFeesComponent implements OnInit {
             this.toogleEditModel(serviceAndfee);
         });
     }
-    updateItem(serviceAndfee :  ServicesAndFeesGridItem): void {
+    update(serviceAndfee :  ServicesAndFeesGridItem): void {
         let updatedItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
 
         let previousNameBackup = serviceAndfee.service;
         updatedItem.service = serviceAndfee.editedValue;
-        updatedItem.oid = 29999999999999;
 
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
+            serviceAndfee.service = serviceAndfee.editedValue;
             this.toogleEditModel(serviceAndfee);
         }, error => {
             serviceAndfee.editedValue = previousNameBackup;
             serviceAndfee.service = previousNameBackup;
             this.showErrorSnackBar( `There was an error updating the service please try again`);
             console.log(error);
+            this.toogleEditModel(serviceAndfee);
         });
     }
     toogleEditModel(item: ServicesAndFeesGridItem): void {
@@ -98,7 +105,7 @@ export class ServicesAndFeesComponent implements OnInit {
         else
             item.isEditMode = !item.isEditMode;
     }
-    public deleteItem(serviceAndfee: ServicesAndFeesGridItem): void {
+    deleteItem(serviceAndfee: ServicesAndFeesGridItem): void {
         const dialogRef = this.deleteDialog.open(
             DeleteConfirmationComponent,
             {
@@ -120,6 +127,16 @@ export class ServicesAndFeesComponent implements OnInit {
                 console.log(error);
             });
         });
+    }
+    createNewCategory(): void {
+        // let newItem: ServicesAndFeesGridItem = {
+        //     oid: 0,
+        //     service: "",
+        //     serviceType: "",
+        //     isEditMode: true,
+        //     isNewItem: true,
+        //     editedValue: ""
+        // };
     }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(

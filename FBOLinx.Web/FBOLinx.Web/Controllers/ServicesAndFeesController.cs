@@ -40,11 +40,11 @@ namespace FBOLinx.Web.Controllers
         }
         // PUT: api/ServicesAndFees/fbo/3
         [HttpPut("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId)
+        public async Task<ActionResult<List<ServicesAndFeesDto>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
         {
-            var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees, handlerId, serviceOfferedId);
+            var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees);
 
-            if (result == null)
+            if (!result)
                 return NotFound();
 
             return Ok();
