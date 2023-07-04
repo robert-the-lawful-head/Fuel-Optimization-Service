@@ -31,6 +31,7 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -114,7 +115,7 @@ export class FlightWatchMapComponent
         this.fboId = this.sharedService.currentUser.fboId;
         this.groupId = this.sharedService.currentUser.groupId;
         this.icao = (this.icao == null) ?
-            (this.sharedService.currentUser.icao) ? this.sharedService.currentUser.icao : localStorage.getItem('icao')
+            this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao)
             :  this.icao;
     }
     ngOnInit(): void {
