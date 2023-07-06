@@ -14,6 +14,7 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
             x.CustomerId == customerId)
         {
             AddInclude(x => x.Notes);
+            AddInclude(x => x.Customer);
         }
     }
 }
