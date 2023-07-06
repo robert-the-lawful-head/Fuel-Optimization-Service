@@ -86,7 +86,7 @@
 
         <div class="row" *ngIf="!inCompleteServiceOrders || inCompleteServiceOrders.length == 0">
             <div class="col-12 text-center">
-                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link" (click)="addServiceOrderClicked()">add one to begin</a>.</span>
+                No service orders found. <span *ngIf="allowAddingNew">You can <a class="btn-link cursor-pointer" (click)="addServiceOrderClicked()">add one to begin</a>.</span>
             </div>
         </div>
 
