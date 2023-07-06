@@ -70,7 +70,8 @@ export class ServiceOrdersListComponent implements OnInit {
         const config: MatDialogConfig = {
             disableClose: true,
             data: newServiceOrder,
-            autoFocus: false
+            autoFocus: false,
+            maxWidth: '510px'
         };
 
         const dialogRef = this.newServiceOrderDialog.open(ServiceOrdersDialogNewComponent, config);
