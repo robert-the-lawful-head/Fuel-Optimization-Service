@@ -27,11 +27,13 @@
                                  (selectionChanged)="onCustomerInfoByGroupChanged($event)"></app-autocomplete-search>
 
         <app-autocomplete-search label="Tail Number"
+                                 *ngIf="!isLoadingAircraft"
                                  [required]="true"
                                  [disabled]="!data.customerInfoByGroup"
                                  [optionValue]="['tailNumber']"
                                  [options]="customerAircraftsDataSource"
                                  [displayFn]="displayTailNumber"
+                                 [filter]="filters.tailNumberFilter"
                                  (filterChanged)="onCustomerAircraftFilterChanged($event)"
                                  (selectionChanged)="onCustomerAircraftChanged($event)"></app-autocomplete-search>
 
