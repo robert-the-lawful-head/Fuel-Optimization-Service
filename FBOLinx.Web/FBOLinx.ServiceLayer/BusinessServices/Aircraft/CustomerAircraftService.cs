@@ -84,6 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 aircrafts =
                     await this.GetListbySpec(
                         new CustomerAircraftByGroupSpecification(new List<int>() { groupId }, customerId));
+
                 aircrafts = aircrafts.Where(x =>
                     tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(x.TailNumber)).ToList();
             }
