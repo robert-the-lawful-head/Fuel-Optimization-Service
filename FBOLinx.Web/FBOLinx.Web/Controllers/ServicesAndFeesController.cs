@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
@@ -21,11 +22,13 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly IFboServicesAndFeesService _fboServicesAndFeesService;
         private readonly IFboService _fboService;
+        private readonly IAuthService _authService;
 
-        public ServicesAndFeesController(IFboServicesAndFeesService fboServicesAndFeesService, ILoggingService logger, IFboService fboService) : base(logger)
+        public ServicesAndFeesController(IFboServicesAndFeesService fboServicesAndFeesService, ILoggingService logger, IFboService fboService, IAuthService authService) : base(logger)
         {
             _fboServicesAndFeesService = fboServicesAndFeesService;
             _fboService = fboService;
+            _authService = authService;
         }
         // GET: api/ServicesAndFees/fbo/3
         [HttpGet("fbo/{fboId}")]
@@ -47,11 +50,16 @@ namespace FBOLinx.Web.Controllers
             var servicesList = new List<string>();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
 
-            if (fbo != null && fbo.Oid > 0)
+            if (fbo == null)
             {
-                var services = await _fboServicesAndFeesService.Get(fbo.Oid);
-                servicesList = services.Select(s => s.Service).ToList();
+                var email = await _authService.CreateNonRevAccount(handlerId);
+                if (!email.Contains("@"))
+                    return servicesList;
+                fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
             }
+
+            var services = await _fboServicesAndFeesService.Get(fbo.Oid);
+            servicesList = services.Select(s => s.Service).ToList();
 
             return servicesList;
         }
