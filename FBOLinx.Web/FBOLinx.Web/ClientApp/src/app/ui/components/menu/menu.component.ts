@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
-import { menuTooltipShowedEvent } from '../../../models/sharedEvents';
+import { fboChangedEvent, fboPricesLoadedEvent, menuTooltipShowedEvent, serviceOrdersChangedEvent } from '../../../constants/sharedEvents';
 import { UserService } from '../../../services/user.service';
 import { MenuService } from './menu.service';
 import { IMenuItem } from './menu-item';
@@ -17,7 +17,6 @@ import { ServiceOrder } from 'src/app/models/service-order';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 
 import * as moment from 'moment';
-
 @Component({
     host: { class: 'app-menu' },
     providers: [MenuService],
@@ -46,11 +45,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === 'fbo-prices-loaded') {
+            if (message === fboChangedEvent) {
+                this.menuService.setDisabledMenuItems(this.menuItems);          }
+            if (message === fboPricesLoadedEvent) {
                 this.showTooltipsIfFirstLogin();
                 this.showPendingServiceOrders();
             }
-            if (message === 'service-orders-changed') {
+            if (message === serviceOrdersChangedEvent) {
                 this.showPendingServiceOrders();
             }
         });
@@ -59,7 +60,9 @@ export class MenuComponent implements OnInit, AfterViewInit {
     getMenuItems(): void {
         const OBSERVER = {
             error: (err) => this.menuService.handleError(err),
-            next: (x) => (this.menuItems = x),
+            next: (x) => {
+                this.menuItems = x;
+                this.menuService.setDisabledMenuItems(this.menuItems);            },
         };
         this.menuService.getData().subscribe(OBSERVER);
     }
