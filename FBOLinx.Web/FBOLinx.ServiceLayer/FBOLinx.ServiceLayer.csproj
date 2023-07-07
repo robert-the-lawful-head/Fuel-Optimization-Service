@@ -44,6 +44,7 @@
 	  <Generated Remove="DTO\CustomerInfoByGroupNoteDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
+	  <Generated Remove="DTO\OrderDetailsDto.g.cs" />
 	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
 	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
 	</ItemGroup>

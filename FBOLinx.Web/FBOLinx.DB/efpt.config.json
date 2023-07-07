@@ -17,10 +17,7 @@
       {
          "Name": "[dbo].[CustomerAircraftNotes]",
          "ObjectType": 0
-      },
-      {
          "Name": "[dbo].[CustomerInfoByGroupNotes]",
-         "ObjectType": 0
       }
    ],
    "UiHint": "fl-test-db01.paragon_test.dbo",
@@ -32,7 +29,7 @@
    "UseFluentApiOnly": false,
    "UseHandleBars": false,
    "UseHierarchyId": false,
-   "UseInflector": true,
+   "UseInflector": false,
    "UseLegacyPluralizer": false,
    "UseManyToManyEntity": false,
    "UseNoDefaultConstructor": false,
@@ -40,6 +37,7 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false
 }

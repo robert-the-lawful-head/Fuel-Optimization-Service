@@ -49,13 +49,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                 }
 
-                if (String.IsNullOrEmpty(acukwikFbo.Email))
+                if (String.IsNullOrEmpty(acukwikFbo.HandlerEmail))
                 {
                     importedFboEmail.Email = "No email found";
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                 }
 
-                importedFboEmail.Email = acukwikFbo.Email;
+                importedFboEmail.Email = acukwikFbo.HandlerEmail;
 
                 var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
 

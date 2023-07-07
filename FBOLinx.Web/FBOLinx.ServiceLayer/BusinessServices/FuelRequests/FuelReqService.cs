@@ -25,6 +25,10 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
+using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -47,6 +51,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
         Task SendFuelOrderNotificationEmail(int handlerId, FuelReqRequest fuelReq);
+        Task AddServiceOrder(FuelReqRequest request, Fbos fbo, int fuelOrderId = 0);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -70,6 +75,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboContactsEntityService _FboContactsEntityService;
         private IAirportService _AirportService;
+        private readonly IServiceOrderService _serviceOrderService;
+        private readonly DateTimeService _dateTimeService;
+        private readonly IServiceOrderItemService _serviceOrderItemService;
+        private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -82,9 +91,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IAuthService authService,
             IHttpContextAccessor httpContextAccessor,
             IFboContactsEntityService fboContactsEntityService,
-            IAirportService airportService) : base(fuelReqEntityService)
+            IAirportService airportService,
+            IServiceOrderService serviceOrderService,
+            DateTimeService dateTimeService,
+            IServiceOrderItemService serviceOrderItemService,
+            ICustomerInfoByGroupService customerInfoByGroupService) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
+            _serviceOrderService = serviceOrderService;
+            _dateTimeService = dateTimeService;
+            _serviceOrderItemService = serviceOrderItemService;
+            _customerInfoByGroupService = customerInfoByGroupService;
             _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
@@ -314,11 +331,57 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var fboContacts = await GetFboContacts(fbo.Oid);
                 var userContacts = await GetUserContacts(fbo);
 
-                var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId;
+                var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
                 var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
 
                 await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, fuelReq);
             }
+        }
+
+        public async Task AddServiceOrder(FuelReqRequest request, Fbos fbo, int fuelOrderId = 0)
+        {
+            var customersWithTail = await _customerInfoByGroupService.GetCustomers(fbo.GroupId, new List<string>() { request.TailNumber });
+            var customer = customersWithTail.Where(c => c.Customer.FuelerlinxId == request.CompanyId).FirstOrDefault();
+            var customerAircraft = customer.Customer.CustomerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
+
+            var serviceReq = new ServiceOrderDto()
+            {
+                Fboid = fbo.Oid,
+                CustomerAircraftId = customerAircraft.Oid,
+                AssociatedFuelOrderId = fuelOrderId,
+                FuelerLinxTransactionId = request.SourceId,
+                ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                CustomerInfoByGroupId = customer.Oid,
+                GroupId = customer.GroupId
+            };
+
+            if (request.TimeStandard == "L")
+            {
+                var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
+                var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+
+                serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                serviceReq.ArrivalDateTimeUtc = etaUtc;
+                serviceReq.DepartureDateTimeUtc = etdUtc;
+            }
+            else
+            {
+                serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
+                serviceReq.ArrivalDateTimeUtc = request.Eta;
+                serviceReq.DepartureDateTimeUtc = request.Etd;
+            }
+
+            serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
+
+            var serviceOrderItems = new List<ServiceOrderItemDto>();
+            foreach (string serviceOrderName in request.ServiceNames)
+            {
+                ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
+                serviceOrderItem.ServiceOrderId = serviceReq.Oid;
+                serviceOrderItem.ServiceName = serviceOrderName;
+                serviceOrderItems.Add(serviceOrderItem);
+            }
+            await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
 
         private async Task<string> GetFboContacts(int fboId)
@@ -370,7 +433,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     fuelVendor = fuelReq.FuelVendor,
                     customOrderNotes = fuelReq.CustomerNotes,
                     buttonUrl = link,
-                    paymentMethod = fuelReq.PaymentMethod
+                    paymentMethod = fuelReq.PaymentMethod,
+                    services = string.Join(", ", fuelReq.ServiceNames)
                 };
                 mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicTemplateData;
 
