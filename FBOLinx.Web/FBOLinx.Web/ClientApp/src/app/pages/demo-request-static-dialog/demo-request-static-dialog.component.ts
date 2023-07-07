@@ -1,8 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountType } from 'src/app/enums/user-role';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { fboChangedEvent } from 'src/app/constants/sharedEvents';
+import { urls } from 'src/app/constants/externalUrlsConstants';
 
 @Component({
   selector: 'app-demo-request-static-dialog',
@@ -10,25 +11,26 @@ import { fboChangedEvent } from 'src/app/constants/sharedEvents';
   styleUrls: ['./demo-request-static-dialog.component.scss']
 })
 export class DemoRequestStaticDialogComponent implements OnInit {
-    public isStaticModalVisibleVisible: boolean = false;
+    public isStaticModalVisible: boolean;
     private whitelistUrl = ['/default-layout/dashboard-fbo-updated'];
     constructor(private router: Router,
         private sharedService: SharedService) { }
 
     ngOnInit() {
+        this.isStaticModalVisible = this.getIsStaticModalVisible();
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === fboChangedEvent) {
-                this.isStaticModalVisibleVisible = this.setIsStaticModalVisibleVisible();
+                this.isStaticModalVisible = this.getIsStaticModalVisible();
             }
         });
     }
 
     openRequestDemo() {
-        window.open('https://outlook.office365.com/owa/calendar/FBOLinxSales@fuelerlinx.com/bookings/', '_blank').focus();
+        window.open(urls.demoRequestUrl, '_blank').focus();
     }
-    setIsStaticModalVisibleVisible(): boolean {
+    getIsStaticModalVisible(): boolean {
         if (this.whitelistUrl.includes(this.router.url) &&
-        this.sharedService.currentUser.accountType !=  AccountType.Freemium) return true;
+        this.sharedService.currentUser.accountType ==  AccountType.Freemium) return true;
         return false;
     }
 }
