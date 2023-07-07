@@ -77,6 +77,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         }
         
         this.data.customerInfoByGroupId = 0;
+        this.customerAircraftsDataSource = [];
     }
 
     public onCustomerAircraftChanged(customerAircraft: CustomerAircraft): void {
@@ -96,7 +97,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             tailNumber: event,
             aircraftId: this.selectedAircraftId
         }        
-        this.data.customerAircraftId = 0;
+        this.data.customerAircraftId = 0;        
     }
 
     public onAircraftTypeChanged(aircraftType: AircraftType) {
