@@ -1,0 +1,18 @@
+<div>
+    <app-customers-edit [customerInfoByGroupId]="customerInfoByGroupId"
+                        [showBreadCrumb]="false"
+                        [showAircraftTab]="false"
+                        [showPricingTab]="false"
+                        [showAnalyticsTab]="false"
+                        [showHistoryTab]="false"
+                        [showClose]="false"></app-customers-edit>
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="pull-right">
+                <button (click)="dialogRef.close()" mat-stroked-button>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

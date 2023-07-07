@@ -48,7 +48,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return entity;
         }
         public async Task<TEntity> GetAsync(int id) => await context.Set<TEntity>().FindAsync(id);
-        
+
+        public IQueryable<TEntity> Get() => context.Set<TEntity>().AsQueryable();
+
         public async Task UpdateAsync(TEntity entity)
         {
             try

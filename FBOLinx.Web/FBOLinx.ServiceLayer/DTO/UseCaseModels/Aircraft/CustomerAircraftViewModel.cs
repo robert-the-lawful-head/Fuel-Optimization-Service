@@ -36,6 +36,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         {
             get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AircraftSizes.NotSet); }
         }
+        public List<CustomerAircraftNoteDto> Notes { get; set; }
 
         public void CastFromDTO(CustomerAircraftsDto customerAircraft)
         {
@@ -55,6 +56,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
             Phone = customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.MainPhone;
             CustomerInfoByGroupId = (customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.Oid).GetValueOrDefault();
             FuelerlinxCompanyId = (customerAircraft?.Customer?.FuelerlinxId);
+            Notes = customerAircraft.Notes;
         }
 
         public static CustomerAircraftsViewModel Cast(CustomerAircraftsDto customerAircraft)

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -51,6 +51,14 @@ const BREADCRUMBS: any[] = [
     templateUrl: './customers-edit.component.html',
 })
 export class CustomersEditComponent implements OnInit {
+    @Input() customerInfoByGroupId: number = 0;
+    @Input() showBreadCrumb: boolean = true;
+    @Input() showAircraftTab: boolean = true;
+    @Input() showPricingTab: boolean = true;
+    @Input() showAnalyticsTab: boolean = true;
+    @Input() showHistoryTab: boolean = true;
+    @Input() showClose: boolean = true;
+
     @ViewChild('priceBreakdownPreview')
     private priceBreakdownPreview: PriceBreakdownComponent;
     // Members
@@ -70,7 +78,7 @@ export class CustomersEditComponent implements OnInit {
     customerForm: FormGroup;
     public customerHistory: any;
     feesAndTaxes: Array<any>;
-    isEditing: boolean;
+    isEditing: boolean = false;
     public customerId: number;
     tags: any[];
     tagsSelected: any[] = [];
@@ -113,10 +121,10 @@ export class CustomersEditComponent implements OnInit {
     }
 
     async ngOnInit() {
-
-        const id = this.route.snapshot.paramMap.get('id');
+        if (this.customerInfoByGroupId == 0)
+            this.customerInfoByGroupId = parseInt(this.route.snapshot.paramMap.get('id'));
         this.customerInfoByGroup = await this.customerInfoByGroupService
-            .get({ oid: id })
+            .get({ oid: this.customerInfoByGroupId })
             .toPromise();
         this.customerId = this.customerInfoByGroup.customerId;
 
@@ -164,7 +172,7 @@ export class CustomersEditComponent implements OnInit {
                 this.sharedService.currentUser.fboId
             ),
             //6
-            this.customerInfoByGroupService.getCustomerLogger(id,
+            this.customerInfoByGroupService.getCustomerLogger(this.customerInfoByGroupId,
                 this.sharedService.currentUser.fboId),
 
             this.customersViewedByFboService.add({
@@ -208,11 +216,11 @@ export class CustomersEditComponent implements OnInit {
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
-                    this.isEditing = true;
+                    
                 }),
                 debounceTime(500),
                 switchMap(async () => {
-
+                    this.isEditing = true;
                     const customerInfoByGroup = {
                         ...this.customerInfoByGroup,
                         ...this.customerForm.value,
@@ -513,7 +521,7 @@ export class CustomersEditComponent implements OnInit {
             this.sharedService.updatedHistory.subscribe(
                 update => {
                     if (update == true) {
-                        this.customerInfoByGroupService.getCustomerLogger(this.route.snapshot.paramMap.get('id'), this.sharedService.currentUser.fboId).subscribe(
+                        this.customerInfoByGroupService.getCustomerLogger(this.customerInfoByGroupId, this.sharedService.currentUser.fboId).subscribe(
                             data => {
                                 this.customerHistory = data;
                                 this.isLoadingHistory = false;

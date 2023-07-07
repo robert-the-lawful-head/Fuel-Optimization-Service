@@ -1,1 +1,10 @@
-﻿
+.mat-column-notes {
+    max-width: 300px;
+    overflow-x: hidden;
+
+    div {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow-x: hidden;
+    }
+}

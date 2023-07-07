@@ -19,6 +19,7 @@
     </mat-form-field>-->
 
         <app-autocomplete-search label="Customer"
+                                 [required]="true"
                                  [optionValue]="['company']"
                                  [options]="customerInfoByGroupDataSource"
                                  [displayFn]="displayCustomerName"
@@ -26,9 +27,13 @@
                                  (selectionChanged)="onCustomerInfoByGroupChanged($event)"></app-autocomplete-search>
 
         <app-autocomplete-search label="Tail Number"
+                                 *ngIf="!isLoadingAircraft"
+                                 [required]="true"
+                                 [disabled]="!data.customerInfoByGroup"
                                  [optionValue]="['tailNumber']"
                                  [options]="customerAircraftsDataSource"
                                  [displayFn]="displayTailNumber"
+                                 [filter]="filters.tailNumberFilter"
                                  (filterChanged)="onCustomerAircraftFilterChanged($event)"
                                  (selectionChanged)="onCustomerAircraftChanged($event)"></app-autocomplete-search>
 

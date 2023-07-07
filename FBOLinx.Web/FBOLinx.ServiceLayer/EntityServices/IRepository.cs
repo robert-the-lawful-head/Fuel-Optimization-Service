@@ -11,6 +11,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 {
     public interface IRepository<TEntity, TContext>
     {
+        IQueryable<TEntity> Get();
         Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetAsync(int id);
