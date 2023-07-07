@@ -63,7 +63,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             }
             else
             {
-                fbo = await _fboService.GetFbo(fuelOrder.Fboid.GetValueOrDefault());
+                fuelOrder.Fbo = await _fboService.GetFbo(fuelOrder.Fboid.GetValueOrDefault());
                 await fuelOrder.PopulateLocalTimes(_airportTimeService);
 
                 TailNumber = fuelOrder.TailNumber;
@@ -79,7 +79,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 FuelVendor = orderDetails.FuelVendor;
             }
 
-            var dynamicTemplateData = new OrderConfirmationTemplateData
+            var dynamicTemplateData = new SendGridOrderConfirmationTemplateData
             {
                 aircraftTailNumber = TailNumber,
                 fboName = Fbo.ToString(),
@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             return true;
         }
 
-        private async Task<bool> SendEmail(OrderConfirmationTemplateData dynamicTemplateData, string fuelDeskEmail, string confirmationEmail)
+        private async Task<bool> SendEmail(SendGridOrderConfirmationTemplateData dynamicTemplateData, string fuelDeskEmail, string confirmationEmail)
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
             mailMessage.From = new MailAddress(fuelDeskEmail);
@@ -104,7 +104,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                     mailMessage.To.Add(email);
             }
 
-            mailMessage.OrderConfirmationTemplateData = dynamicTemplateData;
+            mailMessage.SendGridOrderConfirmationTemplateData = dynamicTemplateData;
 
             //Send email
             var result = await _mailService.SendAsync(mailMessage);

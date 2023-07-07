@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 {
-    public class OrderConfirmationTemplateData
+    public class SendGridOrderConfirmationTemplateData
     {
         [JsonProperty("aircraftTailNumber")]
         public string aircraftTailNumber { get; set; }

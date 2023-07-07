@@ -351,6 +351,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 AssociatedFuelOrderId = fuelOrderId,
                 FuelerLinxTransactionId = request.SourceId,
                 ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                CustomerInfoByGroupId = customer.Oid,
+                GroupId = customer.GroupId
             };
 
             if (request.TimeStandard == "L")
@@ -369,7 +371,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceReq.DepartureDateTimeUtc = request.Etd;
             }
 
-            await _serviceOrderService.AddNewOrder(serviceReq);
+            serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
 
             var serviceOrderItems = new List<ServiceOrderItemDto>();
             foreach (string serviceOrderName in request.ServiceNames)
@@ -432,7 +434,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     customOrderNotes = fuelReq.CustomerNotes,
                     buttonUrl = link,
                     paymentMethod = fuelReq.PaymentMethod,
-                    services = fuelReq.ServiceNames
+                    services = string.Join(", ", fuelReq.ServiceNames)
                 };
                 mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicTemplateData;
 

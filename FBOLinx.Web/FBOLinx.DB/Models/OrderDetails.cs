@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.DB.Models
 {
-    [Index("FuelerLinxRequestId", Name = "INX_OrderDetails_FuelerLinxTransactionId", IsUnique = true)]
-    public partial class OrderDetails
+    [Index("FuelerLinxTransactionId", Name = "INX_OrderDetails_FuelerLinxTransactionId", IsUnique = true)]
+    public partial class OrderDetails : FBOLinxBaseEntityModel<int>
     {
         public int FuelerLinxTransactionId { get; set; }
         [Required]

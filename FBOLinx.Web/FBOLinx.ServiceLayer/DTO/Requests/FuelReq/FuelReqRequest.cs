@@ -28,6 +28,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.FuelReq
         public string FlightDepartment { get; set; }
         public string AircraftMakeModel { get; set; }
         public bool DemoMode { get; set; } = true;
-        public List<string> ServiceNames { get; set; }
+        public List<string> ServiceNames { get; set; } = new List<string>();
     }
 }
