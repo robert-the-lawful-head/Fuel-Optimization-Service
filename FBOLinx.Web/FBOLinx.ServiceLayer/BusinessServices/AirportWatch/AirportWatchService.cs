@@ -43,8 +43,8 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.Core.Utilities.Geography;
-using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
@@ -78,8 +78,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
-        private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegService _SwimFlightLegService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -94,8 +94,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ISWIMFlightLegService swimFlightLegService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegService swimFlightLegService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;

@@ -19,6 +19,9 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 import { DialogConfirmAircraftDeleteComponent } from '../customer-aircrafts-confirm-delete-modal/customer-aircrafts-confirm-delete-modal.component';
 import { ActivatedRoute } from '@angular/router';
 
+import { CustomerAircraftNote } from '../../../models/customer-aircraft-note';
+import { CustomerAircraft } from '../../../models/customer-aircraft';
+
 @Component({
     selector: 'app-customer-aircrafts-edit',
     styleUrls: ['./customer-aircrafts-edit.component.scss'],
@@ -27,13 +30,14 @@ import { ActivatedRoute } from '@angular/router';
 export class CustomerAircraftsEditComponent implements OnInit {
     @Output() saveEditClicked = new EventEmitter<any>();
     @Output() cancelEditClicked = new EventEmitter<any>();
-    @Input() customerAircraftInfo: any;
+    @Input() customerAircraftInfo: CustomerAircraft;
 
     // Public Members
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public pricingTemplates: Array<any>;
     public customerInfoByGroupId : any ;
+    public customerAircraftNote: CustomerAircraftNote;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -46,9 +50,19 @@ export class CustomerAircraftsEditComponent implements OnInit {
 
     ngOnInit() {
         if (this.data) {
-            this.aircraftsService.get(this.data).subscribe((data: any) => {
+            this.customerAircraftsService.get(this.data).subscribe((data: CustomerAircraft) => {
 
                 this.customerAircraftInfo = data;
+                var notesForFbo = this.customerAircraftInfo?.notes?.filter(x => x.fboId == this.sharedService.currentUser.fboId);
+                this.customerAircraftNote = notesForFbo && notesForFbo.length > 0 ? notesForFbo[0]  : null;
+                if (this.customerAircraftNote == null)
+                    this.customerAircraftNote = {
+                        oid: 0,
+                        fboId: this.sharedService.currentUser.fboId,
+                        customerAircraftId: this.customerAircraftInfo.oid,
+                        notes: '',
+                        lastUpdatedByUserId: this.sharedService.currentUser.oid
+                    };
 
             });
         }
@@ -66,8 +80,14 @@ export class CustomerAircraftsEditComponent implements OnInit {
         console.log(this.data.customerGroupId)
         this.customerAircraftsService
             .update(this.customerAircraftInfo , this.sharedService.currentUser.oid)
-            .subscribe((data: any) => {
-                this.dialogRef.close(data);
+            .subscribe((data: CustomerAircraft) => {
+                this.customerAircraftNote.customerAircraftId = data.oid;
+                if (this.customerAircraftNote.oid > 0) {
+                    this.customerAircraftsService.updateCustomerAircraftNotes(this.customerAircraftNote).subscribe((data: any) => { this.dialogRef.close(data); })
+                } else {
+                    this.customerAircraftsService.addCustomerAircraftNotes(this.customerAircraftNote).subscribe((data: any) => { this.dialogRef.close(data); })
+                }
+                
             });
     }
 

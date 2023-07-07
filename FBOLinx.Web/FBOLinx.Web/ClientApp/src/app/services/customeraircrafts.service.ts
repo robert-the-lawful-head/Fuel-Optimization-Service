@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CustomerAircraftNote } from '../models/customer-aircraft-note';
 
 @Injectable()
 export class CustomeraircraftsService {
@@ -121,6 +122,36 @@ export class CustomeraircraftsService {
         return this.http.post(
             this.accessPointUrl + '/create-with-customer',
             payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCustomerAircraftNotes(customerAircraftId: number) {
+        return this.http.get(
+            this.accessPointUrl + '/notes/' + customerAircraftId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public addCustomerAircraftNotes(payload: CustomerAircraftNote) {
+        return this.http.post(this.accessPointUrl + '/notes', payload, {
+            headers: this.headers,
+        });
+    }
+
+    public updateCustomerAircraftNotes(payload: CustomerAircraftNote) {
+        return this.http.put(this.accessPointUrl + '/notes', payload, {
+            headers: this.headers,
+        });
+    }
+
+    public deleteCustomerAircraftNotes(id: number) {
+        return this.http.delete(
+            this.accessPointUrl + '/notes/' + id,
             {
                 headers: this.headers,
             }

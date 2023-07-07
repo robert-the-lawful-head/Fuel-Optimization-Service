@@ -21,6 +21,14 @@
       {
          "Name": "[dbo].[ServiceOrders]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CustomerAircraftNotes]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CustomerInfoByGroupNotes]",
+         "ObjectType": 0
       }
    ],
    "UiHint": "fl-test-db01.paragon_test.dbo",

@@ -32,8 +32,8 @@ using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 
 namespace FBOLinx.Web.Controllers
 {
