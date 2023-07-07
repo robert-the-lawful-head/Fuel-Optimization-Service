@@ -14,7 +14,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import {

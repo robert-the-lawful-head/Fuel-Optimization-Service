@@ -21,7 +21,7 @@ import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
@@ -688,7 +688,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         );
 
         this.sort.active = 'allInPrice';
-    }    
+    }
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService

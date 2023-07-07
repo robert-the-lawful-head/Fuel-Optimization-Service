@@ -16,7 +16,7 @@ import * as moment from 'moment';
 import { UserRole } from 'src/app/enums/user-role';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { fboChangedEvent } from '../../../models/sharedEvents';
+import { fboChangedEvent } from '../../../constants/sharedEvents';
 import { FbopricesService } from '../../../services/fboprices.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';

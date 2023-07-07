@@ -1,3 +1,5 @@
+import { AccountType } from "../enums/user-role";
+
 export class User {
     oid: number;
     username: string;
@@ -12,4 +14,5 @@ export class User {
     icao?: string;
     managerGroupId: number;
     conductorFbo?: boolean;
+    accountType?: AccountType;
 }

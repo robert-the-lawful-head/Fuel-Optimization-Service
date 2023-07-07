@@ -14,7 +14,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 const BREADCRUMBS: any[] = [
     {

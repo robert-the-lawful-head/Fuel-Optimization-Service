@@ -15,7 +15,7 @@ import { GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { State } from '../../../store/reducers';

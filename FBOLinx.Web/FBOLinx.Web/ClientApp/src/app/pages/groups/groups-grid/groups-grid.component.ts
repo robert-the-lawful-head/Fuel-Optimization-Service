@@ -26,7 +26,7 @@ import { first, last } from 'lodash';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { fboChangedEvent } from '../../../models/sharedEvents';
+import { fboChangedEvent } from '../../../constants/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -43,6 +43,7 @@ import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-d
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 const initialColumns: ColumnType[] = [
     {
@@ -435,16 +436,13 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.tableLocalStorageFilterKey,
                     this.searchValue
                 );
-                this.sharedService.currentUser.managerGroupId =
-                    this.sharedService.currentUser.groupId;
-                localStorage.setItem(
-                    'managerGroupId',
-                    this.sharedService.currentUser.groupId.toString()
-                );
-                this.sharedService.currentUser.groupId = group.oid;
-                localStorage.setItem('groupId', group.oid);
-                localStorage.setItem('impersonatedrole', '2');
-                this.sharedService.currentUser.impersonatedRole = 2;
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,group.oid);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,2);
+
                 this.router.navigate(['/default-layout/fbos/']);
             });
         }
@@ -482,26 +480,22 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.tableLocalStorageFilterKey,
                     this.searchValue
                 );
-                localStorage.setItem(
-                    'managerGroupId',
-                    this.sharedService.currentUser.groupId.toString()
-                );
-                this.sharedService.currentUser.managerGroupId =
-                    this.sharedService.currentUser.groupId;
 
-                localStorage.setItem('groupId', fbo.groupId.toString());
-                this.sharedService.currentUser.groupId = fbo.groupId;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
 
-                localStorage.setItem('impersonatedrole', '1');
-                this.sharedService.currentUser.impersonatedRole = 1;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
 
-                localStorage.setItem('conductorFbo', 'true');
-                this.sharedService.currentUser.conductorFbo = true;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,fbo.groupId);
 
-                localStorage.setItem('fboId', fbo.oid.toString());
-                this.sharedService.currentUser.fboId = fbo.oid;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,1);
 
-                this.sharedService.currentUser.icao = fbo.icao;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.conductorFbo,true);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fbo.oid);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,fbo.icao);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
 
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo-updated/']);

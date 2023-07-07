@@ -6,7 +6,7 @@ import { groupGridSet } from 'src/app/store/actions';
 import { SharedService } from '../../../layouts/shared-service';
 import {
     deleteGroupEvent
-} from '../../../models/sharedEvents';
+} from '../../../constants/sharedEvents';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';

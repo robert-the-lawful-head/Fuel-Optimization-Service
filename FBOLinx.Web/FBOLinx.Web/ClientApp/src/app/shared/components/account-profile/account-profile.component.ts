@@ -17,7 +17,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import * as _ from 'lodash';
 
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { SharedService } from '../../../layouts/shared-service';
 import { SystemcontactsNewContactModalComponent } from '../../../pages/contacts/systemcontacts-new-contact-modal/systemcontacts-new-contact-modal.component';
 import { ContactsService } from '../../../services/contacts.service';
