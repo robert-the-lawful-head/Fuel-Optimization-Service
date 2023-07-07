@@ -9,7 +9,7 @@ import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
 import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
@@ -17,7 +17,7 @@ import { FlightWatchService } from 'src/app/services/flightwatch.service';
 // Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
 import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/flight-watch-map-services/flight-watch-map.service';
-import {localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import {localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-dashboard-fbo-updated',

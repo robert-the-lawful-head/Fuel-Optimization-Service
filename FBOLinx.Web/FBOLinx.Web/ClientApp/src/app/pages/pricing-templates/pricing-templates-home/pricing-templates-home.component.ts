@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 // Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { FbopricesService } from "../../../services/fboprices.service";

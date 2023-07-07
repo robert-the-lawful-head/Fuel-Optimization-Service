@@ -14,7 +14,7 @@ import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { interval, Observable, Subscription } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 // Services
 import { FboairportsService } from '../../../services/fboairports.service';

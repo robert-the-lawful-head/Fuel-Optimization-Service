@@ -23,6 +23,7 @@
                         (click)="toggle($event, item, this)"
                         *ngIf="item.routing"
                         class="item-link"
+                        [ngClass]="{ 'disabled': item.disabled }"
                         href="#"
                         routerLink="{{ item.routing }}"
                     >

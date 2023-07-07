@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 /*import FlatfileImporter from 'flatfile-csv-importer';*/
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { Parametri } from '../../../services/paremeters.service';
 // Services
