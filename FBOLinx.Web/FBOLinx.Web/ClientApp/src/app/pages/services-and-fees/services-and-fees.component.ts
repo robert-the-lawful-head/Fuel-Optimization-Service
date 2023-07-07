@@ -61,6 +61,8 @@ export class ServicesAndFeesComponent implements OnInit {
         newItem.service = "";
         newItem.isNewItem = true;
         newItem.oid = 0;
+        newItem.handlerId = null;
+        newItem.serviceOfferedId = null;
         this.addItemToServiceType(newItem,true,true);
     }
     saveItem(serviceAndfee:  ServicesAndFeesGridItem): void {
