@@ -1,12 +1,13 @@
-﻿using FBOLinx.DB.Models;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.DB.Models.Dega;
 using FBOLinx.DB.Models.ServicesAndFees;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
+using FBOLinx.ServiceLayer.Mapping;
 using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
-using StackifyLib;
 
 namespace FBOLinx.ServiceLayer.Extensions
 {
@@ -62,7 +63,12 @@ namespace FBOLinx.ServiceLayer.Extensions
 
                 TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesDto>
                 .NewConfig()
+                .Map(dest => dest.isActive, src => true)
                 .Map(dest => dest.Oid, src => src.HandlerId.ToString()+src.ServiceOfferedId.ToString());
+
+                TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
+                .NewConfig()
+                .Map(dest => dest.isActive, src => src.ServiceActionType != ServiceActionType.NotActive);
         }
     }
 }

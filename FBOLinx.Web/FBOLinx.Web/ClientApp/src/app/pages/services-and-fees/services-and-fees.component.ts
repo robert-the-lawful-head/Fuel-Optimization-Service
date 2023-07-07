@@ -138,6 +138,9 @@ export class ServicesAndFeesComponent implements OnInit {
         //     editedValue: ""
         // };
     }
+    isCustomServiceAndFee(item: ServicesAndFees): boolean {
+        return item.handlerId ==  null && item.serviceOfferedId == null;
+    }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(
             message,

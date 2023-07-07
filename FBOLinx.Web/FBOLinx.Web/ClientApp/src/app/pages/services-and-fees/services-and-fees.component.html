@@ -46,8 +46,12 @@
                             </div>
                     </ng-container>
                     <ng-container *ngIf="!val.isEditMode">
-                        <span>{{val.service}}</span>
-                        <div class="actions-buttons">
+                        <div>
+                            <mat-checkbox class="example-margin"
+                            [(ngModel)]="val.isActive"></mat-checkbox>
+                            <span class="p-lg-3">{{val.service}}</span>
+                        </div>
+                        <div class="actions-buttons" *ngIf="isCustomServiceAndFee(val)">
                             <span (click)="toogleEditModel(val)"><mat-icon>edit</mat-icon></span>
                             <span (click)="deleteItem(val)"><mat-icon>delete</mat-icon></span>
                         </div>

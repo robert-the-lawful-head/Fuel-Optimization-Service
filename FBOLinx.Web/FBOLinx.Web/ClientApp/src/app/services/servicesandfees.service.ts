@@ -8,6 +8,7 @@ export interface ServicesAndFees {
     serviceOfferedId: number | null;
     service: string;
     serviceType: string;
+    isActive: boolean;
 }
 
 @Injectable()

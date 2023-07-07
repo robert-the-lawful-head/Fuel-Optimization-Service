@@ -18,7 +18,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
     {
         Task<List<ServicesAndFeesDto>> Get(int fboId);
         Task<ServicesAndFeesDto> Create(int fboId, ServicesAndFeesDto servicesAndFees);
-        Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId);
+        Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees);
         Task<bool> Delete(int ServiceAdnFeesId, int? handlerId, int? serviceOfferedId);
     }
     public class FboServicesAndFeesService : IFboServicesAndFeesService
@@ -46,6 +46,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 
             var modifiedServices = _fboCustomServicesAndFeesRepo.Where(x => x.FboId == fboId);
             var acukwikServicesOffered = _acukwikServicesOfferedEntityService.Where(x => x.HandlerId == (int)fbo.AcukwikFBOHandlerId);
+
             if (!modifiedServices.Any())
             {
                 return await GetfromAcukwikServicesOffered(acukwikServicesOffered);
@@ -59,22 +60,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                     x.Adapt<ServicesAndFeesDto>()
                 ).ToListAsync();
         }
-        private async Task<List<ServicesAndFeesDto>> GetMergedDataFromAcukwikServicesOfferedAndCustomServicesAndFeesRepo(IQueryable<FboCustomServicesAndFees> modifiedServices, IQueryable<AcukwikServicesOffered> acukwikServicesOffered)
+        private async Task<List<ServicesAndFeesDto>> GetMergedDataFromAcukwikServicesOfferedAndCustomServicesAndFeesRepo(IQueryable<FboCustomServicesAndFees> customServices, IQueryable<AcukwikServicesOffered> acukwikServicesOffered)
         {
-            var deletedAndModifiedServices = await modifiedServices.Where(x => x.ServiceActionType == ServiceActionType.Deleted || x.ServiceActionType == ServiceActionType.Updated).Select(x => x.AcukwikServicesOfferedId.ToString()).ToListAsync();
+            var notActiveAcukwikServicesOffered = await customServices.Where(x => x.ServiceActionType == ServiceActionType.NotActive && x.AcukwikServicesOfferedId != null).Select(x => x.AcukwikServicesOfferedId.ToString()).ToListAsync();
 
-            // generating Id manually until is set on dega db
-            var customNotModifiedSrvices = acukwikServicesOffered.Where(x => !deletedAndModifiedServices.Contains((x.HandlerId.ToString() + x.ServiceOfferedId.ToString())));
 
-            var notModifiedServiceResult = await customNotModifiedSrvices.Select(x =>
+            var servicesAndFeesAcukwik = await acukwikServicesOffered.Select(x =>
                    x.Adapt<ServicesAndFeesDto>()
                ).ToListAsync();
 
-            var customModifiedServices = await modifiedServices.Select(x =>
+            servicesAndFeesAcukwik.ForEach(x =>
+            {
+                x.isActive = !notActiveAcukwikServicesOffered.Contains((x.HandlerId.ToString() + x.ServiceOfferedId.ToString()));
+            });
+
+            customServices = customServices.Where(x => x.ServiceActionType != ServiceActionType.NotActive && x.AcukwikServicesOfferedId == null);
+
+
+            var customerServicesAndfees = await customServices.Select(x =>
                    x.Adapt<ServicesAndFeesDto>()
                ).ToListAsync();
 
-            return notModifiedServiceResult.Concat(customModifiedServices).ToList();
+            return servicesAndFeesAcukwik.Concat(customerServicesAndfees).ToList();
         }
         public async Task<ServicesAndFeesDto> Create(int fboId, ServicesAndFeesDto servicesAndFees)
         {
@@ -87,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             return createdEntity.Adapt<ServicesAndFeesDto>();
         }
 
-        public async Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees, int? handlerId, int? serviceOfferedId)
+        public async Task<bool> Update(int fboId, ServicesAndFeesDto servicesAndFees)
         {
             var customServiceAndfee = await _fboCustomServicesAndFeesRepo.FindAsync(servicesAndFees.Oid);
 
@@ -98,6 +105,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                 await _fboCustomServicesAndFeesRepo.UpdateAsync(customServiceAndfee);
                 return true;
             }
+
+            var handlerId = servicesAndFees.HandlerId;
+            var serviceOfferedId = servicesAndFees.ServiceOfferedId;
 
             if (handlerId == null && serviceOfferedId == null)
                 return false;
