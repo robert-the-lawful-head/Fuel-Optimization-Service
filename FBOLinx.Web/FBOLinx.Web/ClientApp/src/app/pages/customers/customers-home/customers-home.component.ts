@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { locationChangedEvent } from '../../../models/sharedEvents';
+import { locationChangedEvent } from '../../../constants/sharedEvents';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';

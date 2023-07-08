@@ -46,6 +46,7 @@ import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizo
 import { LogoComponent } from './components/logo/logo.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
+import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
 
 @NgModule({
     declarations: [
@@ -55,6 +56,7 @@ import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-n
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent
     ],
     exports: [
         HorizontalNavbarComponent,
@@ -63,6 +65,7 @@ import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-n
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent
     ],
     imports: [
         HttpClientModule,

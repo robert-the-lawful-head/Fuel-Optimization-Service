@@ -31,7 +31,7 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
