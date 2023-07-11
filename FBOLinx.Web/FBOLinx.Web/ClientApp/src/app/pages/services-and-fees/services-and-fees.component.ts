@@ -2,7 +2,8 @@ import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { ServicesAndFees, ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
+import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
+import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 
 const BREADCRUMBS: any[] = [
@@ -16,7 +17,7 @@ const BREADCRUMBS: any[] = [
     },
 ];
 
-interface ServicesAndFeesGridItem extends ServicesAndFees{
+interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
     isNewItem: boolean,
     editedValue: string
@@ -28,7 +29,7 @@ interface ServicesAndFeesGridItem extends ServicesAndFees{
 })
 export class ServicesAndFeesComponent implements OnInit {
     @Input() public fboId: number|null = null;
-    servicesAndFeesGridDisplay: { [key: string]: ServicesAndFeesGridItem[] } = {};
+    servicesAndFeesGridDisplay: FbosServicesAndFeesResponse[] = [];
     breadcrumb = BREADCRUMBS;
 
     constructor(
@@ -39,31 +40,28 @@ export class ServicesAndFeesComponent implements OnInit {
         ) { }
 
     async ngOnInit() {
-         var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
-         servicesAndFees.forEach((serviceAndFee) => {
-            this.addItemToServiceType(serviceAndFee);
-         });
+        this.servicesAndFeesGridDisplay = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
     }
-    private addItemToServiceType(serviceAndFee: ServicesAndFees,isEditMode: boolean = false, isNewItem: boolean = false): void {
-        let servicesAndFeesGrid: ServicesAndFeesGridItem = {
-            ... serviceAndFee,
-             isEditMode: isEditMode,
-             isNewItem : isNewItem,
-             editedValue: serviceAndFee.service
-            };
-        if(serviceAndFee.serviceType in this.servicesAndFeesGridDisplay)
-            this.servicesAndFeesGridDisplay[serviceAndFee.serviceType].push(servicesAndFeesGrid);
-        else
-            this.servicesAndFeesGridDisplay[serviceAndFee.serviceType] = [servicesAndFeesGrid];
-    }
-    createNewItem(serviceAndFee: ServicesAndFeesGridItem): void {
-        let newItem: ServicesAndFeesGridItem =  Object.assign({}, serviceAndFee);
-        newItem.service = "";
-        newItem.isNewItem = true;
-        newItem.oid = 0;
-        newItem.handlerId = null;
-        newItem.serviceOfferedId = null;
-        this.addItemToServiceType(newItem,true,true);
+
+    createNewItem(serviceType: ServiceTypeResponse): void {
+
+        let category = this.servicesAndFeesGridDisplay.find(elem=> elem.serviceType.name == serviceType.name);
+
+        let newItem: ServicesAndFeesGridItem = {
+            oid : 0,
+            isNewItem : true,
+            handlerId : category.servicesAndFees[0]?.handlerId,
+            serviceOfferedId : category.servicesAndFees[0]?.serviceOfferedId,
+            isCustom : true,
+            serviceTypeId : serviceType.oid,
+            service : '',
+            isActive : true,
+            isEditMode : true,
+            editedValue : ''
+        };
+
+
+        category.servicesAndFees.push(newItem);
     }
     saveItem(serviceAndfee:  ServicesAndFeesGridItem): void {
        if(serviceAndfee.isNewItem)
@@ -73,17 +71,21 @@ export class ServicesAndFeesComponent implements OnInit {
     }
     add(serviceAndfee:  ServicesAndFeesGridItem): void {
         serviceAndfee.service = serviceAndfee.editedValue;
-        let newItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
-        this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, newItem)
+
+        this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, serviceAndfee)
         .subscribe(response => {
+            console.log("🚀 ~ file: services-and-fees.component.ts:86 ~ ServicesAndFeesComponent ~ add ~ response:", response)
+
+            serviceAndfee.oid = response.oid;
             serviceAndfee.isNewItem = false;
             this.toogleEditModel(serviceAndfee);
         }, error => {
-            this.showErrorSnackBar( `There was an error saving ${serviceAndfee.serviceType} ${serviceAndfee.service} please try again`);
+            this.showErrorSnackBar( `There was an error saving ${serviceAndfee.service} ${serviceAndfee.service} please try again`);
             console.log(error);
             this.toogleEditModel(serviceAndfee);
         });
     }
+
     update(serviceAndfee :  ServicesAndFeesGridItem): void {
         let updatedItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
 
@@ -93,6 +95,7 @@ export class ServicesAndFeesComponent implements OnInit {
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.service = serviceAndfee.editedValue;
             this.toogleEditModel(serviceAndfee);
+            this.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
         }, error => {
             serviceAndfee.editedValue = previousNameBackup;
             serviceAndfee.service = previousNameBackup;
@@ -101,9 +104,28 @@ export class ServicesAndFeesComponent implements OnInit {
             this.toogleEditModel(serviceAndfee);
         });
     }
-    toogleEditModel(item: ServicesAndFeesGridItem): void {
+    updateActiveFlag(serviceAndfee :  ServicesAndFeesGridItem): void {
+        let updatedItem: ServicesAndFees = {
+            oid: serviceAndfee.oid,
+            handlerId: serviceAndfee.handlerId,
+            serviceOfferedId: serviceAndfee.serviceOfferedId,
+            service: serviceAndfee.service,
+            serviceTypeId: serviceAndfee.serviceTypeId,
+            isActive: !serviceAndfee.isActive
+        }
+        this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
+            serviceAndfee.oid = response.oid;
+            this.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
+        }, error => {
+            this.showErrorSnackBar( `There was an error updating the service please try again`);
+            serviceAndfee.isActive = !serviceAndfee.isActive;
+            console.log(error);
+
+        });
+    }
+    toogleEditModel(item: ServicesAndFeesGridItem,itemList: ServicesAndFeesGridItem[] = []): void {
         if(item.isNewItem)
-            this.servicesAndFeesGridDisplay[item.serviceType].pop();
+            itemList.pop();
         else
             item.isEditMode = !item.isEditMode;
     }
@@ -121,9 +143,12 @@ export class ServicesAndFeesComponent implements OnInit {
                 return;
             }
             this.servicesAndFeesService.remove(serviceAndfee.item.oid).subscribe(response => {
-                this.servicesAndFeesGridDisplay[serviceAndfee.item.serviceType] = this.servicesAndFeesGridDisplay[serviceAndfee.item.serviceType].filter(item => item.oid !== serviceAndfee.item.oid);
+                let category = this.servicesAndFeesGridDisplay.find(elem=> elem.serviceType.oid == serviceAndfee.item.serviceTypeId);
+
+                category.servicesAndFees = category.servicesAndFees.filter(item => item.oid != serviceAndfee.item.oid);
 
                 this.toogleEditModel(serviceAndfee);
+                this.showSuccessSnackBar("Service deleted successfully");
             }, error => {
                 this.showErrorSnackBar( `There was an error deleting ${serviceAndfee.item.serviceType} ${serviceAndfee.item.service} please try again`);
                 console.log(error);
@@ -139,6 +164,16 @@ export class ServicesAndFeesComponent implements OnInit {
         //     isNewItem: true,
         //     editedValue: ""
         // };
+        // this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, newItem)
+        // .subscribe(response => {
+        //     serviceAndfee.oid = response.oid;
+        //     serviceAndfee.isNewItem = false;
+        //     this.toogleEditModel(serviceAndfee);
+        // }, error => {
+        //     this.showErrorSnackBar( `There was an error saving ${serviceAndfee.serviceType} ${serviceAndfee.service} please try again`);
+        //     console.log(error);
+        //     this.toogleEditModel(serviceAndfee);
+        // });
     }
     isCustomServiceAndFee(item: ServicesAndFees): boolean {
         return item.handlerId ==  null && item.serviceOfferedId == null;
@@ -150,6 +185,16 @@ export class ServicesAndFeesComponent implements OnInit {
             {
                 duration: 2000,
                 panelClass: ['error-snackbar'],
+            }
+        );
+    }
+    private showSuccessSnackBar(message: string): void {
+        this.snackBar.open(
+            message,
+            '',
+            {
+                duration: 2000,
+                panelClass: ['blue-snackbar'],
             }
         );
     }

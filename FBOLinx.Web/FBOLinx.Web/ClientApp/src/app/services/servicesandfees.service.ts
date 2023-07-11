@@ -1,15 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-
-export interface ServicesAndFees {
-    oid: number;
-    handlerId: number | null;
-    serviceOfferedId: number | null;
-    service: string;
-    serviceType: string;
-    isActive: boolean;
-}
+import { FbosServicesAndFeesResponse, ServicesAndFees } from '../models/services-and-fees/services-and-fees';
 
 @Injectable()
 export class ServicesAndFeesService {
@@ -22,8 +14,8 @@ export class ServicesAndFeesService {
         });
         this.accessPointUrl = baseUrl + 'api/ServicesAndFees';
     }
-    public getFboServicesAndFees(fboId : number) : Observable<ServicesAndFees[]> {
-        return this.http.get<ServicesAndFees[]>(this.accessPointUrl + '/fbo/' +fboId, {
+    public getFboServicesAndFees(fboId : number) : Observable<FbosServicesAndFeesResponse[]> {
+        return this.http.get<FbosServicesAndFeesResponse[]>(this.accessPointUrl + '/fbo/' +fboId, {
             headers: this.headers,
         });
     }
@@ -40,8 +32,8 @@ export class ServicesAndFeesService {
         });
     }
 
-    public update(fboId: number, payload:ServicesAndFees) : Observable<void> {
-        return this.http.put<void>(this.accessPointUrl + '/fbo/' + fboId, payload, {
+    public update(fboId: number, payload:ServicesAndFees) : Observable<ServicesAndFees> {
+        return this.http.put<ServicesAndFees>(this.accessPointUrl + '/fbo/' + fboId, payload, {
             headers: this.headers,
         });
     }

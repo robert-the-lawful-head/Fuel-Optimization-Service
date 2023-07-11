@@ -10,5 +10,9 @@ namespace FBOLinx.DB.Models.ServicesAndFees
         [Required]
         [StringLength(100)]
         public string Name { get; set; }
+        [ForeignKey("OID")]
+        public int? FboId { get; set; }
+        public virtual Fbos Fbo { get; set; }
+        public virtual ICollection<FboCustomServicesAndFees> FboCustomServicesAndFees { get; set; }
     }
 }

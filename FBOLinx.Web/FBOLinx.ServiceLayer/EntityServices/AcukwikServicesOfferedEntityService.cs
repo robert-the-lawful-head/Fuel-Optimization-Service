@@ -29,7 +29,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task<AcukwikServicesOffered> FindByComposeKeyAsync(int composeKey)
         {
-            return await this.dbSet.FirstOrDefaultAsync(x => int.Parse(x.HandlerId.ToString()+x.ServiceOfferedId.ToString()) == composeKey);
+            return await this.dbSet.FirstOrDefaultAsync(x => (x.HandlerId.ToString()+x.ServiceOfferedId.ToString()) == composeKey.ToString());
         }
         public IQueryable<AcukwikServicesOffered> FindByComposeKeyIQueryable(int composeKey)
         {
