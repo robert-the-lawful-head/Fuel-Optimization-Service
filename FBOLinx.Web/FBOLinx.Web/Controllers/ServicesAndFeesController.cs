@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesAndFeesController : FBOLinxControllerBase

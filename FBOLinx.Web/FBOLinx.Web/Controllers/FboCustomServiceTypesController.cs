@@ -1,53 +1,67 @@
-﻿using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
-using FBOLinx.ServiceLayer.Logging;
+﻿using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
+using FBOLinx.DB.Models.ServicesAndFees;
+using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FBOLinx.Web.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FboCustomServiceTypesController : FBOLinxControllerBase
     {
-        private readonly IFboServicesAndFeesService _fboServicesAndFeesService;
+        private readonly IFboServiceTypeService _fboServiceTypeService;
 
-        public FboCustomServiceTypesController(IFboServicesAndFeesService fboServicesAndFeesService, ILoggingService logger) : base(logger)
+        public FboCustomServiceTypesController(IFboServiceTypeService fboServiceTypeService, ILoggingService logger) : base(logger)
         {
-            _fboServicesAndFeesService = fboServicesAndFeesService;
+            _fboServiceTypeService = fboServiceTypeService;
         }
 
-        // GET: api/<FboCustomServiceTypesController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        // GET: api/FboCustomServiceTypes/fbo/3
+        [HttpGet("fbo/{fboId}")]
+        public async Task<ActionResult<List<ServiceTypeResponse>>> Get(int fboId)
         {
-            return new string[] { "value1", "value2" };
-        }
+            var result = await _fboServiceTypeService.Get(fboId);
 
-        // GET api/<FboCustomServiceTypesController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+            if (result == null)
+                return NotFound();
 
-        // POST api/<FboCustomServiceTypesController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
+            return Ok(result);
         }
-
-        // PUT api/<FboCustomServiceTypesController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST: api/FboCustomServiceTypes/fbo/3
+        [HttpPost("fbo/{fboId}")]
+        public async Task<ActionResult<ServiceTypeResponse>> Post(int fboId, [FromBody] ServiceTypeResponse fboCustomServiceTypes)
         {
+            var result = await _fboServiceTypeService.Create(fboId, fboCustomServiceTypes);
+
+            return Ok(result);
         }
-
-        // DELETE api/<FboCustomServiceTypesController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // PUT: api/FboCustomServiceTypes/fbo/3
+        [HttpPut("fbo/{fboId}")]
+        public async Task<ActionResult<List<ServiceTypeResponse>>> Put(int fboId, [FromBody] ServiceTypeResponse fboCustomServiceTypes)
         {
+            var result = await _fboServiceTypeService.Update(fboId, fboCustomServiceTypes);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+        // Delete: api/FboCustomServiceTypes/1234
+        [HttpDelete("{FboCustomServiceTypesId}")]
+        public async Task<ActionResult<List<ServiceTypeResponse>>> Delete(int FboCustomServiceTypesId)
+        {
+            var result = await _fboServiceTypeService.Delete(FboCustomServiceTypesId);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok();
         }
     }
 }
