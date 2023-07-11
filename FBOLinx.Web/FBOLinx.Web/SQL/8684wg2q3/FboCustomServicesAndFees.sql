@@ -13,12 +13,19 @@ CREATE TABLE [dbo].[FboCustomServicesAndFees](
 	[FboId] [int] NULL,
 	[AcukwikServicesOfferedId] [int] NULL,
 	[Service] [varchar](100) NULL,
-	[ServiceType] [varchar](100) NULL,
+	[ServiceTypeId] [int] NULL,
  CONSTRAINT [PK_FboCustomServicesAndFees] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[FboCustomServicesAndFees]  WITH CHECK ADD  CONSTRAINT [FK_FboCustomServicesAndFees_FboCustomServiceTypes] FOREIGN KEY([ServiceTypeId])
+REFERENCES [dbo].[FboCustomServiceTypes] ([OID])
+GO
+
+ALTER TABLE [dbo].[FboCustomServicesAndFees] CHECK CONSTRAINT [FK_FboCustomServicesAndFees_FboCustomServiceTypes]
 GO
 
 
