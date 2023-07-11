@@ -6,6 +6,7 @@ import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, Serv
 import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
+import { ItemInputComponent } from './item-input/item-input.component';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -26,7 +27,7 @@ export class ServicesAndFeesComponent implements OnInit {
         private servicesAndFeesService: ServicesAndFeesService,
         private serviceTypeService: ServiceTypeService,
         private sharedService: SharedService,
-        private deleteDialog: MatDialog,
+        private dialog: MatDialog,
         private snackBar: MatSnackBar
         ) { }
 
@@ -35,7 +36,6 @@ export class ServicesAndFeesComponent implements OnInit {
     }
 
     createNewItem(serviceType: ServiceTypeResponse): void {
-
         let category = this.servicesAndFeesGridDisplay.find(elem=> elem.serviceType.name == serviceType.name);
 
         let newItem: ServicesAndFeesGridItem = {
@@ -121,7 +121,7 @@ export class ServicesAndFeesComponent implements OnInit {
             item.isEditMode = !item.isEditMode;
     }
     deleteItem(serviceAndfee: ServicesAndFeesGridItem): void {
-        const dialogRef = this.deleteDialog.open(
+        const dialogRef = this.dialog.open(
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
@@ -146,22 +146,76 @@ export class ServicesAndFeesComponent implements OnInit {
             });
         });
     }
-    createNewCategory(): void {
-        let newItem: ServiceTypeResponse = {
-            oid: 0,
-            name: '',
-            isCustom : true
-        };
-        // this.serviceTypeService.add(this.sharedService.currentUser.fboId, newItem)
-        // .subscribe(response => {
-        //     serviceAndfee.oid = response.oid;
-        //     serviceAndfee.isNewItem = false;
-        //     this.toogleEditModel(serviceAndfee);
-        // }, error => {
-        //     this.showErrorSnackBar( `There was an error saving ${serviceAndfee.serviceType} ${serviceAndfee.service} please try again`);
-        //     console.log(error);
-        //     this.toogleEditModel(serviceAndfee);
-        // });
+    deleteCategory(serviceType: ServiceTypeResponse): void{
+        const dialogRef = this.dialog.open(
+            DeleteConfirmationComponent,
+            {
+                autoFocus: false,
+                data: { description: 'Category', item: serviceType },
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((serviceType) => {
+            if (!serviceType) {
+                return;
+            }
+            this.serviceTypeService.remove(serviceType.item.oid).subscribe(response => {
+                this.servicesAndFeesGridDisplay = this.servicesAndFeesGridDisplay.filter(elem=> elem.serviceType.oid != serviceType.item.oid);
+                this.showSuccessSnackBar("Category and services deleted successfully");
+            }, error => {
+                this.showErrorSnackBar( `There was an error deleting ${serviceType.item.name} please try again`);
+                console.log(error);
+            });
+        });
+    }
+    openCategoryDialog(serviceType: ServiceTypeResponse = null, isEditMode: boolean = false): void {
+        if(serviceType == null){
+            serviceType = {
+                oid: 0,
+                name: "",
+                isCustom : true
+            };
+        }
+        const dialogRef = this.dialog.open(ItemInputComponent,  {data: {name: serviceType.name}});
+
+          dialogRef.afterClosed().subscribe(result => {
+            var previousName = serviceType.name;
+            serviceType.name = result.name;
+            if(isEditMode)
+                this.updateCategory(serviceType,previousName);
+            else
+                this.addCategory(serviceType);
+
+          });
+    }
+    private updateCategory(serviceType: ServiceTypeResponse, previousName: string): void{
+        this.serviceTypeService.update(serviceType.oid, serviceType)
+        .subscribe(response => {
+            serviceType.oid = response.oid;
+            this.servicesAndFeesGridDisplay.push({
+                serviceType: serviceType,
+                servicesAndFees: []
+            });
+            this.showSuccessSnackBar( `saved Successfully`);
+        }, error => {
+            serviceType.name = previousName;
+            this.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
+            console.log(error);
+        });
+    }
+    private addCategory(serviceType: ServiceTypeResponse): void{
+        this.serviceTypeService.add(this.sharedService.currentUser.fboId, serviceType)
+        .subscribe(response => {
+            serviceType.oid = response.oid;
+            this.servicesAndFeesGridDisplay.push({
+                serviceType: serviceType,
+                servicesAndFees: []
+            });
+            this.showSuccessSnackBar( `saved Successfully`);
+        }, error => {
+            this.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
+            console.log(error);
+        });
     }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(

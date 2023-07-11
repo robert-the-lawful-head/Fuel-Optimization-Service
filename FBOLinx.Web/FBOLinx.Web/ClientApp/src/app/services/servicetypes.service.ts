@@ -32,8 +32,8 @@ export class ServiceTypeService {
         });
     }
 
-    public update(fboId: number, payload:ServiceTypeResponse) : Observable<ServiceTypeResponse> {
-        return this.http.put<ServiceTypeResponse>(this.accessPointUrl + '/fbo/' + fboId, payload, {
+    public update(serviceTypeId: number, payload:ServiceTypeResponse) : Observable<ServiceTypeResponse> {
+        return this.http.put<ServiceTypeResponse>(this.accessPointUrl + '/' + serviceTypeId, payload, {
             headers: this.headers,
         });
     }

@@ -41,11 +41,11 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(result);
         }
-        // PUT: api/FboCustomServiceTypes/fbo/3
-        [HttpPut("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServiceTypeResponse>>> Put(int fboId, [FromBody] ServiceTypeResponse fboCustomServiceTypes)
+        // PUT: api/FboCustomServiceTypes/3
+        [HttpPut("{serviceTypeId}")]
+        public async Task<ActionResult<List<ServiceTypeResponse>>> Put(int serviceTypeId, [FromBody] ServiceTypeResponse fboCustomServiceTypes)
         {
-            var result = await _fboServiceTypeService.Update(fboId, fboCustomServiceTypes);
+            var result = await _fboServiceTypeService.Update(serviceTypeId, fboCustomServiceTypes);
 
             if (result == null)
                 return NotFound();

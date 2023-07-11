@@ -8,10 +8,10 @@
                 {{service.serviceType.name}}
             </mat-panel-title>
             <mat-panel-description *ngIf="service.serviceType.isCustom">
-                <span>
+                <span (click)="openCategoryDialog(service.serviceType, true)">
                     <mat-icon>edit</mat-icon>
                 </span>
-                <span>
+                <span (click)="deleteCategory(service.serviceType)">
                     <mat-icon>delete</mat-icon>
                 </span>
             </mat-panel-description>
@@ -64,7 +64,7 @@
       </mat-accordion>
 
     <div class="add-button-row">
-        <button ni-button [view]="'gray'" size="large" (click)="createNewCategory()">
+        <button ni-button [view]="'gray'" size="large" (click)="openCategoryDialog()">
             Create New Category
         </button>
     </div>

@@ -185,6 +185,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             if (acukwikService != null && customServiceAndfee != null)
             {
                 await _fboCustomServicesAndFeesRepo.DeleteAsync(servicesAndFees.Oid);
+
                 return servicesAndFees;
             }
             //add not active acuckwick record

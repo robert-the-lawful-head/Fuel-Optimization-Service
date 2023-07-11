@@ -2,9 +2,11 @@
 using FBOLinx.DB.Models.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 using FBOLinx.ServiceLayer.EntityServices;
+using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
@@ -19,22 +21,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
     public class FboServiceTypeService : IFboServiceTypeService
     {
         private IRepository<FboCustomServiceType, FboLinxContext> _fboCustomEntityTypeRepo;
+        private IRepository<FboCustomServicesAndFees, FboLinxContext> _fboCustomServicesAndFeesRepo;
+
 
         public FboServiceTypeService(
-            IRepository<FboCustomServiceType, FboLinxContext> fboCustomEntityTypeRepo
+            IRepository<FboCustomServiceType, FboLinxContext> fboCustomEntityTypeRepo,
+            IRepository<FboCustomServicesAndFees, FboLinxContext> fboCustomServicesAndFeesRepo
         )
         {
             _fboCustomEntityTypeRepo = fboCustomEntityTypeRepo;
+            _fboCustomServicesAndFeesRepo = fboCustomServicesAndFeesRepo;
         }
 
         public async Task<ServiceTypeResponse> Create(int fboId, ServiceTypeResponse serviceType)
         {
-            return (await _fboCustomEntityTypeRepo.AddAsync(serviceType.Adapt<FboCustomServiceType>())).Adapt<ServiceTypeResponse>();
+            var entity = serviceType.Adapt<FboCustomServiceType>();
+            entity.FboId = fboId;
+            return (await _fboCustomEntityTypeRepo.AddAsync(entity)).Adapt<ServiceTypeResponse>();
         }
 
         public async Task<bool> Delete(int serviceTypeId)
         {
-            return (await _fboCustomEntityTypeRepo.DeleteAsync(serviceTypeId) == null) ? false : true;
+            var entity = await _fboCustomEntityTypeRepo.Get().Include(x => x.FboCustomServicesAndFees).Where(x => x.Oid == serviceTypeId).FirstOrDefaultAsync();
+
+             await _fboCustomEntityTypeRepo.DeleteAsync(entity);
+
+            return true;
         }
 
         public async Task<List<ServiceTypeResponse>> Get(int fboId)
@@ -44,7 +56,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 
         public async Task<ServiceTypeResponse> Update(int serviceTypeId, ServiceTypeResponse serviceType)
         {
-            var entity = serviceType.Adapt<FboCustomServiceType>();
+            var entity = await _fboCustomEntityTypeRepo.FindAsync(serviceTypeId);
+
+            if (entity == null)
+                return null;
+            entity.Name = serviceType.Name;
             await _fboCustomEntityTypeRepo.UpdateAsync(entity);
             return  entity.Adapt<ServiceTypeResponse>();
         }
