@@ -1,4 +1,5 @@
 ﻿using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
+using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
 using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +22,7 @@ namespace FBOLinx.Web.Controllers
         }
         // GET: api/ServicesAndFees/fbo/3
         [HttpGet("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Get(int fboId)
+        public async Task<ActionResult<List<FbosServicesAndFeesResponse>>> Get(int fboId)
         {
             var result =  await _fboServicesAndFeesService.Get(fboId);
 
@@ -44,10 +45,10 @@ namespace FBOLinx.Web.Controllers
         {
             var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees);
 
-            if (!result)
+            if (result == null)
                 return NotFound();
 
-            return Ok();
+            return Ok(result);
         }
         // Delete: api/ServicesAndFees/1234
         [HttpDelete("{servicesAndFeesId}")]

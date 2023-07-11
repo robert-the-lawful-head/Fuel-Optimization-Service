@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace FBOLinx.DB.Models.ServicesAndFees
 {
+    [Table("FboCustomServiceTypes")]
     public class FboCustomServiceType : FBOLinxBaseEntityModel<int>
     {
         [Required]

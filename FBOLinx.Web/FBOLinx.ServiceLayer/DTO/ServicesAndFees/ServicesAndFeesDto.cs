@@ -7,6 +7,6 @@
         public int? ServiceOfferedId { get; set; }
         public string Service { get; set; }
         public string ServiceType { get; set; }
-        public bool isActive { get;set; }
+        public bool IsActive { get;set; }
     }
 }

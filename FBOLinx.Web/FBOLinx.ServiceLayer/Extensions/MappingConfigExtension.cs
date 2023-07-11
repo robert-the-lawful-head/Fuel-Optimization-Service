@@ -1,10 +1,9 @@
-﻿using FBOLinx.Core.Enums;
-using FBOLinx.DB.Models;
+﻿using FBOLinx.DB.Models;
 using FBOLinx.DB.Models.Dega;
 using FBOLinx.DB.Models.ServicesAndFees;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
-using FBOLinx.ServiceLayer.Mapping;
 using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,12 +62,35 @@ namespace FBOLinx.ServiceLayer.Extensions
 
                 TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesDto>
                 .NewConfig()
-                .Map(dest => dest.isActive, src => true)
+                .Map(dest => dest.IsActive, src => true)
                 .Map(dest => dest.Oid, src => src.HandlerId.ToString()+src.ServiceOfferedId.ToString());
 
-                TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
+            TypeAdapterConfig<AcukwikServicesOffered, ServiceTypeResponse>
+            .NewConfig()
+            .Map(dest => dest.IsCustom, src => false);
+                //.Map(dest => dest.ServiceType, src => src.Adapt<FboCustomServiceType>());
+    
+                TypeAdapterConfig<AcukwikServicesOffered, FboCustomServiceType>
                 .NewConfig()
-                .Map(dest => dest.isActive, src => src.ServiceActionType != ServiceActionType.NotActive);
+                .Map(dest => dest.Oid, src => 0)
+                .Map(dest => dest.Name, src => src.Service);
+
+                TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesResponse>
+                .NewConfig()
+                .Map(dest => dest.IsCustom, src => false);
+
+                TypeAdapterConfig<FboCustomServicesAndFees, ServiceTypeResponse>
+                .NewConfig()
+                .Map(dest => dest.IsCustom, src => true);
+
+                TypeAdapterConfig<FboCustomServicesAndFees, FboCustomServiceType>
+                .NewConfig()
+                .Map(dest => dest.Oid, src => src.ServiceTypeId)
+                .Map(dest => dest.Name, src => src.ServiceType);
+
+                 TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesResponse>
+                .NewConfig()
+                .Map(dest => dest.IsCustom, src => true);
         }
     }
 }

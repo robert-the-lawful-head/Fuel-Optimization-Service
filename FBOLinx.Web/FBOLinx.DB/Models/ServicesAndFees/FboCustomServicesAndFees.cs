@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models.ServicesAndFees
@@ -14,8 +14,8 @@ namespace FBOLinx.DB.Models.ServicesAndFees
         public int? AcukwikServicesOfferedId { get; set; }
         [StringLength(100)]
         public string Service { get; set; }
-        [Required]
-        [StringLength(100)]
-        public string ServiceType { get; set; }
+        [ForeignKey("OID")]
+        public int? ServiceTypeId { get; set; }
+        public virtual FboCustomServiceType ServiceType { get; set; }
     }
 }
