@@ -1,6 +1,3 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
-
-<div class="after-breadcrumb">
     <div *ngIf="!servicesAndFeesGridDisplay">
         <mat-spinner></mat-spinner>
     </div>
@@ -51,7 +48,7 @@
                             [(ngModel)]="val.isActive"></mat-checkbox>
                             <span class="p-lg-3">{{val.service}}</span>
                         </div>
-                        <div class="actions-buttons" *ngIf="isCustomServiceAndFee(val)">
+                        <div class="actions-buttons" *ngIf="val.isCustom">
                             <span (click)="toogleEditModel(val)"><mat-icon>edit</mat-icon></span>
                             <span (click)="deleteItem(val)"><mat-icon>delete</mat-icon></span>
                         </div>
@@ -71,4 +68,3 @@
             Create New Category
         </button>
     </div>
-</div>

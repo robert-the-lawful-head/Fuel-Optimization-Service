@@ -233,6 +233,7 @@ import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders
 import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.component';
+import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
 
 @NgModule({
     declarations: [
@@ -387,7 +388,9 @@ import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.
         ServiceOrdersDialogNewComponent,
         ServiceOrdersDialogOrderItemsComponent,
         FeeAndTaxBreakdownDialogWrapperComponent,
-        ServicesAndFeesComponent
+        ServicesAndFeesComponent,
+        ServicesAndFeesHomeComponent,
+        RampFeesCategoryComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

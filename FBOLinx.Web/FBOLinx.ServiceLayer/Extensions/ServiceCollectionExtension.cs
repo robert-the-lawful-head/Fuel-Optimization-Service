@@ -118,7 +118,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
-            services.AddTransient<IFboServiceTypeService, IFboServiceTypeService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
             
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

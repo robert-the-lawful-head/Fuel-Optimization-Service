@@ -110,6 +110,7 @@ import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTem
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
 import { ServicesAndFeesService } from './services/servicesandfees.service';
+import { ServiceTypeService } from './services/serviceTypes.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -235,7 +236,8 @@ import { ServicesAndFeesService } from './services/servicesandfees.service';
         PricingTemplateCalcService,
         DocumentService,
         ServiceOrderService,
-        ServicesAndFeesService
+        ServicesAndFeesService,
+        ServiceTypeService
     ],
 })
 export class AppModule { }

@@ -1,21 +1,11 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
+import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/services-and-fees',
-        title: 'FBO Services and Fees',
-    },
-];
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -25,15 +15,16 @@ interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
 @Component({
   selector: 'app-services-and-fees',
   templateUrl: './services-and-fees.component.html',
-  styleUrls: ['./services-and-fees.component.scss']
+  styleUrls: ['./services-and-fees.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ServicesAndFeesComponent implements OnInit {
     @Input() public fboId: number|null = null;
     servicesAndFeesGridDisplay: FbosServicesAndFeesResponse[] = [];
-    breadcrumb = BREADCRUMBS;
 
     constructor(
         private servicesAndFeesService: ServicesAndFeesService,
+        private serviceTypeService: ServiceTypeService,
         private sharedService: SharedService,
         private deleteDialog: MatDialog,
         private snackBar: MatSnackBar
@@ -156,15 +147,12 @@ export class ServicesAndFeesComponent implements OnInit {
         });
     }
     createNewCategory(): void {
-        // let newItem: ServicesAndFeesGridItem = {
-        //     oid: 0,
-        //     service: "",
-        //     serviceType: "",
-        //     isEditMode: true,
-        //     isNewItem: true,
-        //     editedValue: ""
-        // };
-        // this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, newItem)
+        let newItem: ServiceTypeResponse = {
+            oid: 0,
+            name: '',
+            isCustom : true
+        };
+        // this.serviceTypeService.add(this.sharedService.currentUser.fboId, newItem)
         // .subscribe(response => {
         //     serviceAndfee.oid = response.oid;
         //     serviceAndfee.isNewItem = false;
@@ -174,9 +162,6 @@ export class ServicesAndFeesComponent implements OnInit {
         //     console.log(error);
         //     this.toogleEditModel(serviceAndfee);
         // });
-    }
-    isCustomServiceAndFee(item: ServicesAndFees): boolean {
-        return item.handlerId ==  null && item.serviceOfferedId == null;
     }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(
