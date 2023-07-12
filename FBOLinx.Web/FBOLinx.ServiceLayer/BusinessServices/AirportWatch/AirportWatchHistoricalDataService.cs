@@ -38,13 +38,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
     public class AirportWatchHistoricalDataService : BaseDTOService<AirportWatchHistoricalDataDto, DB.Models.AirportWatchHistoricalData, FboLinxContext>, IAirportWatchHistoricalDataService
     {
         private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
-        private AircraftService _AircraftService;
+        private IAircraftService _AircraftService;
         private IFboEntityService _FboEntityService;
         private CustomerAircraftEntityService _CustomerAircraftEntityService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
         public AirportWatchHistoricalDataService(AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
-            AircraftService aircraftService,
+            IAircraftService aircraftService,
             IFboEntityService fboEntityService,
             CustomerAircraftEntityService customerAircraftEntityService,
             ICustomerInfoByGroupService customerInfoByGroupService
