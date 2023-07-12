@@ -8,7 +8,7 @@
                 {{service.serviceType.name}}
             </mat-panel-title>
             <mat-panel-description *ngIf="service.serviceType.isCustom">
-                <span (click)="openCategoryDialog(service.serviceType, true)">
+                <span (click)="openCategoryDialog(service.serviceType)">
                     <mat-icon>edit</mat-icon>
                 </span>
                 <span (click)="deleteCategory(service.serviceType)">
@@ -50,7 +50,7 @@
                         </div>
                         <div class="actions-buttons" *ngIf="val.isCustom">
                             <span (click)="toogleEditModel(val)"><mat-icon>edit</mat-icon></span>
-                            <span (click)="deleteItem(val)"><mat-icon>delete</mat-icon></span>
+                            <span (click)="deleteItem(val,service.serviceType.name)"><mat-icon>delete</mat-icon></span>
                         </div>
                     </ng-container>
                 </div>

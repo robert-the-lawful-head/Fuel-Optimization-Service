@@ -33,6 +33,7 @@ button, mat-icon{
     border: 1px solid $card-header-bg;
     border-radius: 3px;
     box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
+    margin-right: auto;
 }
 .services-cards-container{
     display: flex;

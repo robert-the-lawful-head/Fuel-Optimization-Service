@@ -7,6 +7,7 @@ import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 import { ItemInputComponent } from './item-input/item-input.component';
+import { useAnimation } from '@angular/animations';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -21,7 +22,7 @@ interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
 })
 export class ServicesAndFeesComponent implements OnInit {
     @Input() public fboId: number|null = null;
-    servicesAndFeesGridDisplay: FbosServicesAndFeesResponse[] = [];
+    servicesAndFeesGridDisplay: FbosServicesAndFeesResponse[];
 
     constructor(
         private servicesAndFeesService: ServicesAndFeesService,
@@ -48,7 +49,10 @@ export class ServicesAndFeesComponent implements OnInit {
             service : '',
             isActive : true,
             isEditMode : true,
-            editedValue : ''
+            editedValue : '',
+            createdDate: new Date(),
+            createdByUser: '',
+            createdByUserId: this.sharedService.currentUser.oid
         };
 
 
@@ -65,8 +69,6 @@ export class ServicesAndFeesComponent implements OnInit {
 
         this.servicesAndFeesService.add(this.sharedService.currentUser.fboId, serviceAndfee)
         .subscribe(response => {
-            console.log("🚀 ~ file: services-and-fees.component.ts:86 ~ ServicesAndFeesComponent ~ add ~ response:", response)
-
             serviceAndfee.oid = response.oid;
             serviceAndfee.isNewItem = false;
             this.toogleEditModel(serviceAndfee);
@@ -102,7 +104,9 @@ export class ServicesAndFeesComponent implements OnInit {
             serviceOfferedId: serviceAndfee.serviceOfferedId,
             service: serviceAndfee.service,
             serviceTypeId: serviceAndfee.serviceTypeId,
-            isActive: !serviceAndfee.isActive
+            isActive: !serviceAndfee.isActive,
+            createdDate: new Date(),
+            createdByUserId: this.sharedService.currentUser.oid
         }
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.oid = response.oid;
@@ -115,12 +119,13 @@ export class ServicesAndFeesComponent implements OnInit {
         });
     }
     toogleEditModel(item: ServicesAndFeesGridItem,itemList: ServicesAndFeesGridItem[] = []): void {
+        item.editedValue = item.service;
         if(item.isNewItem)
             itemList.pop();
         else
             item.isEditMode = !item.isEditMode;
     }
-    deleteItem(serviceAndfee: ServicesAndFeesGridItem): void {
+    deleteItem(serviceAndfee: ServicesAndFeesGridItem, serviceTypeName: string = null): void {
         const dialogRef = this.dialog.open(
             DeleteConfirmationComponent,
             {
@@ -134,7 +139,7 @@ export class ServicesAndFeesComponent implements OnInit {
                 return;
             }
             this.servicesAndFeesService.remove(serviceAndfee.item.oid).subscribe(response => {
-                let category = this.servicesAndFeesGridDisplay.find(elem=> elem.serviceType.oid == serviceAndfee.item.serviceTypeId);
+                let category = this.servicesAndFeesGridDisplay.find(elem=> elem.serviceType.name == serviceTypeName);
 
                 category.servicesAndFees = category.servicesAndFees.filter(item => item.oid != serviceAndfee.item.oid);
 
@@ -168,12 +173,16 @@ export class ServicesAndFeesComponent implements OnInit {
             });
         });
     }
-    openCategoryDialog(serviceType: ServiceTypeResponse = null, isEditMode: boolean = false): void {
+    openCategoryDialog(serviceType: ServiceTypeResponse = null): void {
+        let isEditMode = serviceType != null;
         if(serviceType == null){
             serviceType = {
                 oid: 0,
                 name: "",
-                isCustom : true
+                isCustom : true,
+                createdDate: new Date(),
+                createdByUser: "",
+                createdByUserId: this.sharedService.currentUser.oid
             };
         }
         const dialogRef = this.dialog.open(ItemInputComponent,  {data: {name: serviceType.name}});
@@ -192,10 +201,6 @@ export class ServicesAndFeesComponent implements OnInit {
         this.serviceTypeService.update(serviceType.oid, serviceType)
         .subscribe(response => {
             serviceType.oid = response.oid;
-            this.servicesAndFeesGridDisplay.push({
-                serviceType: serviceType,
-                servicesAndFees: []
-            });
             this.showSuccessSnackBar( `saved Successfully`);
         }, error => {
             serviceType.name = previousName;

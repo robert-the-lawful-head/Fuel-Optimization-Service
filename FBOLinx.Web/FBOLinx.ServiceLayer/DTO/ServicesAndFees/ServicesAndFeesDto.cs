@@ -10,5 +10,6 @@ namespace FBOLinx.ServiceLayer.DTO.ServicesAndFees
         public string Service { get; set; }
         public int? ServiceTypeId { get; set; }
         public bool IsActive { get;set; }
+        public int CreatedByUserId { get; set; }
     }
 }

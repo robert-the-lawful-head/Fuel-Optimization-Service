@@ -87,10 +87,12 @@ namespace FBOLinx.ServiceLayer.Extensions
 
                 TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesResponse>
                 .NewConfig()
+                .Map(dest => dest.CreatedByUser, src => "NA")
                 .Map(dest => dest.IsCustom, src => false);
 
                 TypeAdapterConfig<FboCustomServicesAndFees, ServiceTypeResponse>
                 .NewConfig()
+                .Map(dest => dest.createdByUser, src => src.CreatedByUser.Username)
                 .Map(dest => dest.IsCustom, src => true);
 
                 TypeAdapterConfig<FboCustomServicesAndFees, FboCustomServiceType>
@@ -98,14 +100,19 @@ namespace FBOLinx.ServiceLayer.Extensions
                 .Map(dest => dest.Oid, src => src.ServiceTypeId)
                 .Map(dest => dest.Name, src => src.ServiceType);
 
-                 TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesResponse>
+            TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesResponse>
                 .NewConfig()
                 .Map(dest => dest.IsActive, src => (src.ServiceActionType == ServiceActionType.Active) ? true : false)
+                .Map(dest => dest.CreatedByUser, src => src.CreatedByUser.Username)
                 .Map(dest => dest.IsCustom, src => true);
 
-            TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
+            TypeAdapterConfig<ServicesAndFeesDto, ServicesAndFeesResponse>
             .NewConfig()
-            .Map(dest => dest.IsActive, src => (src.ServiceActionType == ServiceActionType.Active) ? true : false);
+            .Map(dest => dest.IsCustom, src => true);
+
+            TypeAdapterConfig<FboCustomServicesAndFees, ServicesAndFeesDto>
+                .NewConfig()
+                .Map(dest => dest.IsActive, src => (src.ServiceActionType == ServiceActionType.Active) ? true : false);
         }
     }
 }

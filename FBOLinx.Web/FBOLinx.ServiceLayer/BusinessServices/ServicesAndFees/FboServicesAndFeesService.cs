@@ -6,6 +6,7 @@ using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
 using FBOLinx.ServiceLayer.EntityServices;
+using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -130,7 +131,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                         Name = service.Name,
                         Oid = service.Oid,
                     },
-                    ServicesAndFees = service.FboCustomServicesAndFees.Adapt<List<ServicesAndFeesDto>>().Adapt<List<ServicesAndFeesResponse>>()
+                    ServicesAndFees = service.FboCustomServicesAndFees.Adapt<List<ServicesAndFeesResponse>>()
                 };
                 fbosServicesAndFeesResponseList.Add(fbosServicesAndFeesResponse);
 
@@ -152,55 +153,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
         {
             var customServiceAndfee = await _fboCustomServicesAndFeesRepo.FindAsync(servicesAndFees.Oid);
 
-            var handlerId = servicesAndFees.HandlerId;
-            var serviceOfferedId = servicesAndFees.ServiceOfferedId;
+            if (servicesAndFees.ServiceTypeId != null && customServiceAndfee == null) return null;
 
-            AcukwikServicesOffered acukwikService = null;
+            var entity = servicesAndFees.Adapt<FboCustomServicesAndFees>();
+            entity.FboId = fboId;
+            entity.AcukwikServicesOfferedId = (customServiceAndfee == null) ? null: customServiceAndfee.AcukwikServicesOfferedId;
 
-            if (handlerId != null && serviceOfferedId != null)
+            if (servicesAndFees.ServiceTypeId != null)
             {
-                acukwikService = await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)handlerId, (int)serviceOfferedId);
+                await _fboCustomServicesAndFeesRepo.UpdateAsync(entity);
+                return entity.Adapt<ServicesAndFeesDto>();
             }
 
-            //new custom service
-            if (acukwikService == null && customServiceAndfee == null)
+            if (customServiceAndfee == null)
             {
-                var entity = servicesAndFees.Adapt<FboCustomServicesAndFees>();
                 entity.Oid = 0;
-                entity.FboId = fboId;
                 var createdEntity = await _fboCustomServicesAndFeesRepo.AddAsync(entity);
 
                 return createdEntity.Adapt<ServicesAndFeesDto>();
             }
-            //Update custom service
-            if (acukwikService == null && customServiceAndfee != null)
-            {
-                var entity = servicesAndFees.Adapt<FboCustomServicesAndFees>();
-                entity.FboId = fboId;
-                await _fboCustomServicesAndFeesRepo.UpdateAsync(entity);
 
+
+            var handlerId = servicesAndFees.HandlerId;
+            var serviceOfferedId = servicesAndFees.ServiceOfferedId;
+
+            var acukwikService = (handlerId == null && serviceOfferedId == null) ? null : await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)handlerId, (int)serviceOfferedId);
+
+            if (acukwikService?.Service == servicesAndFees.Service)
+            {
+                await _fboCustomServicesAndFeesRepo.DeleteAsync(entity.Oid);
                 return entity.Adapt<ServicesAndFeesDto>();
             }
-            //delete not active acuckwick record
-            if (acukwikService != null && customServiceAndfee != null)
-            {
-                await _fboCustomServicesAndFeesRepo.DeleteAsync(servicesAndFees.Oid);
-
-                return servicesAndFees;
-            }
-            //add not active acuckwick record
-            if (acukwikService != null && customServiceAndfee == null)
-            {
-                var updatedEntity = servicesAndFees.Adapt<FboCustomServicesAndFees>();
-                updatedEntity.FboId = fboId;
-                updatedEntity.Oid = 0;
-                updatedEntity.AcukwikServicesOfferedId = int.Parse(servicesAndFees?.HandlerId.ToString() + servicesAndFees?.ServiceOfferedId.ToString());
-                var createdEntity = await _fboCustomServicesAndFeesRepo.AddAsync(updatedEntity);
-
-                return createdEntity.Adapt<ServicesAndFeesDto>();
-            }
-
-            return null;
+            await _fboCustomServicesAndFeesRepo.UpdateAsync(entity);
+            return entity.Adapt<ServicesAndFeesDto>();
         }
         public async Task<bool> Delete(int ServiceAdnFeesId,int? handlerId, int? serviceOfferedId)
         {

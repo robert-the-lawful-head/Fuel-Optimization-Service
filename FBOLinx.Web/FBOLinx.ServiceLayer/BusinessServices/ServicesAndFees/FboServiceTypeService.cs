@@ -21,16 +21,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
     public class FboServiceTypeService : IFboServiceTypeService
     {
         private IRepository<FboCustomServiceType, FboLinxContext> _fboCustomEntityTypeRepo;
-        private IRepository<FboCustomServicesAndFees, FboLinxContext> _fboCustomServicesAndFeesRepo;
-
 
         public FboServiceTypeService(
-            IRepository<FboCustomServiceType, FboLinxContext> fboCustomEntityTypeRepo,
-            IRepository<FboCustomServicesAndFees, FboLinxContext> fboCustomServicesAndFeesRepo
+            IRepository<FboCustomServiceType, FboLinxContext> fboCustomEntityTypeRepo
         )
         {
             _fboCustomEntityTypeRepo = fboCustomEntityTypeRepo;
-            _fboCustomServicesAndFeesRepo = fboCustomServicesAndFeesRepo;
         }
 
         public async Task<ServiceTypeResponse> Create(int fboId, ServiceTypeResponse serviceType)
