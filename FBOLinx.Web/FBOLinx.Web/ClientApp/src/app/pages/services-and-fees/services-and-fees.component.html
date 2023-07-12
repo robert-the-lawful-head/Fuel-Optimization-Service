@@ -48,9 +48,10 @@
                             [(ngModel)]="val.isActive"></mat-checkbox>
                             <span class="p-lg-3">{{val.service}}</span>
                         </div>
-                        <div class="actions-buttons" *ngIf="val.isCustom">
-                            <span (click)="toogleEditModel(val)"><mat-icon>edit</mat-icon></span>
-                            <span (click)="deleteItem(val,service.serviceType.name)"><mat-icon>delete</mat-icon></span>
+                        <div class="actions-buttons">
+                            <span (click)="toogleEditModel(val)" *ngIf="val.isCustom"><mat-icon>edit</mat-icon></span>
+                            <span (click)="deleteItem(val,service.serviceType.name)" *ngIf="val.isCustom"><mat-icon>delete</mat-icon></span>
+                            <span [matTooltip]="getInfoTooltipText(val)"><mat-icon>info</mat-icon></span>
                         </div>
                     </ng-container>
                 </div>

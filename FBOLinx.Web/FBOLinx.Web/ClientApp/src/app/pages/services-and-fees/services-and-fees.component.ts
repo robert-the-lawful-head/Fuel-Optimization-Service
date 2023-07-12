@@ -222,6 +222,12 @@ export class ServicesAndFeesComponent implements OnInit {
             console.log(error);
         });
     }
+    getInfoTooltipText(serviceAndFees: ServicesAndFeesResponse): string{
+        if(serviceAndFees.serviceTypeId == null)
+            return   `Source: Acukwik`;
+        else
+            return  `Source: ${serviceAndFees.createdByUser} - ${serviceAndFees.createdDate}`;
+    }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(
             message,
