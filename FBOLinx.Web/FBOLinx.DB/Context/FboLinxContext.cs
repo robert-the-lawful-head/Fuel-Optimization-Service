@@ -1066,6 +1066,11 @@ namespace FBOLinx.DB.Context
             {
                 entity.HasNoKey();
             });
+
+            modelBuilder.Entity<FboCustomServiceType>()
+            .HasMany(p => p.FboCustomServicesAndFees)
+            .WithOne(c => c.ServiceType)
+            .OnDelete(DeleteBehavior.Cascade);
         }
 
         [DbFunction("fn_Split")]

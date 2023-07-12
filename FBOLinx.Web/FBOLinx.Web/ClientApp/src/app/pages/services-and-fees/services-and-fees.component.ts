@@ -73,6 +73,7 @@ export class ServicesAndFeesComponent implements OnInit {
         .subscribe(response => {
             serviceAndfee.oid = response.oid;
             serviceAndfee.isNewItem = false;
+            serviceAndfee.createdByUser = this.sharedService.currentUser.username;
             this.toogleEditModel(serviceAndfee);
         }, error => {
             this.showErrorSnackBar( `There was an error saving ${serviceAndfee.service} ${serviceAndfee.service} please try again`);

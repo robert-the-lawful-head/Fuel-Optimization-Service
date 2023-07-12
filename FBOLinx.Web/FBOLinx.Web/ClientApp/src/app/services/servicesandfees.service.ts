@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FbosServicesAndFeesResponse, ServicesAndFees } from '../models/services-and-fees/services-and-fees';
+import { FbosServicesAndFeesResponse, ServicesAndFees, ServicesAndFeesResponse } from '../models/services-and-fees/services-and-fees';
 
 @Injectable()
 export class ServicesAndFeesService {
@@ -20,8 +20,8 @@ export class ServicesAndFeesService {
         });
     }
 
-    public add(fboId: number , payload: ServicesAndFees) : Observable<ServicesAndFees> {
-        return this.http.post<ServicesAndFees>(this.accessPointUrl + '/fbo/' + fboId, payload, {
+    public add(fboId: number , payload: ServicesAndFees) : Observable<ServicesAndFeesResponse> {
+        return this.http.post<ServicesAndFeesResponse>(this.accessPointUrl + '/fbo/' + fboId, payload, {
             headers: this.headers,
         });
     }
@@ -32,8 +32,8 @@ export class ServicesAndFeesService {
         });
     }
 
-    public update(fboId: number, payload:ServicesAndFees) : Observable<ServicesAndFees> {
-        return this.http.put<ServicesAndFees>(this.accessPointUrl + '/fbo/' + fboId, payload, {
+    public update(fboId: number, payload:ServicesAndFees) : Observable<ServicesAndFeesResponse> {
+        return this.http.put<ServicesAndFeesResponse>(this.accessPointUrl + '/fbo/' + fboId, payload, {
             headers: this.headers,
         });
     }

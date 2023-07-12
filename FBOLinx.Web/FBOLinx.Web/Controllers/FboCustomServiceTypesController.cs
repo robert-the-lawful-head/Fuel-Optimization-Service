@@ -10,7 +10,7 @@ using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 
 namespace FBOLinx.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FboCustomServiceTypesController : FBOLinxControllerBase

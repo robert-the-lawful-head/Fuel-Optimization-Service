@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.Web.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesAndFeesController : FBOLinxControllerBase
@@ -33,7 +33,7 @@ namespace FBOLinx.Web.Controllers
         }
         // POST: api/ServicesAndFees/fbo/3
         [HttpPost("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Post(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
+        public async Task<ActionResult<ServicesAndFeesResponse>> Post(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
         {
             var result = await _fboServicesAndFeesService.Create(fboId,servicesAndFees);
 
@@ -41,7 +41,7 @@ namespace FBOLinx.Web.Controllers
         }
         // PUT: api/ServicesAndFees/fbo/3
         [HttpPut("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
+        public async Task<ActionResult<List<ServicesAndFeesResponse>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
         {
             var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees);
 
@@ -52,14 +52,14 @@ namespace FBOLinx.Web.Controllers
         }
         // Delete: api/ServicesAndFees/1234
         [HttpDelete("{servicesAndFeesId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Delete(int servicesAndFeesId, int? handlerId, int? serviceOfferedId)
+        public async Task<IActionResult> Delete(int servicesAndFeesId, int? handlerId, int? serviceOfferedId)
         {
             var result = await _fboServicesAndFeesService.Delete(servicesAndFeesId, handlerId, serviceOfferedId);
 
             if (result == null)
                 return NotFound();
 
-            return Ok();
+            return NoContent();
         }
     }
 }
