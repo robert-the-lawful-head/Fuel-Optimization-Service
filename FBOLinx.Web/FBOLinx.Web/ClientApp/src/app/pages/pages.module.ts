@@ -141,6 +141,7 @@ import { CustomersDialogNewCustomerComponent } from './customers/customers-dialo
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
 import { CustomersGridComponent } from './customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
+import { CustomersEditDialogComponent } from './customers/customers-edit-dialog/customers-edit-dialog.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardFboUpdatedComponent } from './dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
@@ -225,8 +226,8 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
-import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
 import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
 import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
@@ -257,6 +258,7 @@ import { ItemInputComponent } from './services-and-fees/item-input/item-input.co
         CustomersEditComponent,
         CustomersGridComponent,
         CustomersHomeComponent,
+        CustomersEditDialogComponent,
         DashboardFboComponent,
         DashboardFboUpdatedComponent,
         DashboardHomeComponent,

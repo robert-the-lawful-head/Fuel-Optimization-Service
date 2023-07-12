@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
@@ -35,5 +36,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public bool? MergeRejected { get; set; }
         public int Oid { get; set; }
         public CustomersDto Customer { get; set; }
+        public List<CustomerInfoByGroupNoteDto> Notes { get; set; }
     }
 }

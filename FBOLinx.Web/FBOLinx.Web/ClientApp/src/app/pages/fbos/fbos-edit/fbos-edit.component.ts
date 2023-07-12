@@ -36,6 +36,7 @@ export class FbosEditComponent implements OnInit {
     contactsData: any;
     groups: Array<any>;
     availableAntennas: any[];
+    availableAccountTypes: any[] = [{ type: "Premium", value: 0 }, { type: "Freemium", value: 1}];
 
     // Private Members
 

@@ -12,6 +12,7 @@ namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
         public CustomerInfoByGroupByGroupIdSpecification(int groupId) : base(x => x.GroupId == groupId)
         {
             AddInclude(x => x.Customer);
+            AddInclude(x => x.Notes);
         }
     }
 }

@@ -29,6 +29,10 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     public appliedDateTypes: EnumOptions.EnumOption[] = EnumOptions.serviceOrderAppliedDateTypeOptions;
     public aircraftTypes: Array<any>;
     public selectedAircraftId: number;
+    public isLoadingAircraft: boolean = false;
+    public filters = {
+        tailNumberFilter: ''
+    };
 
     constructor(public dialogRef: MatDialogRef<ServiceOrdersDialogNewComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ServiceOrder,
@@ -38,18 +42,20 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         private sharedService: SharedService,
         private acukwikAirportsService: AcukwikairportsService,
         private aircraftsService: AircraftsService) {
-
+                    
     }
 
     ngOnInit() {
+            //Initialize an empty aircraft
+        this.onCustomerAircraftFilterChanged('');
         this.loadCustomerInfoByGroupDataSource();
         this.loadAircraftTypes();
     }    
 
     public onCustomerInfoByGroupChanged(selectedCustomerInfoByGroup: CustomerInfoByGroup): void {
         this.data.customerInfoByGroup = selectedCustomerInfoByGroup;
-        this.data.customerAircraft = null;
         this.onCustomerAircraftChanged(null);
+        this.filters.tailNumberFilter = '';
 
         this.data.customerInfoByGroupId = this.data.customerInfoByGroup.oid;
         if (this.data.customerInfoByGroupId > 0) {
@@ -58,21 +64,29 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     }
 
     public onCustomerFilterChanged(event) {
-        this.data.customerInfoByGroup = {
-            oid: 0,
-            company: event,
-            groupId: this.sharedService.currentUser.groupId,
-            customerId: 0
-        };
+        if (event == '' || event == null) {
+            this.data.customerInfoByGroup = null;
+            this.onCustomerAircraftChanged(null);
+        } else {
+            this.data.customerInfoByGroup = {
+                oid: 0,
+                company: event,
+                groupId: this.sharedService.currentUser.groupId,
+                customerId: 0
+            };
+        }
+        
         this.data.customerInfoByGroupId = 0;
+        this.customerAircraftsDataSource = [];
     }
 
     public onCustomerAircraftChanged(customerAircraft: CustomerAircraft): void {
-        this.data.customerAircraft = customerAircraft;
-        if (this.data.customerAircraft != null)
+        if (customerAircraft == null) {
+            this.onCustomerAircraftFilterChanged('');
+        } else {
+            this.data.customerAircraft = customerAircraft;
             this.data.customerAircraftId = this.data.customerAircraft.oid;
-        else
-           this.data.customerAircraftId = 0;
+        }
     }
 
     public onCustomerAircraftFilterChanged(event) {
@@ -82,8 +96,8 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             customerId: 0,
             tailNumber: event,
             aircraftId: this.selectedAircraftId
-        }
-        this.data.customerAircraftId = 0;
+        }        
+        this.data.customerAircraftId = 0;        
     }
 
     public onAircraftTypeChanged(aircraftType: AircraftType) {
@@ -179,8 +193,10 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     }
 
     private loadCustomerAircraftsDataSource() {
+        this.isLoadingAircraft = true;
         this.customerAircraftsDataSource = [];
         this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.data.groupId, this.data.fboId, this.data.customerInfoByGroup.customerId).subscribe((response: CustomerAircraft[]) => {
+            this.isLoadingAircraft = false;
             this.customerAircraftsDataSource = response.sort((n1, n2) => {
                 if (n1.tailNumber > n2.tailNumber) {
                     return 1;
