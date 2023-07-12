@@ -379,7 +379,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     }
 
                     // Get customer aircraft info
-                    var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupAndTailSpecification(new List<int> { customer.GroupId }, customer.CustomerId));
+                    var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int> { customer.GroupId }, customer.CustomerId));
                     var customerAircraft = customerAircrafts.Where(c => c.Oid == customerAircraftId).FirstOrDefault();
                     var aircraft = await _aircraftService.GetSingleBySpec(new DB.Specifications.Aircraft.AircraftSpecification(new List<int>() { customerAircraft.AircraftId }));
 
