@@ -62,6 +62,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
         private readonly IOrderConfirmationService _orderConfirmationService;
         private readonly IOrderDetailsService _orderDetailsService;
+        private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -71,7 +72,8 @@ namespace FBOLinx.Web.Controllers
             ICompanyPricingLogService companyPricingLogService,
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
-            IOrderDetailsService orderDetailsService) : base(logger)
+            IOrderDetailsService orderDetailsService,
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -88,6 +90,7 @@ namespace FBOLinx.Web.Controllers
             _customerInfoByGroupService = customerInfoByGroupService;
             _orderConfirmationService = orderConfirmationService;
             _orderDetailsService = orderDetailsService;
+            _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
         }
 
         // GET: api/FuelReqs/5
@@ -344,9 +347,9 @@ namespace FBOLinx.Web.Controllers
 
                         fuelReq = await _fuelReqService.AddAsync(fuelReq);
 
-                        List <FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
+                        List <FuelReqPricingTemplateDto> fuelReqPricingTemplates = new List<FuelReqPricingTemplateDto>();
                         var pricingTemplate = fuelReqsPt[0].PricingTemplate;
-                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplate
+                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplateDto
                         {
                             FuelReqId = fuelReq.Oid,
                             PricingTemplateId = pricingTemplate.Oid,
@@ -373,8 +376,8 @@ namespace FBOLinx.Web.Controllers
                                     }).ToListAsync()
                             }),
                         });
-                        await _context.FuelReqPricingTemplate.AddRangeAsync(fuelReqPricingTemplates);
-                        await _context.SaveChangesAsync();
+
+                        await _fuelReqPricingTemplateService.BulkUpdate(fuelReqPricingTemplates);
 
                         // Add order details
                         orderDetails = await _orderDetailsService.AddAsync(orderDetails);
