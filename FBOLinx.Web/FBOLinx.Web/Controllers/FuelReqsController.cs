@@ -50,7 +50,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
@@ -64,7 +64,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IOrderDetailsService _orderDetailsService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
@@ -397,52 +397,13 @@ namespace FBOLinx.Web.Controllers
                         await _fuelReqService.UpdateAsync(fuelReq);
                     }
                 }
-
-                // ADD SERVICE REQUEST
-                if (request.ServiceNames.Count > 0)
-                {
-                    await _fuelReqService.AddServiceOrder(request, fbo, fuelReq == null ? 0 : fuelReq.Oid);
-
-                    // Add order details
-                    if (orderDetails.Oid == 0)
-                        await _orderDetailsService.AddAsync(orderDetails);
-                }
-
-                // SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON 
-                if (!request.DemoMode)
-                {
-                    var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
-                    if ((fboPreferences.DirectOrderNotificationsEnabled.HasValue && fboPreferences.DirectOrderNotificationsEnabled.Value) || (fboPreferences.DirectOrderNotificationsEnabled == null))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
-                }
+                else
+                    await _orderDetailsService.AddAsync(orderDetails);
 
                 return Ok(new List<FuelReqDto>() { fuelReq });
             }
             else
             {
-                // SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON OR NOT FBOLINX CUSTOMER
-                var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-                if (!request.DemoMode)
-                {
-                    var fboPreferences = new FboPreferencesDTO();
-                    if (fbo != null && fbo.Oid > 0)
-                    {
-                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fbo.Oid));
-                    }
-
-                    if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && ((fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value) || (fboPreferences.OrderNotificationsEnabled == null))))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(request.FboHandlerId, request);
-                }
-
-                // IF THERE'S A SERVICE ORDER, ADD SERVICE REQUEST TO DB
-                if (request.ServiceNames.Count > 0)
-                {
-                    if (fbo == null || fbo.Oid == 0)
-                        fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-
-                    await _fuelReqService.AddServiceOrder(request, fbo);
-                }
-
                 // Add order details
                 await _orderDetailsService.AddAsync(orderDetails);
 

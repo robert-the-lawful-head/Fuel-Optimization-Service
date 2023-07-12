@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly IFboService _FboService;
         private List<AirportWatchLiveDataDto> _LiveDataToUpdate;
         private List<AirportWatchLiveDataDto> _LiveDataToInsert;
@@ -81,7 +81,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext, IAircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
