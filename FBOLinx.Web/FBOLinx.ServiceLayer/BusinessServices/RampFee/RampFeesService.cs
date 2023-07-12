@@ -18,10 +18,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _DegaContext;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private IMailService _MailService;
 
-        public RampFeesService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, IMailService mailService)
+        public RampFeesService(FboLinxContext context, DegaContext degaContext, IAircraftService aircraftService, IMailService mailService)
         {
             _context = context;
             _DegaContext = degaContext;

@@ -43,8 +43,8 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.Core.Utilities.Geography;
-using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly IFboService _FboService;
         private List<AirportWatchLiveDataDto> _LiveDataToUpdate;
         private List<AirportWatchLiveDataDto> _LiveDataToInsert;
@@ -78,10 +78,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
-        private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegService _SwimFlightLegService;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, AircraftService aircraftService, 
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext, IAircraftService aircraftService, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
@@ -94,8 +94,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ISWIMFlightLegService swimFlightLegService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegService swimFlightLegService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;

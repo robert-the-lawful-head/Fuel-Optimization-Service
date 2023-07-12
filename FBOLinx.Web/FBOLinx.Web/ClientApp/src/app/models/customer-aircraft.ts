@@ -1,4 +1,5 @@
-import {AircraftSizes } from '../enums/aircraft-sizes';
+import { AircraftSizes } from '../enums/aircraft-sizes';
+import { CustomerAircraftNote } from './customer-aircraft-note';
 
 export type CustomerAircraft = {
     oid: number;
@@ -10,4 +11,5 @@ export type CustomerAircraft = {
     basedPagLocation?: string;
     networkCode?: string;
     addedFrom?: number;
+    notes?: CustomerAircraftNote[];
 };
