@@ -33,6 +33,7 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 import * as moment from 'moment';
 import { UserRole } from 'src/app/enums/user-role';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 @Component({
     host: {
@@ -133,12 +134,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.subscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
                 if (!this.canUserSeePricing()) {
+                    this.fuelOrders.length = 0;
                     return;
                 }
                 if (message === fboChangedEvent) {
                     this.loadLocations();
                     this.loadFboInfo();
                     this.loadNeedsAttentionCustomers();
+                    this.loadUpcomingOrders();
                 }
                 if (message === customerUpdatedEvent) {
                     this.loadNeedsAttentionCustomers();
@@ -248,9 +251,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     stopManagingFBOClicked() {
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('impersonatedrole');
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
         this.sharedService.currentUser.fboId = 0;
         this.sharedService.currentUser.impersonatedRole = null;
         if (
@@ -264,20 +267,21 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.sharedService.currentUser.groupId =
                 this.sharedService.currentUser.managerGroupId;
         } else {
-            localStorage.removeItem('groupId');
+            localStorage.removeItem(localStorageAccessConstant.groupId);
         }
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
+        this.sharedService.emitChange(fboChangedEvent);
         this.close();
         if (this.sharedService.currentUser.conductorFbo) {
-            localStorage.removeItem('conductorFbo');
+            localStorage.removeItem(localStorageAccessConstant.conductorFbo);
             this.sharedService.currentUser.conductorFbo = false;
             this.router.navigate(['/default-layout/groups/']);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
-                localStorage.setItem('impersonatedrole', '2');
+                localStorage.setItem(localStorageAccessConstant.impersonatedrole, '2');
             }
             this.router.navigate(['/default-layout/fbos/']);
         }
@@ -285,10 +289,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     stopManagingGroupClicked() {
         this.sharedService.currentUser.impersonatedRole = null;
-        localStorage.removeItem('impersonatedrole');
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('groupId');
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.groupId);
         this.sharedService.currentUser.fboId = 0;
         if (
             this.sharedService.currentUser.managerGroupId &&
@@ -375,12 +379,12 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadFboInfo() {
-        if (!this.currentUser.fboId && !localStorage.getItem('fboId')) {
+        if (!this.currentUser.fboId && !localStorage.getItem(localStorageAccessConstant.fboId)) {
             return;
         }
 
         if (!this.currentUser.fboId) {
-            this.currentUser.fboId = localStorage.getItem('fboId');
+            this.currentUser.fboId = localStorage.getItem(localStorageAccessConstant.fboId);
         }
 
         this.fboAirportsService
@@ -390,8 +394,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
-                    this.sharedService.currentUser.icao = this.fboAirport.icao;
-                    localStorage.setItem('icao',this.fboAirport.icao);
+                    this.sharedService.setLocationStorageValues(this.fboAirport.icao);
                     this.sharedService.emitChange(
                         SharedEvents.icaoChangedEvent
                     );
@@ -407,7 +410,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fbo = _.assign({}, data);
-                    localStorage.setItem('fbo', this.fbo.fbo);
+                    localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
 
                     if (this.sharedService.currentUser.role != 3) {
                         this.fbosService.updateLastLogin(this.currentUser.fboId).subscribe((data: any) => {
@@ -429,10 +432,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.needsAttentionMenu.isOpened = false;
         this.sharedService.currentUser.fboId = this.fboAirport.fboid;
         this.loadFboInfo();
-        localStorage.setItem(
-            'fboId',
-            this.sharedService.currentUser.fboId.toString()
-        );
+        localStorage.setItem(localStorageAccessConstant.fboId,this.sharedService.currentUser.fboId.toString());
+
+        this.sharedService.setLocationStorageValues(location.icao);
 
         this.fbosService.manageFbo(this.sharedService.currentUser.fboId).subscribe(() => {
             if (this.isOnDashboard())
@@ -509,50 +511,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             }, (error: any) => {
 
             });
-
-
-        //this.airportWatchService
-        //    .getAll(
-        //        this.sharedService.currentUser.groupId,
-        //        this.sharedService.currentUser.fboId
-        //    )
-        //    .subscribe((data: any) => {
-        //        if (data && data != null) {
-        //            var fuelOrders = this.fuelOrders = [];
-        //            this.flightWatchData = data.flightWatchData;
-        //            this.flightWatchData.forEach(x => {
-        //                if (!x.fuelOrder)
-        //                    return;
-        //                if (x.fuelOrder.timeStandard != null && x.fuelOrder.timeStandard.toLowerCase() == 'z' || x.fuelOrder.timeStandard == '0')
-        //                    x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment().utc())).asMinutes();
-        //                else
-        //                    x.fuelOrder.minutesUntilArrival = moment.duration(moment(x.fuelOrder.eta).diff(moment())).asMinutes();
-        //                x.fuelOrder.minutesUntilArrival = Math.round(x.fuelOrder.minutesUntilArrival);
-        //                fuelOrders.push(x.fuelOrder);
-        //            });
-        //        }
-        //    }, (error: any) => {
-
-        //    });
-
-        //**Use this commented out code if they ever decide to show order notifications for FBOs that don't have flight watch.
-        //this.fuelReqsService
-        //    .getForGroupFboAndDateRange(
-        //        this.sharedService.currentUser.groupId,
-        //        this.sharedService.currentUser.fboId,
-        //        moment().toDate(),
-        //        moment().add(2, 'h').toDate()
-        //    )
-        //    .subscribe((data: any) => {
-        //        this.fuelOrders = data;
-        //        this.fuelOrders.forEach(x => {
-        //            try {
-        //                x.minutesUntilArrival = moment.duration(x.eta.diff(moment())).asMinutes();
-        //            } catch (e) {
-
-        //            }
-        //        });
-        //    });
     }
     public isLobbyViewVisible():boolean {
         return this.currentUser &&

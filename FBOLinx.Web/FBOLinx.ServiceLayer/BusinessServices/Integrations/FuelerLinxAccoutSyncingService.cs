@@ -151,7 +151,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
             //Find aircrafts that don't have any customer associations to add in
             var nonCustomerAircraftList =
                await _customerAircraftEntityService.GetListBySpec(
-                   new CustomerAircraftByGroupAndTailSpecification(groupIds, 0));
+                   new CustomerAircraftByGroupSpecification(groupIds, 0));
 
             var newAircraftToAdd = (from t in tailNumbers
                                     join g in groupIds on 1 equals 1
@@ -177,7 +177,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             var customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
-                    new CustomerAircraftByGroupAndTailSpecification(groupIds, _customerRecord.Oid));
+                    new CustomerAircraftByGroupSpecification(groupIds, _customerRecord.Oid));
 
             //Find any missing customer aircraft records that need to be added
             var aircraftToAdd = (from t in tailNumbers
@@ -224,7 +224,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 await _customerAircraftEntityService.BulkUpdate(aircraftToRemove);
                 customerAircraftList =
                 await _customerAircraftEntityService.GetListBySpec(
-                    new CustomerAircraftByGroupAndTailSpecification(groupIds, _customerRecord.Oid));
+                    new CustomerAircraftByGroupSpecification(groupIds, _customerRecord.Oid));
             }
 
             if (customerAircraftList == null || customerAircraftList.Count == 0)
