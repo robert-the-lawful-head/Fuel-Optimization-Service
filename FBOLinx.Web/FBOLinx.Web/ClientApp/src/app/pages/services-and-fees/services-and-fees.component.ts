@@ -8,6 +8,7 @@ import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 import { ItemInputComponent } from './item-input/item-input.component';
 import { useAnimation } from '@angular/animations';
+import { DatePipe } from '@angular/common';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -29,7 +30,8 @@ export class ServicesAndFeesComponent implements OnInit {
         private serviceTypeService: ServiceTypeService,
         private sharedService: SharedService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private datePipe : DatePipe
         ) { }
 
     async ngOnInit() {
@@ -226,7 +228,7 @@ export class ServicesAndFeesComponent implements OnInit {
         if(serviceAndFees.serviceTypeId == null)
             return   `Source: Acukwik`;
         else
-            return  `Source: ${serviceAndFees.createdByUser} - ${serviceAndFees.createdDate}`;
+            return  `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate,'MM/dd/yyyy')}`;
     }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(

@@ -1,4 +1,5 @@
 ﻿using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
+using System;
 
 namespace FBOLinx.ServiceLayer.DTO.ServicesAndFees
 {
@@ -11,5 +12,6 @@ namespace FBOLinx.ServiceLayer.DTO.ServicesAndFees
         public int? ServiceTypeId { get; set; }
         public bool IsActive { get;set; }
         public int CreatedByUserId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

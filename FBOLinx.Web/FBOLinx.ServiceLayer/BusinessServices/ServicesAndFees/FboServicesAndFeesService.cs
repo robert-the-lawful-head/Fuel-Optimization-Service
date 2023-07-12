@@ -118,7 +118,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             var customAcukwikServicesOffered = customServices.Where(x => x.ServiceTypeId == null);
             var fbosServicesAndFeesResponseList = await this.GetfromAcukwikServicesOffered(acukwikServicesOffered, customAcukwikServicesOffered);
 
-            var customServiceTypes = await _fboCustomServiceTypeRepo.Get().Include(x => x.FboCustomServicesAndFees).ToListAsync();
+            var customServiceTypes = await _fboCustomServiceTypeRepo.Get()
+                .Include(x => x.FboCustomServicesAndFees)
+                .Include(x => x.CreatedByUser).ToListAsync();
 
 
             foreach (var service in customServiceTypes)
