@@ -35,7 +35,7 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private ICustomerAircraftService _CustomerAircraftService;
         private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
         private AirportWatchService _AirportWatchService;
@@ -43,7 +43,7 @@ namespace FBOLinx.Web.Controllers
         private ICustomerAircraftNoteService _CustomerAircraftNoteService;
 
         public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            AircraftService aircraftService, ICustomerAircraftService customerAircraftService,
+            IAircraftService aircraftService, ICustomerAircraftService customerAircraftService,
             IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService,
             ILoggingService logger, IGroupCustomersService groupCustomersService,
             ICustomerAircraftNoteService customerAircraftNoteService) : base(logger)

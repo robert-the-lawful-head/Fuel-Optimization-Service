@@ -24,11 +24,11 @@ namespace FBOLinx.Web.Controllers
     public class AirCraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
 
        
        
-        public AirCraftsController(FboLinxContext context, AircraftService aircraftService, ILoggingService logger) : base(logger)
+        public AirCraftsController(FboLinxContext context, IAircraftService aircraftService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _aircraftService = aircraftService;
