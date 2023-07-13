@@ -129,12 +129,12 @@ export class CustomersEditComponent implements OnInit {
         this.customerId = this.customerInfoByGroup.customerId;
 
         //Grab the appropriate note
-        var notesForFbo = this.customerInfoByGroup?.notes?.filter(x => x.fboId == this.sharedService.currentUser.fboId);
-        this.customerInfoByGroupNote = notesForFbo && notesForFbo.length > 0 ? notesForFbo[0] : null;
+        var notesForGroup = this.customerInfoByGroup?.notes?.filter(x => !x.fboId || x.fboId == 0);
+        this.customerInfoByGroupNote = notesForGroup && notesForGroup.length > 0 ? notesForGroup[0] : null;
         if (this.customerInfoByGroupNote == null) {
             this.customerInfoByGroupNote = {
                 oid: 0,
-                fboId: this.sharedService.currentUser.fboId,
+                fboId: 0,
                 customerInfoByGroupId: this.customerInfoByGroup.oid,
                 notes: '',
                 lastUpdatedByUserId: this.sharedService.currentUser.oid
