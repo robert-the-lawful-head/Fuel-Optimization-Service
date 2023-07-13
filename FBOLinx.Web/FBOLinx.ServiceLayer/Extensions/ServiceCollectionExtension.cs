@@ -121,6 +121,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
             services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
+            services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
 

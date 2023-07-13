@@ -109,6 +109,8 @@ import { FileHelper } from './helpers/files/file.helper';
 import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTemplateCalc.service';
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
+import { ServicesAndFeesService } from './services/servicesandfees.service';
+import { ServiceTypeService } from './services/serviceTypes.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -233,7 +235,9 @@ import { ServiceOrderService } from './services/serviceorder.service';
         FileHelper,
         PricingTemplateCalcService,
         DocumentService,
-        ServiceOrderService
+        ServiceOrderService,
+        ServicesAndFeesService,
+        ServiceTypeService
     ],
 })
 export class AppModule { }

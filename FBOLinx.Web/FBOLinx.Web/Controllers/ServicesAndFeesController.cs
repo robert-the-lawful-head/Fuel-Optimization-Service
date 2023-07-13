@@ -1,3 +1,5 @@
+﻿using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
+using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 ﻿using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
@@ -32,7 +34,7 @@ namespace FBOLinx.Web.Controllers
         }
         // GET: api/ServicesAndFees/fbo/3
         [HttpGet("fbo/{fboId}")]
-        public async Task<ActionResult<List<ServicesAndFeesDto>>> Get(int fboId)
+        public async Task<ActionResult<List<FbosServicesAndFeesResponse>>> Get(int fboId)
         {
             var result = await _fboServicesAndFeesService.Get(fboId);
 
@@ -40,6 +42,36 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
 
             return Ok(result);
+        }
+        // POST: api/ServicesAndFees/fbo/3
+        [HttpPost("fbo/{fboId}")]
+        public async Task<ActionResult<ServicesAndFeesResponse>> Post(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
+        {
+            var result = await _fboServicesAndFeesService.Create(fboId,servicesAndFees);
+
+            return Ok(result);
+        }
+        // PUT: api/ServicesAndFees/fbo/3
+        [HttpPut("fbo/{fboId}")]
+        public async Task<ActionResult<List<ServicesAndFeesResponse>>> Put(int fboId, [FromBody] ServicesAndFeesDto servicesAndFees)
+        {
+            var result = await _fboServicesAndFeesService.Update(fboId, servicesAndFees);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+        // Delete: api/ServicesAndFees/1234
+        [HttpDelete("{servicesAndFeesId}")]
+        public async Task<IActionResult> Delete(int servicesAndFeesId, int? handlerId, int? serviceOfferedId)
+        {
+            var result = await _fboServicesAndFeesService.Delete(servicesAndFeesId, handlerId, serviceOfferedId);
+
+            if (result == null)
+                return NotFound();
+
+            return NoContent();
         }
 
         [AllowAnonymous]
