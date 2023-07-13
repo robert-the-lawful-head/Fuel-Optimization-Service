@@ -57,7 +57,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<ILoggingService, LoggingService>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IGroupService, GroupService>();
-            services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<IAircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<ICustomerAircraftService, CustomerAircraftService>();
