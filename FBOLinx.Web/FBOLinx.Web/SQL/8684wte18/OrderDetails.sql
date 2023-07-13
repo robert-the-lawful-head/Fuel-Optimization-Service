@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[OrderDetails](
 	[FuelerLinxTransactionId] [int] NOT NULL,
 	[ConfirmationEmail] [varchar](255) NOT NULL,
 	[FuelVendor] [varchar](50) NOT NULL,
+	[PaymentMethod] [varchar](255) NULL,
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC

@@ -13,10 +13,11 @@ namespace FBOLinx.ServiceLayer.EntityServices
     where TEntity : class where TContext : DbContext
     {
         protected readonly TContext context;
-
+        public DbSet<TEntity> dbSet;
         public Repository(TContext context)
         {
             this.context = context;
+            this.dbSet = context.Set<TEntity>();
         }
         public async Task<TEntity> AddAsync(TEntity entity)
         {
@@ -38,7 +39,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task<TEntity> DeleteAsync(int id)
         {
-            var entity = context.Set<TEntity>().Find(id);
+            var entity = await context.Set<TEntity>().FindAsync(id);
             if (entity == null)
             {
                 return null;
@@ -47,8 +48,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
             return entity;
         }
-        public async Task<TEntity> GetAsync(int id) => await context.Set<TEntity>().FindAsync(id);
-
         public IQueryable<TEntity> Get() => context.Set<TEntity>().AsQueryable();
 
         public async Task UpdateAsync(TEntity entity)
@@ -78,6 +77,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         => await context.Set<TEntity>().AnyAsync(predicate);
         public async Task<TEntity> FindAsync(int id)
         => await context.Set<TEntity>().FindAsync(id);
+
         public virtual async Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec) => await GetEntitySingleBySpec(spec);
         
         public virtual async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
