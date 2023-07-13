@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
-        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        public async Task<ActionResult<List<CustomerInfoByGroup>>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
         {
             if (string.IsNullOrEmpty(tailNumber))
                 return Ok(new List<CustomerInfoByGroup>());
