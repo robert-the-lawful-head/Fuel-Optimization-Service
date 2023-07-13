@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FbosService } from 'src/app/services/fbos.service';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 
 @Component({

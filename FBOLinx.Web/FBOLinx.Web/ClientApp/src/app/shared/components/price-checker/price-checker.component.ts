@@ -14,7 +14,7 @@ import { SharedService } from '../../../layouts/shared-service';
 // Enums
 import { EnumOptions } from '../../../models/enum-options';
 // Model
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';

@@ -39,6 +39,8 @@ import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
 import { PublicViewComponent } from './layouts/public-view/public-view.component';
 import { AboutFbolinxComponent } from './pages/about-fbolinx/about-fbolinx.component';
 import { ServiceOrdersHomeComponent } from './pages/service-orders/service-orders-home/service-orders-home.component';
+import { ServicesAndFeesComponent } from './pages/services-and-fees/services-and-fees.component';
+import { ServicesAndFeesHomeComponent } from './pages/services-and-fees-home/services-and-fees-home.component';
 
 const defaultRoutes: Routes = [
     {
@@ -167,8 +169,8 @@ const defaultRoutes: Routes = [
     },
     {
         canActivate: [AuthGuard],
-        component: RampFeesHomeComponent,
-        path: 'rampfees',
+        component: ServicesAndFeesHomeComponent,
+        path: 'services-and-fees',
     },
     {
         canActivate: [AuthGuard],
@@ -213,7 +215,7 @@ const defaultRoutes: Routes = [
         canActivate: [AuthGuard],
         component: DashboardHomeComponent,
         path: '**',
-    }    
+    }
 ];
 
 const outsideTheGateRoutes: Routes = [

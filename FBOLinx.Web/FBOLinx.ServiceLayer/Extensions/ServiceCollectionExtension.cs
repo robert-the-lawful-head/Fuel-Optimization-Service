@@ -121,7 +121,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
-
+            services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;
