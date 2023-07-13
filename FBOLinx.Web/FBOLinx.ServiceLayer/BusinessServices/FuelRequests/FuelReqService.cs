@@ -394,7 +394,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         departureDate = fuelReq == null ? serviceOrder.DepartureDateTimeUtc.ToString() : fuelReq.Etd.ToString(),
                         fuelVolume = fuelReq == null ? "0" : fuelReq.QuotedVolume.ToString(),
                         fuelVendor = orderDetails.FuelVendor.ToLower().Contains("fbolinx") ? fbo.Fbo : orderDetails.FuelVendor,
-                        paymentMethod = fuelReq == null ? "" : fuelReq.PaymentMethod,
+                        paymentMethod = orderDetails.PaymentMethod,
                         services = string.Join(", ", serviceNames)
                     };
 
