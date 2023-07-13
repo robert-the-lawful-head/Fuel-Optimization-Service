@@ -20,5 +20,6 @@ namespace FBOLinx.ServiceLayer.DTO
         public int FuelerLinxTransactionId { get; set; }
         public string ConfirmationEmail { get; set; }
         public string FuelVendor { get; set; }
+        public string PaymentMethod { get; set; } = "";
     }
 }

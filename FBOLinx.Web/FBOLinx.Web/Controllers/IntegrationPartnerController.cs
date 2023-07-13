@@ -125,6 +125,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.ConfirmationEmail = request.Email;
             orderDetails.FuelVendor = request.FuelVendor;
             orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
+            orderDetails.PaymentMethod = request.PaymentMethod;
 
             if (request.ServiceNames.Count > 0)
                 await _fuelReqService.AddServiceOrder(request, fbo);
