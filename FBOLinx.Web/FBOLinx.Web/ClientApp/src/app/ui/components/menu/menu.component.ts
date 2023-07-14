@@ -44,9 +44,13 @@ export class MenuComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        this.sharedService.titleChanged$.subscribe((title) => {
+                this.menuService.setDisabledMenuItems(this.menuItems);
+        });
         this.sharedService.changeEmitted$.subscribe((message) => {
             if (message === fboChangedEvent) {
-                this.menuService.setDisabledMenuItems(this.menuItems);          }
+                this.menuService.setDisabledMenuItems(this.menuItems);
+            }
             if (message === fboPricesLoadedEvent) {
                 this.showTooltipsIfFirstLogin();
                 this.showPendingServiceOrders();
