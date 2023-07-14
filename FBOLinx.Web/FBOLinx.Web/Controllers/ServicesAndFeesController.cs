@@ -90,7 +90,8 @@ namespace FBOLinx.Web.Controllers
             }
 
             var services = await _fboServicesAndFeesService.Get(fbo.Oid);
-            servicesList = services.Select(s => s.ServiceType.Name).ToList();
+            var allServicesList = services.SelectMany(s => s.ServicesAndFees).ToList();
+            servicesList = allServicesList.Select(s => s.Service).ToList();
 
             return servicesList;
         }
