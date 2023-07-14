@@ -73,7 +73,8 @@ export class DefaultLayoutComponent implements OnInit {
         this.compress = false;
         this.menuStyle = 'style-3';
 
-        sharedService.titleChanged$.subscribe((title) => {
+        sharedService.titleChanged$.subscribe((title: string) => {
+            this.sharedService.title = title;
             setTimeout(() => (this.pageTitle = title), 100);
         });
 
