@@ -171,7 +171,7 @@
             "color": "rgba(0,0,0,.87)"
         },
         "tooltip": "Enter and manage your fees.",
-        "routing": "/default-layout/rampfees",
+        "routing": "/default-layout/services-and-fees",
         "roles": [ 1, 4, 6 ]
     },
     {

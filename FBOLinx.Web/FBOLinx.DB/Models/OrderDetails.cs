@@ -20,5 +20,8 @@ namespace FBOLinx.DB.Models
         [StringLength(50)]
         [Unicode(false)]
         public string FuelVendor { get; set; }
+        [StringLength(255)]
+        [Unicode(false)]
+        public string PaymentMethod { get; set; }
     }
 }

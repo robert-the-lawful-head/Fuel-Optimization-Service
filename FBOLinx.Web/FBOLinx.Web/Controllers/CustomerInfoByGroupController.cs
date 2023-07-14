@@ -51,7 +51,6 @@ namespace FBOLinx.Web.Controllers
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly AircraftService _aircraftService;
         private readonly DegaContext _degaContext;
         private readonly IFboPricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
@@ -63,7 +62,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService,
             AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService,
             FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService,
-            AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService,
+            DegaContext degaContext, IFboPricesService fbopricesService,
             IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService,
             ILoggingService logger, ICustomerAircraftService customerAircraftService,
             ICustomerInfoByGroupNoteService customerInfoByGroupNoteService) : base(logger)
@@ -79,7 +78,6 @@ namespace FBOLinx.Web.Controllers
             _fuelerLinxService = fuelerLinxService;
             _degaContext = degaContext;
             _pricingTemplateService = pricingTemplateService;
-            _aircraftService = aircraftService;
             _fboPricesService = fbopricesService;
             _fboFeesAndTaxesService = fboFeesAndTaxesService;
             _customerInfoByGroupService = customerInfoByGroupService;

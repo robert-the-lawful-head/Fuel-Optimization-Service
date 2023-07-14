@@ -59,7 +59,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<ILoggingService, LoggingService>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IGroupService, GroupService>();
-            services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<IAircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<ICustomerAircraftService, CustomerAircraftService>();
@@ -122,7 +122,10 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
-
+            services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
+            services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;

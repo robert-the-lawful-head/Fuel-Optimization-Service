@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FBOLinx.Core.Enums;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
@@ -56,7 +57,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public FboairportsDto FboAirport { get; set; }
         public ICollection<FuelReqDto> FuelReqs { get; set; }
         public ICollection<PricingTemplateDto> PricingTemplates { get; set; }
-        public FbopreferencesDto Preferences { get; set; }
+        public FboPreferencesDTO Preferences { get; set; }
         public ICollection<FbocontactsDto> Contacts { get; set; }
         public ICollection<UserDTO> Users { get; set; }
         //public ICollection<FbopricesDto> Fboprices { get; set; }

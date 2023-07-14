@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Inject, Output, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import {SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
@@ -29,13 +30,14 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     public appliedDateTypes: EnumOptions.EnumOption[] = EnumOptions.serviceOrderAppliedDateTypeOptions;
     public aircraftTypes: Array<any>;
     public selectedAircraftId: number;
-    public isLoadingAircraft: boolean = false;
+    public dialogLoader: string = 'dialogLoader';
     public filters = {
         tailNumberFilter: ''
     };
 
     constructor(public dialogRef: MatDialogRef<ServiceOrdersDialogNewComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ServiceOrder,
+        private NgxUiLoader: NgxUiLoaderService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private customerAircraftsService: CustomeraircraftsService,
         private serviceOrderService: ServiceOrderService,
@@ -48,25 +50,24 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     ngOnInit() {
             //Initialize an empty aircraft
         this.onCustomerAircraftFilterChanged('');
+        this.loadCustomerAircraftsDataSource();
         this.loadCustomerInfoByGroupDataSource();
         this.loadAircraftTypes();
     }    
 
     public onCustomerInfoByGroupChanged(selectedCustomerInfoByGroup: CustomerInfoByGroup): void {
         this.data.customerInfoByGroup = selectedCustomerInfoByGroup;
-        this.onCustomerAircraftChanged(null);
-        this.filters.tailNumberFilter = '';
 
         this.data.customerInfoByGroupId = this.data.customerInfoByGroup.oid;
         if (this.data.customerInfoByGroupId > 0) {
             this.loadCustomerAircraftsDataSource();
         }
+        this.setWarningMessage();
     }
 
     public onCustomerFilterChanged(event) {
         if (event == '' || event == null) {
             this.data.customerInfoByGroup = null;
-            this.onCustomerAircraftChanged(null);
         } else {
             this.data.customerInfoByGroup = {
                 oid: 0,
@@ -77,6 +78,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         }
         
         this.data.customerInfoByGroupId = 0;
+        this.customerAircraftsDataSource = [];
     }
 
     public onCustomerAircraftChanged(customerAircraft: CustomerAircraft): void {
@@ -85,7 +87,9 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         } else {
             this.data.customerAircraft = customerAircraft;
             this.data.customerAircraftId = this.data.customerAircraft.oid;
+            this.loadCustomerInfoByGroupDataSource();
         }
+        this.setWarningMessage();
     }
 
     public onCustomerAircraftFilterChanged(event) {
@@ -96,7 +100,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             tailNumber: event,
             aircraftId: this.selectedAircraftId
         }        
-        this.data.customerAircraftId = 0;
+        this.data.customerAircraftId = 0;        
     }
 
     public onAircraftTypeChanged(aircraftType: AircraftType) {
@@ -137,7 +141,9 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     }
 
     public onSaveChanges(): void {
+        this.NgxUiLoader.startLoader(this.dialogLoader);
         this.serviceOrderService.createServiceOrder(this.data).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
+            this.NgxUiLoader.stopLoader(this.dialogLoader);
             if (!response.success)
                 alert('Error creating service order: ' + response.message);
             else
@@ -169,16 +175,40 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
     }
 
     private setWarningMessage() {
-        if (this.data.customerInfoByGroupId == 0 && this.data.customerInfoByGroup?.company != null && this.data.customerInfoByGroup?.company.length > 0) {
-            this.warningMessage = '*A new customer will be created with this order.';
+        if (this.data.customerInfoByGroupId == 0) {
+            this.errorMessage = '*A valid customer selection is required.';
+        } else {
+            this.errorMessage = '';
         }
         if (this.data.customerAircraftId == 0 && this.data.customerAircraft?.tailNumber != null && this.data.customerAircraft?.tailNumber.length > 0) {
             this.warningMessage = '*A new tail number will be added with this order.';
+        } else {
+            this.warningMessage = '';
         }
     }
 
     private loadCustomerInfoByGroupDataSource() {
-        this.customerInfoByGroupService.getCustomerInfoByGroupListByGroupId(this.data.groupId).subscribe((response: CustomerInfoByGroup[]) => {
+        this.NgxUiLoader.startLoader(this.dialogLoader);
+        if (this.data.customerAircraft != null && this.data.customerAircraft.oid > 0)
+            this.loadCustomerInfoByGroupDataSourceByTail();
+        else {
+            this.customerInfoByGroupService.getCustomerInfoByGroupListByGroupId(this.data.groupId).subscribe((response: CustomerInfoByGroup[]) => {
+                this.customerInfoByGroupDataSource = response.sort((n1, n2) => {
+                    if (n1.company > n2.company) {
+                        return 1;
+                    }
+                    if (n1.company < n2.company) {
+                        return -1;
+                    }
+                    return 0;
+                });
+                this.NgxUiLoader.stopLoader(this.dialogLoader);
+            });
+        }        
+    }
+
+    private loadCustomerInfoByGroupDataSourceByTail() {
+        this.aircraftsService.getCustomersByTail(this.sharedService.currentUser.groupId, this.data.customerAircraft.tailNumber).subscribe((response: CustomerInfoByGroup[]) => {
             this.customerInfoByGroupDataSource = response.sort((n1, n2) => {
                 if (n1.company > n2.company) {
                     return 1;
@@ -187,15 +217,35 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
                     return -1;
                 }
                 return 0;
-            });            
+            });
+            this.NgxUiLoader.stopLoader(this.dialogLoader);
         });
     }
 
     private loadCustomerAircraftsDataSource() {
-        this.isLoadingAircraft = true;
         this.customerAircraftsDataSource = [];
+        this.NgxUiLoader.startLoader(this.dialogLoader);
+
+        if (this.data.customerInfoByGroup && this.data.customerInfoByGroup.customerId > 0) {
+            this.loadCustomerAircraftDataSourceByCustomerId();
+        } else {
+            this.customerAircraftsService.getAircraftsListByGroupAndFbo(this.sharedService.currentUser.groupId, this.sharedService.currentUser.fboId).subscribe((response: CustomerAircraft[]) => {
+                this.customerAircraftsDataSource = response.sort((n1, n2) => {
+                    if (n1.tailNumber > n2.tailNumber) {
+                        return 1;
+                    }
+                    if (n1.tailNumber < n2.tailNumber) {
+                        return -1;
+                    }
+                    return 0;
+                });
+                this.NgxUiLoader.stopLoader(this.dialogLoader);
+            });
+        }        
+    }
+
+    private loadCustomerAircraftDataSourceByCustomerId() {
         this.customerAircraftsService.getCustomerAircraftsByGroupAndCustomerId(this.data.groupId, this.data.fboId, this.data.customerInfoByGroup.customerId).subscribe((response: CustomerAircraft[]) => {
-            this.isLoadingAircraft = false;
             this.customerAircraftsDataSource = response.sort((n1, n2) => {
                 if (n1.tailNumber > n2.tailNumber) {
                     return 1;
@@ -205,6 +255,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
                 }
                 return 0;
             });
+            this.NgxUiLoader.stopLoader(this.dialogLoader);
         })
     }
 

@@ -14,7 +14,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
         IQueryable<TEntity> Get();
         Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> GetAsync(int id);
         Task<TEntity> AddAsync(TEntity entity);
         Task<List<TEntity>> AddRangeAsync(List<TEntity> entity);
         Task UpdateAsync(TEntity entity);

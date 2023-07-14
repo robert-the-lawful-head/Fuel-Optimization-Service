@@ -50,7 +50,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
@@ -62,16 +62,18 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
         private readonly IOrderConfirmationService _orderConfirmationService;
         private readonly IOrderDetailsService _orderDetailsService;
+        private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
             ICompanyPricingLogService companyPricingLogService,
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
-            IOrderDetailsService orderDetailsService) : base(logger)
+            IOrderDetailsService orderDetailsService,
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -88,6 +90,7 @@ namespace FBOLinx.Web.Controllers
             _customerInfoByGroupService = customerInfoByGroupService;
             _orderConfirmationService = orderConfirmationService;
             _orderDetailsService = orderDetailsService;
+            _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
         }
 
         // GET: api/FuelReqs/5
@@ -262,6 +265,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.ConfirmationEmail = request.Email;
             orderDetails.FuelVendor = request.FuelVendor;
             orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
+            orderDetails.PaymentMethod = request.PaymentMethod;
 
             if (fboId > 0)
             {
@@ -344,9 +348,9 @@ namespace FBOLinx.Web.Controllers
 
                         fuelReq = await _fuelReqService.AddAsync(fuelReq);
 
-                        List <FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
+                        List <FuelReqPricingTemplateDto> fuelReqPricingTemplates = new List<FuelReqPricingTemplateDto>();
                         var pricingTemplate = fuelReqsPt[0].PricingTemplate;
-                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplate
+                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplateDto
                         {
                             FuelReqId = fuelReq.Oid,
                             PricingTemplateId = pricingTemplate.Oid,
@@ -373,8 +377,8 @@ namespace FBOLinx.Web.Controllers
                                     }).ToListAsync()
                             }),
                         });
-                        await _context.FuelReqPricingTemplate.AddRangeAsync(fuelReqPricingTemplates);
-                        await _context.SaveChangesAsync();
+
+                        await _fuelReqPricingTemplateService.BulkUpdate(fuelReqPricingTemplates);
 
                         // Add order details
                         orderDetails = await _orderDetailsService.AddAsync(orderDetails);
@@ -397,52 +401,13 @@ namespace FBOLinx.Web.Controllers
                         await _fuelReqService.UpdateAsync(fuelReq);
                     }
                 }
-
-                // ADD SERVICE REQUEST
-                if (request.ServiceNames.Count > 0)
-                {
-                    await _fuelReqService.AddServiceOrder(request, fbo, fuelReq == null ? 0 : fuelReq.Oid);
-
-                    // Add order details
-                    if (orderDetails.Oid == 0)
-                        await _orderDetailsService.AddAsync(orderDetails);
-                }
-
-                // SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON 
-                if (!request.DemoMode)
-                {
-                    var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
-                    if ((fboPreferences.DirectOrderNotificationsEnabled.HasValue && fboPreferences.DirectOrderNotificationsEnabled.Value) || (fboPreferences.DirectOrderNotificationsEnabled == null))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
-                }
+                else
+                    await _orderDetailsService.AddAsync(orderDetails);
 
                 return Ok(new List<FuelReqDto>() { fuelReq });
             }
             else
             {
-                // SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON OR NOT FBOLINX CUSTOMER
-                var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-                if (!request.DemoMode)
-                {
-                    var fboPreferences = new FboPreferencesDTO();
-                    if (fbo != null && fbo.Oid > 0)
-                    {
-                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fbo.Oid));
-                    }
-
-                    if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && ((fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value) || (fboPreferences.OrderNotificationsEnabled == null))))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(request.FboHandlerId, request);
-                }
-
-                // IF THERE'S A SERVICE ORDER, ADD SERVICE REQUEST TO DB
-                if (request.ServiceNames.Count > 0)
-                {
-                    if (fbo == null || fbo.Oid == 0)
-                        fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-
-                    await _fuelReqService.AddServiceOrder(request, fbo);
-                }
-
                 // Add order details
                 await _orderDetailsService.AddAsync(orderDetails);
 

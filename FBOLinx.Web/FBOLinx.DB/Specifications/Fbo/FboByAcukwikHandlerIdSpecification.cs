@@ -12,7 +12,8 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
     {
         public FboByAcukwikHandlerIdSpecification(int acukwikHandlerId) : base(x => x.AcukwikFBOHandlerId == acukwikHandlerId)
         {
-
+            AddInclude(x => x.FboAirport);
+            AddInclude(x => x.Preferences);
         }
     }
 }
