@@ -32,7 +32,9 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "/default-layout/rampfees",
         "/default-layout/groups",
         "/default-layout/fbo-geofencing",
-        "/default-layout/antenna-status"];
+        "/default-layout/antenna-status",
+        "/default-layout/services-and-fees"
+    ];
 
 
     constructor(
