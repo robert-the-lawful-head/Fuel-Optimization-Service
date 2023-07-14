@@ -3,7 +3,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { fboChangedEvent } from 'src/app/constants/sharedEvents';
 import { urls } from 'src/app/constants/externalUrlsConstants';
-import { MenuService } from 'src/app/ui/components/menu/menu.service';
 import { AccountType } from 'src/app/enums/user-role';
 import { Subscription } from 'rxjs';
 
