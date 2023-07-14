@@ -35,13 +35,25 @@ export class MenuService {
         return observableThrowError(error.error || 'Server Error');
     }
     public setDisabledMenuItems(menuItems: IMenuItem[]): void {
-        if (this.sharedService.currentUser.accountType ==  AccountType.Premium) return;
+        if (this.sharedService.currentUser.accountType ==  AccountType.Premium){
+            this.enableMenuItems(menuItems);
+        }else{
+            this.DisabledMenuItems(menuItems);
+        }
 
+
+    }
+    private DisabledMenuItems(menuItems: IMenuItem[]): void {
         menuItems.forEach(element => {
             if(this.freemiumEnaledMenuItemsTitles.includes(element.title))
                 element.disabled = false;
             else
                 element.disabled = true;
+        });
+    }
+    private enableMenuItems(menuItems: IMenuItem[]): void {
+        menuItems.forEach(element => {
+                element.disabled = false;
         });
     }
 }
