@@ -7,7 +7,6 @@ import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 import { ItemInputComponent } from './item-input/item-input.component';
-import { useAnimation } from '@angular/animations';
 import { DatePipe } from '@angular/common';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
@@ -133,7 +132,7 @@ export class ServicesAndFeesComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'Service', item: serviceAndfee },
+                data: { description: 'Category', item: serviceAndfee },
             }
         );
 
