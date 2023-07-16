@@ -32,7 +32,8 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "/default-layout/rampfees",
         "/default-layout/groups",
         "/default-layout/fbo-geofencing",
-        "/default-layout/antenna-status"];
+        "/default-layout/antenna-status",
+        "/default-layout/services-and-fees"];
 
 
     constructor(
@@ -52,6 +53,9 @@ export class DemoRequestStaticDialogComponent implements OnInit {
                 this.isStaticModalVisible = this.getIsStaticModalVisible(this.router.url);
             }
         });
+    }
+    ngOnDestroy() {
+        this.routerSubscription.unsubscribe();
     }
 
     openRequestDemo() {
