@@ -3,16 +3,16 @@
     </div>
     <mat-accordion class="example-headers-align" multi>
         <mat-expansion-panel *ngFor="let service of servicesAndFeesGridDisplay">
-          <mat-expansion-panel-header class="mat-elevation-z">
+          <mat-expansion-panel-header>
             <mat-panel-title>
                 {{service.serviceType.name}}
             </mat-panel-title>
             <mat-panel-description *ngIf="service.serviceType.isCustom">
                 <span (click)="openCategoryDialog(service.serviceType)">
-                    <mat-icon>edit</mat-icon>
+                    <mat-icon class="material-icons-outlined">edit</mat-icon>
                 </span>
                 <span (click)="deleteCategory(service.serviceType)">
-                    <mat-icon>delete</mat-icon>
+                    <mat-icon class="material-icons-outlined">delete</mat-icon>
                 </span>
             </mat-panel-description>
             </mat-expansion-panel-header>
@@ -49,9 +49,9 @@
                             <span class="p-lg-3">{{val.service}}</span>
                         </div>
                         <div class="actions-buttons">
-                            <span (click)="toogleEditModel(val)" *ngIf="val.isCustom"><mat-icon>edit</mat-icon></span>
-                            <span (click)="deleteItem(val,service.serviceType.name)" *ngIf="val.isCustom"><mat-icon>delete</mat-icon></span>
-                            <span [matTooltip]="getInfoTooltipText(val)"><mat-icon>info</mat-icon></span>
+                            <span (click)="toogleEditModel(val)" *ngIf="val.isCustom"><mat-icon class="material-icons-outlined">edit</mat-icon></span>
+                            <span (click)="deleteItem(val,service.serviceType.name)" *ngIf="val.isCustom"><mat-icon class="material-icons-outlined">delete</mat-icon></span>
+                            <span [matTooltip]="getInfoTooltipText(val)"><mat-icon class="material-icons-outlined">info</mat-icon></span>
                         </div>
                     </ng-container>
                 </div>
