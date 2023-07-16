@@ -1,34 +1,11 @@
 @import "../../../assets/sass/variable";
 
-.example-action-buttons {
-    padding-bottom: 20px;
-}
-
-.example-headers-align .mat-expansion-panel-header-description {
-    justify-content: right;
-    align-items: center;
-}
-
-.example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-    margin-left: 8px;
-}
-.mat-accordion .mat-expansion-panel {
-    padding: 10px;
-    margin: 20px 0 20px 0;
-    background-color: transparent;
-    border: none;
-}
-
-button, mat-icon{
-    cursor: pointer;
-}
-
 .service-card{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    margin: 10px;
+    padding: 10px;
+    margin: 5px;
     background-color: #fff;
     border: 1px solid $card-header-bg;
     border-radius: 3px;
@@ -49,5 +26,9 @@ input {
 .add-button-row{
     display: flex;
     flex-direction: column;
+    padding: 10px;
+    button{
+        font-weight: bold;
+    }
 }
 

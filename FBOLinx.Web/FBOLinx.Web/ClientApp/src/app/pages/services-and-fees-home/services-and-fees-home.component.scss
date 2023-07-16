@@ -13,12 +13,15 @@
     margin-left: 8px;
 }
 .mat-accordion .mat-expansion-panel {
-    padding: 10px;
-    margin: 20px 0 20px 0;
-    background-color: transparent;
-    border: none;
+    margin: 10px 0 10px 0;
+    box-shadow: none;
 }
-
+.mat-expansion-panel-header {
+    border: 1px solid $card-header-bg;
+}
+.mat-expansion-panel-content {
+    background-color: #F8F8F8;
+}
 button, mat-icon{
     cursor: pointer;
 }
