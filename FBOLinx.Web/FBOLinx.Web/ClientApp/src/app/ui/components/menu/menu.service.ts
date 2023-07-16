@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { throwError as observableThrowError } from 'rxjs';
 import { IMenuItem } from './menu-item';
 import { AccountType } from 'src/app/enums/user-role';
-import { Router } from '@angular/router';
 import { SharedService } from 'src/app/layouts/shared-service';
 
 @Injectable({
@@ -12,11 +11,20 @@ import { SharedService } from 'src/app/layouts/shared-service';
 export class MenuService {
     constructor(
         private http: HttpClient,
-        private router: Router,
         private sharedService: SharedService
         ) {}
 
-    public freemiumActiveMenuItems = ["Dashboard","About FBOLinx","Orders","Service Orders","FBO Services & Fees"];
+    public freemiumEnaledMenuItemsTitles = [
+        "Dashboard",
+        "CSR Dashboard",
+        "About FBOLinx",
+        "Orders",
+        "Service Orders",
+        "FBO Services & Fees",
+        "Groups",
+        "FBO Geofencing",
+        "Antenna Status"
+    ];
 
     public getData() {
         const URL = '../../../../assets/data/main-menu.json';
@@ -26,15 +34,26 @@ export class MenuService {
     public handleError(error: any) {
         return observableThrowError(error.error || 'Server Error');
     }
-
     public setDisabledMenuItems(menuItems: IMenuItem[]): void {
-        if(this.router.url == "/default-layout/groups") return;
-        if(this.sharedService.currentUser.accountType !=  AccountType.Freemium) return;
+        if (this.sharedService.currentUser.accountType ==  AccountType.Premium){
+            this.enableMenuItems(menuItems);
+        }else{
+            this.DisabledMenuItems(menuItems);
+        }
+
+
+    }
+    private DisabledMenuItems(menuItems: IMenuItem[]): void {
         menuItems.forEach(element => {
-            if(this.freemiumActiveMenuItems.includes(element.title))
+            if(this.freemiumEnaledMenuItemsTitles.includes(element.title))
                 element.disabled = false;
             else
                 element.disabled = true;
+        });
+    }
+    private enableMenuItems(menuItems: IMenuItem[]): void {
+        menuItems.forEach(element => {
+                element.disabled = false;
         });
     }
 }
