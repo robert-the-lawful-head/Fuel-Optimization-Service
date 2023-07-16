@@ -1,9 +1,5 @@
 <h1 mat-dialog-title>
-    {{
-        data.description === "margin template"
-            ? "Delete Margin Template?"
-            : "Delete Record?"
-    }}
+    Delete {{ (data.description != null)? data.description : "Record" }}?
 </h1>
 <div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px">
     <span *ngIf="data.fullDescription; then fullBlock; else simpleBlock">
@@ -11,7 +7,7 @@
     </span>
     <ng-template #fullBlock>{{ data.fullDescription }}</ng-template>
     <ng-template #simpleBlock
-        >You are about to remove this {{ data.description }}. Are you
+        >You are about to remove this {{ (data.description != null)? data.description : "record" }}. Are you
         sure?</ng-template
     >
 </div>
