@@ -8,6 +8,7 @@ import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-co
 import { ItemInputComponent } from './item-input/item-input.component';
 import { DatePipe } from '@angular/common';
 import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
+import { AccountType } from 'src/app/enums/user-role';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -230,7 +231,9 @@ export class ServicesAndFeesComponent implements OnInit {
         else
             return  `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate,'MM/dd/yyyy')}`;
     }
-
+    isAvailableForCurrentUser(): boolean {
+        return this.sharedService.currentUser.accountType == AccountType.Premium;
+    }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(
             message,
