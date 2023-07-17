@@ -1,39 +1,24 @@
 @import "../../../assets/sass/variable";
 
-.example-action-buttons {
-    padding-bottom: 20px;
-}
-
-.example-headers-align .mat-expansion-panel-header-description {
-    justify-content: right;
-    align-items: center;
-}
-
-.example-headers-align .mat-mdc-form-field + .mat-mdc-form-field {
-    margin-left: 8px;
-}
-.mat-accordion .mat-expansion-panel {
-    padding: 10px;
-    margin: 20px 0 20px 0;
-    background-color: transparent;
-    border: none;
-}
-
-button, mat-icon{
-    cursor: pointer;
-}
-
 .service-card{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    margin: 10px;
+    padding: 10px;
+    margin: 5px;
     background-color: #fff;
     border: 1px solid $card-header-bg;
     border-radius: 3px;
     box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
     margin-right: auto;
+    .text{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .mat-checkbox{
+            margin-bottom: 0px;
+        }
+    }
 }
 .services-cards-container{
     display: flex;
@@ -43,11 +28,21 @@ button, mat-icon{
 input {
     border: 1px solid #ccc;
     border-radius: 10px;
-    padding: 5px 10px;
+    padding: 5px 5px;
     width: 100%;
   }
 .add-button-row{
     display: flex;
     flex-direction: column;
+    padding: 10px;
+    button{
+        font-weight: bold;
+    }
+}
+
+.actions-buttons{
+    padding: 0px;
+    display: flex;
+    justify-content: flex-end;
 }
 

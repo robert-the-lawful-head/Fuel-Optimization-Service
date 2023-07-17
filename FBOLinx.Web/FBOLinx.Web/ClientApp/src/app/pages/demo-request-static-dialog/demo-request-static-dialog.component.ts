@@ -55,6 +55,9 @@ export class DemoRequestStaticDialogComponent implements OnInit {
             }
         });
     }
+    ngOnDestroy() {
+        this.routerSubscription.unsubscribe();
+    }
 
     openRequestDemo() {
         window.open(urls.demoRequestUrl, '_blank').focus();
