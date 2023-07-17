@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime, string fbo);
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
-        Task SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId);
+        Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId);
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
     }
 
@@ -338,7 +338,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return chartData;
         }
 
-        public async Task SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId)
+        public async Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId)
         {
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
 
@@ -404,9 +404,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
                     var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
 
-                    await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, dynamicTemplateData);
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, dynamicTemplateData);
+
+                    return result;
                 }
+                return false;
             }
+            return false;
         }
        
         public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo)
@@ -478,7 +482,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return System.String.Join(";", alertEmailAddressesUsers);
         }
 
-        private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, SendGridAutomatedFuelOrderNotificationTemplateData dynamicTemplateData)
+        private async Task<bool> GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, SendGridAutomatedFuelOrderNotificationTemplateData dynamicTemplateData)
         {
             try
             {
@@ -495,10 +499,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;
+
+                return result;
             }
             catch (System.Exception exception)
             {
-
+                return false;
             }
         }
     }
