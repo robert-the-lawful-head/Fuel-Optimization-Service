@@ -11,6 +11,14 @@
     border-radius: 3px;
     box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
     margin-right: auto;
+    .text{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .mat-checkbox{
+            margin-bottom: 0px;
+        }
+    }
 }
 .services-cards-container{
     display: flex;
