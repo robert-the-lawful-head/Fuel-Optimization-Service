@@ -23,11 +23,13 @@
             <div class="row services-cards-container mat-elevation-z">
                 <div class="col-5 service-card" *ngFor="let val of service.servicesAndFees">
                     <ng-container *ngIf="val.isEditMode">
-                            <div class="col-6">
-                                <input matInput placeholder="service Name" [(ngModel)]="val.editedValue">
+                            <div class="col-7">
+                                <mat-form-field>
+                                    <input matInput placeholder="service Name" [(ngModel)]="val.editedValue">
+                                </mat-form-field>
                             </div>
                             <!-- Submit button -->
-                            <div class="actions-buttons col-6">
+                            <div class="actions-buttons col-5">
                                 <button
                                     (click)="saveItem(val)"
                                     class="mr-1"

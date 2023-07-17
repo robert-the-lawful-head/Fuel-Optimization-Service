@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.DB.Models.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
