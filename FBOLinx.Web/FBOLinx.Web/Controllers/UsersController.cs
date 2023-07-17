@@ -19,6 +19,9 @@ using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.DB.Specifications.ServiceOrder;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -27,7 +30,7 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     public class UsersController : FBOLinxControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly Services.IUserService _userService;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFileProvider _fileProvider;
@@ -37,8 +40,9 @@ namespace FBOLinx.Web.Controllers
         private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
+        private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
 
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger) : base(logger)
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
@@ -50,13 +54,13 @@ namespace FBOLinx.Web.Controllers
             _Services = services;
             _fboService = fboService;
             _pricingTemplateService = pricingTemplateService;
+            _userBusinessService = userBusinessService;
         }
 
         [HttpGet("prepare-token-auth")]
         public async Task<IActionResult> PrepareTokenAuthentication()
         {
-            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
-
+            var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
             await HandlePreLoginEvents(user);
 
             return Ok(user);
@@ -413,7 +417,7 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task HandlePreLoginEvents(User user)
+        private async Task HandlePreLoginEvents(UserDTO user)
         {
             var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
 

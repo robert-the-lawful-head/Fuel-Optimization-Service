@@ -1,9 +1,19 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.AcukwikAirport;
+using FBOLinx.DB.Specifications.Aircraft;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 using FBOLinx.ServiceLayer.DTO.Responses.Auth;
+using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,23 +34,38 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
     {
         private readonly IGroupFboService _GroupFboService;
         private readonly IOAuthService _OAuthService;
+        private readonly IFboService _fboService;
+        private readonly IAcukwikFboHandlerDetailService _acukwikFbohandlerDetailService;
+        private readonly IUserService _userService;
+        private readonly IAirportService _airportService;
+        private readonly IFboPreferencesService _fboPreferencesService;
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
 
         public AuthService(FboLinxContext context, DegaContext degaContext,
             IGroupFboService groupFboService,
-            IOAuthService oAuthService)
+            IOAuthService oAuthService,
+            IFboService fboService,
+            IAcukwikFboHandlerDetailService acukwikFbohandlerDetailService,
+            IUserService userService,
+            IAirportService airportService,
+            IFboPreferencesService fboPreferencesService)
         {
             _context = context;
             _degaContext = degaContext;
             _GroupFboService = groupFboService;
             _OAuthService = oAuthService;
+            _fboService = fboService;
+            _acukwikFbohandlerDetailService = acukwikFbohandlerDetailService;
+            _userService = userService;
+            _airportService = airportService;
+            _fboPreferencesService = fboPreferencesService;
         }
         public async Task<AuthenticatedLinkResponse> CreateAuthenticatedLink(int handlerId)
         {
-            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
             var importedFboEmail = new ImportedFboEmails();
-            var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
+            var acukwikFbo = await _acukwikFbohandlerDetailService.GetSingleBySpec(new AcukwikFboHandlerDetailSpecification(handlerId));
 
             if (fbo == null)
             {
@@ -49,7 +74,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                 if (!importedFboEmail.Email.Contains("@"))
                     return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
 
-                fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+                fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
             }
             else
             {
@@ -66,10 +91,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                 }
             }
 
-            var user = await _context.User.Where(x => x.FboId == fbo.Oid && (x.Role == Core.Enums.UserRoles.Primary || x.Role == Core.Enums.UserRoles.NonRev)).FirstOrDefaultAsync();
-
+            var user = await _userService.GetSingleBySpec(new PrimaryOrNonRevUserByFboIdSpecification(fbo.Oid));
+            
             //Return URL with authentication for 7 days
-            AccessTokens accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
+            AccessTokensDto accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
             return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };
         }
 
@@ -77,7 +102,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
         {
             var fbo = new Fbos();
             var importedFboEmail = new ImportedFboEmails();
-            var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
+            var acukwikFbo = await _acukwikFbohandlerDetailService.GetSingleBySpec(new AcukwikFboHandlerDetailSpecification(handlerId));
 
             if (acukwikFbo == null)
             {
@@ -93,19 +118,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
             importedFboEmail.Email = acukwikFbo.HandlerEmail;
 
-            var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
+            var acukwikAirport = await _airportService.GetSingleBySpec(new AcukwikAirportByOidSpecification(acukwikFbo.AirportId.GetValueOrDefault()));
 
             var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Core.Enums.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
             fbo = await _GroupFboService.CreateNewFbo(newFbo);
 
-            DB.Models.User newUser = new DB.Models.User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
-            await _context.User.AddAsync(newUser);
+            UserDTO newUser = new UserDTO() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
+            await _userService.AddAsync(newUser);
 
-            Fbopreferences fbopreferences = new Fbopreferences();
-            fbopreferences = new Fbopreferences() { Fboid = fbo.Oid, EnableJetA = true, EnableSaf = false, OrderNotificationsEnabled = true };
-            await _context.Fbopreferences.AddAsync(fbopreferences);
-
-            await _context.SaveChangesAsync();
+            FboPreferencesDTO fbopreferences = new FboPreferencesDTO();
+            fbopreferences = new FboPreferencesDTO() { Fboid = fbo.Oid, EnableJetA = true, EnableSaf = false, OrderNotificationsEnabled = true };
+            await _fboPreferencesService.AddAsync(fbopreferences);
 
             return importedFboEmail.Email;
         }

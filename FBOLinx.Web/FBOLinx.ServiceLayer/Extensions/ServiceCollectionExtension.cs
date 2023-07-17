@@ -21,6 +21,7 @@ using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
@@ -123,6 +124,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
             services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();
+            services.AddTransient<IAccessTokensService, AccessTokensService>();
+            services.AddTransient<IRefreshTokensService, RefreshTokensService>();
             
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

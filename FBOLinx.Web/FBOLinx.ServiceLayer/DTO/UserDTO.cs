@@ -27,5 +27,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public GroupDto Group { get; set; }
         public ICollection<AccessTokensDto> AccessTokens { get; set; }
         public string RoleDescription { get; set; }
+        public string Token { get; set; }
     }
 }

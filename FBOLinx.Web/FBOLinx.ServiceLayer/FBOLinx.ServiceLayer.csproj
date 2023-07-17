@@ -46,6 +46,10 @@
 	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
 	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="BusinessServices\AcukwikFboHandlerDetail\" />
+	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />
 	</Target>
