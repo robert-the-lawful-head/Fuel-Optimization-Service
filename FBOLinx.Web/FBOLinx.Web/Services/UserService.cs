@@ -9,14 +9,17 @@ using System.Collections.Generic;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.DB.Specifications.ServiceOrder;
 
 namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
-        Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord);
-        Task<User> CreateGroupLoginIfNeeded(Group groupRecord);
+        Task<UserDTO> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
+        Task<UserDTO> CreateFBOLoginIfNeeded(Fbos fboRecord);
+        Task<UserDTO> CreateGroupLoginIfNeeded(Group groupRecord);
     }
 
     public class UserService : IUserService
@@ -25,18 +28,20 @@ namespace FBOLinx.Web.Services
         private readonly FboLinxContext _Context;
         private IEncryptionService _EncryptionService;
         private readonly JwtManager _jwtManager;
+        private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService, JwtManager jwtManager)
+        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService)
         {
             _EncryptionService = encryptionService;
             _Context = context;
             _AppSettings = appSettings.Value;
             _jwtManager = jwtManager;
+            _userService = userService;
         }
         
-        public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
+        public async Task<UserDTO> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
+            UserDTO user = await _userService.GetSingleBySpec(new UserByUsernameSpecification(username));
             
             if (user == null)
             {
@@ -72,9 +77,10 @@ namespace FBOLinx.Web.Services
             return user;
         }
         
-        public async Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord)
+        public async Task<UserDTO> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
+            var user = await _userService.GetSingleBySpec(new PrimaryUserByFboIdSpecification(fboRecord.Oid));
+           
             if (user != null)
                 return user;
 
@@ -85,7 +91,7 @@ namespace FBOLinx.Web.Services
                 join c in _Context.Contacts on fc.ContactId equals c.Oid
                 where fc.Fboid == fboRecord.Oid
                 select c).OrderByDescending(x => x.Primary).FirstOrDefaultAsync();
-            user = new User()
+            user = new UserDTO()
             {
                 FirstName = contactRecord?.FirstName,
                 FboId = fboRecord.Oid,
@@ -96,27 +102,26 @@ namespace FBOLinx.Web.Services
                 Username = fboRecord.Username,
                 Active = true
             };
-            await _Context.User.AddAsync(user);
+            await _userService.AddAsync(user);
+
             //fboRecord.Password = "";
             //fboRecord.Username = "";
             //_Context.Fbos.Update(fboRecord);
-            await _Context.SaveChangesAsync();
 
             //Return the newly created user that transitioned from the FBOs table
             return user;
         }
 
-        public async Task<User> CreateGroupLoginIfNeeded(Group groupRecord)
+        public async Task<UserDTO> CreateGroupLoginIfNeeded(Group groupRecord)
         {
-            User user = await _Context.User.Where(
-                (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+            var user = await _userService.GetSingleBySpec(new ConductorOrGroupAdminUserByGroupIdSpecification(groupRecord.Oid));
             if (user != null)
                 return user;
 
             if (string.IsNullOrEmpty(groupRecord.Username) || string.IsNullOrEmpty(groupRecord.Password))
                 return null;
             //User doesn't exist for group - create it
-            user = new User()
+            user = new UserDTO()
             {
                 FirstName = groupRecord.GroupName,
                 FboId = 0,
@@ -128,29 +133,28 @@ namespace FBOLinx.Web.Services
                 Active = true
             };
 
-            await _Context.User.AddAsync(user);
+            await _userService.AddAsync(user);
             //groupRecord.Password = "";
             //groupRecord.Username = "";
             //_Context.Group.Update(groupRecord);
-            await _Context.SaveChangesAsync();
 
             //Return the newly created user that transitioned from the Group table
             return user;
         }
 
         #region Private Methods
-        private void SetAuthToken(User user)
+        private void SetAuthToken(UserDTO user)
         {
             user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
-        private void UpdateLoginCount(User user)
+        private async void UpdateLoginCount(UserDTO user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
-            _Context.SaveChanges();
+            await _userService.UpdateAsync(user);
         }
 
-        private async Task<User> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
+        private async Task<UserDTO> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
         {
             var fbo = from f in _Context.Fbos
                       join g in _Context.Group on f.GroupId equals g.Oid

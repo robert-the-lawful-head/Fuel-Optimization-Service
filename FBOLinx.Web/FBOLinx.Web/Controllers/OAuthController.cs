@@ -12,6 +12,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -53,7 +54,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokens accessToken = await _iOAuthService.GenerateAccessToken(user, 10080);
+            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user, 10080);
 
             return Ok(accessToken);
         }

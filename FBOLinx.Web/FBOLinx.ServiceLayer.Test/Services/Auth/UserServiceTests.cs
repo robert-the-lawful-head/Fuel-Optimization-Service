@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
@@ -28,7 +29,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             User testUser = MockGetUser();
 
             // Act
-            User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            UserDTO existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             //Assert
             Assert.AreEqual(testUser.Oid, existingUser.Oid);
@@ -39,7 +40,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = MockGetUser();
 
-            User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password, true);
+            UserDTO existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password, true);
 
             Assert.Multiple(() =>
             {
@@ -54,7 +55,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = MockGetUser();
 
-            User result = await subject.GetUserByCredentials(testUser.Username, "incorrect");
+            UserDTO result = await subject.GetUserByCredentials(testUser.Username, "incorrect");
 
             Assert.IsNull(result);
         }
@@ -64,7 +65,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = MockGetUser();
 
-            User result = await subject.GetUserByCredentials("incorrect", "incorrect");
+            UserDTO result = await subject.GetUserByCredentials("incorrect", "incorrect");
 
             Assert.IsNull(result);
         }
@@ -74,7 +75,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             User testUser = MockGetUser(true);
 
-            User result = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            UserDTO result = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             Assert.IsNull(result);
         }
@@ -122,7 +123,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            UserDTO createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             Assert.Multiple(() =>
             {
@@ -163,7 +164,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            UserDTO createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             Assert.Multiple(() =>
             {
@@ -187,7 +188,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 services.AddSingleton(dbContextMock.Object);
             });
 
-            User user = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = testUser.FboId });
+            UserDTO user = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = testUser.FboId });
 
             Assert.AreEqual(testUser.Oid, user.Oid);
         }
@@ -218,7 +219,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 services.AddSingleton(dbContextMock.Object);
             });
 
-            User createdUser = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
+            UserDTO createdUser = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
 
             Assert.Multiple(() =>
             {
@@ -260,7 +261,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 services.AddSingleton(dbContextMock.Object);
             });
 
-            User user = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = testUser.GroupId.Value });
+            UserDTO user = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = testUser.GroupId.Value });
 
             Assert.AreEqual(testUser.Oid, user.Oid);
         }
@@ -284,7 +285,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.CreateGroupLoginIfNeeded(
+            UserDTO createdUser = await subject.CreateGroupLoginIfNeeded(
                 new Group() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
 
             Assert.Multiple(() =>
