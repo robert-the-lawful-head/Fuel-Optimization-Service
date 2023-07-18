@@ -76,7 +76,7 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpGet("handlerid/{handlerId}")]
-        public async Task<ActionResult<List<string>>> GetFboServicesAndFeesByHandlerId([FromRoute] int handlerId)
+        public async Task<ActionResult<List<FbosServicesAndFeesResponse>>> GetFboServicesAndFeesByHandlerId([FromRoute] int handlerId)
         {
             var servicesList = new List<string>();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
@@ -85,15 +85,13 @@ namespace FBOLinx.Web.Controllers
             {
                 var email = await _authService.CreateNonRevAccount(handlerId);
                 if (!email.Contains("@"))
-                    return servicesList;
+                    return new List<FbosServicesAndFeesResponse>();
                 fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
             }
 
             var services = await _fboServicesAndFeesService.Get(fbo.Oid);
-            var allServicesList = services.SelectMany(s => s.ServicesAndFees).ToList();
-            servicesList = allServicesList.Select(s => s.Service).ToList();
 
-            return servicesList;
+            return services;
         }
 
     }
