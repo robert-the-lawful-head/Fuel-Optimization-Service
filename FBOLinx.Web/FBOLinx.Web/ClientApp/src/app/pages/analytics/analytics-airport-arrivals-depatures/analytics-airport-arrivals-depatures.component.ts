@@ -233,9 +233,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     refreshData() {
-        this.filterEndDate = this.getEndOfDayTime(this.filterEndDate);
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
+
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+        this.fetchData(startDate, endDate).subscribe(
             (data: any[]) => {
                 this.data = data;
 
