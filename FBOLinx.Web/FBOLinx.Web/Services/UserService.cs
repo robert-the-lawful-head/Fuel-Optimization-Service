@@ -1,17 +1,15 @@
 ﻿using System.Linq;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
@@ -24,19 +22,19 @@ namespace FBOLinx.Web.Services
 
     public class UserService : IUserService
     {
-        private readonly AppSettings _AppSettings;
         private readonly FboLinxContext _Context;
         private IEncryptionService _EncryptionService;
         private readonly JwtManager _jwtManager;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private IRepository<Group, FboLinxContext> _groupRepo;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService)
+        public UserService(FboLinxContext context, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IRepository<Group, FboLinxContext> groupRepo)
         {
             _EncryptionService = encryptionService;
             _Context = context;
-            _AppSettings = appSettings.Value;
             _jwtManager = jwtManager;
             _userService = userService;
+            _groupRepo = groupRepo;
         }
         
         public async Task<UserDTO> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
@@ -51,7 +49,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
+                var groupRecord = await _groupRepo.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
 
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())
@@ -104,11 +102,6 @@ namespace FBOLinx.Web.Services
             };
             await _userService.AddAsync(user);
 
-            //fboRecord.Password = "";
-            //fboRecord.Username = "";
-            //_Context.Fbos.Update(fboRecord);
-
-            //Return the newly created user that transitioned from the FBOs table
             return user;
         }
 
@@ -134,11 +127,7 @@ namespace FBOLinx.Web.Services
             };
 
             await _userService.AddAsync(user);
-            //groupRecord.Password = "";
-            //groupRecord.Username = "";
-            //_Context.Group.Update(groupRecord);
 
-            //Return the newly created user that transitioned from the Group table
             return user;
         }
 
@@ -151,7 +140,7 @@ namespace FBOLinx.Web.Services
         private async void UpdateLoginCount(UserDTO user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
-            await _userService.UpdateAsync(user);
+            _Context.SaveChanges();
         }
 
         private async Task<UserDTO> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
@@ -168,7 +157,7 @@ namespace FBOLinx.Web.Services
                 return await CreateFBOLoginIfNeeded(fboRecord);
             }
 
-            var groupRecord = await _Context.Group.Where(
+            var groupRecord = await _groupRepo.Where(
                     (x => x.Isfbonetwork == false && x.Username == username && (x.Password == password || resetPassword))).FirstOrDefaultAsync();
 
             if (groupRecord != null)
