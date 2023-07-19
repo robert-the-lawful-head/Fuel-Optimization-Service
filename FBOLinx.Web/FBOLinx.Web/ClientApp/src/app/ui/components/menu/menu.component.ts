@@ -72,7 +72,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
         const hidden = item.roles && item.roles.indexOf(role) === -1;
         return {
-            active: item.active || isActive,
+            active: isActive ?? item.active,
             disabled: item.disabled,
             'has-sub': item.sub,
             hidden,

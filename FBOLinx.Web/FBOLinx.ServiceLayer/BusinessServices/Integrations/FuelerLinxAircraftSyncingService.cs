@@ -66,9 +66,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 return;
 
             //Find all aircraft currently covering the FuelerLinx company fleet
-            var coveredAircraft = await _customerAircraftEntityService.GetListBySpec(
-                new CustomerAircraftByGroupAndTailSpecification(_existingGroupRecords.Select(x => x.Oid).ToList(),
-                    new List<string>() { _tailNumber }, _customerRecord.Oid));
+            var coveredAircraft = await _customerAircraftEntityService.GetCustomerAircraftsByGroupAndTail
+                (_existingGroupRecords.Select(x => x.Oid).ToList(),
+                    new List<string>() { _tailNumber }, _customerRecord.Oid);
 
             if (_fuelerlinxAircraft == null)
             {
@@ -101,8 +101,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 //Find aircrafts that don't have any customer associations to add in
                 List<int> groupIds = _existingGroupRecords.Select(x => x.Oid).ToList();
                 var nonCustomerAircraftList =
-                   await _customerAircraftEntityService.GetListBySpec(
-                       new CustomerAircraftByGroupAndTailSpecification(groupIds, new List<string>() { _tailNumber }, 0));
+                   await _customerAircraftEntityService.GetCustomerAircraftsByGroupAndTail(groupIds, new List<string>() { _tailNumber }, 0);
 
                 var newAircraftToAdd = (from g in groupIds
                                         join ca in nonCustomerAircraftList on g equals ca.GroupId

@@ -724,7 +724,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     filterChanged() {
         this.applyFilter(this.searchValue);
     }
-
+    isValidPricing(data: any) {
+        return data.expiredFboPricingCount === 0 && data.activeFboCount > 0;
+    }
     private saveSettings() {
         localStorage.setItem(
             this.tableLocalStorageKey,

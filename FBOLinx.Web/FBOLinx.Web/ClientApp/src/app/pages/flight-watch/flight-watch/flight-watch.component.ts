@@ -14,6 +14,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { FlightWatchDictionary, FlightWatchModelResponse } from '../../../models/flight-watch';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 const BREADCRUMBS: any[] = [
     {
@@ -78,7 +79,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private cdref: ChangeDetectorRef)
     {
         this.sharedService.titleChange(this.pageTitle);
-        this.selectedICAO = (this.sharedService.currentUser.icao)?this.sharedService.currentUser.icao:localStorage.getItem('icao');
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
     }
 
     ngAfterContentChecked() {
