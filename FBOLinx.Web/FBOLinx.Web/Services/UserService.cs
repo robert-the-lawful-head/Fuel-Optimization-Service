@@ -69,7 +69,7 @@ namespace FBOLinx.Web.Services
             if (authenticate)
             {
                 SetAuthToken(user);
-                UpdateLoginCount(user);
+                await UpdateLoginCount(user);
             }
 
             return user;
@@ -137,7 +137,7 @@ namespace FBOLinx.Web.Services
             user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
-        private async void UpdateLoginCount(UserDTO user)
+        private async Task UpdateLoginCount(UserDTO user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
             _Context.SaveChanges();
