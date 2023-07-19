@@ -51,6 +51,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private IPriceFetchingService _PriceFetchingService;
         private List<CustomerWithPricing> _CurrentPricingResults;
         private IDemoFlightWatch _demoFlightWatch;
+        private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -61,9 +62,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             IAirportFboGeofenceClustersService airportFboGeofenceClustersService,
             ICompanyPricingLogService companyPricingLogService,
             IPriceFetchingService priceFetchingService,
-            IDemoFlightWatch demoFlightWatch
+            IDemoFlightWatch demoFlightWatch,
+            IAircraftHexTailMappingService aircraftHexTailMappingService
         )
         {
+            _AircraftHexTailMappingService = aircraftHexTailMappingService;
             _PriceFetchingService = priceFetchingService;
             _CompanyPricingLogService = companyPricingLogService;
             _AirportFboGeofenceClustersService = airportFboGeofenceClustersService;
@@ -114,10 +117,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             //Then load all SWIM flight legs that we have from the last hour.
             var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
-            
+
+            var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
+            var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
-            var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs);
+            var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs, hexTailMappings);
 
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
@@ -161,16 +166,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         }
 
         private List<FlightWatchModel> CombineAirportWatchAndSWIMData(List<AirportWatchLiveDataWithHistoricalStatusDto> liveDataWithHistoricalInfo,
-            IEnumerable<SWIMFlightLegDTO> swimFlightLegs)
+            IEnumerable<SWIMFlightLegDTO> swimFlightLegs,
+            List<AircraftHexTailMappingDTO> hexTailMapping)
         {
             var result = new List<FlightWatchModel>();
 
             //Combine SWIM and AirportWatch data by tail number
             result = (from liveData in liveDataWithHistoricalInfo
                 join flightLeg in swimFlightLegs on liveData.TailNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
+                join hexTail in hexTailMapping on liveData.TailNumber?.ToUpper() equals hexTail.TailNumber?.ToUpper()
+                into leftJoinHexTail
+                from hexTail in leftJoinHexTail.DefaultIfEmpty()
                 select new FlightWatchModel(liveData.AirportWatchLiveData,
                     liveData.RecentAirportWatchHistoricalDataCollection,
-                    flightLeg)
+                    flightLeg,
+                    hexTail)
                 {
                 }).ToList();
 
@@ -180,22 +190,43 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     join existing in result on liveData.Oid equals existing.AirportWatchLiveDataId.GetValueOrDefault()
                         into leftJoinResult
                     from existing in leftJoinResult.DefaultIfEmpty()
-                    where existing == null
+                    join hexTail in hexTailMapping on liveData.TailNumber?.ToUpper() equals hexTail.TailNumber?.ToUpper()
+                        into leftJoinHexTail
+                    from hexTail in leftJoinHexTail.DefaultIfEmpty()
+                             where existing == null
                     select new FlightWatchModel(liveData.AirportWatchLiveData,
                         liveData.RecentAirportWatchHistoricalDataCollection,
-                        flightLeg)
+                        flightLeg,
+                        hexTail)
                     {
                     }
                 ).ToList());
 
             //Add any remaining AirportWatch data to the result without a SWIM match
-            result.AddRange(liveDataWithHistoricalInfo
-                .Where(x => !result.Any(r => r.AirportWatchLiveDataId > 0 && r.AirportWatchLiveDataId == x.AirportWatchLiveData.Oid)).Select(x =>
-                    new FlightWatchModel(x.AirportWatchLiveData, x.RecentAirportWatchHistoricalDataCollection, null)));
+            result.AddRange((from liveData in liveDataWithHistoricalInfo
+                    join resultItem in result on liveData.Oid equals resultItem.AirportWatchLiveDataId.GetValueOrDefault()
+                        into leftJoinResult
+                    from resultItem in leftJoinResult.DefaultIfEmpty()
+                    join hexTail in hexTailMapping on liveData.TailNumber?.ToUpper() equals
+                        hexTail.TailNumber?.ToUpper()
+                        into leftJoinHexTail
+                    from hexTail in leftJoinHexTail.DefaultIfEmpty()
+                    where resultItem == null
+                    select new FlightWatchModel(liveData.AirportWatchLiveData,
+                        liveData.RecentAirportWatchHistoricalDataCollection, null, hexTail)
+                ));
 
             //Add any remaining SWIM data to the result without an AirportWatch match
-            result.AddRange(swimFlightLegs.Where(x => !result.Any(r => r.SWIMFlightLegId > 0 && r.SWIMFlightLegId == x.Oid)).Select(x =>
-                new FlightWatchModel(null, null, x)));
+            result.AddRange(from swimFlight in swimFlightLegs
+                    join resultItem in result on swimFlight.Oid equals resultItem.SWIMFlightLegId.GetValueOrDefault()
+                        into leftJoinResult
+                    from resultItem in leftJoinResult.DefaultIfEmpty()
+                    join hexTail in hexTailMapping on swimFlight.AircraftIdentification?.ToUpper() equals hexTail.TailNumber?.ToUpper()
+                        into leftJoinHexTail
+                    from hexTail in leftJoinHexTail.DefaultIfEmpty()
+                    where resultItem == null
+                        select new FlightWatchModel(null, null, swimFlight, hexTail)
+                    );
 
             //If we are focused on an FBO then remove any potential records that we've lost track of on antenna + swim data
             if (_Options.FboIdForCenterPoint.GetValueOrDefault() > 0)
