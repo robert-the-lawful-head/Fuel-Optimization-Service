@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,13 +12,11 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.DB.Specifications.ServiceOrder;
 
 namespace FBOLinx.Web.Controllers
@@ -33,25 +29,18 @@ namespace FBOLinx.Web.Controllers
         private readonly Services.IUserService _userService;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IFileProvider _fileProvider;
-        private readonly MailSettings _MailSettings;
         private readonly IFboService _fboService;
-        private IServiceProvider _Services;
         private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
         private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
-
-        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService) : base(logger)
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
             _userService = userService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            _MailSettings = mailSettings.Value;
-            _fileProvider = fileProvider;
-            _Services = services;
             _fboService = fboService;
             _pricingTemplateService = pricingTemplateService;
             _userBusinessService = userBusinessService;
@@ -445,6 +434,6 @@ namespace FBOLinx.Web.Controllers
                 throw ex;
             }
         }
-        
+
     }
 }
