@@ -88,7 +88,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
-        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+        this.mapLoadSubscription = timer(0, 9000).subscribe(() =>{
             this.loadAirportWatchData();
         });
     }
