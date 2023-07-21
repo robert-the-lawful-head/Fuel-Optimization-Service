@@ -141,16 +141,16 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpPost("handlerId/{handlerId}/fuelerlinxTransactionId/{fuelerlinxTransactionId}/send-order-notification")]
-        public async Task<ActionResult<List<FuelReqDto>>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId)
+        public async Task<ActionResult<bool>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId);
+            var result = await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId);
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

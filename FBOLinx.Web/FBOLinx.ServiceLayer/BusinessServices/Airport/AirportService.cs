@@ -11,6 +11,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -22,7 +23,7 @@ using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 {
-    public interface IAirportService
+    public interface IAirportService : IBaseDTOService<AcukwikAirportDTO, DB.Models.AcukwikAirport>
     {
         Task<Fboairports> GetAirportForFboId(int fboId);
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
@@ -40,8 +41,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
     }
 
-    //TODO: Convert this to a DTO and Entity Service!
-    public class AirportService : IAirportService
+    public class AirportService :
+        BaseDTOService<AcukwikAirportDTO, DB.Models.AcukwikAirport, FboLinxContext>, IAirportService
     {
         private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
         private string _GeneralAirportInfoCacheKey = "AirportWatchService_AllAirports_GeneralAirportInfo";
@@ -53,9 +54,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         private AcukwikAirportEntityService _AcukwikAirportEntityService;
         private FuelerLinxApiService _FuelerLinxApiService;
 
-        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
+        public AirportService(IRepository<AcukwikAirport, FboLinxContext> entityService, FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
             AcukwikAirportEntityService acukwikAirportEntityService,
-            FuelerLinxApiService fuelerLinxApiService)
+            FuelerLinxApiService fuelerLinxApiService) : base(
+            entityService)
         {
             _FuelerLinxApiService = fuelerLinxApiService;
             _AcukwikAirportEntityService = acukwikAirportEntityService;

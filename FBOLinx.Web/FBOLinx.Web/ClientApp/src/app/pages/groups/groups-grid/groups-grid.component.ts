@@ -103,6 +103,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     public pricingExpiredTemplate: any;
     @ViewChild('accountExpiredTemplate', { static: true })
     public accountExpiredTemplate: any;
+    @ViewChild('accountTypeTemplate', { static: true })
+    public accountTypeTemplate: any;
     @ViewChild('usersTemplate', { static: true }) public usersTemplate: any;
 
     // Input/Output Bindings
@@ -121,7 +123,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     pageTitle = 'Groups';
     searchValue = '';
     groupAccountType: 'all' | 'active' | 'inactive' = 'active';
-    fboAccountType: 'all' | 'active' | 'inactive' = 'active';
+    fboActiveAccountType: 'all' | 'active' | 'inactive' = 'active';
+    fboAccountType: 'all' | 'premium' | 'freemium' = 'premium';
     pageSettings: any = {
         pageSize: 25,
         pageSizes: [25, 50, 100, 'All'],
@@ -191,6 +194,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     headerText: 'Account Expired',
                     template: this.accountExpiredTemplate,
                 },
+                {
+                    headerText: 'Account Type',
+                    template: this.accountTypeTemplate,
+                },
                 { template: this.fboManageTemplate, width: 150 },
             ],
             dataSource: this.fboDataSource,
@@ -259,6 +266,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.usersTemplate.elementRef.nativeElement._viewContainerRef =
             this.viewContainerRef;
         this.usersTemplate.elementRef.nativeElement.propName = 'template';
+
+        this.accountTypeTemplate.elementRef.nativeElement._viewContainerRef =
+            this.viewContainerRef;
+        this.accountTypeTemplate.elementRef.nativeElement.propName =
+            'template';
 
         setTimeout(() => {
             this.refreshColumns();
@@ -563,9 +575,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
         const filteredFbos = this.groupsFbosData.fbos.filter(
             (fbo) =>
-                this.fboAccountType === 'all' ||
-                (this.fboAccountType === 'active' && !fbo.accountExpired) ||
-                (this.fboAccountType === 'inactive' && fbo.accountExpired)
+                (this.fboActiveAccountType === 'all' ||
+                (this.fboActiveAccountType === 'active' && !fbo.accountExpired) ||
+                (this.fboActiveAccountType === 'inactive' && fbo.accountExpired))
+                &&
+                (
+                    (this.fboAccountType === 'all' ||
+                        (this.fboAccountType === 'premium' && !fbo.accountType) ||
+                        (this.fboAccountType === 'freemium' && fbo.accountType))
+                )
         );
         const filteredGroups = this.groupsFbosData.groups.filter(
             (group) =>

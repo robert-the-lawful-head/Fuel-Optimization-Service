@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime, string fbo);
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
-        Task SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId);
+        Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId);
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
     }
 
@@ -338,7 +338,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return chartData;
         }
 
-        public async Task SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId)
+        public async Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId)
         {
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
 
@@ -382,6 +382,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int> { customer.GroupId }, customer.CustomerId));
                     var customerAircraft = customerAircrafts.Where(c => c.Oid == customerAircraftId).FirstOrDefault();
                     var aircraft = await _aircraftService.GetSingleBySpec(new DB.Specifications.Aircraft.AircraftSpecification(new List<int>() { customerAircraft.AircraftId }));
+                    
+                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
 
                     var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridAutomatedFuelOrderNotificationTemplateData
                     {
@@ -395,18 +397,22 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelVolume = fuelReq == null ? "0" : fuelReq.QuotedVolume.ToString(),
                         fuelVendor = orderDetails.FuelVendor.ToLower().Contains("fbolinx") ? fbo.Fbo : orderDetails.FuelVendor,
                         paymentMethod = orderDetails.PaymentMethod,
-                        services = string.Join(", ", serviceNames)
+                        services = string.Join(", ", serviceNames),
+                        buttonUrl = link
                     };
 
                     var fboContacts = await GetFboContacts(fbo.Oid);
                     var userContacts = await GetUserContacts(fbo);
 
-                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
                     var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
 
-                    await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, link, dynamicTemplateData);
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, dynamicTemplateData);
+
+                    return result;
                 }
+                return false;
             }
+            return false;
         }
        
         public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo)
@@ -478,7 +484,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return System.String.Join(";", alertEmailAddressesUsers);
         }
 
-        private async Task GenerateFuelOrderMailMessage(string fbo, string fboEmails, string link, SendGridAutomatedFuelOrderNotificationTemplateData dynamicTemplateData)
+        private async Task<bool> GenerateFuelOrderMailMessage(string fbo, string fboEmails, SendGridAutomatedFuelOrderNotificationTemplateData dynamicTemplateData)
         {
             try
             {
@@ -495,10 +501,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;
+
+                return result;
             }
             catch (System.Exception exception)
             {
-
+                return false;
             }
         }
     }
