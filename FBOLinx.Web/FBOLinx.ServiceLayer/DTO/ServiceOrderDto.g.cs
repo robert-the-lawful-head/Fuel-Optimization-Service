@@ -44,7 +44,7 @@ namespace FBOLinx.ServiceLayer.DTO
         {
             get
             {
-                return (ServiceOrderItems != null && ServiceOrderItems.Count > 0 && (ServiceOrderItems?.Where(x => x.IsCompleted == false).Count()).GetValueOrDefault() == 0);
+                return (ServiceOrderItems != null && ServiceOrderItems.Count > 0 && (ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == false).Count()).GetValueOrDefault() == 0);
             }
         }
         
