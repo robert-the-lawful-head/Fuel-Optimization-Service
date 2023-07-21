@@ -140,7 +140,7 @@ namespace FBOLinx.Web.Services
         private async Task UpdateLoginCount(UserDTO user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
-            await _userService.UpdateAsync(user);
+            _Context.SaveChanges();
         }
 
         private async Task<UserDTO> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)

@@ -174,7 +174,14 @@ export abstract class GridBase {
             sort.sortables.get(sortedColumn?.id) as MatSortHeader
         )?._setAnimationTransitionState({ toState: 'active' });
     }
-    getEndOfDayTime(date: Date): Date {
-        return new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+    getEndOfDayTime(date: Date, utcDate: boolean = false): Date {
+        return (utcDate) ?
+        new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59)):
+        new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59);
+    }
+    getStartOfDayTime(date: Date, utcDate: boolean = false): Date {
+        return (utcDate) ?
+        new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0)):
+        new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0);
     }
 }

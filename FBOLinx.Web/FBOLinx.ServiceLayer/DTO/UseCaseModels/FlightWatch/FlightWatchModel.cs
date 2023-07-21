@@ -27,14 +27,19 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private FlightLegStatus? _Status;
         private bool _DoesSWIMFlightLegNeedUpdate = false;
         private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-2);
+        private AircraftHexTailMappingDTO _HexTailMapping;
 
-        public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, SWIMFlightLegDTO swimFlightLeg)
+        public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, 
+            List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, 
+            SWIMFlightLegDTO swimFlightLeg,
+            AircraftHexTailMappingDTO hexTailMapping)
         {
+            _HexTailMapping = hexTailMapping;
             _SwimFlightLeg = swimFlightLeg;
             _AirportWatchHistoricalDataCollection = airportWatchHistoricalDataCollection;
             _AirportWatchLiveData = airportWatchLiveData;
         }
-        public string FAARegisteredOwner => _SwimFlightLeg?.FAARegisteredOwner;
+        public string FAARegisteredOwner => string.IsNullOrEmpty(_HexTailMapping?.FAARegisteredOwner) ? _SwimFlightLeg?.FAARegisteredOwner : _HexTailMapping.FAARegisteredOwner;
         public int? AirportWatchLiveDataId => _AirportWatchLiveData?.Oid;
         public long? SWIMFlightLegId => _SwimFlightLeg?.Oid;
 
@@ -72,10 +77,16 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         
         public string FlightDepartment => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
 
-        public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ? _SwimFlightLeg?.FAAMake : _CustomerAircraft?.Make;
-        public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ? _SwimFlightLeg?.FAAModel : _CustomerAircraft?.Model;
-        public string FAAMake => _SwimFlightLeg?.FAAMake;
-        public string FAAModel => _SwimFlightLeg?.FAAModel;
+        //Use customer make first, then HexTailMapping, then SWIM
+        public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ?
+            FAAMake : 
+            _CustomerAircraft?.Make;
+        //Use customer model first, then HexTailMapping, then SWIM
+        public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ?
+            FAAModel : 
+            _CustomerAircraft?.Model;
+        public string FAAMake => string.IsNullOrEmpty(_HexTailMapping?.FaaAircraftMakeModelReference?.MFR) ? _SwimFlightLeg?.FAAMake : _HexTailMapping?.FaaAircraftMakeModelReference?.MFR;
+        public string FAAModel => string.IsNullOrEmpty(_HexTailMapping?.FaaAircraftMakeModelReference?.MODEL) ? _SwimFlightLeg?.FAAModel : _HexTailMapping?.FaaAircraftMakeModelReference?.MODEL;
         public double? FuelCapacityGal => _CustomerAircraft?.FuelCapacityGal;
 
         public string Origin

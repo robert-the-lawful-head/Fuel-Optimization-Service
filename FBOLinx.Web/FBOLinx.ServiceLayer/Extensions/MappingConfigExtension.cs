@@ -88,6 +88,7 @@ namespace FBOLinx.ServiceLayer.Extensions
                 TypeAdapterConfig<AcukwikServicesOffered, ServicesAndFeesResponse>
                 .NewConfig()
                 .Map(dest => dest.CreatedByUser, src => "NA")
+                .Map(dest => dest.IsActive, src => true)
                 .Map(dest => dest.IsCustom, src => false);
 
                 TypeAdapterConfig<FboCustomServicesAndFees, ServiceTypeResponse>

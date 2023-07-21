@@ -24,10 +24,10 @@ namespace FBOLinx.Web.Controllers
     public class CustomersController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private IFuelerLinxAccoutSyncingService _fuelerLinxAccoutSyncingService;
 
-        public CustomersController(FboLinxContext context, AircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService, ILoggingService logger) : base(logger)
+        public CustomersController(FboLinxContext context, IAircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService, ILoggingService logger) : base(logger)
         {
             _fuelerLinxAccoutSyncingService = fuelerLinxAccoutSyncingService;
             _context = context;

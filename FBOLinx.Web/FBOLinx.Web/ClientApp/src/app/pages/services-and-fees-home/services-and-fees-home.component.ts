@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
 const BREADCRUMBS: any[] = [
     {
@@ -14,7 +14,8 @@ const BREADCRUMBS: any[] = [
 @Component({
   selector: 'app-services-and-fees-home',
   templateUrl: './services-and-fees-home.component.html',
-  styleUrls: ['./services-and-fees-home.component.scss']
+  styleUrls: ['./services-and-fees-home.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ServicesAndFeesHomeComponent implements OnInit {
     breadcrumb = BREADCRUMBS;

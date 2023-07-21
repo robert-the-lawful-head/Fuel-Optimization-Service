@@ -29,6 +29,12 @@
                     >
                         <span *ngIf="isHidden(item) != true" class="text">
                             {{ item.title }}
+
+                            <mat-icon *ngIf="item.disabled"
+                            aria-hidden="true"
+                            class="mat-icon material-icons float-right premium-icon"
+                            role="img"
+                            >workspace_premium</mat-icon>
                         </span>
 
                         <span

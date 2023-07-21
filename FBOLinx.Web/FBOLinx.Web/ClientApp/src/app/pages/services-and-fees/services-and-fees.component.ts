@@ -1,14 +1,14 @@
-import { Component, OnInit, Input, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
-import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
 import { ItemInputComponent } from './item-input/item-input.component';
-import { useAnimation } from '@angular/animations';
 import { DatePipe } from '@angular/common';
+import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
+import { AccountType } from 'src/app/enums/user-role';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -133,7 +133,7 @@ export class ServicesAndFeesComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'Service', item: serviceAndfee },
+                data: { description: 'Category', item: serviceAndfee },
             }
         );
 
@@ -230,6 +230,9 @@ export class ServicesAndFeesComponent implements OnInit {
             return   `Source: Acukwik`;
         else
             return  `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate,'MM/dd/yyyy')}`;
+    }
+    isAvailableForCurrentUser(): boolean {
+        return this.sharedService.currentUser.accountType == AccountType.Premium;
     }
     private showErrorSnackBar(message: string): void {
         this.snackBar.open(
