@@ -456,6 +456,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
                 serviceOrderItem.ServiceOrderId = serviceReq.Oid;
                 serviceOrderItem.ServiceName = serviceOrderName;
+                serviceOrderItem.IsCompleted = false;
                 serviceOrderItems.Add(serviceOrderItem);
             }
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
