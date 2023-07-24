@@ -22,6 +22,7 @@ import { ProceedConfirmationComponent } from '../../shared/components/proceed-co
 import { AgreementsAndDocumentsModalComponent } from 'src/app/shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
 import { DocumentService } from 'src/app/services/documents.service';
 import { AccountType } from 'src/app/enums/user-role';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
     providers: [SharedService],
@@ -446,6 +447,7 @@ export class DefaultLayoutComponent implements OnInit {
                 )
                 .subscribe(
                     (data: any) => {
+                        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
                         var fbo = data;
                         this.fboairportsService
                             .getForFbo(

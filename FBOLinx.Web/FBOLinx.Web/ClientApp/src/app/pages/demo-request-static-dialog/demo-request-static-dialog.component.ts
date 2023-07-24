@@ -33,7 +33,9 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "/default-layout/groups",
         "/default-layout/fbo-geofencing",
         "/default-layout/antenna-status",
-        "/default-layout/services-and-fees"
+        "/default-layout/services-and-fees",
+        "/default-layout/fbos",
+        "/default-layout/groups"
     ];
 
 
@@ -63,6 +65,8 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         window.open(urls.demoRequestUrl, '_blank').focus();
     }
     getIsStaticModalVisible(url: string): boolean {
+        url = (url.split('/').length > 3) ? (url.split('/').splice(0, 3)).join('/') : url;
+
         if(this.sharedService.currentUser.accountType == AccountType.Premium)
             return false;
         if(this.freemiumEnaledMenuItemsUrls.includes(url))
