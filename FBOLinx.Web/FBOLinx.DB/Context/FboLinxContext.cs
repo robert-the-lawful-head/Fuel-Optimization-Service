@@ -169,7 +169,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<OrderDetails> OrderDetails { get; set; }
         public virtual DbSet<FboCustomServicesAndFees> FboCustomServicesAndFees { get; set; }
         public virtual DbSet<FboCustomServiceType> FboCustomServiceType { get; set; }
-
+        public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

@@ -373,4 +373,13 @@ export class FuelreqsService {
             }
         );
     }
+    public sendOrderConfirmationNotification(fuelerlinxTransactionId: number) {
+        return this.http.post(
+            `${this.accessPointUrl}/send-email-confirmation/fuelerlinxtransactionid/${fuelerlinxTransactionId}`,
+            {},
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

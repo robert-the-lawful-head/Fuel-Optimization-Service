@@ -26,6 +26,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
+import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -109,12 +110,15 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     expandedElement: any[] = [];
 
+    isConfirmedLoadingDictionary: { [key: string]: boolean; } = {};
+
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
-        private serviceOrderItemDialog: MatDialog
+        private serviceOrderItemDialog: MatDialog,
+        private fuelreqsService: FuelreqsService
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -179,7 +183,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         result.push(...
             this.getVisibleDataColumns()
         );
-
+        result.push('receivedConfirmationButton');
         return result;
     }
 
@@ -293,5 +297,25 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             data: fuelreq.serviceOrder
         };
         const dialogRef = this.serviceOrderItemDialog.open(ServiceOrdersDialogOrderItemsComponent, config);
+    }
+    sendConfirmationNotification(event: Event, fuelreq: any): void{
+        event.stopPropagation();
+
+        this.isConfirmedLoadingDictionary[fuelreq.sourceId] = true;
+
+        this.fuelreqsService.sendOrderConfirmationNotification(fuelreq.sourceId).subscribe(response => {
+            fuelreq.isConfirmed = true;
+            this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
+        }, error => {
+            this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
+            console.log(error);
+        });
+    }
+    isLoadignConfirmationButton(fuelreq: any): boolean{
+        return this.isConfirmedLoadingDictionary[fuelreq.sourceId];
+    }
+    getConfirmationButtonText(fuelreq: any): string{
+        return  this.isLoadignConfirmationButton(fuelreq) ? "" :
+        fuelreq.isConfirmed ? "Confirmation Sent" : "Send Confirmation"
     }
 }
