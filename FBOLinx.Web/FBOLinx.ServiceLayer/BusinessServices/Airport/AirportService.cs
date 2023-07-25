@@ -11,6 +11,7 @@ using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -22,9 +23,8 @@ using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 {
-    public interface IAirportService
+    public interface IAirportService : IBaseDTOService<AcukwikAirportDTO, DB.Models.AcukwikAirport>
     {
-        Task<Fboairports> GetAirportForFboId(int fboId);
         Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId);
         Task<List<AcukwikAirport>> GetAirportsByAcukwikAirportIds(List<int> acukwikAirportIds);
         Task<AcukwikAirport> GetAirportByAirportIdentifier(string airportIdentifier);
@@ -40,12 +40,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
     }
 
-    //TODO: Convert this to a DTO and Entity Service!
-    public class AirportService : IAirportService
+    public class AirportService :
+        BaseDTOService<AcukwikAirportDTO, DB.Models.AcukwikAirport, DegaContext>, IAirportService
     {
         private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
         private string _GeneralAirportInfoCacheKey = "AirportWatchService_AllAirports_GeneralAirportInfo";
-        private FboLinxContext _fboLinxContext;
         private DegaContext _degaContext;
         private IMemoryCache _MemoryCache;
         private List<AirportPosition> _AirportPositions;
@@ -53,22 +52,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         private AcukwikAirportEntityService _AcukwikAirportEntityService;
         private FuelerLinxApiService _FuelerLinxApiService;
 
-        public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
+        public AirportService(IRepository<AcukwikAirport, DegaContext> entityService, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
             AcukwikAirportEntityService acukwikAirportEntityService,
-            FuelerLinxApiService fuelerLinxApiService)
+            FuelerLinxApiService fuelerLinxApiService) : base(
+            entityService)
         {
             _FuelerLinxApiService = fuelerLinxApiService;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _FboEntityService = fboEntityService;
             _MemoryCache = memoryCache;
             _degaContext = degaContext;
-            _fboLinxContext = fboLinxContext;
-        }
-
-        public async Task<Fboairports> GetAirportForFboId(int fboId)
-        {
-            var airport = await _fboLinxContext.Fboairports.FirstOrDefaultAsync(x => x.Fboid == fboId);
-            return airport;
         }
 
         public async Task<AcukwikAirport> GetAirportByAcukwikAirportId(int acukwikAirportId)

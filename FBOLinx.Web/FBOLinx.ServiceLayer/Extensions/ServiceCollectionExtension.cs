@@ -18,9 +18,12 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.User;
@@ -57,7 +60,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<ILoggingService, LoggingService>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IGroupService, GroupService>();
-            services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<IAircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<ICustomerAircraftService, CustomerAircraftService>();
@@ -115,7 +118,16 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
-
+            services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
+            services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
+            services.AddTransient<IOrderDetailsService, OrderDetailsService>();
+            services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
+            services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();
+            services.AddTransient<IAccessTokensService, AccessTokensService>();
+            services.AddTransient<IRefreshTokensService, RefreshTokensService>();
+            
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;

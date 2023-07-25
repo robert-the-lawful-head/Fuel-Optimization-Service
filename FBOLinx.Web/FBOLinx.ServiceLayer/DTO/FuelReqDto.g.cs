@@ -1,10 +1,12 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using EllipticCurve.Utils;
 using FBOLinx.Core.Utilities.DatesAndTimes;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
@@ -16,6 +18,8 @@ namespace FBOLinx.Service.Mapping.Dto
         private string _TailNumber;
         private string _FboName;
         private string _PricingTemplateName;
+        private DateTime? _ArrivalDateTimeLocal;
+        private DateTime? _DepartureDateTimeLocal;
 
         public int Oid { get; set; }
         public int? CustomerId { get; set; }
@@ -87,6 +91,8 @@ namespace FBOLinx.Service.Mapping.Dto
         public FbosDto Fbo { get; set; }
         public FuelReqPricingTemplateDto FuelReqPricingTemplate { get; set; }
         public ServiceOrderDto ServiceOrder { get; set; }
+        public DateTime? ArrivalDateTimeLocal => _ArrivalDateTimeLocal;
+        public DateTime? DepartureDateTimeLocal => _DepartureDateTimeLocal;
 
         public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
         {
@@ -163,6 +169,13 @@ namespace FBOLinx.Service.Mapping.Dto
                 return date;
             return DateTimeHelper.GetLocalTime(
                 date, airport.IntlTimeZone, airport.RespectDaylightSavings);
+        }
+
+        public async Task PopulateLocalTimes(IAirportTimeService airportTimeService)
+        {
+            _ArrivalDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid.GetValueOrDefault(), Etd);
+            if (Etd.HasValue)
+                _DepartureDateTimeLocal = await airportTimeService.GetAirportLocalDateTime(Fboid.GetValueOrDefault(), Etd);
         }
     }
 }

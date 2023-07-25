@@ -1,5 +1,8 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +14,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
 {
     public interface IOAuthService
     {
-        Task<AccessTokens> GenerateAccessToken(DB.Models.User user, int expireMinutes = 60);
-        Task<RefreshTokens> GenerateRefreshToken(DB.Models.User user, AccessTokens token);
+        Task<AccessTokensDto> GenerateAccessToken(UserDTO user, int expireMinutes = 60);
+        Task<RefreshTokensDto> GenerateRefreshToken(int userId, int tokenId);
     }
 
     public class OAuthService : IOAuthService
     {
         private readonly FboLinxContext _context;
-        public OAuthService(FboLinxContext context)
+        private readonly IAccessTokensService _accessTokensService;
+        private readonly IRefreshTokensService _refreshTokensService;
+
+        public OAuthService(FboLinxContext context, IAccessTokensService accessTokensService, IRefreshTokensService refreshTokensService)
         {
             _context = context;
+            _accessTokensService = accessTokensService;
+            _refreshTokensService = refreshTokensService;
         }
 
-        public async Task<AccessTokens> GenerateAccessToken(DB.Models.User user, int expireMinutes = 60)
+        public async Task<AccessTokensDto> GenerateAccessToken(UserDTO user, int expireMinutes = 60)
         {
-            var accessToken = new AccessTokens
+            var accessToken = new AccessTokensDto
             {
                 Oid = 0,
                 AccessToken = GetNewToken(),
@@ -33,24 +41,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
                 Expired = DateTime.UtcNow.AddMinutes(expireMinutes),
                 UserId = user.Oid
             };
-            _context.AccessTokens.Add(accessToken);
-            await _context.SaveChangesAsync();
+
+            await _accessTokensService.AddAsync(accessToken);
 
             return accessToken;
         }
 
-        public async Task<RefreshTokens> GenerateRefreshToken(DB.Models.User user, AccessTokens token)
+        public async Task<RefreshTokensDto> GenerateRefreshToken(int userId, int tokenId)
         {
-            var refreshToken = new RefreshTokens
+            var refreshToken = new RefreshTokensDto
             {
                 CreatedAt = DateTime.UtcNow,
                 Expired = DateTime.UtcNow.AddMonths(3),
                 Token = GetNewToken(),
-                UserId = user.Oid,
-                AccessTokenId = token.Oid
+                UserId = userId,
+                AccessTokenId = tokenId
             };
-            _context.RefreshTokens.Add(refreshToken);
-            await _context.SaveChangesAsync();
+            await _refreshTokensService.AddAsync(refreshToken);
             return refreshToken;
         }
 

@@ -34,6 +34,11 @@ using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.DB.Specifications.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -45,23 +50,30 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
         private readonly IFuelReqService _fuelReqService;
         private readonly IDemoFlightWatch _demoFlightWatch;
+        private readonly ILoggingService logger;
         private readonly IFboPreferencesService _FboPreferencesService;
         private ICompanyPricingLogService _CompanyPricingLogService;
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
+        private readonly IOrderConfirmationService _orderConfirmationService;
+        private readonly IOrderDetailsService _orderDetailsService;
+        private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
             ICompanyPricingLogService companyPricingLogService,
-            ICustomerInfoByGroupService customerInfoByGroupService) : base(logger)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            IOrderConfirmationService orderConfirmationService,
+            IOrderDetailsService orderDetailsService,
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -73,8 +85,12 @@ namespace FBOLinx.Web.Controllers
             _airportWatchService = airportWatchService;
             _fuelReqService = fuelReqService;
             _demoFlightWatch = demoFlightWatch;
+            this.logger = logger;
             _FboPreferencesService = fboPreferencesService;
             _customerInfoByGroupService = customerInfoByGroupService;
+            _orderConfirmationService = orderConfirmationService;
+            _orderDetailsService = orderDetailsService;
+            _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
         }
 
         // GET: api/FuelReqs/5
@@ -238,12 +254,18 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpPost("fbo/{fboId}/create")]
-        public async Task<ActionResult<List<FuelReq>>> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
+        public async Task<ActionResult<List<FuelReqDto>>> CreateFuelReqByFbo([FromRoute] int fboId, [FromBody] FuelReqRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
+
+            var orderDetails = new OrderDetailsDto();
+            orderDetails.ConfirmationEmail = request.Email;
+            orderDetails.FuelVendor = request.FuelVendor;
+            orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
+            orderDetails.PaymentMethod = request.PaymentMethod;
 
             if (fboId > 0)
             {
@@ -255,83 +277,82 @@ namespace FBOLinx.Web.Controllers
                 if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
                     return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
 
-                var fuelReqs = await _context.FuelReq.Where(f => f.SourceId > 0 && f.SourceId == request.SourceId).ToListAsync();
-
-                if (fuelReqs.Count == 0)
+                var fuelReq = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdSpecification(request.SourceId.GetValueOrDefault()));
+                if (request.FuelEstWeight > 0)
                 {
                     var fuelReqsPt =
-                                    await (from c in _context.Customers
-                                           join cg in _context.CustomerInfoByGroup on
-                                           new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
-                                           equals
-                                           new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
-                                           join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
-                                           join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
-                                           join f in _context.Fbos on
-                                           new { GroupId = cg.GroupId, FboId = fboId, Active = true }
-                                           equals
-                                           new { GroupId = f.GroupId, FboId = f.Oid, Active = f.Active ?? false}
-                                           join ca in _context.CustomerAircrafts on
-                                           new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
-                                           equals
-                                           new { ca.TailNumber, ca.CustomerId, GroupId = ca.GroupId }
-                                           select new
-                                           {
-                                               Fboid = fboId,
-                                               CustomerAircraftId = ca.Oid,
-                                               request.Eta,
-                                               request.Etd,
-                                               request.Icao,
-                                               request.Notes,
-                                               QuotedPpg = request.FuelEstCost,
-                                               QuotedVolume = request.FuelEstWeight,
-                                               request.TimeStandard,
-                                               CustomerId = c.Oid,
-                                               DateCreated = DateTime.Now,
-                                               Source = "FuelerLinx",
-                                               request.SourceId,
-                                               request.Email,
-                                               request.PhoneNumber,
-                                               PricingTemplate = pt,
-                                               request.FuelOn,
-                                               request.CustomerNotes,
-                                               request.PaymentMethod
-                                           })
-                                    .Distinct()
-                                    .ToListAsync();
+                                            await (from c in _context.Customers
+                                                   join cg in _context.CustomerInfoByGroup on
+                                                   new { CustomerId = c.Oid, c.FuelerlinxId, Active = true }
+                                                   equals
+                                                   new { cg.CustomerId, FuelerlinxId = request.CompanyId, Active = cg.Active ?? false }
+                                                   join cct in _context.CustomCustomerTypes on cg.CustomerId equals cct.CustomerId
+                                                   join pt in _context.PricingTemplate on new { cct.CustomerType, Fboid = fboId } equals new { CustomerType = pt.Oid, pt.Fboid }
+                                                   join f in _context.Fbos on
+                                                   new { GroupId = cg.GroupId, FboId = fboId, Active = true }
+                                                   equals
+                                                   new { GroupId = f.GroupId, FboId = f.Oid, Active = f.Active ?? false }
+                                                   join ca in _context.CustomerAircrafts on
+                                                   new { TailNumber = request.TailNumber.Trim(), CustomerId = c.Oid, cg.GroupId }
+                                                   equals
+                                                   new { ca.TailNumber, ca.CustomerId, GroupId = ca.GroupId }
+                                                   select new
+                                                   {
+                                                       Fboid = fboId,
+                                                       CustomerAircraftId = ca.Oid,
+                                                       request.Eta,
+                                                       request.Etd,
+                                                       request.Icao,
+                                                       request.Notes,
+                                                       QuotedPpg = request.FuelEstCost,
+                                                       QuotedVolume = request.FuelEstWeight,
+                                                       request.TimeStandard,
+                                                       CustomerId = c.Oid,
+                                                       DateCreated = DateTime.Now,
+                                                       Source = "FuelerLinx",
+                                                       request.SourceId,
+                                                       request.Email,
+                                                       request.PhoneNumber,
+                                                       PricingTemplate = pt,
+                                                       request.FuelOn,
+                                                       request.CustomerNotes,
+                                                       request.PaymentMethod
+                                                   })
+                                            .Distinct()
+                                            .ToListAsync();
 
-                    fuelReqs = fuelReqsPt.Select(fr => new FuelReq
+                    // ADD FUEL REQUEST
+                    if (fuelReq == null || fuelReq.Oid == 0)
                     {
-                        Fboid = fr.Fboid,
-                        CustomerAircraftId = fr.CustomerAircraftId,
-                        Eta = fr.Eta,
-                        Etd = fr.Etd,
-                        Icao = fr.Icao,
-                        Notes = fr.Notes,
-                        QuotedPpg = fr.QuotedPpg,
-                        QuotedVolume = fr.QuotedVolume,
-                        TimeStandard = fr.TimeStandard,
-                        CustomerId = fr.CustomerId,
-                        DateCreated = fr.DateCreated,
-                        Source = fr.Source,
-                        SourceId = fr.SourceId,
-                        Email = fr.Email,
-                        PhoneNumber = fr.PhoneNumber,
-                        FuelOn = fr.FuelOn,
-                        CustomerNotes = fr.CustomerNotes,
-                        PaymentMethod = fr.PaymentMethod,
-                    }).ToList();
-
-                    await _context.FuelReq.AddRangeAsync(fuelReqs);
-                    await _context.SaveChangesAsync();
-
-                    List<FuelReqPricingTemplate> fuelReqPricingTemplates = new List<FuelReqPricingTemplate>();
-                    for (int i = 0; i < fuelReqs.Count; i++)
-                    {
-                        var pricingTemplate = fuelReqsPt[i].PricingTemplate;
-                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplate
+                        fuelReq = fuelReqsPt.Select(fr => new FuelReqDto
                         {
-                            FuelReqId = fuelReqs[i].Oid,
+                            Fboid = fr.Fboid,
+                            CustomerAircraftId = fr.CustomerAircraftId,
+                            Eta = fr.Eta,
+                            Etd = fr.Etd,
+                            Icao = fr.Icao,
+                            Notes = fr.Notes,
+                            QuotedPpg = fr.QuotedPpg,
+                            QuotedVolume = fr.QuotedVolume,
+                            TimeStandard = fr.TimeStandard,
+                            CustomerId = fr.CustomerId,
+                            DateCreated = fr.DateCreated,
+                            Source = fr.Source,
+                            SourceId = fr.SourceId,
+                            Email = fr.Email,
+                            PhoneNumber = fr.PhoneNumber,
+                            FuelOn = fr.FuelOn,
+                            CustomerNotes = fr.CustomerNotes,
+                            PaymentMethod = fr.PaymentMethod,
+                        }).FirstOrDefault();
+
+                        fuelReq = await _fuelReqService.AddAsync(fuelReq);
+
+                        List <FuelReqPricingTemplateDto> fuelReqPricingTemplates = new List<FuelReqPricingTemplateDto>();
+                        var pricingTemplate = fuelReqsPt[0].PricingTemplate;
+                        fuelReqPricingTemplates.Add(new FuelReqPricingTemplateDto
+                        {
+                            FuelReqId = fuelReq.Oid,
                             PricingTemplateId = pricingTemplate.Oid,
                             PricingTemplateName = pricingTemplate.Name,
                             PricingTemplateRaw = JsonConvert.SerializeObject(new
@@ -356,55 +377,39 @@ namespace FBOLinx.Web.Controllers
                                     }).ToListAsync()
                             }),
                         });
+
+                        await _fuelReqPricingTemplateService.BulkUpdate(fuelReqPricingTemplates);
+
+                        // Add order details
+                        orderDetails = await _orderDetailsService.AddAsync(orderDetails);
                     }
-                    await _context.FuelReqPricingTemplate.AddRangeAsync(fuelReqPricingTemplates);
+                    else
+                    {
+                        // Update request
+                        fuelReq.Eta = request.Eta;
+                        fuelReq.Etd = request.Etd;
+                        fuelReq.Notes = request.Notes;
+                        fuelReq.QuotedPpg = request.FuelEstCost;
+                        fuelReq.QuotedVolume = request.FuelEstWeight;
+                        fuelReq.TimeStandard = request.TimeStandard;
+                        fuelReq.Email = request.Email;
+                        fuelReq.PhoneNumber = request.PhoneNumber;
+                        fuelReq.FuelOn = request.FuelOn;
+                        fuelReq.CustomerNotes = request.CustomerNotes;
+                        fuelReq.PaymentMethod = request.PaymentMethod;
+
+                        await _fuelReqService.UpdateAsync(fuelReq);
+                    }
                 }
                 else
-                {
-                    fuelReqs[0].Eta = request.Eta;
-                    fuelReqs[0].Etd = request.Etd;
-                    fuelReqs[0].Notes = request.Notes;
-                    fuelReqs[0].QuotedPpg = request.FuelEstCost;
-                    fuelReqs[0].QuotedVolume = request.FuelEstWeight;
-                    fuelReqs[0].TimeStandard = request.TimeStandard;
-                    fuelReqs[0].Email = request.Email;
-                    fuelReqs[0].PhoneNumber = request.PhoneNumber;
-                    fuelReqs[0].FuelOn = request.FuelOn;
-                    fuelReqs[0].CustomerNotes = request.CustomerNotes;
-                    fuelReqs[0].PaymentMethod = request.PaymentMethod;
-                }
-                await _context.SaveChangesAsync();
+                    await _orderDetailsService.AddAsync(orderDetails);
 
-                // CODE TO SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON 
-                if (!request.DemoMode)
-                {
-                    var fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fboId));
-                    if (fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value)
-                        await _fuelReqService.SendFuelOrderNotificationEmail(fbo.AcukwikFBOHandlerId.GetValueOrDefault(), request);
-                }
-
-                return Ok(fuelReqs);
+                return Ok(new List<FuelReqDto>() { fuelReq });
             }
             else
             {
-                // CODE TO SEND EMAIL IF NOT IN DEMOMODE AND SETTING IS ON OR NOT FBOLINX CUSTOMER
-                if (!request.DemoMode)
-                {
-                    var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.AcukwikFBOHandlerId == request.FboHandlerId);
-                    var fboHandlerId = 0;
-
-                    var fboPreferences = new FboPreferencesDTO();
-                    if (fbo != null && fbo.Oid > 0)
-                    {
-                        fboPreferences = await _FboPreferencesService.GetSingleBySpec(new FboPreferencesByFboIdSpecification(fbo.Oid));
-                        fboHandlerId = fbo.AcukwikFBOHandlerId.GetValueOrDefault();
-                    }
-                    else
-                        fboHandlerId = request.FboHandlerId;
-
-                    if (fbo == null || (fbo != null && fboPreferences != null && fboPreferences.Oid > 0 && fboPreferences.OrderNotificationsEnabled.HasValue && fboPreferences.OrderNotificationsEnabled.Value))
-                        await _fuelReqService.SendFuelOrderNotificationEmail(fboHandlerId, request);
-                }
+                // Add order details
+                await _orderDetailsService.AddAsync(orderDetails);
 
                 return Ok();
             }
@@ -499,9 +504,23 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReq);
         }
 
+        // Post: api/FuelReqs/send-email-confirmation/5
+        [HttpPost("send-email-confirmation/fuelerlinxtransactionid/{fuelerlinxTransactionId}")]
+        public async Task<IActionResult> SendEmailConfirmation([FromRoute] int fuelerlinxTransactionId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var success = await _orderConfirmationService.SendEmailConfirmation(fuelerlinxTransactionId);
+
+            return Ok(success);
+        }
+
         #region Analysis
 
-        
+
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)
         {

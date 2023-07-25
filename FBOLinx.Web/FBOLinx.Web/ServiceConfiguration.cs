@@ -112,6 +112,8 @@ namespace FBOLinx.Web
             services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
             services.AddTransient<IGroupEntityService, GroupEntityService>();
             services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
+            services.AddTransient<IOrderDetailsEntityService, OrderDetailsEntityService>();
+            services.AddTransient<FuelReqPricingTemplateEntityService, FuelReqPricingTemplateEntityService>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

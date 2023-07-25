@@ -8,7 +8,7 @@ import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 
 const BREADCRUMBS: any[] = [
     {

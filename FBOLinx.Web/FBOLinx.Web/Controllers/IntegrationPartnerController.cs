@@ -1,11 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.DB.Specifications.FuelRequests;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.Requests.FuelReq;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.ServiceLayer.Logging;
@@ -14,6 +21,15 @@ using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
+using FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
+using Azure.Core;
+using FBOLinx.DB.Specifications.ServiceOrder;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -27,9 +43,14 @@ namespace FBOLinx.Web.Controllers
         private readonly JwtManager _jwtManager;
         private IAPIKeyManager _apiKeyManager;
         private readonly FboLinxContext _context;
-        private FbopricesService _fboPricesService;
+        private IFboPricesService _fboPricesService;
+        private readonly IFuelReqService _fuelReqService;
+        private readonly IOrderDetailsService _orderDetailsService;
+        private readonly IFboPreferencesService _fboPreferencesService;
+        private readonly IFboService _fboService;
 
-        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, FbopricesService fbopricesService, ILoggingService logger) : base(logger)
+        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, IFboPricesService fbopricesService, ILoggingService logger,
+                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;
@@ -37,6 +58,10 @@ namespace FBOLinx.Web.Controllers
             _apiKeyManager = apiKeyManager;
             _context = context;
             _fboPricesService = fbopricesService;
+            _fuelReqService = fuelReqService;
+            _orderDetailsService = orderDetailsService;
+            _fboPreferencesService = fboPreferencesService;
+            _fboService = fboService;
         }
 
 
@@ -82,6 +107,50 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpPost("handlerId/{handlerId}/create-service-order")]
+        public async Task<ActionResult<List<FuelReqDto>>> CreateServiceOrderRequest([FromRoute] int handlerId, [FromBody] ServiceOrderRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
+
+            var orderDetails = new OrderDetailsDto();
+            orderDetails.ConfirmationEmail = request.Email;
+            orderDetails.FuelVendor = request.FuelVendor;
+            orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
+            orderDetails.PaymentMethod = request.PaymentMethod;
+
+            if (request.ServiceNames.Count > 0)
+                await _fuelReqService.AddServiceOrder(request, fbo);
+
+            // Add order details if it doesn't exist yet
+            var exisitngOrderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(request.SourceId.GetValueOrDefault()));
+            if (exisitngOrderDetails == null)
+                await _orderDetailsService.AddAsync(orderDetails);
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpPost("handlerId/{handlerId}/fuelerlinxTransactionId/{fuelerlinxTransactionId}/send-order-notification")]
+        public async Task<ActionResult<bool>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var result = await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId);
+
+            return Ok(result);
         }
     }
 }

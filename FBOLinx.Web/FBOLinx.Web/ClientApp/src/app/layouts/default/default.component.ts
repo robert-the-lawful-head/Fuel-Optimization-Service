@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { filter } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 
-import * as SharedEvents from '../../models/sharedEvents';
+import * as SharedEvents from '../../constants/sharedEvents';
 // Services
 import { FboairportsService } from '../../services/fboairports.service';
 import { FbopricesService } from '../../services/fboprices.service';

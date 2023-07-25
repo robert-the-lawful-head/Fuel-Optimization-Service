@@ -35,13 +35,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
     public class CustomerAircraftService : BaseDTOService<CustomerAircraftsDto, DB.Models.CustomerAircrafts, FboLinxContext>, ICustomerAircraftService
     {
-        private AircraftService _AircraftService;
+        private IAircraftService _AircraftService;
         private readonly IPricingTemplateService _pricingTemplateService;
         private IMemoryCache _MemoryCache;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
 
-        public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, AircraftService aircraftService, 
+        public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, IAircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
             IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService) : base(customerAircraftEntityService)
         {

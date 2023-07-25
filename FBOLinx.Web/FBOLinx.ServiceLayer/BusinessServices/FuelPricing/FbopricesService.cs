@@ -57,7 +57,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
     public class FbopricesService : BaseDTOService<FboPricesDTO, DB.Models.Fboprices, FboLinxContext>, IFboPricesService
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeesService;
         private readonly IFboPricesEntityService _fboPricesEntityService;
@@ -70,7 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private readonly IIntegrationPartnersEntityService _integrationPartnersEntityService;
         private readonly ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
 
-        public FbopricesService(FboLinxContext context, AircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IFboPricesEntityService fboPricesEntityService, DateTimeService dateTimeService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, IUserService userService, IntegrationUpdatePricingLogService integrationUpdatePricingLogService, IFboService fboService, IFboPreferencesService fboPreferencesService, IIntegrationPartnersEntityService integrationPartnersEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(fboPricesEntityService)
+        public FbopricesService(FboLinxContext context, IAircraftService aircraftService, IPriceFetchingService priceFetchingService, RampFeesService rampFeesService, IFboPricesEntityService fboPricesEntityService, DateTimeService dateTimeService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, IUserService userService, IntegrationUpdatePricingLogService integrationUpdatePricingLogService, IFboService fboService, IFboPreferencesService fboPreferencesService, IIntegrationPartnersEntityService integrationPartnersEntityService, ICustomerInfoByGroupEntityService customerInfoByGroupEntityService) : base(fboPricesEntityService)
         {
             _context = context;
             _aircraftService = aircraftService;

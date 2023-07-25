@@ -15,11 +15,7 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[ServiceOrderItems]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[ServiceOrders]",
+         "Name": "[dbo].[OrderDetails]",
          "ObjectType": 0
       }
    ],
@@ -32,7 +28,7 @@
    "UseFluentApiOnly": false,
    "UseHandleBars": false,
    "UseHierarchyId": false,
-   "UseInflector": true,
+   "UseInflector": false,
    "UseLegacyPluralizer": false,
    "UseManyToManyEntity": false,
    "UseNoDefaultConstructor": false,
@@ -40,6 +36,7 @@
    "UseNodaTime": false,
    "UseNullableReferences": false,
    "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
    "UseSpatial": false,
    "UseT4": false
 }
