@@ -63,7 +63,7 @@
                 </div>
             </div>
             <div class="add-button-row">
-                <button ni-button [view]="'gray'" size="large" (click)="createNewItem(service.serviceType)" *ngIf="isAvailableForCurrentUser()">
+                <button ni-button class="col-md-7 col-sm-12" [view]="'success'" size="large" (click)="createNewItem(service.serviceType)" *ngIf="isAvailableForCurrentUser()">
                 Create New Item
                 </button>
             </div>
@@ -72,7 +72,7 @@
     </mat-accordion>
 
     <div class="add-button-row">
-        <button ni-button [view]="'gray'" size="large" (click)="openCategoryDialog()" *ngIf="isAvailableForCurrentUser()">
+        <button ni-button class="col-md-7 col-sm-12" [view]="'accent'" size="large" (click)="openCategoryDialog()" *ngIf="isAvailableForCurrentUser()">
             Create New Category
         </button>
     </div>
