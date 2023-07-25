@@ -64,12 +64,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private IMemoryCache _MemoryCache;
         private IAirportTimeService _AirportTimeService;
         private readonly AcukwikAirportEntityService _AcukwikAirportEntityService;
-        private readonly ILogger _logger;
         private IMailService _MailService;
         private readonly IAuthService _AuthService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboContactsEntityService _FboContactsEntityService;
         private IAirportService _AirportService;
+        private readonly ILogger _logger;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -77,12 +77,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IMemoryCache memoryCache,
             IAirportTimeService airportTimeService,
             AcukwikAirportEntityService acukwikAirportEntityService,
-            ILogger<FuelReqService> logger,
             IMailService mailService,
             IAuthService authService,
             IHttpContextAccessor httpContextAccessor,
             IFboContactsEntityService fboContactsEntityService,
-            IAirportService airportService) : base(fuelReqEntityService)
+            IAirportService airportService,
+            ILogger logger) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _logger = logger;

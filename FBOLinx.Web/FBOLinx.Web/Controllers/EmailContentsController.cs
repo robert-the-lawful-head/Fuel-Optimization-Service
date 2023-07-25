@@ -21,9 +21,9 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private IHttpContextAccessor _HttpContextAccessor;
-        private EmailContentService _emailContentService;
+        private IEmailContentService _emailContentService;
 
-        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, EmailContentService emailContentService, ILoggingService logger) : base(logger)
+        public EmailContentsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, IEmailContentService emailContentService, ILoggingService logger) : base(logger)
         {
             _emailContentService = emailContentService;
             _HttpContextAccessor = httpContextAccessor;

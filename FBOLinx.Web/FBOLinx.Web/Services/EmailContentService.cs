@@ -6,11 +6,22 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.Web.Models.Responses;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.Web.Services
 {
-    public class EmailContentService
+    public interface IEmailContentService
+    {
+        Task<List<EmailContent>> GetEmailContentsForFbo(int fboId);
+        Task<EmailContent> AddDefaultEmailContentForFbo(int fboId);
+        Task<string> GetFileAttachment(int contentTemplateId);
+        Task<FbolinxEmailContentFileAttachment> GetFileAttachmentObject(int contentTemplateId);
+        Task<string> GetFileAttachmentName(int contentTemplateId);
+        Task UploadFileAttachment(FbolinxEmailContentAttachmentsRequest request);
+        Task DeleteFileAttachment(int emailContentId);
+    }
+    public class EmailContentService: IEmailContentService
     {
         private FboLinxContext _context;
         private readonly FilestorageContext _fileStorageContext;

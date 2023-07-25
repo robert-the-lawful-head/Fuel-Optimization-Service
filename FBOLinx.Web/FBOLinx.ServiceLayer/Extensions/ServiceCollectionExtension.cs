@@ -159,6 +159,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services
                 .AddTransient<IAirportWatchHistoricalParkingEntityService,
                     AirportWatchHistoricalParkingEntityService>();
+            services.AddTransient<IDistributionErrorsEntityService, DistributionErrorsEntityService>();
+            services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
 
             return services;
         }
