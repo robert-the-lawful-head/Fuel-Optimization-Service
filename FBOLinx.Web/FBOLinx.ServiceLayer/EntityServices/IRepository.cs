@@ -29,5 +29,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<TEntity> FindAsync(int id);
         Task BulkInsert(List<TEntity> entities, BulkConfig? bulkConfig = null);
         Task BulkUpdate(List<TEntity> entities, BulkConfig? bulkConfig = null);
+        Task BeginDbTransaction();
+        Task RollbackDbTransaction();
     }
 }

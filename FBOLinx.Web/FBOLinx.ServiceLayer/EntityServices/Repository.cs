@@ -8,12 +8,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FBOLinx.DB.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
     public class Repository<TEntity,TContext> : IRepository<TEntity,TContext>
     where TEntity : class where TContext : DbContext
     {
+        private IDbContextTransaction dbContextTransaction;
+
         protected readonly TContext context;
         public Repository(TContext context)
         {
@@ -175,6 +178,21 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkUpdateAsync(entities);
             await transaction.CommitAsync();
+        }
+
+        public async Task BeginDbTransaction()
+        {
+            dbContextTransaction = await context.Database.BeginTransactionAsync();
+        }
+
+        public async Task RollbackDbTransaction()
+        {
+            if (dbContextTransaction == null)
+            {
+                return;
+            }
+
+            await dbContextTransaction.RollbackAsync();
         }
     }
 }
