@@ -68,7 +68,7 @@ namespace FBOLinx.Web.Controllers
             IHttpContextAccessor httpContextAccessor,
             JwtManager jwtManager,
             RampFeesService rampFeesService,
-            AircraftService aircraftService,
+            IAircraftService aircraftService,
             IPriceFetchingService priceFetchingService,
             IFboPricesService fbopricesService,
             DateTimeService dateTimeService,
