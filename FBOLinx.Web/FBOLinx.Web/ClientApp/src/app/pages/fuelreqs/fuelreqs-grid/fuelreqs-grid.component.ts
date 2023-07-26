@@ -27,6 +27,7 @@ import {
 } from '../../../shared/components/table-settings/table-settings.component';
 import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -118,7 +119,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
         private serviceOrderItemDialog: MatDialog,
-        private fuelreqsService: FuelreqsService
+        private fuelreqsService: FuelreqsService,
+        private snackBarService: SnackBarService
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -306,9 +308,11 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.fuelreqsService.sendOrderConfirmationNotification(fuelreq.sourceId).subscribe(response => {
             fuelreq.isConfirmed = true;
             this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
+            this.snackBarService.showSuccessSnackBar("Confirmation Sent");
         }, error => {
             this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
             console.log(error);
+            this.snackBarService.showErrorSnackBar("Error sending confirmation try again later");
         });
     }
     isLoadignConfirmationButton(fuelreq: any): boolean{

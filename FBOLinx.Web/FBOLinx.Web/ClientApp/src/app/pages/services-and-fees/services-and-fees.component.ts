@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
 import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
@@ -9,6 +8,7 @@ import { ItemInputComponent } from './item-input/item-input.component';
 import { DatePipe } from '@angular/common';
 import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
 import { AccountType } from 'src/app/enums/user-role';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
@@ -30,7 +30,7 @@ export class ServicesAndFeesComponent implements OnInit {
         private serviceTypeService: ServiceTypeService,
         private sharedService: SharedService,
         private dialog: MatDialog,
-        private snackBar: MatSnackBar,
+        private snackBar: SnackBarService,
         private datePipe : DatePipe
         ) { }
 
@@ -76,7 +76,7 @@ export class ServicesAndFeesComponent implements OnInit {
             serviceAndfee.createdByUser = this.sharedService.currentUser.username;
             this.toogleEditModel(serviceAndfee);
         }, error => {
-            this.showErrorSnackBar( `There was an error saving ${serviceAndfee.service} ${serviceAndfee.service} please try again`);
+            this.snackBar.showErrorSnackBar( `There was an error saving ${serviceAndfee.service} ${serviceAndfee.service} please try again`);
             console.log(error);
             this.toogleEditModel(serviceAndfee);
         });
@@ -91,11 +91,11 @@ export class ServicesAndFeesComponent implements OnInit {
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.service = serviceAndfee.editedValue;
             this.toogleEditModel(serviceAndfee);
-            this.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
+            this.snackBar.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
         }, error => {
             serviceAndfee.editedValue = previousNameBackup;
             serviceAndfee.service = previousNameBackup;
-            this.showErrorSnackBar( `There was an error updating the service please try again`);
+            this.snackBar.showErrorSnackBar( `There was an error updating the service please try again`);
             console.log(error);
             this.toogleEditModel(serviceAndfee);
         });
@@ -113,9 +113,9 @@ export class ServicesAndFeesComponent implements OnInit {
         }
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.oid = response.oid;
-            this.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
+            this.snackBar.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
         }, error => {
-            this.showErrorSnackBar( `There was an error updating the service please try again`);
+            this.snackBar.showErrorSnackBar( `There was an error updating the service please try again`);
             serviceAndfee.isActive = !serviceAndfee.isActive;
             console.log(error);
 
@@ -147,9 +147,9 @@ export class ServicesAndFeesComponent implements OnInit {
                 category.servicesAndFees = category.servicesAndFees.filter(item => item.oid != serviceAndfee.item.oid);
 
                 this.toogleEditModel(serviceAndfee);
-                this.showSuccessSnackBar("Service deleted successfully");
+                this.snackBar.showSuccessSnackBar("Service deleted successfully");
             }, error => {
-                this.showErrorSnackBar( `There was an error deleting ${serviceAndfee.item.serviceType} ${serviceAndfee.item.service} please try again`);
+                this.snackBar.showErrorSnackBar( `There was an error deleting ${serviceAndfee.item.serviceType} ${serviceAndfee.item.service} please try again`);
                 console.log(error);
             });
         });
@@ -169,9 +169,9 @@ export class ServicesAndFeesComponent implements OnInit {
             }
             this.serviceTypeService.remove(serviceType.item.oid).subscribe(response => {
                 this.servicesAndFeesGridDisplay = this.servicesAndFeesGridDisplay.filter(elem=> elem.serviceType.oid != serviceType.item.oid);
-                this.showSuccessSnackBar("Category and services deleted successfully");
+                this.snackBar.showSuccessSnackBar("Category and services deleted successfully");
             }, error => {
-                this.showErrorSnackBar( `There was an error deleting ${serviceType.item.name} please try again`);
+                this.snackBar.showErrorSnackBar( `There was an error deleting ${serviceType.item.name} please try again`);
                 console.log(error);
             });
         });
@@ -204,10 +204,10 @@ export class ServicesAndFeesComponent implements OnInit {
         this.serviceTypeService.update(serviceType.oid, serviceType)
         .subscribe(response => {
             serviceType.oid = response.oid;
-            this.showSuccessSnackBar( `saved Successfully`);
+            this.snackBar.showSuccessSnackBar( `saved Successfully`);
         }, error => {
             serviceType.name = previousName;
-            this.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
+            this.snackBar.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
             console.log(error);
         });
     }
@@ -219,9 +219,9 @@ export class ServicesAndFeesComponent implements OnInit {
                 serviceType: serviceType,
                 servicesAndFees: []
             });
-            this.showSuccessSnackBar( `saved Successfully`);
+            this.snackBar.showSuccessSnackBar( `saved Successfully`);
         }, error => {
-            this.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
+            this.snackBar.showErrorSnackBar( `There was an error saving ${serviceType.name} please try again`);
             console.log(error);
         });
     }
@@ -233,25 +233,5 @@ export class ServicesAndFeesComponent implements OnInit {
     }
     isAvailableForCurrentUser(): boolean {
         return this.sharedService.currentUser.accountType == AccountType.Premium;
-    }
-    private showErrorSnackBar(message: string): void {
-        this.snackBar.open(
-            message,
-            '',
-            {
-                duration: 2000,
-                panelClass: ['error-snackbar'],
-            }
-        );
-    }
-    private showSuccessSnackBar(message: string): void {
-        this.snackBar.open(
-            message,
-            '',
-            {
-                duration: 2000,
-                panelClass: ['blue-snackbar'],
-            }
-        );
     }
 }
