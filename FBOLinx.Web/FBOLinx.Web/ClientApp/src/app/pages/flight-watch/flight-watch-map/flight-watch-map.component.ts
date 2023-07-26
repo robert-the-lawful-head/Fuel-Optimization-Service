@@ -125,6 +125,7 @@ export class FlightWatchMapComponent
                 this.styleLoaded = true;
             })
             .onLoad(async () => {
+                this.resizeMap(true);
                 await this.loadMapIcons();
                 this.loadFlightOnMap();
                 this.loadICAOIconOnMap(this.icao);
