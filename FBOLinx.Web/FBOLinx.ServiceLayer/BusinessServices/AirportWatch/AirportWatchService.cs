@@ -107,7 +107,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _demoData = demoData;
             _context = context;
             _degaContext = degaContext;
-            _aircraftService = aircraftService;
             _FboService = fboService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;

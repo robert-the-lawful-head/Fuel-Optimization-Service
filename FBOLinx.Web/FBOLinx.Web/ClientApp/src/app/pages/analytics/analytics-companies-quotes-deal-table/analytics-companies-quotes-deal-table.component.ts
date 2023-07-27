@@ -215,8 +215,11 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     }
 
     refreshData() {
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
+
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+        this.fetchData(startDate, endDate).subscribe(
             (data: any) => {
                 this.dataSource.data = data;
                  this.dataSource.sortingDataAccessor = (item, property) => {

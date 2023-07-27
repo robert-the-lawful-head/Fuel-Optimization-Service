@@ -107,7 +107,7 @@ namespace FBOLinx.ServiceLayer.Demo
             };
             var airportWatchHistoricalDataCollection = new List<AirportWatchHistoricalDataDto>();
 
-            var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim);
+            var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim, null);
 
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
 

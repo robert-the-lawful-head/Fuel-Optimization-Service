@@ -120,6 +120,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
             services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
+            services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
+            services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
@@ -168,6 +170,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
             services.AddTransient<IServiceOrderEntityService, ServiceOrderEntityService>();
             services.AddTransient<IServiceOrderItemEntityService, ServiceOrderItemEntityService>();
+            services.AddTransient<ICustomerAircraftNoteEntityService, CustomerAircraftNoteEntityService>();
+            services.AddTransient<ICustomerInfoByGroupNoteEntityService, CustomerInfoByGroupNoteEntityService>();
             services
                 .AddTransient<IAirportWatchHistoricalParkingEntityService,
                     AirportWatchHistoricalParkingEntityService>();

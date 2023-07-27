@@ -31,7 +31,11 @@ namespace FBOLinx.ServiceLayer.Test
             distributePricingRequest.PricingTemplate.EmailContentId = 1;
             distributePricingRequest.PricingTemplate.Notes = string.Empty;
             distributePricingRequest.PricingTemplate.MarginType = MarginTypes.CostPlus;
-            distributePricingRequest.Customer = CreateCustomerInfoByGroup();
+            distributePricingRequest.Customer = new CustomerInfoByGroupDto()
+            {
+                Oid = 1,
+                CustomerId = 1
+            };
             distributePricingRequest.Customer.CustomerId = 1;
 
             return distributePricingRequest;
@@ -46,11 +50,12 @@ namespace FBOLinx.ServiceLayer.Test
             return distributePricingRequest;
         }
 
-        public static CustomerInfoByGroupDto CreateCustomerInfoByGroup()
+        public static CustomerInfoByGroup CreateCustomerInfoByGroup()
         {
-            CustomerInfoByGroupDto customerInfoByGroup = new CustomerInfoByGroupDto();
-            customerInfoByGroup.Oid = 1;
-            customerInfoByGroup.CustomerId = 1;
+            var customerInfoByGroup = new CustomerInfoByGroup();
+            customerInfoByGroup.CustomerId = int.MaxValue;
+            customerInfoByGroup.GroupId = int.MaxValue;
+            customerInfoByGroup.Username = "TestUser";
 
             return customerInfoByGroup;
         }

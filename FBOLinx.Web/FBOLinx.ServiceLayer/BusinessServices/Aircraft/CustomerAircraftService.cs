@@ -76,10 +76,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             _MemoryCache.Remove(_AircraftWithDetailsCacheKey + groupId + "_" + fboId);
         }
 
-        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, List<string> tailNumbers = null)
+        private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, int customerId = 0, List<string> tailNumbers = null)
         {
-            var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
-            var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
+            List<CustomerAircraftsDto> aircrafts = null;
+            if (customerId > 0)
+            {
+                aircrafts =
+                    await this.GetListbySpec(
+                        new CustomerAircraftByGroupSpecification(new List<int>() { groupId }, customerId));
+
+                aircrafts = aircrafts.Where(x =>
+                    tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(x.TailNumber)).ToList();
+            }
+            else
+            {
+                var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
+                aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
+            }
+
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
 
@@ -102,7 +116,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             var aircraftPricingTemplates = await _pricingTemplateService.GetCustomerAircraftTemplates(fboId, groupId);
             var allAircraft = await _AircraftService.GetAllAircrafts();
 
-            var result = await GetCustomerAircraftsViewModel(groupId, tailNumbers);
+            var result = await GetCustomerAircraftsViewModel(groupId, customerId, tailNumbers);
 
             result.ForEach(x =>
             {

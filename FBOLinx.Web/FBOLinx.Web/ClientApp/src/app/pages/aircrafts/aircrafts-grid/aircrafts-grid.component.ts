@@ -142,7 +142,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                     data: {
                         disableDelete:
                             customerAircraft.isFuelerlinxNetwork &&
-                            customerAircraft.addedFrom,
+                            customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
                     },
                     width: '450px',
