@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -31,5 +32,6 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task BulkUpdate(List<TEntity> entities, BulkConfig? bulkConfig = null);
         Task BeginDbTransaction();
         Task RollbackDbTransaction();
+        IExecutionStrategy CreateExecutionStrategy();
     }
 }

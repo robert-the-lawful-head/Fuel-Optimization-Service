@@ -180,6 +180,13 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await transaction.CommitAsync();
         }
 
+        public IExecutionStrategy CreateExecutionStrategy()
+        {
+            IExecutionStrategy executionStrategy = context.Database.CreateExecutionStrategy();
+
+            return executionStrategy;
+        }
+
         public async Task BeginDbTransaction()
         {
             dbContextTransaction = await context.Database.BeginTransactionAsync();

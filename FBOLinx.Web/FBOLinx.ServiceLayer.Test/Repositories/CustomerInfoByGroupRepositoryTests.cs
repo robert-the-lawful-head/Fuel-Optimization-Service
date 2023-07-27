@@ -23,12 +23,18 @@ namespace FBOLinx.ServiceLayer.Test.Repositories
         [Test]
         public async Task GetListBySpec_ShouldReturnSpecifiedEntities()
         {
-            var testEntities = await subject.AddRangeAsync(new List<CustomerInfoByGroup>()
+            List<CustomerInfoByGroup> testEntities = null;
+
+            List<CustomerInfoByGroup> result = await Act<List<CustomerInfoByGroup>>(async () =>
             {
-                CreateTestEntity(),
-                CreateTestEntity()
+                testEntities = await subject.AddRangeAsync(new List<CustomerInfoByGroup>()
+                {
+                    CreateTestEntity(),
+                    CreateTestEntity()
+                });
+
+                return await subject.GetListBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(testEntities.First().CustomerId, testEntities.First().GroupId));
             });
-            var result = await subject.GetListBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(testEntities.First().CustomerId, testEntities.First().GroupId));
 
             Assert.AreEqual(2, result.Count(x => x.Username == testEntities.First().Username));
         }
