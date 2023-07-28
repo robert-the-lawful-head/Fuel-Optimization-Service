@@ -110,7 +110,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 
             await SendEmail(dynamicTemplateData, fbo.FuelDeskEmail, orderDetails.ConfirmationEmail);
 
-            await RegisterConfirmationNotificationSend(fuelerLinxId);
+            await RegisterConfirmationNotificationSend(fuelReq.SourceId.GetValueOrDefault());
 
             return true;
         }
