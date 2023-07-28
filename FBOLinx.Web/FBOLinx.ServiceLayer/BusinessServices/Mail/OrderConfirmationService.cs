@@ -2,6 +2,7 @@
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.DB.Specifications.ServiceOrder;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
@@ -15,7 +16,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 {
     public interface IOrderConfirmationService
     {
-        Task<bool> SendEmailConfirmation(int fuelerLinxId);
+        Task<bool> SendEmailConfirmation(FuelReqDto fuelReq);
     }
     public class OrderConfirmationService : IOrderConfirmationService
     {
@@ -25,8 +26,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
         private readonly IOrderDetailsService _orderDetailsService;
         private readonly IFboService _fboService;
         private readonly IAirportTimeService _airportTimeService;
+        private readonly ICustomerAircraftService _customerAircraftService;
 
-        public OrderConfirmationService(IMailService mailService, IFuelReqService fuelReqService, IServiceOrderService serviceOrderService, IOrderDetailsService orderDetailsService, IFboService fboService, IAirportTimeService airportTimeService)
+        public OrderConfirmationService(IMailService mailService, IFuelReqService fuelReqService, IServiceOrderService serviceOrderService, IOrderDetailsService orderDetailsService, IFboService fboService, IAirportTimeService airportTimeService, ICustomerAircraftService customerAircraftService)
         {
             _mailService = mailService;
             _fuelReqService = fuelReqService;
@@ -34,46 +36,57 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             _orderDetailsService = orderDetailsService;
             _fboService = fboService;
             _airportTimeService = airportTimeService;
+            _customerAircraftService = customerAircraftService;
         }
 
-        public async Task<bool> SendEmailConfirmation(int fuelerLinxId)
+        public async Task<bool> SendEmailConfirmation(FuelReqDto fuelReq)
         {
             var TailNumber = "";
             var Fbo = "";
             var Icao = "";
             var Eta = "";
             var FuelVendor = "";
-            var FuelerLinxTransactionId = "";
+            var FuelerLinxTransactionId = fuelReq.SourceId.GetValueOrDefault().ToString();
 
-            var fuelOrder = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelerLinxId));
+            var fuelOrder = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
             var serviceOrder = new DTO.ServiceOrderDto();
             var fbo = new FbosDto();
 
             if (fuelOrder == null || fuelOrder.Oid == 0)
             {
-                serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdSpecification(fuelerLinxId));
+                serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
                 fbo = await _fboService.GetFbo(serviceOrder.Fboid);
                 await serviceOrder.PopulateLocalTimes(_airportTimeService);
 
-                TailNumber = serviceOrder.CustomerAircraft.TailNumber;
-                Fbo = fbo.Fbo;
-                Icao = fbo.FboAirport.Icao;
-                Eta = serviceOrder.ArrivalDateTimeLocal.ToString();
-                FuelerLinxTransactionId = fuelerLinxId.ToString();
+                if (serviceOrder != null && serviceOrder.Oid > 0)     // SERVICE ORDER ONLY
+                {
+                    TailNumber = serviceOrder.CustomerAircraft.TailNumber;
+                    Fbo = fbo.Fbo;
+                    Icao = fbo.FboAirport.Icao;
+                    Eta = serviceOrder.ArrivalDateTimeLocal.ToString();
+                }
+                else     // CONTRACT FUEL ORDER ONLY
+                {
+                    fbo = await _fboService.GetFbo(fuelReq.Fboid.GetValueOrDefault());
+
+                    TailNumber = fuelReq.TailNumber;
+                    Fbo = fbo.Fbo;
+                    Icao = fbo.FboAirport.Icao;
+                    Eta = fuelReq.Eta.ToString();
+                }
             }
-            else
+            else      // DIRECT FUEL ORDER
             {
-                fuelOrder.Fbo = await _fboService.GetFbo(fuelOrder.Fboid.GetValueOrDefault());
+                fbo = await _fboService.GetFbo(fuelOrder.Fboid.GetValueOrDefault());
                 await fuelOrder.PopulateLocalTimes(_airportTimeService);
 
-                TailNumber = fuelOrder.TailNumber;
-                Fbo = fuelOrder.Fbo.Fbo;
+                TailNumber = await _customerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(fuelOrder.CustomerAircraftId.GetValueOrDefault());
+                Fbo = fbo.Fbo;
                 Icao = fuelOrder.Icao;
                 Eta = fuelOrder.ArrivalDateTimeLocal.ToString();
-                FuelerLinxTransactionId = fuelerLinxId.ToString();
             }
 
-            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelerLinxId));
+            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
             if (orderDetails != null && orderDetails.Oid > 0)
             {
                 FuelVendor = orderDetails.FuelVendor;
@@ -84,7 +97,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 aircraftTailNumber = TailNumber,
                 fboName = Fbo.ToString(),
                 airportICAO = Icao,
-                arrivalDate = Eta.ToString(),
+                arrivalDate = Eta,
                 fuelVendor = FuelVendor,
                 fuelerLinxId = FuelerLinxTransactionId
             };

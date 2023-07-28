@@ -207,6 +207,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
 
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
+                fuelRequest.Fboid = fboId;
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -217,6 +218,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             {
                 var airport = await _AirportService.GetGeneralAirportInformation(order.Icao);
                 FuelReqDto.SetAirportLocalTimes(order, airport);
+                order.Fboid = fboId;
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);
