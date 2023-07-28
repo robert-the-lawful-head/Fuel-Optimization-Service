@@ -305,7 +305,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
         this.isConfirmedLoadingDictionary[fuelreq.sourceId] = true;
 
-        this.fuelreqsService.sendOrderConfirmationNotification(fuelreq.sourceId).subscribe(response => {
+        this.fuelreqsService.sendOrderConfirmationNotification(fuelreq).subscribe(response => {
             fuelreq.isConfirmed = true;
             this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
             this.snackBarService.showSuccessSnackBar("Confirmation Sent");
