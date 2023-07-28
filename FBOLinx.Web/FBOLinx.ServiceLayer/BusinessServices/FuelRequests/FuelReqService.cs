@@ -212,6 +212,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed );
+                fuelRequest.Fboid = fboId;
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -223,6 +224,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var airport = await _AirportService.GetGeneralAirportInformation(order.Icao);
                 FuelReqDto.SetAirportLocalTimes(order, airport);
                 order.IsConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == order.SourceId);
+                order.Fboid = fboId;
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);

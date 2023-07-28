@@ -80,8 +80,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private ISWIMFlightLegService _SwimFlightLegService;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
-            IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext,
+           IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,

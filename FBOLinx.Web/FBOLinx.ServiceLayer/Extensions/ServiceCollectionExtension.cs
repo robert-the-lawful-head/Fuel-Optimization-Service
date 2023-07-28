@@ -115,13 +115,13 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
-            services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
-            services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
             services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
             services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
             services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
             services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
+            services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
+            services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();

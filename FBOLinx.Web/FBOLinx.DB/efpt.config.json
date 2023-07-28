@@ -23,11 +23,6 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[CustomerAircraftNotes]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[CustomerInfoByGroupNotes]",
          "ObjectType": 0
       }
    ],

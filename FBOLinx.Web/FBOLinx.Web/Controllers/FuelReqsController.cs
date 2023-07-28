@@ -501,16 +501,16 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReq);
         }
 
-        // Post: api/FuelReqs/send-email-confirmation/5
-        [HttpPost("send-email-confirmation/fuelerlinxtransactionid/{fuelerlinxTransactionId}")]
-        public async Task<IActionResult> SendEmailConfirmation([FromRoute] int fuelerlinxTransactionId)
+        // Post: api/FuelReqs/send-email-confirmation/
+        [HttpPost("send-email-confirmation")]
+        public async Task<IActionResult> SendEmailConfirmation([FromBody] FuelReqDto fuelReq)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var success = await _orderConfirmationService.SendEmailConfirmation(fuelerlinxTransactionId);
+            var success = await _orderConfirmationService.SendEmailConfirmation(fuelReq);
 
             return Ok(success);
         }
