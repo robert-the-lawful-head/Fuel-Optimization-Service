@@ -73,7 +73,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         super();
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
+            moment().add(-30, 'd').format('MM/DD/YYYY')
         );
         this.filterEndDate = new Date(
             moment().add(7, 'd').format('MM/DD/YYYY')
