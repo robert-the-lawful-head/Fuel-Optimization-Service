@@ -51,7 +51,8 @@
                     <ng-container *ngIf="!val.isEditMode">
                         <div class="text">
                             <mat-checkbox (click)="updateActiveFlag(val)"
-                            [(ngModel)]="val.isActive"></mat-checkbox>
+                            [(ngModel)]="val.isActive" [disabled]="val.isSaving">
+                            </mat-checkbox>
                             <span class="pl-3">{{val.service}}</span>
                         </div>
                         <div class="actions-buttons">

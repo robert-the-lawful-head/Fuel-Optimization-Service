@@ -13,7 +13,8 @@ import { AccountType } from 'src/app/enums/user-role';
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse{
     isEditMode : boolean,
     isNewItem: boolean,
-    editedValue: string
+    editedValue: string,
+    isSaving: boolean
 }
 @Component({
   selector: 'app-services-and-fees',
@@ -54,7 +55,8 @@ export class ServicesAndFeesComponent implements OnInit {
             editedValue : '',
             createdDate: new Date(),
             createdByUser: '',
-            createdByUserId: this.sharedService.currentUser.oid
+            createdByUserId: this.sharedService.currentUser.oid,
+            isSaving: false
         };
 
 
@@ -84,6 +86,7 @@ export class ServicesAndFeesComponent implements OnInit {
 
     update(serviceAndfee :  ServicesAndFeesGridItem): void {
         let updatedItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
+        console.log("🚀 ~ file: services-and-fees.component.ts:89 ~ ServicesAndFeesComponent ~ update ~ updatedItem:", updatedItem)
 
         let previousNameBackup = serviceAndfee.service;
         updatedItem.service = serviceAndfee.editedValue;
@@ -101,15 +104,18 @@ export class ServicesAndFeesComponent implements OnInit {
         });
     }
     updateActiveFlag(serviceAndfee :  ServicesAndFeesGridItem): void {
+        serviceAndfee.isSaving = true;
+        serviceAndfee.isActive = !serviceAndfee.isActive;
+        console.log("🚀 ~ file: services-and-fees.component.ts:107 ~ ServicesAndFeesComponent ~ updateActiveFlag ~ serviceAndfee.isActive:", serviceAndfee.isActive)
         let updatedItem: ServicesAndFees = {
             oid: serviceAndfee.oid,
             handlerId: serviceAndfee.handlerId,
             serviceOfferedId: serviceAndfee.serviceOfferedId,
             service: serviceAndfee.service,
             serviceTypeId: serviceAndfee.serviceTypeId,
-            isActive: !serviceAndfee.isActive,
+            isActive: serviceAndfee.isActive,
             createdDate: new Date(),
-            createdByUserId: this.sharedService.currentUser.oid
+            createdByUserId: this.sharedService.currentUser.oid,
         }
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.oid = response.oid;
@@ -117,6 +123,7 @@ export class ServicesAndFeesComponent implements OnInit {
         }, error => {
             this.showErrorSnackBar( `There was an error updating the service please try again`);
             serviceAndfee.isActive = !serviceAndfee.isActive;
+            serviceAndfee.isSaving = false;
             console.log(error);
 
         });
