@@ -26,6 +26,10 @@ import { CustomerAircraftsDialogNewAircraftComponent } from '../customer-aircraf
 import { CustomerAircraftsEditComponent } from '../customer-aircrafts-edit/customer-aircrafts-edit.component';
 import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component';
 
+// Models
+import { CustomerAircraftNote } from '../../../models/customer-aircraft-note';
+import { CustomerAircraft } from '../../../models/customer-aircraft';
+
 @Component({
     selector: 'app-customer-aircrafts-grid',
     styleUrls: ['./customer-aircrafts-grid.component.scss'],
@@ -47,7 +51,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
         'aircraftType',
         'aircraftSize',
         'aircraftPricingTemplate',
-        'delete',
+        'notes',
     ];
     public resultsLength = 0;
     public aircraftSizes: Array<any>;
@@ -180,7 +184,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             }
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
-            result.customerId = this.customer.customerId;
+            result.customerId = this.customer.customerId;            
             this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
@@ -340,6 +344,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
                         });
                 }
             });
+    }
+
+    public getNoteToDisplayForAircraft(customerAircraft: CustomerAircraft) {
+        var notesForFbo = customerAircraft?.notes?.filter(x => x.fboId == this.sharedService.currentUser.fboId);
+        if (notesForFbo && notesForFbo.length > 0) {
+            return notesForFbo[0].notes;
+        }
+        return '';
     }
 
     //[#hz0jtd] FlatFile importer was requested to be removed

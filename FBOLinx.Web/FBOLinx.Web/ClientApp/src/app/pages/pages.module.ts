@@ -141,6 +141,7 @@ import { CustomersDialogNewCustomerComponent } from './customers/customers-dialo
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
 import { CustomersGridComponent } from './customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
+import { CustomersEditDialogComponent } from './customers/customers-edit-dialog/customers-edit-dialog.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardFboUpdatedComponent } from './dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
@@ -257,6 +258,7 @@ import { ItemInputComponent } from './services-and-fees/item-input/item-input.co
         CustomersEditComponent,
         CustomersGridComponent,
         CustomersHomeComponent,
+        CustomersEditDialogComponent,
         DashboardFboComponent,
         DashboardFboUpdatedComponent,
         DashboardHomeComponent,

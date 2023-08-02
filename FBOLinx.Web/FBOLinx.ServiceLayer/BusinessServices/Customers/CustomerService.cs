@@ -21,7 +21,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
         Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
         Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId);
-        bool CompareCustomers(CustomerInfoByGroup oldCustomer, CustomerInfoByGroup newCustomer);
+        bool CompareCustomers(CustomerInfoByGroupDto oldCustomer, CustomerInfoByGroupDto newCustomer);
         Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId);
         Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId);
         Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId);
@@ -175,7 +175,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             return result;
         }
 
-        public bool CompareCustomers (CustomerInfoByGroup oldCustomer , CustomerInfoByGroup newCustomer)
+        public bool CompareCustomers (CustomerInfoByGroupDto oldCustomer , CustomerInfoByGroupDto newCustomer)
         {
             return
             oldCustomer.Active == newCustomer.Active &&

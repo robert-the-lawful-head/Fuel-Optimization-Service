@@ -209,9 +209,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 var columnForAirport: ColumnType = { id: fbo.icao, name: 'Visits to ' + fbo.icao };
                 var columnForFbo: ColumnType = { id: fbo.icao + fbo.acukwikFboHandlerId, name: 'Visits to ' + fbo.fbo + ' ' + fbo.icao };
                 this.dynamicColumns.push(columnForAirport);
-                this.dynamicColumns.push(columnForFbo);
-                this.refreshData(true);
+                this.dynamicColumns.push(columnForFbo);                
             }
+            this.refreshData(true);
         });
     }
 

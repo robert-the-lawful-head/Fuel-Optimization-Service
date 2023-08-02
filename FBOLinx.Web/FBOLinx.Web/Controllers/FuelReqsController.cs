@@ -45,7 +45,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
@@ -56,7 +56,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,

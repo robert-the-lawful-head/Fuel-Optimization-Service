@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ using NuGet.Packaging;
 using Microsoft.Extensions.Azure;
 using System.Text.RegularExpressions;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -49,21 +51,23 @@ namespace FBOLinx.Web.Controllers
         private readonly IPriceDistributionService _priceDistributionService;
         private readonly FuelerLinxApiService _fuelerLinxService;
         private readonly IPricingTemplateService _pricingTemplateService;
-        private readonly AircraftService _aircraftService;
         private readonly DegaContext _degaContext;
         private readonly IFboPricesService _fboPricesService;
         private readonly IFboFeesAndTaxesService _fboFeesAndTaxesService;
         private ICustomerInfoByGroupService _customerInfoByGroupService;
         private readonly ICustomerAircraftService _customerAircraftService;
+        private ICustomerInfoByGroupNoteService _CustomerInfoByGroupNoteService;
 
         public CustomerInfoByGroupController(IWebHostEnvironment hostingEnvironment, FboLinxContext context,
             ICustomerService customerService, IPriceFetchingService priceFetchingService, IFboService fboService,
             AirportWatchService airportWatchService, IPriceDistributionService priceDistributionService,
             FuelerLinxApiService fuelerLinxService, IPricingTemplateService pricingTemplateService,
-            AircraftService aircraftService, DegaContext degaContext, IFboPricesService fbopricesService,
+            DegaContext degaContext, IFboPricesService fbopricesService,
             IFboFeesAndTaxesService fboFeesAndTaxesService, ICustomerInfoByGroupService customerInfoByGroupService,
-            ILoggingService logger, ICustomerAircraftService customerAircraftService) : base(logger)
+            ILoggingService logger, ICustomerAircraftService customerAircraftService,
+            ICustomerInfoByGroupNoteService customerInfoByGroupNoteService) : base(logger)
         {
+            _CustomerInfoByGroupNoteService = customerInfoByGroupNoteService;
             _hostingEnvironment = hostingEnvironment;
             _context = context;
             _priceFetchingService = priceFetchingService;
@@ -74,7 +78,6 @@ namespace FBOLinx.Web.Controllers
             _fuelerLinxService = fuelerLinxService;
             _degaContext = degaContext;
             _pricingTemplateService = pricingTemplateService;
-            _aircraftService = aircraftService;
             _fboPricesService = fbopricesService;
             _fboFeesAndTaxesService = fboFeesAndTaxesService;
             _customerInfoByGroupService = customerInfoByGroupService;
@@ -98,12 +101,9 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerInfoByGroup = await (_context.CustomerInfoByGroup.Where(cg => cg.Oid.Equals(id))
-                                                        .Include(cg => cg.Customer))
+            var result = await (_customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupSpecification(id)));
 
-                                                        .FirstOrDefaultAsync<CustomerInfoByGroup>();
-
-            return Ok(customerInfoByGroup);
+            return Ok(result);
         }
 
         [HttpGet("group/{groupId}/list")]
@@ -551,7 +551,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/CustomerInfoByGroup/5
         [HttpPut("{id}/{userId}")]
-        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerInfoByGroup customerInfoByGroup)
+        public async Task<IActionResult> PutCustomerInfoByGroup([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerInfoByGroupDto customerInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -566,32 +566,20 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerInfoByGroup oldCustomer = _context.CustomerInfoByGroup.FirstOrDefault(c => c.Oid == customerInfoByGroup.Oid);
+                //var existingRecord = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupSpecification(customerInfoByGroup.Oid));
+                
+                ////Check for any changed notes so we record who did it and when
+                //var changedNotes = customerInfoByGroup.Notes?.Where(x => existingRecord.Notes?.FirstOrDefault(e => e.Oid == x.Oid)?.Notes == x.Notes).ToList();
+                //if (changedNotes != null && changedNotes.Any())
+                //{
+                //    foreach (var changedNote in changedNotes)
+                //    {
+                //        changedNote.LastUpdatedByUserId = userId;
+                //        changedNote.LastUpdatedUtc = DateTime.UtcNow;
+                //    }
+                //}
 
-                if (oldCustomer != null)
-                {
-                    if (_customerService.CompareCustomers(oldCustomer, customerInfoByGroup) == false)
-                    {
-                        oldCustomer.Active = customerInfoByGroup.Active;
-                        oldCustomer.Address = customerInfoByGroup.Address;
-                        oldCustomer.CertificateType = customerInfoByGroup.CertificateType;
-                        oldCustomer.City = customerInfoByGroup.City;
-                        oldCustomer.Company = customerInfoByGroup.Company;
-                        oldCustomer.Country = customerInfoByGroup.Country;
-                        oldCustomer.CustomerCompanyType = customerInfoByGroup.CustomerCompanyType;
-                        oldCustomer.Distribute = customerInfoByGroup.Distribute;
-                        oldCustomer.EmailSubscription = customerInfoByGroup.EmailSubscription;
-                        oldCustomer.MainPhone = customerInfoByGroup.MainPhone;
-                        oldCustomer.Show100Ll = customerInfoByGroup.Show100Ll;
-                        oldCustomer.ShowJetA = customerInfoByGroup.ShowJetA;
-                        oldCustomer.State = customerInfoByGroup.State;
-                        oldCustomer.Website = customerInfoByGroup.Website;
-                        
-                        _context.CustomerInfoByGroup.Update(oldCustomer);
-
-                        await _context.SaveChangesAsync(userId, customerInfoByGroup.CustomerId, customerInfoByGroup.GroupId);
-                    }
-                }
+                await _customerInfoByGroupService.UpdateAsync(customerInfoByGroup);
 
             }
             catch (DbUpdateConcurrencyException)
@@ -946,6 +934,110 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(true);
+        }
+
+        [HttpGet("notes/{customerInfoByGroupId}")]
+        public async Task<ActionResult<List<CustomerInfoByGroupNoteDto>>> GetCustomerNotes(
+            [FromRoute] int customerInfoByGroupId)
+        {
+            try
+            {
+                var result = await _CustomerInfoByGroupNoteService.GetSingleBySpec(
+                    new CustomerInfoByGroupNoteByCustomerInfoByGroupIdSpecification(customerInfoByGroupId));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
+        [HttpPost("notes")]
+        public async Task<ActionResult<CustomerInfoByGroupNoteDto>> AddCustomerNotes(
+            [FromBody] CustomerInfoByGroupNoteDto customerInfoByGroupNoteDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var existingRecords = await _CustomerInfoByGroupNoteService.GetListbySpec(
+                    new CustomerInfoByGroupNoteByCustomerInfoByGroupIdSpecification(customerInfoByGroupNoteDto
+                        .CustomerInfoByGroupId));
+                var existingRecordForSameFbo =
+                    existingRecords.FirstOrDefault(x => x.FboId == customerInfoByGroupNoteDto.FboId);
+
+                if (existingRecordForSameFbo != null)
+                    customerInfoByGroupNoteDto.Oid = existingRecordForSameFbo.Oid;
+
+                customerInfoByGroupNoteDto.LastUpdatedUtc = DateTime.UtcNow;
+
+                if (customerInfoByGroupNoteDto.Oid > 0)
+                    await _CustomerInfoByGroupNoteService.UpdateAsync(customerInfoByGroupNoteDto);
+                else
+                    customerInfoByGroupNoteDto =
+                        await _CustomerInfoByGroupNoteService.AddAsync(customerInfoByGroupNoteDto);
+            }
+            catch (System.Exception exception)
+            {
+                HandleException(exception);
+                throw exception;
+            }
+
+            return Ok(customerInfoByGroupNoteDto);
+        }
+
+        [HttpPut("notes/{id}")]
+        public async Task<IActionResult> UpdateCustomerNotes([FromRoute] int id,
+            [FromBody] CustomerInfoByGroupNoteDto customerInfoByGroupNoteDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != customerInfoByGroupNoteDto.Oid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                customerInfoByGroupNoteDto.LastUpdatedUtc = DateTime.UtcNow;
+                await _CustomerInfoByGroupNoteService.UpdateAsync(customerInfoByGroupNoteDto);
+            }
+            catch (System.Exception exception)
+            {
+                base.HandleException(exception);
+                throw exception;
+            }
+
+            return Ok(customerInfoByGroupNoteDto);
+        }
+
+        [HttpDelete("notes/{id}")]
+        public async Task<IActionResult> DeleteCustomerNotes([FromRoute] int id)
+        {
+            var customerInfoByGroupNoteDto = await _CustomerInfoByGroupNoteService.FindAsync(id);
+            if (customerInfoByGroupNoteDto == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _CustomerInfoByGroupNoteService.DeleteAsync(customerInfoByGroupNoteDto);
+            }
+            catch (System.Exception exception)
+            {
+                base.HandleException(exception);
+                throw exception;
+            }
+
+            return Ok();
         }
 
 

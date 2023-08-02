@@ -58,7 +58,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddScoped<ILoggingService, LoggingService>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IGroupService, GroupService>();
-            services.AddTransient<AircraftService, AircraftService>();
+            services.AddTransient<IAircraftService, AircraftService>();
             services.AddTransient<IEncryptionService, EncryptionService>();
             services.AddTransient<IMailTemplateService, MailTemplateService>();
             services.AddTransient<ICustomerAircraftService, CustomerAircraftService>();
@@ -120,6 +120,9 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
             services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
             
+            services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
+            services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
+
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;
@@ -160,6 +163,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IIntegrationPartnersEntityService, IntegrationPartnersEntityService>();
             services.AddTransient<IServiceOrderEntityService, ServiceOrderEntityService>();
             services.AddTransient<IServiceOrderItemEntityService, ServiceOrderItemEntityService>();
+            services.AddTransient<ICustomerAircraftNoteEntityService, CustomerAircraftNoteEntityService>();
+            services.AddTransient<ICustomerInfoByGroupNoteEntityService, CustomerInfoByGroupNoteEntityService>();
             services
                 .AddTransient<IAirportWatchHistoricalParkingEntityService,
                     AirportWatchHistoricalParkingEntityService>();
