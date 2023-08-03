@@ -86,7 +86,6 @@ export class ServicesAndFeesComponent implements OnInit {
 
     update(serviceAndfee :  ServicesAndFeesGridItem): void {
         let updatedItem: ServicesAndFees =  Object.assign({}, serviceAndfee);
-        console.log("🚀 ~ file: services-and-fees.component.ts:89 ~ ServicesAndFeesComponent ~ update ~ updatedItem:", updatedItem)
 
         let previousNameBackup = serviceAndfee.service;
         updatedItem.service = serviceAndfee.editedValue;
@@ -104,9 +103,9 @@ export class ServicesAndFeesComponent implements OnInit {
         });
     }
     updateActiveFlag(serviceAndfee :  ServicesAndFeesGridItem): void {
+        if(serviceAndfee.isSaving) return;
         serviceAndfee.isSaving = true;
         serviceAndfee.isActive = !serviceAndfee.isActive;
-        console.log("🚀 ~ file: services-and-fees.component.ts:107 ~ ServicesAndFeesComponent ~ updateActiveFlag ~ serviceAndfee.isActive:", serviceAndfee.isActive)
         let updatedItem: ServicesAndFees = {
             oid: serviceAndfee.oid,
             handlerId: serviceAndfee.handlerId,
@@ -119,6 +118,7 @@ export class ServicesAndFeesComponent implements OnInit {
         }
         this.servicesAndFeesService.update(this.sharedService.currentUser.fboId,updatedItem).subscribe(response => {
             serviceAndfee.oid = response.oid;
+            serviceAndfee.isSaving = false;
             this.showSuccessSnackBar( `Service ${serviceAndfee.service} was updated successfully`);
         }, error => {
             this.showErrorSnackBar( `There was an error updating the service please try again`);
