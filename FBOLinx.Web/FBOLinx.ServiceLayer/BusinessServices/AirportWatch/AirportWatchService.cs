@@ -816,6 +816,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             if (fboAntenna != "none")
                 distinctUnassignedBoxes.Add(fboAntenna);
 
+            distinctUnassignedBoxes.Add("");
+
             return distinctUnassignedBoxes.OrderBy(d => d).ToList();
         }
 
