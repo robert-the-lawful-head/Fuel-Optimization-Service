@@ -15,6 +15,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 
 import * as moment from 'moment';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
+import { AccountType } from 'src/app/enums/user-role';
 
 @Component({
     selector: 'app-service-orders-list',
@@ -33,6 +34,7 @@ export class ServiceOrdersListComponent implements OnInit {
     public filterStartDate: Date = new Date(moment().add(-1, 'M').format('YYYY-MM-DD'));
     public filterEndDate: Date = new Date(moment().add(1, 'M').format('YYYY-MM-DD'));
     public sortType: string = 'arrivalDateTimeLocal';
+    public isAddOrderDisabled: boolean = true;
 
     constructor(private router: Router,
         private serviceOrderService: ServiceOrderService,
@@ -46,6 +48,8 @@ export class ServiceOrdersListComponent implements OnInit {
             this.loadServiceOrders();
         else
             this.arrangeServiceOrders();
+
+        this.isAddOrderDisabled = this.sharedService.currentUser.accountType == AccountType.Freemium;
     }
 
     public addServiceOrderClicked() {
@@ -78,7 +82,7 @@ export class ServiceOrdersListComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result: ServiceOrder) => {
             if (!result)
-                return;                
+                return;
             this.serviceOrdersData.push(result);
             this.arrangeServiceOrders();
             this.serviceOrderClicked(result);
@@ -110,7 +114,7 @@ export class ServiceOrdersListComponent implements OnInit {
                 return;
             }
             this.deleteOrder(serviceOrder);
-        });        
+        });
     }
 
     public serviceOrderToggleChanged(event: any) {
@@ -145,7 +149,6 @@ export class ServiceOrdersListComponent implements OnInit {
     public sortTypeChanged() {
         this.sortOrders();
     }
-
     private loadServiceOrders() {
         this.serviceOrdersData = null;
         this.serviceOrderService.getServiceOrdersForFbo(this.sharedService.currentUser.fboId, this.filterStartDate, this.filterEndDate).subscribe((response: EntityResponseMessage<Array<ServiceOrder>>) => {
@@ -158,7 +161,7 @@ export class ServiceOrdersListComponent implements OnInit {
         });
     }
 
-    private calculateCompletions(serviceOrder: ServiceOrder) {        
+    private calculateCompletions(serviceOrder: ServiceOrder) {
         serviceOrder.numberOfCompletedItems = serviceOrder.serviceOrderItems.filter(x => x.isCompleted).length;
         serviceOrder.isCompleted = serviceOrder.numberOfCompletedItems == serviceOrder.serviceOrderItems.length;
     }

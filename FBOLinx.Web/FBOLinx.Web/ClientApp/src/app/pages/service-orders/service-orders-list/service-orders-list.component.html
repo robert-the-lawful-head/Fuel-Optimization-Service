@@ -75,7 +75,8 @@
             <div class="col-12 text-right">
 
                 <div>
-                    <button (click)="addServiceOrderClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn"
+                    <button (click)="addServiceOrderClicked()" [view]="'accent'"
+                    [disabled]="isAddOrderDisabled"beforeIcon="fa fa-plus" class="action-btn"
                             ni-button size="small">
                         Add Order
                     </button>
