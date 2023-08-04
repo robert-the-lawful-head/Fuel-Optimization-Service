@@ -55,11 +55,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             if (fuelOrder == null || fuelOrder.Oid == 0)
             {
                 serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
-                fbo = await _fboService.GetFbo(serviceOrder.Fboid);
-                await serviceOrder.PopulateLocalTimes(_airportTimeService);
-
+                
                 if (serviceOrder != null && serviceOrder.Oid > 0)     // SERVICE ORDER ONLY
                 {
+                    fbo = await _fboService.GetFbo(serviceOrder.Fboid);
+                    await serviceOrder.PopulateLocalTimes(_airportTimeService);
+
                     TailNumber = serviceOrder.CustomerAircraft.TailNumber;
                     Fbo = fbo.Fbo;
                     Icao = fbo.FboAirport.Icao;

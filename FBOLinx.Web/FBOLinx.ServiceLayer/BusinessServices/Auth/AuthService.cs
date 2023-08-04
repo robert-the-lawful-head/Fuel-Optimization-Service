@@ -92,7 +92,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
             }
 
             var user = await _userService.GetSingleBySpec(new PrimaryOrNonRevUserByFboIdSpecification(fbo.Oid));
-            
+
+            if (!fbo.Active.GetValueOrDefault() && fbo.AccountType != Core.Enums.AccountTypes.NonRevFBO)
+            {
+                fbo.AccountType = Core.Enums.AccountTypes.NonRevFBO;
+                user.Role = Core.Enums.UserRoles.NonRev;
+
+                await _fboService.UpdateAsync(fbo);
+                await _userService.UpdateAsync(user);
+            }
+
             //Return URL with authentication for 7 days
             AccessTokensDto accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
             return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };

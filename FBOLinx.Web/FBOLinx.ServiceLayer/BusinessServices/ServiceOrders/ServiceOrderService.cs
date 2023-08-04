@@ -74,10 +74,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServiceOrders
         public override async Task<ServiceOrderDto> GetSingleBySpec(ISpecification<ServiceOrder> spec)
         {
             var result = await base.GetSingleBySpec(spec);
-            await result.PopulateLocalTimes(_AirportTimeService);
+            if (result != null)
+                await result.PopulateLocalTimes(_AirportTimeService);
             return result;
         }
-
-        
     }
 }

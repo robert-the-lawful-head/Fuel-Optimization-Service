@@ -10,7 +10,7 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
 {
     public sealed class FboByAcukwikHandlerIdSpecification : Specification<Models.Fbos>
     {
-        public FboByAcukwikHandlerIdSpecification(int acukwikHandlerId) : base(x => x.AcukwikFBOHandlerId == acukwikHandlerId)
+        public FboByAcukwikHandlerIdSpecification(int acukwikHandlerId) : base(x => x.AcukwikFBOHandlerId == acukwikHandlerId && x.GroupId > 1)
         {
             AddInclude(x => x.FboAirport);
             AddInclude(x => x.Preferences);
