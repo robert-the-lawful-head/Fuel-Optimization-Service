@@ -448,6 +448,8 @@ export class DefaultLayoutComponent implements OnInit {
                 .subscribe(
                     (data: any) => {
                         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
+
                         var fbo = data;
                         this.fboairportsService
                             .getForFbo(

@@ -26,7 +26,7 @@ import { first, last } from 'lodash';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { fboChangedEvent } from '../../../constants/sharedEvents';
+import { accountTypeChangedEvent, fboChangedEvent } from '../../../constants/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
@@ -498,6 +498,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
 
                 this.sharedService.emitChange(fboChangedEvent);
+                this.sharedService.emitChange(accountTypeChangedEvent);
+
                 this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
             });
         }

@@ -411,6 +411,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
 

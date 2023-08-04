@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { fboChangedEvent } from 'src/app/constants/sharedEvents';
 import { urls } from 'src/app/constants/externalUrlsConstants';
 import { AccountType } from 'src/app/enums/user-role';
 import { Subscription } from 'rxjs';
+import { accountTypeChangedEvent, fboChangedEvent } from 'src/app/constants/sharedEvents';
 
 @Component({
   selector: 'app-demo-request-static-dialog',
@@ -25,7 +25,7 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "Antenna Status"
     ];
 
-    public freemiumEnaledMenuItemsUrls = [
+    public freemiumEnabledMenuItemsUrls = [
         "/default-layout/about-fbolinx",
         "/default-layout/fuelreqs",
         "/default-layout/service-orders",
@@ -34,8 +34,7 @@ export class DemoRequestStaticDialogComponent implements OnInit {
         "/default-layout/fbo-geofencing",
         "/default-layout/antenna-status",
         "/default-layout/services-and-fees",
-        "/default-layout/fbos",
-        "/default-layout/groups"
+        "/default-layout/fbos"
     ];
 
 
@@ -52,7 +51,7 @@ export class DemoRequestStaticDialogComponent implements OnInit {
     ngOnInit() {
         this.isStaticModalVisible = this.getIsStaticModalVisible(this.router.url);
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent) {
+            if (message === fboChangedEvent || message === accountTypeChangedEvent) {
                 this.isStaticModalVisible = this.getIsStaticModalVisible(this.router.url);
             }
         });
@@ -66,10 +65,12 @@ export class DemoRequestStaticDialogComponent implements OnInit {
     }
     getIsStaticModalVisible(url: string): boolean {
         url = (url.split('/').length > 3) ? (url.split('/').splice(0, 3)).join('/') : url;
+        console.log("🚀 ~ file: demo-request-static-dialog.component.ts:69 ~ DemoRequestStaticDialogComponent ~ getIsStaticModalVisible ~ url:", url)
+        console.log("🚀 ~ file: demo-request-static-dialog.component.ts:71 ~ DemoRequestStaticDialogComponent ~ getIsStaticModalVisible ~ this.sharedService.currentUser.accountType:", this.sharedService.currentUser.accountType)
 
         if(this.sharedService.currentUser.accountType == AccountType.Premium)
             return false;
-        if(this.freemiumEnaledMenuItemsUrls.includes(url))
+        if(this.freemiumEnabledMenuItemsUrls.includes(url))
             return false;
 
         return true;
