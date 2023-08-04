@@ -93,10 +93,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
             var user = await _userService.GetSingleBySpec(new PrimaryOrNonRevUserByFboIdSpecification(fbo.Oid));
 
-            if (!fbo.Active.GetValueOrDefault() && fbo.AccountType != Core.Enums.AccountTypes.NonRevFBO)
+            if (!fbo.Active.GetValueOrDefault())
             {
                 fbo.AccountType = Core.Enums.AccountTypes.NonRevFBO;
+                fbo.Active = true;
                 user.Role = Core.Enums.UserRoles.NonRev;
+                user.Active = true;
 
                 await _fboService.UpdateAsync(fbo);
                 await _userService.UpdateAsync(user);
