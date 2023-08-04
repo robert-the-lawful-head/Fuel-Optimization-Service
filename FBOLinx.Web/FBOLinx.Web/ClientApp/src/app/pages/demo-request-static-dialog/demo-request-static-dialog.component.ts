@@ -65,8 +65,6 @@ export class DemoRequestStaticDialogComponent implements OnInit {
     }
     getIsStaticModalVisible(url: string): boolean {
         url = (url.split('/').length > 3) ? (url.split('/').splice(0, 3)).join('/') : url;
-        console.log("🚀 ~ file: demo-request-static-dialog.component.ts:69 ~ DemoRequestStaticDialogComponent ~ getIsStaticModalVisible ~ url:", url)
-        console.log("🚀 ~ file: demo-request-static-dialog.component.ts:71 ~ DemoRequestStaticDialogComponent ~ getIsStaticModalVisible ~ this.sharedService.currentUser.accountType:", this.sharedService.currentUser.accountType)
 
         if(this.sharedService.currentUser.accountType == AccountType.Premium)
             return false;
