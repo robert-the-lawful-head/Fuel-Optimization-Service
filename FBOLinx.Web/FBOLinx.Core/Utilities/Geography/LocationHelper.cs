@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Itenso.TimePeriod;
@@ -83,6 +84,10 @@ namespace FBOLinx.Core.Utilities.Geography
 
         public static bool IsPointInPolygon(Geolocation.Coordinate p, Geolocation.Coordinate[] polygon)
         {
+            if ((polygon?.Length).GetValueOrDefault() < 2)
+            {
+                return false;
+            }
             double minX = polygon[0].Latitude;
             double maxX = polygon[0].Latitude;
             double minY = polygon[0].Longitude;
