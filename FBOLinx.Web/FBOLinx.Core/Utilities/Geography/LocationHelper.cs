@@ -84,7 +84,7 @@ namespace FBOLinx.Core.Utilities.Geography
 
         public static bool IsPointInPolygon(Geolocation.Coordinate p, Geolocation.Coordinate[] polygon)
         {
-            if ((polygon?.Length).GetValueOrDefault() < 2)
+            if ((polygon?.Length).GetValueOrDefault() < 3)
             {
                 return false;
             }
