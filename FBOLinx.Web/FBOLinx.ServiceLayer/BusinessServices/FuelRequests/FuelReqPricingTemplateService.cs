@@ -30,7 +30,7 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.CustomerAircrafts;

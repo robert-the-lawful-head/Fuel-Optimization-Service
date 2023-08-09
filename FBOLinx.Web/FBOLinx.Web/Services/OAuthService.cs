@@ -16,7 +16,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Services

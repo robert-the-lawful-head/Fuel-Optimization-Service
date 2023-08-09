@@ -30,11 +30,12 @@ using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.DTO.Requests.Integrations;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -56,7 +57,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetCustomerTransactionsCountForAirport(string icao, DateTime startDateTime, DateTime endDateTime, string fbo);
         Task<ICollection<FbolinxCustomerTransactionsCountAtAirport>> GetfuelerlinxCustomerFBOOrdersCount(string fbo, string icao, DateTime startDateTime, DateTime endDateTime);
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
-        Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId);
+        Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId, int fuelerlinxCompanyId, SendOrderNotificationRequest request);
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
     }
 
@@ -340,7 +341,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return chartData;
         }
 
-        public async Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId)
+        public async Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerlinxTransactionId, int fuelerlinxCompanyId, SendOrderNotificationRequest request)
         {
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
 
@@ -362,6 +363,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     var customer = new CustomerInfoByGroupDto();
                     var customerAircraftId = 0;
+                    var arrivalDateTime = "";
+                    var departureDateTime = "";
+                    var quotedVolume = 0.0;
 
                     // Get fuel request and set customer info
                     FuelReqDto fuelReq = await GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelerlinxTransactionId));
@@ -369,20 +373,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     {
                         customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(fuelReq.CustomerId.GetValueOrDefault()));
                         customerAircraftId = fuelReq.CustomerAircraftId.GetValueOrDefault();
+                        arrivalDateTime = fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard;
+                        departureDateTime = fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard;
+                        quotedVolume = fuelReq.QuotedVolume.GetValueOrDefault();
                     }
 
                     // Get service request
                     ServiceOrderDto serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdSpecification(fuelerlinxTransactionId));
-                    var serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName).ToList();
+                    var serviceNames = new List<string>();
                     if (serviceOrder != null)
                     {
+                        serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName).ToList();
                         customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(serviceOrder.GroupId, serviceOrder.CustomerInfoByGroupId));
                         customerAircraftId = serviceOrder.CustomerAircraftId;
+                        arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " Z";
+                        departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " Z";
+                    }
+
+                    if (customer.Oid == 0)
+                    {
+                        var customers = await _customerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(fbo.GroupId));
+                        customer = customers.Where(c => c.Customer?.FuelerlinxId == fuelerlinxCompanyId).FirstOrDefault();
+                        quotedVolume = request.QuotedVolume;
                     }
 
                     // Get customer aircraft info
                     var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int> { customer.GroupId }, customer.CustomerId));
-                    var customerAircraft = customerAircrafts.Where(c => c.Oid == customerAircraftId).FirstOrDefault();
+                    var customerAircraft = new CustomerAircraftsDto();
+
+                    if (customerAircraftId == 0)
+                        customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber && c.CustomerId == customer.Customer.Oid).FirstOrDefault();
+                    else
+                        customerAircraft = customerAircrafts.Where(c => c.Oid == customerAircraftId).FirstOrDefault();
+
                     var aircraft = await _aircraftService.GetSingleBySpec(new DB.Specifications.Aircraft.AircraftSpecification(new List<int>() { customerAircraft.AircraftId }));
                     
                     var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
@@ -394,9 +417,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         flightDepartment = customer.Company,
                         aircraftMakeModel = aircraft.Make + " " + aircraft.Model,
                         airportICAO = fbo.FboAirport.Icao,
-                        arrivalDate = fuelReq == null ? serviceOrder.ArrivalDateTimeUtc.ToString() : fuelReq.Eta.ToString(),
-                        departureDate = fuelReq == null ? serviceOrder.DepartureDateTimeUtc.ToString() : fuelReq.Etd.ToString(),
-                        fuelVolume = fuelReq == null ? "0" : fuelReq.QuotedVolume.ToString(),
+                        arrivalDate = arrivalDateTime == "" ? request.Arrival : arrivalDateTime,
+                        departureDate = departureDateTime == "" ? request.Departure : departureDateTime,
+                        fuelVolume = quotedVolume.ToString(),
                         fuelVendor = orderDetails.FuelVendor.ToLower().Contains("fbolinx") ? fbo.Fbo : orderDetails.FuelVendor,
                         paymentMethod = orderDetails.PaymentMethod,
                         services = string.Join(", ", serviceNames),

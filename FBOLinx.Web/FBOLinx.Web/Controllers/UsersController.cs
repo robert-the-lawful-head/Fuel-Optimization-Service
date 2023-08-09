@@ -17,7 +17,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -408,13 +408,17 @@ namespace FBOLinx.Web.Controllers
 
         private async Task HandlePreLoginEvents(UserDTO user)
         {
-            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            var fbo = await _fboService.GetFbo(user.FboId);
 
             if (fbo != null)
             {
-                fbo.FboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
-                fbo.LastLogin = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                if (fbo.GroupId == user.GroupId)
+                {
+                    fbo.LastLogin = DateTime.UtcNow;
+                    await _fboService.UpdateAsync(fbo);
+
+                    user.Fbo = fbo;
+                }
             }
 
             try

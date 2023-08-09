@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.DB.Specifications.User
 {
-    public sealed class PrimaryUserByFboIdSpecification : Specification<Models.User>
+    public sealed class UsersByFboIdSpecification : Specification<Models.User>
     {
-        public PrimaryUserByFboIdSpecification(int fboId) : base(x => x.FboId == fboId && x.Role == Core.Enums.UserRoles.Primary)
+        public UsersByFboIdSpecification(int fboId) : base(x => x.FboId == fboId)
         {
         }
     }

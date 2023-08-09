@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services

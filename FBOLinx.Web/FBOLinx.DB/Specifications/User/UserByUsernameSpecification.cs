@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOLinx.DB.Specifications.ServiceOrder
+namespace FBOLinx.DB.Specifications.User
 {
     public sealed class UserByUsernameSpecification : Specification<Models.User>
     {

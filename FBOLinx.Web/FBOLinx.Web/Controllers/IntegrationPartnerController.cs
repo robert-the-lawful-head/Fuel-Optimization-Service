@@ -29,7 +29,7 @@ using FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using Azure.Core;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -140,15 +140,15 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
-        [HttpPost("handlerId/{handlerId}/fuelerlinxTransactionId/{fuelerlinxTransactionId}/send-order-notification")]
-        public async Task<ActionResult<bool>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId)
+        [HttpPost("handlerId/{handlerId}/fuelerlinxTransactionId/{fuelerlinxTransactionId}/fuelerlinxCompanyId/{fuelerlinxCompanyId}/send-order-notification")]
+        public async Task<ActionResult<bool>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId, [FromRoute] int fuelerlinxCompanyId, [FromBody] SendOrderNotificationRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var result = await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId);
+            var result = await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId, fuelerlinxCompanyId, request);
 
             return Ok(result);
         }

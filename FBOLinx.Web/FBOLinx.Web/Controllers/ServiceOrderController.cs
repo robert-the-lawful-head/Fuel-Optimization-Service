@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Specifications.ServiceOrder;
+using FBOLinx.DB.Specifications.User;
 using FBOLinx.DB.Specifications.ServiceOrderItem;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.DTO;
