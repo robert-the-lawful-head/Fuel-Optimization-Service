@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
@@ -9,13 +8,13 @@ import { ServiceOrdersDialogNewComponent } from '../service-orders-dialog-new/se
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
 import { ServiceOrder } from 'src/app/models/service-order';
-import { ServiceOrderItem } from 'src/app/models/service-order-item';
 import { EntityResponseMessage } from 'src/app/models/entity-response-message';
 import { MatSidenav } from '@angular/material/sidenav';
 
 import * as moment from 'moment';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 import { AccountType } from 'src/app/enums/user-role';
+import { MatSelectionList } from '@angular/material/list';
 
 @Component({
     selector: 'app-service-orders-list',
@@ -26,6 +25,7 @@ export class ServiceOrdersListComponent implements OnInit {
     @Input() allowAddingNew: boolean = true;
 
     @ViewChild('serviceOrderDrawer') serviceOrderDrawer: MatSidenav;
+    @ViewChild('incompletedServiceOrders') selectionList: MatSelectionList;
 
     public selectedServiceOrder: ServiceOrder;
     public inCompleteServiceOrders: Array<ServiceOrder>;
@@ -34,9 +34,9 @@ export class ServiceOrdersListComponent implements OnInit {
     public filterStartDate: Date = new Date(moment().add(-1, 'M').format('YYYY-MM-DD'));
     public filterEndDate: Date = new Date(moment().add(1, 'M').format('YYYY-MM-DD'));
     public sortType: string = 'arrivalDateTimeLocal';
-    public isAddOrderDisabled: boolean = true;
+    public isFreemiumAccount: boolean = true;
 
-    constructor(private router: Router,
+    constructor(
         private serviceOrderService: ServiceOrderService,
         private sharedService: SharedService,
         private newServiceOrderDialog: MatDialog,
@@ -49,9 +49,12 @@ export class ServiceOrdersListComponent implements OnInit {
         else
             this.arrangeServiceOrders();
 
-        this.isAddOrderDisabled = this.sharedService.currentUser.accountType == AccountType.Freemium;
+        this.isFreemiumAccount = this.sharedService.currentUser.accountType == AccountType.Freemium;
     }
 
+    ngAfterViewInit() {
+        this.selectionList.deselectAll();
+    }
     public addServiceOrderClicked() {
         var newServiceOrder: ServiceOrder = {
             oid: 0,
@@ -118,7 +121,12 @@ export class ServiceOrdersListComponent implements OnInit {
     }
 
     public serviceOrderToggleChanged(event: any) {
+        if(this.isFreemiumAccount){
+            this.selectionList.deselectAll();
+            return;
+        }
         var serviceOrder: ServiceOrder = event.option._value;
+
         for (const item of serviceOrder.serviceOrderItems) {
             item.isCompleted = event.option._selected;
             if (item.isCompleted) {
@@ -202,24 +210,17 @@ export class ServiceOrdersListComponent implements OnInit {
     }
 
     private sortOrders() {
-        this.inCompleteServiceOrders = this.inCompleteServiceOrders.sort((n1, n2) => {
-            if (n1[this.sortType] > n2[this.sortType]) {
-                return 1;
-            }
-            if (n1[this.sortType] < n2[this.sortType]) {
-                return -1;
-            }
-            return 0;
-        });
+        this.customSort(this.inCompleteServiceOrders);
+        this.customSort(this.completeServiceOrders);
+    }
 
-        this.completeServiceOrders = this.completeServiceOrders.sort((n1, n2) => {
-            if (n1[this.sortType] > n2[this.sortType]) {
-                return 1;
+    private customSort(arr: ServiceOrder[]): void{
+        arr.sort((a, b) => {
+            if(this.sortType == "customerInfoByGroup.company")
+                return b.customerInfoByGroup.company.localeCompare(a.customerInfoByGroup.company);
+
+            return b[this.sortType].localeCompare(a[this.sortType])
             }
-            if (n1[this.sortType] < n2[this.sortType]) {
-                return -1;
-            }
-            return 0;
-        });
+        );
     }
 }
