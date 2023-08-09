@@ -82,7 +82,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IFboContactsEntityService _FboContactsEntityService;
         private IAirportService _AirportService;
         private readonly IServiceOrderService _serviceOrderService;
-        private readonly ILogger _logger;
         private readonly DateTimeService _dateTimeService;
         private readonly IServiceOrderItemService _serviceOrderItemService;
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
@@ -109,7 +108,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IOrderDetailsService orderDetailsService,
             ICustomerAircraftService customerAircraftService,
             IAircraftService aircraftService,
-            IFboService fboService, ILogger logger) : base(fuelReqEntityService)
+            IFboService fboService) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _serviceOrderService = serviceOrderService;
@@ -120,7 +119,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _customerAircraftService = customerAircraftService;
             _aircraftService = aircraftService;
             _fboService = fboService;
-            _logger = logger;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _AirportTimeService = airportTimeService;
             _MemoryCache = memoryCache;
