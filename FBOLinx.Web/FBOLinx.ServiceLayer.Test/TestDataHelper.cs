@@ -26,7 +26,7 @@ namespace FBOLinx.ServiceLayer.Test
         {
             DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
             distributePricingRequest.GroupId = 1;
-            distributePricingRequest.FboId = 1;
+            distributePricingRequest.FboId = 1557;
             distributePricingRequest.PricingTemplate = new PricingTemplate();
             distributePricingRequest.PricingTemplate.EmailContentId = 1;
             distributePricingRequest.PricingTemplate.Notes = string.Empty;

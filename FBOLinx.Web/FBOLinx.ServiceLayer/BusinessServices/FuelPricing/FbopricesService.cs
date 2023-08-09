@@ -92,20 +92,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
-            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && (f.Expired == null || f.Expired != true)).ToListAsync();
+
+
+            var oldPrices = await GetListbySpec(new OldPricesByFboIdSpecification(fboId));
             foreach (var p in oldPrices)
             {
                 p.Expired = true;
-                _context.Fboprices.Update(p);
             }
-            await _context.SaveChangesAsync();
+            await BulkUpdate(oldPrices);
 
-            var fboprices = await (
-                            from f in _context.Fboprices
-                            where f.EffectiveTo > DateTime.UtcNow
-                            && f.Fboid == fboId && f.Expired != true
-                            orderby f.Oid
-                            select f).ToListAsync();
+            var fboprices = await GetListbySpec(new CurrentFboPricesByFboIdSpecification(fboId));
+
+            //var fboprices = await (
+            //                from f in _context.Fboprices
+            //                where f.EffectiveTo > DateTime.UtcNow
+            //                && f.Fboid == fboId && f.Expired != true
+            //                orderby f.Oid
+            //                select f).ToListAsync();
 
             var oldJetAPriceExists = fboprices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
             if (oldJetAPriceExists.Count() > 2)
@@ -114,8 +117,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 for (int i = 0; i <= 1; i++)
                 {
                     oldJetAPriceExists[i].Expired = true;
-                    _context.Fboprices.Update(oldJetAPriceExists[i]);
-                    await _context.SaveChangesAsync();
+                    await UpdateAsync(oldJetAPriceExists[i]);
+                    //_context.Fboprices.Update(oldJetAPriceExists[i]);
+                    //await _context.SaveChangesAsync();
 
                     fboprices.Remove(oldJetAPriceExists[i]);
                 }
@@ -128,8 +132,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 for (int i = 0; i <= 1; i++)
                 {
                     oldSafPriceExists[i].Expired = true;
-                    _context.Fboprices.Update(oldSafPriceExists[i]);
-                    await _context.SaveChangesAsync();
+                    await UpdateAsync(oldSafPriceExists[i]);
+                    //_context.Fboprices.Update(oldSafPriceExists[i]);
+                    //await _context.SaveChangesAsync();
 
                     fboprices.Remove(oldSafPriceExists[i]);
                 }

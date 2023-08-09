@@ -23,6 +23,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
@@ -48,20 +49,21 @@ namespace FBOLinx.Web.Services
         private IPriceFetchingService _PriceFetchingService;
         private IPricingTemplateService _PricingTemplateService;
         private FbolinxEmailContentFileAttachment _EmailContentAttachment;
-        private EmailContentService _EmailContentService;
+        private IEmailContentService _EmailContentService;
         private readonly FilestorageContext _fileStorageContext;
         private IMailService _MailService;
         private EmailContent _EmailContent;
         private IPricingTemplateAttachmentService _pricingTemplateAttachmentService;
         private IFboService _fboService;
         private readonly IFboPricesService _fbopricesService;
-
+        private readonly IDistributionErrorsEntityService _distributionErrorsEntityService;
+        private readonly ICustomerContactsEntityService _customerContactsEntityService;
         private PriceBreakdownDisplayTypes _PriceBreakdownDisplayType;
 
         #region Constructors
         public PriceDistributionService(IMailService mailService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IMailTemplateService mailTemplateService, IPriceFetchingService priceFetchingService, 
-            FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, EmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
-            IFboService fboService, IFboPricesService fbopricesService)
+            FilestorageContext fileStorageContext, IPricingTemplateService pricingTemplateService, IEmailContentService emailContentService, IPricingTemplateAttachmentService pricingTemplateAttachmentService,
+            IFboService fboService, IFboPricesService fbopricesService, IDistributionErrorsEntityService distributionErrorsEntityService, ICustomerContactsEntityService customerContactsEntityService)
         {
             _PriceFetchingService = priceFetchingService;
             _MailTemplateService = mailTemplateService;
@@ -74,6 +76,8 @@ namespace FBOLinx.Web.Services
             _pricingTemplateAttachmentService = pricingTemplateAttachmentService;
             _fboService = fboService;
             _fbopricesService = fbopricesService;
+            _distributionErrorsEntityService = distributionErrorsEntityService;
+            _customerContactsEntityService = customerContactsEntityService;
         }
         #endregion
 
@@ -243,7 +247,7 @@ namespace FBOLinx.Web.Services
                     distributionQueueRecord = distributionQueueRecords.FirstOrDefault();
                 }
 
-                var recipients = await GetRecipientsForCustomer(customer);
+                var recipients = await _customerContactsEntityService.GetRecipientsForCustomer(customer, _DistributePricingRequest.FboId, _DistributePricingRequest.GroupId);
                 if (!_IsPreview && recipients.Count == 0)
                 {
                     await MarkDistributionRecordAsComplete(distributionQueueRecord);
@@ -267,7 +271,7 @@ namespace FBOLinx.Web.Services
                     mailMessage.To.Add(_DistributePricingRequest.PreviewEmail);
 
                 //Get additional attachments
-                if (_PricingTemplateFileAttachment != null)
+                if (_PricingTemplateFileAttachment != null && _PricingTemplateFileAttachment.Oid > 0)
                     mailMessage.AttachmentsCollection.Add(new Core.Utilities.Mail.FileAttachment { ContentType = _PricingTemplateFileAttachment.ContentType, FileName = _PricingTemplateFileAttachment.FileName, FileData = Convert.ToBase64String(_PricingTemplateFileAttachment.FileData, 0, _PricingTemplateFileAttachment.FileData.Length) });
 
                 if (_EmailContentAttachment != null)
@@ -360,8 +364,8 @@ namespace FBOLinx.Web.Services
                     errorRecord.Error = exception.Message + "***" + exception.InnerException.StackTrace + "****" + exception.StackTrace;
                 else
                     errorRecord.Error = exception.Message + "****" + exception.StackTrace;
-                _context.Set<DistributionErrors>().Add(errorRecord);
-                await _context.SaveChangesAsync();
+
+                await _distributionErrorsEntityService.AddAsync(errorRecord);
             }
         }
 
@@ -679,21 +683,6 @@ namespace FBOLinx.Web.Services
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "TwoColumnsDepartureOnlyRow.csv");
             else
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
-        }
-
-        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDto customer)
-        {
-            var result = await (from cc in _context.Set<CustomerContacts>()
-                                join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
-                                join cibg in _context.Set<ContactInfoByGroup>() on c.Oid equals cibg.ContactId
-                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = _DistributePricingRequest.FboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
-                                from cibf in leftJoinCIBF.DefaultIfEmpty()
-                                where cibg.GroupId == _DistributePricingRequest.GroupId
-                                      && cc.CustomerId == customer.CustomerId
-                                      && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
-                                      && !string.IsNullOrEmpty(cibg.Email)
-                                select cibg).ToListAsync();
-            return result;
         }
 
         private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers)

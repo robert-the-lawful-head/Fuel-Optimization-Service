@@ -21,6 +21,8 @@ using MockQueryable.Moq;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 
 namespace FBOLinx.ServiceLayer.Test.Services
 {
@@ -247,29 +249,36 @@ namespace FBOLinx.ServiceLayer.Test.Services
             dbContextMock.Setup(x => x.Set<ContactInfoByGroup>())
                 .Returns(contactInfoByGroupDbSetMock.Object);
 
+            IEnumerable<Fboairports> fboairports = new List<Fboairports>()
+                {
+                    new Fboairports()
+                    {
+                        Fboid = distributePricingRequest.FboId,
+                        Icao = "KTEST"
+                    }
+                };
+            Mock<DbSet<Fboairports>> fboairportsDbSetMock = fboairports.AsQueryable().BuildMockDbSet();
+            dbContextMock.Setup(x => x.Set<Fboairports>())
+                .Returns(fboairportsDbSetMock.Object);
+
             IEnumerable<Fbos> fbos = new List<Fbos>()
                 {
                     new Fbos()
                     {
                         Oid = distributePricingRequest.FboId,
                         SenderAddress = fromEmail,
-                        ReplyTo = "test@fuelerlinx.com"
+                        ReplyTo = "test@fuelerlinx.com",
+                        Fbo = "Test FBO",
+                        Address = "123 Test St",
+                        City = "Van Nuys",
+                        State = "CA",
+                        ZipCode = "91005",
+                        FboAirport = fboairports.Where(f => f.Icao == "KTEST").FirstOrDefault()
                     }
                 };
             Mock<DbSet<Fbos>> fbosDbSetMock = fbos.AsQueryable().BuildMockDbSet();
             dbContextMock.Setup(x => x.Set<Fbos>())
                 .Returns(fbosDbSetMock.Object);
-
-            IEnumerable<Fboairports> fboairports = new List<Fboairports>()
-                {
-                    new Fboairports()
-                    {
-                        Fboid = distributePricingRequest.FboId,
-                    }
-                };
-            Mock<DbSet<Fboairports>> fboairportsDbSetMock = fboairports.AsQueryable().BuildMockDbSet();
-            dbContextMock.Setup(x => x.Set<Fboairports>())
-                .Returns(fboairportsDbSetMock.Object);
 
             IEnumerable<EmailContent> emailContent = new List<EmailContent>()
                 {
@@ -319,6 +328,22 @@ namespace FBOLinx.ServiceLayer.Test.Services
             var mailTemplateServiceMock = new Mock<IMailTemplateService>();
             mailTemplateServiceMock.Setup(x => x.GetTemplatesFileContent(It.IsAny<string>(), It.IsAny<string>())).Returns(string.Empty);
             services.AddSingleton(mailTemplateServiceMock.Object);
+
+            var pricingTemplateAttachmentsServiceMock = new Mock<IPricingTemplateAttachmentService>();
+            pricingTemplateAttachmentsServiceMock.Setup(x => x.GetFileAttachmentObject(It.IsAny<int>())).Returns(Task.FromResult(new FbolinxPricingTemplateFileAttachmentDto()));
+            services.AddSingleton(pricingTemplateAttachmentsServiceMock.Object);
+
+            var emailContentServiceMock = new Mock<IEmailContentService>();
+            emailContentServiceMock.Setup(x => x.GetFileAttachment(It.IsAny<int>())).Returns(Task.FromResult(string.Empty));
+            services.AddSingleton(emailContentServiceMock.Object);
+
+            var distributionErrorsEntityServiceMock = new Mock<IDistributionErrorsEntityService>();
+            distributionErrorsEntityServiceMock.Setup(x => x.AddAsync(It.IsAny<DistributionErrors>()));
+            services.AddSingleton(distributionErrorsEntityServiceMock.Object);
+
+            var customerContactsEntityServiceMock = new Mock<ICustomerContactsEntityService>();
+            customerContactsEntityServiceMock.Setup(x => x.GetRecipientsForCustomer(It.IsAny<CustomerInfoByGroupDto>(), It.IsAny<int>(), It.IsAny<int>()));
+            services.AddSingleton(customerContactsEntityServiceMock.Object);
         }
     }
 }
