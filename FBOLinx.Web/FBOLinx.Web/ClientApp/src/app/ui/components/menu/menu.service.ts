@@ -14,16 +14,12 @@ export class MenuService {
         private sharedService: SharedService
         ) {}
 
-    public freemiumEnaledMenuItemsTitles = [
-        "Dashboard",
-        "CSR Dashboard",
-        "About FBOLinx",
-        "Orders",
-        "Service Orders",
-        "FBO Services & Fees",
-        "Groups",
-        "FBO Geofencing",
-        "Antenna Status"
+    public freemiumDisabledMenuItemsUrls = [
+        "/default-layout/flight-watch",
+        "/default-layout/pricing-templates",
+        "/default-layout/email-templates",
+        "/default-layout/customers",
+        "/default-layout/analytics"
     ];
 
     public getData() {
@@ -35,6 +31,7 @@ export class MenuService {
         return observableThrowError(error.error || 'Server Error');
     }
     public setDisabledMenuItems(menuItems: IMenuItem[]): void {
+        if(menuItems == null) return;
         if (this.sharedService.currentUser.accountType ==  AccountType.Premium){
             this.enableMenuItems(menuItems);
         }else{
@@ -45,10 +42,10 @@ export class MenuService {
     }
     private DisabledMenuItems(menuItems: IMenuItem[]): void {
         menuItems.forEach(element => {
-            if(this.freemiumEnaledMenuItemsTitles.includes(element.title))
-                element.disabled = false;
-            else
+            if(this.freemiumDisabledMenuItemsUrls.includes(element.routing))
                 element.disabled = true;
+            else
+                element.disabled = false;
         });
     }
     private enableMenuItems(menuItems: IMenuItem[]): void {

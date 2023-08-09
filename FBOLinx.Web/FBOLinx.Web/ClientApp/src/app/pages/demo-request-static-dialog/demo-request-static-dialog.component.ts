@@ -15,28 +15,15 @@ export class DemoRequestStaticDialogComponent implements OnInit {
     public isStaticModalVisible: boolean;
     private routerSubscription: Subscription;
 
-    public freemiumEnaledMenuItemsTitles = [
-        "About FBOLinx",
-        "Orders",
-        "Service Orders",
-        "FBO Services & Fees",
-        "Groups",
-        "FBO Geofencing",
-        "Antenna Status"
+    public freemiumDisableMenuItemsRoutes = [
+        "/default-layout/dashboard-fbo-updated",
+        "/default-layout/dashboard-csr",
+        "/default-layout/flight-watch",
+        "/default-layout/pricing-templates",
+        "/default-layout/email-templates",
+        "/default-layout/customers",
+        "/default-layout/analytics"
     ];
-
-    public freemiumEnabledMenuItemsUrls = [
-        "/default-layout/about-fbolinx",
-        "/default-layout/fuelreqs",
-        "/default-layout/service-orders",
-        "/default-layout/rampfees",
-        "/default-layout/groups",
-        "/default-layout/fbo-geofencing",
-        "/default-layout/antenna-status",
-        "/default-layout/services-and-fees",
-        "/default-layout/fbos"
-    ];
-
 
     constructor(
         private router: Router,
@@ -68,9 +55,9 @@ export class DemoRequestStaticDialogComponent implements OnInit {
 
         if(this.sharedService.currentUser.accountType == AccountType.Premium)
             return false;
-        if(this.freemiumEnabledMenuItemsUrls.includes(url))
-            return false;
+        if(this.freemiumDisableMenuItemsRoutes.includes(url))
+            return true;
 
-        return true;
+        return false;
     }
 }

@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
-import { fboChangedEvent, fboPricesLoadedEvent, menuTooltipShowedEvent, serviceOrdersChangedEvent } from '../../../constants/sharedEvents';
+import { accountTypeChangedEvent, fboChangedEvent, fboPricesLoadedEvent, menuTooltipShowedEvent, serviceOrdersChangedEvent } from '../../../constants/sharedEvents';
 import { UserService } from '../../../services/user.service';
 import { MenuService } from './menu.service';
 import { IMenuItem } from './menu-item';
@@ -48,7 +48,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
                 this.menuService.setDisabledMenuItems(this.menuItems);
         });
         this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent) {
+            if (message === fboChangedEvent || message === accountTypeChangedEvent) {
                 this.menuService.setDisabledMenuItems(this.menuItems);
             }
             if (message === fboPricesLoadedEvent) {
