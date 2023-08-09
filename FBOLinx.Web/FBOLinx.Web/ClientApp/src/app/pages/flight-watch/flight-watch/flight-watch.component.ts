@@ -15,6 +15,7 @@ import { FlightWatchDictionary, FlightWatchModelResponse } from '../../../models
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { isCommercialAircraft } from 'src/utils/aircraft';
 
 const BREADCRUMBS: any[] = [
     {
@@ -48,8 +49,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loading = false;
     mapLoadSubscription: Subscription;
     airportWatchFetchSubscription: Subscription;
-    filter: string;
-    filteredTypes: string[] = [];
     center: LngLatLike;
     selectedFlightWatch: FlightWatchModelResponse;
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
@@ -69,7 +68,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     style: any = {};
     isMapShowing = true;
 
-    arrivalsDeparturesProps = { initial: 0, currentWidth: 0 };
+    currentFilters: SwimFilter = { filterText: '', dataType: null, isCommercialAircraftVisible: true, filteredTypes: [] };
 
     constructor(
         private flightWatchService: FlightWatchService,
@@ -101,15 +100,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         }
     }
     setData(data: FlightWatchModelResponse[]):void{
-        let currentFilter: SwimFilter = { filterText: this.filter, dataType: null };
-
         this.arrivals = data?.filter((row: FlightWatchModelResponse) => { return row.arrivalICAO == row.focusedAirportICAO });
         this.departures = data?.filter((row: FlightWatchModelResponse) => { return row.departureICAO  == row.focusedAirportICAO && row.status != null });
 
         this.arrivalsAllRecords = this.arrivals;
         this.departuresAllRecords = this.departures;
 
-        this.onFilterChanged(currentFilter);
+        this.applyFiltersToData();
     }
     setIcaoList(airportList: AcukwikAirport[]){
         this.acukwikairport = airportList;
@@ -160,18 +157,26 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.selectedFlightWatch = undefined;
     }
 
-    onFilterChanged(filter: SwimFilter) {
-        this.filter = filter.filterText;
-        this.arrivals = this.filterData(this.filter?.toLowerCase(), this.arrivalsAllRecords);
-        this.departures = this.filterData(this.filter?.toLowerCase(), this.departuresAllRecords);
+    onTextFilterChanged(filter: string): void {
+        this.currentFilters.filterText = filter;
+        this.applyFiltersToData();
+    }
+    applyFiltersToData(): void {
+        this.arrivals = this.filterData(this.currentFilters.filterText?.toLowerCase(), this.arrivalsAllRecords);
+        this.departures = this.filterData(this.currentFilters.filterText?.toLowerCase(), this.departuresAllRecords);
 
         this.flightWatchData = this.arrivals.concat(this.departures);
     }
     filterData(filter: string, records: FlightWatchModelResponse[]): FlightWatchModelResponse[]{
 
-        if (this.filteredTypes.length) {
+        if (this.currentFilters.filteredTypes.length) {
             records = records.filter((fw) =>
-                this.filteredTypes.includes(fw.aircraftTypeCode)
+                this.currentFilters.filteredTypes.includes(fw.aircraftTypeCode)
+            );
+        }
+        if(!this.currentFilters.isCommercialAircraftVisible){
+            records = records.filter(
+                (flightWatch) => !isCommercialAircraft(flightWatch.atcFlightNumber)
             );
         }
 
@@ -217,9 +222,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     onTypesFilterChanged(filteredTypes: string[]) {
-        let currentFilter: SwimFilter = { filterText : this.filter, dataType: null };
-        this.filteredTypes = filteredTypes;
-        this.onFilterChanged(currentFilter);
+        this.currentFilters.filteredTypes = filteredTypes;
+        this.applyFiltersToData();
     }
     openAircraftPopup(tailNumber: string){
         this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
@@ -236,5 +240,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     isDrawerOpen(){
        return this.drawer.opened;
+    }
+    filterCommercialAircrafts(isCommercialAircraftVisible: boolean){
+        this.currentFilters.isCommercialAircraftVisible = isCommercialAircraftVisible;
+        this.applyFiltersToData();
     }
 }
