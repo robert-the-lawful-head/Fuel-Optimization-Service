@@ -102,7 +102,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
                 Active = true,
                 DateActivated = DateTime.Now,
-                AccountType = request.AccountType
+                AccountType = Core.Enums.AccountTypes.RevFbo
             };
 
             _context.Fbos.Add(fbo);

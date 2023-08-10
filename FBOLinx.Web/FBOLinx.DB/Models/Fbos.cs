@@ -93,7 +93,7 @@ namespace FBOLinx.DB.Models
         }
         private string _ReplyTo;
 
-        public AccountTypes AccountType { get; set; } = AccountTypes.RevFbo;
+        public AccountTypes AccountType { get; set; }
 
         public string AntennaName { get; set; }
 
