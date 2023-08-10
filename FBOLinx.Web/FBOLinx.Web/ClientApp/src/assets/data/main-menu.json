@@ -23,7 +23,7 @@
         },
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
         "routing": "/default-layout/dashboard-fbo-updated",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "CSR Dashboard",
@@ -44,7 +44,7 @@
         },
         "tooltip": "Flight Watch",
         "routing": "/default-layout/flight-watch",
-        "roles": [ 1, 4, 5 ]
+        "roles": [ 1, 4, 5, 6]
     },
     {
         "title": "FBO Group",
@@ -117,7 +117,7 @@
         },
         "tooltip": "Create and manage margin templates for your customer.",
         "routing": "/default-layout/pricing-templates",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Email Templates",
@@ -128,7 +128,7 @@
         },
         "tooltip": "Create and manage emails for distribution.",
         "routing": "/default-layout/email-templates",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Customer Manager",
@@ -139,7 +139,7 @@
         },
         "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template.",
         "routing": "/default-layout/customers",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Orders",
@@ -183,6 +183,6 @@
         },
         "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
         "routing": "/default-layout/analytics",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6]
     }
 ]
