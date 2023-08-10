@@ -1,0 +1,8 @@
+<div class="pl-1 pr-1">
+    <span (click)="toogleFavorite()" *ngIf="isFavorite" class="favorite-icon"
+        ><mat-icon>star</mat-icon></span
+    >
+    <span (click)="toogleFavorite()" *ngIf="!isFavorite"
+        ><mat-icon class="not-favorite-icon">star</mat-icon></span
+    >
+</div>
