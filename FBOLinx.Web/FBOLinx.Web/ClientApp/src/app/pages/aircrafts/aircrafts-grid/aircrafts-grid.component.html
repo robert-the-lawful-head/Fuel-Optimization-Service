@@ -22,10 +22,12 @@
                    matSortDirection="asc">
                 <ng-container matColumnDef="tailNumber">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>Tail</th>
-                    <td (click)="editCustomerAircraft(aircraft)"
-                        *matCellDef="let aircraft"
+                    <td *matCellDef="let aircraft"
                         mat-cell>
-                        {{ aircraft.tailNumber }}
+                        <div class="row">
+                            <app-favorite-icon></app-favorite-icon>
+                            <span (click)="editCustomerAircraft(aircraft)">{{ aircraft.tailNumber }}</span>
+                        </div>
                     </td>
                 </ng-container>
 
