@@ -168,7 +168,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
         public virtual DbSet<CustomerAircraftNote> CustomerAircraftNotes { get; set; }
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
-
+        public virtual DbSet<FboFavoriteAircrafts> FboFavoriteAircrafts { get; set; }
+        public virtual DbSet<FboFavoriteCompanies> FboFavoriteCompanies { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
