@@ -89,6 +89,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public viewCustomerDetailsClicked() {
+        if(this.isFreemiumAccount) return;
         const dialogRef = this.customerDetailsDialog.open(
             CustomersEditDialogComponent,
             {
@@ -102,6 +103,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public viewAircraftDetailsClicked() {
+        if(this.isFreemiumAccount) return;
         const dialogRef = this.aircraftDetailsDialog.open(
             CustomerAircraftsEditComponent,
             {
