@@ -9,26 +9,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
     public interface IFboCompaniesFavoritesService
     {
-        Task<FboFavoriteCompanies> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId);
+        Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId);
         Task<bool> DeleteCompanyFavorite(int oid);
-        Task<List<FboFavoriteCompanies>> GetCompaniesFavoritesByFboId(int fboId);
+        Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId);
     }
 
     public class FboCompaniesFavoritesService : IFboAircraftFavoritesService
     {
-        private IRepository<FboFavoriteCompanies, FboLinxContext> _fboFavoriteCompaniesRepo;
+        private IRepository<FboFavoriteCompany, FboLinxContext> _FboFavoriteCompanyRepo;
 
-        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompanies, FboLinxContext> fboFavoriteCompaniesRepo)
+        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompany, FboLinxContext> FboFavoriteCompanyRepo)
         {
-            _fboFavoriteCompaniesRepo = fboFavoriteCompaniesRepo;
+            _FboFavoriteCompanyRepo = FboFavoriteCompanyRepo;
         }
 
-        public Task<FboFavoriteAircrafts> AddAircraftFavorite(int fboId, int aircraftId)
+        public Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<FboFavoriteCompanies> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId)
+        public Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId)
         {
             throw new NotImplementedException();
         }
@@ -43,12 +43,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             throw new NotImplementedException();
         }
 
-        public Task<List<FboFavoriteAircrafts>> GetAircraftFavoriteByFboId(int fboId)
+        public Task<List<FboFavoriteAircraft>> GetAircraftFavoriteByFboId(int fboId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<FboFavoriteCompanies>> GetCompaniesFavoritesByFboId(int fboId)
+        public Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId)
         {
             throw new NotImplementedException();
         }

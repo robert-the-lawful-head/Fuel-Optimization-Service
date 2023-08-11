@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public class FboFavoriteCompanies : FBOLinxBaseEntityModel<int>
+    public class FboFavoriteCompany : FBOLinxBaseEntityModel<int>
     {
         [ForeignKey("OID")]
         public int CustomerInfoByGroupId { get; set; }

@@ -9,21 +9,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
     public interface IFboAircraftFavoritesService
     {
-        Task<FboFavoriteAircrafts> AddAircraftFavorite(int fboId, int aircraftId);
+        Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId);
         Task<bool> DeleteAircraftFavorite(int oid);
-        Task<List<FboFavoriteCompanies>> GetCompaniesFavoritesByFboId(int fboId);
+        Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId);
     }
 
     public class FboAircraftFavoritesService : IFboAircraftFavoritesService
     {
-        private IRepository<FboFavoriteAircrafts, FboLinxContext> _fboFavoriteAircraftsRepo;
+        private IRepository<FboFavoriteAircraft, FboLinxContext> _FboFavoriteAircraftsRepo;
 
-        public FboAircraftFavoritesService(IRepository<FboFavoriteAircrafts, FboLinxContext> fboFavoriteAircraftsRepo)
+        public FboAircraftFavoritesService(IRepository<FboFavoriteAircraft, FboLinxContext> FboFavoriteAircraftsRepo)
         {
-            _fboFavoriteAircraftsRepo = fboFavoriteAircraftsRepo;
+            _FboFavoriteAircraftsRepo = FboFavoriteAircraftsRepo;
         }
 
-        public Task<FboFavoriteAircrafts> AddAircraftFavorite(int fboId, int aircraftId)
+        public Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId)
         {
             throw new NotImplementedException();
         }
@@ -33,7 +33,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             throw new NotImplementedException();
         }
 
-        public Task<List<FboFavoriteCompanies>> GetCompaniesFavoritesByFboId(int fboId)
+        public Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId)
         {
             throw new NotImplementedException();
         }

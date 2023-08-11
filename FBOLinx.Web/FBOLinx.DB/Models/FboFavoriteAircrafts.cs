@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public class FboFavoriteAircrafts : FBOLinxBaseEntityModel<int>
+    public class FboFavoriteAircraft : FBOLinxBaseEntityModel<int>
     {
         
         [ForeignKey("AircraftID")]
