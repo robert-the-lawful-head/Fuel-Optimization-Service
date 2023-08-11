@@ -7,20 +7,20 @@ using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
-    public interface IFboCompaniesFavoritesService
+    public interface IFboAircraftFavoritesService
     {
-        Task<FboFavoriteCompanies> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId);
-        Task<bool> DeleteCompanyFavorite(int oid);
+        Task<FboFavoriteAircrafts> AddAircraftFavorite(int fboId, int aircraftId);
+        Task<bool> DeleteAircraftFavorite(int oid);
         Task<List<FboFavoriteCompanies>> GetCompaniesFavoritesByFboId(int fboId);
     }
 
-    public class FboCompaniesFavoritesService : IFboAircraftFavoritesService
+    public class FboAircraftFavoritesService : IFboAircraftFavoritesService
     {
-        private IRepository<FboFavoriteCompanies, FboLinxContext> _fboFavoriteCompaniesRepo;
+        private IRepository<FboFavoriteAircrafts, FboLinxContext> _fboFavoriteAircraftsRepo;
 
-        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompanies, FboLinxContext> fboFavoriteCompaniesRepo)
+        public FboAircraftFavoritesService(IRepository<FboFavoriteAircrafts, FboLinxContext> fboFavoriteAircraftsRepo)
         {
-            _fboFavoriteCompaniesRepo = fboFavoriteCompaniesRepo;
+            _fboFavoriteAircraftsRepo = fboFavoriteAircraftsRepo;
         }
 
         public Task<FboFavoriteAircrafts> AddAircraftFavorite(int fboId, int aircraftId)
@@ -28,22 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             throw new NotImplementedException();
         }
 
-        public Task<FboFavoriteCompanies> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> DeleteAircraftFavorite(int oid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteCompanyFavorite(int oid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<FboFavoriteAircrafts>> GetAircraftFavoriteByFboId(int fboId)
         {
             throw new NotImplementedException();
         }
