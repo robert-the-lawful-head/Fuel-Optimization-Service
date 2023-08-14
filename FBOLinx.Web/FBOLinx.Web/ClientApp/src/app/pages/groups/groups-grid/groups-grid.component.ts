@@ -122,8 +122,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     // Members
     pageTitle = 'Groups';
     searchValue = '';
-    groupAccountType: 'all' | 'active' | 'inactive' = 'active';
-    fboActiveAccountType: 'all' | 'active' | 'inactive' = 'active';
+    groupAccountType: 'all' | 'active' | 'inactive' = 'all';
+    fboActiveAccountType: 'all' | 'active' | 'inactive' = 'all';
     fboAccountType: 'all' | 'premium' | 'freemium' = 'premium';
     pageSettings: any = {
         pageSize: 25,
