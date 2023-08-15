@@ -12,7 +12,7 @@
         },
         "tooltip": "Know more about FBOLinx.",
         "routing": "/default-layout/about-fbolinx",
-        "roles": [ ] // not required now
+        "roles": [ ]
     },
     {
         "title": "Dashboard",
