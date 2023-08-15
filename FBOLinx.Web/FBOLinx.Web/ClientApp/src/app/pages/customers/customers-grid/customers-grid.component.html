@@ -84,7 +84,10 @@
                             <input (change)="selectUnique()" [(ngModel)]="customer.selectAll" class="checkboxHeight"
                             type="checkbox" value="{{ customer.selectAll }}" />
                         </span>
-                        <app-favorite-icon></app-favorite-icon>
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(customer)"
+                        (favoriteClick)="toogleFavorite(customer)"
+                        ></app-favorite-icon>
                     </div>
                 </td>
             </ng-container>

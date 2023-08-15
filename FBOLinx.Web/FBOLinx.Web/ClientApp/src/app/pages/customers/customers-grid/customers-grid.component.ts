@@ -36,6 +36,7 @@ import { CustomerGridState } from '../../../store/reducers/customer';
 import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 // Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
+import { FavoritesService } from 'src/app/services/favorites.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -160,7 +161,8 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         private tagsService: TagsService,
         private dialog: MatDialog ,
         private route : ActivatedRoute,
-        private currencyPipe: CurrencyPipe
+        private currencyPipe: CurrencyPipe,
+        private favoritesService: FavoritesService
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
@@ -688,7 +690,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         );
 
         this.sort.active = 'allInPrice';
-    }    
+    }
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService
@@ -709,5 +711,35 @@ export class CustomersGridComponent extends GridBase implements OnInit {
 
         this.start = 0;
         this.limit = 20;
+    }
+    setIsFavoriteProperty(customer: any): any {
+        customer.isFavorite = customer.favoriteCompany != null;
+        return customer;
+    }
+    toogleFavorite(favoriteData: any): void {
+        console.log("🚀 ~ file: customers-grid.component.ts:714 ~ CustomersGridComponent ~ toogleFavorite ~ favoriteData:", favoriteData.customerInfoByGroupId)
+        console.log("🚀 ~ file: customers-grid.component.ts:718 ~ CustomersGridComponent ~ toogleFavorite ~ favoriteData.isFavorite:", favoriteData.isFavorite);
+        console.log("🚀 ~ file: customers-grid.component.ts:731 ~ CustomersGridComponent ~ toogleFavorite ~ favoriteData.FavoriteCompany:", favoriteData.favoriteCompany);
+
+        if(favoriteData.isFavorite)
+            this.favoritesService.saveCompanyFavorite(this.sharedService.currentUser.fboId, favoriteData.customerInfoByGroupId)
+            .subscribe(
+                (data: any) => {
+                   favoriteData.favoriteCompany = data;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
+        else
+            this.favoritesService.deleteCompanyFavorite(favoriteData.favoriteCompany.oid)
+            .subscribe(
+                (data: any) => {
+                   favoriteData.favoriteCompany = null;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
     }
 }

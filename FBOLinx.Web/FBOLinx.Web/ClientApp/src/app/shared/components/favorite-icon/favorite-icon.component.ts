@@ -6,15 +6,18 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./favorite-icon.component.scss']
 })
 export class FavoriteIconComponent implements OnInit {
-    @Input() isFavorite: boolean = false;
-    @Output() favoriteClick = new EventEmitter<boolean>();
+    @Input() favoriteData: any;
+    @Input() isSaving: boolean = false;
+    @Output() favoriteClick = new EventEmitter<any>();
 
     constructor() { }
 
     ngOnInit() {
     }
     toogleFavorite(): void{
-        this.isFavorite = !this.isFavorite;
-        this.favoriteClick.emit(this.isFavorite);
+        if(this.isSaving) return;
+        this.favoriteData.isFavorite = !this.favoriteData.isFavorite;
+
+        this.favoriteClick.emit(this.favoriteData);
     }
 }
