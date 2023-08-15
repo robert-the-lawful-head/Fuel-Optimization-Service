@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -14,7 +15,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId);
     }
 
-    public class FboCompaniesFavoritesService : IFboAircraftFavoritesService
+    public class FboCompaniesFavoritesService : IFboCompaniesFavoritesService
     {
         private IRepository<FboFavoriteCompany, FboLinxContext> _FboFavoriteCompanyRepo;
 
@@ -23,34 +24,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             _FboFavoriteCompanyRepo = FboFavoriteCompanyRepo;
         }
 
-        public Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId)
+        public async Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int customerInfoByGroupId)
         {
-            throw new NotImplementedException();
+            return await _FboFavoriteCompanyRepo.AddAsync(new FboFavoriteCompany() { CustomerInfoByGroupId = customerInfoByGroupId, FboId = fboId});
+        }
+        public async Task<bool> DeleteCompanyFavorite(int oid)
+        {
+            await _FboFavoriteCompanyRepo.DeleteAsync(oid);
+            return true;
         }
 
-        public Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId)
+        public async Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteAircraftFavorite(int oid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteCompanyFavorite(int oid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<FboFavoriteAircraft>> GetAircraftFavoriteByFboId(int fboId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId)
-        {
-            throw new NotImplementedException();
+            return _FboFavoriteCompanyRepo.Where(x => x.FboId == fboId).ToList();
         }
     }
 }

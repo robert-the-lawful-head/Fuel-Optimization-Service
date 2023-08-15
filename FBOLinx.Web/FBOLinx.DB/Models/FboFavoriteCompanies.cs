@@ -10,7 +10,5 @@ namespace FBOLinx.DB.Models
         public int CustomerInfoByGroupId { get; set; }
         [ForeignKey("OID")]
         public int FboId { get; set; }
-        public virtual Fbos fbo { get; set; }
-        public virtual CustomerInfoByGroup CustomerInfoByGroup { get; set; }
     }
 }

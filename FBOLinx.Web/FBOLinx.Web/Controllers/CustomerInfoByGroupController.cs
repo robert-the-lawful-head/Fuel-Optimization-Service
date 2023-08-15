@@ -1165,7 +1165,8 @@ namespace FBOLinx.Web.Controllers
                                                          : string.Format("{0:C}", defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
                                                  : (ai.MarginTypeDescription + " " + (ai.DiscountType == DiscountTypes.Percentage ?
                                                      cm == null ? "0" : cm.Amount.ToString() + "%"
-                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault()))))
+                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))),
+                            FavoriteCompany = cg.FavoriteCompany
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -1193,7 +1194,8 @@ namespace FBOLinx.Web.Controllers
                                 .OrderBy(a => a)
                                 .ToList(),
                             Tags = resultsGroup.Key.Tags.ToList(),
-                            PricingFormula = resultsGroup.Key.PricingFormula
+                            PricingFormula = resultsGroup.Key.PricingFormula,
+                            FavoriteCompany = resultsGroup.Key.FavoriteCompany
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

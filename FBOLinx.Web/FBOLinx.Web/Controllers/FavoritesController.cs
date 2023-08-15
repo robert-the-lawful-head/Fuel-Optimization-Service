@@ -24,17 +24,19 @@ namespace FBOLinx.Web.Controllers
             _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
         }
 
-        //POST api/favorites/fbo/{fboId}/CustomerInfoByGroup/{CustomerInfoByGroupId}
-        [HttpPost("fbo/{fboId}/group/{CustomerInfoByGroupId}")]
-        public async Task<ActionResult<FboFavoriteCompany>> CreateCompanyFavorite(int fboid, int customerinfoBybroupId)
+        //POST api/favorites/fbo/{fboId}/CustomerInfoByGroup/{customerInfoByGroupId}
+        [HttpPost("fbo/{fboId}/group/{customerInfoByGroupId}")]
+        public async Task<ActionResult<FboFavoriteCompany>> CreateCompanyFavorite(int fboid, int customerInfoByGroupId)
         {
-            return Ok(await _fboCompaniesFavoritesService.AddCompanyFavorite(fboid,customerinfoBybroupId));
+            var result = await _fboCompaniesFavoritesService.AddCompanyFavorite(fboid, customerInfoByGroupId);
+            return Ok(result);
         }
         //POST api/favorites/fbo/{fboId}/aircraft/{aircraftId}
         [HttpPost("fbo/{fboId}/aircraft/{aircraftId}")]
         public async Task<ActionResult<FboFavoriteAircraft>> CreateAoircraftFavorite(int fboid, int aircraftId)
         {
-            return Ok(await _fboAircraftFavoritesService.AddAircraftFavorite(fboid, aircraftId));
+            var result = await _fboAircraftFavoritesService.AddAircraftFavorite(fboid, aircraftId);
+            return Ok(result);
         }
         //DELETE api/favorites/company/{oid}        
         [HttpDelete("company/{oid}")]
