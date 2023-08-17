@@ -82,12 +82,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                     importedFboEmail.Email = fbo.FuelDeskEmail;
                 else
                 {
-                    if (String.IsNullOrEmpty(acukwikFbo.Email))
+                    if (String.IsNullOrEmpty(acukwikFbo.HandlerEmail))
                     {
                         importedFboEmail.Email = "No email found";
                         return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email };
                     }
-                    importedFboEmail.Email = acukwikFbo.Email;
+                    importedFboEmail.Email = acukwikFbo.HandlerEmail;
                 }
             }
 
