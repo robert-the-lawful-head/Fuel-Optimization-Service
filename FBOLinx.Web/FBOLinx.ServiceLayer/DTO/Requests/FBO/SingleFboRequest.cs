@@ -20,6 +20,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.FBO
         public string FuelDeskEmail { get; set; }
         [Required]
         public int AcukwikFboHandlerId { get; set; }
-        public AccountTypes AccountType { get; set; } = AccountTypes.RevFbo;
+        public AccountTypes AccountType { get; set; };
     }
 }
