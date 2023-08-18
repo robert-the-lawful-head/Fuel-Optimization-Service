@@ -1,4 +1,5 @@
-﻿using FBOLinx.DB.Context;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
@@ -15,7 +16,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
     public interface IGroupFboService
     {
         Task<Group> CreateNewGroup(string groupName);
-        Task<Fbos> CreateNewFbo(SingleFboRequest request);
+        Task<Fbos> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo);
         Task DeleteFbo(int fboId);
         Task DeleteFbos(List<int> fboIds);
     }
@@ -85,7 +86,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
             return group;
         }
 
-        public async Task<Fbos> CreateNewFbo(SingleFboRequest request)
+        public async Task<Fbos> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo)
         {
             if (request.GroupId.GetValueOrDefault() == 0)
             {
@@ -102,7 +103,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 AcukwikFBOHandlerId = request.AcukwikFboHandlerId,
                 Active = true,
                 DateActivated = DateTime.Now,
-                AccountType = Core.Enums.AccountTypes.RevFbo
+                AccountType = accountType
             };
 
             _context.Fbos.Add(fbo);

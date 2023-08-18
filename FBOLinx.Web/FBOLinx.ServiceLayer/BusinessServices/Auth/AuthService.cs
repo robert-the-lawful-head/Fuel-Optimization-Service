@@ -1,4 +1,5 @@
-﻿using FBOLinx.DB.Context;
+﻿using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Aircraft;
@@ -131,8 +132,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
             var acukwikAirport = await _airportService.GetSingleBySpec(new AcukwikAirportByOidSpecification(acukwikFbo.AirportId.GetValueOrDefault()));
 
-            var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Core.Enums.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
-            fbo = await _GroupFboService.CreateNewFbo(newFbo);
+            var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, FuelDeskEmail = importedFboEmail.Email };
+            fbo = await _GroupFboService.CreateNewFbo(newFbo, AccountTypes.NonRevFBO);
 
             UserDTO newUser = new UserDTO() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
             await _userService.AddAsync(newUser);
