@@ -1,7 +1,10 @@
 ﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
     public interface IGroupFboService
     {
         Task<Group> CreateNewGroup(string groupName);
-        Task<Fbos> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo);
+        Task<FbosDto> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo);
         Task DeleteFbo(int fboId);
         Task DeleteFbos(List<int> fboIds);
     }
@@ -26,13 +29,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         private IServiceScopeFactory _serviceScopeFactory;
         private FuelerLinxContext _fuelerLinxContext;
         private FuelerLinxApiService _fuelerLinxApiService;
+        private readonly IFboService _fboService;
+        private readonly IFboAirportsService _fboAirportsService;
 
-        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxApiService fuelerLinxApiService)
+        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxApiService fuelerLinxApiService, IFboService fboService, IFboAirportsService fboAirportsService)
         {
             _fuelerLinxContext = fuelerLinxContext;
             _serviceScopeFactory = serviceScopeFactory;
             _context = context;
             _fuelerLinxApiService = fuelerLinxApiService;
+            _fboService = fboService;
+            _fboAirportsService = fboAirportsService;
         }
 
         #region Public Methods
@@ -53,7 +60,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 {
                     try
                     {
-                        await _fuelerLinxContext.Database.ExecuteSqlRawAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName + "', @GroupID=" + group.Oid + "");
+                        await _fuelerLinxContext.Database.ExecuteSqlRawAsync("exec up_Insert_FBOlinxGroupIntofuelerList @GroupName='" + group.GroupName.Replace("'","''") + "', @GroupID=" + group.Oid + "");
                     }
                     catch (Exception ex)
                     {
@@ -86,7 +93,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
             return group;
         }
 
-        public async Task<Fbos> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo)
+        public async Task<FbosDto> CreateNewFbo(SingleFboRequest request, AccountTypes accountType = AccountTypes.RevFbo)
         {
             if (request.GroupId.GetValueOrDefault() == 0)
             {
@@ -96,7 +103,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 request.GroupId = group.Oid;
             }
 
-            Fbos fbo = new Fbos
+            FbosDto fbo = new FbosDto
             {
                 Fbo = request.Fbo.Trim(),
                 GroupId = request.GroupId.GetValueOrDefault(),
@@ -106,17 +113,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 AccountType = accountType
             };
 
-            _context.Fbos.Add(fbo);
-            await _context.SaveChangesAsync();
+            await _fboService.AddAsync(fbo);
 
-            Fboairports fboairport = new Fboairports
+            //_context.Fbos.Add(fbo);
+            //await _context.SaveChangesAsync();
+
+            FboAirportsDTO fboairport = new FboAirportsDTO
             {
                 Icao = request.Icao,
                 Iata = request.Iata,
                 Fboid = fbo.Oid
             };
-            _context.Fboairports.Add(fboairport);
-            await _context.SaveChangesAsync();
+            await _fboAirportsService.AddAsync(fboairport);
+            //_context.Fboairports.Add(fboairport);
+            //await _context.SaveChangesAsync();
 
             return fbo;
         }

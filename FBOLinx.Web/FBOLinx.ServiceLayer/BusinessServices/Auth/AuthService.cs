@@ -104,6 +104,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
                 await _fboService.UpdateAsync(fbo);
                 await _userService.UpdateAsync(user);
             }
+            else if (fbo.Suspended.GetValueOrDefault())
+            {
+                fbo.AccountType = Core.Enums.AccountTypes.NonRevFBO;
+                user.Role = Core.Enums.UserRoles.NonRev;
+
+                await _fboService.UpdateAsync(fbo);
+                await _userService.UpdateAsync(user);
+            }
 
             //Return URL with authentication for 7 days
             AccessTokensDto accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
@@ -112,7 +120,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
         public async Task<string> CreateNonRevAccount(int handlerId)
         {
-            var fbo = new Fbos();
+            var fbo = new FbosDto();
             var importedFboEmail = new ImportedFboEmails();
             var acukwikFbo = await _acukwikFbohandlerDetailService.GetSingleBySpec(new AcukwikFboHandlerDetailSpecification(handlerId));
 
