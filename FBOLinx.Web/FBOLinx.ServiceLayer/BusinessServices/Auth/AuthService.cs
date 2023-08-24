@@ -94,6 +94,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
 
             var user = await _userService.GetSingleBySpec(new PrimaryOrNonRevUserByFboIdSpecification(fbo.Oid));
 
+            if (user == null)
+            {
+                user = new UserDTO() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.Primary, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
+                await _userService.AddAsync(user);
+            }
+            
             if (!fbo.Active.GetValueOrDefault())
             {
                 fbo.AccountType = Core.Enums.AccountTypes.NonRevFBO;
