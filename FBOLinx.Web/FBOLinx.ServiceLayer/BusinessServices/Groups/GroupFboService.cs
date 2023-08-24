@@ -113,10 +113,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 AccountType = accountType
             };
 
-            await _fboService.AddAsync(fbo);
-
-            //_context.Fbos.Add(fbo);
-            //await _context.SaveChangesAsync();
+            fbo = await _fboService.AddAsync(fbo);
 
             FboAirportsDTO fboairport = new FboAirportsDTO
             {
@@ -125,8 +122,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                 Fboid = fbo.Oid
             };
             await _fboAirportsService.AddAsync(fboairport);
-            //_context.Fboairports.Add(fboairport);
-            //await _context.SaveChangesAsync();
 
             return fbo;
         }
