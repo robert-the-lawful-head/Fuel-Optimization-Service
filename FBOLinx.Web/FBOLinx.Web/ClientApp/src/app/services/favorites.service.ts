@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { FboFavoriteAircraft } from '../models/favorites/favoriteAircraft';
+import { FboFavoriteCompany } from '../models/favorites/favoriteCompany';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +17,25 @@ export class FavoritesService {
         this.accessPointUrl = baseUrl + 'api/favorites';
     }
     public saveCompanyFavorite(fboId: number, customerInfoByGroupId: number) {
-        return this.http.post(`${this.accessPointUrl}/fbo/${fboId}/group/${customerInfoByGroupId}`,{}, {
+        var payload : FboFavoriteCompany = {
+            oid:  0,
+            customerInfoByGroupId: customerInfoByGroupId,
+            fboId: fboId
+        };
+
+        return this.http.post(`${this.accessPointUrl}/company`,payload, {
             headers: this.headers,
         });
     }
-    public saveAircraftFavorite(fboId: number, aircraftId: number) {
-        console.log(`${this.accessPointUrl}/fbo/${fboId}/aircraft/${aircraftId}`);
-        return this.http.post(`${this.accessPointUrl}/fbo/${fboId}/aircraft/${aircraftId}`,{}, {
+    public saveAircraftFavorite(fboId: number,groupId: number, tailNumber: string,aircraftId?: number) {
+        var payload : FboFavoriteAircraft = {
+            oid: 0,
+            aircraftId: aircraftId,
+            fboId: fboId,
+            groupId: groupId,
+            tailNumber: tailNumber
+        };
+        return this.http.post(`${this.accessPointUrl}/aircraft`,payload, {
             headers: this.headers,
         });
     }
