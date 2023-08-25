@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class FavoriteIconComponent implements OnInit {
     @Input() favoriteData: any;
     @Input() isSaving: boolean = false;
+    @Input() hasPadding: boolean = true;
     @Output() favoriteClick = new EventEmitter<any>();
 
     constructor() { }

@@ -1,4 +1,4 @@
-<div class="pl-1 pr-1">
+<div [ngClass]="{ 'pl-1 pr-1': hasPadding }">
     <span (click)="toogleFavorite()" *ngIf="favoriteData.isFavorite" class="favorite-icon"
         ><mat-icon>star</mat-icon></span
     >
