@@ -100,7 +100,7 @@ namespace FBOLinx.Web.Services
                 Username = fboRecord.Username,
                 Active = true
             };
-            await _userService.AddAsync(user);
+            user = await _userService.AddAsync(user);
 
             return user;
         }
@@ -126,7 +126,7 @@ namespace FBOLinx.Web.Services
                 Active = true
             };
 
-            await _userService.AddAsync(user);
+            user = await _userService.AddAsync(user);
 
             return user;
         }

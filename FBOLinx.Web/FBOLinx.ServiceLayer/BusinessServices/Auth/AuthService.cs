@@ -97,7 +97,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
             if (user == null)
             {
                 user = new UserDTO() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.Primary, Username = importedFboEmail.Email.Trim(), FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
-                await _userService.AddAsync(user);
+                user = await _userService.AddAsync(user);
             }
             
             if (!fbo.Active.GetValueOrDefault())
