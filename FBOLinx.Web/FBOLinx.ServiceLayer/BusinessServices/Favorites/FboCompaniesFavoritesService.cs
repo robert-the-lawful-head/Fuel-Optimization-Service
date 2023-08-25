@@ -10,7 +10,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
     public interface IFboCompaniesFavoritesService
     {
-        Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int CustomerInfoByGroupId);
+        Task<FboFavoriteCompany> AddCompanyFavorite(FboFavoriteCompany fboFavoriteCompany);
         Task<bool> DeleteCompanyFavorite(int oid);
         Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId);
     }
@@ -24,9 +24,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             _FboFavoriteCompanyRepo = FboFavoriteCompanyRepo;
         }
 
-        public async Task<FboFavoriteCompany> AddCompanyFavorite(int fboId, int customerInfoByGroupId)
+        public async Task<FboFavoriteCompany> AddCompanyFavorite(FboFavoriteCompany fboFavoriteCompany)
         {
-            return await _FboFavoriteCompanyRepo.AddAsync(new FboFavoriteCompany() { CustomerInfoByGroupId = customerInfoByGroupId, FboId = fboId});
+            return await _FboFavoriteCompanyRepo.AddAsync(fboFavoriteCompany);
         }
         public async Task<bool> DeleteCompanyFavorite(int oid)
         {

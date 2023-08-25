@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -9,31 +10,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
     public interface IFboAircraftFavoritesService
     {
-        Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId);
+        Task<FboFavoriteAircraft> AddAircraftFavorite(FboFavoriteAircraft fboFavoriteAircraft);
         Task<bool> DeleteAircraftFavorite(int oid);
-        Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId);
+        Task<List<FboFavoriteAircraft>> GetAircraftfavoritesByFboId(int fboId);
     }
 
     public class FboAircraftFavoritesService : IFboAircraftFavoritesService
     {
-        private IRepository<FboFavoriteAircraft, FboLinxContext> _FboFavoriteAircraftsRepo;
+        private IRepository<FboFavoriteAircraft, FboLinxContext> _fboFavoriteAircraftsRepo;
 
         public FboAircraftFavoritesService(IRepository<FboFavoriteAircraft, FboLinxContext> FboFavoriteAircraftsRepo)
         {
-            _FboFavoriteAircraftsRepo = FboFavoriteAircraftsRepo;
+            _fboFavoriteAircraftsRepo = FboFavoriteAircraftsRepo;
         }
 
-        public Task<FboFavoriteAircraft> AddAircraftFavorite(int fboId, int aircraftId)
+        public async Task<FboFavoriteAircraft> AddAircraftFavorite(FboFavoriteAircraft fboFavoriteAircraft)
         {
-            throw new NotImplementedException();
+             return await _fboFavoriteAircraftsRepo.AddAsync(fboFavoriteAircraft);
         }
 
-        public Task<bool> DeleteAircraftFavorite(int oid)
+        public async Task<bool> DeleteAircraftFavorite(int oid)
         {
-            throw new NotImplementedException();
+            await _fboFavoriteAircraftsRepo.DeleteAsync(oid);
+            return true;
         }
 
-        public Task<List<FboFavoriteCompany>> GetCompaniesFavoritesByFboId(int fboId)
+        public Task<List<FboFavoriteAircraft>> GetAircraftfavoritesByFboId(int fboId)
         {
             throw new NotImplementedException();
         }
