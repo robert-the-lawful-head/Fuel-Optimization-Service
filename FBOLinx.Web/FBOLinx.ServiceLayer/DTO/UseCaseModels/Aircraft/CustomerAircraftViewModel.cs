@@ -31,6 +31,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public string Phone { get; set; }
         public int CustomerInfoByGroupId { get; set; }
         public int? FuelerlinxCompanyId { get; set; }
+        public FboFavoriteAircraft? FavoriteAircraft { get; set; }
 
         public string AircraftSizeDescription
         {
@@ -57,6 +58,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
             CustomerInfoByGroupId = (customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.Oid).GetValueOrDefault();
             FuelerlinxCompanyId = (customerAircraft?.Customer?.FuelerlinxId);
             Notes = customerAircraft.Notes;
+            FavoriteAircraft = customerAircraft.FavoriteAircraft;
         }
 
         public static CustomerAircraftsViewModel Cast(CustomerAircraftsDto customerAircraft)

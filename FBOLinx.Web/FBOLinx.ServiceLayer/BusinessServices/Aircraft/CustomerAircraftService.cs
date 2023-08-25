@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
-using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
@@ -40,15 +33,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private IMemoryCache _MemoryCache;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
+        private IRepository<FboFavoriteAircraft,FboLinxContext> _favoriteAircraftRepository { get; set; }
 
         public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, IAircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
-            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService) : base(customerAircraftEntityService)
+            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService, IRepository<FboFavoriteAircraft, FboLinxContext> favoriteAircraftRepository) : base(customerAircraftEntityService)
         {
             _MemoryCache = memoryCache;
             _CustomerInfoByGroupService = customerInfoByGroupService;
             _AircraftService = aircraftService;
             _pricingTemplateService = pricingTemplateService;
+            _favoriteAircraftRepository = favoriteAircraftRepository;
         }
 
         public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null, bool useCache = false)
@@ -78,7 +73,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, int customerId = 0, List<string> tailNumbers = null)
         {
-            List<CustomerAircraftsDto> aircrafts = null;
+            List<CustomerAircraftsDto> aircrafts = null;           
+
             if (customerId > 0)
             {
                 aircrafts =
@@ -93,6 +89,27 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
                 aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
             }
+
+            var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId)
+                                    .Where(x => tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(x.TailNumber));
+
+            aircrafts = aircrafts
+            .GroupJoin(
+                favoriteAircrafts,
+                a => a.TailNumber,
+                fa => fa.TailNumber,
+                (a, fa) => new
+                {
+                    aircraft = a,
+                    favoriteAircraft = fa ?? null
+
+                }).Select(aj =>
+            {
+                var result = new CustomerAircraftsDto();
+                result = aj.aircraft;
+                result.FavoriteAircraft = aj.favoriteAircraft.FirstOrDefault();
+                return result;
+            }).ToList();
 
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
