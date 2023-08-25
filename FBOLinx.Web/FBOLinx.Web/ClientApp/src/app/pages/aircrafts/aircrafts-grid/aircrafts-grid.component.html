@@ -25,7 +25,9 @@
                     <td *matCellDef="let aircraft"
                         mat-cell>
                         <div class="row">
-                            <app-favorite-icon></app-favorite-icon>
+                            <app-favorite-icon
+                            [favoriteData]="setIsFavoriteProperty(aircraft)"
+                            (favoriteClick)="toogleFavorite(aircraft)"></app-favorite-icon>
                             <span (click)="editCustomerAircraft(aircraft)">{{ aircraft.tailNumber }}</span>
                         </div>
                     </td>

@@ -21,6 +21,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
+import { FavoritesService } from 'src/app/services/favorites.service';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -61,6 +62,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         private sharedService: SharedService ,
         private route : ActivatedRoute,
         private nullOrEmptyToDefault: NullOrEmptyToDefault,
+        private favoritesService: FavoritesService
     ) {
         super();
         this.isLoadingAircraftTypes = true;
@@ -263,5 +265,30 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
     }
     getAircrafttypeDisplayString(aircraft: any): string {
         return this.nullOrEmptyToDefault.transform(aircraft.make, false) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,false);
+    }
+    setIsFavoriteProperty(aircraft: any): any {
+        aircraft.isFavorite = aircraft.favoriteAircraft != null;
+        return aircraft;
+    }
+    toogleFavorite(favoriteData: any): void {
+        if(favoriteData.isFavorite)
+            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,favoriteData.groupId,favoriteData.tailNumber, favoriteData.aircraftId)
+            .subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = data;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
+        else
+            this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid).subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = null;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
     }
 }
