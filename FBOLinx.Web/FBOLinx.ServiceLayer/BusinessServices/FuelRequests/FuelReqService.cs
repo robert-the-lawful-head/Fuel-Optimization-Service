@@ -383,8 +383,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName).ToList();
                         customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(serviceOrder.GroupId, serviceOrder.CustomerInfoByGroupId));
                         customerAircraftId = serviceOrder.CustomerAircraftId;
-                        arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " Z";
-                        departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " Z";
+                        arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
+                        departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
                     }
 
                     if (customer.Oid == 0)
