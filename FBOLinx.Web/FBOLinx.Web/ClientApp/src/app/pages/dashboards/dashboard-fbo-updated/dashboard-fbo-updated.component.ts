@@ -44,7 +44,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     //flghtWatch
     center: LngLatLike;
     flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
-    mapLoadSubscription: Subscription;
     isMapLoading: boolean = true;
     isStable: boolean = true;
     selectedICAO: string = "";
@@ -94,9 +93,9 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     async ngOnInit() {
         await this.setFlightWatchMapCenter();
 
-        this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
+        this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse[]}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
-                if(value.data =! null){
+                if(value.data){
                     this.flightWatchDictionary = this.flightWatchMapService.getDictionaryByTailNumberAsKey(
                         value.data
                     );
@@ -126,7 +125,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         if (this.locationChangedSubscription) {
             this.locationChangedSubscription.unsubscribe();
         }
-        if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
     }
     async setFlightWatchMapCenter(){
         if(this.selectedICAO)
