@@ -58,7 +58,15 @@
                 *matCellDef="let element"
             >
                 <span class="center-items">
-                    <ng-container *ngIf="hasIcon(column)"
+                    <ng-container *ngIf="isFavoriteButtonVisible(column, element)">
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(element)"
+                        [hasPadding]="false"
+                        (favoriteClick)="toogleFavorite(element)"
+                        (click)="$event.stopPropagation()"></app-favorite-icon>
+                    </ng-container>
+
+                    <ng-container *ngIf="hasIcon(column) && !isFavoriteButtonVisible(column, element)"
                         ><mat-icon [ngStyle]="{ color: getTextColor(element, column) }">{{
                             getIcon(element)
                         }}</mat-icon></ng-container

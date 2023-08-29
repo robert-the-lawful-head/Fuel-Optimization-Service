@@ -14,6 +14,7 @@ import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
+import { FavoritesService } from 'src/app/services/favorites.service';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -55,7 +56,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
                 private booleanToText: BooleanToTextPipe,
-                private flightWatchHelper: FlightWatchHelper) { }
+                private flightWatchHelper: FlightWatchHelper,
+                private favoritesService: FavoritesService) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
@@ -259,5 +261,34 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     getNoDataToDisplayString(){
         return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
+    }
+    isFavoriteButtonVisible(column: any, data: any): boolean {
+        // && data.IsCustomerManagerAircraft
+        return column == swimTableColumns.status;
+    }
+    setIsFavoriteProperty(aircraft: any): any {
+        aircraft.isFavorite = aircraft.favoriteAircraft != null;
+        return aircraft;
+    }
+    toogleFavorite(favoriteData: any): void {
+        if(favoriteData.isFavorite)
+            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,this.sharedService.currentUser.groupId,favoriteData.tailNumber, null)
+            .subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = data;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
+        else
+            this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid).subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = null;
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
     }
 }
