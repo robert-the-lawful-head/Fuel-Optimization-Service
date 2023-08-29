@@ -130,6 +130,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
+            var customerAircrafts = await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
+
+            result = result
+            .GroupJoin(
+                customerAircrafts,
+                a => a.TailNumber,
+                fa => fa.TailNumber,
+                (a, fa) => new
+                {
+                    aircraft = a,
+                    customerAircaft = fa.FirstOrDefault()
+
+                }).Select(aj =>
+                {
+                    aj.aircraft.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft ?? null;
+                    aj.aircraft.IsCustomerManagerAircraft = true;
+                    return aj.aircraft;
+                }).ToList();
+
             return result;
         }
         private void AddDemoDataToFlightWatchResult(List<FlightWatchModel> result, FbosDto fbo)

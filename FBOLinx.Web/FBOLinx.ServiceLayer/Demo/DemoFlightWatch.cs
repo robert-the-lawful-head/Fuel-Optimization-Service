@@ -67,6 +67,7 @@ namespace FBOLinx.ServiceLayer.Demo
                 return null;
 
             var demoData = _demoData.Value.FlightWatch;
+            
             var swim = new SWIMFlightLegDTO()
             {
                 FAAMake = "CESSNA",
@@ -110,7 +111,7 @@ namespace FBOLinx.ServiceLayer.Demo
             var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim, null);
 
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
-
+            flightWatch.IsCustomerManagerAircraft = true;
             return flightWatch;
         }
     }

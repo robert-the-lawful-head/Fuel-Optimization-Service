@@ -278,5 +278,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             _TrackingDegree = trackingDegree;
         }
+        public FboFavoriteAircraft FavoriteAircraft { get; set; }
+        public bool IsCustomerManagerAircraft { get; set; } =  false;
     }
 }

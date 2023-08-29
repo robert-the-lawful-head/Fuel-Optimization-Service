@@ -12,7 +12,6 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.EntityServices;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
@@ -24,6 +23,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId);
         Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId);
         void ClearCache(int groupId, int fboId = 0);
+        Task<List<CustomerAircraftsDto>> GetCustomerAircrafts(int groupId);
     }
 
     public class CustomerAircraftService : BaseDTOService<CustomerAircraftsDto, DB.Models.CustomerAircrafts, FboLinxContext>, ICustomerAircraftService
@@ -112,6 +112,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             }).ToList();
 
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
+        }
+        public async Task<List<CustomerAircraftsDto>> GetCustomerAircrafts(int groupId)
+        {
+
+            var customers = await _CustomerInfoByGroupService.GetCustomers(groupId);
+            var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
+
+            var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId);
+
+            aircrafts = aircrafts
+            .GroupJoin(
+                favoriteAircrafts,
+                a => a.TailNumber,
+                fa => fa.TailNumber,
+                (a, fa) => new
+                {
+                    aircraft = a,
+                    favoriteAircraft = fa ?? null
+
+                }).Select(aj =>
+                {
+                    var result = new CustomerAircraftsDto();
+                    result = aj.aircraft;
+                    result.FavoriteAircraft = aj.favoriteAircraft.FirstOrDefault();
+                    return result;
+                }).ToList();
+
+            return aircrafts;
         }
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomAircraftWithDetailsFromCache(int groupId,
