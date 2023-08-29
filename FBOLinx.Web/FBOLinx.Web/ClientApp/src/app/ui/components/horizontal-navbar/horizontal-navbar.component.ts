@@ -7,11 +7,10 @@ import {
     Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
-
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
@@ -24,7 +23,6 @@ import { FboairportsService } from '../../../services/fboairports.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbosService } from '../../../services/fbos.service';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { AirportWatchService } from '../../../services/airportwatch.service';
 // Services
 import { UserService } from '../../../services/user.service';
 // Components
@@ -34,6 +32,9 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 import * as moment from 'moment';
 import { UserRole } from 'src/app/enums/user-role';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
+import { FlightWatchService } from 'src/app/services/flightwatch.service';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
 @Component({
     host: {
@@ -80,14 +81,17 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     needsAttentionCustomersData: any[];
     subscription: any;
     fuelOrders: any[] = [];
-    flightWatchData: any[];
+
+    mapLoadSubscription: Subscription;
+    selectedICAO: string = "";
+    airportWatchFetchSubscription: Subscription;
+    flightWatchData : FlightWatchModelResponse[];
 
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private router: Router,
-        private route: ActivatedRoute,
         private accountProfileDialog: MatDialog,
         private userService: UserService,
         private fboPricesService: FbopricesService,
@@ -95,8 +99,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fbosService: FbosService,
         private fuelReqsService: FuelreqsService,
         private winRef: WindowRef,
-        private airportWatchService: AirportWatchService,
-        private Location: Location
+        private Location: Location,
+        private flightWatchService: FlightWatchService,
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -146,12 +150,23 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 if (message === customerUpdatedEvent) {
                     this.loadNeedsAttentionCustomers();
                 }
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.loadAirportWatchData();
+                }else if(message == SharedEvents.icaoChangedEvent){
+                    this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                }
             }
         );
 
         this.fuelOrdersSubscription = timer(0, 120000).subscribe(() =>
             this.loadUpcomingOrders()
         );
+
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+            if(this.selectedICAO)
+                this.loadAirportWatchData();
+        });
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
     }
 
     ngOnDestroy() {
@@ -161,6 +176,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.fuelOrdersSubscription) {
             this.fuelOrdersSubscription.unsubscribe();
         }
+        if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
+        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
+
     }
 
     toggle(event) {
@@ -524,6 +542,30 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     public get userRole(){
         return UserRole;
     }
+
+    loadAirportWatchData() {
+        return this.airportWatchFetchSubscription = this.flightWatchService
+        .getAirportLiveData(
+            this.sharedService.currentUser.fboId,
+            this.selectedICAO
+        )
+        .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
+            if (data.success) {
+                this.flightWatchData = data.result;
+            }else{
+                console.log("flight watch data: message", data.message);
+            }
+            this.sharedService.valueChange(
+            {
+                event: SharedEvents.flightWatchDataEvent,
+                data: this.flightWatchData,
+            });
+        }, (error: any) => {
+        console.log("flight watch error:", error)
+
+        });
+    }
+
     // Private Methods
     private isOnDashboard(): boolean {
         if (!this.Location) {
