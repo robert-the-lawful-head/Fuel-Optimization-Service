@@ -69,6 +69,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     fuelOrderNotificationsMenu: any = {
         isOpened: false
     };
+    favoriteAircrafts: any = {
+        isOpened: false
+    };
     currrentJetACostPricing: any;
     currrentJetARetailPricing: any;
     hasLoadedJetACost = false;
@@ -208,6 +211,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
+    openfavoriteAircrafts() {
+        this.favoriteAircrafts.isOpened = !this.favoriteAircrafts.isOpened;
+    }
+
     openFuelOrdersUpdate() {
         this.fuelOrderNotificationsMenu.isOpened = !this.fuelOrderNotificationsMenu.isOpened;
     }
@@ -216,6 +223,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
         this.fuelOrderNotificationsMenu.isOpened = false;
+        this.favoriteAircrafts.isOpened = false;
         this.isOpened = false;
     }
 
@@ -552,20 +560,47 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
             if (data.success) {
                 this.flightWatchData = data.result;
+                let favoriteAircrats = this.flightWatchData.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null);
+                console.log("🚀 ~ file: horizontal-navbar.component.ts:555 ~ HorizontalNavbarComponent ~ .subscribe ~ data.result:", this.flightWatchData)
+                console.log("🚀 ~ file: horizontal-navbar.component.ts:558 ~ HorizontalNavbarComponent ~ .subscribe ~ favoriteAircrats:", favoriteAircrats)
+                var storedFavoriteAircrafts: {[fboid: string]: FlightWatchModelResponse[];} = JSON.parse(localStorage.getItem(localStorageAccessConstant.favoriteAircrafts));
+                storedFavoriteAircrafts = storedFavoriteAircrafts ?? {};
+                console.log("🚀 ~ file: horizontal-navbar.component.ts:559 ~ HorizontalNavbarComponent ~ .subscribe ~ storedFavoriteAircrafts:", storedFavoriteAircrafts)
+                favoriteAircrats.forEach(item => {
+                    if(storedFavoriteAircrafts[this.sharedService.currentUser.fboId]){
+                        const existingIndex = storedFavoriteAircrafts[this.sharedService.currentUser.fboId].findIndex(obj => obj.tailNumber == item.tailNumber);
+                        if (existingIndex !== -1) {
+                            storedFavoriteAircrafts[this.sharedService.currentUser.fboId].splice(existingIndex, 1);
+                        }else{
+                            storedFavoriteAircrafts[this.sharedService.currentUser.fboId].push(item);
+                        }
+                    }
+                    else
+                        storedFavoriteAircrafts[this.sharedService.currentUser.fboId] = [item];
+                });
+                localStorage.setItem(localStorageAccessConstant.favoriteAircrafts, JSON.stringify(storedFavoriteAircrafts));
             }else{
                 console.log("flight watch data: message", data.message);
             }
             this.sharedService.valueChange(
             {
                 event: SharedEvents.flightWatchDataEvent,
-                data: this.flightWatchData,
+                data: this.flightWatchData ?? null,
             });
         }, (error: any) => {
-        console.log("flight watch error:", error)
-
+            console.log("flight watch error:", error)
         });
     }
+    removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
+        var storedFavoriteAircrafts: {[fboid: string]: FlightWatchModelResponse[];} = JSON.parse(localStorage.getItem(localStorageAccessConstant.favoriteAircrafts));
 
+        storedFavoriteAircrafts[this.sharedService.currentUser.fboId] = storedFavoriteAircrafts[this.sharedService.currentUser.fboId].filter(item => item.tailNumber != flightwatch.tailNumber);
+
+        localStorage.setItem(localStorageAccessConstant.favoriteAircrafts, JSON.stringify(storedFavoriteAircrafts));
+    }
+    goToFlightWatch():void{
+        this.router.navigate(['/default-layout/flight-watch']);
+    }
     // Private Methods
     private isOnDashboard(): boolean {
         if (!this.Location) {
