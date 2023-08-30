@@ -158,6 +158,7 @@ namespace FBOLinx.Web.Controllers
                 g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
                 g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
                 g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
+                g.HasPremiumFbos = fbos.Any(f => f.GroupId == g.Oid && f.AccountType == AccountTypes.RevFbo);
             });
 
             return Ok(new GroupFboViewModel
