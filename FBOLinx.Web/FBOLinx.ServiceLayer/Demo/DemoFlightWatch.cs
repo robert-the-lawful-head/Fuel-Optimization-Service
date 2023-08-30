@@ -110,6 +110,7 @@ namespace FBOLinx.ServiceLayer.Demo
 
             var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim, null);
 
+            flightWatch.FavoriteAircraft = new FboFavoriteAircraft() { AircraftId = null, FboId = 276, GroupId = 83, TailNumber = "XXCITA10", Oid = 1000 };
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
             flightWatch.IsCustomerManagerAircraft = true;
             return flightWatch;
