@@ -5,8 +5,16 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class GetTimePipe implements PipeTransform {
 
-  transform(dateObject?: any, args?: any): any {
-    if(dateObject == null) return "";
+  transform(date?: any, args?: any): any {
+    if(date == null) return "";
+
+    let dateObject = new Date();
+
+    if (typeof date === 'string' || date instanceof String) {
+        if (date === null || date.trim() === "") return "";
+        dateObject  = new Date(date.toString());
+    }
+
     var hms:string[] = [
         dateObject.getHours().toString(),
         dateObject.getMinutes().toString()

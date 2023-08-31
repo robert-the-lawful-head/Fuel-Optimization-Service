@@ -214,16 +214,11 @@ import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-
 import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/missedorders-grid.component';
-import { GetTimePipe } from '../shared/pipes/dateTime/getTime.pipe';
-import { ToReadableDateTimePipe } from '../shared/pipes/dateTime/ToReadableDateTime.pipe';
-import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
-import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
 import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
 import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters/flight-watch-filters.component';
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
-import { NullOrEmptyToDefault } from '../shared/pipes/null/NullOrEmptyToDefault.pipe';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
 import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
@@ -462,13 +457,8 @@ import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/p
         GroupService,
         ToolbarService,
         DetailRowService,
-        GetTimePipe,
-        ToReadableDateTimePipe,
-        ToReadableTimePipe,
-        BooleanToTextPipe,
         DatePipe,
         CurrencyPipe,
-        NullOrEmptyToDefault
     ],
 })
 export class PagesModule { }
