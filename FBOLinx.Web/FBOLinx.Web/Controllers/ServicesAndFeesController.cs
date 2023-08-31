@@ -89,9 +89,9 @@ namespace FBOLinx.Web.Controllers
                 fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(handlerId));
             }
 
-            var services = await _fboServicesAndFeesService.Get(fbo.Oid);
-
-            return services;
+            var allServices = await _fboServicesAndFeesService.Get(fbo.Oid);
+            var activeServices = allServices.Where(a => a.ServicesAndFees.Any(s => s.IsActive)).ToList();
+            return activeServices;
         }
 
     }
