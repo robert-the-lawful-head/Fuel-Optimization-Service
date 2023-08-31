@@ -35,6 +35,7 @@ import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCon
 import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 
 @Component({
     host: {
@@ -562,7 +563,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         )
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
             if (data.success) {
-                var filteredFavoriteAircrafts = data.result.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null);
+                var filteredFavoriteAircrafts = data.result.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null && item.status == FlightLegStatus.EnRoute && item.etaLocal != null);
                 this.favoriteAircraftsData =
                 filteredFavoriteAircrafts?.filter(item =>
                     !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
