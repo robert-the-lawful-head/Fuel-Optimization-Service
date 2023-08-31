@@ -171,10 +171,10 @@
                     <li *ngFor="let flightwatch of favoriteAircraftsData">
                         <a>
                             <div class="content">
-                                <span class="desc">
-                                    {{flightwatch.tailNumber}} ({{flightwatch.icaoAircraftCode}}) has been detected ETA: {{ flightwatch.etaLocal}}
+                                <span class="desc p-1">
+                                    {{flightwatch.tailNumber}} ({{flightwatch.icaoAircraftCode}}) has been detected ETA: {{flightwatch.etaLocal | getTime}}
                                 </span>
-                                <div class="text-right">
+                                <div class="text-right p-1">
                                     <button (click)="removeFavoriteAircraft(flightwatch)"
                                     [view]="'error'"
                                     class="mr-1"
