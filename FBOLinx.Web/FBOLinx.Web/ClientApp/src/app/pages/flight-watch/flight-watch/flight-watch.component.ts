@@ -16,7 +16,7 @@ import { Subscription } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
