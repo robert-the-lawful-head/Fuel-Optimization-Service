@@ -157,8 +157,8 @@
                 <mat-icon aria-hidden="false" aria-label="Notifications">airplanemode_active</mat-icon>
                 <span [ngClass]="{
                       marker:
-                      (flightWatchData &&
-                      flightWatchData.length> 0)
+                      (favoriteAircraftsData &&
+                      favoriteAircraftsData.length> 0)
                     }">
                 </span>
             </a>
@@ -168,7 +168,7 @@
                 </h4>
 
                 <ul class="notifications-list">
-                    <li *ngFor="let flightwatch of flightWatchData">
+                    <li *ngFor="let flightwatch of favoriteAircraftsData">
                         <a>
                             <div class="content">
                                 <span class="desc">
