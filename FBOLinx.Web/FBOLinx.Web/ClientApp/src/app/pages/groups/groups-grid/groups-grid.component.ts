@@ -587,8 +587,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         );
         const filteredGroups = this.groupsFbosData.groups.filter(
             (group) =>
-                this.fboAccountType == "freemium" || this.fboAccountType == "premium" ? (
-                    (this.fboAccountType == "freemium" && !group.hasPremiumFbos && group.fboCount > 0) || (this.fboAccountType == "premium" && group.hasPremiumFbos)) :
+                (this.fboAccountType == "freemium" || this.fboAccountType == "premium") ? ((
+                    (this.fboAccountType == "freemium" && !group.hasPremiumFbos) || (this.fboAccountType == "premium" && group.hasPremiumFbos))
+                    && group.fboCount > 0 && (this.fboActiveAccountType == "all" || ((this.fboActiveAccountType == "active" && group.hasActiveFbos) || this.fboActiveAccountType == "inactive" && !group.hasActiveFbos))) :
                 (this.groupAccountType === 'all' ||
                 (this.groupAccountType === 'active' && group.active) ||
                 (this.groupAccountType == 'inactive' && !group.active))

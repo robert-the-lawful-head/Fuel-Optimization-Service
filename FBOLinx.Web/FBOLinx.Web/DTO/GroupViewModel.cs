@@ -18,5 +18,6 @@ namespace FBOLinx.Web.DTO
         public int Quotes30Days { get; set; }
         public int Orders30Days { get; set; }
         public bool HasPremiumFbos { get; set; }
+        public bool HasActiveFbos { get; set; }
     }
 }
