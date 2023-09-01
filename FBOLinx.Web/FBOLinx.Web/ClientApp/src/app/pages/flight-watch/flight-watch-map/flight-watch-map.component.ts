@@ -32,6 +32,8 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { Subscription } from 'rxjs';
+import * as SharedEvents from '../../../models/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -102,6 +104,8 @@ export class FlightWatchMapComponent
         }
     }
 
+    subscription: Subscription;
+
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
         private sharedService: SharedService,
@@ -144,7 +148,12 @@ export class FlightWatchMapComponent
                 }
 
             });
-
+            this.subscription = this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse}) => {
+                    if (value.event == SharedEvents.flyToOnMapEvent) {
+                        this.flyToCoordinates(value.data.latitude,value.data.longitude);
+                    }
+                }
+            );
     }
 
     ngAfterViewInit() {
@@ -155,6 +164,7 @@ export class FlightWatchMapComponent
     }
     ngOnDestroy(): void {
         this.mapRemove();
+        if(this.subscription) this.subscription.unsubscribe();
     }
     async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -503,9 +513,12 @@ export class FlightWatchMapComponent
     }
     goToAirport(icao: string){
         let airport = this.acukwikairports.find( x => x.icao == icao);
+        this.flyToCoordinates(airport.latitudeInDegrees,airport.longitudeInDegrees);
+    }
+    flyToCoordinates(latitudeInDegrees: number, longitudeInDegrees: number){
         let flyToCenter = {
-            lat: airport.latitudeInDegrees,
-            lng: airport.longitudeInDegrees,
+            lat: latitudeInDegrees,
+            lng: longitudeInDegrees,
         };
         this.flyTo(flyToCenter);
     }

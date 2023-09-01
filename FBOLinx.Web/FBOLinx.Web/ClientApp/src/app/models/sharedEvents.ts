@@ -9,3 +9,4 @@ export const fboPricesClearedEvent = 'fbo prices cleared';
 export const deleteGroupEvent = 'group deleted';
 export const resetMissedOrders = 'reset missed orders';
 export const flightWatchDataEvent = 'flightWatchDataEvent';
+export const flyToOnMapEvent = 'flyToOnMap';

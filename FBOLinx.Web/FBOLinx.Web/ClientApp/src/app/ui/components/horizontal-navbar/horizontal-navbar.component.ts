@@ -590,8 +590,12 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.favoriteAircraftsData = this.favoriteAircraftsData.filter(item => item.tailNumber != flightwatch.tailNumber);
         localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
     }
-    goToFlightWatch():void{
-        this.router.navigate(['/default-layout/flight-watch']);
+    goToFlightWatch(flightwatch: FlightWatchModelResponse):void{
+        this.sharedService.valueChange(
+        {
+            event: SharedEvents.flyToOnMapEvent,
+            data: flightwatch,
+        });
     }
     // Private Methods
     private isOnDashboard(): boolean {
