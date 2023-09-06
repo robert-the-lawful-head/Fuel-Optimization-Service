@@ -5,6 +5,7 @@ import {
     OnDestroy,
     OnInit,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -36,6 +37,7 @@ import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @Component({
     host: {
@@ -52,6 +54,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() openedSidebar: boolean;
     @Input() isPublicView: boolean = false;
     @Output() sidebarState = new EventEmitter();
+
+    @ViewChild(IncomingFavoriteAircraftInfoComponent)IncomingFavoriteAircraftInfoComponent: IncomingFavoriteAircraftInfoComponent;
 
     showOverlay: boolean;
     isOpened: boolean;
@@ -105,7 +109,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fuelReqsService: FuelreqsService,
         private winRef: WindowRef,
         private Location: Location,
-        private flightWatchService: FlightWatchService,
+        private flightWatchService: FlightWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -572,10 +576,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
                 );
                 localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
-
             }else{
                 console.log("flight watch data: message", data.message);
             }
+            this.sendNotifications(filteredFavoriteAircrafts);
             this.sharedService.valueChange(
             {
                 event: SharedEvents.flightWatchDataEvent,
@@ -583,6 +587,11 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             });
         }, (error: any) => {
             console.log("flight watch error:", error)
+        });
+    }
+    sendNotifications(data: FlightWatchModelResponse[]) {
+        data.forEach(flightwatch => {
+          this.IncomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
         });
     }
     removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
