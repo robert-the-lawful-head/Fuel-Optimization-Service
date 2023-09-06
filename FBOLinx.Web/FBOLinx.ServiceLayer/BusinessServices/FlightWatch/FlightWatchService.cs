@@ -130,7 +130,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-            var customerAircrafts = await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
+            var customerAircrafts =(_Fbo ==  null) ? null : await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
 
             result = result
             .GroupJoin(
