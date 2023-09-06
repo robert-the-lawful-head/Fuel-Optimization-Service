@@ -12,11 +12,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
-import { Subscription } from 'rxjs';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../constants/sharedEvents';
+import * as SharedEvents from '../../../models/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
@@ -57,11 +56,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     isStable = true;
     loading = false;
-    center: LngLatLike;
+    center: LngLatLike = null;
     selectedFlightWatch: FlightWatchModelResponse;
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
-
-    AircraftLiveDatasubscription: Subscription;
 
     flightWatchData: FlightWatchModelResponse[];
     filteredFlightWatchData: FlightWatchDictionary;
@@ -93,7 +90,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
-        this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse[]}) => {
+        this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
+            if(!value.data) return;
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
                     this.setData(value.data);
@@ -104,6 +102,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                 }
                 this.loading = false;
             }
+            if (value.event == SharedEvents.flyToOnMapEvent) {
+                this.center = this.flightWatchMapService.getMapCenterByCoordinates(value.data.latitude,value.data.longitude);
+            }
         });
     }
     ngAfterContentChecked() {
@@ -111,9 +112,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        this.center = await this.flightWatchMapService.getMapCenter(
-            this.selectedICAO
-        );
+        if(this.center == null)
+            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
     }
     ngOnDestroy() {
     }

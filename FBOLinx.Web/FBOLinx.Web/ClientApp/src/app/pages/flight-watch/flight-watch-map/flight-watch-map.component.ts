@@ -33,7 +33,6 @@ import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { Subscription } from 'rxjs';
-import * as SharedEvents from '../../../models/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -148,12 +147,6 @@ export class FlightWatchMapComponent
                 }
 
             });
-            this.subscription = this.sharedService.valueChanged$.subscribe((value: {event: string, data: FlightWatchModelResponse}) => {
-                    if (value.event == SharedEvents.flyToOnMapEvent) {
-                        this.flyToCoordinates(value.data.latitude,value.data.longitude);
-                    }
-                }
-            );
     }
 
     ngAfterViewInit() {
@@ -292,6 +285,8 @@ export class FlightWatchMapComponent
             this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
+        if(changes.center)
+            this.flyTo(this.center);
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
@@ -515,12 +510,8 @@ export class FlightWatchMapComponent
         let airport = this.acukwikairports.find( x => x.icao == icao);
         this.flyToCoordinates(airport.latitudeInDegrees,airport.longitudeInDegrees);
     }
-    flyToCoordinates(latitudeInDegrees: number, longitudeInDegrees: number){
-        let flyToCenter = {
-            lat: latitudeInDegrees,
-            lng: longitudeInDegrees,
-        };
-        this.flyTo(flyToCenter);
+    flyToCoordinates(latitudeInDegrees: number, longitudeInDegrees: number): void{
+        this.flyTo(this.flightWatchMapService.getMapCenterByCoordinates(latitudeInDegrees,longitudeInDegrees));
     }
     openAircraftPopUpByTailNumber(tailNumber: string): void {
         let selectedFlight = keys(this.data).find(

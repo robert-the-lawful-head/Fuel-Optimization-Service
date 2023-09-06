@@ -4,6 +4,7 @@ import { SharedService } from 'src/app/layouts/shared-service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import * as SharedEvents from 'src/app/models/sharedEvents';
 import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-incoming-favorite-aircraft-info',
@@ -12,23 +13,26 @@ import { filter } from 'rxjs/operators';
 })
 export class IncomingFavoriteAircraftInfoComponent implements OnInit {
     notifications: FlightWatchModelResponse[] = [];
-    clickedAircraft: FlightWatchModelResponse;
+    clickedAircraft: FlightWatchModelResponse = null;
     flightWatchUrl: string = '/default-layout/flight-watch';
     notificationTimeOut: number = 15000;
 
+    subscription: Subscription;
+
     constructor(private router: Router, private sharedService: SharedService) {
-        this.router.events
+        this.subscription = this.router.events
             .pipe(filter((event) => event instanceof NavigationEnd))
             .subscribe((event: NavigationEnd) => {
-                if (event.url != this.flightWatchUrl) return;
-                this.sharedService.valueChange({
-                    event: SharedEvents.flyToOnMapEvent,
-                    data: this.clickedAircraft,
-                });
+                if (this.clickedAircraft == null) return;
+                this.flyToNotificationEventChange();
             });
     }
 
     ngOnInit() {}
+    ngOnDestroy(): void {
+        if(this.subscription)
+            this.subscription.unsubscribe();
+    }
     pushCustomNotification(aircraftInfo: FlightWatchModelResponse) {
         this.notifications.unshift(aircraftInfo);
 
@@ -43,10 +47,17 @@ export class IncomingFavoriteAircraftInfoComponent implements OnInit {
 
     goToFlightWatch(flightwatch: FlightWatchModelResponse): void {
         this.clickedAircraft = flightwatch;
-        this.router.navigate(['/default-layout/flight-watch']);
+        this.removeNotification(flightwatch);
+        if(this.router.url != this.flightWatchUrl)
+            this.router.navigate(['/default-layout/flight-watch']);
+        else
+            this.flyToNotificationEventChange();
+    }
+    private flyToNotificationEventChange(): void {
         this.sharedService.valueChange({
             event: SharedEvents.flyToOnMapEvent,
             data: this.clickedAircraft,
         });
+        this.clickedAircraft = null;
     }
 }
