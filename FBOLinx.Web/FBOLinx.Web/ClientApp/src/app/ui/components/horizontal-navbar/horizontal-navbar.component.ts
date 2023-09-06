@@ -95,6 +95,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     airportWatchFetchSubscription: Subscription;
     favoriteAircraftsData : FlightWatchModelResponse[];
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
+    notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
+
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -178,6 +180,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
         this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
+
+        this.notifiedFavoriteAircraft = JSON.parse(localStorage.getItem(localStorageAccessConstant.notifiedFavoriteAircraft)) ?? [];
     }
 
     ngOnDestroy() {
@@ -572,14 +576,30 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 filteredFavoriteAircrafts?.filter(item =>
                     !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
                 );
+
                 this.dismissedFavoriteAircrafts = this.dismissedFavoriteAircrafts.filter(item =>
                     filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
                 );
                 localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+
+
+                this.notifiedFavoriteAircraft =
+                filteredFavoriteAircrafts?.filter(item =>
+                    this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
+                );
+
+                localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
+
+                let notNotifiedFavoriteAircraft =
+                filteredFavoriteAircrafts?.filter(item =>
+                    !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
+                );
+
+                this.sendNotifications(notNotifiedFavoriteAircraft);
+
             }else{
                 console.log("flight watch data: message", data.message);
             }
-            this.sendNotifications(filteredFavoriteAircrafts);
             this.sharedService.valueChange(
             {
                 event: SharedEvents.flightWatchDataEvent,
@@ -590,7 +610,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         });
     }
     sendNotifications(data: FlightWatchModelResponse[]) {
-        data.forEach(flightwatch => {
+        data?.forEach(flightwatch => {
           this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
         });
     }
