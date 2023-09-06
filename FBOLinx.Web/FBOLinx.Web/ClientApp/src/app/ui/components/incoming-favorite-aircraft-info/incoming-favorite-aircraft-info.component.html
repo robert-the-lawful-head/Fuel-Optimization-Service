@@ -1,0 +1,28 @@
+<div class="notification-container" *ngIf="notifications?.length > 0">
+    <div *ngFor="let flightwatch of notifications" class="message-box warning">
+        <div class="buttons">
+            <div class="close-btn">
+                <span (click)="removeNotification(flightwatch)">
+                    <mat-icon>close</mat-icon>
+                </span>
+            </div>
+            <button
+                (click)="goToFlightWatch(flightwatch)"
+                [view]="'accent'"
+                class="mr-1"
+                ni-button
+                size="small"
+            >
+                Show me
+            </button>
+        </div>
+        <div class="pl-4">
+            <span>
+                <strong>{{ flightwatch.tailNumber }}</strong> (<u>{{
+                    flightwatch.icaoAircraftCode
+                }}</u>) has been detected
+                <br/> ETA: {{ flightwatch.etaLocal | getTime }}
+            </span>
+        </div>
+    </div>
+</div>
