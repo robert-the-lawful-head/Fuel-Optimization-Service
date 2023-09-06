@@ -55,7 +55,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() isPublicView: boolean = false;
     @Output() sidebarState = new EventEmitter();
 
-    @ViewChild(IncomingFavoriteAircraftInfoComponent)IncomingFavoriteAircraftInfoComponent: IncomingFavoriteAircraftInfoComponent;
+    @ViewChild(IncomingFavoriteAircraftInfoComponent) incomingFavoriteAircraftInfoComponent: IncomingFavoriteAircraftInfoComponent;
 
     showOverlay: boolean;
     isOpened: boolean;
@@ -591,7 +591,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
     sendNotifications(data: FlightWatchModelResponse[]) {
         data.forEach(flightwatch => {
-          this.IncomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
+          this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
         });
     }
     removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
@@ -600,11 +600,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
     }
     goToFlightWatch(flightwatch: FlightWatchModelResponse):void{
-        this.sharedService.valueChange(
-        {
-            event: SharedEvents.flyToOnMapEvent,
-            data: flightwatch,
-        });
+        this.incomingFavoriteAircraftInfoComponent.goToFlightWatch(flightwatch);
     }
     // Private Methods
     private isOnDashboard(): boolean {
