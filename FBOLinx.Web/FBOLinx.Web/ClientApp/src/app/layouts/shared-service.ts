@@ -60,7 +60,13 @@ export class SharedService {
 
     // Private members
     private _currentUser: User;
-
+    private _title: string;
+    get title(): string {
+        return this._title;
+    }
+    set title(title: string) {
+        this._title = title;
+    }
     // Public Members
     get currentUser(): User {
         // const error = new Error();

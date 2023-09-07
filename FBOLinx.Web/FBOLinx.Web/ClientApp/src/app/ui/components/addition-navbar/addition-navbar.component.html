@@ -1,6 +1,8 @@
-<a #nodeInput (click)="openNavbar($event)" class="open-navbar" href="#">
-    <i class="icon fa fa-envelope" style="transform: scale(1.5, 1.2)"></i>
-</a>
+<ng-container *ngIf="isEmailDrawerEnabled()">
+    <a #nodeInput (click)="openNavbar($event)" class="open-navbar" href="#">
+        <i class="icon fa fa-envelope" style="transform: scale(1.5, 1.2)"></i>
+    </a>
+</ng-container>
 
 <div *ngIf="pricingTemplatesData.length == 0">
     <mat-spinner diameter="30"></mat-spinner>

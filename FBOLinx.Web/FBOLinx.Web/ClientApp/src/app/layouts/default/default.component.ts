@@ -21,6 +21,8 @@ import { SharedService } from '../shared-service';
 import { ProceedConfirmationComponent } from '../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { AgreementsAndDocumentsModalComponent } from 'src/app/shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
 import { DocumentService } from 'src/app/services/documents.service';
+import { AccountType } from 'src/app/enums/user-role';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
     providers: [SharedService],
@@ -73,7 +75,8 @@ export class DefaultLayoutComponent implements OnInit {
         this.compress = false;
         this.menuStyle = 'style-3';
 
-        sharedService.titleChanged$.subscribe((title) => {
+        sharedService.titleChanged$.subscribe((title: string) => {
+            this.sharedService.title = title;
             setTimeout(() => (this.pageTitle = title), 100);
         });
 
@@ -260,6 +263,8 @@ export class DefaultLayoutComponent implements OnInit {
     checkCurrentPrices() {
         const currentRoute = this.router.url;
 
+        if(this.sharedService.currentUser.accountType == AccountType.Freemium) return;
+
         if (currentRoute == '/default-layout/groups') return;
 
         if (!this.sharedService.currentUser.fboId) return;
@@ -442,6 +447,9 @@ export class DefaultLayoutComponent implements OnInit {
                 )
                 .subscribe(
                     (data: any) => {
+                        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                        this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
+
                         var fbo = data;
                         this.fboairportsService
                             .getForFbo(

@@ -1,9 +1,7 @@
 import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
 import { AircraftsService } from '../../../services/aircrafts.service';
 
@@ -25,15 +23,15 @@ import * as moment from 'moment';
 export class ServiceOrdersItemListComponent implements OnInit {
     @Input() serviceOrder: ServiceOrder;
     @Input() showClose: boolean = true;
+    @Input() isFreemiumAccount: boolean = true;
     @Output() serviceOrderItemsChanged: EventEmitter<ServiceOrder> = new EventEmitter();
     @Output() closeClicked: EventEmitter<boolean> = new EventEmitter();
 
     public customerInfoByGroup: CustomerInfoByGroup;
     public newServiceOrderItem: ServiceOrderItem;
 
-    constructor(private router: Router,
+    constructor(
         private serviceOrderService: ServiceOrderService,
-        private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private aircraftsService: AircraftsService,
         private deleteServiceOrderItemDialog: MatDialog,
@@ -48,7 +46,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public addServiceOrderItemClicked() {
-        
+
         this.serviceOrderService.createServiceOrderItem(this.newServiceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
             if (!response.success)
                 alert('Error creating service order item: ' + response.message);
@@ -79,7 +77,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
         this.saveServiceOrderItem(serviceOrderItem);
     }
 
-    public serviceItemToggleChanged(event: any) {        
+    public serviceItemToggleChanged(event: any) {
         event.option._value.isCompleted = event.option._selected;
         if (event.option._value.isCompleted) {
             event.option._value.completionDateTimeUtc = moment(new Date().toUTCString()).format('YYYY-MM-DD HH:mm');
@@ -91,6 +89,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public viewCustomerDetailsClicked() {
+        if(this.isFreemiumAccount) return;
         const dialogRef = this.customerDetailsDialog.open(
             CustomersEditDialogComponent,
             {
@@ -104,7 +103,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     public viewAircraftDetailsClicked() {
-        
+        if(this.isFreemiumAccount) return;
         const dialogRef = this.aircraftDetailsDialog.open(
             CustomerAircraftsEditComponent,
             {
@@ -149,7 +148,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
         this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
     }
 
-    private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {        
+    private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {
         this.serviceOrderService.updateServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
             if (!response.success)
                 alert('Error saving service order item: ' + response.message);

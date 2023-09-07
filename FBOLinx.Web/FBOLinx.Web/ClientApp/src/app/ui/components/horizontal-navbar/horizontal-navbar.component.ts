@@ -32,7 +32,7 @@ import { AccountProfileComponent } from '../../../shared/components/account-prof
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 import * as moment from 'moment';
-import { UserRole } from 'src/app/enums/user-role';
+import { AccountType, UserRole } from 'src/app/enums/user-role';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
@@ -119,7 +119,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     get notificationVisible() {
         return (
             this.sharedService.currentUser.fboId > 0 &&
-            this.sharedService.currentUser.role !== 5
+            this.sharedService.currentUser.role !== 5 &&
+            this.sharedService.currentUser.accountType == AccountType.Premium
         );
     }
 
@@ -409,6 +410,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             })
             .subscribe(
                 (data: any) => {
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
 
@@ -513,6 +516,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             });
     }
     public isLobbyViewVisible():boolean {
+        if(this.currentUser.accountType === AccountType.Freemium) return false;
         return this.currentUser &&
         (this.currentUser.role ===  UserRole.Primary ||
             this.currentUser.role ===  UserRole.CSR ||

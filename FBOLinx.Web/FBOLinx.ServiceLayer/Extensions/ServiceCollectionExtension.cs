@@ -129,7 +129,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();
             services.AddTransient<IAccessTokensService, AccessTokensService>();
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
-            
+                        
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;

@@ -20,11 +20,11 @@ import { DistributeEmailsConfirmationComponent } from 'src/app/shared/components
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { DistributionService } from '../../../services/distribution.service';
-import { EmailcontentService } from '../../../services/emailcontent.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { AccountType } from 'src/app/enums/user-role';
 
 @Component({
     host: {
@@ -439,5 +439,8 @@ export class AdditionNavbarComponent
         this.marginTemplateDataSource.sort = this.sort;
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
+    }
+    isEmailDrawerEnabled() {
+        return this.sharedService.currentUser.accountType == AccountType.Premium;
     }
 }
