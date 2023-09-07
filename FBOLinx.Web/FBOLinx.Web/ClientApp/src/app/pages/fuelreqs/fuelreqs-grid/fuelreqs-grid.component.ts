@@ -69,11 +69,10 @@ const initialColumns: ColumnType[] = [
         id: 'email',
         name: 'Email',
     },
-    //not show services untill full feature is merged into develop
-    // {
-    //     id: 'services',
-    //     name: 'Services',
-    // }
+    {
+        id: 'services',
+        name: 'Services',
+    }
 ];
 
 @Component({
