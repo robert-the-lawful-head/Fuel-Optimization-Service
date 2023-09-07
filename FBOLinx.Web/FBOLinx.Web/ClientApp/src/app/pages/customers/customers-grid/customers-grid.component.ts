@@ -37,6 +37,7 @@ import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-
 // Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { FavoritesService } from 'src/app/services/favorites.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -162,7 +163,8 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         private dialog: MatDialog ,
         private route : ActivatedRoute,
         private currencyPipe: CurrencyPipe,
-        private favoritesService: FavoritesService
+        private favoritesService: FavoritesService,
+        private snackbarService: SnackBarService
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
@@ -725,6 +727,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                 },
                 (error: any) => {
                     console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error adding company to favorites");
                 }
             );
         else
@@ -734,7 +737,8 @@ export class CustomersGridComponent extends GridBase implements OnInit {
                    favoriteData.favoriteCompany = null;
                 },
                 (error: any) => {
-                    console.log(error);
+                    console.log(error)
+                    this.snackbarService.showErrorSnackBar("Error removing company from favorites");
                 }
             );
     }

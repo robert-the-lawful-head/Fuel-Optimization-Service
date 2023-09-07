@@ -22,6 +22,7 @@ import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
 import { FavoritesService } from 'src/app/services/favorites.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -63,7 +64,8 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         private sharedService: SharedService ,
         private route : ActivatedRoute,
         private nullOrEmptyToDefault: NullOrEmptyToDefault,
-        private favoritesService: FavoritesService
+        private favoritesService: FavoritesService,
+        private snackbarService: SnackBarService
     ) {
         super();
         this.isLoadingAircraftTypes = true;
@@ -280,6 +282,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                 },
                 (error: any) => {
                     console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
                 }
             );
         else
@@ -289,6 +292,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                 },
                 (error: any) => {
                     console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error removing aircraft from favorites")
                 }
             );
     }

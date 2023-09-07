@@ -15,6 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { FavoritesService } from 'src/app/services/favorites.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -58,7 +59,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 private sharedService: SharedService,
                 private booleanToText: BooleanToTextPipe,
                 private flightWatchHelper: FlightWatchHelper,
-                private favoritesService: FavoritesService) { }
+                private favoritesService: FavoritesService,
+                private snackbarService: SnackBarService) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
@@ -277,6 +279,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 },
                 (error: any) => {
                     console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
                 }
             );
         else
@@ -286,6 +289,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 },
                 (error: any) => {
                     console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error removing aircraft from favorites");
                 }
             );
     }
