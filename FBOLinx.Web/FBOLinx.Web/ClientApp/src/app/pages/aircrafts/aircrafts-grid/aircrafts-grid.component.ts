@@ -26,6 +26,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
     selector: 'app-aircrafts-grid',
     styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
+    providers: [NullOrEmptyToDefault]
 })
 export class AircraftsGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
