@@ -152,5 +152,42 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(result);
         }
+
+
+        // POST: api/integrationpartner/update-tail-specific-all-inclusive
+        [HttpPost("update-tail-specific-all-inclusive")]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdateTailSpecificAllInclusive(UpdateTailSpecificAllInclusiveRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            try
+            {
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+                var integrationPartner = await _apiKeyManager.GetIntegrationPartner();
+
+                if (user.FboId > 0 && integrationPartner.Oid > 0)
+                {
+                    
+                    return Ok(new { message = "Success" });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Invalid user" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

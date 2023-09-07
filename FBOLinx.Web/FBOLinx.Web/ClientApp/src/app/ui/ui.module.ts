@@ -46,7 +46,7 @@ import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizo
 import { LogoComponent } from './components/logo/logo.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
-import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
+import { AppPipesModule } from "../app-pipes.module";
 
 @NgModule({
     declarations: [
@@ -107,6 +107,7 @@ import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-d
         NgxMatDatetimePickerModule,
         NgxMatTimepickerModule,
         NgxMatNativeDateModule,
-    ],
+        AppPipesModule
+    ]
 })
 export class UIModule {}

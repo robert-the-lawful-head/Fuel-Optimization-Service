@@ -798,12 +798,19 @@ namespace FBOLinx.Web.Controllers
                                                           from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                           where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                           && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          && f != null
+                                                          group f by new
+                                                          {
+                                                              f.Month,
+                                                              f.Year
+                                                          }
+                                                          into results
                                                           select new NgxChartItemType
                                                           {
-                                                              Month = month,
-                                                              Year = year,
-                                                              Name = month + "/" + year,
-                                                              Value = f?.TotalOrders ?? 0
+                                                              Month = results.Key.Month,
+                                                              Year = results.Key.Year,
+                                                              Name = results.Key.Month + "/" + results.Key.Year,
+                                                              Value = results.Sum(x => x.TotalOrders)
                                                           })
                                       .OrderBy(x => x.Year)
                                       .ThenBy(x => x.Month)
@@ -836,12 +843,19 @@ namespace FBOLinx.Web.Controllers
                                                               from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                               where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                               && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                               && f != null
+                                                              group f by new
+                                                              {
+                                                                  f.Month,
+                                                                  f.Year
+                                                              }
+                                                          into results
                                                               select new NgxChartItemType
                                                               {
-                                                                  Month = month,
-                                                                  Year = year,
-                                                                  Name = month + "/" + year,
-                                                                  Value = f?.TotalSum ?? 0
+                                                                  Month = results.Key.Month,
+                                                                  Year = results.Key.Year,
+                                                                  Name = results.Key.Month + "/" + results.Key.Year,
+                                                                  Value = results.Sum(x => x?.TotalSum ?? 0)
                                                               })
                                            .OrderBy(x => x.Year)
                                            .ThenBy(x => x.Month)
@@ -913,12 +927,19 @@ namespace FBOLinx.Web.Controllers
                                                           from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                           where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                           && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          && f!= null
+                                                          group f by new
+                                                          {
+                                                              f.Month,
+                                                              f.Year
+                                                          }
+                                                          into results
                                                           select new NgxChartItemType
                                                           {
-                                                              Month = month,
-                                                              Year = year,
-                                                              Name = month + "/" + year,
-                                                              Value = f?.TotalOrders ?? 0
+                                                              Month = results.Key.Month,
+                                                              Year = results.Key.Year,
+                                                              Name = results.Key.Month + "/" + results.Key.Year,
+                                                              Value = results.Sum(x => x.TotalOrders)
                                                           })
                                       .OrderBy(x => x.Year)
                                       .ThenBy(x => x.Month)
