@@ -63,6 +63,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 AddOrderConfirmationEmailData(msg, ref sendGridMessage);
             }
 
+            if (msg.SendGridFuelRequestUpdateOrCancellationTemplateData != null)
+            {
+                AddFuelRequestUpdateOrCancellationEmailData(msg, ref sendGridMessage);
+            }
+
             var apiKey = _MailSettings.SendGridAPIKey;
             var client = new SendGridClient(apiKey);
             var response = await client.SendEmailAsync(sendGridMessage);
@@ -205,6 +210,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
         {
             sendGridMessageWithTemplate.SetTemplateData(message.SendGridOrderConfirmationTemplateData);
             sendGridMessageWithTemplate.TemplateId = "d-3e1c01b4dc5241b7a4ed0eb4300e855d";
+        }
+
+        private void AddFuelRequestUpdateOrCancellationEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridFuelRequestUpdateOrCancellationTemplateData);
+            sendGridMessageWithTemplate.TemplateId = "d-54bd984d93c0496cbcb30f7f01c9d908";
         }
 
         private SmtpClient GenerateSMTP()

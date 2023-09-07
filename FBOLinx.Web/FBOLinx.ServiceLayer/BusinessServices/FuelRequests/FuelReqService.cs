@@ -59,6 +59,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
         Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId, int fuelerlinxCompanyId, SendOrderNotificationRequest request);
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
+        Task<bool> SendFuelOrderCancellationEmail(int fuelOrderId);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -436,7 +437,50 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
             return false;
         }
-       
+
+        public async Task<bool> SendFuelOrderCancellationEmail(int fuelOrderId)
+        {
+            // Get fuel request
+            FuelReqDto fuelReq = await GetSingleBySpec(new FuelReqByIdSpecification(fuelOrderId));
+
+            if (fuelReq == null || fuelReq.Oid == 0)
+                return false;
+
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelReq.Fboid.GetValueOrDefault()));
+
+            var canSendEmail = false;
+            if (fbo == null || (fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
+                canSendEmail = true;
+
+            // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
+            if (canSendEmail)
+            {
+                var authentication = await _AuthService.CreateAuthenticatedLink(fbo.AcukwikFBOHandlerId.GetValueOrDefault());
+
+                if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
+                {
+                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId; ;
+
+                    var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridFuelRequestUpdateOrCancellationTemplateData
+                    {
+                        buttonUrl = link,
+                        requestStatus = "Cancelled"
+                    };
+
+                    var fboContacts = await GetFboContacts(fbo.Oid);
+                    var userContacts = await GetUserContacts(fbo);
+
+                    var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
+
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, null, dynamicTemplateData);
+
+                    return result;
+                }
+                return false;
+            }
+            return false;
+        }
+
         public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo)
         {
             var customersWithTail = await _customerInfoByGroupService.GetCustomers(fbo.GroupId, new List<string>() { request.TailNumber });
@@ -507,7 +551,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return System.String.Join(";", alertEmailAddressesUsers);
         }
 
-        private async Task<bool> GenerateFuelOrderMailMessage(string fbo, string fboEmails, SendGridAutomatedFuelOrderNotificationTemplateData dynamicTemplateData)
+        private async Task<bool> GenerateFuelOrderMailMessage(string fbo, string fboEmails, SendGridAutomatedFuelOrderNotificationTemplateData dynamicAutomatedFuelOrderNotificationTemplateData = null, SendGridFuelRequestUpdateOrCancellationTemplateData dynamicFuelRequestUpdateOrCancellationTemplateDate = null)
         {
             try
             {
@@ -520,7 +564,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         mailMessage.To.Add(fboEmail);
                 }
 
-                mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicTemplateData;
+                if (dynamicAutomatedFuelOrderNotificationTemplateData != null)
+                    mailMessage.SendGridAutomatedFuelOrderNotificationTemplateData = dynamicAutomatedFuelOrderNotificationTemplateData;
+                else if (dynamicFuelRequestUpdateOrCancellationTemplateDate != null)
+                    mailMessage.SendGridFuelRequestUpdateOrCancellationTemplateData = dynamicFuelRequestUpdateOrCancellationTemplateDate;
 
                 //Send email
                 var result = _MailService.SendAsync(mailMessage).Result;

@@ -234,6 +234,11 @@ namespace FBOLinx.Web.Controllers
 
                 fuelReq.Cancelled = isCancelled;
                 await _context.SaveChangesAsync();
+
+                if (fuelReq.Cancelled.GetValueOrDefault())
+                {
+                    await _fuelReqService.SendFuelOrderCancellationEmail(id);
+                }
             }
 
             return Ok(fuelReq);
