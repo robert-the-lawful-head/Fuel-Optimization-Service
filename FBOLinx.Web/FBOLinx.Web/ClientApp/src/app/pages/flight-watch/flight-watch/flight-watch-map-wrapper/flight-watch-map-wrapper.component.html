@@ -133,7 +133,7 @@
     <app-flight-watch-filters
     [icaoList]="icaoList"
     [icao]="icao"
-    (filterChanged)="filterChanged.emit($event)"
+    (textFilterChanged)="textFilterChanged.emit($event)"
     (icaoChanged)="icaoChanged.emit($event)"
     (updateDrawerButtonPosition)="updateDrawerButtonPosition.emit()"
     ></app-flight-watch-filters>

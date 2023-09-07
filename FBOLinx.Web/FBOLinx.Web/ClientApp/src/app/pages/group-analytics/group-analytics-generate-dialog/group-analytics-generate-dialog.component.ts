@@ -159,14 +159,17 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.dataSources = this.data.customers.filter((customer) =>
             customer.company.toLowerCase().includes(filter)
         );
+        this.focusTextbox();
     }
 
     rowSelected() {
         this.selectedCustomers = this.grid.getSelectedRecords();
+        this.focusTextbox();
     }
 
     rowDeselected() {
         this.selectedCustomers = this.grid.getSelectedRecords();
+        this.focusTextbox();
     }
 
     populateExportDataForCustomer(
@@ -235,7 +238,16 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         });
     }
 
+    focusTextbox() {
+        const searchBox = document.getElementById("searchBox") as HTMLInputElement;
+
+        if (searchBox) {
+            searchBox.focus();
+        }
+    }
+
     public onFilterInput(event: any, fieldName: string, operator: string): void {
         this.grid.filterByColumn(fieldName, operator, event.target.value);
+        this.focusTextbox();
     }      
 }
