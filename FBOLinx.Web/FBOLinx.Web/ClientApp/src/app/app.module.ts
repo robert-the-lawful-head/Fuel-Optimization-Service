@@ -109,8 +109,8 @@ import { FileHelper } from './helpers/files/file.helper';
 import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTemplateCalc.service';
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
+import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
-
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -235,7 +235,9 @@ import { FavoritesService } from './services/favorites.service';
         PricingTemplateCalcService,
         DocumentService,
         ServiceOrderService,
+        SnackBarService,
         FavoritesService
+
     ],
 })
 export class AppModule { }
