@@ -154,12 +154,8 @@
         <!--favorite aircrafts notifications/alerts-->
         <div *ngIf="notificationVisible" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item notification-icon">
             <a (click)="openfavoriteAircrafts()" class="nav-link">
-                <mat-icon aria-hidden="false" aria-label="Notifications">airplanemode_active</mat-icon>
-                <span [ngClass]="{
-                      marker:
-                      (favoriteAircraftsData &&
-                      favoriteAircraftsData.length> 0)
-                    }">
+                <span *ngIf="favoriteAircraftsData && favoriteAircraftsData.length > 0">
+                    <mat-icon [matBadge]="favoriteAircraftsData.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
                 </span>
             </a>
             <div class="dropdown-menu">
