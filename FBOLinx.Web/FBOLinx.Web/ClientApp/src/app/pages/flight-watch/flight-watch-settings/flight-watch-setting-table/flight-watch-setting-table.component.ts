@@ -16,6 +16,7 @@ import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -262,9 +263,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getNoDataToDisplayString(){
         return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
     }
-    isFavoriteButtonVisible(column: any, data: any): boolean {
-        // && data.IsCustomerManagerAircraft
-        return column == swimTableColumns.status;
+    isFavoriteButtonVisible(column: any, data: FlightWatchModelResponse): boolean {
+        return column == swimTableColumns.status && data.isCustomerManagerAircraft;
     }
     setIsFavoriteProperty(aircraft: any): any {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;
