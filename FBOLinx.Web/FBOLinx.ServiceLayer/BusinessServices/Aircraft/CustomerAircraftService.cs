@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.DB.Specifications.Group;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -93,23 +95,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId)
                                     .Where(x => tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(x.TailNumber));
 
-            aircrafts = aircrafts
-            .GroupJoin(
-                favoriteAircrafts,
-                a => a.TailNumber,
-                fa => fa.TailNumber,
-                (a, fa) => new
-                {
-                    aircraft = a,
-                    favoriteAircraft = fa ?? null
-
-                }).Select(aj =>
-            {
-                var result = new CustomerAircraftsDto();
-                result = aj.aircraft;
-                result.FavoriteAircraft = aj.favoriteAircraft.FirstOrDefault();
-                return result;
-            }).ToList();
+            JoinFavoriteAircrafts(aircrafts, favoriteAircrafts);
 
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
@@ -118,30 +104,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             var customers = await _CustomerInfoByGroupService.GetCustomers(groupId);
             var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
-
             var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId);
-
-            aircrafts = aircrafts
-            .GroupJoin(
-                favoriteAircrafts,
-                a => a.TailNumber,
-                fa => fa.TailNumber,
-                (a, fa) => new
-                {
-                    aircraft = a,
-                    favoriteAircraft = fa ?? null
-
-                }).Select(aj =>
-                {
-                    var result = new CustomerAircraftsDto();
-                    result = aj.aircraft;
-                    result.FavoriteAircraft = aj.favoriteAircraft.FirstOrDefault();
-                    return result;
-                }).ToList();
-
+            JoinFavoriteAircrafts(aircrafts,favoriteAircrafts);
             return aircrafts;
         }
+        private List<CustomerAircraftsDto> JoinFavoriteAircrafts(List<CustomerAircraftsDto>aircrafts,IQueryable<FboFavoriteAircraft> favoriteAircrafts)
+        {
 
+            return  (from a in aircrafts
+                         join b in favoriteAircrafts
+                         on a.TailNumber equals b.TailNumber into joined
+                         from subB in joined.DefaultIfEmpty()
+                         select new
+                         {
+                             aircraft = a,
+                             favorite = subB
+
+                         }).Select(aj =>
+                         {
+                             aj.aircraft.FavoriteAircraft = aj.favorite;
+                             return aj.aircraft;
+                         }).ToList();
+        }
         private async Task<List<CustomerAircraftsViewModel>> GetCustomAircraftWithDetailsFromCache(int groupId,
             int fboId = 0, int customerId = 0, List<string> tailNumbers = null)
         {
@@ -154,7 +138,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             return result?.Where(x => (tailNumbers == null || tailNumbers.Contains(x.TailNumber))
             && (customerId == 0 || x.CustomerId == customerId)).ToList();
         }
-
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftWithDetailsFromDatabase(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null)
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);

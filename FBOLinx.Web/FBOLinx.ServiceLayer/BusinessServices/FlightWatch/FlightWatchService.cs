@@ -132,22 +132,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             var customerAircrafts =(_Fbo ==  null) ? null : await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
 
-            result = result
-            .GroupJoin(
-                customerAircrafts,
-                a => a.TailNumber,
-                fa => fa.TailNumber,
-                (a, fa) => new
-                {
-                    aircraft = a,
-                    customerAircaft = fa.FirstOrDefault()
+            result = (from a in result
+                        join b in customerAircrafts
+                        on a.TailNumber equals b.TailNumber into joined
+                        from subB in joined.DefaultIfEmpty()
+                        select new
+                        {
+                            aircraft = a,
+                            customerAircaft = subB
 
-                }).Select(aj =>
-                {
-                    aj.aircraft.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft ?? null;
-                    aj.aircraft.IsCustomerManagerAircraft = true;
-                    return aj.aircraft;
-                }).ToList();
+                        }).Select(aj =>
+                        {
+                            aj.aircraft.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft ?? null;
+                            aj.aircraft.IsCustomerManagerAircraft = (aj.customerAircaft == null) ? false: true;
+                            return aj.aircraft;
+                        }).ToList();
 
             return result;
         }
