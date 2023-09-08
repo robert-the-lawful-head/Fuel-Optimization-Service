@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-favorite-icon',
@@ -11,13 +11,18 @@ export class FavoriteIconComponent implements OnInit {
     @Input() hasPadding: boolean = true;
     @Output() favoriteClick = new EventEmitter<any>();
 
+    isFavorite = false;
+
     constructor() { }
 
     ngOnInit() {
+        this.isFavorite = this.favoriteData.isFavorite;
     }
     toogleFavorite(): void{
         if(this.isSaving) return;
-        this.favoriteData.isFavorite = !this.favoriteData.isFavorite;
+
+        this.isFavorite = !this.isFavorite;
+        this.favoriteData.isFavorite = this.isFavorite;
 
         this.favoriteClick.emit(this.favoriteData);
     }

@@ -66,10 +66,11 @@
                         (click)="$event.stopPropagation()"></app-favorite-icon>
                     </ng-container>
 
-                    <ng-container *ngIf="hasIcon(column) && !isFavoriteButtonVisible(column, element)"
+                    <ng-container *ngIf="hasIcon(column)"
                         ><mat-icon [ngStyle]="{ color: getTextColor(element, column) }">{{
                             getIcon(element)
-                        }}</mat-icon></ng-container
+                        }}</mat-icon>
+                    </ng-container
                     >
                     {{ getColumnData(element, column) }}
                 </span>
