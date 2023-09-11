@@ -111,6 +111,7 @@ import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
 import { ServicesAndFeesService } from './services/servicesandfees.service';
 import { ServiceTypeService } from './services/serviceTypes.service';
+import { SnackBarService } from './services/utils/snackBar.service';
 
 @NgModule({
     bootstrap: [AppComponent],
@@ -237,7 +238,8 @@ import { ServiceTypeService } from './services/serviceTypes.service';
         DocumentService,
         ServiceOrderService,
         ServicesAndFeesService,
-        ServiceTypeService
+        ServiceTypeService,
+        SnackBarService
     ],
 })
 export class AppModule { }

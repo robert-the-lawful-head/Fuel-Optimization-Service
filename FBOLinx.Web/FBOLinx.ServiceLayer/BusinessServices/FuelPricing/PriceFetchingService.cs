@@ -7,21 +7,18 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using static FBOLinx.Core.Utilities.Extensions.ListExtensions;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using System.Net.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
-using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
-using FBOLinx.DB.Specifications.Customers;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 {
@@ -36,8 +33,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private IPricingTemplateService _PricingTemplateService;
         private IFboPricesEntityService _FboPricesEntityService;
         private ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private IRepository<Fboprices, FboLinxContext> _fboPricesRepo;
 
-        public PriceFetchingService(FboLinxContext context, ICustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService, IFboPricesEntityService fboPricesEntityService, ICustomerInfoByGroupService customerInfoByGroupService)
+        public PriceFetchingService(FboLinxContext context, ICustomerService customerService, IFboService fboService, IMailService mailService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateService pricingTemplateService, IFboPricesEntityService fboPricesEntityService, ICustomerInfoByGroupService customerInfoByGroupService, IRepository<Fboprices, FboLinxContext> fboPricesRepo)
         {
             _FboService = fboService;
             _CustomerService = customerService;
@@ -46,6 +44,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             _PricingTemplateService = pricingTemplateService;
             _FboPricesEntityService = fboPricesEntityService;
             _CustomerInfoByGroupService = customerInfoByGroupService;
+            _fboPricesRepo = fboPricesRepo;
         }
 
         #region Public Methods
@@ -554,12 +553,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         private async Task UpdateExpiredPrices(List<int> fboIds)
         {
             //Mark old prices as expired
-            var oldPrices = await _context.Fboprices.Where(f =>
+            var oldPrices = await _fboPricesRepo.Where(f =>
                     f.EffectiveTo <= DateTime.UtcNow && (f.Fboid.HasValue && fboIds.Contains(f.Fboid.Value)) && (f.Expired == null || f.Expired != true))
                 .ToListAsync();
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            await _context.BulkUpdateAsync(oldPrices);
-            await transaction.CommitAsync();
+
+            await _fboPricesRepo.BulkUpdate(oldPrices);
         }
         #endregion
     }

@@ -82,7 +82,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboContactsEntityService _FboContactsEntityService;
         private IAirportService _AirportService;
-        private readonly IServiceOrderService _serviceOrderService;
+         private readonly IServiceOrderService _serviceOrderService;
         private readonly DateTimeService _dateTimeService;
         private readonly IServiceOrderItemService _serviceOrderItemService;
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
@@ -90,6 +90,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private readonly ICustomerAircraftService _customerAircraftService;
         private readonly IAircraftService _aircraftService;
         private readonly IFboService _fboService;
+        private readonly IRepository<FuelReqConfirmation, FboLinxContext> _fuelReqConfirmationRepo;
 
         public FuelReqService(FuelReqEntityService fuelReqEntityService, FuelerLinxApiService fuelerLinxService, FboLinxContext context,
             IFboEntityService fboEntityService,
@@ -109,7 +110,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             IOrderDetailsService orderDetailsService,
             ICustomerAircraftService customerAircraftService,
             IAircraftService aircraftService,
-            IFboService fboService) : base(fuelReqEntityService)
+            IFboService fboService,
+            IRepository<FuelReqConfirmation, FboLinxContext> fuelReqConfirmationRepo) : base(fuelReqEntityService)
         {
             _AirportService = airportService;
             _serviceOrderService = serviceOrderService;
@@ -132,6 +134,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             _AuthService = authService;
             _httpContextAccessor = httpContextAccessor;
             _FboContactsEntityService = fboContactsEntityService;
+            _fuelReqConfirmationRepo = fuelReqConfirmationRepo;
         }
 
         public async Task<List<FuelReqDto>> GetUpcomingDirectAndContractOrdersForTailNumber(int groupId, int fboId,
@@ -200,12 +203,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             List<FuelReqDto> fuelReqsFromFuelerLinx = new List<FuelReqDto>();
 
+            var fuelReqConfirmationList = _fuelReqConfirmationRepo.Get();
 
             foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
                 var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
 
-                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
+                var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
+                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed );
                 fuelRequest.Fboid = fboId;
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
@@ -217,6 +222,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             {
                 var airport = await _AirportService.GetGeneralAirportInformation(order.Icao);
                 FuelReqDto.SetAirportLocalTimes(order, airport);
+                order.IsConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == order.SourceId);
                 order.Fboid = fboId;
             }
 

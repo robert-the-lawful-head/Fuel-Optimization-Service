@@ -39,8 +39,8 @@
 	<ItemGroup>
 	  <Generated Remove="DTO\AirportWatchHistoricalParkingDto.g.cs" />
 	  <Generated Remove="Dto\AuditDto.g.cs" />
-	  <Generated Remove="DTO\FaaAircraftMakeModelReferenceDto.g.cs" />
 	  <Generated Remove="DTO\CustomerAircraftNoteDto.g.cs" />
+	  <Generated Remove="DTO\FaaAircraftMakeModelReferenceDto.g.cs" />
 	  <Generated Remove="DTO\CustomerInfoByGroupNoteDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />

@@ -1,4 +1,5 @@
-﻿using FBOLinx.DB.Models;
+﻿using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.Service.Mapping.Dto;
@@ -9,6 +10,8 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
+using FBOLinx.ServiceLayer.EntityServices;
+using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -26,9 +29,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
         private readonly IOrderDetailsService _orderDetailsService;
         private readonly IFboService _fboService;
         private readonly IAirportTimeService _airportTimeService;
+        private readonly IRepository<FuelReqConfirmation, FboLinxContext> _fuelReqConfirmationRepo;
         private readonly ICustomerAircraftService _customerAircraftService;
 
-        public OrderConfirmationService(IMailService mailService, IFuelReqService fuelReqService, IServiceOrderService serviceOrderService, IOrderDetailsService orderDetailsService, IFboService fboService, IAirportTimeService airportTimeService, ICustomerAircraftService customerAircraftService)
+        public OrderConfirmationService(IMailService mailService, IFuelReqService fuelReqService, IServiceOrderService serviceOrderService, IOrderDetailsService orderDetailsService, IFboService fboService, IAirportTimeService airportTimeService, IRepository<FuelReqConfirmation, FboLinxContext> fuelReqConfirmationRepo, ICustomerAircraftService customerAircraftService)
         {
             _mailService = mailService;
             _fuelReqService = fuelReqService;
@@ -36,6 +40,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             _orderDetailsService = orderDetailsService;
             _fboService = fboService;
             _airportTimeService = airportTimeService;
+            _fuelReqConfirmationRepo = fuelReqConfirmationRepo;
             _customerAircraftService = customerAircraftService;
         }
 
@@ -105,9 +110,26 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 
             await SendEmail(dynamicTemplateData, fbo.FuelDeskEmail, orderDetails.ConfirmationEmail);
 
+            await RegisterConfirmationNotificationSend(fuelerLinxId);
+
             return true;
         }
+        private async Task<bool> RegisterConfirmationNotificationSend(int fuelerLinxId)
+        {
+            var comfirmation = await _fuelReqConfirmationRepo.Where(x => x.SourceId == fuelerLinxId).FirstOrDefaultAsync();
 
+            if (comfirmation != null) return true;
+
+            var fuelReqConfirmation = new FuelReqConfirmation
+            {
+                SourceId = fuelerLinxId,
+                IsConfirmed = true
+            };
+
+            await _fuelReqConfirmationRepo.AddAsync(fuelReqConfirmation);
+
+            return true;
+        }
         private async Task<bool> SendEmail(SendGridOrderConfirmationTemplateData dynamicTemplateData, string fuelDeskEmail, string confirmationEmail)
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
