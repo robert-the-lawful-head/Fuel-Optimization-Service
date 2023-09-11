@@ -88,7 +88,8 @@ namespace FBOLinx.ServiceLayer.Demo
                 ArrivalICAO = fbo.FboAirport.Icao,
                 ActualSpeed = demoData.GroundSpeedKts,
                 FlightDepartment = "Test Company",
-                FAARegisteredOwner = "Test FAA Owner"
+                FAARegisteredOwner = "Test FAA Owner",
+                ICAOAircraftCode = "AicraftKVNY"
             };
             var airportWatchLiveData = new AirportWatchLiveDataDto()
             {
