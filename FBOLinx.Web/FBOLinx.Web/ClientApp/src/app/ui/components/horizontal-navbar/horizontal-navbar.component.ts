@@ -289,6 +289,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         localStorage.removeItem(localStorageAccessConstant.managerGroupId);
         localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
         this.sharedService.currentUser.fboId = 0;
+        this.sharedService.resetCurrentUserPropertyValue(localStorageAccessConstant.icao);
+        this.selectedICAO = null;
         this.sharedService.currentUser.impersonatedRole = null;
         if (
             this.sharedService.currentUser.managerGroupId &&
