@@ -110,6 +110,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
                         ca.CustomerId = cust.Oid;
                         ca.GroupId = groupId;
                         ca.TailNumber = aircraft.TailNumber;
+                        ca.AddedFrom = cust.FuelerlinxId > 0 ? 1 : 0;
 
                         customerAircraftsToInsert.Add(ca);
                     }
