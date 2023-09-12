@@ -29,6 +29,8 @@ import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-sele
 // Models
 import { CustomerAircraftNote } from '../../../models/customer-aircraft-note';
 import { CustomerAircraft } from '../../../models/customer-aircraft';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { FavoritesService } from 'src/app/services/favorites.service';
 
 @Component({
     selector: 'app-customer-aircrafts-grid',
@@ -75,7 +77,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
         private aircraftPricesService: AircraftpricesService,
         private customCustomerTypeService: CustomcustomertypesService,
         private sharedService: SharedService ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private snackbarService: SnackBarService,
+        private favoritesService: FavoritesService
     ) {
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
@@ -184,7 +188,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             }
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
-            result.customerId = this.customer.customerId;            
+            result.customerId = this.customer.customerId;
             this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
@@ -352,6 +356,34 @@ export class CustomerAircraftsGridComponent implements OnInit {
             return notesForFbo[0].notes;
         }
         return '';
+    }
+
+    setIsFavoriteProperty(aircraft: any): any {
+        aircraft.isFavorite = aircraft.favoriteAircraft != null;
+        return aircraft;
+    }
+    toogleFavorite(favoriteData: any): void {
+        if(favoriteData.isFavorite)
+            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,favoriteData.groupId,favoriteData.tailNumber, favoriteData.aircraftId)
+            .subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = data;
+                },
+                (error: any) => {
+                    console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
+                }
+            );
+        else
+            this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid).subscribe(
+                (data: any) => {
+                   favoriteData.favoriteAircraft = null;
+                },
+                (error: any) => {
+                    console.log(error);
+                    this.snackbarService.showErrorSnackBar("Error removing aircraft from favorites")
+                }
+            );
     }
 
     //[#hz0jtd] FlatFile importer was requested to be removed

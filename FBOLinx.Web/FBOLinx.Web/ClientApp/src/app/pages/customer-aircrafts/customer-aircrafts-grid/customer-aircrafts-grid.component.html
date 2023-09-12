@@ -8,8 +8,6 @@
                 <span matPrefix><i class="fa fa-search"></i></span>
             </mat-form-field>
         </div>
-     
-
         <table
             [dataSource]="customerAircraftsDataSource"
             class="col-md-12"
@@ -21,11 +19,16 @@
             <ng-container matColumnDef="tailNumber">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Tail</th>
                 <td
-                    (click)="editCustomerAircraft(customerAircraft)"
                     *matCellDef="let customerAircraft"
                     mat-cell
                 >
-                    {{ customerAircraft.tailNumber }}
+                    <div class="row">
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(customerAircraft)"
+                        (favoriteClick)="toogleFavorite(customerAircraft)"></app-favorite-icon>
+                        <span (click)="editCustomerAircraft(customerAircraft)">{{ customerAircraft.tailNumber }}</span>
+                    </div>
+
                 </td>
             </ng-container>
 
