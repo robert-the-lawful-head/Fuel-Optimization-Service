@@ -168,7 +168,7 @@
                         <a>
                             <div class="content">
                                 <span class="desc p-1">
-                                    {{flightwatch.tailNumber}} ({{flightwatch.icaoAircraftCode}}) has been detected ETA: {{flightwatch.etaLocal | getTime}}
+                                    {{flightwatch.tailNumber}} ({{flightwatch.icaoAircraftCode}}) has been detected ETA: {{flightwatch.etaLocal | date: "HH:mm" }}
                                 </span>
                                 <div class="text-right p-1">
                                     <button (click)="removeFavoriteAircraft(flightwatch)"

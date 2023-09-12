@@ -21,7 +21,7 @@
                 <strong>{{ flightwatch.tailNumber }}</strong> (<u>{{
                     flightwatch.icaoAircraftCode
                 }}</u>) has been detected
-                <br/> ETA: {{ flightwatch.etaLocal | getTime }}
+                <br/> ETA: {{ flightwatch.etaLocal | date: "HH:mm"  }}
             </span>
         </div>
     </div>
