@@ -69,9 +69,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     ngAfterViewInit() {
         if(this.isArrival){
-            this.dataSource = new MatTableDataSource(this.mapValuesToStrings(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); })));
+            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); }));
         }else{
-            this.dataSource =  new MatTableDataSource(this.mapValuesToStrings(this.setManualSortOnDepartures(this.data)));
+            this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(this.data));
         }
         this.dataSource.sort = this.sort;
 
@@ -96,14 +96,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
         if (changes.data && this.dataSource){
             if(this.hasChangeDefaultSort){
-                this.dataSource.data =  this.mapValuesToStrings(changes.data.currentValue);
+                this.dataSource.data =  changes.data.currentValue;
                 return;
             }
 
             if(this.isArrival){
                 this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaLocal, start: 'asc'}));
             }else{
-                this.dataSource.data = this.mapValuesToStrings(this.setManualSortOnDepartures(changes.data.currentValue));
+                this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
         }
     }
@@ -111,16 +111,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
         this.columns = columns;
         this.allColumnsToDisplay = this.getVisibleColumns();
         this.dataColumnsToDisplay = this.getVisibleDataColumns();
-    }
-    mapValuesToStrings(data: Swim[]){
-        return data.map((row) => {
-            row.statusDisplayString = FlightLegStatus[row.status];
-            row.ete = !row.ete ? '' : this.toReadableTime.transform(row.ete);
-            row.etaLocal = this.getTime.transform(row.etaLocal);
-            row.atdLocal = this.getTime.transform(row.atdLocal);
-            row.isAircraftOnGround = this.booleanToText.transform(row.isAircraftOnGround);
-            return row;
-        });
     }
     setManualSortOnDepartures(data: Swim[]){
         var taxiing = data?.filter((row) => { return FlightLegStatus.TaxiingDestination == row.status || FlightLegStatus.TaxiingOrigin == row.status; }) || [];
@@ -176,8 +166,15 @@ export class FlightWatchSettingTableComponent implements OnInit {
 
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
-        if(column == swimTableColumns.status) return row.statusDisplayString;
         if(column == swimTableColumns.makeModel) return this.getMakeModelDisplayString(row);
+        if(column == swimTableColumns.etaLocal) return this.getTime.transform(row.etaLocal);
+        if(column == swimTableColumns.atdLocal) return this.getTime.transform(row.atdLocal);
+        if(column == swimTableColumns.ete) return !row.ete ? '' : this.toReadableTime.transform(row.ete);
+        if(column == swimTableColumns.isAircraftOnGround) return this.booleanToText.transform(row.isAircraftOnGround);
+        if(column == swimTableColumns.status){
+            row.statusDisplayString = FlightLegStatus[row.status];
+            return row.statusDisplayString;
+        }
 
         let col = this.columns.find( c => {
             return c.id == column
