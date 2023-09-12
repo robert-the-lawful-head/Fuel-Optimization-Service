@@ -178,6 +178,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 this.loadAirportWatchData();
         });
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.notifiedFavoriteAircraft = JSON.parse(localStorage.getItem(localStorageAccessConstant.notifiedFavoriteAircraft)) ?? [];
+
+        this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
     }
 
     ngOnDestroy() {
@@ -584,6 +588,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 filteredFavoriteAircrafts?.filter(item =>
                     !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
                 );
+
+                localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
 
                 this.notifiedFavoriteAircraft.push(...notNotifiedFavoriteAircraft);
                 this.sendNotifications(notNotifiedFavoriteAircraft);
