@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
-using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.Service.Mapping.Dto;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
+using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
@@ -22,6 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         Task<List<CustomerListResponse>> GetCustomersListByGroupAndFbo(int groupId, int fboId, int customerInfoByGroupId = 0);
         Task<List<CustomerInfoByGroupDto>> GetCustomers(int groupId, List<string> tailNumbers = null);
         Task<List<CustomerInfoByGroupDto>> GetCustomersByGroup(int groupId, int customerInfoByGroupId = 0);
+        Task<CustomerInfoByGroupDto> GetById(int customerInfoByGroupId);
     }
 
     public class CustomerInfoByGroupService : BaseDTOService<CustomerInfoByGroupDto, DB.Models.CustomerInfoByGroup, FboLinxContext>, ICustomerInfoByGroupService
@@ -85,6 +83,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             customers.RemoveAll(x => x == null);
 
             return customers;
+        }
+
+        public async Task<CustomerInfoByGroupDto> GetById(int customerInfoByGroupId)
+        {
+           var result =  await _EntityService.Where(x => x.Oid == customerInfoByGroupId).Include(x => x.Customer.CustomerAircrafts).FirstOrDefaultAsync();
+
+            return result.Adapt<CustomerInfoByGroupDto>();
+
         }
     }
 }
