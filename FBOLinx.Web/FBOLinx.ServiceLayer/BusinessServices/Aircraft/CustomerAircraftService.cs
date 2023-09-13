@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
-using FBOLinx.DB.Specifications.Group;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -35,17 +33,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private IMemoryCache _MemoryCache;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
-        private IRepository<FboFavoriteAircraft,FboLinxContext> _favoriteAircraftRepository { get; set; }
 
         public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, IAircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
-            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService, IRepository<FboFavoriteAircraft, FboLinxContext> favoriteAircraftRepository) : base(customerAircraftEntityService)
+            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService) : base(customerAircraftEntityService)
         {
             _MemoryCache = memoryCache;
             _CustomerInfoByGroupService = customerInfoByGroupService;
             _AircraftService = aircraftService;
             _pricingTemplateService = pricingTemplateService;
-            _favoriteAircraftRepository = favoriteAircraftRepository;
         }
 
         public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null, bool useCache = false)
@@ -92,11 +88,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
             }
 
-            var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId)
-                                    .Where(x => tailNumbers == null || tailNumbers.Count == 0 || tailNumbers.Contains(x.TailNumber));
-
-            JoinFavoriteAircrafts(aircrafts, favoriteAircrafts);
-
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
         }
         public async Task<List<CustomerAircraftsDto>> GetCustomerAircrafts(int groupId)
@@ -104,28 +95,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
             var customers = await _CustomerInfoByGroupService.GetCustomers(groupId);
             var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
-            var favoriteAircrafts = _favoriteAircraftRepository.Where(x => x.GroupId == groupId);
-            JoinFavoriteAircrafts(aircrafts,favoriteAircrafts);
             return aircrafts;
         }
-        private List<CustomerAircraftsDto> JoinFavoriteAircrafts(List<CustomerAircraftsDto>aircrafts,IQueryable<FboFavoriteAircraft> favoriteAircrafts)
-        {
 
-            return  (from a in aircrafts
-                         join b in favoriteAircrafts
-                         on a.TailNumber equals b.TailNumber into joined
-                         from subB in joined.DefaultIfEmpty()
-                         select new
-                         {
-                             aircraft = a,
-                             favorite = subB
-
-                         }).Select(aj =>
-                         {
-                             aj.aircraft.FavoriteAircraft = aj.favorite;
-                             return aj.aircraft;
-                         }).ToList();
-        }
         private async Task<List<CustomerAircraftsViewModel>> GetCustomAircraftWithDetailsFromCache(int groupId,
             int fboId = 0, int customerId = 0, List<string> tailNumbers = null)
         {

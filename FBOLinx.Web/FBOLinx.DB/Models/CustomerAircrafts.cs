@@ -41,5 +41,6 @@ namespace FBOLinx.DB.Models
         public ICollection<ServiceOrder> ServiceOrders { get; set; }
         [InverseProperty("CustomerAircraft")]
         public ICollection<CustomerAircraftNote> Notes { get; set; }
+        public virtual FboFavoriteAircraft FavoriteAircraft { get; set; }
     }
 }
