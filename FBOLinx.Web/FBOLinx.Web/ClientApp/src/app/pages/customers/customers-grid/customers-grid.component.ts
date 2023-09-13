@@ -723,6 +723,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             this.favoritesService.saveCompanyFavorite(this.sharedService.currentUser.fboId, favoriteData.customerInfoByGroupId)
             .subscribe(
                 (data: any) => {
+                   console.log("🚀 ~ file: customers-grid.component.ts:726 ~ CustomersGridComponent ~ toogleFavorite ~ data:", data)
                    favoriteData.favoriteCompany = data;
                 },
                 (error: any) => {

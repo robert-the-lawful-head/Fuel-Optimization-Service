@@ -275,7 +275,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
     }
     toogleFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
-            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,favoriteData.groupId,favoriteData.tailNumber, favoriteData.aircraftId)
+            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId, favoriteData.customerAircraftId)
             .subscribe(
                 (data: any) => {
                    favoriteData.favoriteAircraft = data;
@@ -283,6 +283,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                 (error: any) => {
                     console.log(error);
                     this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
+                    favoriteData.favoriteAircraft = null;
                 }
             );
         else

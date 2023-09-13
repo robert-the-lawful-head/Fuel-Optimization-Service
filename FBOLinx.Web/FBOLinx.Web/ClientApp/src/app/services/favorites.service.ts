@@ -27,13 +27,11 @@ export class FavoritesService {
             headers: this.headers,
         });
     }
-    public saveAircraftFavorite(fboId: number,groupId: number, tailNumber: string,aircraftId?: number) {
+    public saveAircraftFavorite(fboId: number,customerAircraftId: number) {
         var payload : FboFavoriteAircraft = {
             oid: 0,
-            aircraftId: aircraftId,
             fboId: fboId,
-            groupId: groupId,
-            tailNumber: tailNumber
+            customerAircraftsId: customerAircraftId
         };
         return this.http.post(`${this.accessPointUrl}/aircraft`,payload, {
             headers: this.headers,
