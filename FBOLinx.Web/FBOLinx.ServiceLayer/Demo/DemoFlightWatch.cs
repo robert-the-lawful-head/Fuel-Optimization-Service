@@ -1,5 +1,4 @@
-﻿using Azure;
-using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.SWIM;
@@ -9,8 +8,6 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using FBOLinx.DB.Specifications.Fbo;
-using System.Security.Cryptography;
 
 namespace FBOLinx.ServiceLayer.Demo
 {
@@ -89,7 +86,7 @@ namespace FBOLinx.ServiceLayer.Demo
                 ActualSpeed = demoData.GroundSpeedKts,
                 FlightDepartment = "Test Company",
                 FAARegisteredOwner = "Test FAA Owner",
-                ICAOAircraftCode = "AicraftKVNY"
+                ICAOAircraftCode = "ICAOAircraftCodeKVNY"
             };
             var airportWatchLiveData = new AirportWatchLiveDataDto()
             {
@@ -105,7 +102,8 @@ namespace FBOLinx.ServiceLayer.Demo
                 GpsAltitude = demoData.GpsAltitude,
                 IsAircraftOnGround = demoData.IsAircraftOnGround,
                 Latitude = demoData.Latitude,
-                Longitude = demoData.Longitude
+                Longitude = demoData.Longitude,
+                AircraftICAO = "AircraftICAOtKVNY"
             };
             var airportWatchHistoricalDataCollection = new List<AirportWatchHistoricalDataDto>();
 
