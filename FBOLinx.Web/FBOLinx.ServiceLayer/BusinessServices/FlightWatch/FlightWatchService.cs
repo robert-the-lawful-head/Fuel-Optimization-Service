@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Context;
+using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
@@ -10,6 +12,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
@@ -22,7 +25,9 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
+using FBOLinx.ServiceLayer.EntityServices;
 using Geolocation;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 {
@@ -48,10 +53,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<string> _DistinctTailNumbers;
         private ICompanyPricingLogService _CompanyPricingLogService;
         private List<CompanyPricingLogMostRecentQuoteModel> _MostRecentQuotes;
-        private IPriceFetchingService _PriceFetchingService;
-        private List<CustomerWithPricing> _CurrentPricingResults;
         private IDemoFlightWatch _demoFlightWatch;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
+        private IRepository<FboFavoriteAircraft,FboLinxContext> _fboFavoriteAircraft;
 
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
@@ -63,11 +67,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             ICompanyPricingLogService companyPricingLogService,
             IPriceFetchingService priceFetchingService,
             IDemoFlightWatch demoFlightWatch,
-            IAircraftHexTailMappingService aircraftHexTailMappingService
+            IAircraftHexTailMappingService aircraftHexTailMappingService,
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            IRepository<FboFavoriteAircraft, FboLinxContext> fboFavoriteAircraft
         )
         {
             _AircraftHexTailMappingService = aircraftHexTailMappingService;
-            _PriceFetchingService = priceFetchingService;
             _CompanyPricingLogService = companyPricingLogService;
             _AirportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _CustomerAircraftService = customerAircraftService;
@@ -77,6 +82,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _FboService = fboService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _demoFlightWatch = demoFlightWatch;
+            _fboFavoriteAircraft = fboFavoriteAircraft;
         }
 
         public async Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId)
@@ -130,23 +136,40 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-            var customerAircrafts =(_Fbo ==  null) ? null : await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
+            //having problem gettin aircrafts through navigation property, using join for now to get the data
+            var customerAircrafts = await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
+            var favoriteAircrafts = _fboFavoriteAircraft.Where(x => x.FboId == _Fbo.Oid);
 
-            result = (from a in result
-                        join b in customerAircrafts
-                        on a.TailNumber equals b.TailNumber into joined
+            customerAircrafts = (from a in customerAircrafts
+                         join b in favoriteAircrafts
+                        on a.Oid equals b.CustomerAircraftsId into joined
                         from subB in joined.DefaultIfEmpty()
                         select new
                         {
                             aircraft = a,
-                            customerAircaft = subB
-
+                            favorite = subB
                         }).Select(aj =>
                         {
-                            aj.aircraft.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft ?? null;
-                            aj.aircraft.IsCustomerManagerAircraft = (aj.customerAircaft == null) ? false: true;
+                            aj.aircraft.FavoriteAircraft = aj.favorite ?? null;
                             return aj.aircraft;
                         }).ToList();
+
+
+            result = (from a in result
+                      join b in customerAircrafts
+                      on a.TailNumber equals b.TailNumber into joined
+                      from subB in joined.DefaultIfEmpty()
+                      select new
+                      {
+                          flightWatch = a,
+                          customerAircaft = subB
+                      }).Select(aj =>
+                      {
+                          aj.flightWatch.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft;
+                          aj.flightWatch.CustomerAircraftId = aj.customerAircaft?.Oid;
+                          aj.flightWatch.IsCustomerManagerAircraft = (aj.customerAircaft == null) ? false : true;
+                          return aj.flightWatch;
+                      }).ToList();
 
             return result;
         }

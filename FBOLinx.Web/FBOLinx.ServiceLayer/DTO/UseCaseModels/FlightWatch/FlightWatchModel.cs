@@ -277,5 +277,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         }
         public FboFavoriteAircraft FavoriteAircraft { get; set; }
         public bool IsCustomerManagerAircraft { get; set; } =  false;
+        public int? CustomerAircraftId { get; set; }
     }
 }
