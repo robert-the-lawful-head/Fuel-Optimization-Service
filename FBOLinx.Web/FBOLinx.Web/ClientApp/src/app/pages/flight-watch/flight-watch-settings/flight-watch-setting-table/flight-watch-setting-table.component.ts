@@ -269,7 +269,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     toogleFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
-            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,this.sharedService.currentUser.groupId,favoriteData.tailNumber, null)
+            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId,favoriteData.customerAircraftId)
             .subscribe(
                 (data: any) => {
                    favoriteData.favoriteAircraft = data;
@@ -277,6 +277,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 (error: any) => {
                     console.log(error);
                     this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
+                    favoriteData.favoriteAircraft = null;
                 }
             );
         else
