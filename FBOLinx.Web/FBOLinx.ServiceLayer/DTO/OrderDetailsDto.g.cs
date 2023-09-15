@@ -21,5 +21,11 @@ namespace FBOLinx.ServiceLayer.DTO
         public string ConfirmationEmail { get; set; }
         public string FuelVendor { get; set; }
         public string PaymentMethod { get; set; } = "";
+        public DateTime? DateTimeUpdated { get; set; }
+        public bool? IsEmailSent { get; set; }
+        public DateTime? DateTimeEmailSent { get; set; }
+        public double? QuotedVolume { get; set; }
+        public int? CustomerAircraftId { get; set; }
+        public DateTime? Eta { get; set; }
     }
 }

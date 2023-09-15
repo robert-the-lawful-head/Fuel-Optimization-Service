@@ -36,6 +36,8 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO.Requests.Integrations;
+using SendGrid.Helpers.Mail;
+using Itenso.TimePeriod;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -59,7 +61,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         int GetairportTotalOrders(int fuelerLinxCustomerID, ICollection<FbolinxCustomerTransactionsCountAtAirport> fuelerlinxCustomerOrdersCount);
         Task<bool> SendFuelOrderNotificationEmail(int handlerId, int fuelerLinxTransactionId, int fuelerlinxCompanyId, SendOrderNotificationRequest request);
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
-        Task<bool> SendFuelOrderCancellationEmail(int fuelOrderId);
+        Task CheckAndSendFuelOrderUpdateEmail(FuelReqRequest fuelerlinxTransaction);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -438,49 +440,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             return false;
         }
 
-        public async Task<bool> SendFuelOrderCancellationEmail(int fuelOrderId)
-        {
-            // Get fuel request
-            FuelReqDto fuelReq = await GetSingleBySpec(new FuelReqByIdSpecification(fuelOrderId));
-
-            if (fuelReq == null || fuelReq.Oid == 0)
-                return false;
-
-            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelReq.Fboid.GetValueOrDefault()));
-
-            var canSendEmail = false;
-            if (fbo == null || (fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
-                canSendEmail = true;
-
-            // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
-            if (canSendEmail)
-            {
-                var authentication = await _AuthService.CreateAuthenticatedLink(fbo.AcukwikFBOHandlerId.GetValueOrDefault());
-
-                if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
-                {
-                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId; ;
-
-                    var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridFuelRequestUpdateOrCancellationTemplateData
-                    {
-                        buttonUrl = link,
-                        requestStatus = "Cancelled"
-                    };
-
-                    var fboContacts = await GetFboContacts(fbo.Oid);
-                    var userContacts = await GetUserContacts(fbo);
-
-                    var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
-
-                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, null, dynamicTemplateData);
-
-                    return result;
-                }
-                return false;
-            }
-            return false;
-        }
-
         public async Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo)
         {
             var customersWithTail = await _customerInfoByGroupService.GetCustomers(fbo.GroupId, new List<string>() { request.TailNumber });
@@ -526,6 +485,118 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceOrderItems.Add(serviceOrderItem);
             }
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
+        }
+
+        public async Task CheckAndSendFuelOrderUpdateEmail(FuelReqRequest fuelerlinxTransaction)
+        {
+            // Get order details
+            OrderDetailsDto orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault()));
+            
+            if (orderDetails != null && orderDetails.Oid > 0)
+            {
+                var sendEmail = false;
+                var requestStatus = "updated";
+                var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault()));
+
+                if (!fuelerlinxTransaction.IsCancelled)
+                {
+                    var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
+                    var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
+                    var customerAircraft = customerAircrafts.Where(c => c.TailNumber == fuelerlinxTransaction.TailNumber).FirstOrDefault();
+
+                    if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
+                    {
+                        orderDetails.CustomerAircraftId = customerAircraft.Oid;
+                        sendEmail = true;
+                    }
+
+                    if (orderDetails.Eta.GetValueOrDefault() != fuelerlinxTransaction.Eta)
+                    {
+                        TimeSpan ts = fuelerlinxTransaction.Eta.GetValueOrDefault() - orderDetails.Eta.GetValueOrDefault();
+                        if (ts.Minutes > 60)
+                            sendEmail = true;
+                        orderDetails.Eta = fuelerlinxTransaction.Eta;
+                    }
+
+                    if (orderDetails.FuelVendor != fuelerlinxTransaction.FuelVendor)
+                    {
+                        orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
+                        sendEmail = true;
+                    }
+
+                    orderDetails.DateTimeUpdated = DateTime.UtcNow;
+                    await _orderDetailsService.UpdateAsync(orderDetails);
+
+                    if (fuelReq != null && fuelReq.Oid > 0)
+                    {
+                        fuelReq.CustomerAircraftId = orderDetails.CustomerAircraftId;
+                        fuelReq.Eta = orderDetails.Eta;
+                    }
+
+                    if (sendEmail && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
+                        sendEmail = false;
+                }
+                else
+                {
+                    sendEmail = true;
+                    requestStatus = "cancelled";
+
+                    if (fuelReq != null && fuelReq.Oid > 0)
+                        fuelReq.Cancelled = true;
+                }
+
+                await UpdateAsync(fuelReq);
+
+                if (sendEmail)
+                {
+                    var success = await SendFuelOrderUpdateEmail(orderDetails.FuelVendor, fuelerlinxTransaction.FboHandlerId, requestStatus);
+                    if (success)
+                    {
+                        orderDetails.IsEmailSent = true;
+                        orderDetails.DateTimeEmailSent = DateTime.UtcNow;
+                        await _orderDetailsService.UpdateAsync(orderDetails);
+                    }
+                }
+            }
+        }
+
+        private async Task<bool> SendFuelOrderUpdateEmail(string fuelVendor, int fboAcukwikHandlerId, string requestStatus)
+        {
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fboAcukwikHandlerId));
+
+            var canSendEmail = false;
+            if (fbo == null || (!fuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null))))
+                canSendEmail = true;
+            else if (fbo == null || fuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
+                canSendEmail = true;
+
+            // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
+            if (canSendEmail)
+            {
+                var authentication = await _AuthService.CreateAuthenticatedLink(fbo.AcukwikFBOHandlerId.GetValueOrDefault());
+
+                if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
+                {
+                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId; ;
+
+                    var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridFuelRequestUpdateOrCancellationTemplateData
+                    {
+                        buttonUrl = link,
+                        requestStatus = requestStatus
+                    };
+
+                    var fboContacts = await GetFboContacts(fbo.Oid);
+                    var userContacts = await GetUserContacts(fbo);
+
+                    var fboEmails = authentication.FboEmails + (fboContacts == "" ? "" : ";" + fboContacts) + (userContacts == "" ? "" : ";" + userContacts);
+
+                    var result = await GenerateFuelOrderMailMessage(authentication.Fbo, fboEmails, null, dynamicTemplateData);
+
+                    return result;
+                }
+                return false;
+            }
+            return false;
         }
 
         private async Task<string> GetFboContacts(int fboId)

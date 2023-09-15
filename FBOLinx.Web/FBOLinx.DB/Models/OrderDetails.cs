@@ -23,5 +23,13 @@ namespace FBOLinx.DB.Models
         [StringLength(255)]
         [Unicode(false)]
         public string PaymentMethod { get; set; }
+        public DateTime? DateTimeUpdated { get; set; }
+        public bool? IsEmailSent { get; set; }
+        public DateTime? DateTimeEmailSent { get; set; }
+        public double? QuotedVolume { get; set; }
+        [Column("CustomerAircraftID")]
+        public int? CustomerAircraftId { get; set; }
+        [Column("ETA")]
+        public DateTime? Eta { get; set; }
     }
 }
