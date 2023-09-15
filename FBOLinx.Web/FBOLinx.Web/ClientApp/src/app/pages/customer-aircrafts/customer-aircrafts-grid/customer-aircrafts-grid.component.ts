@@ -168,7 +168,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
         //});
     }
     ngOnChanges(changes: SimpleChanges) {
-        console.log(changes)
         if(changes.customer){
             this.isFavoriteCompany = changes.customer.currentValue.favoriteCompany != null;
         }
@@ -210,7 +209,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
-            console.log(this.route.snapshot.paramMap.get('id'));
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {

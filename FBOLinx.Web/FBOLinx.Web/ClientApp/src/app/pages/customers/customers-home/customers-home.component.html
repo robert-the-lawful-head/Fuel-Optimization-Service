@@ -19,6 +19,7 @@
                         [fuelVendors]="fuelVendors"
                         [tags] = "tags"
                         (customerPriceClicked)="customerPriceClicked($event)"
+                        (refreshAircrafts)="refreshAircrafts()"
                     ></app-customers-grid>
                 </div>
                 <div *ngIf="!customersData || !pricingTemplatesData">

@@ -124,6 +124,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     @Output() customerDeleted = new EventEmitter<any>();
     @Output() customerPriceClicked = new EventEmitter<any>();
     @Output() exportAircraftClick = new EventEmitter<any>();
+    @Output() refreshAircrafts = new EventEmitter<void>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -723,8 +724,8 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             this.favoritesService.saveCompanyFavorite(this.sharedService.currentUser.fboId, favoriteData.customerInfoByGroupId)
             .subscribe(
                 (data: any) => {
-                   console.log("🚀 ~ file: customers-grid.component.ts:726 ~ CustomersGridComponent ~ toogleFavorite ~ data:", data)
                    favoriteData.favoriteCompany = data;
+                   this.refreshAircrafts.emit();
                 },
                 (error: any) => {
                     console.log(error);
@@ -736,6 +737,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
             .subscribe(
                 (data: any) => {
                    favoriteData.favoriteCompany = null;
+                   this.refreshAircrafts.emit();
                 },
                 (error: any) => {
                     console.log(error)
