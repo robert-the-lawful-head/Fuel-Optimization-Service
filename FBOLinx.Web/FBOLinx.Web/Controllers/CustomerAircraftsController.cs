@@ -18,13 +18,11 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
-using Azure.Core;
-using System.Security.Cryptography;
 using FBOLinx.DB.Specifications.CustomerAircraftNote;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
-using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -41,12 +39,16 @@ namespace FBOLinx.Web.Controllers
         private AirportWatchService _AirportWatchService;
         private readonly IGroupCustomersService _GroupCustomersService;
         private ICustomerAircraftNoteService _CustomerAircraftNoteService;
+        private IFboAircraftFavoritesService _fboAircraftFavoritesService;
+
 
         public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             IAircraftService aircraftService, ICustomerAircraftService customerAircraftService,
             IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService,
             ILoggingService logger, IGroupCustomersService groupCustomersService,
-            ICustomerAircraftNoteService customerAircraftNoteService) : base(logger)
+            ICustomerAircraftNoteService customerAircraftNoteService,
+            IFboAircraftFavoritesService fboAircraftFavoritesService
+        ) : base(logger)
         {
             _CustomerAircraftNoteService = customerAircraftNoteService;
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
@@ -56,6 +58,7 @@ namespace FBOLinx.Web.Controllers
             _aircraftService = aircraftService;
             _AirportWatchService = airportWatchService;
             _GroupCustomersService = groupCustomersService;
+            _fboAircraftFavoritesService = fboAircraftFavoritesService;
         }
 
         [HttpGet]
@@ -259,7 +262,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("{userId}")]
-        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts)
+        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts, bool isFavorite = false, int fboId = 0)
         {
             if (!ModelState.IsValid)
             {
@@ -268,6 +271,10 @@ namespace FBOLinx.Web.Controllers
           
             _context.CustomerAircrafts.Add(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
+
+            if(isFavorite && fboId  > 0)
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircrafts.Oid, FboId = fboId } );
+
             _CustomerAircraftService.ClearCache(customerAircrafts.GroupId);
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);

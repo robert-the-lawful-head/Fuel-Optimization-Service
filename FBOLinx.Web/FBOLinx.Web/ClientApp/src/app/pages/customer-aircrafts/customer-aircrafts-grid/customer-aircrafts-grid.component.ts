@@ -1,10 +1,10 @@
-import { identifierName } from '@angular/compiler';
 import {
     Component,
     EventEmitter,
     Input,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,10 +24,8 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 // Components
 import { CustomerAircraftsDialogNewAircraftComponent } from '../customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component';
 import { CustomerAircraftsEditComponent } from '../customer-aircrafts-edit/customer-aircrafts-edit.component';
-import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component';
 
 // Models
-import { CustomerAircraftNote } from '../../../models/customer-aircraft-note';
 import { CustomerAircraft } from '../../../models/customer-aircraft';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { FavoritesService } from 'src/app/services/favorites.service';
@@ -61,7 +59,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
     public customerInfobyGroupId : any;
-
+    public isFavoriteCompany = false;
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
@@ -86,9 +84,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
             this.aircraftTypes = data;
             this.isLoadingAircraftTypes = false;
         });
-
-
-
     }
 
     ngOnInit() {
@@ -172,7 +167,12 @@ export class CustomerAircraftsGridComponent implements OnInit {
         //    userId: '1',
         //});
     }
-
+    ngOnChanges(changes: SimpleChanges) {
+        console.log(changes)
+        if(changes.customer){
+            this.isFavoriteCompany = changes.customer.currentValue.favoriteCompany != null;
+        }
+    }
     public newCustomerAircraft() {
         const dialogRef = this.newCustomerAircraftDialog.open(
             CustomerAircraftsDialogNewAircraftComponent,
@@ -189,7 +189,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid,this.isFavoriteCompany, this.sharedService.currentUser.fboId).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
