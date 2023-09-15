@@ -233,7 +233,7 @@ export class ServicesAndFeesComponent implements OnInit {
         });
     }
     getInfoTooltipText(serviceAndFees: ServicesAndFeesResponse): string{
-        if(serviceAndFees.serviceTypeId == null)
+        if (!serviceAndFees.isCustom)
             return   `Source: Acukwik`;
         else
             return  `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate,'MM/dd/yyyy')}`;
