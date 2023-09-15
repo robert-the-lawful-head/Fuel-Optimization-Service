@@ -11,3 +11,5 @@ export const deleteGroupEvent = 'group deleted';
 export const resetMissedOrders = 'reset missed orders';
 export const fboPricesLoadedEvent = 'fbo-prices-loaded';
 export const serviceOrdersChangedEvent = 'service-orders-changed';
+export const accountTypeChangedEvent = 'account-type-changed';
+

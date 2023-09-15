@@ -373,4 +373,13 @@ export class FuelreqsService {
             }
         );
     }
+    public sendOrderConfirmationNotification(payload) {
+        return this.http.post(
+            `${this.accessPointUrl}/send-email-confirmation`,
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

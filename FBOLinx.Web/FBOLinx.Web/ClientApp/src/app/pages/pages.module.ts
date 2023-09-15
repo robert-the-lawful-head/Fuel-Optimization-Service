@@ -221,8 +221,8 @@ import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
-import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
 import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
 import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';

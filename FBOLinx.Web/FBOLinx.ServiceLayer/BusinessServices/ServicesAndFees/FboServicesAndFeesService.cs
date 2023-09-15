@@ -6,11 +6,8 @@ using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees;
 using FBOLinx.ServiceLayer.DTO.ServicesAndFees;
 using FBOLinx.ServiceLayer.EntityServices;
-using Fuelerlinx.SDK;
 using Mapster;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,23 +55,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             {
                 return await GetfromAcukwikServicesOffered(acukwikServicesOffered);
             }
-            return await GetMergedDataFromAcukwikServicesOfferedAndCustomServicesAndFeesRepo(modifiedServices,acukwikServicesOffered);
+
+            var fbosServicesAndFeesResponseList = await GetfromAcukwikServicesOffered(acukwikServicesOffered, modifiedServices);
+
+            return await GetCustomServicesAndFees(fbosServicesAndFeesResponseList);
             
         }
         private async Task<List<FbosServicesAndFeesResponse>> GetfromAcukwikServicesOffered(IQueryable<AcukwikServicesOffered> acukwikServicesOffered,IQueryable<FboCustomServicesAndFees> customServices = null)
         {
             Dictionary<string, List<ServicesAndFeesResponse>> serviceDictionary = new Dictionary<string, List<ServicesAndFeesResponse>>();
 
+
             
-            var notActiveAcukwikServicesOffered = (customServices == null) ? null : customServices.Where(x => x.ServiceActionType == ServiceActionType.NotActive).Select(x => x.Service);
+            var notActiveAcukwikServicesOffered = (customServices == null) ? null : customServices.Where(x => x.ServiceActionType == ServiceActionType.NotActive && x.ServiceTypeId == null);
 
             await acukwikServicesOffered.ForEachAsync(x =>
                 {
                     var serviceType = x.ServiceType;
                     var serviceAndFee = x.Adapt<ServicesAndFeesResponse>();
 
-                    if(notActiveAcukwikServicesOffered != null || notActiveAcukwikServicesOffered?.Count() > 0)
-                        serviceAndFee.IsActive = !notActiveAcukwikServicesOffered.Contains(x.Service);
+                    if (notActiveAcukwikServicesOffered != null)
+                    {
+                        var notactiveService = notActiveAcukwikServicesOffered.Where(cs => cs.Service == x.Service);
+                        if (notactiveService.Any())
+                        {
+                            serviceAndFee.IsActive = false;
+                            serviceAndFee.Oid = notactiveService.FirstOrDefault().Oid;
+                        }
+                    }
 
                     if (serviceDictionary.ContainsKey(serviceType))
                     {
@@ -87,13 +95,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                 }
             );
 
-            var customService = (customServices == null) ? new List<FboCustomServicesAndFees>() : customServices.ToList();
+            var customService = (customServices == null) ? new List<FboCustomServicesAndFees>() : customServices.Where(x => x.ServiceTypeId == null).ToList();
 
             foreach (var cs in customService)
             {
+                if (cs.AcukwikServicesOfferedId == null) continue;
                 var service = await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)cs.AcukwikServicesOfferedId);
-                if(service.Service != cs.Service)
-                    serviceDictionary[service.ServiceType].Add(cs.Adapt<ServicesAndFeesResponse>());
+                if (service.Service == cs.Service) continue;
+                var resouce = cs.Adapt<ServicesAndFeesResponse>();
+                resouce.HandlerId = service.HandlerId;
+                resouce.ServiceOfferedId = service.ServiceOfferedId;
+                serviceDictionary[service.ServiceType].Add(resouce);
             }
 
             var fbosServicesAndFeesResponseList = new List<FbosServicesAndFeesResponse>();
@@ -114,11 +126,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             }
             return fbosServicesAndFeesResponseList;
         }
-        private async Task<List<FbosServicesAndFeesResponse>> GetMergedDataFromAcukwikServicesOfferedAndCustomServicesAndFeesRepo(IQueryable<FboCustomServicesAndFees> customServices, IQueryable<AcukwikServicesOffered> acukwikServicesOffered)
+        private async Task<List<FbosServicesAndFeesResponse>> GetCustomServicesAndFees(List<FbosServicesAndFeesResponse> customServicesAndFees)
         {
-            var customAcukwikServicesOffered = customServices.Where(x => x.ServiceTypeId == null);
-            var fbosServicesAndFeesResponseList = await this.GetfromAcukwikServicesOffered(acukwikServicesOffered, customAcukwikServicesOffered);
-
             var customServiceTypes = await _fboCustomServiceTypeRepo.Get()
                 .Include(x => x.FboCustomServicesAndFees)
                 .Include(x => x.CreatedByUser).ToListAsync();
@@ -136,10 +145,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                     },
                     ServicesAndFees = service.FboCustomServicesAndFees.Adapt<List<ServicesAndFeesResponse>>()
                 };
-                fbosServicesAndFeesResponseList.Add(fbosServicesAndFeesResponse);
+                customServicesAndFees.Add(fbosServicesAndFeesResponse);
 
             }
-            return fbosServicesAndFeesResponseList;
+            return customServicesAndFees;
         }
         public async Task<ServicesAndFeesResponse> Create(int fboId, ServicesAndFeesDto servicesAndFees)
         {
@@ -173,7 +182,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 
                 return createdEntity.Adapt<ServicesAndFeesResponse>();
             }
-
 
             var handlerId = servicesAndFees.HandlerId;
             var serviceOfferedId = servicesAndFees.ServiceOfferedId;

@@ -1,14 +1,9 @@
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
-using EllipticCurve.Utils;
 using FBOLinx.Core.Utilities.DatesAndTimes;
-using FBOLinx.DB.Models;
-using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.DTO;
-using FBOLinx.ServiceLayer.EntityServices;
 using Fuelerlinx.SDK;
 
 namespace FBOLinx.Service.Mapping.Dto
@@ -47,6 +42,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string CustomerNotes { get; set; }
         public string PaymentMethod { get; set; }
         public string TimeZone { get; set; }
+        public bool? IsConfirmed { get; set; }
         public string TailNumber
         {
             get
@@ -94,7 +90,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public DateTime? ArrivalDateTimeLocal => _ArrivalDateTimeLocal;
         public DateTime? DepartureDateTimeLocal => _DepartureDateTimeLocal;
 
-        public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName)
+        public void CastFromFuelerLinxTransaction(Fuelerlinx.SDK.TransactionDTO item, string companyName, bool isConfirmed)
         {
             Oid = 0;
             ActualPpg = 0;
@@ -119,12 +115,13 @@ namespace FBOLinx.Service.Mapping.Dto
             PhoneNumber = "";
             FuelOn = item.TransactionDetails.FuelOn;
             CustomerName = companyName;
+            IsConfirmed = isConfirmed;
         }
 
-        public static FuelReqDto Cast(TransactionDTO transaction, string companyName, Fuelerlinx.SDK.GeneralAirportInformation airport)
+        public static FuelReqDto Cast(TransactionDTO transaction, string companyName, Fuelerlinx.SDK.GeneralAirportInformation airport, bool isConfirmed = false)
         {
             FuelReqDto fuelRequest = new FuelReqDto();
-            fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName);
+            fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName, isConfirmed);
             SetAirportLocalTimes(fuelRequest, airport);
             SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
 

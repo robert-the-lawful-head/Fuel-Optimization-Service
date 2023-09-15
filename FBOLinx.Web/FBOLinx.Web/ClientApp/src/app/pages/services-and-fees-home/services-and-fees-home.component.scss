@@ -13,12 +13,23 @@
     margin-left: 8px;
 }
 .mat-accordion .mat-expansion-panel {
-    padding: 10px;
-    margin: 20px 0 20px 0;
-    background-color: transparent;
-    border: none;
+    margin: 10px 0 10px 0;
+    box-shadow: none;
 }
-
-button, mat-icon{
+.mat-expansion-panel-header {
+    border: 1px solid $card-header-bg;
+}
+.mat-expansion-panel-content {
+    background-color: #F8F8F8;
+}
+button{
     cursor: pointer;
+}
+mat-icon{
+    font-size: 20px !important;
+    cursor: pointer;
+}
+.panel-title-description{
+    font-style: italic;
+    color: #2276be;
 }

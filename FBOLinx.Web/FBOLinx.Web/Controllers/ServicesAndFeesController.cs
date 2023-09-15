@@ -90,9 +90,9 @@ namespace FBOLinx.Web.Controllers
             }
 
             var allServices = await _fboServicesAndFeesService.Get(fbo.Oid);
-            var activeServices = allServices.Where(a => a.ServicesAndFees.Any(s => s.IsActive)).ToList();
+            var activeServices = allServices.Where(a => (bool)(a.ServicesAndFees?.Any(s => s.IsActive))).ToList();
+            activeServices.ForEach(x => x.ServicesAndFees.RemoveAll(s => !s.IsActive));
             return activeServices;
         }
-
     }
 }
