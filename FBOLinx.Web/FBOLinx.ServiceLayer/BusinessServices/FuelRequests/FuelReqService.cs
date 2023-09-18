@@ -555,7 +555,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 if (sendEmail)
                 {
-                    var success = await SendFuelOrderUpdateEmail(orderDetails.FuelVendor, fuelerlinxTransaction.FboHandlerId, requestStatus);
+                    var success = await SendFuelOrderUpdateEmail(orderDetails.FuelVendor, fuelerlinxTransaction.FboHandlerId, requestStatus, orderDetails.FuelerLinxTransactionId);
                     if (success)
                     {
                         orderDetails.IsEmailSent = true;
@@ -566,14 +566,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
         }
 
-        private async Task<bool> SendFuelOrderUpdateEmail(string fuelVendor, int fboAcukwikHandlerId, string requestStatus)
+        private async Task<bool> SendFuelOrderUpdateEmail(string fuelVendor, int fboAcukwikHandlerId, string requestStatus, int sourceId)
         {
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fboAcukwikHandlerId));
 
             var canSendEmail = false;
             if (fbo == null || (!fuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.OrderNotificationsEnabled.HasValue && fbo.Preferences.OrderNotificationsEnabled.Value) || (fbo.Preferences.OrderNotificationsEnabled == null))))
                 canSendEmail = true;
-            else if (fbo == null || fuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null))))
+            else if (fbo == null || fuelVendor.ToLower().Contains("fbolinx") && fbo != null && fbo.Preferences != null && fbo.Preferences.Oid > 0 && ((fbo.Preferences.DirectOrderNotificationsEnabled.HasValue && fbo.Preferences.DirectOrderNotificationsEnabled.Value) || (fbo.Preferences.DirectOrderNotificationsEnabled == null)))
                 canSendEmail = true;
 
             // SEND EMAIL IF SETTING IS ON OR NOT FBOLINX CUSTOMER
@@ -583,7 +583,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
                 {
-                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + fuelReq.SourceId; ;
+                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken) + "&id=" + sourceId; ;
 
                     var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridFuelRequestUpdateOrCancellationTemplateData
                     {
