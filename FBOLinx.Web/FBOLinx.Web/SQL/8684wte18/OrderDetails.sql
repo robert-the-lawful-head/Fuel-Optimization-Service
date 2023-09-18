@@ -14,6 +14,12 @@ CREATE TABLE [dbo].[OrderDetails](
 	[ConfirmationEmail] [varchar](255) NOT NULL,
 	[FuelVendor] [varchar](50) NOT NULL,
 	[PaymentMethod] [varchar](255) NULL,
+DateTimeUpdated datetime2(7) NULL,
+IsEmailSent bit NULL,
+DateTimeEmailSent datetime2(7) NULL,
+QuotedVolume float NULL,
+CustomerAircraftID int NULL,
+ETA datetime2(7) NULL
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC

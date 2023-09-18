@@ -36,6 +36,7 @@ using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -60,6 +61,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IOrderConfirmationService _orderConfirmationService;
         private readonly IOrderDetailsService _orderDetailsService;
         private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
+        private readonly ICustomerAircraftService _customerAircraftService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -70,7 +72,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -88,6 +90,7 @@ namespace FBOLinx.Web.Controllers
             _orderConfirmationService = orderConfirmationService;
             _orderDetailsService = orderDetailsService;
             _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
+            _customerAircraftService = customerAircraftService;
         }
 
         // GET: api/FuelReqs/5
@@ -231,11 +234,6 @@ namespace FBOLinx.Web.Controllers
 
                 fuelReq.Cancelled = isCancelled;
                 await _context.SaveChangesAsync();
-
-                if (fuelReq.Cancelled.GetValueOrDefault())
-                {
-                    await _fuelReqService.SendFuelOrderCancellationEmail(id);
-                }
             }
 
             return Ok(fuelReq);
@@ -268,11 +266,18 @@ namespace FBOLinx.Web.Controllers
             orderDetails.FuelVendor = request.FuelVendor;
             orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
             orderDetails.PaymentMethod = request.PaymentMethod;
+            orderDetails.QuotedVolume = request.FuelEstWeight;
+            orderDetails.Eta = request.Eta;
+
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(request.FboHandlerId));
+            var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
+            var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
+
+            if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
+                orderDetails.CustomerAircraftId = customerAircraft.Oid;
 
             if (fboId > 0)
             {
-                var fbo = await _context.Fbos.Include(x => x.Group).FirstOrDefaultAsync(x => x.Oid == fboId);
-
                 if (fbo == null)
                     return BadRequest("Invalid FBO");
 
@@ -520,8 +525,22 @@ namespace FBOLinx.Web.Controllers
             return Ok(success);
         }
 
-        #region Analysis
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpPost("update-fuelerlinx-request")]
+        public async Task<ActionResult> UpdateFuelerLinxFuelRequest([FromBody] FuelReqRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
+
+            return Ok();
+        }
+
+        #region Analysis
 
         [HttpPost("analysis/top-customers/fbo/{fboId}")]
         public async Task<IActionResult> GetTopCustomersForFbo([FromRoute] int fboId, [FromBody] FuelReqsTopCustomersByFboRequest request)
