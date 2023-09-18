@@ -47,7 +47,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             if (fbo == null)
                 return null;
 
-            var modifiedServices = _fboCustomServicesAndFeesRepo.Where(x => x.FboId == fboId).Include(p => p.ServiceType);
+            var modifiedServices = _fboCustomServicesAndFeesRepo.Where(x => x.FboId == fboId).Include(p => p.ServiceType).Include(p => p.CreatedByUser);
             var serviceTypes = _fboCustomServiceTypeRepo.Where(x => x.FboId == fboId);
             var acukwikServicesOffered = _acukwikServicesOfferedEntityService.Where(x => x.HandlerId == (int)fbo.AcukwikFBOHandlerId);
 

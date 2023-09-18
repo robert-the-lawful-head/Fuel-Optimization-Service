@@ -93,7 +93,7 @@ namespace FBOLinx.ServiceLayer.Extensions
 
                 TypeAdapterConfig<FboCustomServicesAndFees, ServiceTypeResponse>
                 .NewConfig()
-                .Map(dest => dest.createdByUser, src => src.CreatedByUser.Username)
+                .Map(dest => dest.CreatedByUser, src => src.CreatedByUser.Username)
                 .Map(dest => dest.IsCustom, src => true);
 
                 TypeAdapterConfig<FboCustomServicesAndFees, FboCustomServiceType>

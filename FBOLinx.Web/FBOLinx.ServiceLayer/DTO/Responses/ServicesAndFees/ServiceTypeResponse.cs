@@ -5,6 +5,6 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.ServicesAndFees
     public class ServiceTypeResponse : FboCustomServiceType
     {
         public bool IsCustom { get; set; }
-        public string createdByUser { get; set; }
+        public string CreatedByUser { get; set; }
     }
 }
