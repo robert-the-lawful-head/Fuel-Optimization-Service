@@ -44,5 +44,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public string paymentMethod { get; set; }
         [JsonProperty("services")]
         public string services { get; set; }
+        [JsonProperty("callSign")]
+        public string callSign { get; set; }
     }
 }

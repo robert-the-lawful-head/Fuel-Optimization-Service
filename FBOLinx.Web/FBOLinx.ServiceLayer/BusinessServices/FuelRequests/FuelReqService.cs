@@ -429,6 +429,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelVendor = orderDetails.FuelVendor.ToLower().Contains("fbolinx") ? fbo.Fbo : orderDetails.FuelVendor,
                         paymentMethod = orderDetails.PaymentMethod,
                         services = string.Join(", ", serviceNames),
+                        callSign = request.CallSign,
                         buttonUrl = link
                     };
 
