@@ -242,6 +242,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public void SetCustomerAircraft(CustomerAircraftsViewModel customerAircraft)
         {
             _CustomerAircraft = customerAircraft;
+            IsCustomerManagerAircraft = customerAircraft != null;
+            FavoriteAircraft = customerAircraft?.FavoriteAircraft;
+            CustomerAircraftId = customerAircraft?.Oid;
         }
 
         public CustomerAircraftsViewModel GetCustomerAircraft()

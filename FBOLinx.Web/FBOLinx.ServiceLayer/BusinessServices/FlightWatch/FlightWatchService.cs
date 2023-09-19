@@ -136,43 +136,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-            //having problem gettin aircrafts through navigation property, using join for now to get the data
-            var customerAircrafts = await _CustomerAircraftService.GetCustomerAircrafts(_Fbo.GroupId);
-            var favoriteAircrafts = _fboFavoriteAircraft.Where(x => x.FboId == _Fbo.Oid);
-
-            customerAircrafts = (from a in customerAircrafts
-                         join b in favoriteAircrafts
-                        on a.Oid equals b.CustomerAircraftsId into joined
-                        from subB in joined.DefaultIfEmpty()
-                        select new
-                        {
-                            aircraft = a,
-                            favorite = subB
-                        }).Select(aj =>
-                        {
-                            aj.aircraft.FavoriteAircraft = aj.favorite ?? null;
-                            return aj.aircraft;
-                        }).ToList();
-
-
-            result = (from a in result
-                      join b in customerAircrafts
-                      on a.TailNumber equals b.TailNumber into joined
-                      from subB in joined.DefaultIfEmpty()
-                      select new
-                      {
-                          flightWatch = a,
-                          customerAircaft = subB
-                      }).Select(aj =>
-                      {
-                          aj.flightWatch.FavoriteAircraft = aj.customerAircaft?.FavoriteAircraft;
-                          aj.flightWatch.CustomerAircraftId = aj.customerAircaft?.Oid;
-                          aj.flightWatch.IsCustomerManagerAircraft = (aj.customerAircaft == null) ? false : true;
-                          return aj.flightWatch;
-                      }).ToList();
-
             return result;
         }
+
         private void AddDemoDataToFlightWatchResult(List<FlightWatchModel> result, FbosDto fbo)
         {
             var flightWatch = _demoFlightWatch.GetFlightWatchModelDemo(fbo);
