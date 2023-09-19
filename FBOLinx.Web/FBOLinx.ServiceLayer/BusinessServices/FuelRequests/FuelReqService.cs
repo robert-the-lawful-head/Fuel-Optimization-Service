@@ -463,7 +463,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 GroupId = customer.GroupId
             };
 
-            if (request.TimeStandard == "L")
+            if (request.TimeStandard == "Local" || request.TimeStandard == "L")
             {
                 var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
                 var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
