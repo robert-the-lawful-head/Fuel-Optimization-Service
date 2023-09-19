@@ -539,7 +539,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelReq.Eta = orderDetails.Eta;
                     }
 
-                    if (sendEmail && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
+                    if (sendEmail && orderDetails.DateTimeEmailSent != null && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
                         sendEmail = false;
                 }
                 else
