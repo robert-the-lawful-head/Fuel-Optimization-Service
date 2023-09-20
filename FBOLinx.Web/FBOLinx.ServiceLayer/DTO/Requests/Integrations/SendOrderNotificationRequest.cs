@@ -13,5 +13,6 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.Integrations
         public string Arrival { get; set; }
         public string Departure { get; set; }
         public double QuotedVolume { get; set; }
+        public string CallSign { get; set; }
     }
 }

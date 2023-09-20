@@ -31,6 +31,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using Azure.Core;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.DB.Specifications.OrderDetails;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -52,7 +53,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerAircraftService _customerAircraftService;
 
         public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, IFboPricesService fbopricesService, ILoggingService logger,
-                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService) : base(logger)
+                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService, ICustomerAircraftService customerAircraftService) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;
@@ -64,6 +65,7 @@ namespace FBOLinx.Web.Controllers
             _orderDetailsService = orderDetailsService;
             _fboPreferencesService = fboPreferencesService;
             _fboService = fboService;
+            _customerAircraftService = customerAircraftService;
         }
 
 

@@ -37,6 +37,8 @@ using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.DB.Specifications.Group;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -62,6 +64,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IOrderDetailsService _orderDetailsService;
         private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
         private readonly ICustomerAircraftService _customerAircraftService;
+        private readonly IGroupService _groupService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -72,7 +75,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -91,6 +94,7 @@ namespace FBOLinx.Web.Controllers
             _orderDetailsService = orderDetailsService;
             _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
             _customerAircraftService = customerAircraftService;
+            _groupService = groupService;
         }
 
         // GET: api/FuelReqs/5
@@ -280,6 +284,8 @@ namespace FBOLinx.Web.Controllers
             {
                 if (fbo == null)
                     return BadRequest("Invalid FBO");
+
+                fbo.Group = await _groupService.GetSingleBySpec(new GroupByGroupIdSpecification(fbo.GroupId));
 
                 if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
                     return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
@@ -535,7 +541,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
+            await _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
 
             return Ok();
         }

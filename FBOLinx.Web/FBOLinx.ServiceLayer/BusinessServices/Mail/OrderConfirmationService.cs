@@ -1,6 +1,7 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.FuelRequests;
+using FBOLinx.DB.Specifications.OrderDetails;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;

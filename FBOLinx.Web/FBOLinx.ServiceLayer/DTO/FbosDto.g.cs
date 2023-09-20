@@ -53,7 +53,7 @@ namespace FBOLinx.Service.Mapping.Dto
         public string SenderAddress { get; set; }
         public string ReplyTo { get; set; }
         public AccountTypes AccountType { get; set; }
-        public GroupDto Group { get; set; }
+        public GroupDTO Group { get; set; }
         public FboairportsDto FboAirport { get; set; }
         public ICollection<FuelReqDto> FuelReqs { get; set; }
         public ICollection<PricingTemplateDto> PricingTemplates { get; set; }
