@@ -40,7 +40,7 @@ namespace FBOLinx.Web.Services
         private int _DistributionLogID = 0;
         private string _CurrentPostedRetail = "";
         private string _ValidUntil = "";
-        private Fbos _Fbo;
+        private FbosDto _Fbo;
         private FboLinxImageFileData _Logo;
         private FbolinxPricingTemplateFileAttachmentDto _PricingTemplateFileAttachment;
         private IHttpContextAccessor _HttpContextAccessor;
@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Services
             _DistributePricingRequest = request;
             _IsPreview = isPreview;
 
-            var customers = new List<CustomerInfoByGroupDTO>();
+            var customers = new List<CustomerInfoByGroupDto>();
             customers = await GetCustomersForDistribution(request);
 
             if (customers == null)
@@ -99,7 +99,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var customerToSend = new CustomerInfoByGroupDTO();
+                var customerToSend = new CustomerInfoByGroupDto();
 
                 foreach (var customer in customers)
                 {
@@ -145,16 +145,16 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Private Methods
-        private async Task<List<CustomerInfoByGroupDTO>> GetCustomersForDistribution(DistributePricingRequest request)
+        private async Task<List<CustomerInfoByGroupDto>> GetCustomersForDistribution(DistributePricingRequest request)
         {
-            List<CustomerInfoByGroupDTO> customers;
+            List<CustomerInfoByGroupDto> customers;
             if (request.Customer == null || request.Customer.Oid == 0)
             {
                 customers = await GetCustomersForDistribution();
             }
             else
             {
-                customers = new List<CustomerInfoByGroupDTO>();
+                customers = new List<CustomerInfoByGroupDto>();
                 customers.Add(request.Customer);
             }
 
@@ -163,7 +163,7 @@ namespace FBOLinx.Web.Services
             return customers.Where(x => x.CustomerCompanyType == _DistributePricingRequest.CustomerCompanyType).ToList();
         }
 
-        private async Task<List<CustomerInfoByGroupDTO>> GetCustomersForDistribution()
+        private async Task<List<CustomerInfoByGroupDto>> GetCustomersForDistribution()
         {
             var result = await (from cg in _context.Set<CustomerInfoByGroup>()
                                 join c in _context.Set<Customers>() on cg.CustomerId equals c.Oid
@@ -171,7 +171,7 @@ namespace FBOLinx.Web.Services
                                 join pt in _context.Set<PricingTemplate>() on cct.CustomerType equals pt.Oid
                                 where cg.GroupId == _DistributePricingRequest.GroupId && pt.Oid == _DistributePricingRequest.PricingTemplate.Oid
                                 && !(c.Suspended ?? false)
-                                select new CustomerInfoByGroupDTO
+                                select new CustomerInfoByGroupDto
                                 {
                                     Oid = cg.Oid,
                                     GroupId = cg.GroupId,
@@ -221,7 +221,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task GenerateDistributionMailMessage(CustomerInfoByGroupDTO customer)
+        private async Task GenerateDistributionMailMessage(CustomerInfoByGroupDto customer)
         {
             DistributionQueue distributionQueueRecord = new DistributionQueue();
             try
@@ -375,7 +375,7 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task StoreSingleCustomer(CustomerInfoByGroupDTO customer)
+        private async Task StoreSingleCustomer(CustomerInfoByGroupDto customer)
         {
             DistributionQueue queue = new DistributionQueue()
             {
@@ -388,7 +388,7 @@ namespace FBOLinx.Web.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroupDTO customer)
+        private async Task<List<PricingTemplate>> GetValidPricingTemplates(CustomerInfoByGroupDto customer)
         {
 
             var result = await _PricingTemplateService.GetAllPricingTemplatesForCustomerAsync(customer, _DistributePricingRequest.FboId,
@@ -397,7 +397,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task<Dictionary<string, byte[]>> GetPriceBreakdownImage(CustomerInfoByGroupDTO customer, List<PricingTemplate> pricingTemplates)
+        private async Task<Dictionary<string, byte[]>> GetPriceBreakdownImage(CustomerInfoByGroupDto customer, List<PricingTemplate> pricingTemplates)
         {
             _PriceBreakdownDisplayType =
                 await _PriceFetchingService.GetPriceBreakdownDisplayType(_DistributePricingRequest.FboId);
@@ -424,7 +424,7 @@ namespace FBOLinx.Web.Services
             return productImages;
         }
 
-        private async Task<Dictionary<string, string>> GetPriceBreakdownHTML(CustomerInfoByGroupDTO customer, PricingTemplate pricingTemplate)
+        private async Task<Dictionary<string, string>> GetPriceBreakdownHTML(CustomerInfoByGroupDto customer, PricingTemplate pricingTemplate)
         {
             var productImageHtml = new Dictionary<string, string>();
 
@@ -681,7 +681,7 @@ namespace FBOLinx.Web.Services
                 return _MailTemplateService.GetTemplatesFileContent("GroupCustomerPrice", "FourColumnsRow.csv");
         }
 
-        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDTO customer)
+        private async Task<List<ContactInfoByGroup>> GetRecipientsForCustomer(CustomerInfoByGroupDto customer)
         {
             var result = await (from cc in _context.Set<CustomerContacts>()
                                 join c in _context.Set<Contacts>() on cc.ContactId equals c.Oid
@@ -696,7 +696,7 @@ namespace FBOLinx.Web.Services
             return result;
         }
 
-        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDTO> customers)
+        private async Task PerformPreDistributionTasks(List<CustomerInfoByGroupDto> customers)
         {
             await GetEmailContent();
             if (!_IsPreview)
@@ -729,7 +729,7 @@ namespace FBOLinx.Web.Services
                 _ValidUntil = "Pricing valid until: " + localDateTime.ToString("MM/dd/yyyy HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
             }
 
-            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId);
+            _Fbo = await _fboService.GetFbo(_DistributePricingRequest.FboId, false);
 
             _Logo = await _fileStorageContext.FboLinxImageFileData.Where(f => f.FboId == _Fbo.Oid).FirstOrDefaultAsync();
 
@@ -740,7 +740,9 @@ namespace FBOLinx.Web.Services
 
         private async Task GetEmailContent()
         {
-            if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0)
+            _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
+
+            if (_DistributePricingRequest.PricingTemplate.EmailContentId == null || _DistributePricingRequest.PricingTemplate.EmailContentId == 0 || _EmailContent == null)
             {
                 List<PricingTemplate> pricingTemplates = await _context.Set<PricingTemplate>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.Oid).ToListAsync();
                 PricingTemplate pricingTemplate = pricingTemplates.FirstOrDefault();
@@ -756,8 +758,6 @@ namespace FBOLinx.Web.Services
 
                 pricingTemplate.EmailContentId = _DistributePricingRequest.PricingTemplate.EmailContentId;
             }
-
-            _EmailContent = await _context.Set<EmailContent>().Where(x => x.Oid == _DistributePricingRequest.PricingTemplate.EmailContentId).FirstOrDefaultAsync();
         }
         private async Task LogDistributionRecord()
         {

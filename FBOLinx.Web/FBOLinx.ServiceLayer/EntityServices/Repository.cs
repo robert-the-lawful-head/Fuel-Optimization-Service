@@ -8,12 +8,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FBOLinx.DB.Models;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
     public class Repository<TEntity,TContext> : IRepository<TEntity,TContext>
     where TEntity : class where TContext : DbContext
     {
+        private IDbContextTransaction dbContextTransaction;
+
         protected readonly TContext context;
         public Repository(TContext context)
         {
@@ -25,7 +28,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
             return entity;
         }
-
+        public async Task<List<TEntity>> AddRangeAsync(List<TEntity> entity)
+        {
+            context.Set<TEntity>().AddRangeAsync(entity);
+            await context.SaveChangesAsync();
+            return entity;
+        }
         public async Task DeleteAsync(TEntity entity)
         {
             context.Set<TEntity>().Remove(entity);
@@ -74,7 +82,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         => await context.Set<TEntity>().FindAsync(id);
         public virtual async Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec) => await GetEntitySingleBySpec(spec);
         
-        public async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
+        public virtual async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
         {
             var queryable = GetEntityListQueryable(spec);
             return await queryable.ToListAsync();
@@ -146,8 +154,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (bulkConfig == null)
             {
                 bulkConfig = new BulkConfig();
-                bulkConfig.SetOutputIdentity = true;
+                bulkConfig.BatchSize = 500;
+                bulkConfig.SetOutputIdentity = false;
+                bulkConfig.BulkCopyTimeout = 0;
+                bulkConfig.WithHoldlock = false;
             }
+
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkInsertAsync(entities, bulkConfig);
             await transaction.CommitAsync();
@@ -158,11 +170,36 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (bulkConfig == null)
             {
                 bulkConfig = new BulkConfig();
-                bulkConfig.SetOutputIdentity = true;
+                bulkConfig.BatchSize = 500;
+                bulkConfig.SetOutputIdentity = false;
+                bulkConfig.BulkCopyTimeout = 0;
+                bulkConfig.WithHoldlock = false;
             }
             await using var transaction = await context.Database.BeginTransactionAsync();
             await context.BulkUpdateAsync(entities);
             await transaction.CommitAsync();
+        }
+
+        public IExecutionStrategy CreateExecutionStrategy()
+        {
+            IExecutionStrategy executionStrategy = context.Database.CreateExecutionStrategy();
+
+            return executionStrategy;
+        }
+
+        public async Task BeginDbTransaction()
+        {
+            dbContextTransaction = await context.Database.BeginTransactionAsync();
+        }
+
+        public async Task RollbackDbTransaction()
+        {
+            if (dbContextTransaction == null)
+            {
+                return;
+            }
+
+            await dbContextTransaction.RollbackAsync();
         }
     }
 }

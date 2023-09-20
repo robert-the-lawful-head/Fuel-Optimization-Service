@@ -321,6 +321,33 @@ button.mat-icon-button {
     padding: 10px;
 }
 
+/*Button positioning and layouts*/
+.vertical-aligned-button-container {
+    position: relative;
+    height: 100%;
+
+    button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+    }
+}
+
+.add-button-container {
+    @media only screen and (max-width: 991px) {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        z-index: 99999;
+
+        button {
+            border-radius: 20px;
+        }
+    }
+}
+/*End Button positioning and layouts*/
+
 /*Tax and Fee Breakdown*/
 
 /*Price Lookup*/
@@ -919,6 +946,91 @@ div.price-checker-button-bottom {
 
 .distribution-toggle {
     margin-left: 217px;
+}
+
+/*Group Analytics*/
+.group-analytics {
+    .chart-container {
+        width: 100%;
+
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .table-container {
+        height: 250px;
+        overflow: auto;
+    }
+
+    .mat-form-field {
+        font-size: 14px;
+    }
+
+    .fbos-dropdown-filter {
+        .p-multiselect {
+            width: 100%;
+        }
+
+        ::ng-deep {
+            .p-multiselect {
+                width: 30rem;
+
+                .p-multiselect-panel {
+                    max-width: 100%;
+                }
+            }
+
+            .p-component {
+                font-size: 13px;
+            }
+        }
+    }
+
+    .actions {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+.statistics-tab {
+    .chart-container {
+        width: 100%;
+
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .table-container {
+        position: relative;
+        height: 593px;
+        overflow: auto;
+    }
+
+    .p-component {
+        font-size: 13px;
+    }
+
+    .p-multiselect {
+        min-width: 15rem;
+    }
 }
 
 /*Mobile Devices*/

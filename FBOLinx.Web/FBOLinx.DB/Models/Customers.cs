@@ -72,5 +72,8 @@ namespace FBOLinx.DB.Models
 
         [InverseProperty("Customer")]
         public virtual ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
+
+        [InverseProperty("Customer")]
+        public ICollection<CustomerAircrafts> CustomerAircrafts { get; set; }
     }
 }

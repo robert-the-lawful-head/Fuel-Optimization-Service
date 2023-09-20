@@ -29,14 +29,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="DTO\ContactsDTO.cs" />
+	  <Compile Remove="DTO\CustomerDTO.cs" />
+	  <Compile Remove="DTO\CustomerInfoByGroupDTO.cs" />
 	  <Compile Remove="DTO\FbopricesDto.g.cs" />
 	  <Compile Remove="DTO\FbosalesTaxDto.g.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Generated Remove="DTO\AirportWatchHistoricalParkingDto.g.cs" />
 	  <Generated Remove="Dto\AuditDto.g.cs" />
+	  <Generated Remove="DTO\FaaAircraftMakeModelReferenceDto.g.cs" />
+	  <Generated Remove="DTO\CustomerAircraftNoteDto.g.cs" />
+	  <Generated Remove="DTO\CustomerInfoByGroupNoteDto.g.cs" />
 	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
 	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
 	</ItemGroup>
 	<Target Name="CleanGenerated">
 		<Delete Files="@(Generated)" />

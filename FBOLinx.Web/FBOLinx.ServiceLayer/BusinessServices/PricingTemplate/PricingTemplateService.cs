@@ -84,7 +84,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.PricingTemplate
             await _customerMarginsEntityService.AddDefaultCustomerMargins(newTemplate.Oid, 1001, 99999);
         }
 
-        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0,bool isAnalytics = false)
+        public async Task<List<DB.Models.PricingTemplate>> GetAllPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0,bool isAnalytics = false)
         {
             List<DB.Models.PricingTemplate> result = new List<DB.Models.PricingTemplate>();
 

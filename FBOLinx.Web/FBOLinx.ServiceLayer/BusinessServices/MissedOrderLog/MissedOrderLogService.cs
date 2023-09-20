@@ -37,10 +37,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
         private FuelerLinxApiService _FuelerLinxApiService;
         private IPricingTemplateEntityService _PricingTemplateEntityService;
         private IAirportTimeService _AirportTimeService;
+        private ICustomerService _CustomerService;
 
         public MissedOrderLogService(IMissedQuoteLogEntityService entityService, IFboEntityService fboEntityService, IFboAirportsService iFboAirportsService,
             ICustomerAircraftService customerAircraftService, ICustomerInfoByGroupService customerInfoByGroupService, IFuelReqService fuelReqService, FuelerLinxApiService fuelerLinxApiService, IPricingTemplateEntityService pricingTemplateEntityService,
-            IAirportTimeService airportTimeService) : base(entityService)
+            IAirportTimeService airportTimeService, ICustomerService customerService) : base(entityService)
         {
             _AirportTimeService = airportTimeService;
             _EntityService = entityService;
@@ -51,6 +52,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
             _FuelReqService = fuelReqService;
             _FuelerLinxApiService = fuelerLinxApiService;
             _PricingTemplateEntityService = pricingTemplateEntityService;
+            _CustomerService = customerService;
         }
 
         public async Task<List<MissedQuotesLogViewModel>> GetMissedOrders(int fboId, DateTime startDateTime, DateTime endDateTime, bool isRecent = false)
@@ -64,9 +66,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             var missedOrdersLogList = new List<MissedQuotesLogViewModel>();
 
-            var customers = await _CustomerInfoByGroupService.GetCustomersByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customers = await _CustomerInfoByGroupService.GetCustomersByGroup(fbo.GroupId);
 
-            var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customerAircraftsPricingTemplates = await _PricingTemplateEntityService.GetCustomerAircrafts(fbo.GroupId, fboId);
 
             var allFboLinxTransactions = new List<FuelReqDto>();
             foreach (var otherFbo in fbos.Where(f => f.Oid != fboId))
@@ -113,15 +115,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                 return missedOrdersLogList.OrderByDescending(m => m.CreatedDate).Take(5).ToList();
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _FuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
-            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fbo.FboAirport?.Icao, Fbo = fbo.Fbo, IsNotEqualToFbo = true });
+            { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fbo.FboAirport?.Icao });
+            var missedOrders = fuelerlinxContractFuelOrders?.Result.Where(f => f.AcukwikHandlerId != fbo.AcukwikFBOHandlerId.GetValueOrDefault()).ToList();
 
-            var groupedFuelerLinxContractFuelOrders = fuelerlinxContractFuelOrders.Result.GroupBy(t => t.CompanyId).Select(g => new
+            var groupedFuelerLinxContractFuelOrders = missedOrders.GroupBy(t => t.CompanyId).Select(g => new
             {
                 CompanyId = g.Key,
                 MissedQuoteCount = g.Count(f => f.TailNumber != "")
             }).ToList();
 
-            foreach (Fuelerlinx.SDK.TransactionDTO transaction in fuelerlinxContractFuelOrders.Result.OrderByDescending(f => f.CreationDate))
+            foreach (Fuelerlinx.SDK.TransactionDTO transaction in missedOrders.OrderByDescending(f => f.CreationDate))
             {
                 var customer = customers.Where(c => c.Customer.FuelerlinxId == transaction.CompanyId.GetValueOrDefault()).FirstOrDefault();
 

@@ -10,17 +10,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerCompanyTypesController : ControllerBase
+    public class CustomerCompanyTypesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
 
-        public CustomerCompanyTypesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor)
+        public CustomerCompanyTypesController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, ILoggingService logger) : base(logger)
         {
             _context = context;
             _HttpContextAccessor = httpContextAccessor;

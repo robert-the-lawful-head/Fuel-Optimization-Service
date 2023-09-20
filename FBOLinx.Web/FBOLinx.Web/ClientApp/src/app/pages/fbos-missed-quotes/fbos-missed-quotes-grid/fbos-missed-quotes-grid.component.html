@@ -7,7 +7,7 @@
 </div>
 
 <div>
-    <div class="subtitle">These flights departments requested a quote and your pricing was expired</div>
+    <div class="subtitle">These flights departments requested a quote and your pricing was expired:</div>
     <div *ngIf="noMissedQuotes">No Missed Quotes</div>
     <div *ngIf="!noMissedQuotes">
         <div *ngFor="let missedQuote of fbosMissedQuotesDataSource;">

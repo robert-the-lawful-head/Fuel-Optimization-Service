@@ -11,6 +11,7 @@ import { AuthenticationService } from '../../../services/authentication.service'
 })
 export class AuthtokenComponent {
     tokenParam: string;
+    idParam: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -21,6 +22,7 @@ export class AuthtokenComponent {
         //const token = this.route.snapshot.paramMap.get('token');
         this.route.queryParamMap.subscribe((params) => {
             this.tokenParam = params.get('token');
+            this.idParam = params.get('id');
         });
 
         if (!this.tokenParam || this.tokenParam === '') {
@@ -41,7 +43,17 @@ export class AuthtokenComponent {
                                         this.router.navigate([
                                             '/default-layout/fbos/',
                                         ]);
-                                    } else {
+                                    }
+                                    else if (this.idParam != "" && (data.role == 6 || data.role == 1))
+                                    {
+                                        this.router.navigate(['/default-layout/fuelreqs'], { queryParams: { id: this.idParam } });
+                                    }
+                                    else if (data.role == 6) {
+                                        this.router.navigate([
+                                            '/default-layout/fuelreqs',
+                                        ]);
+                                    }
+                                    else {
                                         this.router.navigate([
                                             '/default-layout/dashboard-fbo-updated/',
                                         ]);

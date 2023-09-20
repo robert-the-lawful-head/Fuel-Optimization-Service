@@ -14,18 +14,19 @@ using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
 using Fuelerlinx.SDK;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbocontactsController : ControllerBase
+    public class FbocontactsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly FuelerLinxApiService _fuelerLinxApiService;
 
-        public FbocontactsController(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService)
+        public FbocontactsController(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _fuelerLinxApiService = fuelerLinxApiService;
@@ -181,7 +182,7 @@ namespace FBOLinx.Web.Controllers
             FBOLinxFuelVendorUpdateRequest request = new FBOLinxFuelVendorUpdateRequest
             {
                 EmailToCC = ccemail,
-                GroupId = fbo.GroupId.GetValueOrDefault(),
+                GroupId = fbo.GroupId,
                 Email = fbo.FuelDeskEmail
             };
 

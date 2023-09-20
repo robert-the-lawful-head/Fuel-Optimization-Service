@@ -17,7 +17,7 @@
         <!--Top row for Cost/Retail Price - Display mode 0 and 1-->
         <div class="row mb-3">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col">
+            <div class="col ml-4">
                 {{ marginType == 0 ? "Cost" : "Retail" }}
             </div>
             <div class="col"></div>
@@ -34,7 +34,7 @@
                               type="checkbox"
                               *ngIf="marginType != 1" [disabled]="isMember"></mat-checkbox>
             </div>
-            <div class="col">
+            <div class="col ml-4">
                 <span [ngClass]="{
                     'strike-through':
                         aboveLineTax.isOmitted ||
@@ -70,7 +70,7 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="marginType == 0">${{ aboveLineTax.amount | number: "1.4-4" }}</span>
+                <span *ngIf="marginType == 0">{{ aboveLineTax.amount | currency:'USD':true:'1.4-4' }}</span>
                 <span *ngIf="marginType == 1">Applied</span>
             </div>
         </div>
@@ -78,31 +78,31 @@
         <!--Sub-total-->
         <div *ngIf="customerMargin != null" class="row mt-3 mb-3">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col font-weight-bold">Sub-total</div>
+            <div class="col font-weight-bold ml-4">Sub-total</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
-                ${{ preMarginSubTotal | number: "1.4-4" }}
+                {{ preMarginSubTotal | currency:'USD':true:'1.4-4' }}
             </div>
         </div>
 
         <!--ITP Margin-->
         <div *ngIf="customerMargin != null" class="row">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col" *ngIf="marginType == 0">ITP-Margin</div>
-            <div class="col" *ngIf="marginType == 1">Discount</div>
+            <div class="col ml-4" *ngIf="marginType == 0">ITP-Margin</div>
+            <div class="col ml-4" *ngIf="marginType == 1">Discount</div>
             <div class="col"></div>
             <div class="col text-right">
-                ${{ marginITP | number: "1.4-4" }}
+                <span *ngIf="marginType == 1">-</span>${{ marginITP | number: "1.4-4" }}
             </div>
         </div>
 
         <!--Sub-total with Margin-->
         <div *ngIf="customerMargin != null" class="row mb-3 mt-3">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col font-weight-bold">Sub-total w/ Margin</div>
+            <div class="col font-weight-bold ml-4">Sub-total w/ Margin</div>
             <div class="col"></div>
             <div class="col text-right font-weight-bold">
-                ${{ subTotalWithMargin | number: "1.4-4" }}
+                {{ subTotalWithMargin | currency:'USD':true:'1.4-4' }}
             </div>
         </div>
 
@@ -122,7 +122,7 @@
                               [(ngModel)]="belowLineTax.isOmitted"
                               type="checkbox" [disabled]="isMember"></mat-checkbox>
             </div>
-            <div class="col">
+            <div class="col ml-4">
                 <span [ngClass]="{
                     'strike-through':
                         belowLineTax.isOmitted ||
@@ -158,16 +158,16 @@
                         ) == -1
                 }"
                  class="col text-right">
-                <span *ngIf="belowLineTax.amount">${{ belowLineTax.amount | number: "1.4-4" }}</span>
+                <span *ngIf="belowLineTax.amount">{{ belowLineTax.amount | currency:'USD':true:'1.4-4' }}</span>
             </div>
         </div>
 
         <!--Total-->
         <div *ngIf="customerMargin != null" class="row font-weight-bold mb-3">
             <div *ngIf="displayMode == 1" class="col-1"></div>
-            <div class="col">Total</div>
+            <div class="col ml-4">Total</div>
             <div class="col"></div>
-            <div class="col text-right">${{ total | number: "1.4-4" }}</div>
+            <div class="col text-right">{{ total | currency:'USD':true:'1.4-4' }}</div>
         </div>
     </div>
 
@@ -212,11 +212,11 @@
                                 aboveLineTax.calculationType == 0 &&
                                 aboveLineTax.amount
                             ">
-                            ${{ aboveLineTax.amount | number: "1.4-4" }}
+                            {{ aboveLineTax.amount | currency:'USD':true:'1.4-4' }}
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <div class="col-6 label-tax-fees">
                 <div [ngClass]="{
@@ -263,9 +263,9 @@
                             belowLineTax.calculationType == 0 &&
                             belowLineTax.amount
                         ">
-                        ${{ belowLineTax.amount | number: "1.4-4" }}
+                        {{ belowLineTax.amount | number: "1.4-4" }}
                     </div>
-                </div>                
+                </div>
             </div>
             <div class="col-6 label-tax-fees" style="padding-right: 0px">
                 <div [ngClass]="{

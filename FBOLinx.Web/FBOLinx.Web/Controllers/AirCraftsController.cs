@@ -14,20 +14,21 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AirCraftsController : ControllerBase
+    public class AirCraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
 
        
        
-        public AirCraftsController(FboLinxContext context, AircraftService aircraftService)
+        public AirCraftsController(FboLinxContext context, IAircraftService aircraftService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _aircraftService = aircraftService;
@@ -71,8 +72,8 @@ namespace FBOLinx.Web.Controllers
                 customerAircraft.TailNumber,
                 customerAircraft.GroupId,
                 customerAircraft.CustomerId,
-                aircraft.Make,
-                aircraft.Model,
+                aircraft?.Make,
+                aircraft?.Model,
                 customerAircraft.Size
             };
 
@@ -81,7 +82,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
-        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        public async Task<ActionResult<List<CustomerInfoByGroup>>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
         {
             if (string.IsNullOrEmpty(tailNumber))
                 return Ok(new List<CustomerInfoByGroup>());

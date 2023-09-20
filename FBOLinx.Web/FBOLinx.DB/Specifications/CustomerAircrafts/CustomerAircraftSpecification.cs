@@ -12,7 +12,7 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
     {
         public CustomerAircraftSpecification(int id) : base(x => x.Oid == id)
         {
-            AddInclude(ca => ca.Customer);
+            AddInclude(x => x.Notes);
         }
     }
 }

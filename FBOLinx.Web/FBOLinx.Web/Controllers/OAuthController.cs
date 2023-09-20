@@ -10,22 +10,26 @@ using System;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class OAuthController : ControllerBase
+    public class OAuthController : FBOLinxControllerBase
     {
         private readonly IUserService _userService;
         private readonly FboLinxContext _context;
-        private readonly OAuthService _oAuthService;
+        private readonly Services.OAuthService _oAuthService;
+        private readonly IOAuthService _iOAuthService;
 
-        public OAuthController(IUserService userService, OAuthService oAuthService, FboLinxContext context)
+        public OAuthController(IUserService userService, Services.OAuthService oAuthService, FboLinxContext context, ILoggingService logger, IOAuthService iOAuthService) : base(logger)
         {
             _userService = userService;
             _context = context;
+            _iOAuthService = iOAuthService;
             _oAuthService = oAuthService;
         }
 
@@ -49,7 +53,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 10080);
+            AccessTokens accessToken = await _iOAuthService.GenerateAccessToken(user, 10080);
 
             return Ok(accessToken);
         }

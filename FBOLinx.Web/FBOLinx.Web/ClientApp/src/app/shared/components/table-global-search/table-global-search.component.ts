@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
 @Component({
@@ -9,13 +10,20 @@ import * as moment from 'moment';
 export class TableGlobalSearchComponent implements OnInit {
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
-    @Input() SubmatDataSource : any = null
+    @Input() SubmatDataSource: any = null
+    @Input() showClearButton: boolean = true;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
+    @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
-    private page: string = "";
+    public userTypedFilter: string = '';
 
-    constructor() {}
+    private page: string = "";
+    private idParam: string = "";
+
+    constructor(
+        private route: ActivatedRoute,
+    ) { }
 
     ngOnInit(): void {
         //if (!this.column) {
@@ -43,6 +51,9 @@ export class TableGlobalSearchComponent implements OnInit {
         //    this.matDataSource.filterCollection.push(this.filter);
         //}
 
+        if (!this.matDataSource)
+            return;
+
         this.setupFilterPredicate();
         if (!this.matDataSource.filterCollection) {
             this.matDataSource.filterCollection = [];
@@ -53,13 +64,22 @@ export class TableGlobalSearchComponent implements OnInit {
             this.page = "customer-manager-filters";
         else
             this.page = "fuel-orders-filters";
-        this.matDataSource.filter = localStorage.getItem(this.page);
+
+        this.route.queryParamMap.subscribe((params) => {
+            this.idParam = params.get('id');
+        });
+
+        if (this.page == "fuel-orders-filters" && this.idParam != null)
+            this.matDataSource.filter = "[{ \"filterValue\":\"" + this.idParam + "\", \"isGlobal\": true }]";
+        else
+            this.matDataSource.filter = localStorage.getItem(this.page);
 
         if (this.matDataSource.filter != null) {
             for (const filter of JSON.parse(this.matDataSource.filter)) {
                 if (filter.isGlobal) {
                     hasGlobal = true;
                     this.globalFilter = filter;
+                    this.userTypedFilter = filter.filterValue;
                     break;
                 }
             }
@@ -69,9 +89,15 @@ export class TableGlobalSearchComponent implements OnInit {
             this.matDataSource.filterCollection.push(this.globalFilter);
         }
 
-        this.applyFilter(this.globalFilter.filterValue);
+        this.applyFilter(this.userTypedFilter);
     }
+
     public applyFilter(filterValue: any) {
+        if (!this.matDataSource) {
+            this.filterApplied.emit(filterValue);
+            return;
+        }
+
         let existingFilters: any[];
         if (!this.matDataSource.filter) {
             existingFilters = [];
@@ -115,10 +141,13 @@ export class TableGlobalSearchComponent implements OnInit {
         );
 
         this.filterApplied.emit(filterValue);
+
+        this.filteredDataSource.emit(this.matDataSource);
     }
 
     public clearAllFilters() {
         this.globalFilter.filterValue = '';
+        this.userTypedFilter = '';
         this.matDataSource.filter = '';
         if (!this.matDataSource.filterCollection) {
             this.matDataSource.filterCollection = [];

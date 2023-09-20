@@ -7,8 +7,8 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
     {
         public int Oid { get; set; }
         public int Fboid { get; set; }
-        public string Product { get; set; }
-        public double? Price { get; set; }
+        public string Product { get; set; } = "";
+        public double? Price { get; set; } = 0;
         public DateTime EffectiveFrom { get; set; }
         public DateTime? EffectiveTo { get; set; }
         public DateTime? TimeStamp { get; set; } = DateTime.UtcNow;
@@ -31,5 +31,7 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.FuelPricing
             }
         }
         public FboPricesSource Source { get; set; }
+        public int? IntegrationPartnerId { get; set; }
+        public string IntegrationPartner { get; set; }
     }
 }

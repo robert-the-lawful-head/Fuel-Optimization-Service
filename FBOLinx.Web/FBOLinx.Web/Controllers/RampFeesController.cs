@@ -13,20 +13,21 @@ using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class RampFeesController : ControllerBase
+    public class RampFeesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly RampFeesService _RampFeesService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private IMailService _MailService;
 
-        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService, IMailService mailService)
+        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, IAircraftService aircraftService, IMailService mailService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _RampFeesService = rampFeesService;

@@ -1,32 +1,42 @@
 <h1 mat-dialog-title>FBO Group Customer Pricing Report</h1>
 <div mat-dialog-content>
     <p>Select the customer(s) you'd like to generate a price sheet for.</p>
-
+  
     <ejs-grid
-        #grid
-        (rowDeselected)="rowDeselected()"
-        (rowSelected)="rowSelected()"
-        [dataSource]="dataSources"
-        [enableHover]="false"
-        [allowSelection]="true"
-        [selectionSettings]="selectOptions"
-        [editSettings]="editSettings"
-        allowFiltering="true"
-        [filterSettings]="filterOptions"
-        [sortSettings]="sortSettings"
-        [allowSorting]="true"
-        height="350"
+      #grid
+      (rowDeselected)="rowDeselected()"
+      (rowSelected)="rowSelected()"
+      [dataSource]="dataSources"
+      [enableHover]="false"
+      [allowSelection]="true"
+      [selectionSettings]="selectOptions"
+      [editSettings]="editSettings"
+      allowFiltering="true"
+      [filterSettings]="filterOptions"
+      [sortSettings]="sortSettings"
+      [allowSorting]="true"
+      height="350"
     >
-        <e-columns>
-            <e-column type="checkbox" width="50"></e-column>
-            <e-column
-                field="customerId"
-                headerText="Customer ID"
-                isPrimaryKey="true"
-                [visible]="false"
-            ></e-column>
-            <e-column field="company" headerText="Customer"></e-column>
-        </e-columns>
+      <e-columns>
+        <e-column type="checkbox" width="50"></e-column>
+        <e-column
+          field="customerId"
+          headerText="Customer ID"
+          isPrimaryKey="true"
+          [visible]="false"
+        ></e-column>
+        <e-column field="company" headerText="Customer">
+          <ng-template #filterTemplate let-data>
+            <input
+                (input)="onFilterInput($event, 'company', 'contains')"
+                [value]="data.filterValue || ''"
+                placeholder="Filter"
+                class="e-input"
+                id="searchBox"
+            />
+          </ng-template>
+        </e-column>
+      </e-columns>
     </ejs-grid>
 </div>
 <div class="" mat-dialog-actions>

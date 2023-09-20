@@ -38,9 +38,10 @@ export class AutocompleteSearchComponent
     @Input() displayFn: (value: any) => any;
     @Input() disabled = false;
     @Input() required = false;
+    @Input() filter: string = '';
     @Output() selectionChanged = new EventEmitter();
+    @Output() filterChanged = new EventEmitter();
 
-    filter = '';
     filteredOptions: Array<any> = [];
     option: any;
 
@@ -63,7 +64,7 @@ export class AutocompleteSearchComponent
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (
+        if (changes.options &&
             changes.options.currentValue &&
             !isEqual(
                 changes.options.currentValue,
@@ -96,6 +97,7 @@ export class AutocompleteSearchComponent
             }
             return false;
         });
+        this.filterChanged.emit(this.filter);
     }
 
     optionSelected(event) {

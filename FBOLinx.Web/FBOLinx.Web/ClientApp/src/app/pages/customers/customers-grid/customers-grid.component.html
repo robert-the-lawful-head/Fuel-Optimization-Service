@@ -29,8 +29,8 @@
                     </button>
                     <mat-menu #gridActions="matMenu" class="switch-nested-menu-left-arrows" xPosition="before">
                         <!--<button (click)="launchImporter()" [ngClass]="{ disabled: !LICENSE_KEY }" mat-menu-item>
-                    Import
-                </button>-->
+                            Import
+                        </button>-->
                         <button [matMenuTriggerFor]="exportActions" mat-menu-item>
                             Export
                         </button>
@@ -61,7 +61,7 @@
                 </mat-form-field>
             </div>
             <div *ngIf="anySelected()" style="margin-top: 3px" class="col bulk-action-btn">
-                <button (click)="exportCustomersToExcel()" [view]="'accent'" ni-button size="small">
+                <button (click)="exportCustomersToExcel(true)" [view]="'accent'" ni-button size="small">
                     Export Selected
                 </button>
             </div>
@@ -175,7 +175,7 @@
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
-                    {{ customer.isFuelerLinxCustomer ? "YES" : "NO" }}
+                    {{ getIsInNetworkDisplayString(customer) }}
                 </td>
             </ng-container>
 
@@ -260,7 +260,7 @@
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <div (click)="onCustomerPriceClicked(customer)" class="allInPrice">
-                        {{ customer.allInPrice > 0 ? (customer.allInPrice | currency: "USD":"symbol":"1.2-2") : "Expired" }}
+                        {{ getAllIPriceDisplayString(customer) }}
                     </div>
                 </td>
             </ng-container>
@@ -321,10 +321,10 @@
             <ng-container matColumnDef="pricingFormula">
                 <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
                     <div>
-                       Pricing Formula
+                        Pricing Formula
                     </div>
                     <span *ngIf="dataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
+                        <app-table-column-filter [columnFormat]="0" [matDataSource]="dataSource"
                                                  [matSort]="sort" columnId="pricingFormula" propertyName="pricingFormula">
                         </app-table-column-filter>
                     </span>
@@ -356,14 +356,14 @@
 
         <div class="invisible">
             <mat-paginator (page)="(0); onPageChanged($event)" [length]="customersData.length"
-            [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
+                           [pageSizeOptions]="[10, 25, 50, 100]" [pageSize]="pageSize"></mat-paginator>
         </div>
 
         <popover-content #feeAndTaxPopover placement="left" title="Price Information" [closeOnClickOutside]="true">
             <price-breakdown #priceBreakdownPreview *ngIf="focusedCustomer"
-                [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId" [feeAndTaxDisplayMode]="2"
-                [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="focusedCustomer.pricingTemplateId"
-                [hideTooltips]="true"></price-breakdown>
+                             [customerInfoByGroupId]="focusedCustomer.customerInfoByGroupId" [feeAndTaxDisplayMode]="2"
+                             [feesAndTaxes]="feesAndTaxes" [priceTemplateId]="focusedCustomer.pricingTemplateId"
+                             [hideTooltips]="true"></price-breakdown>
         </popover-content>
     </div>
 </div>

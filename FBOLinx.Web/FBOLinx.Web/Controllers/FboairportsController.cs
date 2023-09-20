@@ -11,18 +11,19 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FboairportsController : ControllerBase
+    public class FboairportsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IFboService _fboService;
 
-        public FboairportsController(FboLinxContext context, IFboService fboService)
+        public FboairportsController(FboLinxContext context, IFboService fboService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _fboService = fboService;

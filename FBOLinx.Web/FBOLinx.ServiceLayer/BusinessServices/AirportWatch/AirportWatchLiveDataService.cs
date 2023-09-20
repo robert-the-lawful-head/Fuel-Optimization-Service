@@ -16,6 +16,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
@@ -36,27 +37,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1);
 
         Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate);
+        Task<AirportWatchIntegrityCheckResult> CheckAirportWatchDataIntegrity(DateTime day);
         Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data);
     }
 
     public class AirportWatchLiveDataService : BaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData, FboLinxContext>, IAirportWatchLiveDataService
     {
         private const int _DistanceInNauticalMiles = 250;
-        private AirportWatchHistoricalDataEntityService _AirportWatchHistoricalDataEntityService;
+        private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
         private IAirportService _AirportService;
         private IFboService _FboService;
         private readonly AirportWatchDataTableEntityService _airportWatchDataTableEntityService;
         private readonly TableStorageLogEntityService _TableStorageLogEntityService;
 
         public AirportWatchLiveDataService(IRepository<DB.Models.AirportWatchLiveData, 
-                FboLinxContext> entityService, 
-            AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService,
+                FboLinxContext> entityService,
+            IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
                 IAirportService airportService,
             IFboService fboService, AirportWatchDataTableEntityService airportWatchDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService) : base(entityService)
         {
             _FboService = fboService;
             _AirportService = airportService;
-            _AirportWatchHistoricalDataEntityService = airportWatchHistoricalDataEntityService;
+            _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _airportWatchDataTableEntityService = airportWatchDataTableEntityService;
             _TableStorageLogEntityService = tableStorageLogEntityService;
         }
@@ -144,7 +146,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             }
             return result;
         }
-        
+
+        public async Task<AirportWatchIntegrityCheckResult> CheckAirportWatchDataIntegrity(DateTime day)
+        {
+            var airportWatchDataTableEntities = await _airportWatchDataTableEntityService.GetAirportWatchDataRecords(day);
+            List<AirportWatchLiveDataDto> airportWatchLiveDataRecords = new List<AirportWatchLiveDataDto>();
+            foreach (AirportWatchDataTableEntity airportWatchDataTableEntity in airportWatchDataTableEntities)
+            {
+                airportWatchLiveDataRecords.AddRange(ConvertToDTO(airportWatchDataTableEntity.DataBlob.Split(Environment.NewLine).ToList()));
+            }
+
+            AirportWatchIntegrityCheckResult result = new AirportWatchIntegrityCheckResult();
+            var airportWatchRecordGroupings = airportWatchLiveDataRecords.GroupBy(x => new { x.BoxTransmissionDateTimeUtc, x.AircraftHexCode, x.BoxName });
+            result.DistinctRecordsCount = airportWatchRecordGroupings.Count();
+            result.DuplicateRecordsCount = airportWatchRecordGroupings.Count(x => x.Count() > 1);
+            return result;
+        }
+
         private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
         {
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();
@@ -170,23 +188,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         {
             if (pastDaysForHistoricalData <= 0)
                 return new List<AirportWatchHistoricalDataDto>();
-            
-            if (string.IsNullOrEmpty(airportIdentifier))
-            {
-                var aircraftHexCodes = liveData.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList();
-                var historicalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec(
-                    new AirportWatchHistoricalDataByHexCodeSpecification(aircraftHexCodes,
-                        DateTime.UtcNow.AddDays(-pastDaysForHistoricalData)));
-                return historicalData.Select(x => x.Adapt<AirportWatchHistoricalDataDto>()).ToList();
-            }
-            else
-            {
-                var tailNumbers = liveData.Where(x => !string.IsNullOrEmpty(x.TailNumber)).Select(x => x.TailNumber).ToList();
-                var projectedHistoricalData = await _AirportWatchHistoricalDataEntityService.GetListBySpec<AirportWatchHistoricalDataSimplifiedProjection>(
-                    new AirportWatchHistoricalDataByIcaoSpecification(airportIdentifier,
-                        DateTime.UtcNow.AddDays(-pastDaysForHistoricalData), DateTime.UtcNow));
-                return projectedHistoricalData.Select(x => x.Adapt<AirportWatchHistoricalDataDto>()).ToList();
-            }
+
+            var aircraftHexCodes = liveData.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).ToList();
+
+            var historicalData = await _AirportWatchHistoricalDataService.GetHistoricalData(
+                DateTime.UtcNow.AddDays(-pastDaysForHistoricalData), DateTime.UtcNow,
+                string.IsNullOrEmpty(airportIdentifier) ? null : new List<string>() { airportIdentifier },
+                aircraftHexCodes);
+            return historicalData;
         }
 
         private List<AirportWatchLiveDataDto> ConvertToDTO(List<string> csvData)

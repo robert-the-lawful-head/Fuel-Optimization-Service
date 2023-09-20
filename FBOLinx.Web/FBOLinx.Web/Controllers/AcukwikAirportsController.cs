@@ -14,20 +14,24 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AcukwikAirportsController : ControllerBase
+    public class AcukwikAirportsController : FBOLinxControllerBase
     {
         private readonly DegaContext _context;
         private IAirportService _AirportService;
+        private IAirportTimeService _AirportTimeService;
 
 
-        public AcukwikAirportsController(DegaContext context, IAirportService airportService)
+        public AcukwikAirportsController(DegaContext context, IAirportService airportService, ILoggingService logger,
+            IAirportTimeService airportTimeService) : base(logger)
         {
+            _AirportTimeService = airportTimeService;
             _AirportService = airportService;
             _context = context;
         }
@@ -206,6 +210,20 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<List<AcukwikAirportDTO>>> GetNearbyAcukwikAirportsByIcao([FromRoute] string icao, [FromRoute] int miles)
         {
             var result = await _AirportService.GetAirportsWithinRange(icao, miles);
+            return Ok(result);
+        }
+
+        [HttpGet("local-time/{icao}")]
+        public async Task<ActionResult<DateTime>> GetAirportLocalTime([FromRoute] string icao, DateTime? fromDateTimeUtc = null)
+        {
+            var result = await _AirportTimeService.GetAirportLocalDateTime(icao, fromDateTimeUtc);
+            return Ok(result);
+        }
+
+        [HttpGet("zulu-time/{icao}")]
+        public async Task<ActionResult<DateTime>> GetAirportZuluTime([FromRoute] string icao, DateTime? fromDateTimeLocal = null)
+        {
+            var result = await _AirportTimeService.GetZuluDateTimeFromAirportLocalDateTime(icao, fromDateTimeLocal);
             return Ok(result);
         }
 

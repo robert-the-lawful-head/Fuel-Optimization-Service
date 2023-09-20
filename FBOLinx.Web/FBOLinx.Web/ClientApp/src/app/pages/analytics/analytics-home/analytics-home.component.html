@@ -50,14 +50,20 @@
                 </div>
             </div>
         </mat-tab>
-        <mat-tab label="Takeoff/Landing Cycles">
+        <mat-tab [label]="((!authenticatedIcao ? '' : authenticatedIcao) + ' Arrivals/Departures')">
             <div class="row mt-3">
                 <div class="col-12">
                     <app-analytics-airport-arrivals-depatures
                         [customers]="customers"
-                        [tailNumbers]="tailNumbers"
                         (refreshCustomers)="getCustomersList()"
                     ></app-analytics-airport-arrivals-depatures>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="Network Arrivals/Departures">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
                 </div>
             </div>
         </mat-tab>

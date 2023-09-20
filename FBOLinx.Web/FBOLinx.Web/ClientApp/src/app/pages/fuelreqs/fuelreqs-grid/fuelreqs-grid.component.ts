@@ -1,3 +1,5 @@
+import { trigger, state, style } from '@angular/animations';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
@@ -9,21 +11,21 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 // Shared components
-import { FuelReqsExportModalComponent } from '../../../shared/components/fuelreqs-export/fuelreqs-export.component';
 import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
+import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -67,26 +69,11 @@ const initialColumns: ColumnType[] = [
         id: 'email',
         name: 'Email',
     },
-    {
-        id: 'oid',
-        name: 'ID',
-    },
-    {
-        id: 'sourceId',
-        name: 'Fuelerlinx ID',
-    },
-    {
-        id: 'cancelled',
-        name: 'Transaction Status',
-    },
-    {
-        id: 'dateCreated',
-        name: 'Created',
-    },
-    {
-        id: 'fuelOn',
-        name: 'Uplift Request',
-    },
+    //not show services untill full feature is merged into develop
+    // {
+    //     id: 'services',
+    //     name: 'Services',
+    // }
 ];
 
 @Component({
@@ -94,12 +81,17 @@ const initialColumns: ColumnType[] = [
     selector: 'app-fuelreqs-grid',
     styleUrls: ['./fuelreqs-grid.component.scss'],
     templateUrl: './fuelreqs-grid.component.html',
+    animations: [
+        trigger('detailExpand', [
+            state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
+            state('expanded', style({ height: '*' }))
+          ])
+    ]
 })
-export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, OnChanges {
+export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @Output() dateFilterChanged = new EventEmitter<any>();
-    @Output() exportTriggered = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
@@ -112,10 +104,18 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
 
     dashboardSettings: any;
 
+    csvFileOptions: csvFileOptions = { fileName: 'FuelOrders', sheetName: 'Fuel Orders' };
+
+    allColumnsToDisplay: string[];
+
+    expandedElement: any[] = [];
+
     constructor(
         private sharedService: SharedService,
-        private exportDialog: MatDialog,
-        private tableSettingsDialog: MatDialog
+        private tableSettingsDialog: MatDialog,
+        private datePipe: DatePipe,
+        private currencyPipe: CurrencyPipe,
+        private serviceOrderItemDialog: MatDialog
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -131,6 +131,7 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
                 changes.fuelreqsData.previousValue
             )
         ) {
+            this.allColumnsToDisplay = this.getVisibleColumns();
             this.refreshTable();
         }
     }
@@ -159,31 +160,28 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.paginator.pageIndex = 0;
         }
 
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
 
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            if (this.columns.length === 13) {
-                this.columns = initialColumns;
-            }
-            else {
-                this.columns = JSON.parse(
-                    localStorage.getItem(this.tableLocalStorageKey)
-                );
-            }
+        this.allColumnsToDisplay = this.getVisibleColumns();
 
-        } else {
-            this.columns = initialColumns;
-        }
         this.refreshTable();
     }
-
-    getTableColumns() {
+    getVisibleDataColumns() {
         return this.columns
             .filter((column) => !column.hidden)
             .map((column) => {
                 if(column.id == 'customer')
                     return 'customerName'
                 return column.id
-            });
+            }) || [];
+    }
+    getVisibleColumns() {
+        var result = ['expand-icon'];
+        result.push(...
+            this.getVisibleDataColumns()
+        );
+
+        return result;
     }
 
     refreshTable() {
@@ -232,21 +230,22 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
         });
     }
 
-    export() {
-        const dialogRef = this.exportDialog.open(FuelReqsExportModalComponent, {
-            data: {
-                filterEndDate: this.filterEndDate,
-                filterStartDate: this.filterStartDate,
-            },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-            this.exportTriggered.emit(result);
-        });
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "eta" || id == "etd" || id == "dateCreated")
+                return this.datePipe.transform(item[id]);
+            else if(id == "quotedPpg")
+                return this.getPPGDisplayString(item);
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
-
+    getPPGDisplayString(fuelreq: any): any{
+        return fuelreq.oid == 0 || fuelreq.quotedPpg == 0
+        ? "CONFIDENTIAL"
+        : this.currencyPipe.transform(fuelreq.quotedPpg,"USD","symbol","1.4-4");
+    }
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(
             TableSettingsComponent,
@@ -271,5 +270,29 @@ export class FuelreqsGridComponent extends VirtualScrollBase implements OnInit, 
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    getNoDataToDisplayString(){
+        return"No Fuel Request set on the selected range of dates";
+    }
+    isRowExpanded(elementId: any){
+        return this.expandedElement.includes(elementId);
+    }
+    toogleExpandedRows(elementId: any){
+        if(this.isRowExpanded(elementId)){
+            this.expandedElement = this.expandedElement.filter(function(item) {
+                return item !== elementId
+            })
+        }else{
+            this.expandedElement.push(elementId);
+        }
+
+    }
+
+    manageServiceOrderClicked(fuelreq: any) {
+        const config: MatDialogConfig = {
+            disableClose: true,
+            data: fuelreq.serviceOrder
+        };
+        const dialogRef = this.serviceOrderItemDialog.open(ServiceOrdersDialogOrderItemsComponent, config);
     }
 }

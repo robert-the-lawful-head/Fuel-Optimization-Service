@@ -14,7 +14,7 @@ export class FlightWatchFiltersComponent implements OnInit {
 
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
-    @Output() filterChanged = new EventEmitter<SwimFilter>();
+    @Output() textFilterChanged = new EventEmitter<string>();
 
     constructor() { }
 
@@ -25,10 +25,7 @@ export class FlightWatchFiltersComponent implements OnInit {
         this.icaoChanged.emit(event);
     }
     applyFilter(event: Event) {
-        let filter: SwimFilter = {
-            filterText: (event.target as HTMLInputElement).value,
-            dataType: null
-        };
-        this.filterChanged.emit(filter);
+        let filterText: string = (event.target as HTMLInputElement).value;
+        this.textFilterChanged.emit(filterText);
     }
 }

@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import * as moment from 'moment';
+import { PolicyAndAgreementDocuments } from 'src/app/models/policyAndAgreementDocuments';
+import { DocumentService } from 'src/app/services/documents.service';
 
 import { AppService } from '../../../services/app.service';
 
@@ -10,11 +12,15 @@ import { AppService } from '../../../services/app.service';
     templateUrl: './footer.component.html',
 })
 export class FooterComponent implements OnInit {
+    @Input() isLandingPage: boolean = false;
     public version: string;
     public year: string;
+    public termsOfService: PolicyAndAgreementDocuments;
+    public eulaLink: string = '';
 
-    constructor(private appService: AppService) {
+    constructor(private appService: AppService,private documentService: DocumentService) {
         this.getAppVersion();
+        this.getEULALastVersion();
     }
 
     ngOnInit() {
@@ -25,5 +31,14 @@ export class FooterComponent implements OnInit {
         this.appService.getVersion().subscribe((data: any) => {
             this.version = data.version;
         });
+    }
+
+    private getEULALastVersion() {
+        this.documentService.getLastEulaVersion().subscribe((data: any) => {
+            this.eulaLink = data?.document;
+        });
+    }
+    public hasEulaLink(): boolean {
+        return this.eulaLink !== '';
     }
 }

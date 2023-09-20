@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
@@ -53,5 +54,10 @@ namespace FBOLinx.DB.Models
         [InverseProperty("CustomerInfoByGroup")]
         [ForeignKey("CustomerId")]
         public Customers Customer { get; set; }
+
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<CustomerInfoByGroupNote> Notes { get; set; }
     }
 }

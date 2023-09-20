@@ -5,8 +5,8 @@
     <app-horizontal-navbar (sidebarState)="sidebarState()"
                            [title]="pageTitle"></app-horizontal-navbar>
 
-    <div [ngClass]="{ 'full-width': !openedSidebar }" class="container-fluid sticky-panel">
-        <div class="row">
+    <div [ngClass]="{ 'full-width': !openedSidebar, 'sticky-panel-csr' : isCsr }" class="container-fluid sticky-panel">
+        <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
             <div class="col-12 text-md-right pt-md-0">
                 <div class="d-inline-block">
                     <app-fbo-prices-panel *ngIf="isPricePanelVisible()"
@@ -23,12 +23,12 @@
             </div>
         </div>
     </div>
-
-    <div *ngIf="pricingTemplatesData">
-        <app-addition-navbar #insideElement
-                             [templatelst]="pricingTemplatesData"></app-addition-navbar>
-    </div>
-
+    <ng-container *ngIf="isAdditionNavBarVisible()">
+        <div *ngIf="pricingTemplatesData && isNotGroupAdmin">
+            <app-addition-navbar #insideElement
+                                [templatelst]="pricingTemplatesData"></app-addition-navbar>
+        </div>
+    </ng-container>
     <main [ngClass]="{ 'full-width': !openedSidebar }"
           class="main-content">
 

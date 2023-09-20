@@ -110,9 +110,10 @@
                                         .marginType == 1">
                                             <div class="">Discount</div>
                                         </th>
-                                        <th>
+                                        <th *ngIf=" pricingTemplateForm.value
+                                        .marginType == 0">
                                             <div class="volume-tiers-header">
-                                                Your ITP Margin
+                                                ITP Margin
                                             </div>
                                         </th>
                                         <th>
@@ -148,6 +149,7 @@
                                             <div class="volume-tiers-width">
                                                 <mat-form-field class="">
                                                     <input formControlName="min"
+                                                           (blur)="updateCustomerMarginVolumeValues(i)"
                                                            matInput />
                                                 </mat-form-field>
                                             </div>
@@ -194,21 +196,11 @@
                                             </div>
                                         </td>
                                         <!--ITP MARGIN-->
-                                        <td [formGroupName]="i"
+                                        <td *ngIf=" pricingTemplateForm.value
+                                                .marginType == 0" [formGroupName]="i"
                                             class="font-weight-bold font-italic">
 
-                                            <div class="volume-tiers-width" *ngIf=" pricingTemplateForm.value
-                                               .marginType == 1">
-                                                <div style="width:75px">
-                                                    ${{
-                                                            customerMargin.value.itp
-                                                                | number: "1.4-4"
-                                                    }}
-                                                </div>
-                                            </div>
-
-                                            <mat-form-field *ngIf=" pricingTemplateForm.value
-                                                .marginType == 0" style="width:100px">
+                                            <mat-form-field style="width:100px">
                                                 <input (click)="
                                                             $event.target.select()
                                                         "
@@ -238,28 +230,28 @@
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
                                                     .discountType != 1">
-                                                    ${{ (jetACost-0) + (customerMargin.value.amount-0) | number: "1.4-4" }}
+                                                    {{ (jetACost-0) + (customerMargin.value.amount-0) | currency:'USD':true:'1.4-4' }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 0 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    ${{ (jetACost-0) + ((jetACost-0) * ((customerMargin.value.amount-0) / 100)) | number: "1.4-4" }}
+                                                    {{ (jetACost-0) + ((jetACost-0) * ((customerMargin.value.amount-0) / 100)) | currency:'USD':true:'1.4-4' }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
                                                     .discountType != 1">
-                                                    ${{ (jetARetail-0) - (customerMargin.value.amount-0) | number: "1.4-4" }}
+                                                    {{ (jetARetail-0) - (customerMargin.value.amount-0) | currency:'USD':true:'1.4-4' }}
                                                 </div>
                                                 <div *ngIf="
                                                 pricingTemplateForm.value
                                                     .marginType == 1 &&
                                                 pricingTemplateForm.value
                                                     .discountType == 1">
-                                                    ${{ (jetARetail-0) - ((jetARetail-0) * (customerMargin.value.amount-0) / 100) | number: "1.4-4" }}
+                                                    {{ (jetARetail-0) - ((jetARetail-0) * (customerMargin.value.amount-0) / 100) | currency:'USD':true:'1.4-4' }}
                                                 </div>
                                             </div>
                                         </td>

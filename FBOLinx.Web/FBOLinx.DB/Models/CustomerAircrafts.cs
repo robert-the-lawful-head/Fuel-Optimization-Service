@@ -7,8 +7,11 @@ namespace FBOLinx.DB.Models
 {
     public partial class CustomerAircrafts : FBOLinxBaseEntityModel<int>
     {
+        [ForeignKey("OID")]
         [Column("GroupID")]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
+
+        [ForeignKey("OID")]
         [Column("CustomerID")]
         public int CustomerId { get; set; }
         [Column("AircraftID")]
@@ -34,5 +37,9 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("CustomerId")]
         public virtual Customers Customer { get; set; }
+        [InverseProperty("CustomerAircraft")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty("CustomerAircraft")]
+        public ICollection<CustomerAircraftNote> Notes { get; set; }
     }
 }

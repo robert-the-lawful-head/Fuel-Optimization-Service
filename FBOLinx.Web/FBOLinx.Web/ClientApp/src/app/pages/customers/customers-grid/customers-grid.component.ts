@@ -1,3 +1,4 @@
+import { CurrencyPipe } from '@angular/common';
 import {
     Component,
     ElementRef,
@@ -12,22 +13,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectChange } from '@angular/material/select';
 import { MatSort, MatSortHeader, SortDirection } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-/*import FlatFileImporter from 'flatfile-csv-importer';*/
-import { find, forEach, map, sortBy } from 'lodash';
+import { find, forEach, sortBy } from 'lodash';
 import { MultiSelect } from 'primeng/multiselect';
 import { Subscription } from 'rxjs';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { TagsService } from 'src/app/services/tags.service';
-import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { CustomermarginsService } from '../../../services/customermargins.service';
 // Services
-import { CustomersService } from '../../../services/customers.service';
 import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.service';
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
@@ -106,7 +103,7 @@ const initialColumns: ColumnType[] = [
     styleUrls: ['./customers-grid.component.scss'],
     templateUrl: './customers-grid.component.html',
 })
-export class CustomersGridComponent extends VirtualScrollBase implements OnInit {
+export class CustomersGridComponent extends GridBase implements OnInit {
     @ViewChild('priceBreakdownPreview')
     priceBreakdownPreview: PriceBreakdownComponent;
     @ViewChild('customerTableContainer') table: ElementRef;
@@ -124,6 +121,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     @Output() editCustomerClicked = new EventEmitter<any>();
     @Output() customerDeleted = new EventEmitter<any>();
     @Output() customerPriceClicked = new EventEmitter<any>();
+    @Output() exportAircraftClick = new EventEmitter<any>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -144,6 +142,12 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     feesAndTaxesSubscription: Subscription;
 
     /*private importer: FlatFileImporter;*/
+    customersCsvOptions: csvFileOptions = { fileName: 'Customers', sheetName: 'Customers' };
+    aircraftCsvOptions: csvFileOptions = { fileName: 'Aircraft', sheetName: 'Aircraft' };
+
+    start: number = 0;
+    limit: number = 20;
+    end: number = this.limit + this.start;
 
     constructor(
         private newCustomerDialog: MatDialog,
@@ -155,10 +159,12 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         private fboFeesAndTaxesService: FbofeesandtaxesService,
         private tagsService: TagsService,
         private dialog: MatDialog ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private currencyPipe: CurrencyPipe
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
+            this.addContactToCustomerDataList();
             this.setVirtualScrollVariables(this.paginator, this.sort, this.customersData);
             this.refreshCustomerDataSource();
         }
@@ -169,16 +175,8 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             this.customerFilterType = this.customerGridState.filterType;
         }
 
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey)
-            );
-            if (this.columns.length !== initialColumns.length) {
-                this.columns = initialColumns;
-            }
-        } else {
-            this.columns = initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
+
         if (this.customerGridState.filter) {
             this.dataSource.filterCollection = JSON.parse(
                 this.customerGridState.filter
@@ -195,6 +193,13 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     }
 
     // Methods
+    addContactToCustomerDataList(){
+        this.customersData.forEach(c => {
+            c['email'] = c.contacts.map(x => x.email).join(' ');
+            c['firstName'] = c.contacts.map(x => x.firstName).join(' ');
+            c['lastName'] = c.contacts.map(x => x.lastName).join(' ');
+        });
+    }
     deleteCustomer(customer) {
         const dialogRef = this.deleteCustomerDialog.open(
             DeleteConfirmationComponent,
@@ -229,11 +234,10 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
     }
 
     selectAction() {
-        const pageCustomersData = this.dataSource.connect().value;
-        forEach(pageCustomersData, (customer) => {
+        forEach( this.dataSource.filteredData, (customer) => {
             customer.selectAll = this.selectAll;
         });
-        this.selectedRows = this.selectAll ? pageCustomersData.length : 0;
+        this.selectedRows = this.selectAll ? this.dataSource.data.length : 0;
     }
 
     selectUnique() {
@@ -262,55 +266,42 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         });
     }
 
-    exportCustomersToExcel() {
-        // Export the filtered results to an excel spreadsheet
-        const filteredList = this.dataSource.filteredData.filter(
-            (item) => item.selectAll === true
-        );
-        let exportData;
-        if (filteredList.length > 0) {
-            exportData = filteredList;
-        } else {
-            exportData = this.dataSource.filteredData;
+    exportCustomersToExcel(exportSelectedCustomers: boolean = false) {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "allInPrice")
+                return this.getAllIPriceDisplayString(item);
+            else if(id == "isFuelerLinxCustomer")
+                return this.getIsInNetworkDisplayString(item);
+            else if(id == "tags")
+                return  item[id].map(x => x.name).join(', ');
+            else if(id == "fuelVendors")
+                return  item[id].map(x => x.label).join(', ');
+            else if(id == "needsAttention"){
+                return this.getNeedsAttentionDisplayString(item);
+            }
+            else
+                return null;
         }
-        exportData = map(exportData, (item) => ({
-            'Certificate Type': item.certificateTypeDescription,
-            Company: item.company,
-            'Customer Type': item.customerCompanyTypeName,
-            'Fleet Size': item.fleetSize,
-            'FuelerLinx Network': item.isFuelerLinxCustomer ? 'YES' : 'NO',
-            'ITP Margin Template': item.pricingTemplateName,
-            'Needs Attention': item.needsAttention ? 'Needs Attention' : '',
-            'Previous Visits': item.aircraftsVisits,
-        }));
-        exportData = sortBy(exportData, [(item) => item.Company.toLowerCase()]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Customers');
-
-        /* save to file */
-        XLSX.writeFile(wb, 'Customers.xlsx');
+        this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc,exportSelectedCustomers);
     }
-
+    getNeedsAttentionDisplayString(customer: any): any{
+        let message = '';
+        if(customer.needsAttention){
+            message = 'Needs Attention';
+        }
+        if(!customer.isFuelerLinxCustomer && !customer.contactExists){
+            message = message+' '+'This customer does not have any contacts setup to receive price distribution.';
+        }
+        return message;
+    }
+    getAllIPriceDisplayString(customer: any): any{
+        return customer.allInPrice > 0 ? this.currencyPipe.transform(customer.allInPrice, "USD","symbol","1.2-2") : "Expired";
+    }
+    getIsInNetworkDisplayString(customer: any): any{
+        return customer.isFuelerLinxCustomer ? "YES" : "NO"
+    }
     exportCustomerAircraftToExcel() {
-        // Export the filtered results to an excel spreadsheet
-        let exportData = map(this.aircraftData, (item) => ({
-            Company: item.company,
-            Tail: item.tailNumber,
-            Type: item.make + ' ' + item.model,
-            Size: item.aircraftSizeDescription,
-            'Company Pricing': item.pricingTemplateName,
-        }));
-        exportData = sortBy(exportData, [
-            (item) => item.Company?.toLowerCase(),
-            (item) => item.Tail?.toLowerCase(),
-        ]);
-        const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-        const wb: XLSX.WorkBook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Aircraft');
-
-        /* save to file */
-        XLSX.writeFile(wb, 'Aircraft.xlsx');
+        this.exportAircraftClick.emit();
     }
 
     customerFilterTypeChanged() {
@@ -543,7 +534,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.columns = [...result];
-                this.refreshSort();
+                this.refreshSort(this.sort, this.columns);
                 this.saveSettings();
             }
         });
@@ -697,25 +688,7 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
         );
 
         this.sort.active = 'allInPrice';
-    }
-    private refreshSort() {
-        const sortedColumn = this.columns.find(
-            (column) => !column.hidden && column.sort
-        );
-        this.sort.sort({
-            disableClear: false,
-            id: null,
-            start: sortedColumn?.sort || 'asc',
-        });
-        this.sort.sort({
-            disableClear: false,
-            id: sortedColumn?.id,
-            start: sortedColumn?.sort || 'asc',
-        });
-        (
-            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
-        )?._setAnimationTransitionState({ toState: 'active' });
-    }
+    }    
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService
@@ -726,5 +699,15 @@ export class CustomersGridComponent extends VirtualScrollBase implements OnInit 
             .subscribe((response: any[]) => {
                 this.feesAndTaxes = response;
             });
+    }
+    loadFilteredDataSource(filteredDataSource: any){
+        if(filteredDataSource.filter.length == 2){
+            this.refreshCustomerDataSource();
+            return;
+        }
+        this.dataSource = filteredDataSource;
+
+        this.start = 0;
+        this.limit = 20;
     }
 }

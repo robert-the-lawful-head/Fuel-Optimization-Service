@@ -16,6 +16,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -26,24 +28,25 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<PricingTemplateGrid>> GetCostPlusPricingTemplates(int fboId);
         Task<List<PricingTemplateGrid>> GetPricingTemplatesWithEmailContent(int fboId, int groupId);
         Task<PricingTemplate> CopyPricingTemplate(int? currentPricingTemplateId, string pricingTemplateName);
-        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
-        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0);
+        Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0);
         Task<List<PricingTemplate>> GetStandardTemplatesForAllCustomers(int groupId, int fboId);
         Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId, int fboId = 0);
+        Task<List<PricingTemplate>> GetAllPricingTemplates();
     }
     
     public class PricingTemplateEntityService : Repository<PricingTemplate, FboLinxContext>, IPricingTemplateEntityService
     {
         private readonly FboLinxContext _context;
-        private readonly CustomerAircraftService _customerAircraftService;
+        private readonly CustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
         private readonly IFboPricesEntityService _fboPricesEntityService;
 
         public PricingTemplateEntityService(FboLinxContext context,
-            ICustomerMarginsEntityService customerMarginEntityService,
             CustomerInfoByGroupEntityService customerInfoByGroupEntityService,
             IFboPricesEntityService fboPricesEntityService) : base(context)
         {
             _context = context;
+            _customerInfoByGroupEntityService = customerInfoByGroupEntityService;
             _fboPricesEntityService = fboPricesEntityService;
         }
 
@@ -161,7 +164,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var customerAircraftAssignments = await GetCustomerAircrafts(groupId, fboId);
 
             //Separate inner queries first for FBO Prices and Margin Tiers
-            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && f.Price != null && f.Expired != true).ToListAsync();
+            var oldPrices = await _context.Fboprices.Where(f => f.EffectiveTo <= DateTime.UtcNow && f.Fboid == fboId && (f.Expired == null || f.Expired != true)).ToListAsync();
             foreach (var p in oldPrices)
             {
                 p.Expired = true;
@@ -430,19 +433,16 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             foreach (var t in templatesWithEmailContent)
             {
-                t.CustomerEmails = await(from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                t.CustomerEmails = await(from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId && x.Active.HasValue && x.Active.Value))
                                          join c in _context.Customers on cg.CustomerId equals c.Oid
-                                         join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                                         join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId && x.CustomerType == t.Oid) on cg.CustomerId equals cc.CustomerId
                                          join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
                                          join co in _context.Contacts on custc.ContactId equals co.Oid
-                                         join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                                         join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = co.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                         join cibg in _context.ContactInfoByGroup on new {ContactId = co.Oid, GroupId = groupId} equals new {ContactId = cibg.ContactId, GroupId = cibg.GroupId}
+                                         join cibf in _context.ContactInfoByFbo on new { ContactId = (int?) co.Oid, FboId = (int?) fboId } equals new { ContactId = cibf.ContactId, FboId = cibf.FboId } into leftJoinCIBF
                                          from cibf in leftJoinCIBF.DefaultIfEmpty()
-                                         where (cg.Active ?? false)
-                                         && cc.CustomerType == t.Oid
-                                         && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
+                                         where ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
                                          && !string.IsNullOrEmpty(cibg.Email)
-                                         && cibg.GroupId == groupId
                                          && (c.Suspended ?? false) == false
                                          select cibg.Email
                                 ).ToListAsync();
@@ -450,28 +450,29 @@ namespace FBOLinx.ServiceLayer.EntityServices
             return templatesWithEmailContent;
         }
 
-        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetStandardPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
-            return await(from cg in _context.CustomerInfoByGroup
-                               join c in _context.Customers on cg.CustomerId equals c.Oid
-                               join cct in _context.CustomCustomerTypes on new
-                               {
-                                   customerId = cg.CustomerId,
-                                   fboId = fboId
-                               } equals new
-                               {
-                                   customerId = cct.CustomerId,
-                                   fboId = cct.Fboid
-                               }
-                               join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
+            var templates = await (from cg in _context.CustomerInfoByGroup
+                                   join c in _context.Customers on cg.CustomerId equals c.Oid
+                                   join cct in _context.CustomCustomerTypes on new
+                                   {
+                                       customerId = cg.CustomerId,
+                                       fboId = fboId
+                                   } equals new
+                                   {
+                                       customerId = cct.CustomerId,
+                                       fboId = cct.Fboid
+                                   }
+                                   join pt in _context.PricingTemplate on cct.CustomerType equals pt.Oid
 
-                               where cg.GroupId == groupId
-                                     && cg.CustomerId == customer.CustomerId
-                                     && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
-                               select pt).ToListAsync();
+                                   where cg.GroupId == groupId
+                                         && cg.CustomerId == customer.CustomerId
+                                         && (pricingTemplateId == 0 || pt.Oid == pricingTemplateId)
+                                   select pt).ToListAsync();
+            return templates;
         }
 
-        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDTO customer, int fboId, int groupId, int pricingTemplateId = 0)
+        public async Task<List<PricingTemplate>> GetTailSpecificPricingTemplatesForCustomerAsync(CustomerInfoByGroupDto customer, int fboId, int groupId, int pricingTemplateId = 0)
         {
             var aircraftPricesResult = await(from ap in _context.AircraftPrices
                                              join ca in _context.CustomerAircrafts on ap.CustomerAircraftId equals ca.Oid
@@ -515,6 +516,19 @@ namespace FBOLinx.ServiceLayer.EntityServices
                                 select new PricingTemplate { Oid = pt.Oid, CustomerId = cg.CustomerId, Name = pt.Name }).ToListAsync();
 
             return result;
+        }
+
+        public async Task<List<PricingTemplate>> GetAllPricingTemplates()
+        {
+            var templates = await (from p in _context.PricingTemplate
+                                   select new PricingTemplate
+                                   {
+                                       Oid = p.Oid,
+                                       Fboid = p.Fboid,
+                                       Default = p.Default
+                                   }).ToListAsync();
+
+            return templates;
         }
 
         #region Private Methods
@@ -609,18 +623,21 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             result.ForEach(x =>
             {
-                var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
-                if (aircraftPricingTemplate != null)
+                if (x.Oid > 0)
                 {
-                    x.PricingTemplateId = aircraftPricingTemplate?.Oid;
-                    x.PricingTemplateName = aircraftPricingTemplate?.Name;
-                }
-                else
-                {
-                    var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
-                    x.PricingTemplateId = pricingTemplate?.Oid;
-                    x.PricingTemplateName = pricingTemplate?.Name;
-                    x.IsCompanyPricing = true;
+                    var aircraftPricingTemplate = aircraftPricingTemplates.FirstOrDefault(pt => pt.CustomerAircraftId == x.Oid);
+                    if (aircraftPricingTemplate != null)
+                    {
+                        x.PricingTemplateId = aircraftPricingTemplate?.Oid;
+                        x.PricingTemplateName = aircraftPricingTemplate?.Name;
+                    }
+                    else
+                    {
+                        var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
+                        x.PricingTemplateId = pricingTemplate?.Oid;
+                        x.PricingTemplateName = pricingTemplate?.Name;
+                        x.IsCompanyPricing = true;
+                    }
                 }
             });
 
@@ -657,27 +674,27 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircrafts(int groupId)
         {
-            List<CustomerAircraftsViewModel> result = await (
-               from ca in _context.CustomerAircrafts
-               join cg in _context.CustomerInfoByGroup on new { groupId, ca.CustomerId } equals new { groupId = cg.GroupId, cg.CustomerId }
-               join c in _context.Customers on cg.CustomerId equals c.Oid
-               where ca.GroupId == groupId && (!c.Suspended.HasValue || !c.Suspended.Value)
-               select new CustomerAircraftsViewModel
-               {
-                   Oid = ca.Oid,
-                   GroupId = ca.GroupId,
-                   CustomerId = ca.CustomerId,
-                   Company = cg.Company,
-                   AircraftId = ca.AircraftId,
-                   TailNumber = ca.TailNumber,
-                   Size = ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
-                   BasedPaglocation = ca.BasedPaglocation,
-                   NetworkCode = ca.NetworkCode,
-                   AddedFrom = ca.AddedFrom ?? 0,
-                   IsFuelerlinxNetwork = c.FuelerlinxId > 0
-               })
-               .OrderBy(x => x.TailNumber)
-               .ToListAsync();
+            var customers = await _customerInfoByGroupEntityService.GetListBySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId));
+            var customerAircrafts = customers.SelectMany(c => c.Customer.CustomerAircrafts).ToList();
+
+            List<CustomerAircraftsViewModel> result = (from c in customers
+                                                       join ca in customerAircrafts on c.CustomerId equals ca.CustomerId into leftJoinCA
+                                                       from ca in leftJoinCA.DefaultIfEmpty()
+                                                       select new CustomerAircraftsViewModel
+                                                       {
+                                                           Oid = ca == null ? 0 : ca.Oid,
+                                                           GroupId = c.GroupId,
+                                                           CustomerId = c.CustomerId,
+                                                           Company = c.Company,
+                                                           AircraftId = ca == null ? 0 : ca.AircraftId,
+                                                           TailNumber = ca?.TailNumber,
+                                                           Size = ca == null ? AircraftSizes.NotSet : ca.Size.HasValue && ca.Size != AircraftSizes.NotSet ? ca.Size : (AircraftSizes.NotSet),
+                                                           BasedPaglocation = ca?.BasedPaglocation,
+                                                           NetworkCode = ca?.NetworkCode,
+                                                           AddedFrom = ca == null ? 0 : ca.AddedFrom,
+                                                           IsFuelerlinxNetwork = c.Customer.FuelerlinxId > 0
+                                                       })
+               .OrderBy(x => x.TailNumber).ToList();
 
             return result;
         }

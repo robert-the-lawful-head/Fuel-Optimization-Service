@@ -28,6 +28,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -102,7 +103,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private fboFeeAndTaxOmitsbyPricingTemplateService: FbofeeandtaxomitsbypricingtemplateService,
         private sharedService: SharedService,
         private emailContentService: EmailcontentService,
-        private marginLessThanOneDialog: MatDialog
+        private marginLessThanOneDialog: MatDialog,
+        private pricingTemplateCalcService: PricingTemplateCalcService,
     ) {
         this.sharedService.titleChange(this.pageTitle);
 
@@ -422,14 +424,7 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     deleteCustomerMargin(index: number) {
-        this.customerMarginsFormArray.removeAt(index);
-        if (this.customerMarginsFormArray.length) {
-            this.customerMarginsFormArray
-                .at(this.customerMarginsFormArray.length - 1)
-                .patchValue({
-                    max: 99999,
-                });
-        }
+        this.pricingTemplateCalcService.adjustCustomerMarginValuesOnDelete(index, this.customerMarginsFormArray);
     }
 
     addCustomerMargin() {
@@ -467,7 +462,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             this.formBuilder.group(group, { updateOn: 'blur' })
         );
     }
-
+    updateCustomerMarginVolumeValues(index: number){
+        this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
+        this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
+    }
     omitFeeAndTaxCheckChanged(feeAndTax: any): void {
         if (!feeAndTax.omitsByPricingTemplate) {
             feeAndTax.omitsByPricingTemplate = [];
@@ -573,10 +571,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         const margins = [...oldMargins];
 
        for (let i = 0; i < margins?.length; i++) {
-
-            if (i > 0) {
-                margins[i - 1].max = Math.abs(margins[i].min - 1);
-            }
             //in Cost Mode
             if (marginType !== 1) {
                 if (margins[i].min !== null && margins[i].amount !== null) {

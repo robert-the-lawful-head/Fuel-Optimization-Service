@@ -11,16 +11,17 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomCustomerTypesController : ControllerBase
+    public class CustomCustomerTypesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomCustomerTypesController(FboLinxContext context)
+        public CustomCustomerTypesController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -109,7 +110,7 @@ namespace FBOLinx.Web.Controllers
                         oldValue.CustomerType = customCustomerTypes.CustomerType;
                         oldValue.Fboid = customCustomerTypes.Fboid;
                         _context.CustomCustomerTypes.Update(oldValue);
-                        await _context.SaveChangesAsync(userId, customCustomerTypes.CustomerId, fbo.GroupId.GetValueOrDefault(), customCustomerTypes.Fboid);
+                        await _context.SaveChangesAsync(userId, customCustomerTypes.CustomerId, fbo.GroupId, customCustomerTypes.Fboid);
                     }
                 }
                
@@ -204,8 +205,10 @@ namespace FBOLinx.Web.Controllers
                     .Select(s => s.CustomerId)
                     .ToListAsync();
 
-                    var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == updateTemplate.fboid).GroupId;
-                    _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo).ToList().ForEach(s => s.PricingTemplateRemoved = true);
+                    var groupInfo = await _context.Fbos.FirstOrDefaultAsync(s => s.Oid == updateTemplate.fboid);
+                    var customerInfoByGroup = await _context.CustomerInfoByGroup.Where(s => customers.Contains(s.CustomerId) && s.GroupId == groupInfo.GroupId).ToListAsync();
+
+                    customerInfoByGroup.ForEach(s => s.PricingTemplateRemoved = true);
 
                     var customCustomerTypes = await _context.CustomCustomerTypes
                         .Where(c => c.Fboid.Equals(updateTemplate.fboid) && c.CustomerType.Equals(updateTemplate.currenttemplate))

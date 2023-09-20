@@ -2,13 +2,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col col-md-4">
-                <mat-form-field>
-                    <input (keyup)="applyFilter($event.target.value)"
-                           [(ngModel)]="searchText"
-                           matInput
-                           placeholder="Search by Customer, TailNumber, FBO, etc." />
-                    <span matPrefix><i class="fa fa-search"></i></span>
-                </mat-form-field>
+                <app-table-global-search [matDataSource]="dataSource"
+                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
             </div>
             <div class="col-6 col-md-3">
                 <mat-form-field>

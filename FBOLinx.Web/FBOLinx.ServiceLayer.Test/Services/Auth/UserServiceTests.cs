@@ -103,7 +103,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 userDbSetMock = MockUserDbSet(dbContextMock, new List<User>());
                 MockFbosDbSet(dbContextMock, new List<Fbos>()
                 {
-                    new Fbos() { Oid = fboRecordId, Username = testUser.Username, Password = testUser.Password, GroupId = testUser.GroupId }
+                    new Fbos() { Oid = fboRecordId, Username = testUser.Username, Password = testUser.Password, GroupId = testUser.GroupId.Value }
                 });
                 MockGroupDbSet(dbContextMock, new List<Group>()
                 {

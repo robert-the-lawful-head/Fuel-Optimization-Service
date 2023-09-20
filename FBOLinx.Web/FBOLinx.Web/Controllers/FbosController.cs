@@ -5,66 +5,71 @@ using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.Web.Auth;
-using System.Web;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FBOLinx.Web.Models.Requests;
-using FBOLinx.Web.Services;
 using Fuelerlinx.SDK;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
+using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using System.Web;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbosController : ControllerBase
+    public class FbosController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly DegaContext _degaContext;
-        private GroupFboService _groupFboService;
+        private IGroupFboService _groupFboService;
         private readonly IFboService _fboService;
-        private IHttpContextAccessor _httpContextAccessor;
-        private readonly OAuthService _oAuthService;
         private readonly IPriceFetchingService _priceFetchingService;
         private readonly RampFeesService _rampFeeService;
         private readonly FuelerLinxApiService _fuelerLinxApiService;
         private readonly IFboPricesService _fbopricesService;
         private readonly IPricingTemplateService _pricingTemplateService;
+        private readonly ILoggingService logger;
+        private readonly IAuthService _AuthService;
+        private readonly IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
 
         public FbosController(
             FboLinxContext context,
             DegaContext degaContext, 
-            GroupFboService groupFboService,
+            IGroupFboService groupFboService,
             IFboService fboService, 
-            IHttpContextAccessor httpContextAccessor, 
-            OAuthService oAuthService, 
             IPriceFetchingService priceFetchingService, 
             RampFeesService rampFeeService, 
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
-            IPricingTemplateService pricingTemplateService)
+            IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
+            IHttpContextAccessor httpContextAccessor) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
             _degaContext = degaContext;
             _fboService = fboService;
-            _httpContextAccessor = httpContextAccessor;
-            _oAuthService = oAuthService;
             _priceFetchingService = priceFetchingService;
             _rampFeeService = rampFeeService;
             _fuelerLinxApiService = fuelerLinxApiService;
             _fbopricesService = fbopricesService;
             _pricingTemplateService = pricingTemplateService;
+            this.logger = logger;
+            _AuthService = authService;
+            _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/Fbos/group/5
@@ -87,7 +92,8 @@ namespace FBOLinx.Web.Controllers
                                 Icao = fa.Icao,
                                 Iata = fa.Iata,
                                 Oid = f.Oid,
-                                GroupId = f.GroupId ?? 0,
+                                GroupId = f.GroupId,
+                                AcukwikFboHandlerId = f.AcukwikFBOHandlerId
                             }).ToListAsync();
 
             foreach (var fbo in fbos)
@@ -125,7 +131,7 @@ namespace FBOLinx.Web.Controllers
                 Fbo = f.Fbo,
                 Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
-                GroupId = f.GroupId ?? 0,
+                GroupId = f.GroupId,
                 Users = f.Users
             }).ToList();
             return Ok(fbosVM);
@@ -199,6 +205,8 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(id);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -449,36 +457,11 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbo = await _context.Fbos.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
+            var authentication = await _AuthService.CreateAuthenticatedLink(handlerId);
+            if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
+                return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken));
 
-            if (fbo == null)
-            {
-                var acukwikFbo = await _degaContext.AcukwikFbohandlerDetail.Where(x => x.HandlerId == handlerId).FirstOrDefaultAsync();
-                if (acukwikFbo == null)
-                    return BadRequest("FBO not found");
-
-                var importedFboEmail = await _degaContext.ImportedFboEmails.Where(x => x.AcukwikFBOHandlerId == handlerId).FirstOrDefaultAsync();
-                if (importedFboEmail == null || importedFboEmail.Oid == 0)
-                    return BadRequest("No email found");
-
-                var acukwikAirport = await _degaContext.AcukwikAirports.Where(x => x.Oid == acukwikFbo.AirportId).FirstOrDefaultAsync();
-
-                if (importedFboEmail != null)
-                {
-                    var newFbo = new SingleFboRequest() { Group = acukwikFbo.HandlerLongName, Icao = acukwikAirport.Icao, Iata = acukwikAirport.Iata, Fbo = acukwikFbo.HandlerLongName, AcukwikFboHandlerId = handlerId, AccountType = Core.Enums.AccountTypes.NonRevFBO, FuelDeskEmail = importedFboEmail.Email };
-                    fbo = await _groupFboService.CreateNewFbo(newFbo);
-
-                    User newUser = new User() { FboId = fbo.Oid, Role = Core.Enums.UserRoles.NonRev, Username = importedFboEmail.Email, FirstName = importedFboEmail.Email, GroupId = fbo.GroupId };
-                    _context.User.Add(newUser);
-                    await _context.SaveChangesAsync();
-                }
-            }
-
-            var user = await _context.User.Where(x => x.FboId == fbo.Oid && x.Role == Core.Enums.UserRoles.NonRev).FirstOrDefaultAsync();
-
-            //Return URL with authentication for 3 days
-            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user, 4320);
-            return Ok("https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(accessToken.AccessToken));
+            return Ok(authentication.FboEmails);
         }
 
         [HttpGet("sendengagementemails")]

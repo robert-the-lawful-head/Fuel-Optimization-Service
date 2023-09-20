@@ -9,33 +9,26 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import {
-    CsvExportModalComponent,
-    ICsvExportModalData,
-} from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
 import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
-import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvent from '../../../models/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
-import { basename } from 'path';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
     templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
-export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBase
+export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     implements OnInit, AfterViewInit, OnDestroy
 {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -66,6 +59,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
 
     dataLength = 0;
 
+    csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
+
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
@@ -78,7 +73,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
         super();
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
+            moment().add(-30, 'd').format('MM/DD/YYYY')
         );
         this.filterEndDate = new Date(
             moment().add(7, 'd').format('MM/DD/YYYY')
@@ -188,21 +183,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
         ];
 
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(
-                localStorage.getItem(this.tableLocalStorageKey));
-
-            if (this.columns.length === 9) {
-                this.columns = initialColumns;
-            }
-            else {
-                this.columns = JSON.parse(
-                    localStorage.getItem(this.tableLocalStorageKey)
-                );
-            }
-        } else {
-            this.columns = initialColumns;
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
     }
 
     fetchData(startDate: Date, endDate: Date) {
@@ -234,8 +215,11 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
     }
 
     refreshData() {
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
+
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+        this.fetchData(startDate, endDate).subscribe(
             (data: any) => {
                 this.dataSource.data = data;
                  this.dataSource.sortingDataAccessor = (item, property) => {
@@ -277,51 +261,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends VirtualScrollBas
      this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3}  });
     }
 
-    onExport() {
-        const dialogRef = this.exportDialog.open<
-            CsvExportModalComponent,
-            ICsvExportModalData,
-            ICsvExportModalData
-        >(CsvExportModalComponent, {
-            data: {
-                filterEndDate: this.filterEndDate,
-                filterStartDate: this.filterStartDate,
-                title: 'Export Customer Statistics',
-            },
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.exportCsv(result.filterStartDate, result.filterEndDate);
-        });
-    }
-
-    exportCsv(startDate: Date, endDate: Date) {
-        this.fetchData(startDate, endDate).subscribe((data: any) => {
-            const exportData = data.map((item) => {
-                const row = {
-                    Company: item.company,
-                    'Conversion Rate': item.conversionRate + '%',
-                    'Direct Orders': item.directOrders,
-                    'Number of Quotes': item.companyQuotesTotal,
-                };
-                row[`Total Orders at ${this.fbo}`] = item.totalOrders;
-                row[`Total Orders at ${this.icao}`] = item.airportOrders;
-                row[`${this.icao} Last Quoted`] = item.lastPullDate;
-                row[`Arrivals`] = item.airportVisits;
-                row[`Visits to ${this.fbo}`] = item.visitsToFbo;
-                row[`% of visits to ${this.fbo}`] = item.percentVisits + '%';
-                return row;
-            });
-            const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-            const wb: XLSX.WorkBook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Customer Statistics');
-
-            /* save to file */
-            XLSX.writeFile(wb, 'Customer Statistics.xlsx');
-        });
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "company")
+                return item[id];
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
 
     openSettings() {

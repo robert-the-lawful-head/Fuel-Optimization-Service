@@ -5,7 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class NullOrEmptyToDefault implements PipeTransform {
 
-  transform(value: any, args?: any): any {
+  transform(value: any, UnknowsAsDefault: boolean = true): any {
+    if (!UnknowsAsDefault) {
+      return (value)?value:'';
+    }
     return (value)?value:'Unknown';
   }
 

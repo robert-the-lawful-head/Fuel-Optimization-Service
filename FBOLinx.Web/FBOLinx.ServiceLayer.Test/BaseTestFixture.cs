@@ -3,13 +3,14 @@ using FBOLinx.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 
 namespace FBOLinx.ServiceLayer.Test
 {
     [TestFixture]
-    public class BaseTestFixture<T>
+    public class BaseTestFixture<TSubject>
     {
-        protected T subject;
+        protected TSubject subject;
 
         protected void Arrange(Action<ServiceCollection> arrange = null)
         {
@@ -20,7 +21,7 @@ namespace FBOLinx.ServiceLayer.Test
                 arrange(services);
             }
             var serviceProvider = services.BuildServiceProvider();
-            subject = serviceProvider.GetRequiredService<T>();
+            subject = serviceProvider.GetRequiredService<TSubject>();
         }
 
         private static IConfiguration GetConfiguration()

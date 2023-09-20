@@ -7,7 +7,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CdkStepperModule } from '@angular/cdk/stepper';
 import { CdkTableModule } from '@angular/cdk/table';
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -141,6 +141,7 @@ import { CustomersDialogNewCustomerComponent } from './customers/customers-dialo
 import { CustomersEditComponent } from './customers/customers-edit/customers-edit.component';
 import { CustomersGridComponent } from './customers/customers-grid/customers-grid.component';
 import { CustomersHomeComponent } from './customers/customers-home/customers-home.component';
+import { CustomersEditDialogComponent } from './customers/customers-edit-dialog/customers-edit-dialog.component';
 import { DashboardFboComponent } from './dashboards/dashboard-fbo/dashboard-fbo.component';
 import { DashboardFboUpdatedComponent } from './dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './dashboards/dashboard-home/dashboard-home.component';
@@ -213,15 +214,20 @@ import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-
 import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
 import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/missedorders-grid.component';
-import { GetTimePipe } from '../shared/pipes/dateTime/getTime.pipe';
-import { ToReadableDateTimePipe } from '../shared/pipes/dateTime/ToReadableDateTime.pipe';
-import { ToReadableTimePipe } from '../shared/pipes/time/ToReadableTime.pipe';
-import { BooleanToTextPipe } from '../shared/pipes/boolean/booleanToText.pipe';
 import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
 import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters/flight-watch-filters.component';
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
+import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
+import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
+import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
+import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
+import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
+import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
+import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 
 @NgModule({
     declarations: [
@@ -244,6 +250,7 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
         CustomersEditComponent,
         CustomersGridComponent,
         CustomersHomeComponent,
+        CustomersEditDialogComponent,
         DashboardFboComponent,
         DashboardFboUpdatedComponent,
         DashboardHomeComponent,
@@ -366,7 +373,16 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
         PriceCheckerDialogComponent,
         AircraftLegendComponent,
         FlightWatchFiltersComponent,
-        LobbyViewComponent
+        LobbyViewComponent,
+        AboutFbolinxComponent,
+        AgreementsAndDocumentsModalComponent,
+        GroupAnalyticsIntraNetworkVisitsReportComponent,
+        ServiceOrdersListComponent,
+        ServiceOrdersHomeComponent,
+        ServiceOrdersItemListComponent,
+        ServiceOrdersDialogNewComponent,
+        ServiceOrdersDialogOrderItemsComponent,
+        FeeAndTaxBreakdownDialogWrapperComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [
@@ -441,10 +457,8 @@ import { LobbyViewComponent } from './lobby-view/lobby-view.component';
         GroupService,
         ToolbarService,
         DetailRowService,
-        GetTimePipe,
-        ToReadableDateTimePipe,
-        ToReadableTimePipe,
-        BooleanToTextPipe
+        DatePipe,
+        CurrencyPipe,
     ],
 })
 export class PagesModule { }

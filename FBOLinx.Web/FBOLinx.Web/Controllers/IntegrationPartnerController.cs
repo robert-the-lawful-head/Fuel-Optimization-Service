@@ -8,6 +8,7 @@ using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.Requests.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class IntegrationPartnerController : ControllerBase
+    public class IntegrationPartnerController : FBOLinxControllerBase
     {
         private IIntegrationStatusService _IntegrationStatusService;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -28,7 +29,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private FbopricesService _fboPricesService;
 
-        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, FbopricesService fbopricesService)
+        public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, FbopricesService fbopricesService, ILoggingService logger) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;
@@ -70,6 +71,43 @@ namespace FBOLinx.Web.Controllers
                         await _fboPricesService.ExpirePricingForFbo(user.FboId);
                     }
 
+                    return Ok(new { message = "Success" });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Invalid user" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+
+        // POST: api/integrationpartner/update-tail-specific-all-inclusive
+        [HttpPost("update-tail-specific-all-inclusive")]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
+        public async Task<IActionResult> UpdateTailSpecificAllInclusive(UpdateTailSpecificAllInclusiveRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { message = "Invalid body request!" });
+            }
+
+            var token = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            try
+            {
+                var claimPrincipal = _jwtManager.GetPrincipal(token);
+                var claimedId = Convert.ToInt32(claimPrincipal.Claims.First((c => c.Type == ClaimTypes.NameIdentifier)).Value);
+
+                var user = await _context.User.FindAsync(claimedId);
+                var integrationPartner = await _apiKeyManager.GetIntegrationPartner();
+
+                if (user.FboId > 0 && integrationPartner.Oid > 0)
+                {
+                    
                     return Ok(new { message = "Success" });
                 }
                 else

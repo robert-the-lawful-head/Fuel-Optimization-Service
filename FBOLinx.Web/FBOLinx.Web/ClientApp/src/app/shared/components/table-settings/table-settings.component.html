@@ -44,6 +44,7 @@
     <div class="text-center col-12">
         <button
             (click)="onSave()"
+            [disabled]="isSaveButtonDisabled"
             class="mr-1"
             color="accent"
             mat-raised-button

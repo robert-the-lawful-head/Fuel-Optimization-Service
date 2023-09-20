@@ -1,11 +1,6 @@
-using FBOLinx.DB.Models;
 using FBOLinx.Job.Base;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Net.Mail;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FBOLinx.Job.EngagementEmails
@@ -25,7 +20,7 @@ namespace FBOLinx.Job.EngagementEmails
         {
             //login as a conductor user
             var responseUser = await _apiClient.PostAsync("users/authenticate", new LandingSiteLoginRequest { Username = "consolejobs@fuelerlinx.com", Password = "Filus123" });
-            var conductorUser = Newtonsoft.Json.JsonConvert.DeserializeObject<DB.Models.User>(responseUser);
+            var conductorUser = Newtonsoft.Json.JsonConvert.DeserializeObject<DB.Models.User>(responseUser.Content.ReadAsStringAsync().Result);
 
             //run job
             _apiClient.GetAsync("fbos/sendengagementemails", conductorUser.Token);

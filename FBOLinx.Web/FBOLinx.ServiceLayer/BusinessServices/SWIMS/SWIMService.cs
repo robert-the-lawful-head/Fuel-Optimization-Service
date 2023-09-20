@@ -34,6 +34,8 @@ using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
 using Mapster;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.Extensions.Customer;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 {
@@ -62,6 +64,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         private SWIMFlightLegDataErrorEntityService _SWIMFlightLegDataErrorEntityService;
         private readonly SWIMUnrecognizedFlightLegEntityService _SWIMUnrecognizedFlightLegEntityService;
         private readonly IAirportService _AirportService;
+        private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegDataService _SwimFlightLegDataService;
 
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
@@ -74,8 +78,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             ISWIMFlightLegService swimFlightLegService,
             SWIMUnrecognizedFlightLegEntityService swimUnrecognizedFlightLegEntityService,
             SWIMFlightLegDataErrorEntityService swimFlightLegDataErrorEntityService,
-            IAirportService airportService)
+            IAirportService airportService,
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegDataService swimFlightLegDataService)
         {
+            _SwimFlightLegDataService = swimFlightLegDataService;
             _SwimFlightLegService = swimFlightLegService;
             _AirportWatchFlightLegStatusService = airportWatchFlightLegStatusService;
             _FlightLegEntityService = flightLegEntityService;
@@ -95,6 +102,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             _SWIMFlightLegDataErrorEntityService = swimFlightLegDataErrorEntityService;
             _SWIMUnrecognizedFlightLegEntityService = swimUnrecognizedFlightLegEntityService;
             _AirportService = airportService;
+            _CustomerInfoByGroupService = customerInfoByGroupService;
         }
 
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
@@ -171,7 +179,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             List<SWIMFlightLeg> existingFlightLegs = new List<SWIMFlightLeg>();
             foreach (IEnumerable<string> gufiBatch in flightIdentifiers.Batch(1000))
             {
-                var existingFlightLegsBatch = (await _FlightLegEntityService.GetListBySpec(new SWIMFlightLegSpecification(gufiBatch.ToList()))).ToList();
+                var existingFlightLegsBatch = (await _FlightLegEntityService.GetSWIMFlightLegs(gufiBatch.ToList()));
                 existingFlightLegs.AddRange(existingFlightLegsBatch);
             }
             existingFlightLegs = existingFlightLegs.OrderByDescending(x => x.ATD).ToList();
@@ -317,8 +325,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Console.WriteLine($"foreach {stopwatch.ElapsedMilliseconds}");
             //stopwatch.Restart();
 
-            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), DateTime.UtcNow.AddHours(-3), true));
+            List<SWIMFlightLeg> existingPlaceholderRecordsToDelete = await _FlightLegEntityService.GetSWIMFlightLegs(DateTime.UtcNow.AddHours(-3), DateTime.UtcNow, null, null, flightLegsToInsert.Select(x => x.AircraftIdentification).ToList(), true);
 
             if (existingPlaceholderRecordsToDelete.Count > 0)
             {
@@ -331,7 +338,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegEntityService.BulkInsert(flightLegsToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
             
@@ -340,7 +348,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 await _FlightLegDataEntityService.BulkInsert(flightLegDataMessagesToInsert, new BulkConfig()
                 {
                     SetOutputIdentity = true,
-                    IncludeGraph = true
+                    IncludeGraph = true,
+                    WithHoldlock = false
                 });
             }
 
@@ -394,7 +403,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Bulk update and insert all legs that need it
             if (existingFlightLegsToUpdate.Count > 0)
             {
-                existingFlightLegsToUpdate.ForEach(x => x.LastUpdated = DateTime.UtcNow);
+                //#8684wjdxy - Do not mark the record as LastUpdated when it's just updating the status.  Save this for position updates only.
+                //existingFlightLegsToUpdate.ForEach(x => x.LastUpdated = DateTime.UtcNow);
                 await _SwimFlightLegService.BulkUpdate(existingFlightLegsToUpdate);
             }
 
@@ -482,14 +492,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 x.SWIMFlightLegId > 0 && x.GetSwimFlightLeg() != null).ToList();
 
             Stopwatch stopwatch = new Stopwatch();
-            List<SWIMFlightLegData> swimFlightLegMessages = await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
+            var swimFlightLegIds = flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0)
+                .Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList();
+            List<SWIMFlightLegDataDTO> swimFlightLegMessages =
+                await _SwimFlightLegDataService.GetSwimFlightLegDataBySwimFlightLegIds(swimFlightLegIds, DateTime.UtcNow.AddMinutes(-2));
+                //await _FlightLegDataEntityService.GetListBySpec(new SWIMFlightLegDataSpecification(flightWatchModelsToProcess.Where(x => x.SWIMFlightLegId > 0).Select(x => x.SWIMFlightLegId.GetValueOrDefault()).ToList(), DateTime.UtcNow.AddMinutes(-2)));
             stopwatch.Stop();
             stopwatch.Restart();
             Parallel.ForEach(flightWatchModelsToProcess, flightWatchModel =>
             {
                 var swimFlightLeg = flightWatchModel.GetSwimFlightLeg();
-                SWIMFlightLegData latestSwimMessage =
-                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
+                SWIMFlightLegDataDTO latestSwimMessage =
+                    swimFlightLegMessages.Where(x => x.SWIMFlightLegId == swimFlightLeg.Oid && x.Latitude != null && x.Longitude != null && x.MessageTimestamp >= DateTime.UtcNow.AddMinutes(-1)).OrderByDescending(x => x.MessageTimestamp).FirstOrDefault();
 
                 if (latestSwimMessage != null)
                 {
@@ -554,7 +568,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         {
             List<string> aircraftIdentifications = swimFlightLegs.Where(x => !string.IsNullOrEmpty(x.AircraftIdentification)).Select(x => x.AircraftIdentification).Distinct().ToList();
             IEnumerable<Tuple<int, string, string>> pricingTemplates = await _CustomerAircraftEntityService.GetPricingTemplates(aircraftIdentifications);
-            var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId, aircraftIdentifications));
+            //var customerAircrafts = await _CustomerAircraftEntityService.GetListBySpec(new CustomerAircraftsByGroupSpecification(groupId, aircraftIdentifications));
+            var customerInfoByGroup = await _CustomerInfoByGroupService.GetCustomers(groupId);
+            var customerAircrafts = customerInfoByGroup.SelectMany(ca => ca.Customer.CustomerAircrafts).ToList();
 
             List<AirportWatchHistoricalData> antennaHistoricalData = null;
             List<AcukwikAirport> airports = null;
@@ -587,9 +603,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 flightLegDto.ICAOAircraftCode = swimFlightLeg.ICAOAircraftCode;
                 flightLegDto.FAARegisteredOwner = swimFlightLeg.FAARegisteredOwner;
 
-                flightLegDto.IsInNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsInNetwork();
-                flightLegDto.IsOutOfNetwork = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsOutOfNetwork();
-                flightLegDto.IsFuelerLinxClient = GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).IsFuelerLinxClient();
+                flightLegDto.IsInNetwork = customerInfoByGroup.Where(c => c.Oid == GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).CustomerId).FirstOrDefault().Customer.IsInNetwork();
+                flightLegDto.IsOutOfNetwork = customerInfoByGroup.Where(c => c.Oid == GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).CustomerId).FirstOrDefault().Customer.IsOutOfNetwork();
+                flightLegDto.IsFuelerLinxClient = customerInfoByGroup.Where(c => c.Oid == GetSwimLegsCustomerAircraft(customerAircrafts, swimFlightLeg.AircraftIdentification).CustomerId).FirstOrDefault().Customer.IsFuelerLinxClient();
 
                 if (!swimFlightLeg.IsPlaceholder)
                 {
@@ -636,7 +652,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         // {
         //     return fo.Where(x => x.CustomerAircraft.TailNumber == tailNumber).FirstOrDefault();
         // }
-        private CustomerAircrafts? GetSwimLegsCustomerAircraft(List<CustomerAircrafts> ca, string tailNumber)
+        private CustomerAircraftsDto? GetSwimLegsCustomerAircraft(List<CustomerAircraftsDto> ca, string tailNumber)
         {
             return ca.Where(x => x.TailNumber == tailNumber).FirstOrDefault();
         }

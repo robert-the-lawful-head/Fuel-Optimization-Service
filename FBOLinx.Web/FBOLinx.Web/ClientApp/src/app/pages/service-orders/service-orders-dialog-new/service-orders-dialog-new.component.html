@@ -1,0 +1,136 @@
+<h1 mat-dialog-title>New Service Order</h1>
+<div mat-dialog-content>
+
+    <div *ngIf="!customerInfoByGroupDataSource">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <div *ngIf="customerInfoByGroupDataSource">
+        <app-autocomplete-search label="Tail Number"
+                                 [required]="true"
+                                 [optionValue]="['tailNumber']"
+                                 [options]="customerAircraftsDataSource"
+                                 [displayFn]="displayTailNumber"
+                                 [filter]="filters.tailNumberFilter"
+                                 (filterChanged)="onCustomerAircraftFilterChanged($event)"
+                                 (selectionChanged)="onCustomerAircraftChanged($event)"></app-autocomplete-search>
+
+        <!--<mat-form-field *ngIf="customerInfoByGroupDataSource && customerInfoByGroupDataSource.length > 0">
+            <mat-select (selectionChange)="onCustomerInfoByGroupChanged()"
+                        [(ngModel)]="data.customerInfoByGroup"
+                        id="ddlCustomerInfoByGroup"
+                        name="ddlCustomerInfoByGroup"
+                        placeHolder="Customer">
+                <mat-option *ngFor="let customerInfoByGroup of customerInfoByGroupDataSource"
+                            [value]="customerInfoByGroup">{{ customerInfoByGroup.company }}</mat-option>
+            </mat-select>
+
+
+        </mat-form-field>-->
+
+    <app-autocomplete-search *ngIf="!data.customerAircraft || data.customerAircraft.oid == 0"
+                             [required]="true"
+                             label="Aircraft Make/Model"
+                             [optionValue]="['make', 'model']"
+                             [options]="aircraftTypes"
+                             [displayFn]="displayAircraft"
+                             (selectionChanged)="onAircraftTypeChanged($event)"></app-autocomplete-search>
+
+        <app-autocomplete-search label="Customer"
+                                 [required]="true"
+                                 [optionValue]="['company']"
+                                 [options]="customerInfoByGroupDataSource"
+                                 [displayFn]="displayCustomerName"
+                                 (filterChanged)="onCustomerFilterChanged($event)"
+                                 (selectionChanged)="onCustomerInfoByGroupChanged($event)"></app-autocomplete-search>
+
+        <!--<mat-form-field>
+            <mat-select [disabled]="!data.customerInfoByGroup"
+                        [required]="true"
+                        (selectionChange)="onCustomerAircraftChanged()"
+                        [(ngModel)]="data.customerAircraft"
+                        id="ddlCustomerAircraft"
+                        name="ddlCustomerAircraft"
+                        placeHolder="Tail Number">
+                <mat-option *ngFor="let customerAircraft of customerAircraftsDataSource"
+                            [value]="customerAircraft">{{ customerAircraft.tailNumber }}</mat-option>
+            </mat-select>
+        </mat-form-field>-->
+
+        <div class="row">
+            <div class="col-12">
+                <mat-form-field>
+                    <mat-select (selectionChange)="serviceOnChanged()"
+                                [(ngModel)]="data.serviceOn"
+                                placeholder="Service On">
+                        <mat-option *ngFor="let appliedDate of appliedDateTypes"
+                                    [value]="appliedDate.value">
+                            {{ appliedDate.text }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 col-md-6">
+                <mat-form-field>
+                    <input (dateChange)="onArrivalDateTimeLocalChanged()"
+                           [required]="(data.serviceOn == 0)"
+                           (focus)="arrivalDateTimeLocal.open()"
+                           [(ngModel)]="data.arrivalDateTimeLocal"
+                           [ngxMatDatetimePicker]="arrivalDateTimeLocal"
+                           matInput
+                           name="arrivalDateTimeLocal"
+                           placeholder="Arrival Date (Local)"/>
+                    <mat-datepicker-toggle [for]="arrivalDateTimeLocal"
+                                           matSuffix></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #arrivalDateTimeLocal
+                                             disabled="false"></ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6">
+                <mat-form-field>
+                    <input (dateChange)="onDepartureDateTimeLocalChanged()"
+                           [required]="(data.serviceOn == 1)"
+                           (focus)="departureDateTimeLocal.open()"
+                           [(ngModel)]="data.departureDateTimeLocal"
+                           [ngxMatDatetimePicker]="departureDateTimeLocal"
+                           matInput
+                           name="departureDateTimeLocal"
+                           placeholder="Departure Date (Local)"/>
+                    <mat-datepicker-toggle [for]="departureDateTimeLocal"
+                                           matSuffix></mat-datepicker-toggle>
+                    <ngx-mat-datetime-picker #departureDateTimeLocal
+                                             disabled="false"></ngx-mat-datetime-picker>
+                </mat-form-field>
+            </div>
+        </div>
+
+
+
+    </div>
+    
+</div>
+<div *ngIf="errorMessage != ''" class="mt-2 text-center" style="color: red">
+    <p>{{errorMessage}}</p>
+</div>
+<div *ngIf="warningMessage != ''" class="mt-2 text-center" style="color: orange">
+    <p>{{warningMessage}}</p>
+</div>
+<div class="mt-2 text-center">
+    <button (click)="onSaveChanges()"
+            class="mr-1"
+            color="accent"
+            [disabled]="(!data.arrivalDateTimeLocal && data.serviceOn == 0) || (!data.departureDateTimeLocal && data.serviceOn == 1) || !data.customerAircraft || data.customerAircraft.aircraftId == 0 || !data.customerInfoByGroup || data.customerInfoByGroup.oid == 0"
+            mat-flat-button>
+        Start Service Order
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+</div>
+
+<ngx-ui-loader [loaderId]="dialogLoader"
+               bgsPosition="center-center"
+               fgsColor="#252d47"
+               fgsType="fading-circle"
+               overlayColor="rgba(0, 0, 0, 0.06)"
+               pbColor="#252d47"></ngx-ui-loader>

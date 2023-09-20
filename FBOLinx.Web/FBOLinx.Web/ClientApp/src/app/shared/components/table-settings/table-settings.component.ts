@@ -21,12 +21,14 @@ export type ColumnType = {
 })
 export class TableSettingsComponent {
     columns: ColumnType[] = [];
-
+    isSaveButtonDisabled = false;
+    hasSelectAllColumn = false;
     constructor(
         private dialogRef: MatDialogRef<TableSettingsComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ColumnType[]
     ) {
-        this.columns = [...data];
+        this.columns = [...data].filter((c) => c.id != 'selectAll')
+        this.hasSelectAllColumn = this.columns.length == data.length ? false : true;
     }
 
     drop(event: CdkDragDrop<string[]>) {
@@ -74,13 +76,23 @@ export class TableSettingsComponent {
                   }
                 : c
         );
+        this.isSaveButtonDisabled = !this.hasAtLeastOneColumnVisible();
     }
 
     onSave() {
+        if(this.hasSelectAllColumn){
+            this.columns = [{
+                id: 'selectAll',
+                name: 'Select All',
+            },...this.columns]
+        }
         this.dialogRef.close(this.columns);
     }
 
     onCancel() {
         this.dialogRef.close();
+    }
+    hasAtLeastOneColumnVisible() {
+        return this.columns.filter((c) => !c.hidden).length > 0;
     }
 }

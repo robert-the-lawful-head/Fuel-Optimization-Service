@@ -37,13 +37,14 @@ using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.Requests;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbopricesController : ControllerBase
+    public class FbopricesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -60,13 +61,14 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerService _customerService;
         private readonly ICompanyPricingLogService _companyPricingLogService;
         private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private IAPIKeyManager _apiKeyManager;
 
         public FbopricesController(
             FboLinxContext context,
             IHttpContextAccessor httpContextAccessor,
             JwtManager jwtManager,
             RampFeesService rampFeesService,
-            AircraftService aircraftService,
+            IAircraftService aircraftService,
             IPriceFetchingService priceFetchingService,
             IFboPricesService fbopricesService,
             DateTimeService dateTimeService,
@@ -78,7 +80,8 @@ namespace FBOLinx.Web.Controllers
             IPricingTemplateService pricingTemplateService,
             ICompanyPricingLogService companyPricingLogService,
             ServiceLayer.BusinessServices.User.IUserService userService,
-            ICustomerService customerService)
+            ICustomerService customerService, ILoggingService logger, IAPIKeyManager apiKeyManager) : base(logger)
+            
         {
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _PriceFetchingService = priceFetchingService;
@@ -95,6 +98,7 @@ namespace FBOLinx.Web.Controllers
             _companyPricingLogService = companyPricingLogService;
             _userService = userService;
             _customerService = customerService;
+            _apiKeyManager = apiKeyManager;
         }
 
         // GET: api/Fboprices/5
@@ -317,7 +321,9 @@ namespace FBOLinx.Web.Controllers
 
                 if (user.FboId > 0)
                 {
-                    var message = await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, request, claimedId);
+                    var apiKeyRecord = await _apiKeyManager.GetIntegrationPartner();
+
+                    var message = await _fbopricesService.UpdateIntegrationPricing(integrationUpdatePricingLog, request, claimedId, apiKeyRecord.Oid);
 
                     return Ok(new { message = message });
                     }
@@ -378,7 +384,9 @@ namespace FBOLinx.Web.Controllers
 
                 if (user.FboId > 0)
                 {
-                    await _fbopricesService.UpdateIntegrationStagePricing(integrationUpdatePricingLog, request, claimedId);
+                    var apiKeyRecord = await _apiKeyManager.GetIntegrationPartner();
+
+                    await _fbopricesService.UpdateIntegrationStagePricing(integrationUpdatePricingLog, request, claimedId, apiKeyRecord.Oid);
                     return Ok(new { message = "Success" });
                 }
                 else
@@ -583,8 +591,8 @@ namespace FBOLinx.Web.Controllers
                     return Ok(null);
 
                 
-                List<CustomerWithPricing> validPricing =
-                    await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications) request.FlightTypeClassification, Core.Enums.ApplicableTaxFlights.All, null, 0);
+                List<CustomerWithPricing> validPricing = await _PriceFetchingService.GetCustomerPricingByLocationAsync(request.ICAO, customer.Oid, (FBOLinx.Core.Enums.FlightTypeClassifications)request.FlightTypeClassification.GetValueOrDefault(), Core.Enums.ApplicableTaxFlights.All, null, 0);
+                    
                 if (validPricing == null)
                     return Ok(null);
 

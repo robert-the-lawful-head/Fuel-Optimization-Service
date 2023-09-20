@@ -6,6 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
@@ -14,33 +15,54 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
-    public interface ICustomerService : IBaseDTOService<CustomerDTO, DB.Models.Customers>
+    public interface ICustomerService : IBaseDTOService<CustomersDto, DB.Models.Customers>
     {
+        Task<CustomersDto> AddNewCustomer(CustomersDto customer);
         Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId);
         Task<List<NeedsAttentionCustomersCountModel>> GetNeedsAttentionCustomersCountByGroupFbo();
-        Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId);
-        bool CompareCustomers(CustomerInfoByGroup oldCustomer, CustomerInfoByGroup newCustomer);
+        Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId);
+        bool CompareCustomers(CustomerInfoByGroupDto oldCustomer, CustomerInfoByGroupDto newCustomer);
         Task<List<CustomersViewedByFbo>> GetCustomersViewedByFbo(int fboId);
         Task<List<CustomerCompanyTypes>> GetCustomerCompanyTypes(int groupId, int fboId);
+        Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId);
     }
 
-        public class CustomerService : BaseDTOService<CustomerDTO, DB.Models.Customers, FboLinxContext>, ICustomerService
+        public class CustomerService : BaseDTOService<CustomersDto, DB.Models.Customers, FboLinxContext>, ICustomerService
     {
         private FboLinxContext _context;
-        private ICustomersEntityService _customerEntityService;
 
         public CustomerService(FboLinxContext context, ICustomersEntityService customerEntityService) : base(customerEntityService)
         {
-            _customerEntityService = customerEntityService;
             _context = context;
         }
 
         #region Public Methods
 
+        public async Task<CustomersDto> AddNewCustomer(CustomersDto customer)
+        {
+            CustomersDto record = null;
+            if (customer.FuelerlinxId.GetValueOrDefault() != 0)
+                record =
+                    await GetSingleBySpec(
+                        new CustomerByFuelerLinxIdSpecification(customer.FuelerlinxId.GetValueOrDefault()));
+            if (record == null || record.Oid == 0)
+                record = await GetSingleBySpec(new CustomerByCompanyName(customer.Company));
+            if (record != null && record.Oid != 0)
+            {
+                record.Company = customer.Company;
+                await UpdateAsync(record);
+                return record;
+            }
+            else
+            {
+                return await AddAsync(customer);
+            }
+        }
+
         public async Task<List<CustomerNeedsAttentionModel>> GetCustomersNeedingAttentionByGroupFbo(int groupId, int fboId)
         {
             var query = await (from f in _context.Fbos
-                join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId ?? 0, Active = true} equals new
+                join cg in _context.CustomerInfoByGroup on new {GroupId = f.GroupId, Active = true} equals new
                         {cg.GroupId, Active = cg.Active ?? false}
                     into leftJoinCg
                 from cg in leftJoinCg.DefaultIfEmpty()
@@ -64,7 +86,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                 where cg.GroupId == groupId && f.Oid == fboId && c.Suspended != true
                 select new
                 {
-                    GroupId = f.GroupId ?? 0,
+                    GroupId = f.GroupId,
                     FboId = f.Oid,
                     CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
                     Company = cg == null ? null : cg.Company,
@@ -99,7 +121,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             var result = await (
                     from f in _context.Fbos
-                    join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId ?? 0, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
+                    join cg in _context.CustomerInfoByGroup on new { GroupId = f.GroupId, Active = true } equals new { cg.GroupId, Active = cg.Active ?? false }
                     into leftJoinCg
                     from cg in leftJoinCg.DefaultIfEmpty()
                     join c in _context.Customers on cg.CustomerId equals c.Oid
@@ -120,7 +142,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
                     where c.Suspended != true
                     select new
                     {
-                        GroupId = f.GroupId ?? 0,
+                        GroupId = f.GroupId,
                         FboId = f.Oid,
                         CustomerInfoByGroupID = cg == null ? 0 : cg.Oid,
                         PricingTemplateId = pt == null ? 0 : pt.Oid,
@@ -153,7 +175,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             return result;
         }
 
-        public bool CompareCustomers (CustomerInfoByGroup oldCustomer , CustomerInfoByGroup newCustomer)
+        public bool CompareCustomers (CustomerInfoByGroupDto oldCustomer , CustomerInfoByGroupDto newCustomer)
         {
             return
             oldCustomer.Active == newCustomer.Active &&
@@ -172,7 +194,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
             oldCustomer.Website == newCustomer.Website;
         }
 
-        public async Task<CustomerDTO> GetCustomerByFuelerLinxId(int fuelerLinxId)
+        public async Task<CustomersDto> GetCustomerByFuelerLinxId(int fuelerLinxId)
         {
             var result =
                 await GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerLinxId));
@@ -189,6 +211,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
         {
             var result = await _context.CustomerCompanyTypes
                     .Where(x => x.GroupId == groupId && x.Fboid == fboId).ToListAsync();
+            return result;
+        }
+
+        public async Task<List<CustomCustomerTypes>> GetCustomCustomerTypes(int fboId)
+        {
+            var result = await _context.CustomCustomerTypes
+                    .Where(x => x.Fboid == fboId).ToListAsync();
             return result;
         }
         #endregion

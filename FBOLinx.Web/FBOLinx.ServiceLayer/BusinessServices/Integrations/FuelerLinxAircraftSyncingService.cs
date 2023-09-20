@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EFCore.BulkExtensions;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.Customers;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
@@ -31,7 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
         private ICustomersEntityService _customerEntityService;
         private IGroupService _groupService;
         private List<GroupDTO> _existingGroupRecords;
-        private CustomerDTO _customerRecord;
+        private CustomersDto _customerRecord;
         private CustomerAircraftEntityService _customerAircraftEntityService;
         private string _tailNumber;
         private ICustomerService _customerService;
@@ -63,9 +66,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 return;
 
             //Find all aircraft currently covering the FuelerLinx company fleet
-            var coveredAircraft = await _customerAircraftEntityService.GetListBySpec(
-                new CustomerAircraftByGroupAndTailSpecification(_existingGroupRecords.Select(x => x.Oid).ToList(),
-                    new List<string>() { _tailNumber }, _customerRecord.Oid));
+            var coveredAircraft = await _customerAircraftEntityService.GetCustomerAircraftsByGroupAndTail
+                (_existingGroupRecords.Select(x => x.Oid).ToList(),
+                    new List<string>() { _tailNumber }, _customerRecord.Oid);
 
             if (_fuelerlinxAircraft == null)
             {
@@ -81,7 +84,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                           TailNumber = c.TailNumber,
                                           Size = c.Size
                                       }).ToList();
-                    await _customerAircraftEntityService.BulkUpdate(coveredAircraft);
+                    await _customerAircraftEntityService.BulkUpdate(coveredAircraft, new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
                 }
 
                 return;
@@ -92,11 +101,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                 //Find aircrafts that don't have any customer associations to add in
                 List<int> groupIds = _existingGroupRecords.Select(x => x.Oid).ToList();
                 var nonCustomerAircraftList =
-                   await _customerAircraftEntityService.GetListBySpec(
-                       new CustomerAircraftByGroupAndTailSpecification(groupIds, new List<string>() { _tailNumber }, 0));
+                   await _customerAircraftEntityService.GetCustomerAircraftsByGroupAndTail(groupIds, new List<string>() { _tailNumber }, 0);
 
                 var newAircraftToAdd = (from g in groupIds
-                                        join ca in nonCustomerAircraftList on g equals ca.GroupId.GetValueOrDefault()
+                                        join ca in nonCustomerAircraftList on g equals ca.GroupId
                                         select new CustomerAircrafts()
                                         {
                                             AddedFrom = (_customerRecord.FuelerlinxId > 0 ? 1 : 0),
@@ -109,7 +117,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
                                         }).ToList();
 
                 if (newAircraftToAdd?.Count > 0)
-                    await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList());
+                    await _customerAircraftEntityService.BulkUpdate(newAircraftToAdd.GroupBy(x => x.Oid).Select(x => x.First()).ToList(), new BulkConfig()
+                    {
+                        BatchSize = 500,
+                        SetOutputIdentity = false,
+                        BulkCopyTimeout = 0,
+                        WithHoldlock = false
+                    });
 
                 coveredAircraft = newAircraftToAdd;
             }
@@ -127,18 +141,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Integrations
 
             //Find the aircraft/groups missing records within FBOLinx
             var missingCoverage = (from f in fullCoverage
-                join c in coveredAircraft on new { GroupId = f.GroupId.GetValueOrDefault(), f.TailNumber, CustomerId = f.CustomerId } equals new
-                    { GroupId = c.GroupId.GetValueOrDefault(), TailNumber = c.TailNumber, CustomerId = c.CustomerId }
+                join c in coveredAircraft on new { GroupId = f.GroupId, f.TailNumber, CustomerId = f.CustomerId } equals new
+                    { GroupId = c.GroupId, TailNumber = c.TailNumber, CustomerId = c.CustomerId }
                 into leftJoinCoveredAircraft from c in leftJoinCoveredAircraft.DefaultIfEmpty()
 
                 where (c?.Oid).GetValueOrDefault() == 0
                 select f).ToList();
 
-            coveredAircraft.ForEach(x => x.AircraftId = _fuelerlinxAircraft.AircraftId.GetValueOrDefault());
-            coveredAircraft.AddRange(missingCoverage);
-
-            //Add them to the CustomerAircrafts table and update covered aircraft with the make/model
-            await _customerAircraftEntityService.BulkInsert(coveredAircraft);
+            //Add them to the CustomerAircrafts table 
+            await _customerAircraftEntityService.BulkInsert(missingCoverage);
         }
 
         private async Task PrepareDataForSync()

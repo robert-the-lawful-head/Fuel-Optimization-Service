@@ -25,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
     public interface IMissedQuoteLogService : IBaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog>
     {
         Task<List<MissedQuotesLogViewModel>> GetMissedQuotesList(int fboId);
-        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO customer);
+        Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomersDto customer);
     }
 
     public class MissedQuoteLogService : BaseDTOService<MissedQuoteLogDTO, DB.Models.MissedQuoteLog, FboLinxContext>, IMissedQuoteLogService
@@ -55,7 +55,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             var recentMissedQuotes = await GetRecentMissedQuotes(fboId, true);
 
             var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
-            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId.GetValueOrDefault(), fboId);
+            var customersList = await _customerInfoByGroupService.GetCustomersListByGroupAndFbo(fbo.GroupId, fboId);
 
             var recentMissedQuotesGroupedList = recentMissedQuotes.GroupBy(r => r.CustomerId).Select(g => new
             {
@@ -80,10 +80,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                 }
             }
 
-            return missedQuotesLogList;
+            return missedQuotesLogList.OrderBy(m => m.CustomerName).ToList();
         }
 
-        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomerDTO  customer)
+        public async Task LogMissedQuote(string icaos, List<FuelPriceResponse> result, CustomersDto  customer)
         {
             foreach (var icao in icaos.Split(',').Select(x => x.Trim()))
             {
@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                     if (!result.Any(r => r.Icao == icao && r.Fbo == fbo.Fbo))
                     {
                         List<MissedQuoteLogDTO> missedQuotesToLog = new List<MissedQuoteLogDTO>();
-                        var customerGroup = await _CustomerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId.Value));
+                        var customerGroup = await _CustomerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId));
 
                         if (customerGroup != null && customerGroup.Oid > 0)
                         {
@@ -157,6 +157,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
         {
             var daysBefore = DateTime.UtcNow.Add(new TimeSpan(-3, 0, 0, 0));
             var recentMissedQuotes = await GetListbySpec(new MissedQuoteLogSpecification(fboId, daysBefore));
+            recentMissedQuotes = recentMissedQuotes.OrderByDescending(r => r.CreatedDate).ToList();
             var localTimeZone = await _FboService.GetAirportTimeZoneByFboId(fboId);
 
             foreach (MissedQuoteLogDTO missedQuoteLog in recentMissedQuotes)

@@ -21,6 +21,8 @@ namespace FBOLinx.DB.Models
         public bool? EnableJetA { get; set; }
         [Column("EnableSaf")]
         public bool? EnableSaf { get; set; }
+        [Column("OrderNotificationsEnabled")]
+        public bool? OrderNotificationsEnabled { get; set; }
         [Key]
         [Column("OID")]
         public int Oid { get; set; }

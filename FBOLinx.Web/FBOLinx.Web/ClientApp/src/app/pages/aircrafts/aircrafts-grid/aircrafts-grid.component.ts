@@ -12,7 +12,9 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
+import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
+import { NullOrEmptyToDefault } from 'src/app/shared/pipes/null/NullOrEmptyToDefault.pipe';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
@@ -24,8 +26,9 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
     selector: 'app-aircrafts-grid',
     styleUrls: ['./aircrafts-grid.component.scss'],
     templateUrl: './aircrafts-grid.component.html',
+    providers: [NullOrEmptyToDefault]
 })
-export class AircraftsGridComponent extends VirtualScrollBase implements OnInit {
+export class AircraftsGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
@@ -35,17 +38,21 @@ export class AircraftsGridComponent extends VirtualScrollBase implements OnInit 
 
     // Public Members
     public aircraftsDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [
-        'tailNumber',
-        'aircraftType',
-        'aircraftSize',
-        'company',
-        'aircraftPricingTemplate',
+    public columns: ColumnType[] = [
+        { id: 'tailNumber', name: 'Tail Number'},
+        { id: 'aircraftType', name: 'Aircraft Type'},
+        { id: 'aircraftSize',name: 'Aircraft Size'},
+        { id: 'company', name: 'Company'},
+        { id: 'aircraftPricingTemplate', name: 'Aircraft Pricing Template'},
     ];
+    displayedColumns = this.columns.map(function(item) {
+        return item.id;
+      });
     public resultsLength = 0;
     public aircraftSizes: Array<any>;
     public aircraftTypes: Array<any>;
     public isLoadingAircraftTypes = false;
+    customersCsvOptions: csvFileOptions = { fileName: 'Aircraft', sheetName: 'Aircraft' };
 
     constructor(
         public newCustomerAircraftDialog: MatDialog,
@@ -53,7 +60,8 @@ export class AircraftsGridComponent extends VirtualScrollBase implements OnInit 
         private aircraftsService: AircraftsService,
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private nullOrEmptyToDefault: NullOrEmptyToDefault,
     ) {
         super();
         this.isLoadingAircraftTypes = true;
@@ -135,7 +143,7 @@ export class AircraftsGridComponent extends VirtualScrollBase implements OnInit 
                     data: {
                         disableDelete:
                             customerAircraft.isFuelerlinxNetwork &&
-                            customerAircraft.addedFrom,
+                            customerAircraft.addedFrom === 1,
                         oid: customerAircraft.oid,
                     },
                     width: '450px',
@@ -242,5 +250,19 @@ export class AircraftsGridComponent extends VirtualScrollBase implements OnInit 
             .subscribe((data: any) => {
                 customerAircraft.pricingTemplateId = event.value;
             });
+    }
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "aircraftType")
+                return this.getAircrafttypeDisplayString(item);
+            else if(id == "aircraftSize")
+                return item['aircraftSizeDescription'];
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
+    }
+    getAircrafttypeDisplayString(aircraft: any): string {
+        return this.nullOrEmptyToDefault.transform(aircraft.make, false) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,false);
     }
 }

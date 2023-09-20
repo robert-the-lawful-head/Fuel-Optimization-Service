@@ -31,6 +31,7 @@ import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -113,6 +114,9 @@ export class FlightWatchMapComponent
         super();
         this.fboId = this.sharedService.currentUser.fboId;
         this.groupId = this.sharedService.currentUser.groupId;
+        this.icao = (this.icao == null) ?
+            this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao)
+            :  this.icao;
     }
     ngOnInit(): void {
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
@@ -121,6 +125,7 @@ export class FlightWatchMapComponent
                 this.styleLoaded = true;
             })
             .onLoad(async () => {
+                this.resizeMap();
                 await this.loadMapIcons();
                 this.loadFlightOnMap();
                 this.loadICAOIconOnMap(this.icao);
@@ -431,7 +436,7 @@ export class FlightWatchMapComponent
     getFbosAndLoad() {
         if (this.clusters) return;
         this.airportFboGeoFenceClustersService
-            .getClustersByIcao(this.sharedService.currentUser.icao)
+            .getClustersByIcao(this.icao)
             .subscribe((response: any) => {
                 this.clusters = [];
                 if (!response) return;
@@ -522,7 +527,7 @@ export class FlightWatchMapComponent
         );
     }
     goToCurrentIcao(){
-        this.goToAirport(this.sharedService.currentUser.icao);
+        this.goToAirport(this.icao);
     }
     toggleLayer(type: LayerType) {
         const layers = this.getLayersFromType(type);
@@ -540,7 +545,7 @@ export class FlightWatchMapComponent
             });
         }
     }
-    resizeMap(isopen: boolean){
+    resizeMap(isopen: boolean = false){
         var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0] as HTMLElement;
         var mapDiv = document.getElementById(this.mapContainer);
         var mapWrapper = document.getElementById('map-wrapper');

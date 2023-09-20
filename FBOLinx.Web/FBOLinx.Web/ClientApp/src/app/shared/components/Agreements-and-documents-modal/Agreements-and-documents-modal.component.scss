@@ -1,0 +1,12 @@
+.mat-dialog-content{
+    overflow: auto !important;
+    a{
+        color: #007bff !important;
+    }
+}
+.mat-dialog-actions {
+    flex-direction: row-reverse;
+    button {
+        margin-left: 10px;
+    }
+}

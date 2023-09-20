@@ -15,10 +15,5 @@ namespace FBOLinx.DB.Specifications.SWIM
         && ((!string.IsNullOrEmpty(x.ArrivalICAO) && x.ArrivalICAO == airportIcao)))
         {
         }
-
-        public SWIMFlightLegByArrivalAirportSpecification(List<string> airportIcaos, DateTime minArrivalOrDepartureDateUTC) : base(x => ((x.ATD > minArrivalOrDepartureDateUTC) || (x.ETA.HasValue && x.ETA.Value > minArrivalOrDepartureDateUTC))
-            && ((!string.IsNullOrEmpty(x.ArrivalICAO) && airportIcaos.Contains(x.ArrivalICAO))))
-        {
-        }
     }
 }

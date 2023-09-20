@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Aircraftwatch } from '../models/flight-watch';
+import { AirportWatchHistoricalParking } from '../models/airport-watch-historical-parking';
 
 import {
     AirportWatchHistoricalDataRequest,
@@ -92,9 +93,32 @@ export class AirportWatchService {
     }
 
     public getUnassignedAntennaBoxes(antennaName: string) {
-        var name = antennaName == null ? "none" : antennaName;
+        var name = antennaName == null || antennaName == "" ? "none" : antennaName;
         return this.http.get<any>(
             `${this.accessPointUrl}/unassignedAntennas/${name}`,
+            { headers: this.headers }
+        );
+    }
+
+    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/intra-network/visits-report/${groupId}?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`,
+            { headers: this.headers }
+        );
+    }
+
+    public createHistoricalParking(record: AirportWatchHistoricalParking) {
+        return this.http.post<AirportWatchHistoricalParking>(
+            `${this.accessPointUrl}/historical-parking`,
+            record,
+            { headers: this.headers }
+        );
+    }
+
+    public updateHistoricalParking(record: AirportWatchHistoricalParking) {
+        return this.http.put<any>(
+            `${this.accessPointUrl}/historical-parking`,
+            record,
             { headers: this.headers }
         );
     }

@@ -7,17 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerMarginsController : ControllerBase
+    public class CustomerMarginsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomerMarginsController(FboLinxContext context)
+        public CustomerMarginsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -245,7 +246,7 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerInfoByGroup.Update(customerInfo);
                 }
 
-                await _context.SaveChangesAsync(model.userId, model.id, groupInfo.GetValueOrDefault(), model.fboid);
+                await _context.SaveChangesAsync(model.userId, model.id, groupInfo, model.fboid);
             }
 
             

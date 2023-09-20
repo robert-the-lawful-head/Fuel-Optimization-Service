@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { SwimFilter } from 'src/app/models/filter';
 import { swimTableColumns, swimTableColumnsDisplayText } from 'src/app/models/swim';
+import { GridBase } from 'src/app/services/tables/GridBase';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
@@ -15,7 +16,7 @@ import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/f
     styleUrls: ['./flight-watch-settings.component.scss'],
     templateUrl: './flight-watch-settings.component.html',
 })
-export class FlightWatchSettingsComponent {
+export class FlightWatchSettingsComponent extends GridBase {
     @Input() arrivals: FlightWatchModelResponse[];
     @Input() departures: FlightWatchModelResponse[];
     @Input() icao: string;
@@ -41,13 +42,11 @@ export class FlightWatchSettingsComponent {
     tableLocalStorageKey: string;
 
     constructor(private tableSettingsDialog: MatDialog,private sharedService: SharedService) {
+        super();
+
     }
     ngOnInit(): void {
         this.initColumns();
-    }
-    ngOnChanges(changes: SimpleChanges) {
-        if(!changes.arrivals?.previousValue && !changes.departures?.previousValue)
-        this.updateDrawerButtonPosition.emit();
     }
 
     get aircraftTypes() {
@@ -119,37 +118,12 @@ export class FlightWatchSettingsComponent {
         });
     }
     initColumns() {
-        let savedColumns = this.getClientSavedColumns();
+        this.tableLocalStorageKey = (this.isLobbyView) ? `lobby-settings-${this.sharedService.currentUser.fboId}` : `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
 
-        if(savedColumns?.length > 0)
-            this.columns = savedColumns;
-        else
-            this.columns = this.getSettingsColumnDefinition();
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.getSettingsColumnDefinition());
 
         this.arrivalsColumns =  this.getFilteredDefaultColumns(true, this.isLobbyView,this.columns);
         this.departuresColumns =  this.getFilteredDefaultColumns(false, this.isLobbyView,this.columns);
-    }
-    private getClientSavedColumns(){
-        if(this.isLobbyView)
-            this.tableLocalStorageKey  = `lobby-settings-${this.sharedService.currentUser.fboId}`;
-        else
-            this.tableLocalStorageKey  = `flight-watch-settings-${this.sharedService.currentUser.fboId}`;
-
-        let localStorageColumns: string = localStorage.getItem(this.tableLocalStorageKey);
-        let hasColumnUpdates :boolean = false;
-        if (localStorageColumns) {
-            let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
-            for(let col in storedCols){
-                let colName = storedCols[col].id;
-                if(swimTableColumnsDisplayText[colName] != undefined) continue;
-                hasColumnUpdates = true;
-                break;
-            }
-            if(!hasColumnUpdates){
-                return storedCols;
-            }
-        }
-        return null;
     }
     private getSettingsColumnDefinition(): ColumnType[]{
         let cols = [];

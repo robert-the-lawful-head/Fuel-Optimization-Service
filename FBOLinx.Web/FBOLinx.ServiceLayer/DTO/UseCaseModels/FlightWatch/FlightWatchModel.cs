@@ -26,16 +26,22 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private AirportWatchLiveDataDto _AirportWatchLiveData;
         private FlightLegStatus? _Status;
         private bool _DoesSWIMFlightLegNeedUpdate = false;
+        private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-2);
+        private AircraftHexTailMappingDTO _HexTailMapping;
 
-        public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, SWIMFlightLegDTO swimFlightLeg)
+        public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, 
+            List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, 
+            SWIMFlightLegDTO swimFlightLeg,
+            AircraftHexTailMappingDTO hexTailMapping)
         {
+            _HexTailMapping = hexTailMapping;
             _SwimFlightLeg = swimFlightLeg;
             _AirportWatchHistoricalDataCollection = airportWatchHistoricalDataCollection;
             _AirportWatchLiveData = airportWatchLiveData;
         }
-        public string FAARegisteredOwner => _SwimFlightLeg?.FAARegisteredOwner;
+        public string FAARegisteredOwner => string.IsNullOrEmpty(_HexTailMapping?.FAARegisteredOwner) ? _SwimFlightLeg?.FAARegisteredOwner : _HexTailMapping.FAARegisteredOwner;
         public int? AirportWatchLiveDataId => _AirportWatchLiveData?.Oid;
-        public int? SWIMFlightLegId => _SwimFlightLeg?.Oid;
+        public long? SWIMFlightLegId => _SwimFlightLeg?.Oid;
 
         public int VisitsToMyFBO { get; set; }
         public int Arrivals { get; set; }
@@ -71,10 +77,16 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         
         public string FlightDepartment => string.IsNullOrEmpty(_SwimFlightLeg?.FlightDepartment) ? _CustomerAircraft?.Company : _SwimFlightLeg?.FlightDepartment;
 
-        public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ? _SwimFlightLeg?.FAAMake : _CustomerAircraft?.Make;
-        public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ? _SwimFlightLeg?.FAAModel : _CustomerAircraft?.Model;
-        public string FAAMake => _SwimFlightLeg?.FAAMake;
-        public string FAAModel => _SwimFlightLeg?.FAAModel;
+        //Use customer make first, then HexTailMapping, then SWIM
+        public string Make => string.IsNullOrEmpty(_CustomerAircraft?.Make) ?
+            FAAMake : 
+            _CustomerAircraft?.Make;
+        //Use customer model first, then HexTailMapping, then SWIM
+        public string Model => string.IsNullOrEmpty(_CustomerAircraft?.Model) ?
+            FAAModel : 
+            _CustomerAircraft?.Model;
+        public string FAAMake => string.IsNullOrEmpty(_HexTailMapping?.FaaAircraftMakeModelReference?.MFR) ? _SwimFlightLeg?.FAAMake : _HexTailMapping?.FaaAircraftMakeModelReference?.MFR;
+        public string FAAModel => string.IsNullOrEmpty(_HexTailMapping?.FaaAircraftMakeModelReference?.MODEL) ? _SwimFlightLeg?.FAAModel : _HexTailMapping?.FaaAircraftMakeModelReference?.MODEL;
         public double? FuelCapacityGal => _CustomerAircraft?.FuelCapacityGal;
 
         public string Origin
@@ -108,8 +120,31 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).HasValue && _SwimFlightLeg?.ETA.Value >= DateTime.UtcNow) ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
-        public double? Latitude => (_AirportWatchLiveData?.Latitude).HasValue ? _AirportWatchLiveData?.Latitude : _SwimFlightLeg?.Latitude;
-        public double? Longitude => (_AirportWatchLiveData?.Longitude).HasValue ? _AirportWatchLiveData?.Longitude : _SwimFlightLeg?.Longitude;
+        public double? Latitude
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Latitude).HasValue)
+                    return _AirportWatchLiveData?.Latitude;
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Latitude).HasValue)
+                    return _SwimFlightLeg?.Latitude;
+                return null;
+            }
+        }
+
+        public double? Longitude
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                    return _AirportWatchLiveData?.Longitude;
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Longitude).HasValue)
+                    return _SwimFlightLeg?.Longitude;
+                return null;
+            }
+        }
 
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround

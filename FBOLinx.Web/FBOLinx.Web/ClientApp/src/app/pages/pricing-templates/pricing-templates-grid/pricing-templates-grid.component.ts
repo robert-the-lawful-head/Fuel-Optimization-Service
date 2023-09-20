@@ -11,7 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Store } from '@ngrx/store';
-import { VirtualScrollBase } from 'src/app/services/tables/VirtualScrollBase';
+import { GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -36,7 +36,7 @@ export interface DefaultTemplateUpdate {
     styleUrls: ['./pricing-templates-grid.component.scss'],
     templateUrl: './pricing-templates-grid.component.html',
 })
-export class PricingTemplatesGridComponent extends VirtualScrollBase implements OnInit {
+export class PricingTemplatesGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Output() editPricingTemplateClicked = new EventEmitter<any>();
     @Output() deletePricingTemplateClicked = new EventEmitter<any>();

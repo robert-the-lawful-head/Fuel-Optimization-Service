@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public class SWIMFlightLegData : FBOLinxBaseEntityModel<int>
+    public class SWIMFlightLegData : FBOLinxBaseEntityModel<long>
     {
         [Required]
         public DateTime ETA { get; set; }
@@ -17,7 +16,7 @@ namespace FBOLinx.DB.Models
         
         public string RawXmlMessage { get; set; }
 
-        public int SWIMFlightLegId { get; set; }
+        public long SWIMFlightLegId { get; set; }
         public virtual SWIMFlightLeg SWIMFlightLeg { get; set; }
 
         public virtual ICollection<SWIMFlightLegDataError> SWIMFlightLegDataErrors { get; set; }
