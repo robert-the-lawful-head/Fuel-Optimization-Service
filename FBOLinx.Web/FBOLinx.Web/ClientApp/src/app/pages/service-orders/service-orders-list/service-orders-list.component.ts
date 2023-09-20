@@ -170,6 +170,12 @@ export class ServiceOrdersListComponent implements OnInit {
     }
 
     private calculateCompletions(serviceOrder: ServiceOrder) {
+        if(serviceOrder.serviceOrderItems.length == 0)
+        {
+            serviceOrder.numberOfCompletedItems = 0;
+            serviceOrder.isCompleted = !serviceOrder.isCompleted;
+            return;
+        }
         serviceOrder.numberOfCompletedItems = serviceOrder.serviceOrderItems.filter(x => x.isCompleted).length;
         serviceOrder.isCompleted = serviceOrder.numberOfCompletedItems == serviceOrder.serviceOrderItems.length;
     }
@@ -177,12 +183,12 @@ export class ServiceOrdersListComponent implements OnInit {
     private arrangeServiceOrders() {
         var filter = this.globalFilter.toUpperCase();
         this.inCompleteServiceOrders = this.serviceOrdersData.filter(x =>
-            (x.serviceOrderItems == null || x.serviceOrderItems.length == 0 || x.serviceOrderItems.filter(item => item.isCompleted).length != x.serviceOrderItems.length)
+            (!x.isCompleted || x.serviceOrderItems == null || x.serviceOrderItems.filter(item => item.isCompleted).length != x.serviceOrderItems.length)
             && (filter == '' || x.customerAircraft?.tailNumber?.toUpperCase().indexOf(filter) > -1 || x.customerInfoByGroup?.company?.toUpperCase().indexOf(filter) > -1)
         );
 
         this.completeServiceOrders = this.serviceOrdersData.filter(x =>
-            (x.serviceOrderItems == null || x.serviceOrderItems.length > 0 && x.serviceOrderItems.filter(item => item.isCompleted).length == x.serviceOrderItems.length)
+            (x.isCompleted ||x.serviceOrderItems == null || x.serviceOrderItems.length > 0 && x.serviceOrderItems.filter(item => item.isCompleted).length == x.serviceOrderItems.length)
             && (filter == '' || x.customerAircraft?.tailNumber?.toUpperCase().indexOf(filter) > -1 || x.customerInfoByGroup?.company?.toUpperCase().indexOf(filter) > -1)
         );
 
