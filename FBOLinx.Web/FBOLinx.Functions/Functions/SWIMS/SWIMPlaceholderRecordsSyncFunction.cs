@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
@@ -10,11 +9,9 @@ namespace FBOLinx.Functions
 {
     public class SWIMPlaceholderRecordsSyncFunction
     {
-        private readonly ISWIMService _SWIMService;
         private readonly HttpClient _HttpClient;
-        public SWIMPlaceholderRecordsSyncFunction(ISWIMService swimService, IHttpClientFactory httpClientFactory)
+        public SWIMPlaceholderRecordsSyncFunction(IHttpClientFactory httpClientFactory)
         {
-            _SWIMService = swimService;
             _HttpClient = httpClientFactory.CreateClient("FBOLinx");
         }
         

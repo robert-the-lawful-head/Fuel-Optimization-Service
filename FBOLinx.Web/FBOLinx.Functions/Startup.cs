@@ -17,11 +17,11 @@ namespace FBOLinx.Functions
             CheckForLocalSettingUsage();
             if (_UseLocalSettings)
             {
-                ServiceConfiguration.ConfigureForLocalSettings(builder, GetSqlConnectionString("DegaDB"), GetSqlConnectionString("ParagonTestDB"));
+                ServiceConfiguration.ConfigureForLocalSettings(builder);
             } 
             else
             {
-                ServiceConfiguration.Configure(builder.Services, GetSqlConnectionString("DegaDB"), GetSqlConnectionString("ParagonTestDB"), GetApplicationSetting("WebApplicationUrl"), GetApplicationSetting("InternalAPIKey"));  
+                ServiceConfiguration.Configure(builder.Services, GetApplicationSetting("WebApplicationUrl"), GetApplicationSetting("InternalAPIKey"));  
             }
 
         }
