@@ -1,29 +1,24 @@
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using FBOLinx.ServiceLayer.BusinessServices.SWIM;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace FBOLinx.Functions
 {
     public class SWIMPlaceholderRecordsSyncFunction
     {
-        private readonly ISWIMService _SWIMService;
-
-        public SWIMPlaceholderRecordsSyncFunction(ISWIMService swimService)
+        private readonly HttpClient _HttpClient;
+        public SWIMPlaceholderRecordsSyncFunction(IHttpClientFactory httpClientFactory)
         {
-            _SWIMService = swimService;
+            _HttpClient = httpClientFactory.CreateClient("FBOLinx");
         }
         
         [FunctionName("SWIMRecentAndUpcomingFlightLegsSyncFunction")]
         public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = false)] TimerInfo timer, ILogger log)
         {
+
             log.LogInformation("C# HTTP trigger function processed a request.");
 
             Stopwatch stopwatch = new Stopwatch();
@@ -31,7 +26,9 @@ namespace FBOLinx.Functions
 
             try
             {
-                await _SWIMService.SyncRecentAndUpcomingFlightLegs();
+                var endpoint = "/api/swim/sync-flight-legs";
+                
+                _HttpClient.PostAsync(endpoint, null);
             }
             catch (Exception ex)
             {
