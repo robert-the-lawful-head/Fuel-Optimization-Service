@@ -82,21 +82,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
             IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
                 FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
+            //customer category types 3,4 are stored as  categoryMinVal 5 on DB so we need to remove them from the list to avoid duplicated items
+            sizes = sizes.Where(x => (short?)(AircraftSizes)x.Value != (short)AircraftSizes.WideBody);
             var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
             var allAircraft = await _aircraftService.GetAllAircrafts();
 
             List<RampFeesGridViewModel> result = (
                 from s in sizes
-                join r in rampFees on new
-                {
-                    size = (int?)((short?)((AircraftSizes)s.Value)),
-                    fboId = (int?)fboId
-                }
-                    equals new
-                    {
-                        size = r.CategoryMinValue,
-                        fboId = r.Fboid
-                    }
+                join r in rampFees
+                on ((short?)(AircraftSizes)s.Value) equals r.CategoryMinValue
                     into leftJoinRampFees
                 from r in leftJoinRampFees.DefaultIfEmpty()
                 select new RampFeesGridViewModel()
@@ -117,7 +111,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
 
                 }).ToList();
 
-            // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
+            //Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
             List<RampFeesGridViewModel> customRampFees = (from r in rampFees
                                                           join a in allAircraft on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                                                           from a in leftJoinAircrafts.DefaultIfEmpty()
