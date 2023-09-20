@@ -73,7 +73,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         super();
         this.icao = this.sharedService.currentUser.icao;
         this.filterStartDate = new Date(
-            moment().add(-12, 'M').format('MM/DD/YYYY')
+            moment().add(-30, 'd').format('MM/DD/YYYY')
         );
         this.filterEndDate = new Date(
             moment().add(7, 'd').format('MM/DD/YYYY')
@@ -215,8 +215,11 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     }
 
     refreshData() {
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
+
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate).subscribe(
+        this.fetchData(startDate, endDate).subscribe(
             (data: any) => {
                 this.dataSource.data = data;
                  this.dataSource.sortingDataAccessor = (item, property) => {

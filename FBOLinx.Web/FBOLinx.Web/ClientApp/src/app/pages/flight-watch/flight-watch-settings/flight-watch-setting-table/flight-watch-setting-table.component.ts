@@ -5,7 +5,7 @@ import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sor
 import { MatTableDataSource } from '@angular/material/table';
 
 import { SharedService } from 'src/app/layouts/shared-service';
-import { stautsDisplayText, stautsIcons, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
+import { stautsIcons, stautsTextColor, Swim, swimTableColumns, swimTableColumnsDisplayText, tailNumberTextColor } from 'src/app/models/swim';
 import {
     ColumnType,
 } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -24,7 +24,8 @@ import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
             state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
             state('expanded', style({ height: '*' }))
           ])
-    ]
+    ],
+    providers: [GetTimePipe,ToReadableTimePipe,BooleanToTextPipe]
 })
 export class FlightWatchSettingTableComponent implements OnInit {
     @Input() data: Swim[];
@@ -110,8 +111,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return data.map((row) => {
             row.statusDisplayString = FlightLegStatus[row.status];
             row.ete = !row.ete ? '' : this.toReadableTime.transform(row.ete);
-            row.etaLocal = this.getTime.transform(this.getDateObject(row.etaLocal));
-            row.atdLocal = this.getTime.transform(this.getDateObject(row.atdLocal));
+            row.etaLocal = this.getTime.transform(row.etaLocal);
+            row.atdLocal = this.getTime.transform(row.atdLocal);
             row.isAircraftOnGround = this.booleanToText.transform(row.isAircraftOnGround);
             return row;
         });
@@ -167,10 +168,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getSwimDataTypeString(){
         return (this.isArrival)? 'Arrivals': 'Departures';
     }
-    getDateObject(dateString: string){
-        if (dateString === null || dateString.trim() === "") return null;
-        return new Date(dateString);
-    }
+
     getColumnData(row: Swim, column:string){
         if(column == "expandedDetail") return;
         if(column == swimTableColumns.status) return row.statusDisplayString;

@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
 import { CertificateType } from '../models';
+import { CustomerInfoByGroupNote } from '../models/customer-info-by-group-note';
 
 @Injectable()
 export class CustomerinfobygroupService {
@@ -258,5 +259,28 @@ export class CustomerinfobygroupService {
         });
     }
 
+    getCustomerInfoByGroupNote(customerInfoByGroupId: number) {
+        return this.http.get(`${this.accessPointUrl}/notes/` + customerInfoByGroupId, {
+            headers: this.headers,
+        });
+    }
 
+    addCustomerInfoByGroupNote(payload: CustomerInfoByGroupNote) {
+        return this.http.post(`${this.accessPointUrl}/notes`, payload, {
+            headers: this.headers,
+        });
+    }
+
+    updateCustomerInfoByGroupNote(payload: CustomerInfoByGroupNote) {
+
+        return this.http.put(`${this.accessPointUrl}/notes/` + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
+
+    deleteCustomerInfoByGroupNoteById(id: number) {
+        return this.http.delete(`${this.accessPointUrl}/notes/` + id, {
+            headers: this.headers,
+        });
+    }
 }

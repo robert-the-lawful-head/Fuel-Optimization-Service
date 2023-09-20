@@ -5,7 +5,11 @@ import { Router } from '@angular/router';
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { ServiceOrderService } from 'src/app/services/serviceorder.service';
+import { AircraftsService } from '../../../services/aircrafts.service';
+
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
+import { CustomersEditDialogComponent } from '../../customers/customers-edit-dialog/customers-edit-dialog.component';
 
 import { ServiceOrder } from 'src/app/models/service-order';
 import { ServiceOrderItem } from 'src/app/models/service-order-item';
@@ -31,7 +35,10 @@ export class ServiceOrdersItemListComponent implements OnInit {
         private serviceOrderService: ServiceOrderService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
-        private deleteServiceOrderItemDialog: MatDialog) {
+        private aircraftsService: AircraftsService,
+        private deleteServiceOrderItemDialog: MatDialog,
+        private customerDetailsDialog: MatDialog,
+        private aircraftDetailsDialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -81,6 +88,48 @@ export class ServiceOrdersItemListComponent implements OnInit {
         }
         this.saveServiceOrderItem(event.option._value);
         this.serviceOrderItemsChanged.emit(this.serviceOrder);
+    }
+
+    public viewCustomerDetailsClicked() {
+        const dialogRef = this.customerDetailsDialog.open(
+            CustomersEditDialogComponent,
+            {
+                data: {
+                    customerInfoByGroupId: this.serviceOrder.customerInfoByGroup.oid
+                },
+                width: '95%',
+                maxWidth: '95%'
+            }
+        );
+    }
+
+    public viewAircraftDetailsClicked() {
+        
+        const dialogRef = this.aircraftDetailsDialog.open(
+            CustomerAircraftsEditComponent,
+            {
+                data: {
+                    disableDelete: true,
+                    oid: this.serviceOrder.customerAircraftId,
+                    customerId: this.serviceOrder.customerInfoByGroup.customerId
+                },
+                width: '450px',
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.aircraftsService
+                .getAircraftSizes()
+                .subscribe((data: any) => {
+                    if (data) {
+                        //Do nothing - no adjustment needed
+                    }
+                });
+        });
     }
 
     public onCloseClicked() {

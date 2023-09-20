@@ -125,6 +125,7 @@ export class FlightWatchMapComponent
                 this.styleLoaded = true;
             })
             .onLoad(async () => {
+                this.resizeMap();
                 await this.loadMapIcons();
                 this.loadFlightOnMap();
                 this.loadICAOIconOnMap(this.icao);
@@ -544,7 +545,7 @@ export class FlightWatchMapComponent
             });
         }
     }
-    resizeMap(isopen: boolean){
+    resizeMap(isopen: boolean = false){
         var mapCanvas = document.getElementsByClassName('mapboxgl-canvas')[0] as HTMLElement;
         var mapDiv = document.getElementById(this.mapContainer);
         var mapWrapper = document.getElementById('map-wrapper');

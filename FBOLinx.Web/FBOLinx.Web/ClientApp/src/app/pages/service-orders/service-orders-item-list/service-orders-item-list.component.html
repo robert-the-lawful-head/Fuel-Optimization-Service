@@ -2,11 +2,21 @@
     <div class="row pt-1">
         <div class="col-10">
             <div class="row">
-                <div class="col-12 font-weight-bold">
-                    {{serviceOrder.customerInfoByGroup?.company}}
+                <div class="col-12">
+                    <div class="d-inline-block pr-0">{{serviceOrder.customerInfoByGroup?.company}}</div>
+                    <div class="d-inline-block">
+                        <button mat-icon-button aria-label="View company details" color="accent" (click)="viewCustomerDetailsClicked()" style="line-height: initial; height: auto; vertical-align: text-top;">
+                            <mat-icon inline="true">open_in_new</mat-icon>
+                        </button>
+                    </div>
                 </div>
                 <div class="col-12">
-                    {{serviceOrder.customerAircraft?.tailNumber}}
+                    <div class="d-inline-block pr-0">{{serviceOrder.customerAircraft?.tailNumber}}</div>
+                    <div class="d-inline-block">
+                        <button mat-icon-button aria-label="View company details" color="accent" (click)="viewAircraftDetailsClicked()" style="line-height: initial; height: auto; vertical-align: text-top;">
+                            <mat-icon inline="true">open_in_new</mat-icon>
+                        </button>
+                    </div>
                 </div>
                 <div class="col-12">
                     {{serviceOrder.arrivalDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
@@ -24,7 +34,7 @@
                               role="img">close</mat-icon>
                 </button>
             </div>
-            
+
         </div>
     </div>
     <div class="row">
@@ -50,7 +60,7 @@
     <div class="row">
         <div class="col-8">
             <mat-form-field>
-                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" (keyup.enter)="addServiceOrderItemClicked()" />
+                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" (keyup.enter)="addServiceOrderItemClicked()" cdk-focus-start />
             </mat-form-field>
         </div>
         <div class="col-4">

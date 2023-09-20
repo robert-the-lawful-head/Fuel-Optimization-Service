@@ -24,11 +24,11 @@ namespace FBOLinx.Web.Controllers
     public class AirCraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
 
        
        
-        public AirCraftsController(FboLinxContext context, AircraftService aircraftService, ILoggingService logger) : base(logger)
+        public AirCraftsController(FboLinxContext context, IAircraftService aircraftService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _aircraftService = aircraftService;
@@ -82,7 +82,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
-        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        public async Task<ActionResult<List<CustomerInfoByGroup>>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
         {
             if (string.IsNullOrEmpty(tailNumber))
                 return Ok(new List<CustomerInfoByGroup>());

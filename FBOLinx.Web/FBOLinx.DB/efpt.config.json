@@ -15,11 +15,11 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[ServiceOrderItems]",
+         "Name": "[dbo].[CustomerAircraftNotes]",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[ServiceOrders]",
+         "Name": "[dbo].[CustomerInfoByGroupNotes]",
          "ObjectType": 0
       }
    ],

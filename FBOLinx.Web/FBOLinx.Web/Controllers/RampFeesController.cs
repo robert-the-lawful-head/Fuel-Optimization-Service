@@ -24,10 +24,10 @@ namespace FBOLinx.Web.Controllers
     {
         private readonly FboLinxContext _context;
         private readonly RampFeesService _RampFeesService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private IMailService _MailService;
 
-        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService, IMailService mailService, ILoggingService logger) : base(logger)
+        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, IAircraftService aircraftService, IMailService mailService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _RampFeesService = rampFeesService;

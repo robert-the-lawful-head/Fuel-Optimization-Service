@@ -16,6 +16,8 @@ export class TableGlobalSearchComponent implements OnInit {
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
+    public userTypedFilter: string = '';
+
     private page: string = "";
     private idParam: string = "";
 
@@ -77,6 +79,7 @@ export class TableGlobalSearchComponent implements OnInit {
                 if (filter.isGlobal) {
                     hasGlobal = true;
                     this.globalFilter = filter;
+                    this.userTypedFilter = filter.filterValue;
                     break;
                 }
             }
@@ -86,7 +89,7 @@ export class TableGlobalSearchComponent implements OnInit {
             this.matDataSource.filterCollection.push(this.globalFilter);
         }
 
-        this.applyFilter(this.globalFilter.filterValue);
+        this.applyFilter(this.userTypedFilter);
     }
 
     public applyFilter(filterValue: any) {
@@ -144,6 +147,7 @@ export class TableGlobalSearchComponent implements OnInit {
 
     public clearAllFilters() {
         this.globalFilter.filterValue = '';
+        this.userTypedFilter = '';
         this.matDataSource.filter = '';
         if (!this.matDataSource.filterCollection) {
             this.matDataSource.filterCollection = [];

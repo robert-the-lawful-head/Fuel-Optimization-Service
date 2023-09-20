@@ -35,8 +35,9 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
-    @Output() filterChanged = new EventEmitter<SwimFilter>();
+    @Output() textFilterChanged = new EventEmitter<string>();
     @Output() icaoChanged = new EventEmitter<string>();
+    @Output() showCommercialAircraftFilter = new EventEmitter<boolean>();
 
     @ViewChild('map') map: FlightWatchMapComponent;
 
@@ -75,6 +76,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     toggleCommercial(event: MouseEvent) {
         this.isCommercialVisible = !this.isCommercialVisible;
         this.flightWatchDictionary = this.getFilteredData(this.data);
+        this.showCommercialAircraftFilter.emit(this.isCommercialVisible);
     }
     toggleLayer(type: LayerType) {
         this.map.toggleLayer(type);

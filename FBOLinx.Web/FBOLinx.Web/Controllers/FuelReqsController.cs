@@ -45,7 +45,7 @@ namespace FBOLinx.Web.Controllers
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
         private readonly FuelerLinxApiService _fuelerLinxService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboService _fboService;
         private readonly AirportWatchService _airportWatchService;
@@ -56,7 +56,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ICustomerInfoByGroupService _customerInfoByGroupService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
-            FuelerLinxApiService fuelerLinxService, AircraftService aircraftService,
+            FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
             AirportFboGeofenceClustersService airportFboGeofenceClustersService, IFboService fboService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IDemoFlightWatch demoFlightWatch,
             ILoggingService logger, IFboPreferencesService fboPreferencesService,
@@ -779,12 +779,19 @@ namespace FBOLinx.Web.Controllers
                                                           from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                           where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                           && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          && f != null
+                                                          group f by new
+                                                          {
+                                                              f.Month,
+                                                              f.Year
+                                                          }
+                                                          into results
                                                           select new NgxChartItemType
                                                           {
-                                                              Month = month,
-                                                              Year = year,
-                                                              Name = month + "/" + year,
-                                                              Value = f?.TotalOrders ?? 0
+                                                              Month = results.Key.Month,
+                                                              Year = results.Key.Year,
+                                                              Name = results.Key.Month + "/" + results.Key.Year,
+                                                              Value = results.Sum(x => x.TotalOrders)
                                                           })
                                       .OrderBy(x => x.Year)
                                       .ThenBy(x => x.Month)
@@ -817,12 +824,19 @@ namespace FBOLinx.Web.Controllers
                                                               from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                               where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                               && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                               && f != null
+                                                              group f by new
+                                                              {
+                                                                  f.Month,
+                                                                  f.Year
+                                                              }
+                                                          into results
                                                               select new NgxChartItemType
                                                               {
-                                                                  Month = month,
-                                                                  Year = year,
-                                                                  Name = month + "/" + year,
-                                                                  Value = f?.TotalSum ?? 0
+                                                                  Month = results.Key.Month,
+                                                                  Year = results.Key.Year,
+                                                                  Name = results.Key.Month + "/" + results.Key.Year,
+                                                                  Value = results.Sum(x => x?.TotalSum ?? 0)
                                                               })
                                            .OrderBy(x => x.Year)
                                            .ThenBy(x => x.Month)
@@ -894,12 +908,19 @@ namespace FBOLinx.Web.Controllers
                                                           from f in leftJoinFuelReqs.DefaultIfEmpty()
                                                           where string.Compare(year.ToString() + month.ToString().PadLeft(2), request.StartDateTime.Year.ToString() + request.StartDateTime.Month.ToString().PadLeft(2)) >= 0
                                                           && string.Compare(year.ToString() + month.ToString().PadLeft(2), request.EndDateTime.Year.ToString() + request.EndDateTime.Month.ToString().PadLeft(2)) <= 0
+                                                          && f!= null
+                                                          group f by new
+                                                          {
+                                                              f.Month,
+                                                              f.Year
+                                                          }
+                                                          into results
                                                           select new NgxChartItemType
                                                           {
-                                                              Month = month,
-                                                              Year = year,
-                                                              Name = month + "/" + year,
-                                                              Value = f?.TotalOrders ?? 0
+                                                              Month = results.Key.Month,
+                                                              Year = results.Key.Year,
+                                                              Name = results.Key.Month + "/" + results.Key.Year,
+                                                              Value = results.Sum(x => x.TotalOrders)
                                                           })
                                       .OrderBy(x => x.Year)
                                       .ThenBy(x => x.Month)
