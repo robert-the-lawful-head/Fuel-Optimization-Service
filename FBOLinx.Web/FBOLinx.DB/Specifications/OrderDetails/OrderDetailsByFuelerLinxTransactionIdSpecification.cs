@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FBOLinx.DB.Specifications.User
+namespace FBOLinx.DB.Specifications.OrderDetails
 {
     public sealed class OrderDetailsByFuelerLinxTransactionIdSpecification : Specification<Models.OrderDetails>
     {

@@ -541,7 +541,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
+            await _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
 
             return Ok();
         }
