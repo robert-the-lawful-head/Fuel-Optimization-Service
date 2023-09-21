@@ -218,6 +218,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed );
                 fuelRequest.Fboid = fboId;
+                fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -371,17 +372,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 if (authentication.FboEmails != "FBO not found" && authentication.FboEmails != "No email found")
                 {
-                    var customer = new CustomerInfoByGroupDto();
+                    var customer = new CustomersDto();
                     var customerAircraftId = 0;
                     var arrivalDateTime = "";
                     var departureDateTime = "";
                     var quotedVolume = 0.0;
 
                     // Get fuel request and set customer info
+                    customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxCompanyId));
+
                     FuelReqDto fuelReq = await GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelerlinxTransactionId));
                     if (fuelReq != null)
                     {
-                        customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(fuelReq.CustomerId.GetValueOrDefault()));
                         customerAircraftId = fuelReq.CustomerAircraftId.GetValueOrDefault();
                         arrivalDateTime = fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard;
                         departureDateTime = fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard;
@@ -394,25 +396,25 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     if (serviceOrder != null)
                     {
                         serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName).ToList();
-                        customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(serviceOrder.GroupId, serviceOrder.CustomerInfoByGroupId));
-                        customerAircraftId = serviceOrder.CustomerAircraftId;
+
+                        if (customerAircraftId == 0)
+                            customerAircraftId = serviceOrder.CustomerAircraftId;
+
                         arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
                         departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
                     }
 
                     if (customer.Oid == 0)
                     {
-                        var customers = await _customerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(fbo.GroupId));
-                        customer = customers.Where(c => c.Customer?.FuelerlinxId == fuelerlinxCompanyId).FirstOrDefault();
                         quotedVolume = request.QuotedVolume;
                     }
 
                     // Get customer aircraft info
-                    var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int> { customer.GroupId }, customer.CustomerId));
+                    var customerAircrafts = await _customerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int> { fbo.GroupId }, customer.Oid));
                     var customerAircraft = new CustomerAircraftsDto();
 
                     if (customerAircraftId == 0)
-                        customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber && c.CustomerId == customer.Customer.Oid).FirstOrDefault();
+                        customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber && c.CustomerId == customer.Oid).FirstOrDefault();
                     else
                         customerAircraft = customerAircrafts.Where(c => c.Oid == customerAircraftId).FirstOrDefault();
 
@@ -560,9 +562,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     sendEmail = true;
                     requestStatus = "cancelled";
-
-                    if (fuelReq != null && fuelReq.Oid > 0)
-                        fuelReq.Cancelled = true;
                 }
 
                 if (sendEmail)
