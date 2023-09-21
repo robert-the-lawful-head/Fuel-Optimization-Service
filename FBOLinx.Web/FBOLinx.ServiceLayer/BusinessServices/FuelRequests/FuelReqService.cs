@@ -218,6 +218,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed );
                 fuelRequest.Fboid = fboId;
+                fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
 
                 fuelReqsFromFuelerLinx.Add(fuelRequest);
             }
@@ -561,9 +562,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     sendEmail = true;
                     requestStatus = "cancelled";
-
-                    if (fuelReq != null && fuelReq.Oid > 0)
-                        fuelReq.Cancelled = true;
                 }
 
                 if (sendEmail)
