@@ -25,7 +25,7 @@
                     <div class="row">
                         <app-favorite-icon
                         [favoriteData]="setIsFavoriteProperty(customerAircraft)"
-                        (favoriteClick)="toogleFavorite(customerAircraft)"></app-favorite-icon>
+                        [callbackComponent]="getCallBackComponent"></app-favorite-icon>
                         <span (click)="editCustomerAircraft(customerAircraft)">{{ customerAircraft.tailNumber }}</span>
                     </div>
 

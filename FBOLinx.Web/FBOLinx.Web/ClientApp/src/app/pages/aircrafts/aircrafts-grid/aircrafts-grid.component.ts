@@ -23,6 +23,7 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -273,28 +274,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;
         return aircraft;
     }
-    toogleFavorite(favoriteData: any): void {
-        if(favoriteData.isFavorite)
-            this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId, favoriteData.customerAircraftId)
-            .subscribe(
-                (data: any) => {
-                   favoriteData.favoriteAircraft = data;
-                },
-                (error: any) => {
-                    console.log(error);
-                    this.snackbarService.showErrorSnackBar("Error adding aircraft to favorites");
-                    favoriteData.favoriteAircraft = null;
-                }
-            );
-        else
-            this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid).subscribe(
-                (data: any) => {
-                   favoriteData.favoriteAircraft = null;
-                },
-                (error: any) => {
-                    console.log(error);
-                    this.snackbarService.showErrorSnackBar("Error removing aircraft from favorites")
-                }
-            );
+    get getCallBackComponent(): CallbackComponent{
+        return CallbackComponent.aircraft;
     }
 }

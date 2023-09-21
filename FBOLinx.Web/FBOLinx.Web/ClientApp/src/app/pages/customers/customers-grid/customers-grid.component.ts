@@ -38,6 +38,7 @@ import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -721,28 +722,9 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     }
     toogleFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
-            this.favoritesService.saveCompanyFavorite(this.sharedService.currentUser.fboId, favoriteData.customerInfoByGroupId)
-            .subscribe(
-                (data: any) => {
-                   favoriteData.favoriteCompany = data;
-                   this.refreshAircrafts.emit();
-                },
-                (error: any) => {
-                    console.log(error);
-                    this.snackbarService.showErrorSnackBar("Error adding company to favorites");
-                }
-            );
-        else
-            this.favoritesService.deleteCompanyFavorite(favoriteData.favoriteCompany.oid)
-            .subscribe(
-                (data: any) => {
-                   favoriteData.favoriteCompany = null;
-                   this.refreshAircrafts.emit();
-                },
-                (error: any) => {
-                    console.log(error)
-                    this.snackbarService.showErrorSnackBar("Error removing company from favorites");
-                }
-            );
+            this.refreshAircrafts.emit();
+    }
+    get getCallBackComponent(): CallbackComponent{
+        return CallbackComponent.Company;
     }
 }

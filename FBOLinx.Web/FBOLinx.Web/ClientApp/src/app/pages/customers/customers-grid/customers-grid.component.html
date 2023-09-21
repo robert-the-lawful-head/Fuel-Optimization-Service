@@ -86,6 +86,7 @@
                         </span>
                         <app-favorite-icon
                         [favoriteData]="setIsFavoriteProperty(customer)"
+                        [callbackComponent]="getCallBackComponent"
                         (favoriteClick)="toogleFavorite(customer)"
                         ></app-favorite-icon>
                     </div>

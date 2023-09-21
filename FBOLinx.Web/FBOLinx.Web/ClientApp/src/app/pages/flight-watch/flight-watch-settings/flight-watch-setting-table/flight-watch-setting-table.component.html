@@ -62,7 +62,7 @@
                         <app-favorite-icon
                         [favoriteData]="setIsFavoriteProperty(element)"
                         [hasPadding]="false"
-                        (favoriteClick)="toogleFavorite(element)"
+                        [callbackComponent]="getCallBackComponent"
                         (click)="$event.stopPropagation()"></app-favorite-icon>
                     </ng-container>
 
