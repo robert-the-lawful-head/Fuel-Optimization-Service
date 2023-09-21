@@ -82,8 +82,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
             IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
                 FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
-            //customer category types 3,4 are stored as  categoryMinVal 5 on DB so we need to remove them from the list to avoid duplicated items
-            sizes = sizes.Where(x => (short?)(AircraftSizes)x.Value != (short)AircraftSizes.WideBody);
             var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
             var allAircraft = await _aircraftService.GetAllAircrafts();
 
@@ -109,7 +107,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
                                  select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
                     LastUpdated = r?.LastUpdated
 
-                }).ToList();
+                }).Where(r => r.CategoryType != RampFeeCategories.Wingspan && r.CategoryType  != RampFeeCategories.WeightRange).ToList();
 
             //Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
             List<RampFeesGridViewModel> customRampFees = (from r in rampFees
