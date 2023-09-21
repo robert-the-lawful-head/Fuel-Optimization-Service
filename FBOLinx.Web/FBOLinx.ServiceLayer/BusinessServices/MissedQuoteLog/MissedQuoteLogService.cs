@@ -89,7 +89,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
             {
                 var fbos = await _FboEntityService.GetFbosByIcaos(icao);
 
-                foreach (var fbo in fbos)
+                foreach (var fbo in fbos.Where(f => f.AccountType == Core.Enums.AccountTypes.RevFbo).ToList())
                 {
                     if (!result.Any(r => r.Icao == icao && r.Fbo == fbo.Fbo))
                     {
