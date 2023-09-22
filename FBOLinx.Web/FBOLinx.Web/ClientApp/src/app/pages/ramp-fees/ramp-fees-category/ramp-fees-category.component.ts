@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 
 @Component({
     selector: 'app-ramp-fees-category',
@@ -30,7 +30,7 @@ export class RampFeesCategoryComponent implements OnInit {
     constructor(
         private rampFeesService: RampfeesService,
         private deleteRampFeeDialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBarService: SnackBarService
     ) {}
 
     ngOnInit() {
@@ -85,14 +85,7 @@ export class RampFeesCategoryComponent implements OnInit {
             }
             this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
-                this.snackBar.open(
-                    `${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`,
-                    '',
-                    {
-                        duration: 2000,
-                        panelClass: ['blue-snackbar'],
-                    }
-                );
+                this.snackBarService.showSuccessSnackBar(`Custom is ramp fee deleted`)
             });
         });
     }
