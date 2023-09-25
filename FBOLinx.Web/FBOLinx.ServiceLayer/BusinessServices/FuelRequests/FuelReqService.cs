@@ -233,6 +233,40 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 order.Fboid = fboId;
             }
 
+            var serviceOrders = await _serviceOrderService.GetListbySpec(new ServiceOrderByFboSpecification(fboId, startDateTime, endDateTime));
+
+            foreach(ServiceOrderDto item in serviceOrders)
+            {
+                var fuelreq = new FuelReqDto()
+                {
+                    Oid = 0,
+                    ActualPpg = 0,
+                    ActualVolume = 0,
+                    Archived = false,
+                    Cancelled = false,
+                    CustomerId = item.CustomerInfoByGroup?.CustomerId,
+                    DateCreated = item.ServiceDateTimeUtc,//check this property
+                    DispatchNotes = string.Empty,
+                    Eta = item.ArrivalDateTimeLocal,
+                    Etd = item.DepartureDateTimeLocal,
+                    Icao = string.Empty,
+                    Notes = string.Empty,
+                    QuotedPpg = 0,
+                    QuotedVolume = 0,
+                    Source = string.Empty,
+                    SourceId = item.FuelerLinxTransactionId,
+                    TimeStandard = null,
+                    TailNumber = string.Empty,
+                    FboName = string.Empty,
+                    Email = string.Empty,
+                    PhoneNumber = item.CustomerInfoByGroup?.Customer?.MainPhone,
+                    FuelOn = string.Empty,
+                    CustomerName = item.CustomerInfoByGroup?.Customer?.Username,
+                    IsConfirmed = false,
+                };
+                result.Add(fuelreq);
+            }
+
             result.AddRange(fuelReqsFromFuelerLinx);
             result.AddRange(directOrders);
 
