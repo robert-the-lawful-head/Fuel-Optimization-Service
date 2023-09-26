@@ -52,7 +52,7 @@
             </mat-expansion-panel-header>
             <app-ramp-fees-category
                 (rampFeeDeleted)="rampFeeDeleted()"
-                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeFieldChanged)="rampFeeFieldChanged($event)"
                 [aircraftTypes]="aircraftTypes"
                 [categoryTitle]="'Business Jets'"
                 [categoryTypes]="[1]"
@@ -68,7 +68,7 @@
             </mat-expansion-panel-header>
             <app-ramp-fees-category
                 (rampFeeDeleted)="rampFeeDeleted()"
-                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeFieldChanged)="rampFeeFieldChanged($event)"
                 [aircraftTypes]="aircraftTypes"
                 [categoryTitle]="'Turboprops'"
                 [categoryTypes]="[1]"
@@ -84,7 +84,7 @@
             </mat-expansion-panel-header>
             <app-ramp-fees-category
                 (rampFeeDeleted)="rampFeeDeleted()"
-                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeFieldChanged)="rampFeeFieldChanged($event)"
                 [aircraftTypes]="aircraftTypes"
                 [categoryTitle]="'Helicopters'"
                 [categoryTypes]="[1]"
@@ -117,7 +117,7 @@
             <app-ramp-fees-category
                 #customRampFeeCat
                 (rampFeeDeleted)="rampFeeDeleted()"
-                (rampFeeFieldChanged)="rampFeeFieldChanged()"
+                (rampFeeFieldChanged)="rampFeeFieldChanged($event)"
                 [aircraftTypes]="aircraftTypes"
                 [categoryTitle]="'Turboprops'"
                 [categoryTypes]="[2, 3, 4, 5]"

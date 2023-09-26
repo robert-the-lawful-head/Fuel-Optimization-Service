@@ -50,6 +50,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
+    feesToUpdate = 0;
 
     /*private importer: FlatfileImporter;*/
 
@@ -132,8 +133,16 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    public rampFeeFieldChanged() {
-        this.requiresUpdate = true;
+    public rampFeeFieldChanged(value) {
+        if (value)
+            this.feesToUpdate++;
+        else
+            this.feesToUpdate--;
+
+        if (this.feesToUpdate > 0)
+            this.requiresUpdate = true;
+        else
+            this.requiresUpdate = false;
     }
 
     public rampFeeDeleted() {

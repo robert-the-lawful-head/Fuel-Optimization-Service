@@ -31,6 +31,7 @@ export class RampFeesDialogNewFeeComponent {
         { text: 'Tail Number', value: 5 },
     ];
     public aircraftTypes: any[];
+    public isWaivedNegative = false;
     subscription: Subscription;
 
     constructor(
@@ -51,5 +52,12 @@ export class RampFeesDialogNewFeeComponent {
     // Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
+    }
+
+    public checkForNegativeValue(value) {
+        if (value < 0)
+            this.isWaivedNegative = true;
+        else
+            this.isWaivedNegative = false;
     }
 }

@@ -45,8 +45,10 @@ export class RampFeesCategoryComponent implements OnInit {
                     this.supportedValues.length === 0 ||
                     this.supportedValues.indexOf(fee.categoryMinValue) > -1
                 ) {
+                    fee.isWaivedNegative = false;
                     this.rampFeesForCategory.push(fee);
                 }
+                fee.isWaivedNegative = false;
                 this.tmpArray.push(fee);
             }
         });
@@ -66,8 +68,16 @@ export class RampFeesCategoryComponent implements OnInit {
     }
 
     public rampFeeRequiresUpdate(fee) {
-        fee.requiresUpdate = true;
-        this.rampFeeFieldChanged.emit();
+        if (fee.waived < 0) {
+            fee.isWaivedNegative = true;
+            fee.requiresUpdate = false;
+            this.rampFeeFieldChanged.emit(false);
+        }
+        else {
+            fee.isWaivedNegative = false;
+            fee.requiresUpdate = true;
+            this.rampFeeFieldChanged.emit(true);
+        }
     }
 
     public deleteRampFee(fee) {

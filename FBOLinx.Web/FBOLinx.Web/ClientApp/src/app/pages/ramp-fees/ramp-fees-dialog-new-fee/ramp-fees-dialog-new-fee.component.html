@@ -24,15 +24,15 @@
     </div>
     <div>
         <mat-form-field>
-            <input
-                [(ngModel)]="data.waived"
-                aria-label="Ramp/Facil. Fee"
-                matInput
-                placeholder="Avoidance"
-                type="number"
-            />
+            <input [(ngModel)]="data.waived"
+                   aria-label="Ramp/Facil. Fee"
+                   matInput
+                   placeholder="Avoidance"
+                   type="number"
+                   (change)="checkForNegativeValue(data.waived)" />
             <span matSuffix>Gal.</span>
         </mat-form-field>
+        <div *ngIf="isWaivedNegative" class="text-danger">Avoidance cannot be negative</div>
     </div>
     <div>
         <mat-form-field>
@@ -131,6 +131,7 @@
         class="mr-1"
         color="green"
         mat-stroked-button
+        [disabled] = "isWaivedNegative"
     >
         <mat-icon>save</mat-icon>
         Add Ramp Fee
