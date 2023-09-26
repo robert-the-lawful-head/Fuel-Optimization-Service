@@ -31,5 +31,6 @@ namespace FBOLinx.DB.Models
         public int? CustomerAircraftId { get; set; }
         [Column("ETA")]
         public DateTime? Eta { get; set; }
+        public int? FboHandlerId { get; set; }
     }
 }

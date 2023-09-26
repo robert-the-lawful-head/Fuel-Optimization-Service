@@ -548,49 +548,57 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 if (!fuelerlinxTransaction.IsCancelled)
                 {
-                    var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
-                    var customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxTransaction.CompanyId.GetValueOrDefault()));
-                    var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
-                    var customerAircraft = customerAircrafts.Where(c => c.TailNumber == fuelerlinxTransaction.TailNumber && c.CustomerId == customer.Oid).FirstOrDefault();
-
-                    if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
+                    if (orderDetails.FboHandlerId.GetValueOrDefault() == fuelerlinxTransaction.FboHandlerId)
                     {
-                        orderDetails.CustomerAircraftId = customerAircraft.Oid;
-                        sendEmail = true;
-                        isUpdated = true;
-                    }
+                        var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
+                        var customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxTransaction.CompanyId.GetValueOrDefault()));
+                        var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
+                        var customerAircraft = customerAircrafts.Where(c => c.TailNumber == fuelerlinxTransaction.TailNumber && c.CustomerId == customer.Oid).FirstOrDefault();
 
-                    if (orderDetails.Eta.GetValueOrDefault() != fuelerlinxTransaction.Eta)
-                    {
-                        TimeSpan ts = fuelerlinxTransaction.Eta.GetValueOrDefault() - orderDetails.Eta.GetValueOrDefault();
-                        if (Math.Abs(ts.TotalMinutes) > 60)
+                        if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
+                        {
+                            orderDetails.CustomerAircraftId = customerAircraft.Oid;
                             sendEmail = true;
-                        orderDetails.Eta = fuelerlinxTransaction.Eta;
-                        isUpdated = true;
-                    }
+                            isUpdated = true;
+                        }
 
-                    if (orderDetails.FuelVendor != fuelerlinxTransaction.FuelVendor)
+                        if (orderDetails.Eta.GetValueOrDefault() != fuelerlinxTransaction.Eta)
+                        {
+                            TimeSpan ts = fuelerlinxTransaction.Eta.GetValueOrDefault() - orderDetails.Eta.GetValueOrDefault();
+                            if (Math.Abs(ts.TotalMinutes) > 60)
+                                sendEmail = true;
+                            orderDetails.Eta = fuelerlinxTransaction.Eta;
+                            isUpdated = true;
+                        }
+
+                        if (orderDetails.FuelVendor != fuelerlinxTransaction.FuelVendor)
+                        {
+                            orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
+                            sendEmail = true;
+                            isUpdated = true;
+                        }
+
+                        if (isUpdated)
+                        {
+                            orderDetails.DateTimeUpdated = DateTime.UtcNow;
+                            await _orderDetailsService.UpdateAsync(orderDetails);
+                        }
+
+                        if (fuelReq != null && fuelReq.Oid > 0)
+                        {
+                            fuelReq.CustomerAircraftId = orderDetails.CustomerAircraftId;
+                            fuelReq.Eta = orderDetails.Eta;
+                            await UpdateAsync(fuelReq);
+                        }
+
+                        if (sendEmail && orderDetails.DateTimeEmailSent != null && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
+                            sendEmail = false;
+                    }
+                    else
                     {
-                        orderDetails.FuelVendor = fuelerlinxTransaction.FuelVendor;
                         sendEmail = true;
-                        isUpdated = true;
+                        requestStatus = "update";
                     }
-
-                    if (isUpdated)
-                    {
-                        orderDetails.DateTimeUpdated = DateTime.UtcNow;
-                        await _orderDetailsService.UpdateAsync(orderDetails);
-                    }
-
-                    if (fuelReq != null && fuelReq.Oid > 0)
-                    {
-                        fuelReq.CustomerAircraftId = orderDetails.CustomerAircraftId;
-                        fuelReq.Eta = orderDetails.Eta;
-                        await UpdateAsync(fuelReq);
-                    }
-
-                    if (sendEmail && orderDetails.DateTimeEmailSent != null && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
-                        sendEmail = false;
                 }
                 else
                 {

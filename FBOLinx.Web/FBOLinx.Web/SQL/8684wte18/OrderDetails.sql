@@ -19,7 +19,8 @@ IsEmailSent bit NULL,
 DateTimeEmailSent datetime2(7) NULL,
 QuotedVolume float NULL,
 CustomerAircraftID int NULL,
-ETA datetime2(7) NULL
+ETA datetime2(7) NULL,
+FboHandlerId int NULL
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC
