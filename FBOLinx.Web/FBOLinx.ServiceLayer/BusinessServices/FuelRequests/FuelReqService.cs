@@ -438,7 +438,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
                     }
 
-                    if (customer.Oid == 0)
+                    if (customer.Oid == 0 || fuelReq.Oid == 0)
                     {
                         quotedVolume = request.QuotedVolume;
                     }
