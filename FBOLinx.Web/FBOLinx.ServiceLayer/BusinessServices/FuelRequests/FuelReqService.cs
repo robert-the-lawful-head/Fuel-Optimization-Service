@@ -596,8 +596,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     }
                     else
                     {
+                        orderDetails.DateTimeUpdated = DateTime.UtcNow;
+                        orderDetails.FboHandlerId = fuelerlinxTransaction.FboHandlerId;
+                        await _orderDetailsService.UpdateAsync(orderDetails);
+
+                        fuelReq.Fboid = orderDetails.FboHandlerId;
+                        await UpdateAsync(fuelReq);
+
                         sendEmail = true;
                         requestStatus = "update";
+
                     }
                 }
                 else
