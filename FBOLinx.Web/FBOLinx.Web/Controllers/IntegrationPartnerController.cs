@@ -152,7 +152,7 @@ namespace FBOLinx.Web.Controllers
         [AllowAnonymous]
         [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
         [HttpPost("handlerId/{handlerId}/fuelerlinxTransactionId/{fuelerlinxTransactionId}/fuelerlinxCompanyId/{fuelerlinxCompanyId}/send-order-notification")]
-        public async Task<ActionResult<bool>> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId, [FromRoute] int fuelerlinxCompanyId, [FromBody] SendOrderNotificationRequest request)
+        public async Task<IActionResult> SendOrderNotification([FromRoute] int handlerId, [FromRoute] int fuelerlinxTransactionId, [FromRoute] int fuelerlinxCompanyId, [FromBody] SendOrderNotificationRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -161,7 +161,7 @@ namespace FBOLinx.Web.Controllers
 
             var result = await _fuelReqService.SendFuelOrderNotificationEmail(handlerId, fuelerlinxTransactionId, fuelerlinxCompanyId, request);
 
-            return Ok(result);
+            return Ok(new {success = result });
         }
 
 
