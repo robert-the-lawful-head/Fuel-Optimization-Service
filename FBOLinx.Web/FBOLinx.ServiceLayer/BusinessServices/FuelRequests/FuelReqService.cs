@@ -237,34 +237,37 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach(ServiceOrderDto item in serviceOrders)
             {
-                var fuelreq = new FuelReqDto()
+                if (!fuelReqsFromFuelerLinx.Any(f => f.SourceId == item.FuelerLinxTransactionId) && !directOrders.Any(d => d.SourceId == item.FuelerLinxTransactionId))
                 {
-                    Oid = 0,
-                    ActualPpg = 0,
-                    ActualVolume = 0,
-                    Archived = false,
-                    Cancelled = false,
-                    CustomerId = item.CustomerInfoByGroup?.CustomerId,
-                    DateCreated = item.ServiceDateTimeUtc,//check this property
-                    DispatchNotes = string.Empty,
-                    Eta = item.ArrivalDateTimeLocal,
-                    Etd = item.DepartureDateTimeLocal,
-                    Icao = string.Empty,
-                    Notes = string.Empty,
-                    QuotedPpg = 0,
-                    QuotedVolume = 0,
-                    Source = string.Empty,
-                    SourceId = item.FuelerLinxTransactionId,
-                    TimeStandard = null,
-                    TailNumber = string.Empty,
-                    FboName = string.Empty,
-                    Email = string.Empty,
-                    PhoneNumber = item.CustomerInfoByGroup?.Customer?.MainPhone,
-                    FuelOn = string.Empty,
-                    CustomerName = item.CustomerInfoByGroup?.Customer?.Username,
-                    IsConfirmed = false,
-                };
-                result.Add(fuelreq);
+                    var fuelreq = new FuelReqDto()
+                    {
+                        Oid = 0,
+                        ActualPpg = 0,
+                        ActualVolume = 0,
+                        Archived = false,
+                        Cancelled = false,
+                        CustomerId = item.CustomerInfoByGroup?.CustomerId,
+                        DateCreated = item.ServiceDateTimeUtc,//check this property
+                        DispatchNotes = string.Empty,
+                        Eta = item.ArrivalDateTimeLocal,
+                        Etd = item.DepartureDateTimeLocal,
+                        Icao = string.Empty,
+                        Notes = string.Empty,
+                        QuotedPpg = 0,
+                        QuotedVolume = 0,
+                        Source = string.Empty,
+                        SourceId = item.FuelerLinxTransactionId,
+                        TimeStandard = null,
+                        TailNumber = string.Empty,
+                        FboName = string.Empty,
+                        Email = string.Empty,
+                        PhoneNumber = item.CustomerInfoByGroup?.Customer?.MainPhone,
+                        FuelOn = string.Empty,
+                        CustomerName = item.CustomerInfoByGroup?.Customer?.Username,
+                        IsConfirmed = false,
+                    };
+                    result.Add(fuelreq);
+                }
             }
 
             result.AddRange(fuelReqsFromFuelerLinx);
