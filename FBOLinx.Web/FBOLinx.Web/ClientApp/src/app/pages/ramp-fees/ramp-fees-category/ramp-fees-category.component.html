@@ -67,15 +67,14 @@
                     </div>
                     <div class="col-3 text-center">
                         <mat-form-field>
-                            <input
-                                (change)="rampFeeRequiresUpdate(fee)"
-                                [(ngModel)]="fee.price"
-                                matInput
-                                placeholder="Ramp/Facil. Fee"
-                                type="number"
-                            />
+                            <input (change)="rampFeeRequiresUpdate(fee)"
+                                   [(ngModel)]="fee.price"
+                                   matInput
+                                   placeholder="Ramp/Facil. Fee"
+                                   type="number" />
                             <span matPrefix>$</span>
                         </mat-form-field>
+                        <div *ngIf="fee.isFeeNegative" class="text-danger">Fee cannot be negative</div>
                     </div>
                     <div class="col-3 text-center">
                         <mat-form-field>
@@ -154,30 +153,27 @@
                                 <div class="col-3">Weight Range</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input
-                                            (change)="
+                                        <input (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                            [(ngModel)]="fee.categoryMinValue"
-                                            matInput
-                                            placeholder="Min. Weight"
-                                            type="number"
-                                        />
+                                               [(ngModel)]="fee.categoryMinValue"
+                                               matInput
+                                               placeholder="Min. Weight"
+                                               type="number" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
+                                    <div *ngIf="fee.isCategoryValueNegative" class="text-danger">Weight cannot be negative</div>
                                 </div>
                                 <div class="col-3">to</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input
-                                            (change)="
+                                        <input (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                            [(ngModel)]="fee.categoryMaxValue"
-                                            matInput
-                                            placeholder="Max. Weight"
-                                            type="number"
-                                        />
+                                               [(ngModel)]="fee.categoryMaxValue"
+                                               matInput
+                                               placeholder="Max. Weight"
+                                               type="number" />
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                 </div>
@@ -186,17 +182,16 @@
                                 <div class="col-3">Wingspan</div>
                                 <div class="col-3">
                                     <mat-form-field>
-                                        <input
-                                            (change)="
+                                        <input (change)="
                                                 rampFeeRequiresUpdate(fee)
                                             "
-                                            [(ngModel)]="fee.categoryMinValue"
-                                            matInput
-                                            placeholder="Min. Wingspan"
-                                            type="number"
-                                        />
+                                               [(ngModel)]="fee.categoryMinValue"
+                                               matInput
+                                               placeholder="Min. Wingspan"
+                                               type="number" />
                                         <span matSuffix>Feet</span>
                                     </mat-form-field>
+                                    <div *ngIf="fee.isCategoryValueNegative" class="text-danger">Wingspan cannot be negative</div>
                                 </div>
                                 <div class="col-3">to</div>
                                 <div class="col-3">

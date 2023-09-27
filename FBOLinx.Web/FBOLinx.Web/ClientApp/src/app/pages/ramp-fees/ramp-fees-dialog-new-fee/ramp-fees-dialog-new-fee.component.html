@@ -12,15 +12,15 @@
     </mat-form-field>
     <div>
         <mat-form-field>
-            <input
-                [(ngModel)]="data.price"
-                aria-label="Ramp/Facil. Fee"
-                matInput
-                placeholder="Ramp/Facil. Fee"
-                type="number"
-            />
+            <input [(ngModel)]="data.price"
+                   aria-label="Ramp/Facil. Fee"
+                   matInput
+                   placeholder="Ramp/Facil. Fee"
+                   type="number"
+                   (change)="checkForFeeNegativeValue(data.price)" />
             <span matPrefix>$</span>
         </mat-form-field>
+        <div *ngIf="isFeeNegative" class="text-danger">Fee cannot be negative</div>
     </div>
     <div>
         <mat-form-field>
@@ -29,7 +29,7 @@
                    matInput
                    placeholder="Avoidance"
                    type="number"
-                   (change)="checkForNegativeValue(data.waived)" />
+                   (change)="checkForWaivedNegativeValue(data.waived)" />
             <span matSuffix>Gal.</span>
         </mat-form-field>
         <div *ngIf="isWaivedNegative" class="text-danger">Avoidance cannot be negative</div>
@@ -67,49 +67,47 @@
     </div>
     <div *ngIf="data.categoryType == 3">
         <mat-form-field>
-            <input
-                [(ngModel)]="data.categoryMinValue"
-                aria-label="Min. Weight"
-                matInput
-                placeholder="Min. Weight"
-                type="number"
-            />
+            <input [(ngModel)]="data.categoryMinValue"
+                   aria-label="Min. Weight"
+                   matInput
+                   placeholder="Min. Weight"
+                   type="number"
+                   (change)="checkForCategoryValueNegativeValue(data)" />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
+        <div *ngIf="isCategoryValueNegative" class="text-danger">Weight cannot be negative</div>
     </div>
     <div *ngIf="data.categoryType == 3">
         <mat-form-field>
-            <input
-                [(ngModel)]="data.categoryMaxValue"
-                aria-label="Max. Weight"
-                matInput
-                placeholder="Max. Weight"
-                type="number"
-            />
+            <input [(ngModel)]="data.categoryMaxValue"
+                   aria-label="Max. Weight"
+                   matInput
+                   placeholder="Max. Weight"
+                   type="number"
+                   (change)="checkForCategoryValueNegativeValue(data)" />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
     </div>
     <div *ngIf="data.categoryType == 4">
         <mat-form-field>
-            <input
-                [(ngModel)]="data.categoryMinValue"
-                aria-label="Min. Wingspan"
-                matInput
-                placeholder="Min. Wingspan"
-                type="number"
-            />
+            <input [(ngModel)]="data.categoryMinValue"
+                   aria-label="Min. Wingspan"
+                   matInput
+                   placeholder="Min. Wingspan"
+                   type="number"
+                   (change)="checkForCategoryValueNegativeValue(data)" />
             <span matSuffix>Feet</span>
         </mat-form-field>
+        <div *ngIf="isCategoryValueNegative" class="text-danger">Wingspan cannot be negative</div>
     </div>
     <div *ngIf="data.categoryType == 4">
         <mat-form-field>
-            <input
-                [(ngModel)]="data.categoryMaxValue"
-                aria-label="Max. Wingspan"
-                matInput
-                placeholder="Max. Wingspan"
-                type="number"
-            />
+            <input [(ngModel)]="data.categoryMaxValue"
+                   aria-label="Max. Wingspan"
+                   matInput
+                   placeholder="Max. Wingspan"
+                   type="number"
+                   (change)="checkForCategoryValueNegativeValue(data)" />
             <span matSuffix>Feet</span>
         </mat-form-field>
     </div>
@@ -131,7 +129,7 @@
         class="mr-1"
         color="green"
         mat-stroked-button
-        [disabled] = "isWaivedNegative"
+        [disabled] = "isWaivedNegative || isCategoryValueNegative || isFeeNegative"
     >
         <mat-icon>save</mat-icon>
         Add Ramp Fee

@@ -41,14 +41,18 @@ export class RampFeesCategoryComponent implements OnInit {
         this.rampFeesForCategory = [];
         this.rampFees.forEach((fee) => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
+                fee.isWaivedNegative = false;
+                fee.isCategoryValueNegative = false;
+                fee.isFeeNegative = false;
+                fee.requiresUpdate = false;
+
                 if (
                     this.supportedValues.length === 0 ||
                     this.supportedValues.indexOf(fee.categoryMinValue) > -1
                 ) {
-                    fee.isWaivedNegative = false;
                     this.rampFeesForCategory.push(fee);
                 }
-                fee.isWaivedNegative = false;
+
                 this.tmpArray.push(fee);
             }
         });
@@ -68,16 +72,22 @@ export class RampFeesCategoryComponent implements OnInit {
     }
 
     public rampFeeRequiresUpdate(fee) {
-        if (fee.waived < 0) {
+        fee.isWaivedNegative = false;
+        fee.isCategoryValueNegative = false;
+        fee.isFeeNegative = false;
+        fee.requiresUpdate = true;
+
+        if (fee.waived < 0)
             fee.isWaivedNegative = true;
-            fee.requiresUpdate = false;
-            this.rampFeeFieldChanged.emit(false);
-        }
-        else {
-            fee.isWaivedNegative = false;
-            fee.requiresUpdate = true;
-            this.rampFeeFieldChanged.emit(true);
-        }
+
+        if (fee.price < 0)
+            fee.isFeeNegative = true;
+
+        if (fee.categoryMinValue < 0 || fee.categoryMaxValue < 0)
+            fee.isCategoryValueNegative = true;
+
+        fee.requiresUpdate = !fee.isWaivedNegative && !fee.isCategoryValueNegative && !fee.isFeeNegative;
+        this.rampFeeFieldChanged.emit();
     }
 
     public deleteRampFee(fee) {

@@ -32,6 +32,8 @@ export class RampFeesDialogNewFeeComponent {
     ];
     public aircraftTypes: any[];
     public isWaivedNegative = false;
+    public isCategoryValueNegative = false;
+    public isFeeNegative = false;
     subscription: Subscription;
 
     constructor(
@@ -54,10 +56,24 @@ export class RampFeesDialogNewFeeComponent {
         this.dialogRef.close();
     }
 
-    public checkForNegativeValue(value) {
+    public checkForWaivedNegativeValue(value) {
+        this.isWaivedNegative = false;
+
         if (value < 0)
             this.isWaivedNegative = true;
-        else
-            this.isWaivedNegative = false;
+    }
+
+    public checkForCategoryValueNegativeValue(data) {
+        this.isCategoryValueNegative = false;
+
+        if (data.categoryMinValue < 0 || data.categoryMaxValue)
+            this.isCategoryValueNegative = true;
+    }
+
+    public checkForFeeNegativeValue(value) {
+        this.isFeeNegative = false;
+
+        if (value < 0)
+            this.isFeeNegative = true;
     }
 }
