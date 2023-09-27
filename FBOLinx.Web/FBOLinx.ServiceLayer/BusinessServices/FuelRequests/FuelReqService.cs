@@ -211,18 +211,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             var fuelReqConfirmationList = _fuelReqConfirmationRepo.Get();
 
-            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
-            {
-                var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
-
-                var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
-                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed );
-                fuelRequest.Fboid = fboId;
-                fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
-
-                fuelReqsFromFuelerLinx.Add(fuelRequest);
-            }
-
             var directOrders = await GetDirectOrdersFromDatabase(fboId, startDateTime, endDateTime, customers);
 
             foreach (FuelReqDto order in directOrders)
@@ -231,6 +219,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 FuelReqDto.SetAirportLocalTimes(order, airport);
                 order.IsConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == order.SourceId);
                 order.Fboid = fboId;
+            }
+
+            foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
+            {
+                if (!directOrders.Any(d => d.SourceId == transaction.Id))
+                {
+                    var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
+
+                    var isConfirmed = fuelReqConfirmationList.Any(x => x.SourceId == transaction.Id);
+                    var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport, isConfirmed);
+                    fuelRequest.Fboid = fboId;
+                    fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
+
+                    fuelReqsFromFuelerLinx.Add(fuelRequest);
+                }
             }
 
             var serviceOrders = await _serviceOrderService.GetListbySpec(new ServiceOrderByFboSpecification(fboId, startDateTime, endDateTime));
