@@ -177,7 +177,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? FuelerlinxCompanyId => _CustomerAircraft?.FuelerlinxCompanyId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
         public string TransactionStatus => ID > 0 ? "LIVE" : "";
-        public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode ?? _SwimFlightLeg?.ICAOAircraftCode;
+        public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode?.Trim() ?? _SwimFlightLeg?.ICAOAircraftCode?.Trim();
         public bool IsInNetwork => (_CustomerAircraft?.IsInNetwork()).GetValueOrDefault();
         public bool IsOutOfNetwork => (_CustomerAircraft?.IsOutOfNetwork()).GetValueOrDefault();
 

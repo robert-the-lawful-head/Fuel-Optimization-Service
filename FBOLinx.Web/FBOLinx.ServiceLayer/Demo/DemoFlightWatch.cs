@@ -86,7 +86,7 @@ namespace FBOLinx.ServiceLayer.Demo
                 ActualSpeed = demoData.GroundSpeedKts,
                 FlightDepartment = "Test Company",
                 FAARegisteredOwner = "Test FAA Owner",
-                ICAOAircraftCode = "ICAOAircraftCodeKVNY"
+                ICAOAircraftCode = "KVNYTest"
             };
             var airportWatchLiveData = new AirportWatchLiveDataDto()
             {
