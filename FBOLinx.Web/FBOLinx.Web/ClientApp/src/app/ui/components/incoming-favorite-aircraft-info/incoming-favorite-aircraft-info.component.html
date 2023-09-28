@@ -18,9 +18,12 @@
         </div>
         <div class="pl-4">
             <span>
-                <strong>{{ flightwatch.tailNumber }}</strong> (<u>{{
+                <strong>{{ flightwatch.tailNumber }}</strong>
+                <span *ngIf="flightwatch.icaoAircraftCode">(<u>{{
                     flightwatch.icaoAircraftCode
-                }}</u>) has been detected
+                }}</u>)
+                </span>
+                has been detected
                 <br/> ETA: {{ flightwatch.etaLocal | date: "HH:mm"  }}
             </span>
         </div>
