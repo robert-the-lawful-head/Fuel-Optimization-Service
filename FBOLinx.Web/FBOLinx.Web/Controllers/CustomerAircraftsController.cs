@@ -23,6 +23,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.BusinessServices.Favorites;
+using System.Security.Cryptography;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -454,13 +455,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircrafts = await _context.CustomerAircrafts.FindAsync(id);
+            var customerAircrafts = await _context.CustomerAircrafts.Include(x => x.FavoriteAircraft).Where(x => x.Oid == id).FirstOrDefaultAsync();
             if (customerAircrafts == null)
             {
                 return NotFound();
             }
+            if(customerAircrafts?.FavoriteAircraft != null)
+                await _fboAircraftFavoritesService.DeleteAircraftFavorite(customerAircrafts.FavoriteAircraft.Oid);
 
-           
             _context.CustomerAircrafts.Remove(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
 
