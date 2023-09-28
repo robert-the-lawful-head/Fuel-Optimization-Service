@@ -2,7 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
-
+import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../aircraft-assign-modal/aircraft-assign-modal.component';
+import { MatDialog } from '@angular/material/dialog';
 export enum CallbackComponent {
     aircraft,
     Company,
@@ -18,13 +19,16 @@ export class FavoriteIconComponent implements OnInit {
     @Input() callbackComponent: CallbackComponent = CallbackComponent.customCallback;
     @Input() isSaving: boolean = false;
     @Input() hasPadding: boolean = true;
+    @Input() customers: [] = [];
     @Output() favoriteClick = new EventEmitter<any>();
 
     isFavorite = false;
 
     constructor(private favoritesService: FavoritesService,
         private sharedService: SharedService,
-        private snackbarService: SnackBarService) { }
+        private snackbarService: SnackBarService,
+        private newCustomerAircraftDialog: MatDialog
+        ) { }
 
     ngOnInit() {
         this.isFavorite = this.favoriteData.isFavorite;
@@ -42,7 +46,7 @@ export class FavoriteIconComponent implements OnInit {
 
         switch(this.callbackComponent) {
             case CallbackComponent.aircraft: {
-               this.aircraftFavoriteClickAction(this.favoriteData);
+               await this.aircraftFavoriteClickAction(this.favoriteData);
                break;
             }
             case CallbackComponent.Company: {
@@ -56,7 +60,17 @@ export class FavoriteIconComponent implements OnInit {
          }
 
     }
-    private aircraftFavoriteClickAction(favoriteData: any): void {
+    private hasCustomer(): boolean {
+        return this.callbackComponent == CallbackComponent.aircraft && this.favoriteData.isCustomerManagerAircraft;
+    }
+    private async aircraftFavoriteClickAction(favoriteData: any): Promise<void> {
+        if(!this.hasCustomer()){
+            await this.openAddCustomerToAicraftDialog();
+        }
+        else
+            this.toogleAicraftFavorite(favoriteData);
+    }
+    private toogleAicraftFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
         this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId, favoriteData.customerAircraftId)
         .subscribe(
@@ -79,10 +93,34 @@ export class FavoriteIconComponent implements OnInit {
             (error: any) => {
                 console.log(error);
                 this.snackbarService.showErrorSnackBar("Error removing aircraft from favorites");
-                favoriteData.isFavorite = true;
-                this.isFavorite = true;
             }
         );
+    }
+    private  async openAddCustomerToAicraftDialog(): Promise<void>{
+        let dialogRef = this.newCustomerAircraftDialog.open<
+            AircraftAssignModalComponent,
+            Partial<NewCustomerAircraftDialogData>
+        >(AircraftAssignModalComponent, {
+            data: {
+                customers: this.customers,
+                tailNumber: this.favoriteData.tailNumber
+            },
+            panelClass: 'aircraft-assign-modal',
+            width: '450px',
+        });
+        let result = await dialogRef
+        .afterClosed().toPromise();
+        if (result) {
+            this.favoriteData.isFavorite = this.isFavorite;
+            this.favoriteData.isCustomerManagerAircraft = true;
+            this.favoriteData.customerInfoByGroupId = result.customerInfoByGroupID;
+            this.favoriteData.customerAircraftId = result.customerAircraftId;
+            this.toogleAicraftFavorite(this.favoriteData);
+        }else{
+            this.isFavorite = !this.isFavorite;
+            this.favoriteData.isFavorite = this.isFavorite;
+        }
+        dialogRef = null;
     }
     private companyFavoriteClickAction(favoriteData: any): void {
         if(favoriteData.isFavorite)

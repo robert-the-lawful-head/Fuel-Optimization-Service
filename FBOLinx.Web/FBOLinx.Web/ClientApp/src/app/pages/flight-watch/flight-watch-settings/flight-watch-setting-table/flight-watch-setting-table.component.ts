@@ -1,4 +1,4 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { state, style, trigger } from '@angular/animations';
 import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
@@ -14,9 +14,6 @@ import { GetTimePipe } from 'src/app/shared/pipes/dateTime/getTime.pipe';
 import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pipe';
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
-import { FavoritesService } from 'src/app/services/favorites.service';
-import { SnackBarService } from 'src/app/services/utils/snackBar.service';
-import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 @Component({
@@ -36,6 +33,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() isArrival: boolean;
     @Input() columns: ColumnType[];
     @Input() isLobbyView: boolean =  false;
+    @Input() customers: any[] =  [];
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() saveSettings = new EventEmitter();
@@ -60,9 +58,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
                 private booleanToText: BooleanToTextPipe,
-                private flightWatchHelper: FlightWatchHelper,
-                private favoritesService: FavoritesService,
-                private snackbarService: SnackBarService) { }
+                private flightWatchHelper: FlightWatchHelper) { }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
@@ -261,8 +257,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     getNoDataToDisplayString(){
         return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
     }
-    isFavoriteButtonVisible(column: any, data: FlightWatchModelResponse): boolean {
-        return column == swimTableColumns.status && data.isCustomerManagerAircraft;
+    isFavoriteButtonVisible(column: any): boolean {
+        return column == swimTableColumns.status;
     }
     setIsFavoriteProperty(aircraft: any): any {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;

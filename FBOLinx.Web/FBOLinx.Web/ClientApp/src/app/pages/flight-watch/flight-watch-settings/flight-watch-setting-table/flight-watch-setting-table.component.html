@@ -58,11 +58,12 @@
                 *matCellDef="let element"
             >
                 <span class="center-items">
-                    <ng-container *ngIf="isFavoriteButtonVisible(column, element)">
+                    <ng-container *ngIf="isFavoriteButtonVisible(column)">
                         <app-favorite-icon
                         [favoriteData]="setIsFavoriteProperty(element)"
                         [hasPadding]="false"
                         [callbackComponent]="getCallBackComponent"
+                        [customers]="customers"
                         (click)="$event.stopPropagation()"></app-favorite-icon>
                     </ng-container>
 

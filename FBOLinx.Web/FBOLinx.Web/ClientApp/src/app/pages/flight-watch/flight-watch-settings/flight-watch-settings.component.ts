@@ -9,6 +9,7 @@ import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/ta
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
+import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,12 +42,17 @@ export class FlightWatchSettingsComponent extends GridBase {
     departuresColumns: ColumnType[] = [];
     tableLocalStorageKey: string;
 
-    constructor(private tableSettingsDialog: MatDialog,private sharedService: SharedService) {
-        super();
+    customers: any[] = [];
 
+    constructor(private tableSettingsDialog: MatDialog,
+        private sharedService: SharedService,
+        private customerInfoByGroupService: CustomerinfobygroupService
+    ) {
+        super();
     }
     ngOnInit(): void {
         this.initColumns();
+        this.getCustomersList(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId);
     }
 
     get aircraftTypes() {
@@ -161,6 +167,18 @@ export class FlightWatchSettingsComponent extends GridBase {
     sortChangeSaveSettings(){
         this.saveSettings();
     }
+
+    getCustomersList(groupId,fboId) {
+        this.customerInfoByGroupService
+            .getCustomersListByGroupAndFbo(
+                groupId,
+                fboId
+            )
+            .subscribe((customers: any[]) => {
+                this.customers = customers;
+            });
+    }
+
     arrivalsDeparturesCommonCols: string[]= [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode,swimTableColumns.ete,swimTableColumns.isAircraftOnGround,swimTableColumns.itpMarginTemplate];
 
     defaultArrivalCols = [swimTableColumns.etaLocal,swimTableColumns.originAirport].concat(this.arrivalsDeparturesCommonCols);
