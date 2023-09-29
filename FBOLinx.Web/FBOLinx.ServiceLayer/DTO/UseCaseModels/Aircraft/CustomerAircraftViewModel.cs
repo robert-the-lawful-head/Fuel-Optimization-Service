@@ -34,6 +34,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public int CustomerAircraftId { get; set; }
 
         public FboFavoriteAircraft? FavoriteAircraft { get; set; }
+        public bool IsCustomerManagerAircraft { get; set; } = true;
 
         public string AircraftSizeDescription
         {
