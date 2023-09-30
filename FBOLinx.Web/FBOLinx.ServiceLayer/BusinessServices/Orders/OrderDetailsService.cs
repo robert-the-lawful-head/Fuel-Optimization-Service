@@ -10,6 +10,7 @@ using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.ServiceLayer.EntityServices;
+using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
