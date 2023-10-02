@@ -19,6 +19,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task<List<TEntity>> AddRangeAsync(List<TEntity> entity);
         Task UpdateAsync(TEntity entity);
         Task DeleteAsync(TEntity entity);
+        Task DeleteRangeAsync(List<TEntity> entity);
         Task<TEntity> DeleteAsync(int id);
         Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec);
         Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec);

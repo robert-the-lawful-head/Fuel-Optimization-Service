@@ -201,5 +201,11 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             await dbContextTransaction.RollbackAsync();
         }
+
+        public async Task DeleteRangeAsync(List<TEntity> entityList)
+        {
+            context.Set<TEntity>().RemoveRange(entityList);
+            await context.SaveChangesAsync();
+        }
     }
 }
