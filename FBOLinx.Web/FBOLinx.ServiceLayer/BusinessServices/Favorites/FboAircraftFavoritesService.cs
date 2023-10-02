@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -15,6 +16,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         Task<List<FboFavoriteAircraft>> GetAircraftfavoritesByFboId(int fboId);
         Task SaveBulkCustomerFavoriteAircraft(List<int> customerAircraftIds, int fboId);
         Task BulkDeleteCustomerFavoriteAircraftByCustomerAicraftId(List<int> customerAircraftIds);
+        Task BulkDeleteCustomerFavoriteAircrafts(List<FboFavoriteAircraft> CustomerAicrafts);
+
     }
 
     public class FboAircraftFavoritesService : IFboAircraftFavoritesService
@@ -28,7 +31,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
         public async Task<FboFavoriteAircraft> AddAircraftFavorite(FboFavoriteAircraft fboFavoriteAircraft)
         {
-             return await _fboFavoriteAircraftsRepo.AddAsync(fboFavoriteAircraft);
+            var existingEntity = (await _fboFavoriteAircraftsRepo.GetAsync(x => x.CustomerAircraftsId == fboFavoriteAircraft.CustomerAircraftsId && x.FboId == fboFavoriteAircraft.FboId)).FirstOrDefault();
+
+            if (existingEntity != null) return existingEntity;
+
+            return await _fboFavoriteAircraftsRepo.AddAsync(fboFavoriteAircraft);
         }
 
         public async Task<bool> DeleteAircraftFavorite(int oid)
@@ -59,10 +66,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         {
             var customerAircrafts = await _fboFavoriteAircraftsRepo.Where(x => customerAircraftIds.Contains(x.CustomerAircraftsId)).ToListAsync();
 
-            foreach (var entity in customerAircrafts)
-            {
-                await _fboFavoriteAircraftsRepo.DeleteAsync(entity);
-            }
+            await _fboFavoriteAircraftsRepo.DeleteRangeAsync(customerAircrafts);
+        }
+
+        public async Task BulkDeleteCustomerFavoriteAircrafts(List<FboFavoriteAircraft> CustomerAicrafts)
+        {
+            await _fboFavoriteAircraftsRepo.DeleteRangeAsync(CustomerAicrafts);
         }
     }
 }

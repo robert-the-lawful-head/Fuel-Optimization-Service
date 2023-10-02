@@ -30,6 +30,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
         public async Task<FboFavoriteCompany> AddCompanyFavorite(FboFavoriteCompany fboFavoriteCompany)
         {
+            var existingEntity = (await _FboFavoriteCompanyRepo.GetAsync(x => x.CustomerInfoByGroupId == fboFavoriteCompany.CustomerInfoByGroupId && x.FboId == fboFavoriteCompany.FboId)).FirstOrDefault();
+
+            if (existingEntity != null) return existingEntity;
+
             var result = await _FboFavoriteCompanyRepo.AddAsync(fboFavoriteCompany);
 
             var customerInfo = await _CustomerInfoByGroupService.GetById(fboFavoriteCompany.CustomerInfoByGroupId);
@@ -43,9 +47,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         {
             var favoriteData = await _FboFavoriteCompanyRepo.FindAsync(oid);
             var customerInfo = await _CustomerInfoByGroupService.GetById(favoriteData.CustomerInfoByGroupId);
-            var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.Oid).ToList();
+            var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.FavoriteAircraft).ToList();
 
-            await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircraftByCustomerAicraftId(aircrafts);
+            await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircrafts(aircrafts);
             await _FboFavoriteCompanyRepo.DeleteAsync(oid);
 
             return true;
