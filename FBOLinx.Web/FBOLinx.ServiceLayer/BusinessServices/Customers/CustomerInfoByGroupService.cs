@@ -8,8 +8,6 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.Responses.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 {
@@ -87,10 +85,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 
         public async Task<CustomerInfoByGroupDto> GetById(int customerInfoByGroupId)
         {
-           var result =  await _EntityService.Where(x => x.Oid == customerInfoByGroupId).Include(x => x.Customer.CustomerAircrafts).FirstOrDefaultAsync();
-
-            return result.Adapt<CustomerInfoByGroupDto>();
-
+            var groupId = (await _EntityService.GetAsync(x => x.Oid == customerInfoByGroupId)).FirstOrDefault().GroupId;
+            return (await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId,customerInfoByGroupId))).FirstOrDefault();
         }
     }
 }
