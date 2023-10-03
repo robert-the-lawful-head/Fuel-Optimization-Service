@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
+using StackifyLib;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
@@ -20,12 +24,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         private IRepository<FboFavoriteCompany, FboLinxContext> _FboFavoriteCompanyRepo;
         private IFboAircraftFavoritesService _FboAircraftFavoritesService;
         private ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private static ILogger<FboCompaniesFavoritesService> _logger { get; set; }
 
-        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompany, FboLinxContext> FboFavoriteCompanyRepo, ICustomerInfoByGroupService CustomerInfoByGroupService, IFboAircraftFavoritesService FboAircraftFavoritesService)
+        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompany, FboLinxContext> FboFavoriteCompanyRepo, ICustomerInfoByGroupService CustomerInfoByGroupService, IFboAircraftFavoritesService FboAircraftFavoritesService, ILogger<FboCompaniesFavoritesService> logger)
         {
             _FboFavoriteCompanyRepo = FboFavoriteCompanyRepo;
             _CustomerInfoByGroupService = CustomerInfoByGroupService;
             _FboAircraftFavoritesService = FboAircraftFavoritesService;
+            _logger = logger;
         }
 
         public async Task<FboFavoriteCompany> AddCompanyFavorite(FboFavoriteCompany fboFavoriteCompany)
@@ -34,12 +40,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
             if (existingEntity != null) return existingEntity;
 
-            var result = await _FboFavoriteCompanyRepo.AddAsync(fboFavoriteCompany);
 
+            var result = await _FboFavoriteCompanyRepo.AddAsync(fboFavoriteCompany);
             var customerInfo = await _CustomerInfoByGroupService.GetById(fboFavoriteCompany.CustomerInfoByGroupId);
             var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.Oid).ToList();
-
-            await _FboAircraftFavoritesService.SaveBulkCustomerFavoriteAircraft(aircrafts,fboFavoriteCompany.FboId);
+            try
+            {
+                await _FboAircraftFavoritesService.SaveBulkCustomerFavoriteAircraft(aircrafts, fboFavoriteCompany.FboId);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                await _FboFavoriteCompanyRepo.DeleteAsync(result.Oid);
+                throw new Exception(ex.Message);
+            }
 
             return result;
         }
@@ -49,7 +63,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             var customerInfo = await _CustomerInfoByGroupService.GetById(favoriteData.CustomerInfoByGroupId);
             var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.FavoriteAircraft).ToList();
 
-            await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircrafts(aircrafts);
+            try
+            {
+                await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircrafts(aircrafts);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.StackTrace);
+                throw new Exception(ex.Message);
+            }
+
             await _FboFavoriteCompanyRepo.DeleteAsync(oid);
 
             return true;

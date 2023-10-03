@@ -1,13 +1,11 @@
 ﻿using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
-using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FBOLinx.ServiceLayer.EntityServices
