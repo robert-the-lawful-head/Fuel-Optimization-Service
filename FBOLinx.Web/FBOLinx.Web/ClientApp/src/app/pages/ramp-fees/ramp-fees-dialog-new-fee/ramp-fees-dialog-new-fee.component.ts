@@ -31,10 +31,13 @@ export class RampFeesDialogNewFeeComponent {
         { text: 'Tail Number', value: 5 },
     ];
     public aircraftTypes: any[];
+    subscription: Subscription;
+
+    //Errors
     public isWaivedNegative = false;
     public isCategoryValueNegative = false;
     public isFeeNegative = false;
-    subscription: Subscription;
+    public isMaxCategoryGrater = true;
 
     constructor(
         public dialogRef: MatDialogRef<RampFeesDialogNewFeeComponent>,
@@ -62,11 +65,22 @@ export class RampFeesDialogNewFeeComponent {
         if (value < 0)
             this.isWaivedNegative = true;
     }
+    public getErrorData() {
+    }
+    public checkCategoryValidation(data): void {
+        this.checkForCategoryValueNegativeValue(data);
+        this.checkForCategoryMinValueGrater(data);
+    }
+    public checkForCategoryMinValueGrater(data): void {
+        this.isMaxCategoryGrater = false;
 
-    public checkForCategoryValueNegativeValue(data) {
+        if (data.categoryMinValue < data.categoryMaxValue)
+            this.isMaxCategoryGrater = true;
+    }
+    public checkForCategoryValueNegativeValue(data): void {
         this.isCategoryValueNegative = false;
 
-        if (data.categoryMinValue < 0 || data.categoryMaxValue)
+        if (data.categoryMinValue < 0 || data.categoryMaxValue < 0)
             this.isCategoryValueNegative = true;
     }
 
