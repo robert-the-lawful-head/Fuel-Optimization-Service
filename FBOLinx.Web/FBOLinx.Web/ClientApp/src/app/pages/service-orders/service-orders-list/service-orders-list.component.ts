@@ -53,7 +53,7 @@ export class ServiceOrdersListComponent implements OnInit {
     }
 
     ngAfterViewInit() {
-        this.selectionList.deselectAll();
+        this.selectionList?.deselectAll();
     }
     public addServiceOrderClicked() {
         var newServiceOrder: ServiceOrder = {
