@@ -1,7 +1,6 @@
 USE [paragon_test]
 GO
 
-/****** Object:  Table [dbo].[FboFavoriteCompanies]    Script Date: 8/24/2023 6:20:19 PM ******/
 SET ANSI_NULLS ON
 GO
 
