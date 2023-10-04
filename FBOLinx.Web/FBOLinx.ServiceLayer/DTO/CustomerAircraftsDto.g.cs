@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO;
 
@@ -23,5 +24,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public CustomersDto Customer { get; set; }
         public List<CustomerAircraftNoteDto> Notes { get; set; }
         public int Oid { get; set; }
+        public FboFavoriteAircraft? FavoriteAircraft { get; set; }
     }
 }

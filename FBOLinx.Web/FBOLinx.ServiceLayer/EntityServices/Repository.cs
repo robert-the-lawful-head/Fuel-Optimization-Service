@@ -1,13 +1,11 @@
 ﻿using EFCore.BulkExtensions;
 using FBOLinx.Core.BaseModels.Specifications;
-using FBOLinx.DB.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FBOLinx.ServiceLayer.EntityServices
@@ -200,6 +198,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             }
 
             await dbContextTransaction.RollbackAsync();
+        }
+
+        public async Task DeleteRangeAsync(List<TEntity> entityList)
+        {
+            context.Set<TEntity>().RemoveRange(entityList);
+            await context.SaveChangesAsync();
         }
     }
 }

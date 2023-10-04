@@ -6,4 +6,6 @@ export const localStorageAccessConstant = {
     groupId: 'groupId',
     impersonatedrole: 'impersonatedrole',
     managerGroupId: 'managerGroupId',
+    dismissedFavoriteAircrafts: 'dismissedFavoriteAircrafts',
+    notifiedFavoriteAircraft: 'notifiedFavoriteAircraft'
 }

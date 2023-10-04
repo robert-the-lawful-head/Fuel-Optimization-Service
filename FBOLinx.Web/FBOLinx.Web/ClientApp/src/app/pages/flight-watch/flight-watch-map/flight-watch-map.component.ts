@@ -32,6 +32,7 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { Subscription } from 'rxjs';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -102,6 +103,8 @@ export class FlightWatchMapComponent
         }
     }
 
+    subscription: Subscription;
+
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
         private sharedService: SharedService,
@@ -144,7 +147,6 @@ export class FlightWatchMapComponent
                 }
 
             });
-
     }
 
     ngAfterViewInit() {
@@ -155,6 +157,7 @@ export class FlightWatchMapComponent
     }
     ngOnDestroy(): void {
         this.mapRemove();
+        if(this.subscription) this.subscription.unsubscribe();
     }
     async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -282,6 +285,8 @@ export class FlightWatchMapComponent
             this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
+        if(changes.center)
+            this.flyTo(this.center);
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
@@ -503,11 +508,10 @@ export class FlightWatchMapComponent
     }
     goToAirport(icao: string){
         let airport = this.acukwikairports.find( x => x.icao == icao);
-        let flyToCenter = {
-            lat: airport.latitudeInDegrees,
-            lng: airport.longitudeInDegrees,
-        };
-        this.flyTo(flyToCenter);
+        this.flyToCoordinates(airport.latitudeInDegrees,airport.longitudeInDegrees);
+    }
+    flyToCoordinates(latitudeInDegrees: number, longitudeInDegrees: number): void{
+        this.flyTo(this.flightWatchMapService.getMapCenterByCoordinates(latitudeInDegrees,longitudeInDegrees));
     }
     openAircraftPopUpByTailNumber(tailNumber: string): void {
         let selectedFlight = keys(this.data).find(

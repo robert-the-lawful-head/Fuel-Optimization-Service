@@ -5,13 +5,13 @@ import {
     OnDestroy,
     OnInit,
     Output,
+    ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
-
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
@@ -24,7 +24,6 @@ import { FboairportsService } from '../../../services/fboairports.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { FbosService } from '../../../services/fbos.service';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { AirportWatchService } from '../../../services/airportwatch.service';
 // Services
 import { UserService } from '../../../services/user.service';
 // Components
@@ -34,6 +33,11 @@ import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 import * as moment from 'moment';
 import { UserRole } from 'src/app/enums/user-role';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
+import { FlightWatchService } from 'src/app/services/flightwatch.service';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @Component({
     host: {
@@ -50,6 +54,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() openedSidebar: boolean;
     @Input() isPublicView: boolean = false;
     @Output() sidebarState = new EventEmitter();
+
+    @ViewChild(IncomingFavoriteAircraftInfoComponent) incomingFavoriteAircraftInfoComponent: IncomingFavoriteAircraftInfoComponent;
 
     showOverlay: boolean;
     isOpened: boolean;
@@ -68,6 +74,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     fuelOrderNotificationsMenu: any = {
         isOpened: false
     };
+    favoriteAircrafts: any = {
+        isOpened: false
+    };
     currrentJetACostPricing: any;
     currrentJetARetailPricing: any;
     hasLoadedJetACost = false;
@@ -80,14 +89,20 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     needsAttentionCustomersData: any[];
     subscription: any;
     fuelOrders: any[] = [];
-    flightWatchData: any[];
+
+    mapLoadSubscription: Subscription;
+    selectedICAO: string = "";
+    airportWatchFetchSubscription: Subscription;
+    favoriteAircraftsData : FlightWatchModelResponse[];
+    dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
+    notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
+
 
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private router: Router,
-        private route: ActivatedRoute,
         private accountProfileDialog: MatDialog,
         private userService: UserService,
         private fboPricesService: FbopricesService,
@@ -95,8 +110,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         private fbosService: FbosService,
         private fuelReqsService: FuelreqsService,
         private winRef: WindowRef,
-        private airportWatchService: AirportWatchService,
-        private Location: Location
+        private Location: Location,
+        private flightWatchService: FlightWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -146,12 +161,27 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                 if (message === customerUpdatedEvent) {
                     this.loadNeedsAttentionCustomers();
                 }
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.loadAirportWatchData();
+                }else if(message == SharedEvents.icaoChangedEvent){
+                    this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                }
             }
         );
 
         this.fuelOrdersSubscription = timer(0, 120000).subscribe(() =>
             this.loadUpcomingOrders()
         );
+
+        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+            if(this.selectedICAO)
+                this.loadAirportWatchData();
+        });
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.notifiedFavoriteAircraft = JSON.parse(localStorage.getItem(localStorageAccessConstant.notifiedFavoriteAircraft)) ?? [];
+
+        this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
     }
 
     ngOnDestroy() {
@@ -161,6 +191,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.fuelOrdersSubscription) {
             this.fuelOrdersSubscription.unsubscribe();
         }
+        if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
+        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
+
     }
 
     toggle(event) {
@@ -190,6 +223,10 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
     }
 
+    openfavoriteAircrafts() {
+        this.favoriteAircrafts.isOpened = !this.favoriteAircrafts.isOpened;
+    }
+
     openFuelOrdersUpdate() {
         this.fuelOrderNotificationsMenu.isOpened = !this.fuelOrderNotificationsMenu.isOpened;
     }
@@ -198,6 +235,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
         this.fuelOrderNotificationsMenu.isOpened = false;
+        this.favoriteAircrafts.isOpened = false;
         this.isOpened = false;
     }
 
@@ -255,6 +293,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         localStorage.removeItem(localStorageAccessConstant.managerGroupId);
         localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
         this.sharedService.currentUser.fboId = 0;
+        this.sharedService.resetCurrentUserPropertyValue(localStorageAccessConstant.icao);
+        this.selectedICAO = null;
         this.sharedService.currentUser.impersonatedRole = null;
         if (
             this.sharedService.currentUser.managerGroupId &&
@@ -523,6 +563,61 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
     public get userRole(){
         return UserRole;
+    }
+
+    loadAirportWatchData() {
+        return this.airportWatchFetchSubscription = this.flightWatchService
+        .getAirportLiveData(
+            this.sharedService.currentUser.fboId,
+            this.selectedICAO
+        )
+        .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
+            if (data.success) {
+                var filteredFavoriteAircrafts = data.result.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null && item.status == FlightLegStatus.EnRoute && item.etaLocal != null);
+                this.favoriteAircraftsData =
+                filteredFavoriteAircrafts?.filter(item =>
+                    !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+                );
+
+                this.dismissedFavoriteAircrafts = this.dismissedFavoriteAircrafts.filter(item =>
+                    filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+                );
+                localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+
+                let notNotifiedFavoriteAircraft =
+                filteredFavoriteAircrafts?.filter(item =>
+                    !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
+                );
+
+                localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
+
+                this.notifiedFavoriteAircraft.push(...notNotifiedFavoriteAircraft);
+                this.sendNotifications(notNotifiedFavoriteAircraft);
+
+            }else{
+                console.log("flight watch data: message", data.message);
+            }
+            this.sharedService.valueChange(
+            {
+                event: SharedEvents.flightWatchDataEvent,
+                data: data.result ?? null,
+            });
+        }, (error: any) => {
+            console.log("flight watch error:", error)
+        });
+    }
+    sendNotifications(data: FlightWatchModelResponse[]) {
+        data?.forEach(flightwatch => {
+          this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
+        });
+    }
+    removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
+        this.dismissedFavoriteAircrafts.push(flightwatch);
+        this.favoriteAircraftsData = this.favoriteAircraftsData.filter(item => item.tailNumber != flightwatch.tailNumber);
+        localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+    }
+    goToFlightWatch(flightwatch: FlightWatchModelResponse):void{
+        this.incomingFavoriteAircraftInfoComponent.goToFlightWatch(flightwatch);
     }
     // Private Methods
     private isOnDashboard(): boolean {

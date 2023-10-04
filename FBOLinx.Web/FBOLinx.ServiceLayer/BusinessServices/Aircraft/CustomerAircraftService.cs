@@ -1,26 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
-using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.EntityServices;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 {
@@ -31,6 +23,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         Task<List<CustomerAircraftsViewModel>> GetAircraftsList(int groupId, int fboId);
         Task<string> GetCustomerAircraftTailNumberByCustomerAircraftId(int customerAircraftId);
         void ClearCache(int groupId, int fboId = 0);
+        Task<List<CustomerAircraftsDto>> GetCustomerAircrafts(int groupId);
     }
 
     public class CustomerAircraftService : BaseDTOService<CustomerAircraftsDto, DB.Models.CustomerAircrafts, FboLinxContext>, ICustomerAircraftService
@@ -40,15 +33,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
         private IMemoryCache _MemoryCache;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private const string _AircraftWithDetailsCacheKey = "CustomerAircraft_CustomAircraftsWithDetails_";
+        private IRepository<FboFavoriteAircraft, FboLinxContext> _FboFavoriteAircraftRepo;
 
         public CustomerAircraftService(ICustomerAircraftEntityService customerAircraftEntityService, IAircraftService aircraftService, 
             IPricingTemplateService pricingTemplateService,
-            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService) : base(customerAircraftEntityService)
+            IMemoryCache memoryCache, ICustomerInfoByGroupService customerInfoByGroupService, IRepository<FboFavoriteAircraft, FboLinxContext> FboFavoriteAircraftRepo) : base(customerAircraftEntityService)
         {
             _MemoryCache = memoryCache;
             _CustomerInfoByGroupService = customerInfoByGroupService;
             _AircraftService = aircraftService;
             _pricingTemplateService = pricingTemplateService;
+            _FboFavoriteAircraftRepo = FboFavoriteAircraftRepo;
         }
 
         public async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsWithDetails(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null, bool useCache = false)
@@ -78,7 +73,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftsViewModel(int groupId, int customerId = 0, List<string> tailNumbers = null)
         {
-            List<CustomerAircraftsDto> aircrafts = null;
+            List<CustomerAircraftsDto> aircrafts = null;           
+
             if (customerId > 0)
             {
                 aircrafts =
@@ -93,8 +89,32 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
                 var customers = await _CustomerInfoByGroupService.GetCustomers(groupId, tailNumbers);
                 aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
             }
+            //not able to get favorites through navigation property so trying a join
+
+            var favorites = _FboFavoriteAircraftRepo.Where(x => aircrafts.Select(y => y.Oid).Contains(x.CustomerAircraftsId));
+            
+            aircrafts = (from a in aircrafts
+                         join b in favorites
+                      on a.Oid equals b.CustomerAircraftsId into joined
+                      from subB in joined.DefaultIfEmpty()
+                      select new
+                      {
+                          aircraft = a,
+                          customerAircaft = subB
+                      }).Select(aj =>
+                      {
+                          aj.aircraft.FavoriteAircraft = aj.customerAircaft ?? null;
+                          return aj.aircraft;
+                      }).ToList();
 
             return aircrafts?.Select(x => CustomerAircraftsViewModel.Cast(x)).ToList();
+        }
+        public async Task<List<CustomerAircraftsDto>> GetCustomerAircrafts(int groupId)
+        {
+
+            var customers = await _CustomerInfoByGroupService.GetCustomers(groupId);
+            var aircrafts = customers.SelectMany(a => a.Customer.CustomerAircrafts).ToList();
+            return aircrafts;
         }
 
         private async Task<List<CustomerAircraftsViewModel>> GetCustomAircraftWithDetailsFromCache(int groupId,
@@ -109,7 +129,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Aircraft
             return result?.Where(x => (tailNumbers == null || tailNumbers.Contains(x.TailNumber))
             && (customerId == 0 || x.CustomerId == customerId)).ToList();
         }
-
         private async Task<List<CustomerAircraftsViewModel>> GetCustomerAircraftWithDetailsFromDatabase(int groupId, int fboId = 0, int customerId = 0, List<string> tailNumbers = null)
         {
             var pricingTemplates = await _pricingTemplateService.GetStandardPricingTemplatesForAllCustomers(fboId, groupId);

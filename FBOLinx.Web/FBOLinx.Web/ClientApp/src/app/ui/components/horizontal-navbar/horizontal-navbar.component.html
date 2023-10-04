@@ -151,6 +151,50 @@
                 </div>
             </div>
         </div>
+        <!--favorite aircrafts notifications/alerts-->
+        <div *ngIf="favoriteAircraftsData && favoriteAircraftsData.length > 0" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item notification-icon">
+            <a (click)="openfavoriteAircrafts()" class="nav-link">
+                <span *ngIf="favoriteAircraftsData && favoriteAircraftsData.length > 0">
+                    <mat-icon [matBadge]="favoriteAircraftsData.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
+                </span>
+            </a>
+            <div class="dropdown-menu">
+                <h4 class="menu-title">
+                    Favorite Aricrafts
+                </h4>
+
+                <ul class="notifications-list">
+                    <li *ngFor="let flightwatch of favoriteAircraftsData">
+                        <a>
+                            <div class="content">
+                                <span class="desc p-1">
+                                    {{flightwatch.tailNumber}}
+                                    <span *ngIf="flightwatch.icaoAircraftCode">
+                                    ({{flightwatch.icaoAircraftCode}})
+                                    </span> has been detected ETA: {{flightwatch.etaLocal | date: "HH:mm" }}
+                                </span>
+                                <div class="text-right p-1">
+                                    <button (click)="removeFavoriteAircraft(flightwatch)"
+                                    [view]="'error'"
+                                    class="mr-1"
+                                    ni-button
+                                    size="small">
+                                        Dismiss
+                                    </button>
+                                    <button (click)="goToFlightWatch(flightwatch)"
+                                    [view]="'accent'"
+                                    class="mr-1"
+                                    ni-button
+                                    size="small">
+                                        Show me
+                                    </button>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div [ngClass]="{ opened: accountProfileMenu.isOpened }" class="nav-item user-name">
             <a (click)="toggleProfileMenu()" class="nav-link">
                 <div *ngIf="userFullName" class="name">{{ userFullName }}</div>
@@ -221,3 +265,4 @@
         <div (click)="close()" class="items-overlay"></div>
     </div>
 </div>
+<app-incoming-favorite-aircraft-info></app-incoming-favorite-aircraft-info>

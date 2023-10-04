@@ -1,5 +1,4 @@
-﻿using Azure;
-using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.SWIM;
@@ -9,8 +8,6 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using FBOLinx.DB.Specifications.Fbo;
-using System.Security.Cryptography;
 
 namespace FBOLinx.ServiceLayer.Demo
 {
@@ -67,6 +64,7 @@ namespace FBOLinx.ServiceLayer.Demo
                 return null;
 
             var demoData = _demoData.Value.FlightWatch;
+            
             var swim = new SWIMFlightLegDTO()
             {
                 FAAMake = "CESSNA",
@@ -87,7 +85,8 @@ namespace FBOLinx.ServiceLayer.Demo
                 ArrivalICAO = fbo.FboAirport.Icao,
                 ActualSpeed = demoData.GroundSpeedKts,
                 FlightDepartment = "Test Company",
-                FAARegisteredOwner = "Test FAA Owner"
+                FAARegisteredOwner = "Test FAA Owner",
+                ICAOAircraftCode = "KVNYTest"
             };
             var airportWatchLiveData = new AirportWatchLiveDataDto()
             {
@@ -103,14 +102,16 @@ namespace FBOLinx.ServiceLayer.Demo
                 GpsAltitude = demoData.GpsAltitude,
                 IsAircraftOnGround = demoData.IsAircraftOnGround,
                 Latitude = demoData.Latitude,
-                Longitude = demoData.Longitude
+                Longitude = demoData.Longitude,
+                AircraftICAO = "AircraftICAOtKVNY"
             };
             var airportWatchHistoricalDataCollection = new List<AirportWatchHistoricalDataDto>();
 
             var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim, null);
 
+            flightWatch.FavoriteAircraft = new FboFavoriteAircraft() { CustomerAircraftsId = 0, FboId = 276 };
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
-
+            flightWatch.IsCustomerManagerAircraft = true;
             return flightWatch;
         }
     }

@@ -53,6 +53,7 @@ namespace FBOLinx.Web.ViewModels
         public ICollection<CustomerTag> Tags { get; set; }
         public string PricingFormula { get; set; }
         public List<CustomerGridContactsViewModel> Contacts { get; set; }
+        public FboFavoriteCompany FavoriteCompany { get; set; }
     }
     public class CustomerGridContactsViewModel
     {

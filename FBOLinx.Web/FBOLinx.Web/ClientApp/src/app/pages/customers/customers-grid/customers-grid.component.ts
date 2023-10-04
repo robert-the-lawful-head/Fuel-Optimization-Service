@@ -36,6 +36,9 @@ import { CustomerGridState } from '../../../store/reducers/customer';
 import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 // Components
 import { CustomersDialogNewCustomerComponent } from '../customers-dialog-new-customer/customers-dialog-new-customer.component';
+import { FavoritesService } from 'src/app/services/favorites.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -122,6 +125,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
     @Output() customerDeleted = new EventEmitter<any>();
     @Output() customerPriceClicked = new EventEmitter<any>();
     @Output() exportAircraftClick = new EventEmitter<any>();
+    @Output() refreshAircrafts = new EventEmitter<void>();
 
     // Members
     tableLocalStorageKey = 'customer-manager-table-settings';
@@ -160,7 +164,9 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         private tagsService: TagsService,
         private dialog: MatDialog ,
         private route : ActivatedRoute,
-        private currencyPipe: CurrencyPipe
+        private currencyPipe: CurrencyPipe,
+        private favoritesService: FavoritesService,
+        private snackbarService: SnackBarService
     ) { super(); }
     ngOnChanges(changes: SimpleChanges): void {
         if(changes.customersData){
@@ -688,7 +694,7 @@ export class CustomersGridComponent extends GridBase implements OnInit {
         );
 
         this.sort.active = 'allInPrice';
-    }    
+    }
 
     private loadCustomerFeesAndTaxes(customerInfoByGroupId: number): void {
         this.fboFeesAndTaxesService
@@ -709,5 +715,16 @@ export class CustomersGridComponent extends GridBase implements OnInit {
 
         this.start = 0;
         this.limit = 20;
+    }
+    setIsFavoriteProperty(customer: any): any {
+        customer.isFavorite = customer.favoriteCompany != null;
+        return customer;
+    }
+    toogleFavorite(favoriteData: any): void {
+        if(favoriteData.isFavorite)
+            this.refreshAircrafts.emit();
+    }
+    get getCallBackComponent(): CallbackComponent{
+        return CallbackComponent.Company;
     }
 }

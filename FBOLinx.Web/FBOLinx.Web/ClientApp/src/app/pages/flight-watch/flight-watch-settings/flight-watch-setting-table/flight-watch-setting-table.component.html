@@ -58,10 +58,20 @@
                 *matCellDef="let element"
             >
                 <span class="center-items">
+                    <ng-container *ngIf="isFavoriteButtonVisible(column)">
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(element)"
+                        [hasPadding]="false"
+                        [callbackComponent]="getCallBackComponent"
+                        [customers]="customers"
+                        (click)="$event.stopPropagation()"></app-favorite-icon>
+                    </ng-container>
+
                     <ng-container *ngIf="hasIcon(column)"
                         ><mat-icon [ngStyle]="{ color: getTextColor(element, column) }">{{
                             getIcon(element)
-                        }}</mat-icon></ng-container
+                        }}</mat-icon>
+                    </ng-container
                     >
                     {{ getColumnData(element, column) }}
                 </span>

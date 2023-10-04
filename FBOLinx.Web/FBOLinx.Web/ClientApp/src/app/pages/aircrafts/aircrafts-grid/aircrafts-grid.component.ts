@@ -21,6 +21,9 @@ import { SharedService } from '../../../layouts/shared-service';
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/customer-aircrafts-edit/customer-aircrafts-edit.component';
+import { FavoritesService } from 'src/app/services/favorites.service';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -62,6 +65,8 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         private sharedService: SharedService ,
         private route : ActivatedRoute,
         private nullOrEmptyToDefault: NullOrEmptyToDefault,
+        private favoritesService: FavoritesService,
+        private snackbarService: SnackBarService
     ) {
         super();
         this.isLoadingAircraftTypes = true;
@@ -264,5 +269,12 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
     }
     getAircrafttypeDisplayString(aircraft: any): string {
         return this.nullOrEmptyToDefault.transform(aircraft.make, false) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,false);
+    }
+    setIsFavoriteProperty(aircraft: any): any {
+        aircraft.isFavorite = aircraft.favoriteAircraft != null;
+        return aircraft;
+    }
+    get getCallBackComponent(): CallbackComponent{
+        return CallbackComponent.aircraft;
     }
 }

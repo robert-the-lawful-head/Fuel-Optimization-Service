@@ -79,8 +79,17 @@
                     </div>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
-                    <input (change)="selectUnique()" [(ngModel)]="customer.selectAll" class="checkboxHeight"
-                           type="checkbox" value="{{ customer.selectAll }}" />
+                    <div class="row mx-auto">
+                        <span>
+                            <input (change)="selectUnique()" [(ngModel)]="customer.selectAll" class="checkboxHeight"
+                            type="checkbox" value="{{ customer.selectAll }}" />
+                        </span>
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(customer)"
+                        [callbackComponent]="getCallBackComponent"
+                        (favoriteClick)="toogleFavorite(customer)"
+                        ></app-favorite-icon>
+                    </div>
                 </td>
             </ng-container>
 
