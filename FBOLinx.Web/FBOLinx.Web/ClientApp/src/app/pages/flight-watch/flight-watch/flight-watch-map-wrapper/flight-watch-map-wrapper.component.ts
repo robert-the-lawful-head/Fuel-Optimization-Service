@@ -31,7 +31,6 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     @Input() icaoList: string[];
     @Input() showFilters: boolean =  true;
 
-    @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();

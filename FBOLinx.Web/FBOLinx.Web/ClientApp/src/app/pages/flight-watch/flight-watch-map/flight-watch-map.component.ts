@@ -53,7 +53,6 @@ export class FlightWatchMapComponent
     @Input() icao: string;
 
     @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
-    @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
     @ViewChild('aircraftPopupContainer')
@@ -170,9 +169,6 @@ export class FlightWatchMapComponent
         this.addSource(this.mapMarkers.airports.sourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
 
         this.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.mapMarkers.airports.layerId, this.mapMarkers.airports.sourceId));
-
-        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
-        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
     }
     async updateICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -190,16 +186,6 @@ export class FlightWatchMapComponent
         if(!source) return;
 
         source.setData(data);
-        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
-        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
-    }
-    clickActionOnAirportICon(e: any): void{
-        let id = e.features[0].properties.id;
-        var clickedAirport = this.acukwikairports.filter((airport) => {
-            return airport.oid == id;
-        });
-        let icaoClicked = clickedAirport[0];
-        this.airportClick.emit(icaoClicked);
     }
     async loadMapIcons(): Promise<unknown> {
         var promisesArray = []
