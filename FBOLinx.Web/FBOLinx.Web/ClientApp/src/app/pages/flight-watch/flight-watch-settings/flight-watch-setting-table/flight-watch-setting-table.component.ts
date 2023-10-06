@@ -258,7 +258,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return (this.isArrival) ? "No upcoming arrivals": "No upcoming departures";
     }
     isFavoriteButtonVisible(column: any): boolean {
-        return column == swimTableColumns.status;
+        return column == swimTableColumns.status && !this.isLobbyView;
     }
     setIsFavoriteProperty(aircraft: any): any {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;

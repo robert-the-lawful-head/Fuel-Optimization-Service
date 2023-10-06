@@ -8,7 +8,7 @@ import {
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
@@ -97,6 +97,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
 
+    isFavoriteAircraftNotificationVisible = true;
+    routeSubscription: Subscription;
+
 
     constructor(
         private authenticationService: AuthenticationService,
@@ -182,6 +185,13 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.notifiedFavoriteAircraft = JSON.parse(localStorage.getItem(localStorageAccessConstant.notifiedFavoriteAircraft)) ?? [];
 
         this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
+
+        this.routeSubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                this.isFavoriteAircraftNotificationVisible = (event.url == '/public-layout/lobby-view')? false : true;
+            }
+        });
+        this.isFavoriteAircraftNotificationVisible = (this.router.url == '/public-layout/lobby-view')? false : true;
     }
 
     ngOnDestroy() {
@@ -193,6 +203,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         }
         if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
         if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
+        if(this.routeSubscription) this.routeSubscription.unsubscribe();
 
     }
 
