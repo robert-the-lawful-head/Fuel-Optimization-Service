@@ -44,6 +44,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             var result = await _FboFavoriteCompanyRepo.AddAsync(fboFavoriteCompany);
             var customerInfo = await _CustomerInfoByGroupService.GetById(fboFavoriteCompany.CustomerInfoByGroupId);
             var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.Oid).ToList();
+            aircrafts = aircrafts.Where(x => x != null).ToList();
+
             try
             {
                 await _FboAircraftFavoritesService.SaveBulkCustomerFavoriteAircraft(aircrafts, fboFavoriteCompany.FboId);
@@ -62,6 +64,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             var favoriteData = await _FboFavoriteCompanyRepo.FindAsync(oid);
             var customerInfo = await _CustomerInfoByGroupService.GetById(favoriteData.CustomerInfoByGroupId);
             var aircrafts = customerInfo.Customer.CustomerAircrafts.Select(x => x.FavoriteAircraft).ToList();
+            aircrafts = aircrafts.Where(x => x != null).ToList();
 
             try
             {
