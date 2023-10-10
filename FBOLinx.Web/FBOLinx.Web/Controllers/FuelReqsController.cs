@@ -39,6 +39,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
+using FBOLinx.DB.Specifications.OrderDetails;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -222,8 +223,8 @@ namespace FBOLinx.Web.Controllers
 
 
         [AllowAnonymous]
-        [HttpPut("canceluncancel/id/{id}")]
-        public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id, bool? isCancelled = null)
+        [HttpPut("canceluncancel/id/{id}/fbohandlerid/{fbohandlerid}")]
+        public async Task<IActionResult> CancelUnCancelFuelRequest([FromRoute] int id, [FromRoute] int fbohandlerid, bool? isCancelled = null)
         {
             var fuelReq = await _context.FuelReq.Where(f => f.Oid == id).FirstOrDefaultAsync();
 
@@ -238,6 +239,15 @@ namespace FBOLinx.Web.Controllers
 
                 fuelReq.Cancelled = isCancelled;
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(id, fbohandlerid));
+                if (orderDetails != null && orderDetails.Oid > 0)
+                {
+                    orderDetails.IsCancelled = true;
+                    await _orderDetailsService.UpdateAsync(orderDetails);
+                };
             }
 
             return Ok(fuelReq);
@@ -272,6 +282,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.PaymentMethod = request.PaymentMethod;
             orderDetails.QuotedVolume = request.FuelEstWeight;
             orderDetails.Eta = request.Eta;
+            orderDetails.FboHandlerId = request.FboHandlerId;
 
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(request.FboHandlerId));
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
@@ -290,7 +301,7 @@ namespace FBOLinx.Web.Controllers
                 if (fbo.Group == null || fbo.Group.IsLegacyAccount.GetValueOrDefault())
                     return BadRequest("Legacy FBO client.  This FBO does not support API orders yet.");
 
-                var fuelReq = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdSpecification(request.SourceId.GetValueOrDefault()));
+                var fuelReq = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
                 if (request.FuelEstWeight > 0)
                 {
                     var fuelReqsPt =

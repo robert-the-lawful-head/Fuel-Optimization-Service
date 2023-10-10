@@ -28,5 +28,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public int? CustomerAircraftId { get; set; }
         public DateTime? Eta { get; set; }
         public int? FboHandlerId { get; set; }
+        public bool? IsCancelled { get; set; }
+        public int? OldFboHandlerId { get; set; }
     }
 }

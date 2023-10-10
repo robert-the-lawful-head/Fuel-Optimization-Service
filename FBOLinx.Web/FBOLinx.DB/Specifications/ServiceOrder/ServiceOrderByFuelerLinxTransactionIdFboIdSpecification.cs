@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace FBOLinx.DB.Specifications.User
 {
-    public sealed class ServiceOrderByFuelerLinxTransactionIdSpecification : Specification<Models.ServiceOrder>
+    public sealed class ServiceOrderByFuelerLinxTransactionIdFboIdSpecification : Specification<Models.ServiceOrder>
     {
-        public ServiceOrderByFuelerLinxTransactionIdSpecification(int fuelerLinxTransactionId) : base(x => x.FuelerLinxTransactionId == fuelerLinxTransactionId)
+        public ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(int fuelerLinxTransactionId, int fboId) : base(x => x.FuelerLinxTransactionId == fuelerLinxTransactionId && x.Fboid == fboId)
         {
             AddInclude(x => x.ServiceOrderItems);
             AddInclude(x => x.CustomerInfoByGroup);

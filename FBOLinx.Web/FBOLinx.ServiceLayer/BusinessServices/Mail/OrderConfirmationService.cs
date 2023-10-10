@@ -54,13 +54,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             var FuelVendor = "";
             var FuelerLinxTransactionId = fuelReq.SourceId.GetValueOrDefault().ToString();
 
-            var fuelOrder = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
+            var fuelOrder = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fuelReq.Fboid.GetValueOrDefault()));
             var serviceOrder = new DTO.ServiceOrderDto();
             var fbo = new FbosDto();
 
             if (fuelOrder == null || fuelOrder.Oid == 0)
             {
-                serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
+                serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.Oid));
                 
                 if (serviceOrder != null && serviceOrder.Oid > 0)     // SERVICE ORDER ONLY
                 {
@@ -93,7 +93,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 Eta = fuelOrder.ArrivalDateTimeLocal.ToString();
             }
 
-            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
+            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.AcukwikFBOHandlerId.GetValueOrDefault()));
             if (orderDetails != null && orderDetails.Oid > 0)
             {
                 FuelVendor = orderDetails.FuelVendor;
@@ -109,7 +109,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 fuelerLinxId = FuelerLinxTransactionId
             };
 
-            await SendEmail(dynamicTemplateData, fbo.FuelDeskEmail, orderDetails.ConfirmationEmail);
+            await SendEmail(dynamicTemplateData, MailService.GetFboLinxAddress(fbo.SenderAddress), orderDetails.ConfirmationEmail);
 
             await RegisterConfirmationNotificationSend(fuelReq.SourceId.GetValueOrDefault());
 
@@ -131,10 +131,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
 
             return true;
         }
-        private async Task<bool> SendEmail(SendGridOrderConfirmationTemplateData dynamicTemplateData, string fuelDeskEmail, string confirmationEmail)
+        private async Task<bool> SendEmail(SendGridOrderConfirmationTemplateData dynamicTemplateData, string senderAddress, string confirmationEmail)
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
-            mailMessage.From = new MailAddress(fuelDeskEmail);
+            mailMessage.From = new MailAddress(senderAddress);
             foreach (string email in confirmationEmail.Split(";"))
             {
                 if (_mailService.IsValidEmailRecipient(email))

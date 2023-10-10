@@ -131,6 +131,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.FuelerLinxTransactionId = request.SourceId.GetValueOrDefault();
             orderDetails.PaymentMethod = request.PaymentMethod;
             orderDetails.Eta = request.Eta;
+            orderDetails.FboHandlerId = handlerId;
 
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
@@ -142,8 +143,8 @@ namespace FBOLinx.Web.Controllers
                 await _fuelReqService.AddServiceOrder(request, fbo);
 
             // Add order details if it doesn't exist yet
-            var exisitngOrderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(request.SourceId.GetValueOrDefault()));
-            if (exisitngOrderDetails == null)
+            var existingOrderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(request.SourceId.GetValueOrDefault(), handlerId));
+            if (existingOrderDetails == null)
                 await _orderDetailsService.AddAsync(orderDetails);
 
             return Ok();

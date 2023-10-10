@@ -32,5 +32,7 @@ namespace FBOLinx.DB.Models
         [Column("ETA")]
         public DateTime? Eta { get; set; }
         public int? FboHandlerId { get; set; }
+        public bool? IsCancelled { get; set; }
+        public int? OldFboHandlerId { get; set; }
     }
 }

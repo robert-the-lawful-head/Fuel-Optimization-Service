@@ -8,9 +8,9 @@ using FBOLinx.Core.BaseModels.Specifications;
 
 namespace FBOLinx.DB.Specifications.FuelRequests
 {
-    public sealed class FuelReqBySourceIdSpecification : Specification<DB.Models.FuelReq>
+    public sealed class FuelReqBySourceIdFboIdSpecification : Specification<DB.Models.FuelReq>
     {
-        public FuelReqBySourceIdSpecification(int sourceId) : base(x => x.SourceId == sourceId)
+        public FuelReqBySourceIdFboIdSpecification(int sourceId, int fboId) : base(x => x.SourceId == sourceId && x.Fboid == fboId)
         {
         }
     }
