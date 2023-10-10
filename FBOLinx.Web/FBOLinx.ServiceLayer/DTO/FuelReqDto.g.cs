@@ -100,7 +100,7 @@ namespace FBOLinx.Service.Mapping.Dto
             DispatchNotes = "";
             Eta = item.ArrivalDateTime;
             Etd = item.DepartureDateTime;
-            Icao = item.Icao;
+            Icao = item.Icao.Trim();
             Notes = "";
             QuotedPpg = 0;
             QuotedVolume = item.DispatchedVolume.Amount;
