@@ -153,6 +153,8 @@ namespace FBOLinx.Core.Utilities.DatesAndTimes
 
         public static string GetLocalTimeZone(DateTime utcDateTime, double? intlTimeZone, string airportCity)
         {
+            if (airportCity == null)
+                airportCity = "";
             var allTimeZones = TimeZoneInfo.GetSystemTimeZones();
             TimeZoneInfo tst = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
             bool isDaylightSavingTime = tst.IsDaylightSavingTime(utcDateTime);
