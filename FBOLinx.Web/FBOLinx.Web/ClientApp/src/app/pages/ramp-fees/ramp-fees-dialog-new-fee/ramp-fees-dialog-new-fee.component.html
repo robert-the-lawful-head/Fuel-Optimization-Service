@@ -72,10 +72,14 @@
                    matInput
                    placeholder="Min. Weight"
                    type="number"
-                   (change)="checkForCategoryValueNegativeValue(data)" />
+                   (change)="checkCategoryValidation(data)" />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
-        <div *ngIf="isCategoryValueNegative" class="text-danger">Weight cannot be negative</div>
+        <div *ngIf="isCategoryValueNegative || !isMaxCategoryGrater" class="text-danger">
+            {{ isMaxCategoryGrater ? '' : 'Max. Weight should be greater than Min. Weight' }}<br />
+            {{ !isCategoryValueNegative ? '' : 'Weight cannot be negative'}}
+
+        </div>
     </div>
     <div *ngIf="data.categoryType == 3">
         <mat-form-field>
@@ -84,7 +88,7 @@
                    matInput
                    placeholder="Max. Weight"
                    type="number"
-                   (change)="checkForCategoryValueNegativeValue(data)" />
+                   (change)="checkCategoryValidation(data)" />
             <span matSuffix>Lbs.</span>
         </mat-form-field>
     </div>
@@ -95,10 +99,13 @@
                    matInput
                    placeholder="Min. Wingspan"
                    type="number"
-                   (change)="checkForCategoryValueNegativeValue(data)" />
+                   (change)="checkCategoryValidation(data)" />
             <span matSuffix>Feet</span>
         </mat-form-field>
-        <div *ngIf="isCategoryValueNegative" class="text-danger">Wingspan cannot be negative</div>
+        <div *ngIf="isCategoryValueNegative || !isMaxCategoryGrater" class="text-danger">
+            {{ isMaxCategoryGrater ? '' : 'Max. Wingspan should be greater than Min. Wingspan' }}<br />
+            {{ !isCategoryValueNegative ? '' : 'Wingspan cannot be negative'}}
+        </div>
     </div>
     <div *ngIf="data.categoryType == 4">
         <mat-form-field>
@@ -107,7 +114,7 @@
                    matInput
                    placeholder="Max. Wingspan"
                    type="number"
-                   (change)="checkForCategoryValueNegativeValue(data)" />
+                   (change)="checkCategoryValidation(data)" />
             <span matSuffix>Feet</span>
         </mat-form-field>
     </div>
@@ -129,7 +136,7 @@
         class="mr-1"
         color="green"
         mat-stroked-button
-        [disabled] = "isWaivedNegative || isCategoryValueNegative || isFeeNegative"
+        [disabled] = "isWaivedNegative || isCategoryValueNegative || isFeeNegative || !isMaxCategoryGrater"
     >
         <mat-icon>save</mat-icon>
         Add Ramp Fee

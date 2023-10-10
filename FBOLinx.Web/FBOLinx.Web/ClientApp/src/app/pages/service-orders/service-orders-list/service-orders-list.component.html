@@ -127,7 +127,7 @@
         <div
             class="row"
             *ngIf="
-                !inCompleteServiceOrders || inCompleteServiceOrders.length == 0
+                (!inCompleteServiceOrders || inCompleteServiceOrders.length == 0) && !isFreemiumAccount
             "
         >
             <div class="col-12 text-center">
