@@ -9,7 +9,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { BehaviorSubject, Subscription, timer } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -128,9 +128,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.canUserSeePricing()) {
             this.loadCurrentPrices();
             this.loadLocations();
-            this.loadFboInfo();
             this.loadNeedsAttentionCustomers();
         }
+        this.loadFboInfo();
 
         this.subscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
