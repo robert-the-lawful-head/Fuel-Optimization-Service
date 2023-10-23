@@ -274,7 +274,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                               { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
                                                   into leftJoinCCOT
                                               from ccot in leftJoinCCOT.DefaultIfEmpty()
-                                              where (c.Oid == customerInfoByGroupId) || (customerInfoByGroupId == 0)
+                                              where fp.Price > 0 && ((c.Oid == customerInfoByGroupId) || (customerInfoByGroupId == 0))
                                               select new CustomerWithPricing()
                                               {
                                                   CustomerId = c.Customer.Oid,
