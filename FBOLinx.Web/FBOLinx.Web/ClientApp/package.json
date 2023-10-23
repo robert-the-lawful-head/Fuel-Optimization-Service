@@ -32,6 +32,7 @@
         "@syncfusion/ej2-angular-inputs": "^19.2.55",
         "@syncfusion/ej2-angular-richtexteditor": "^18.4.42",
         "@syncfusion/ej2-material-theme": "~18.4.42",
+        "@turf/turf": "^6.5.0",
         "angular-resizable-element": "^3.3.5",
         "angular2-text-mask": "^9.0.0",
         "bootstrap": "^4.6.0",
