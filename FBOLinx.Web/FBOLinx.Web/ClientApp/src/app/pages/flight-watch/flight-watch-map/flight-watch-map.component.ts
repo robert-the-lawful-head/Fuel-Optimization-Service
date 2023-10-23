@@ -13,6 +13,8 @@ import {
 } from '@angular/core';
 import { Dictionary, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
+import { environment } from 'src/environments/environment';
+import * as turf from '@turf/turf';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
@@ -77,6 +79,8 @@ export class FlightWatchMapComponent
     public clusters: AirportFboGeoFenceCluster[];
 
     public isMapDataLoaded: boolean = false;
+
+    public startTime: number = Date.now();
 
     // Mapbox and layers IDs
     public mapMarkers: MapMarkers= {
@@ -265,7 +269,17 @@ export class FlightWatchMapComponent
     ngOnChanges(changes: SimpleChanges): void {
         if(!this.map) return;
 
-        if (changes.data) {
+        if (changes.data&& this.styleLoaded) {
+            this.startTime = Date.now();
+            const propertyNames = Object.getOwnPropertyNames(
+                changes.data.currentValue
+            );
+
+            for (const propertyName of propertyNames) {
+                changes.data.currentValue[propertyName].previousLongitude = changes.data.previousValue[propertyName]?.longitude ?? changes.data.currentValue[propertyName].longitude;
+
+                changes.data.currentValue[propertyName].previousLatitude = changes.data.previousValue[propertyName]?.latitude ?? changes.data.currentValue[propertyName].latitude;
+            }
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.updateFlightOnMap(this.mapMarkers.flights);
             this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
@@ -331,22 +345,50 @@ export class FlightWatchMapComponent
             features: dataFeatures,
         };
 
-        source.setData(data);
+        // source.setData(data);
 
-        if (this.currentPopup.isPopUpOpen) {
-            let selectedFlight = marker.data.find(
-                (key) => this.data[key].tailNumber == this.currentPopup.popupId
-            );
-            if (!selectedFlight){
-                this.closeAllPopUps();
-                this.currentPopup.isPopUpOpen = false;
-            }else{
-                this.setDefaultPopUpOpen(selectedFlight);
-                this.currentPopup.isPopUpOpen = true;
+        const animate = () => {
+            var elapsedTime = Date.now() - this.startTime;
+            const progress = elapsedTime / environment.flightWatch.apiCallInterval;
+
+            if (progress < 1) {
+                data.map = data.features.map((pointSource) => {
+                    var coordinates = pointSource.properties['origin-coordinates'];
+                    var targetCoordinates = pointSource.properties['destination-coordinates'];
+
+                    let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
+                    let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
+
+                    pointSource.geometry.coordinates = [lng, lat];
+
+                    // pointSource.properties.bearing = turf.bearing(
+                    //     turf.point([lng, lat]),
+                    //     turf.point(targetCoordinates)
+                    //     );
+                });
+
+                source.setData(data);
+
+                if (this.currentPopup.isPopUpOpen) {
+                    let selectedFlight = marker.data.find(
+                        (key) => this.data[key].tailNumber == this.currentPopup.popupId
+                    );
+                    if (!selectedFlight) {
+                        this.closeAllPopUps();
+                        this.currentPopup.isPopUpOpen = false;
+                    } else {
+                        this.setDefaultPopUpOpen(selectedFlight);
+                        this.currentPopup.isPopUpOpen = true;
+                    }
+                }
+
+                if (!isReversedLayers) this.applyMouseFunctions(marker.layerId);
+
+                requestAnimationFrame(animate);
             }
-        }
-        if(!isReversedLayers)
-            this.applyMouseFunctions(marker.layerId);
+        };
+
+        requestAnimationFrame(animate);
     }
     setDefaultPopUpOpen(selectedFlightId: string): void {
         if (!selectedFlightId){

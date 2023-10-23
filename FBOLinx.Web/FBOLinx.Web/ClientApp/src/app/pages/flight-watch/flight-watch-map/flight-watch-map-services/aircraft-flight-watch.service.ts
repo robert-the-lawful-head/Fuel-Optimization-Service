@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { IGNORE_BLOCK_TAGS } from '@syncfusion/ej2-angular-richtexteditor';
 import * as mapboxgl from 'mapbox-gl';
-import { AnyLayer, AnySourceData, MapboxEvent } from 'mapbox-gl';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
-import { convertDMSToDEG } from 'src/utils/coordinates';
 import { FlightWatchMapService } from './flight-watch-map.service';
 
 @Injectable({
@@ -27,10 +24,12 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
 
         return {
             geometry: {
-                coordinates: [data.longitude, data.latitude],
+                coordinates: [(data.previousLongitude)?data.previousLongitude:data.longitude??0, (data.previousLatitude)?data.previousLatitude:data.latitude??0],
                 type: 'Point',
             },
             properties: {
+                'origin-coordinates': [data.previousLongitude, data.previousLatitude],
+                'destination-coordinates': [data.longitude??0, data.latitude??0],
                 id: data.tailNumber,
                 'default-icon-image': icon,
                 'rotate': data.trackingDegree ?? 0,
@@ -51,6 +50,8 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'icon-allow-overlap': true,
                 'icon-image':['get', 'default-icon-image'],
                 'icon-rotate': ['get', 'rotate'],
+                // 'icon-rotate': ['get', 'bearing'],
+                // 'icon-rotation-alignment': 'map',
                 'icon-size': ['get', 'size'],
                 'symbol-z-order': 'source'
             },
