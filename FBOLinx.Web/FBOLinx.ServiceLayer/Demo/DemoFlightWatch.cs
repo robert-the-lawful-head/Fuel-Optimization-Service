@@ -8,12 +8,14 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace FBOLinx.ServiceLayer.Demo
 {
     public interface IDemoFlightWatch
     {
-        bool isDemoDataVisibleByFboId(int? fboId);
+        bool IsDemoDataVisibleByFboId(int? fboId);
         FuelReqDto GetFuelReqDemo();
         FlightWatchModel GetFlightWatchModelDemo(FbosDto fbo);
 
@@ -21,17 +23,19 @@ namespace FBOLinx.ServiceLayer.Demo
     public class DemoFlightWatch : IDemoFlightWatch
     {
         private IOptions<DemoData> _demoData;
-        public DemoFlightWatch(IOptions<DemoData> demoData) {
+        private IWebHostEnvironment _env;
+        public DemoFlightWatch(IOptions<DemoData> demoData, IWebHostEnvironment env) {
             _demoData = demoData;
+            _env = env;
         }
 
         private  Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
             return fboId == 276 || fboId == 525;
         };
-        public bool isDemoDataVisibleByFboId(int? fboId)
+        public bool IsDemoDataVisibleByFboId(int? fboId)
         {
-            return _isDemoDataVisibleByFboId(fboId);
+            return _isDemoDataVisibleByFboId(fboId)  && !_env.IsProduction();
         } 
         public FuelReqDto GetFuelReqDemo()
         {
