@@ -89,6 +89,8 @@ export interface FlightWatchModelResponse {
     altitude: number;
     latitude: number;
     longitude: number;
+    previousLongitude: number;
+    previousLatitude: number;
     isAircraftOnGround: boolean;
     itpMarginTemplate: string;
     pricingTemplateId: number;
