@@ -192,7 +192,7 @@ namespace FBOLinx.Web.Controllers
             
             var result = await _fuelReqService.GetDirectAndContractOrdersByGroupAndFbo(groupId, fboId, request.StartDateTime, request.EndDateTime);
 
-            if (_demoFlightWatch.isDemoDataVisibleByFboId(fboId))
+            if (_demoFlightWatch.IsDemoDataVisibleByFboId(fboId))
             {
                 result.Add(_demoFlightWatch.GetFuelReqDemo());
             }
