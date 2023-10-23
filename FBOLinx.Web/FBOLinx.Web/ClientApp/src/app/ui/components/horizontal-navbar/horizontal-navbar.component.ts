@@ -12,6 +12,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
+import { environment } from 'src/environments/environment';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
@@ -176,7 +177,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.loadUpcomingOrders()
         );
 
-        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+        this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
             if(this.selectedICAO)
                 this.loadAirportWatchData();
         });
