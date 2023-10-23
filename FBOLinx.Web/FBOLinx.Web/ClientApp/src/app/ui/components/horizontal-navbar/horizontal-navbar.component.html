@@ -152,7 +152,7 @@
             </div>
         </div>
         <!--favorite aircrafts notifications/alerts-->
-        <div *ngIf="isFavoriteAircraftNotificationVisible || (favoriteAircraftsData && favoriteAircraftsData.length > 0)" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item fuel-order">
+        <div *ngIf="isFavoriteAircraftNotificationVisible && favoriteAircraftsData && favoriteAircraftsData.length > 0" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item fuel-order">
             <a (click)="openfavoriteAircrafts()" class="nav-link">
                 <span *ngIf="favoriteAircraftsData && favoriteAircraftsData.length > 0">
                     <mat-icon [matBadge]="favoriteAircraftsData.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
