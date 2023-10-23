@@ -133,7 +133,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
 
-            if (_demoFlightWatch.isDemoDataVisibleByFboId(options.FboIdForCenterPoint))
+            if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
             return result;
