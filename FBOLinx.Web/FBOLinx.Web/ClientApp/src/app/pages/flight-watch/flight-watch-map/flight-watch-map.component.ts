@@ -14,7 +14,6 @@ import {
 import { Dictionary, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
-import * as turf from '@turf/turf';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportFboGeofenceClustersService } from '../../../services/airportfbogeofenceclusters.service';
@@ -46,7 +45,7 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 })
 export class FlightWatchMapComponent
     extends MapboxglBase
-    implements OnInit, OnChanges
+    implements OnInit, OnChanges, OnDestroy
 {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: Dictionary<FlightWatchModelResponse>;
@@ -81,6 +80,8 @@ export class FlightWatchMapComponent
     public isMapDataLoaded: boolean = false;
 
     public startTime: number = Date.now();
+    private id: number = 0;
+    private animationFrameIds: number[] = [];
 
     // Mapbox and layers IDs
     public mapMarkers: MapMarkers= {
@@ -340,8 +341,13 @@ export class FlightWatchMapComponent
             type: 'FeatureCollection',
             features: dataFeatures,
         };
+        for (const id of this.animationFrameIds) {
 
-        const animate = () => {
+            cancelAnimationFrame(id);
+        }
+        this.animationFrameIds = [];
+
+        const animate = (id: number) => {
             let elapsedTime = Date.now() - this.startTime;
             let progress = elapsedTime / environment.flightWatch.apiCallInterval;
             let popUpCoordinates = null;
@@ -374,11 +380,14 @@ export class FlightWatchMapComponent
                     }
                 }
 
-                requestAnimationFrame(animate);
+                const animationFrameId = requestAnimationFrame(() => animate(id));
+                this.animationFrameIds.push(animationFrameId);
             }
         };
+        this.id++;
+        const animationFrameId = requestAnimationFrame(() => animate(this.id));
 
-        requestAnimationFrame(animate);
+        this.animationFrameIds.push(animationFrameId);
 
         this.applyMouseFunctions(marker.layerId);
     }
