@@ -363,14 +363,21 @@ export class FlightWatchMapComponent
                     let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
 
                     pointSource.geometry.coordinates = [lng, lat];
-
-                    if(this.currentPopup.popupId == pointSource.properties.id)
+                    //need to update the icon image change on animation
+                    //working with some lag, need to seach for better solution
+                    if(this.currentPopup.popupId == pointSource.properties.id){
                         popUpCoordinates = pointSource.geometry.coordinates;
+                        const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
+                        pointSource.properties['default-icon-image'] = reverseIcon;
+                    }else{
+                        const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
+                        pointSource.properties['default-icon-image'] = defaultIcon;
+                    }
 
                 });
 
                 source.setData(data);
-                if (this.currentPopup.isPopUpOpen) {
+                if (this.currentPopup.isPopUpOpen && this.currentPopup.popupId) {
                     if (!popUpCoordinates == null) {
                         this.closeAllPopUps();
                         this.currentPopup.isPopUpOpen = false;
@@ -393,7 +400,8 @@ export class FlightWatchMapComponent
     }
     updateOpenedPopUpCoordinates(coordinates: any): void {
         this.currentPopup.coordinates = coordinates;
-        this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
+        let LngLat: mapboxgl.LngLatLike = {lng: coordinates[0], lat: coordinates[1]}
+        this.currentPopup.popupInstance.setLngLat(LngLat);
     }
     setMapMarkersData(flights: string[]): void{
         let activeFuelRelease = flights.filter((key) => { return this.data[key].isActiveFuelRelease }) || [];
@@ -427,12 +435,14 @@ export class FlightWatchMapComponent
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
-        const reversedIconImage = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[id]);
-        const defaultIconImage = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[id]);
 
         if (self.selectedAircraft == id) {
             return;
         }
+
+        const reversedIconImage = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[id]);
+        const defaultIconImage = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[id]);
+        e.features[0].properties['default-icon-image'] = reversedIconImage;
 
         self.selectedAircraft = id;
         self.markerClicked.emit(this.data[id]);
@@ -451,16 +461,7 @@ export class FlightWatchMapComponent
         self.currentPopup.popupInstance.on('close', function(event) {
             self.selectedAircraft =  null;
             self.currentPopup.isPopUpOpen = false;
-            // Restore the initial icon-image
-            self.map.setLayoutProperty(self.mapMarkers.flights.layerId, 'icon-image',defaultIconImage);
-            // Update the marker's properties
-            e.features[0].properties.iconImage = defaultIconImage;
         });
-
-        // Switch the icon-image to 'new-icon' (an SVG image)
-        self.map.setLayoutProperty(self.mapMarkers.flights.layerId, 'icon-image', reversedIconImage);
-        // Update the marker's properties
-        e.features[0].properties.iconImage = reversedIconImage;
     }
     getFbosAndLoad() {
         if (this.clusters) return;
