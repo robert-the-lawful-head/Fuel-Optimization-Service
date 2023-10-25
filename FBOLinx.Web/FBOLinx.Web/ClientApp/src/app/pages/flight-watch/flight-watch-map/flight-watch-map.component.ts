@@ -282,7 +282,6 @@ export class FlightWatchMapComponent
             }
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.updateFlightOnMap(this.mapMarkers.flights);
-            this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
         if(changes.center)
@@ -313,11 +312,10 @@ export class FlightWatchMapComponent
         this.setMapMarkersData(keys(this.data));
 
         this.loadFlightMarkersOnMap(this.mapMarkers.flights);
-        this.loadFlightMarkersOnMap(this.mapMarkers.flightsReversed,true);
     }
-    loadFlightMarkersOnMap(marker: MapMarkerInfo, isReversedLayers = false) {
+    loadFlightMarkersOnMap(marker: MapMarkerInfo) {
         const markers = this.getFlightSourcerFeatureMarkers(
-            marker.data,isReversedLayers
+            marker.data
         );
         this.addSource(
             marker.sourceId,
@@ -326,80 +324,66 @@ export class FlightWatchMapComponent
         this.addLayer(
             this.aircraftFlightWatchService.getFlightLayerJsonData(
                 marker.layerId,
-                marker.sourceId,
-                isReversedLayers
+                marker.sourceId
             )
         );
-        if(!isReversedLayers)
-            this.applyMouseFunctions(marker.layerId);
+        this.applyMouseFunctions(marker.layerId);
     }
-    updateFlightOnMap(marker: MapMarkerInfo, isReversedLayers = false) {
+    updateFlightOnMap(marker: MapMarkerInfo) {
         if (!this.map || !this.isMapDataLoaded) return;
 
         const source = this.getSource(marker.sourceId);
 
-        const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data, isReversedLayers);
+        const dataFeatures = this.getFlightSourcerFeatureMarkers(marker.data);
 
         const data: any = {
             type: 'FeatureCollection',
             features: dataFeatures,
         };
 
-        // source.setData(data);
-
         const animate = () => {
-            var elapsedTime = Date.now() - this.startTime;
-            const progress = elapsedTime / environment.flightWatch.apiCallInterval;
+            let elapsedTime = Date.now() - this.startTime;
+            let progress = elapsedTime / environment.flightWatch.apiCallInterval;
+            let popUpCoordinates = null;
 
             if (progress < 1) {
                 data.map = data.features.map((pointSource) => {
                     var coordinates = pointSource.properties['origin-coordinates'];
                     var targetCoordinates = pointSource.properties['destination-coordinates'];
 
+                    if(coordinates == targetCoordinates) return;
+
                     let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
                     let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
 
                     pointSource.geometry.coordinates = [lng, lat];
 
-                    // pointSource.properties.bearing = turf.bearing(
-                    //     turf.point([lng, lat]),
-                    //     turf.point(targetCoordinates)
-                    //     );
+                    if(this.currentPopup.popupId == pointSource.properties.id)
+                        popUpCoordinates = pointSource.geometry.coordinates;
+
                 });
 
                 source.setData(data);
-
                 if (this.currentPopup.isPopUpOpen) {
-                    let selectedFlight = marker.data.find(
-                        (key) => this.data[key].tailNumber == this.currentPopup.popupId
-                    );
-                    if (!selectedFlight) {
+                    if (!popUpCoordinates == null) {
                         this.closeAllPopUps();
                         this.currentPopup.isPopUpOpen = false;
                     } else {
-                        this.setDefaultPopUpOpen(selectedFlight);
+                        this.updateOpenedPopUpCoordinates(popUpCoordinates);
                         this.currentPopup.isPopUpOpen = true;
                     }
                 }
-
-                if (!isReversedLayers) this.applyMouseFunctions(marker.layerId);
 
                 requestAnimationFrame(animate);
             }
         };
 
         requestAnimationFrame(animate);
-    }
-    setDefaultPopUpOpen(selectedFlightId: string): void {
-        if (!selectedFlightId){
-            this.closeAllPopUps();
-            return;
-        }
 
-        this.currentPopup.coordinates = [
-            this.data[selectedFlightId].longitude,
-            this.data[selectedFlightId].latitude,
-        ];
+        this.applyMouseFunctions(marker.layerId);
+    }
+    updateOpenedPopUpCoordinates(coordinates: any): void {
+        this.currentPopup.coordinates = coordinates;
         this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
     }
     setMapMarkersData(flights: string[]): void{
@@ -415,12 +399,11 @@ export class FlightWatchMapComponent
         this.mapMarkers.flightsReversed.data = [].concat(outOfNetwork,inNetwork,fuelerLinxClient,activeFuelRelease);
 
     }
-    getFlightSourcerFeatureMarkers(flights: string[], isReversedLayout = false): any[] {
+    getFlightSourcerFeatureMarkers(flights: string[]): any[] {
         return flights.map((key) => {
             const row = this.data[key];
             return this.aircraftFlightWatchService.getFlightFeatureJsonData(
-                row,
-                isReversedLayout
+                row
             );
         });
     }
@@ -435,6 +418,8 @@ export class FlightWatchMapComponent
         self: FlightWatchMapComponent
     ) {
         const id = e.features[0].properties.id;
+        const reversedIconImage = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[id]);
+        const defaultIconImage = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[id]);
 
         if (self.selectedAircraft == id) {
             return;
@@ -457,14 +442,16 @@ export class FlightWatchMapComponent
         self.currentPopup.popupInstance.on('close', function(event) {
             self.selectedAircraft =  null;
             self.currentPopup.isPopUpOpen = false;
-            try {
-                self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
-            } catch (err) {
-                console.log("attempt to filter on an undefined map");
-            }
+            // Restore the initial icon-image
+            self.map.setLayoutProperty(self.mapMarkers.flights.layerId, 'icon-image',defaultIconImage);
+            // Update the marker's properties
+            e.features[0].properties.iconImage = defaultIconImage;
         });
 
-        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
+        // Switch the icon-image to 'new-icon' (an SVG image)
+        self.map.setLayoutProperty(self.mapMarkers.flights.layerId, 'icon-image', reversedIconImage);
+        // Update the marker's properties
+        e.features[0].properties.iconImage = reversedIconImage;
     }
     getFbosAndLoad() {
         if (this.clusters) return;

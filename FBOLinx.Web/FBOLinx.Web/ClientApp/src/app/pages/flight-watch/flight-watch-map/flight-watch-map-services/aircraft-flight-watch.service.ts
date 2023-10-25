@@ -9,7 +9,8 @@ import { FlightWatchMapService } from './flight-watch-map.service';
 export class AircraftFlightWatchService {
 
 constructor(private flightWatchMapService : FlightWatchMapService) { }
-    public getFlightFeatureJsonData(data: FlightWatchModelResponse,isSelectedAircraft:boolean): any {
+
+    public getAricraftIcon(isSelectedAircraft: boolean,data: FlightWatchModelResponse): string {
         let icon = `aircraft_image_${this.flightWatchMapService.getDefaultAircraftType(
             data
         )}`;
@@ -21,6 +22,10 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 ? '_fuelerlinx'
                 : ''
         }`;
+        return icon;
+    }
+    public getFlightFeatureJsonData(data: FlightWatchModelResponse): any {
+        let icon = this.getAricraftIcon(false,data);
 
         return {
             geometry: {
@@ -40,8 +45,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     }
     public getFlightLayerJsonData(
         layerId: string,
-        flightSourceId: any,
-        isReversedLayer: boolean
+        flightSourceId: any
     ): mapboxgl.AnyLayer {
 
         let json : mapboxgl.AnyLayer  = {
@@ -50,8 +54,6 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'icon-allow-overlap': true,
                 'icon-image':['get', 'default-icon-image'],
                 'icon-rotate': ['get', 'rotate'],
-                // 'icon-rotate': ['get', 'bearing'],
-                // 'icon-rotation-alignment': 'map',
                 'icon-size': ['get', 'size'],
                 'symbol-z-order': 'source'
             },
@@ -60,7 +62,6 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
 
         };
 
-        if(isReversedLayer) json['filter'] = ["==", "id", ""];
         return json;
 
     }
