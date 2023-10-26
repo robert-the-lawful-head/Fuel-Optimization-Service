@@ -80,7 +80,6 @@ export class FlightWatchMapComponent
     public isMapDataLoaded: boolean = false;
 
     public startTime: number = Date.now();
-    private id: number = 0;
     private animationFrameIds: number[] = [];
 
     // Mapbox and layers IDs
@@ -341,19 +340,19 @@ export class FlightWatchMapComponent
             type: 'FeatureCollection',
             features: dataFeatures,
         };
-        for (const id of this.animationFrameIds) {
 
-            cancelAnimationFrame(id);
-        }
-        this.animationFrameIds = [];
-
-        const animate = (id: number) => {
+        this.cancelExistingAnimationFames();
+        this.animateAircrafts(source,data);
+        this.applyMouseFunctions(marker.layerId);
+    }
+    private animateAircrafts(source: mapboxgl.GeoJSONSource, data: any): void {
+        const animate = () => {
             let elapsedTime = Date.now() - this.startTime;
             let progress = elapsedTime / environment.flightWatch.apiCallInterval;
-            let popUpCoordinates = null;
+            let popUpCoordinates: number[] = null;
 
             if (progress < 1) {
-                data.map = data.features.map((pointSource) => {
+                data.features.forEach((pointSource) => {
                     var coordinates = pointSource.properties['origin-coordinates'];
                     var targetCoordinates = pointSource.properties['destination-coordinates'];
 
@@ -377,26 +376,33 @@ export class FlightWatchMapComponent
                 });
 
                 source.setData(data);
-                if (this.currentPopup.isPopUpOpen && this.currentPopup.popupId) {
-                    if (!popUpCoordinates == null) {
-                        this.closeAllPopUps();
-                        this.currentPopup.isPopUpOpen = false;
-                    } else {
-                        this.updateOpenedPopUpCoordinates(popUpCoordinates);
-                        this.currentPopup.isPopUpOpen = true;
-                    }
-                }
 
-                const animationFrameId = requestAnimationFrame(() => animate(id));
+                this.refreshPopUp(popUpCoordinates)
+
+                const animationFrameId = requestAnimationFrame(animate);
                 this.animationFrameIds.push(animationFrameId);
             }
         };
-        this.id++;
-        const animationFrameId = requestAnimationFrame(() => animate(this.id));
+        const animationFrameId = requestAnimationFrame(animate);
 
         this.animationFrameIds.push(animationFrameId);
-
-        this.applyMouseFunctions(marker.layerId);
+    }
+    private refreshPopUp(popUpCoordinates: number[]): void {
+        if (this.currentPopup.isPopUpOpen && this.currentPopup.popupId) {
+            if (!popUpCoordinates == null) {
+                this.closeAllPopUps();
+                this.currentPopup.isPopUpOpen = false;
+            } else {
+                this.updateOpenedPopUpCoordinates(popUpCoordinates);
+                this.currentPopup.isPopUpOpen = true;
+            }
+        }
+    }
+    private cancelExistingAnimationFames(): void {
+        for (const id of this.animationFrameIds) {
+            cancelAnimationFrame(id);
+        }
+        this.animationFrameIds = [];
     }
     updateOpenedPopUpCoordinates(coordinates: any): void {
         this.currentPopup.coordinates = coordinates;
