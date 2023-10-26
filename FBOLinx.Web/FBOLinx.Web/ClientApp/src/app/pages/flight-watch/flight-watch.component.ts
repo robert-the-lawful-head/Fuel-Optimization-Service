@@ -14,13 +14,13 @@ import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import { SharedService } from '../../layouts/shared-service';
+import * as SharedEvents from '../../models/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
-} from '../../../models/flight-watch';
-import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+} from '../../models/flight-watch';
+import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
