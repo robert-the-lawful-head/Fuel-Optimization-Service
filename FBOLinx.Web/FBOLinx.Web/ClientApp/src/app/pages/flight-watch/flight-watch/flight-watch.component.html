@@ -49,7 +49,7 @@
             opened
         >
             <ng-container *ngIf="flightWatchData">
-                <app-flight-watch-settings
+                <app-flight-watch-aicraft-grid
                     [arrivals]="arrivals"
                     [departures]="departures"
                     [icaoList]="airportsICAO"
@@ -61,7 +61,7 @@
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                     [showFilters]="showFilters"
                     [isLobbyView]="isLobbyView"
-                ></app-flight-watch-settings>
+                ></app-flight-watch-aicraft-grid>
             </ng-container>
         </mat-drawer>
     </mat-drawer-container>

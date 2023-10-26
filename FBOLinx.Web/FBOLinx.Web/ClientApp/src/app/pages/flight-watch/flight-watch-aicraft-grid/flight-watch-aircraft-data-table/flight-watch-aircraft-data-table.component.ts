@@ -17,9 +17,9 @@ import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 @Component({
-    selector: 'app-flight-watch-setting-table',
-    templateUrl: './flight-watch-setting-table.component.html',
-    styleUrls: ['./flight-watch-setting-table.component.scss'],
+    selector: 'app-flight-watch-aircraft-data-table',
+    templateUrl: './flight-watch-aircraft-data-table.component.html',
+    styleUrls: ['./flight-watch-aircraft-data-table.component.scss'],
     animations: [
         trigger('detailExpand', [
             state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
@@ -28,7 +28,7 @@ import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favor
     ],
     providers: [GetTimePipe,ToReadableTimePipe,BooleanToTextPipe]
 })
-export class FlightWatchSettingTableComponent implements OnInit {
+export class FlightWatchAircraftDataTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
     @Input() columns: ColumnType[];
