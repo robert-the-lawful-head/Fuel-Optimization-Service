@@ -160,7 +160,7 @@ import { FbosGridComponent } from './fbos/fbos-grid/fbos-grid.component';
 import { FbosGridNewFboDialogComponent } from './fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 import { FbosHomeComponent } from './fbos/fbos-home/fbos-home.component';
 import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
-import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
+import { FlightWatchAircraftInfoComponent } from './flight-watch/aircraft-popup-container/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
 import { FlightWatchAicraftGridComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
 import { FuelreqsGridComponent } from './fuelreqs/fuelreqs-grid/fuelreqs-grid.component';
