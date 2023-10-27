@@ -364,7 +364,7 @@ export class FlightWatchMapComponent
                     pointSource.geometry.coordinates = [lng, lat];
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
-                    if(this.currentPopup.popupId == pointSource.properties.id){
+                    if(this.currentPopup.popupId == pointSource.properties.id || this.selectedAircraft != null){
                         popUpCoordinates = pointSource.geometry.coordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
@@ -467,6 +467,7 @@ export class FlightWatchMapComponent
         self.currentPopup.popupInstance.on('close', function(event) {
             self.selectedAircraft =  null;
             self.currentPopup.isPopUpOpen = false;
+            self.currentPopup.popupId = null;
         });
     }
     getFbosAndLoad() {
