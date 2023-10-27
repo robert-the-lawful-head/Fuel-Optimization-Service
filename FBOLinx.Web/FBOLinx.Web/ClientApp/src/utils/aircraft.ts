@@ -22,6 +22,7 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'JBU',
     'JIA',
     'JSX',
+    'KAP',
     'KLM',
     'NKS',
     'PDT',
