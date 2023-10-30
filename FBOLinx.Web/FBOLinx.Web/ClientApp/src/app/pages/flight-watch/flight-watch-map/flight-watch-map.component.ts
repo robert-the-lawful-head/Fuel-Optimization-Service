@@ -289,11 +289,17 @@ export class FlightWatchMapComponent
             this.flyTo(this.center);
     }
     private checkForPopupOpen(): void {
-        if(this.currentPopup.isPopUpOpen && this.currentPopup.popupInstance != null)
-        {
-            if(this.mapMarkers.flights.data.filter(x => x == this.currentPopup.popupId).length == 0)
-            this.closeAllPopUps();
-        }
+        if(!this.currentPopup.isPopUpOpen && this.currentPopup.popupInstance == null) return;
+        if(this.mapMarkers.flights.data.filter(x => x == this.currentPopup.popupId).length > 0) return;
+        this.resetCurrentPopUpState()
+    }
+    private resetCurrentPopUpState(): void {
+        this.currentPopup.isPopUpOpen = false;
+        this.currentPopup.popupId = null;
+        this.currentPopup.coordinates = null;
+        this.currentPopup.popupInstance = null;
+        this.selectedAircraft = null;
+        this.closeAllPopUps();
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
@@ -372,7 +378,7 @@ export class FlightWatchMapComponent
                     pointSource.geometry.coordinates = [lng, lat];
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
-                    if(this.currentPopup.popupId == pointSource.properties.id || this.selectedAircraft != null){
+                    if(this.currentPopup.popupId == pointSource.properties.id){
                         popUpCoordinates = pointSource.geometry.coordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
@@ -396,14 +402,11 @@ export class FlightWatchMapComponent
         this.animationFrameIds.push(animationFrameId);
     }
     private refreshPopUp(popUpCoordinates: number[]): void {
-        if (this.currentPopup.isPopUpOpen && this.currentPopup.popupId) {
-            if (!popUpCoordinates == null) {
-                this.closeAllPopUps();
-                this.currentPopup.isPopUpOpen = false;
-            } else {
-                this.updateOpenedPopUpCoordinates(popUpCoordinates);
-                this.currentPopup.isPopUpOpen = true;
-            }
+        if (!this.currentPopup.isPopUpOpen && this.currentPopup.popupId == null) return;
+        if (!popUpCoordinates == null){
+            this.resetCurrentPopUpState();
+        } else {
+            this.updateOpenedPopUpCoordinates(popUpCoordinates);
         }
     }
     private cancelExistingAnimationFames(): void {
@@ -453,10 +456,6 @@ export class FlightWatchMapComponent
         if (self.selectedAircraft == id) {
             return;
         }
-
-        const reversedIconImage = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[id]);
-        const defaultIconImage = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[id]);
-        e.features[0].properties['default-icon-image'] = reversedIconImage;
 
         self.selectedAircraft = id;
         self.markerClicked.emit(this.data[id]);
