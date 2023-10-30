@@ -646,13 +646,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.childGrid.dataSource = this.fboDataSource;
     }
 
-    groupFbos(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return [];
-        }
+    groupFbos(groupId: number) {
         return this.groupsFbosData.fbos.filter(
-            (fbo) => fbo.groupId === group.oid
+            (fbo) => fbo.groupId === groupId
         );
     }
 

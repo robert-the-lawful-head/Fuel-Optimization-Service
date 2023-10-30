@@ -181,9 +181,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
                 var customer = await _CustomerInfoByGroupService.GetCustomersByGroup(groupId, customerInfoByGroupId);
+                var customCustomerTypes = await _CustomerService.GetCustomCustomerTypes(fboId);
+
+                if (customer.Count > 1)
+                    customer = (from c in customer
+                               join cct in customCustomerTypes on c.CustomerId equals cct.CustomerId
+                               select c).ToList();
+
                 var customerInfoByGroup = customer[0];
                 //var customerInfoByGroup = await _CustomerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerInfoByGroupId, groupId));
-                var customCustomerTypes = await _CustomerService.GetCustomCustomerTypes(fboId);
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {
