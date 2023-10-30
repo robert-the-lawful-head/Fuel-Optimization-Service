@@ -281,11 +281,19 @@ export class FlightWatchMapComponent
                 changes.data.currentValue[propertyName].previousLatitude = changes.data.previousValue[propertyName]?.latitude ?? changes.data.currentValue[propertyName].latitude;
             }
             this.setMapMarkersData(keys(changes.data.currentValue));
+            this.checkForPopupOpen();
             this.updateFlightOnMap(this.mapMarkers.flights);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
         if(changes.center)
             this.flyTo(this.center);
+    }
+    private checkForPopupOpen(): void {
+        if(this.currentPopup.isPopUpOpen && this.currentPopup.popupInstance != null)
+        {
+            if(this.mapMarkers.flights.data.filter(x => x == this.currentPopup.popupId).length == 0)
+            this.closeAllPopUps();
+        }
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
