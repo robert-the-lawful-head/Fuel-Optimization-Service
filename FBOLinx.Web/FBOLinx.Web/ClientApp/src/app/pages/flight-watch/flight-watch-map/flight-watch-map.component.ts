@@ -140,15 +140,12 @@ export class FlightWatchMapComponent
             })
             .onSourcedata(async () => {
                 let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
-                let flightsReversedlayer = this.map.getLayer(this.mapMarkers.flightsReversed.layerId);
                 let airportlayer = this.map.getLayer(this.mapMarkers.airports.layerId);
                 let fbolayer = this.map.getLayer(this.mapMarkers.fbos.layerId);
-                if(flightslayer && airportlayer && fbolayer && flightsReversedlayer){
+                if(flightslayer && airportlayer && fbolayer){
                     this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
                     this.map.moveLayer(this.mapMarkers.flights.layerId);
-                    this.map.moveLayer(this.mapMarkers.flightsReversed.layerId);
                 }
-
             });
     }
 
