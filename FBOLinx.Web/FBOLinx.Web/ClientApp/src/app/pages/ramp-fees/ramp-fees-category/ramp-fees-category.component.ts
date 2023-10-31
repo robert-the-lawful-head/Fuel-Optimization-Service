@@ -6,6 +6,7 @@ import { RampfeesService } from '../../../services/rampfees.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { rampfeeCategoryType } from 'src/app/enums/ramp-fee.enum';
 
 @Component({
     selector: 'app-ramp-fees-category',
@@ -108,5 +109,26 @@ export class RampFeesCategoryComponent implements OnInit {
                 this.snackBarService.showSuccessSnackBar(`Custom is ramp fee deleted`)
             });
         });
+    }
+    getLabel(fee: any): string{
+
+        if(this.categoryTypes.includes(1))
+            return fee.sizeDescription;
+
+        if(fee.categoryType == rampfeeCategoryType.aicraft)
+            return ` ${fee.aircraftMake} ${fee.aircraftModel}`;
+
+        let label = fee.categoryDescription;
+
+        if(fee.categoryType == rampfeeCategoryType.weightRange)
+            label += ` ${fee.categoryMinValue} - ${fee.categoryMaxValue}`;
+
+        if(fee.categoryType == rampfeeCategoryType.wingspan)
+            label += ` ${fee.categoryMinValue} - ${fee.categoryMaxValue}`;
+
+        if(fee.categoryType == rampfeeCategoryType.tailnumber)
+            label += ` ${fee.categoryStringValue}`;
+
+        return label;
     }
 }

@@ -32,33 +32,11 @@
                                             >
                                         </div>
                                         <div
-                                            *ngIf="fee.categoryType != 2"
                                             class="
                                                 ramp-fee-details-expansion-label
                                             "
                                         >
-                                            {{
-                                                categoryTypes.indexOf(1) > -1
-                                                    ? fee.sizeDescription
-                                                    : fee.categoryTypeDescription
-                                            }}
-                                        </div>
-                                        <div
-                                            *ngIf="fee.categoryType == 2"
-                                            class="
-                                                ramp-fee-details-expansion-label
-                                            "
-                                        >
-                                            {{ fee.aircraftMake }}
-                                            {{ fee.aircraftModel }}
-                                        </div>
-                                        <div
-                                            *ngIf="fee.categoryType == 5"
-                                            class="
-                                                ramp-fee-details-expansion-label
-                                            "
-                                        >
-                                            {{ fee.categoryStringValue }}
+                                            {{getLabel(fee)}}
                                         </div>
                                     </div>
                                 </div>
