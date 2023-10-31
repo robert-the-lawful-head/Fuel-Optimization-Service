@@ -45,6 +45,7 @@ export class RampFeesCategoryComponent implements OnInit {
                 fee.isWaivedNegative = false;
                 fee.isCategoryValueNegative = false;
                 fee.isFeeNegative = false;
+                fee.isCategoryMinValueGrater = false;
                 fee.requiresUpdate = false;
 
                 if (
@@ -76,6 +77,7 @@ export class RampFeesCategoryComponent implements OnInit {
         fee.isWaivedNegative = false;
         fee.isCategoryValueNegative = false;
         fee.isFeeNegative = false;
+        fee.isCategoryMinValueGrater = false;
         fee.requiresUpdate = true;
 
         if (fee.waived < 0)
@@ -84,10 +86,13 @@ export class RampFeesCategoryComponent implements OnInit {
         if (fee.price < 0)
             fee.isFeeNegative = true;
 
+        if (fee.categoryMinValue >= fee.categoryMaxValue)
+            fee.isCategoryMinValueGrater = true;
+
         if (fee.categoryMinValue < 0 || fee.categoryMaxValue < 0)
             fee.isCategoryValueNegative = true;
 
-        fee.requiresUpdate = !fee.isWaivedNegative && !fee.isCategoryValueNegative && !fee.isFeeNegative;
+        fee.requiresUpdate = !fee.isWaivedNegative && !fee.isCategoryValueNegative && !fee.isFeeNegative && !fee.isCategoryMinValueGrater;
         this.rampFeeFieldChanged.emit();
     }
 

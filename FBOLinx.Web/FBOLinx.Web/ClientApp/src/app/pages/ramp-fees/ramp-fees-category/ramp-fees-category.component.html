@@ -141,6 +141,7 @@
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                     <div *ngIf="fee.isCategoryValueNegative" class="text-danger">Weight cannot be negative</div>
+                                    <div *ngIf="fee.isCategoryMinValueGrater" class="text-danger">Min value cannot be grater than Max value</div>
                                 </div>
                                 <div class="col-3">to</div>
                                 <div class="col-3">
