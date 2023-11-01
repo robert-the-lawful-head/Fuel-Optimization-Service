@@ -257,6 +257,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
 
             //Service orders
+            List<FuelReqDto> serviceOrdersList = new List<FuelReqDto>();
             var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
             orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(serviceOrderIds);
             orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(serviceOrderIds);
@@ -294,12 +295,56 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == item.FuelerLinxTransactionId).Select(d => d.PaymentMethod).FirstOrDefault(),
                         ServiceOrder = item
                     };
+                    serviceOrdersList.Add(fuelreq);
+                }
+            }
+
+            // Cancelled contract orders
+            orderDetails = await _orderDetailsEntityService.GetListBySpec(new OrderDetailsByFboHandlerIdSpecifications(fboRecord.AcukwikFBOHandlerId.GetValueOrDefault()));
+            orderDetails = orderDetails.Where(o => o.IsCancelled == true).ToList();
+            var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
+
+            foreach (OrderDetails item in orderDetails)
+            {
+                if (!fuelReqsFromFuelerLinx.Any(f => f.SourceId == item.FuelerLinxTransactionId) && !directOrders.Any(d => d.SourceId == item.FuelerLinxTransactionId) && !serviceOrdersList.Any(r => r.SourceId == item.FuelerLinxTransactionId))
+                {
+                    var fuelreq = new FuelReqDto()
+                    {
+                        Oid = item.Oid,
+                        ActualPpg = 0,
+                        ActualVolume = 0,
+                        Archived = false,
+                        Cancelled = true,
+                        CustomerId = customerAircrafts.Where(c => c.Oid == item.CustomerAircraftId).Select(a => a.CustomerId).FirstOrDefault(),
+                        //DateCreated = item.ServiceDateTimeUtc,//check this property
+                        DispatchNotes = string.Empty,
+                        Eta = item.Eta,
+                        Icao = string.Empty,
+                        Notes = string.Empty,
+                        QuotedPpg = 0,
+                        QuotedVolume = 0,
+                        Source = string.Empty,
+                        SourceId = item.FuelerLinxTransactionId,
+                        TimeStandard = null,
+                        TailNumber = string.Empty,
+                        FboName = string.Empty,
+                        Email = string.Empty,
+                        FuelOn = string.Empty,
+                        IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
+                        PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == item.FuelerLinxTransactionId).Select(d => d.PaymentMethod).FirstOrDefault(),
+                    };
                     result.Add(fuelreq);
                 }
             }
 
+            foreach(FuelReqDto fuelReq in result)
+            {
+                fuelReq.CustomerName = customers.Where(c => c.CustomerId == fuelReq.CustomerId).Select(cu => cu.Company).FirstOrDefault();
+            }
+
             result.AddRange(fuelReqsFromFuelerLinx);
             result.AddRange(directOrders);
+            result.AddRange(serviceOrdersList);
 
             return result;
         }
