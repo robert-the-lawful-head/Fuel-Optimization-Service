@@ -152,15 +152,15 @@
             </div>
         </div>
         <!--favorite aircrafts notifications/alerts-->
-        <div *ngIf="isFavoriteAircraftNotificationVisible && favoriteAircraftsData && favoriteAircraftsData.length > 0" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item fuel-order">
+        <div *ngIf="favoriteNotificationVisible" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item fuel-order">
             <a (click)="openfavoriteAircrafts()" class="nav-link">
-                <span *ngIf="favoriteAircraftsData && favoriteAircraftsData.length > 0">
+                <span>
                     <mat-icon [matBadge]="favoriteAircraftsData.length" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
                 </span>
             </a>
             <div class="dropdown-menu">
                 <h4 class="menu-title">
-                    Favorite Aricrafts
+                    Favorite Aircraft
                 </h4>
 
                 <ul class="notifications-list">
@@ -265,6 +265,6 @@
         <div (click)="close()" class="items-overlay"></div>
     </div>
 </div>
-<ng-container *ngIf="isFavoriteAircraftNotificationVisible">
+<ng-container *ngIf="favoriteNotificationVisible">
     <app-incoming-favorite-aircraft-info></app-incoming-favorite-aircraft-info>
 </ng-container>
