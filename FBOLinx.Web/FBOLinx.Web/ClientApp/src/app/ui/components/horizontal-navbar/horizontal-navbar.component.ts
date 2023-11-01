@@ -97,7 +97,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
 
-    isFavoriteAircraftNotificationVisible = true;
+    private isLobbyViewPage:boolean = false;
     routeSubscription: Subscription;
 
 
@@ -138,6 +138,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         return (
             this.sharedService.currentUser.fboId > 0 &&
             this.sharedService.currentUser.role !== 5
+        );
+    }
+
+    get favoriteNotificationVisible() {
+        return (
+            this.sharedService.currentUser.fboId > 0 ||
+            this.isLobbyViewPage ||
+            this.router.url != '/public-layout/lobby-view'
         );
     }
 
@@ -188,10 +196,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.routeSubscription = this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
-                this.isFavoriteAircraftNotificationVisible = (event.url == '/public-layout/lobby-view')? false : true;
+                this.isLobbyViewPage = (event.url == '/public-layout/lobby-view')? false : true;
             }
         });
-        this.isFavoriteAircraftNotificationVisible = (this.router.url == '/public-layout/lobby-view')? false : true;
     }
 
     ngOnDestroy() {
