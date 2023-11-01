@@ -111,7 +111,7 @@ export class RampFeesCategoryComponent implements OnInit {
             }
             this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
-                this.snackBarService.showSuccessSnackBar(`Custom is ramp fee deleted`)
+                this.snackBarService.showSuccessSnackBar(`Custom ramp fee deleted`);
             });
         });
     }
