@@ -15,7 +15,7 @@ namespace FBOLinx.Web.ViewModels
 
         public string AircraftSizeDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AircraftSizes.NotSet); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(Size ?? AircraftSizes.NotSet); }
         }
     }
 }

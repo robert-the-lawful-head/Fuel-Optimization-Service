@@ -279,7 +279,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (coordinates.Latitude == 0 && coordinates.Longitude == 0)
                 return;
             AirportPosition airportPosition =
-                await _AirportService.GetNearestAirportPosition(coordinates.Latitude, coordinates.Longitude);
+                await _AirportService.GetNearestAirportPosition(coordinates.Latitude, coordinates.Longitude, new List<AcukwikAirportTypes>()
+                    {
+                        AcukwikAirportTypes.Heliport_Vertiport
+                    });
 
             if (airportPosition != null)
                 flightWatchModel.SetAirportPosition(airportPosition);

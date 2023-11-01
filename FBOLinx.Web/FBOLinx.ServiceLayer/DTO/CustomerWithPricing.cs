@@ -70,7 +70,7 @@ namespace FBOLinx.ServiceLayer.DTO
         {
             get
             {
-                return Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
+                return Core.Utilities.Enums.EnumHelper.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
 

@@ -31,7 +31,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
         Task<AirportPosition> GetAirportPositionForFbo(int fboId);
         Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
-        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
+        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null);
 
         Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
             int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
@@ -115,7 +115,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return positions?.Where(x => x.GetProperAirportIdentifier() == airportIdentifier).FirstOrDefault();
         }
 
-        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
+        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null)
         {
             List<AirportPosition> airportPositions = await GetAirportPositions();
             double minDistance = -1;
@@ -123,6 +123,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1 && a.Latitude <= latitude + 1 && a.Longitude >= longitude - 1 && a.Longitude <= longitude + 1).ToList();
             foreach (var airport in closestAirports)
             {
+                if (airportTypesToOmit != null && airportTypesToOmit.Contains(airport.AirportTypeAsEnum))
+                    continue;
                 double distance = GeoCalculator.GetDistance(latitude, longitude, airport.Latitude, airport.Longitude, 5, DistanceUnit.Miles);
 
                 if (minDistance == -1 || distance < minDistance)
@@ -184,7 +186,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                                 Iata = x.Iata,
                                 Faa = x.Faa,
                                 DaylightSavingsYn = x.DaylightSavingsYn,
-                                IntlTimeZone = x.IntlTimeZone
+                                IntlTimeZone = x.IntlTimeZone,
+                                x.AirportType
                             })
                             .AsNoTracking())
                         .ToListAsync())
@@ -200,7 +203,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
                             Iata = a.Iata,
                             Faa = a.Faa,
                             DaylightSavingsYn = a.DaylightSavingsYn,
-                            IntlTimeZone = a.IntlTimeZone
+                            IntlTimeZone = a.IntlTimeZone,
+                            AirportType = a.AirportType
                         };
                     })
                     .ToList();

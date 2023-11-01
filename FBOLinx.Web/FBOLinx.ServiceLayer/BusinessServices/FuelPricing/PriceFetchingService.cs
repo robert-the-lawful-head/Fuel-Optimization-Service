@@ -317,7 +317,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
                                                   PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A") + ((flightTypePassedIn == FlightTypeClassifications.Private || flightTypePassedIn == FlightTypeClassifications.Commercial) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypePassedIn) + ")" : "")
+                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A") + ((flightTypePassedIn == FlightTypeClassifications.Private || flightTypePassedIn == FlightTypeClassifications.Commercial) ? " (" + FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(flightTypePassedIn) + ")" : "")
                                               }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
                 // If getting pricing by template for price checker, just use the first customer
