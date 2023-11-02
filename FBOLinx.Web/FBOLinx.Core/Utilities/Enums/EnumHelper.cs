@@ -57,7 +57,8 @@ namespace FBOLinx.Core.Utilities.Enums
                 descriptions.Add(new EnumDescriptionValue<T>()
                 {
                     Description = ((DescriptionAttribute)description[0]).Description,
-                    Value = System.Convert.ToInt16(value)
+                    Value = System.Convert.ToInt16(value),
+                    ValueAsEnum = (T)value
                 });
             }
             return descriptions;

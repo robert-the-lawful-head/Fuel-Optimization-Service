@@ -125,8 +125,9 @@ namespace FBOLinx.Web
 
             services.AddSingleton<IFileProvider>(physicalProvider);
 
-            //Scheduled service just for testing.  Will remove soon.
+            //Scheduled services just for testing.  Will remove soon.
             //services.AddHostedService<SWIMPlaceholderSyncFunctionScheduledService>();
+            //services.AddHostedService<AirportWatchLiveDataReprocessScheduledService>();
 
             ConfigureAzureTableStorageEntityServices(services, configuration);
         }
