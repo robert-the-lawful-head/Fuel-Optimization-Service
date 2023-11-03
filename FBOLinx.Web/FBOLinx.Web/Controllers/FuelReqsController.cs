@@ -40,6 +40,7 @@ using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.DB.Specifications.OrderDetails;
+using FBOLinx.DB.Specifications.Fbo;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -275,6 +276,12 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
+            var fbo = new FbosDto();
+            if (fboId == 0)
+                fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(request.FboHandlerId));
+            else
+                fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
+
             var orderDetails = new OrderDetailsDto();
             orderDetails.ConfirmationEmail = request.Email;
             orderDetails.FuelVendor = request.FuelVendor;
@@ -282,9 +289,8 @@ namespace FBOLinx.Web.Controllers
             orderDetails.PaymentMethod = request.PaymentMethod;
             orderDetails.QuotedVolume = request.FuelEstWeight;
             orderDetails.Eta = request.Eta;
-            orderDetails.FboHandlerId = request.FboHandlerId;
-
-            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(request.FboHandlerId));
+            orderDetails.FboHandlerId =  fboId == 0 ? request.FboHandlerId : fbo.AcukwikFBOHandlerId;
+            
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
 
