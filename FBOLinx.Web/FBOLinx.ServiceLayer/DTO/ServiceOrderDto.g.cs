@@ -32,6 +32,14 @@ namespace FBOLinx.ServiceLayer.DTO
         public int? FuelerLinxTransactionId { get; set; }
         public ServiceOrderAppliedDateTypes? ServiceOn { get; set; }
 
+        public int NumberOfTotalServices
+        {
+            get
+            {
+                return ServiceOrderItems.Count;
+            }
+        }
+
         public int NumberOfCompletedItems
         {
             get

@@ -231,6 +231,7 @@ import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/p
 import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.component';
 import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
+import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 
 @NgModule({
     declarations: [
@@ -389,7 +390,8 @@ import { ItemInputComponent } from './services-and-fees/item-input/item-input.co
         ServicesAndFeesComponent,
         ServicesAndFeesHomeComponent,
         RampFeesCategoryComponent,
-        ItemInputComponent
+        ItemInputComponent,
+        FuelreqsGridServicesComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

@@ -1,0 +1,31 @@
+<div *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div class="row">
+    <div class="col-10">
+        <div class="row services-cards-container mat-elevation-z">
+            <div *ngIf="!isLoading && noServices">This order does not have any services associated with it</div>
+            <ng-container *ngFor="let service of fuelreqsServicesAndFeesGridDisplay;">
+                <div class="col-3 service-card">
+                    <ng-container>
+                        <div class="col-7 text">
+                            <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)">
+                            </mat-checkbox>
+                            <span class="pl-3" *ngIf="!service.isEditMode">{{service.serviceName}}</span>
+                            <mat-form-field *ngIf="service.isEditMode" class="mat-form-field-no-padding pl-1">
+                                <input matInput [(ngModel)]="service.serviceName">
+                            </mat-form-field>
+                        </div>
+                        <div class="actions-buttons">
+                            <span><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
+                            <span><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
+                            <span [matTooltip]="getInfoTooltipText(service)"><mat-icon class="material-icons-outlined">info</mat-icon></span>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div>VIEW NOTES BUTTON</div>
+</div>

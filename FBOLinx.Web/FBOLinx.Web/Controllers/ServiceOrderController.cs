@@ -69,6 +69,26 @@ namespace FBOLinx.Web.Controllers
         }
 
         /// <summary>
+        /// Fetch a service order by a given FuelerLinx transaction id, FBO id
+        /// </summary>
+        /// <param name="fuelerlinxTransactionId"></param>
+        /// <param name="fboId"></param>
+        /// <returns></returns>
+        [HttpGet("fuelerlinxtransactionid/{fuelerlinxTransactionId}/fboid/{fboId}")]
+        public async Task<ActionResult<ServiceOrderResponse>> GetServiceOrderByFuelerLinxTransactionIdFboId([FromRoute] int fuelerlinxTransactionId, [FromRoute] int fboId)
+        {
+            try
+            {
+                var result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransactionId, fboId));
+                return Ok(new ServiceOrderResponse(result));
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new ServiceOrderResponse(false, exception.Message));
+            }
+        }
+
+        /// <summary>
         /// Post a new service order
         /// </summary>
         /// <param name="request"></param>

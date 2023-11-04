@@ -28,15 +28,16 @@ import {
 import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { ServiceOrder } from '../../../models/service-order';
 
 const initialColumns: ColumnType[] = [
     {
-        id: 'customerName',
-        name: 'Flight Dept.',
+        id: 'tailNumber',
+        name: 'Tail #',
     },
     {
-        id: 'pricingTemplateName',
-        name: 'ITP Margin Template',
+        id: 'customerName',
+        name: 'Flight Dept.',
     },
     {
         id: 'eta',
@@ -44,24 +45,23 @@ const initialColumns: ColumnType[] = [
         sort: 'desc',
     },
     {
-        id: 'etd',
-        name: 'ETD',
+        id: 'paymentMethod',
+        name: 'Payment Method',
     },
-    {
-        id: 'quotedVolume',
-        name: 'Volume (gal.)',
-    },
+
     {
         id: 'quotedPpg',
         name: 'PPG',
     },
     {
-        id: 'tailNumber',
-        name: 'Tail #',
+        id: 'etd',
+        name: 'ETD',
     },
+
+    //SERVICES COMPLETED
     {
-        id: 'phoneNumber',
-        name: 'Phone',
+        id: 'services',
+        name: 'Services',
     },
     {
         id: 'source',
@@ -70,10 +70,6 @@ const initialColumns: ColumnType[] = [
     {
         id: 'email',
         name: 'Email',
-    },
-    {
-        id: 'services',
-        name: 'Services',
     }
 ];
 
@@ -282,24 +278,16 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     isRowExpanded(elementId: any){
         return this.expandedElement.includes(elementId);
     }
-    toogleExpandedRows(elementId: any){
+    toogleExpandedRows(elementId: any) {
         if(this.isRowExpanded(elementId)){
-            this.expandedElement = this.expandedElement.filter(function(item) {
+            this.expandedElement = this.expandedElement.filter(function (item) {
                 return item !== elementId
-            })
+            });
         }else{
             this.expandedElement.push(elementId);
         }
-
     }
-
-    manageServiceOrderClicked(fuelreq: any) {
-        const config: MatDialogConfig = {
-            disableClose: true,
-            data: fuelreq.serviceOrder
-        };
-        const dialogRef = this.serviceOrderItemDialog.open(ServiceOrdersDialogOrderItemsComponent, config);
-    }
+    
     sendConfirmationNotification(event: Event, fuelreq: any): void{
         event.stopPropagation();
 
