@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { Parametri } from '../../../services/paremeters.service';
+import { rampfeeCategoryType } from 'src/app/enums/ramp-fee.enum';
 
 export interface NewRampFeeDialogData {
     oid: number;
@@ -45,7 +46,7 @@ export class RampFeesDialogNewFeeComponent {
         private aircraftsService: AircraftsService,
         private messageService: Parametri
     ) {
-        this.data.categoryType = 2;
+        this.data.categoryType = rampfeeCategoryType.aicraft;
         this.messageService
             .getMessage()
             .subscribe((mymessage) => (this.data.expirationDate = mymessage));

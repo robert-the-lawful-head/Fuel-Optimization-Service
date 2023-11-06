@@ -32,33 +32,11 @@
                                             >
                                         </div>
                                         <div
-                                            *ngIf="fee.categoryType != 2"
                                             class="
                                                 ramp-fee-details-expansion-label
                                             "
                                         >
-                                            {{
-                                                categoryTypes.indexOf(1) > -1
-                                                    ? fee.sizeDescription
-                                                    : fee.categoryTypeDescription
-                                            }}
-                                        </div>
-                                        <div
-                                            *ngIf="fee.categoryType == 2"
-                                            class="
-                                                ramp-fee-details-expansion-label
-                                            "
-                                        >
-                                            {{ fee.aircraftMake }}
-                                            {{ fee.aircraftModel }}
-                                        </div>
-                                        <div
-                                            *ngIf="fee.categoryType == 5"
-                                            class="
-                                                ramp-fee-details-expansion-label
-                                            "
-                                        >
-                                            {{ fee.categoryStringValue }}
+                                            {{getLabel(fee)}}
                                         </div>
                                     </div>
                                 </div>
@@ -163,6 +141,7 @@
                                         <span matSuffix>Lbs.</span>
                                     </mat-form-field>
                                     <div *ngIf="fee.isCategoryValueNegative" class="text-danger">Weight cannot be negative</div>
+                                    <div *ngIf="fee.isCategoryMinValueGrater" class="text-danger">Min value cannot be grater than Max value</div>
                                 </div>
                                 <div class="col-3">to</div>
                                 <div class="col-3">
