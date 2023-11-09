@@ -589,8 +589,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             await PrepareRecordsForDatabase(airportWatchDistinctBoxes);
 
-            if (!isTesting)
-                await CommitChanges();
+            //if (!isTesting)
+            //    await CommitChanges();
         }
 
         private async Task PrepareRecordsForDatabase(List<AirportWatchDistinctBoxesDTO> airportWatchDistinctBoxes)
