@@ -143,6 +143,20 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             }
         }
 
+        public string SourceOfCoordinates
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
+                    _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                    return "Antenna";
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Longitude).HasValue)
+                    return "SWIM";
+                return "None";
+            }
+        }
+
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround
             : _SwimFlightLeg?.IsAircraftOnGround;

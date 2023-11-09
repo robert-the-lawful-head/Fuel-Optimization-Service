@@ -45,7 +45,7 @@ namespace FBOLinx.Web.ViewModels
         {
             get
             {
-                return Core.Utilities.Enum.GetDescription(CertificateType ?? CertificateTypes.NotSet);
+                return Core.Utilities.Enums.EnumHelper.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
 

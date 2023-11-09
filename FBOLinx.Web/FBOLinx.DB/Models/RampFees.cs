@@ -54,7 +54,7 @@ namespace FBOLinx.DB.Models
             get
             {
                 if (CategoryType.GetValueOrDefault() == RampFeeCategories.AircraftSize)
-                    return FBOLinx.Core.Utilities.Enum.GetDescription((AircraftSizes) CategoryMinValue);
+                    return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription((AircraftSizes) CategoryMinValue);
                 return "";
             }
         }
@@ -65,7 +65,7 @@ namespace FBOLinx.DB.Models
             get
             {
                 if (string.IsNullOrEmpty(_CategoryDescription))
-                    return FBOLinx.Core.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault());
+                    return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(CategoryType.GetValueOrDefault());
                 return _CategoryDescription;
             }
             set
@@ -83,7 +83,7 @@ namespace FBOLinx.DB.Models
                     case RampFeeCategories.AircraftType:
                         return "Applies to all  " + CategoryDescription + ".";
                     case RampFeeCategories.AircraftSize:
-                        return "Applies to all aircraft with the size: " + FBOLinx.Core.Utilities.Enum.GetDescription((AircraftSizes)(System.Convert.ToInt16(CategoryMinValue))) + ".";
+                        return "Applies to all aircraft with the size: " + FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription((AircraftSizes)(System.Convert.ToInt16(CategoryMinValue))) + ".";
                     case RampFeeCategories.TailNumber:
                         return "Applies to the following tails: " + CategoryStringValue;
                     case RampFeeCategories.WeightRange:

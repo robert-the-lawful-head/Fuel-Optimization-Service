@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
+using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Geography;
 using Geolocation;
 
@@ -19,7 +20,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport
         [Column("DaylightSavingsYN")]
         [StringLength(255)]
         public string DaylightSavingsYn { get; set; }
-        
+        public string AirportType { get; set; }
+        public AcukwikAirportTypes AirportTypeAsEnum => FBOLinx.Core.Utilities.Enums.EnumHelper.GetEnumValueFromDescription<AcukwikAirportTypes>(AirportType);
+
         public string GetProperAirportIdentifier()
         {
                 if (!string.IsNullOrEmpty(Icao))

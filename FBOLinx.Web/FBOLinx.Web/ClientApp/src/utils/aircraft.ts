@@ -17,6 +17,7 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'ENY',
     'FDX',
     'FFT',
+    'GDP',
     'GEC',
     'HAL',
     'JBU',
@@ -24,6 +25,7 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'JSX',
     'KAP',
     'KLM',
+    'MTN',
     'NKS',
     'PDT',
     'POE',
@@ -32,7 +34,9 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'ROU',
     'RPA',
     'SCX',
+    'SIL',
     'SKW',
+    'SNC',
     'SWA',
     'SWG',
     'TSC',
@@ -42,6 +46,7 @@ export const COMMERCIAL_AIRCRAFT_FLIGHT_NUMBER = [
     'UPS',
     'VIV',
     'VOI',
+    'WAF',
     'WJA'
 ];
 

@@ -21,7 +21,7 @@ namespace FBOLinx.ServiceLayer.Dto.Responses
 
         public string MarginTypeDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(MarginType ?? MarginTypes.CostPlus); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(MarginType ?? MarginTypes.CostPlus); }
         }
         public double Margin { get; set; }
         public double? IntoPlanePrice { get; set; }
