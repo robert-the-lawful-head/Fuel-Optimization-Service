@@ -31,11 +31,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
         Task<AirportPosition> GetAirportPositionForFbo(int fboId);
         Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
-        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null);
+        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
 
         Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
             int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
-        Task<List<AirportPosition>> GetAirportPositions(List<AcukwikAirportTypes> airportTypesToOmit = null);
+        Task<List<AirportPosition>> GetAirportPositions();
         Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
     }
@@ -45,12 +45,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
     {
         private string _AllAirportsPositioningCacheKey = "AirportWatchService_AllAirportsPositioning";
         private string _GeneralAirportInfoCacheKey = "AirportWatchService_AllAirports_GeneralAirportInfo";
-        private List<AcukwikAirportTypes> _LastOmittedAirportTypes = null;
         private FboLinxContext _fboLinxContext;
         private DegaContext _degaContext;
         private IMemoryCache _MemoryCache;
         private List<AirportPosition> _AirportPositions;
-        private List<AirportPosition> _LastFilteredAirportPositions;
         private IFboEntityService _FboEntityService;
         private AcukwikAirportEntityService _AcukwikAirportEntityService;
         private FuelerLinxApiService _FuelerLinxApiService;
@@ -117,9 +115,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return positions?.Where(x => x.GetProperAirportIdentifier() == airportIdentifier).FirstOrDefault();
         }
 
-        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null)
+        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
         {
-            List<AirportPosition> airportPositions = await GetAirportPositions(airportTypesToOmit);
+            List<AirportPosition> airportPositions = await GetAirportPositions();
             double minDistance = -1;
             AirportPosition nearestAirportPosition = null;
             var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1
@@ -169,20 +167,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             return result?.Select(x => x.Adapt<AcukwikAirportDTO>()).ToList();
         }
 
-        public async Task<List<AirportPosition>> GetAirportPositions(List<AcukwikAirportTypes> airportTypesToOmit = null)
+        public async Task<List<AirportPosition>> GetAirportPositions()
         {
-            if (IsPrivateFilteredAirportPositionCollectionValid(airportTypesToOmit))
-                return _LastFilteredAirportPositions;
-
-            _LastOmittedAirportTypes = airportTypesToOmit;
+            if (_AirportPositions?.Count > 0)
+                return _AirportPositions;
 
             _AirportPositions = LookupAirportPositionRecordsByFromCache();
 
             if (_AirportPositions == null)
             {
+                //Exclude all heliports as it leads to misleading airport positions
                 var airports = (await (_degaContext.AcukwikAirports
 
-                            .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude) && x.AirportType != "Heliport / Vertiport")
                             .Select(x => new 
                             {
                                 Latitude = x.Latitude,
@@ -220,12 +217,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
                 _AirportPositions = airports;
             }
-
-            if (airportTypesToOmit != null)
-                _LastFilteredAirportPositions = _AirportPositions.Where(x => !airportTypesToOmit.Contains(x.AirportTypeAsEnum)).ToList();
-            else
-                _LastFilteredAirportPositions = _AirportPositions;
-            return _LastFilteredAirportPositions;
+            
+            return _AirportPositions;
         }
 
         public async Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier)
@@ -248,22 +241,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             var cacheEntryOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
             _MemoryCache.Set(_GeneralAirportInfoCacheKey, cachedResult, cacheEntryOptions);
             return cachedResult;
-        }
-
-        private bool IsPrivateFilteredAirportPositionCollectionValid(List<AcukwikAirportTypes> airportTypesToOmit = null)
-        {
-            if ((_LastFilteredAirportPositions?.Count).GetValueOrDefault() == 0)
-                return false;
-            if (_LastOmittedAirportTypes == null && airportTypesToOmit == null)
-                return true;
-            if (_LastOmittedAirportTypes == null && airportTypesToOmit != null)
-                return false;
-            if (_LastOmittedAirportTypes != null && airportTypesToOmit == null)
-                return false;
-            if (_LastOmittedAirportTypes.All(x => airportTypesToOmit.Any(a => a == x)) &&
-                _LastOmittedAirportTypes.Count == airportTypesToOmit.Count)
-                return true;
-            return false;
         }
 
         private Tuple<double, double> GetGeoLocationFromGPS(string lat, string lng)

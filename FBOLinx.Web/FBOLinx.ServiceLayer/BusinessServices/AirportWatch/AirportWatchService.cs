@@ -672,15 +672,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         private async Task PrepareRecordsForDatabase(List<AirportWatchDistinctBoxesDTO> airportWatchDistinctBoxes)
         {
-            var invalidAirportTypesForNearbyCheck = new List<AcukwikAirportTypes>()
-            {
-                AcukwikAirportTypes.Heliport_Vertiport
-            };
             //[#2ht0dek] Reverting back changes for this branch and upgrading EFCore and BulkExtensions to test performance
             //Set the nearest airport for all records that will be recorded for historical statuses
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToInsert)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude, invalidAirportTypesForNearbyCheck);
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
@@ -689,7 +685,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             foreach (var airportWatchHistoricalDataDto in _HistoricalDataToUpdate)
             {
-                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude, invalidAirportTypesForNearbyCheck);
+                var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
 
                 if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
