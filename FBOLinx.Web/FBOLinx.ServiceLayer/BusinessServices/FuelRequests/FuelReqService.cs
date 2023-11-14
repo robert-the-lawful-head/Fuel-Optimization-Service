@@ -666,7 +666,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         await UpdateAsync(fuelReq);
                     }
 
-                    if (sendEmail && orderDetails.DateTimeEmailSent != null && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
+                    if (fuelerlinxTransaction.IsOkToSendEmail && sendEmail && orderDetails.DateTimeEmailSent != null && DateTime.UtcNow - orderDetails.DateTimeEmailSent.Value < TimeSpan.FromHours(4) && DateTime.UtcNow - orderDetails.Eta.GetValueOrDefault() > TimeSpan.FromMinutes(30))
                         sendEmail = false;
                 }
                 else // FBO was changed
@@ -694,7 +694,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 requestStatus = "cancelled";
             }
 
-            if (sendEmail && fuelerlinxTransaction.FboHandlerId > 0)
+            if (fuelerlinxTransaction.IsOkToSendEmail && sendEmail && fuelerlinxTransaction.FboHandlerId > 0)
             {
                 var success = await SendFuelOrderUpdateEmail(orderDetails.FuelVendor, fuelerlinxTransaction.FboHandlerId, requestStatus, orderDetails.FuelerLinxTransactionId);
                 if (success)
