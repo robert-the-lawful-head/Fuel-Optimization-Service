@@ -316,8 +316,16 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                                     .updateDefaultTemplate(this.updateModel)
                                     .subscribe((result) => {
                                         if (result) {
-                                            this.canSave = true;
-                                            this.savePricingTemplate();
+
+                                            if (this.updateModel.newtemplate == this.updateModel.currenttemplate) {
+                                                this.isSaving = false;
+                                                this.hasSaved = true;
+                                                this.pricingTemplateForm.controls.default.setValue(true);
+                                            }
+                                            else {
+                                                this.canSave = true;
+                                                this.savePricingTemplate();
+                                            }
                                         }
                                     });
                             }
