@@ -537,6 +537,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             foreach (var record in data)
             {
+                record.CreatedDateTime = DateTime.UtcNow;
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 

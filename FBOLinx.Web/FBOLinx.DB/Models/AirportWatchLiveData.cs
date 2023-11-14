@@ -48,6 +48,7 @@ namespace FBOLinx.DB.Models
             oldRecord.GpsAltitude = newRecord.GpsAltitude;
             oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
             oldRecord.TailNumber = newRecord.TailNumber;
+            oldRecord.CreatedDateTime = newRecord.CreatedDateTime;
         }
     }
 }
