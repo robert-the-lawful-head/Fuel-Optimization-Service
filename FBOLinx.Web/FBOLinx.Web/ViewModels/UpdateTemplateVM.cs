@@ -10,5 +10,6 @@ namespace FBOLinx.Web.ViewModels
         public int currenttemplate { get; set; }
         public int fboid { get; set; }
         public int newtemplate { get; set; }
+        public bool isDeleting { get; set; }
     }
 }
