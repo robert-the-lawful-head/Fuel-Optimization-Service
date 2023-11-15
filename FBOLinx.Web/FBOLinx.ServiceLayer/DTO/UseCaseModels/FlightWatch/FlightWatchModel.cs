@@ -66,7 +66,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? VerticalSpeedKts => _AirportWatchLiveData?.VerticalSpeedKts;
         public int? TransponderCode => _AirportWatchLiveData?.TransponderCode;
         public string BoxName => _AirportWatchLiveData?.BoxName;
-        public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc;
+        public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc ?? _SwimFlightLeg?.LastUpdated;
         public string AircraftTypeCode => _AirportWatchLiveData?.AircraftTypeCode;
         public int? GpsAltitude => _AirportWatchLiveData?.GpsAltitude;
         public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
@@ -114,8 +114,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? ATDZulu => _SwimFlightLeg?.ATD;
         public DateTime? ETALocal => _SwimFlightLeg?.ETALocal;
         public DateTime? ETAZulu => _SwimFlightLeg?.ETA;
-        public DateTime? CreatedDateTime => _AirportWatchLiveData?.CreatedDateTime;
-
         public TimeSpan? ETE => ((_SwimFlightLeg?.ETA).HasValue && _SwimFlightLeg?.ETA.Value >= DateTime.UtcNow) ? ((_SwimFlightLeg?.ETA).GetValueOrDefault() - DateTime.UtcNow).Duration() : null;
         public double? ActualSpeed => (_AirportWatchLiveData?.GroundSpeedKts).HasValue ? _AirportWatchLiveData?.GroundSpeedKts : _SwimFlightLeg?.ActualSpeed;
         public double? Altitude => (_AirportWatchLiveData?.GpsAltitude).HasValue ? _AirportWatchLiveData?.GpsAltitude : _SwimFlightLeg?.Altitude;
