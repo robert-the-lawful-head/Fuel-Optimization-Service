@@ -98,7 +98,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
     notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
 
-    isLobbyViewPage = true;
+    isLobbyViewPage: boolean = false;
     routeSubscription: Subscription;
 
 
