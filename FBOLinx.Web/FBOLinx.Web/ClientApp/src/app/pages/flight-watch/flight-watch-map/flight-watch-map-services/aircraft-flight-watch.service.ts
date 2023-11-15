@@ -27,13 +27,17 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: FlightWatchModelResponse): any {
         let icon = this.getAricraftIcon(false,data);
 
+        let originCoordinates =  (data.aircraftPositionDateTimeUtc > data.previousAircraftPositionDateTimeUtc) ?
+        [data.previousLongitude, data.previousLatitude] :
+        [data.longitude??0, data.latitude??0];
+
         return {
             geometry: {
                 coordinates: [(data.previousLongitude)?data.previousLongitude:data.longitude??0, (data.previousLatitude)?data.previousLatitude:data.latitude??0],
                 type: 'Point',
             },
             properties: {
-                'origin-coordinates': [data.previousLongitude, data.previousLatitude],
+                'origin-coordinates': originCoordinates,
                 'destination-coordinates': [data.longitude??0, data.latitude??0],
                 id: data.tailNumber,
                 'default-icon-image': icon,
@@ -54,6 +58,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'icon-allow-overlap': true,
                 'icon-image':['get', 'default-icon-image'],
                 'icon-rotate': ['get', 'rotate'],
+                // 'icon-rotate': ['get', 'bearing'],
                 'icon-size': ['get', 'size'],
                 'symbol-z-order': 'source'
             },
