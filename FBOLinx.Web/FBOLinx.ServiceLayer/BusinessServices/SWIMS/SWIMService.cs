@@ -420,10 +420,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             string gpsLongitude = gpsCoordinates[1];
             double latitude = GetLatitude(gpsLatitude);
             double longitude = GetLongitude(gpsLongitude);
-            var nearestAirport = await _AirportService.GetNearestAirportPosition(latitude, longitude, new List<AcukwikAirportTypes>()
-                {
-                    AcukwikAirportTypes.Heliport_Vertiport
-                });
+            var nearestAirport = await _AirportService.GetNearestAirportPosition(latitude, longitude);
             if (nearestAirport != null)
             {
                 return nearestAirport.Icao;

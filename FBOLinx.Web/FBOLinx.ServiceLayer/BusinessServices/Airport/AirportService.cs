@@ -29,7 +29,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<AcukwikAirport>> GetAirportsByAirportIdentifier(List<string> airportIdentifiers);
         Task<AirportPosition> GetAirportPositionForFbo(int fboId);
         Task<AirportPosition> GetAirportPositionByAirportIdentifier(string airportIdentifier);
-        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null);
+        Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude);
 
         Task<List<AcukwikAirportDTO>> GetAirportsWithinRange(string airportIdentifierForCenterAirport,
             int nauticalMileRadius, bool mustProvideJetFuel = true, bool excludeMilitary = true);
@@ -123,6 +123,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
             var antennasData = await _AirportWatchDistinctBoxesService.GetBoxByName(antennas);
 
+        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
             foreach (var antenna in antennas)
             {
                 var antennaBox = antennasData.FirstOrDefault(x => x.BoxName == antenna);
@@ -140,16 +141,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             }
             return closestAntenna;
         }
-        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude, List<AcukwikAirportTypes> airportTypesToOmit = null)
+        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
         {
             List<AirportPosition> airportPositions = await GetAirportPositions();
             double minDistance = -1;
             AirportPosition nearestAirportPosition = null;
-            var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1 && a.Latitude <= latitude + 1 && a.Longitude >= longitude - 1 && a.Longitude <= longitude + 1).ToList();
+            var closestAirports = airportPositions.Where(a => a.Latitude >= latitude - 1
+                                                              && a.Latitude <= latitude + 1
+                                                              && a.Longitude >= longitude - 1
+                                                              && a.Longitude <= longitude + 1).ToList();
             foreach (var airport in closestAirports)
             {
-                if (airportTypesToOmit != null && airportTypesToOmit.Contains(airport.AirportTypeAsEnum))
-                    continue;
                 double distance = GeoCalculator.GetDistance(latitude, longitude, airport.Latitude, airport.Longitude, 5, DistanceUnit.Miles);
 
                 if (minDistance == -1 || distance < minDistance)
@@ -200,9 +202,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
             if (_AirportPositions == null)
             {
+                //Exclude all heliports as it leads to misleading airport positions
                 var airports = (await (_degaContext.AcukwikAirports
 
-                            .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude))
+                            .Where(x => !string.IsNullOrEmpty(x.Latitude) && !string.IsNullOrEmpty(x.Longitude) && x.AirportType != "Heliport / Vertiport")
                             .Select(x => new 
                             {
                                 Latitude = x.Latitude,
@@ -240,7 +243,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
                 _AirportPositions = airports;
             }
-
+            
             return _AirportPositions;
         }
 

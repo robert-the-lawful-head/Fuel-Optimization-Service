@@ -4,6 +4,11 @@ import {
     MatDialog,
     MatDialogRef,
 } from '@angular/material/dialog';
+import { PricingTemplate } from '../../../models';
+export interface PricingTemplatesDialogDeleteWarningComponentData {
+    action: string;
+    data: PricingTemplate[]
+}
 
 @Component({
     selector: 'app-pricing-templates-delete-warning-template',
@@ -17,7 +22,7 @@ export class PricingTemplatesDialogDeleteWarningComponent implements OnInit {
         public dialogRef: MatDialogRef<PricingTemplatesDialogDeleteWarningComponent>,
         @Inject(MAT_DIALOG_DATA) public data,
         public closeConfirmationDialog: MatDialog
-    ) {}
+    ) { dialogRef.disableClose = true; }
 
     ngOnInit() {}
 
