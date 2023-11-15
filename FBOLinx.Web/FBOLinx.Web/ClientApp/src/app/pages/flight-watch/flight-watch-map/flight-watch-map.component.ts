@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { Dictionary, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
+import * as turf from '@turf/turf';
 import { environment } from 'src/environments/environment';
 
 import { SharedService } from '../../../layouts/shared-service';
@@ -268,14 +269,23 @@ export class FlightWatchMapComponent
 
         if (changes.data&& this.styleLoaded) {
             this.startTime = Date.now();
-            const propertyNames = Object.getOwnPropertyNames(
+            const tailNumbers = Object.getOwnPropertyNames(
                 changes.data.currentValue
             );
 
-            for (const propertyName of propertyNames) {
-                changes.data.currentValue[propertyName].previousLongitude = changes.data.previousValue[propertyName]?.longitude ?? changes.data.currentValue[propertyName].longitude;
+            for (const tailNumber of tailNumbers) {
+                let currentData = changes.data.currentValue[tailNumber];
+                let previousData = changes.data.previousValue[tailNumber];
 
-                changes.data.currentValue[propertyName].previousLatitude = changes.data.previousValue[propertyName]?.latitude ?? changes.data.currentValue[propertyName].latitude;
+                currentData.longitude = currentData.longitude ??
+                (previousData?.longitude ?? 1);
+                currentData.latitude = currentData.latitude ?? (previousData?.latitude ?? 1);
+
+                currentData.previousLongitude = previousData?.longitude ?? currentData.longitude;
+                currentData.previousLatitude = previousData?.latitude ?? currentData.latitude;
+
+
+                currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc ?? currentData.aircraftPositionDateTimeUtc;
             }
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.checkForPopupOpen();
@@ -384,6 +394,10 @@ export class FlightWatchMapComponent
                         pointSource.properties['default-icon-image'] = defaultIcon;
                     }
 
+                    pointSource.properties.bearing = turf.bearing(
+                        turf.point(pointSource.geometry.coordinates),
+                        turf.point(targetCoordinates)
+                        );
                 });
 
                 source.setData(data);
