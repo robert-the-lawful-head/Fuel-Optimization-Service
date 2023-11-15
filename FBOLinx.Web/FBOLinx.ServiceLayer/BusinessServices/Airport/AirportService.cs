@@ -123,7 +123,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 
             var antennasData = await _AirportWatchDistinctBoxesService.GetBoxByName(antennas);
 
-        public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
             foreach (var antenna in antennas)
             {
                 var antennaBox = antennasData.FirstOrDefault(x => x.BoxName == antenna);
