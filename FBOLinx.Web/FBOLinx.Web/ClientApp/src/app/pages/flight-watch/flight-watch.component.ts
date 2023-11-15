@@ -14,8 +14,8 @@ import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { SharedService } from '../../layouts/shared-service';
-import * as SharedEvents from '../../models/sharedEvents';
+import { SharedService } from 'src/app/layouts/shared-service';
+import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
@@ -24,6 +24,7 @@ import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-servi
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
+import { coordinatesSource } from 'src/app/enums/flight-watch.enum';
 
 const BREADCRUMBS: any[] = [
     {
@@ -119,12 +120,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     setData(data: FlightWatchModelResponse[]): void {
         this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
-            return row.arrivalICAO == row.focusedAirportICAO;
+            return row.arrivalICAO == row.focusedAirportICAO && row.sourceOfCoordinates != coordinatesSource.None;
         });
         this.departures = data?.filter((row: FlightWatchModelResponse) => {
             return (
                 row.departureICAO == row.focusedAirportICAO &&
-                row.status != null
+                row.status != null && row.sourceOfCoordinates != coordinatesSource.None
             );
         });
 
