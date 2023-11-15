@@ -1,4 +1,4 @@
-import { FlightLegStatus } from "../enums/flight-watch.enum";
+import { FlightLegStatus, coordinatesSource } from "../enums/flight-watch.enum";
 import { FboFavoriteAircraft } from "./favorites/favoriteAircraft";
 
 export type FlightWatchDictionary = {
@@ -12,8 +12,8 @@ export type FlightWatch = {
     altitudeInStandardPressure?: number;
     groundSpeedKts?: number;
     trackingDegree?: number;
-    latitude: number;
-    longitude: number;
+    latitude: number | null;
+    longitude: number | null;
     verticalSpeedKts?: number;
     transponderCode?: number;
     boxName: string;
@@ -116,4 +116,6 @@ export interface FlightWatchModelResponse {
     faaRegisteredOwner: string;
     favoriteAircraft: FboFavoriteAircraft | null;
     isCustomerManagerAircraft: boolean;
+    sourceOfCoordinates: coordinatesSource;
+    previousAircraftPositionDateTimeUtc: Date;
 }
