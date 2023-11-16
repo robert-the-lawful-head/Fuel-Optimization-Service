@@ -120,12 +120,11 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     setData(data: FlightWatchModelResponse[]): void {
         this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
-            return row.arrivalICAO == row.focusedAirportICAO && row.sourceOfCoordinates != coordinatesSource.None;
+            return row.arrivalICAO == row.focusedAirportICAO
         });
         this.departures = data?.filter((row: FlightWatchModelResponse) => {
             return (
-                row.departureICAO == row.focusedAirportICAO &&
-                row.status != null && row.sourceOfCoordinates != coordinatesSource.None
+                row.departureICAO == row.focusedAirportICAO
             );
         });
 

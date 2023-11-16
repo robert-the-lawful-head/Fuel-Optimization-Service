@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Constants;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
@@ -135,6 +137,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
+
+
+            result.RemoveAll(x => x.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.None);
+            result.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null );
 
             return result;
         }
