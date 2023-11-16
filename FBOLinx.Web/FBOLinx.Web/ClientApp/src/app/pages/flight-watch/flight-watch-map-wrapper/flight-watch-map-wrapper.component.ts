@@ -62,17 +62,13 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         for (let currentData of currentFlights) {
             let previousData = previousFlights.find((obj) => obj.tailNumber == currentData.tailNumber);
 
-            currentData.longitude = currentData.longitude ??
-            (previousData?.longitude ?? 1);
-            currentData.latitude = currentData.latitude ?? (previousData?.latitude ?? 1);
+            currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc;
 
-            currentData.previousLongitude = previousData?.longitude ?? currentData.longitude;
-            currentData.previousLatitude = previousData?.latitude ?? currentData.latitude;
+            let isDateTimeSyncronized = (currentData.aircraftPositionDateTimeUtc > currentData.previousAircraftPositionDateTimeUtc);
 
+            currentData.previousLongitude = isDateTimeSyncronized ? previousData?.longitude ?? currentData.longitude : currentData.longitude;
+            currentData.previousLatitude =  isDateTimeSyncronized ? previousData?.latitude ?? currentData.latitude : currentData.latitude;
 
-            currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc ?? currentData.aircraftPositionDateTimeUtc;
-
-            currentData.isDateTimeDelayed = (currentData.aircraftPositionDateTimeUtc < currentData.previousAircraftPositionDateTimeUtc);
         }
     }
     getFilteredData(

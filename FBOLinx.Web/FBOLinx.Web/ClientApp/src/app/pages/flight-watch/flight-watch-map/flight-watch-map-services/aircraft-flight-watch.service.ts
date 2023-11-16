@@ -27,21 +27,17 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
     public getFlightFeatureJsonData(data: FlightWatchModelResponse): any {
         let icon = this.getAricraftIcon(false,data);
 
-        let originCoordinates =  (data.aircraftPositionDateTimeUtc > data.previousAircraftPositionDateTimeUtc) ?
-        [data.previousLongitude, data.previousLatitude] :
-        [data.longitude??0, data.latitude??0];
-
         return {
             geometry: {
-                coordinates: [(data.previousLongitude)?data.previousLongitude:data.longitude??0, (data.previousLatitude)?data.previousLatitude:data.latitude??0],
+                coordinates:  [data.previousLongitude, data.previousLatitude],
                 type: 'Point',
             },
             properties: {
-                'origin-coordinates': originCoordinates,
-                'destination-coordinates': [data.longitude??0, data.latitude??0],
+                'origin-coordinates': [data.previousLongitude, data.previousLatitude],
+                'destination-coordinates': [data.longitude, data.latitude],
                 id: data.tailNumber,
                 'default-icon-image': icon,
-                'rotate': data.trackingDegree ?? 0,
+                'bearing': data.trackingDegree ?? 0,
                 'size': 0.5,
             },
             type: 'Feature'
@@ -57,8 +53,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             layout: {
                 'icon-allow-overlap': true,
                 'icon-image':['get', 'default-icon-image'],
-                'icon-rotate': ['get', 'rotate'],
-                // 'icon-rotate': ['get', 'bearing'],
+                'icon-rotate': ['get', 'bearing'],
                 'icon-size': ['get', 'size'],
                 'symbol-z-order': 'source'
             },

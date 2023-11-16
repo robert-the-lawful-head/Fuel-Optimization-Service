@@ -267,7 +267,7 @@ export class FlightWatchMapComponent
     ngOnChanges(changes: SimpleChanges): void {
         if(!this.map) return;
 
-        if (changes.data&& this.styleLoaded) {
+        if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.checkForPopupOpen();
@@ -375,11 +375,11 @@ export class FlightWatchMapComponent
                         const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = defaultIcon;
                     }
-
-                    pointSource.properties.bearing = turf.bearing(
+                    let liveBearing = turf.bearing(
                         turf.point(pointSource.geometry.coordinates),
                         turf.point(targetCoordinates)
                         );
+                    pointSource.properties.bearing = liveBearing == 0 ? pointSource.properties.bearing : liveBearing;
                 });
 
                 source.setData(data);
