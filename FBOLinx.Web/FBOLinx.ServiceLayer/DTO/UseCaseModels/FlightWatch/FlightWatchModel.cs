@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FBOLinx.Core.Constants;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
@@ -91,7 +92,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             get
             {
                 if (string.IsNullOrEmpty(FocusedAirportICAO))
-                    return "";
+                    return string.Empty;
                 return FocusedAirportICAO == DepartureICAO ? ArrivalICAO : DepartureICAO;
             }
         }
@@ -101,7 +102,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             get
             {
                 if (string.IsNullOrEmpty(FocusedAirportICAO))
-                    return "";
+                    return string.Empty;
                 return FocusedAirportICAO == DepartureICAO ? ArrivalCity : DepartureCity;
             }
         }
@@ -149,11 +150,11 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             {
                 if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
                     _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
-                    return "Antenna";
+                    return FlightWatchConstants.CoordinatesSource.Antenna;
                 if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
                     (_SwimFlightLeg?.Longitude).HasValue)
-                    return "SWIM";
-                return "None";
+                    return FlightWatchConstants.CoordinatesSource.Swim;
+                return FlightWatchConstants.CoordinatesSource.None;
             }
         }
 
@@ -190,7 +191,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? FuelerlinxFuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
         public int? FuelerlinxCompanyId => _CustomerAircraft?.FuelerlinxCompanyId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
-        public string TransactionStatus => ID > 0 ? "LIVE" : "";
+        public string TransactionStatus => ID > 0 ? FlightWatchConstants.TransactionStatus.Live : string.Empty;
         public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode?.Trim() ?? _SwimFlightLeg?.ICAOAircraftCode?.Trim();
         public bool IsInNetwork => (_CustomerAircraft?.IsInNetwork()).GetValueOrDefault();
         public bool IsOutOfNetwork => (_CustomerAircraft?.IsOutOfNetwork()).GetValueOrDefault();
@@ -216,7 +217,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? LastQuoteDate { get; set; }
 
         public string LastQuote =>
-            (!LastQuoteDate.HasValue ? "" : LastQuoteDate.GetValueOrDefault().ToShortDateString());
+            (!LastQuoteDate.HasValue ? string.Empty: LastQuoteDate.GetValueOrDefault().ToShortDateString());
 
         public SWIMFlightLegDTO GetSwimFlightLeg()
         {
