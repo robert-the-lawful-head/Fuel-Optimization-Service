@@ -269,24 +269,6 @@ export class FlightWatchMapComponent
 
         if (changes.data&& this.styleLoaded) {
             this.startTime = Date.now();
-            const tailNumbers = Object.getOwnPropertyNames(
-                changes.data.currentValue
-            );
-
-            for (const tailNumber of tailNumbers) {
-                let currentData = changes.data.currentValue[tailNumber];
-                let previousData = changes.data.previousValue[tailNumber];
-
-                currentData.longitude = currentData.longitude ??
-                (previousData?.longitude ?? 1);
-                currentData.latitude = currentData.latitude ?? (previousData?.latitude ?? 1);
-
-                currentData.previousLongitude = previousData?.longitude ?? currentData.longitude;
-                currentData.previousLatitude = previousData?.latitude ?? currentData.latitude;
-
-
-                currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc ?? currentData.aircraftPositionDateTimeUtc;
-            }
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.checkForPopupOpen();
             this.updateFlightOnMap(this.mapMarkers.flights);

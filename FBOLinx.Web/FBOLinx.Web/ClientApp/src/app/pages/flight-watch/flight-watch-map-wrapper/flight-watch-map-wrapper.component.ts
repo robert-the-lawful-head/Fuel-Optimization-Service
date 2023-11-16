@@ -52,9 +52,27 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.data) {
+            this.processFlightWatchData(changes.data.currentValue,changes.data.previousValue);
             this.flightWatchDictionary = this.getFilteredData(
                 changes.data.currentValue
             );
+        }
+    }
+    private processFlightWatchData(currentFlights: FlightWatchModelResponse [], previousFlights: FlightWatchModelResponse [] = []):void {
+        for (let currentData of currentFlights) {
+            let previousData = previousFlights.find((obj) => obj.tailNumber == currentData.tailNumber);
+
+            currentData.longitude = currentData.longitude ??
+            (previousData?.longitude ?? 1);
+            currentData.latitude = currentData.latitude ?? (previousData?.latitude ?? 1);
+
+            currentData.previousLongitude = previousData?.longitude ?? currentData.longitude;
+            currentData.previousLatitude = previousData?.latitude ?? currentData.latitude;
+
+
+            currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc ?? currentData.aircraftPositionDateTimeUtc;
+
+            currentData.isDateTimeDelayed = (currentData.aircraftPositionDateTimeUtc < currentData.previousAircraftPositionDateTimeUtc);
         }
     }
     getFilteredData(
