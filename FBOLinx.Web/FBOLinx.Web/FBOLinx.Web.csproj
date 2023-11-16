@@ -13,6 +13,8 @@
 	<PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
     <PackageReference Include="EFCore.BulkExtensions" Version="6.5.5" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
+    <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.3.8" />
+    <PackageReference Include="MiniProfiler.EntityFrameworkCore" Version="4.3.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.18.2" />
 	<PackageReference Include="StackifyLib" Version="2.2.10" />
