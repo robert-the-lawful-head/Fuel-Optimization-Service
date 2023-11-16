@@ -494,7 +494,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
             var fbos = await (from f in _context.Fbos
                               join fa in _context.Fboairports on f.Oid equals fa.Fboid
-                              where f.Active == true && f.GroupId > 1
+                              where f.Active == true && f.GroupId > 1 && f.AccountType == AccountTypes.RevFbo
                               select new
                               {
                                   Active = f.Active,
