@@ -18,7 +18,7 @@ namespace FBOLinx.ServiceLayer.DTO.Requests.ServiceOrder
         public int? FboLinxFuelOrderId { get; set; } = 0;
         public string FuelOn { get; set; }
         public string FuelVendor { get; set; }
-        public List<string> ServiceNames { get; set; } = new List<string>();
+        public List<ServiceOrderItemRequest> Services { get; set; } = new List<ServiceOrderItemRequest>();
         public string PaymentMethod { get; set; }
     }
 }

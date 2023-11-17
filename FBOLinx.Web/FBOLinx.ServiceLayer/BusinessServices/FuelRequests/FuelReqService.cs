@@ -599,14 +599,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
 
             var serviceOrderItems = new List<ServiceOrderItemDto>();
-            foreach (string serviceOrderName in request.ServiceNames)
-            {
-                ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
-                serviceOrderItem.ServiceOrderId = serviceReq.Oid;
-                serviceOrderItem.ServiceName = serviceOrderName;
-                serviceOrderItem.IsCompleted = false;
-                serviceOrderItems.Add(serviceOrderItem);
-            }
+            //foreach (string serviceOrderName in request.ServiceNames)
+            //{
+            //    ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
+            //    serviceOrderItem.ServiceOrderId = serviceReq.Oid;
+            //    serviceOrderItem.ServiceName = serviceOrderName;
+            //    serviceOrderItem.IsCompleted = false;
+            //    serviceOrderItems.Add(serviceOrderItem);
+            //}
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
 

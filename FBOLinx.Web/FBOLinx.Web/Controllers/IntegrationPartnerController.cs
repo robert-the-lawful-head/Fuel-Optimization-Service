@@ -139,8 +139,8 @@ namespace FBOLinx.Web.Controllers
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
 
-            if (request.ServiceNames.Count > 0)
-                await _fuelReqService.AddServiceOrder(request, fbo);
+            //if (request.ServiceNames.Count > 0)
+            //    await _fuelReqService.AddServiceOrder(request, fbo);
 
             // Add order details if it doesn't exist yet
             var existingOrderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(request.SourceId.GetValueOrDefault(), handlerId));
