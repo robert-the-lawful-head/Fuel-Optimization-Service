@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +26,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
         private IServiceScopeFactory _serviceScopeFactory;
         private FuelerLinxContext _fuelerLinxContext;
         private FuelerLinxApiService _fuelerLinxApiService;
+        private IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
 
-        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxApiService fuelerLinxApiService)
+        public GroupFboService(FboLinxContext context, IServiceScopeFactory serviceScopeFactory, FuelerLinxContext fuelerLinxContext, FuelerLinxApiService fuelerLinxApiService, IFboCompaniesFavoritesService fboCompaniesFavoritesService)
         {
             _fuelerLinxContext = fuelerLinxContext;
             _serviceScopeFactory = serviceScopeFactory;
             _context = context;
             _fuelerLinxApiService = fuelerLinxApiService;
+            _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
         }
 
         #region Public Methods
@@ -122,6 +125,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Groups
 
         public async Task DeleteFbo(int fboId)
         {
+            await _fboCompaniesFavoritesService.DeleteFavoritesByFboId(fboId);
             await _context.Database.ExecuteSqlRawAsync("exec up_Delete_Fbo @OID = " + fboId);
         }
         public async Task DeleteGroup(int id)
