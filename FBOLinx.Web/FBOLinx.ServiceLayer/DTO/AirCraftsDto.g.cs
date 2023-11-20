@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using FBOLinx.Core.Enums;
-using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Models;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
@@ -30,5 +30,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public short? TempSize { get; set; }
         public ICollection<AFSAircraftDto> AFSAircraft { get; set; }
         public AircraftSpecificationsDto AircraftSpecifications { get; set; }
+        public FboFavoriteAircraft? FavoriteAircraft { get; set; }
     }
 }

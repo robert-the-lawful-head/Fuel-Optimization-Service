@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Text;
+﻿using System.Collections.Generic;
 using FBOLinx.Core.BaseModels.Specifications;
 
 namespace FBOLinx.DB.Specifications.CustomerAircrafts
@@ -15,6 +12,7 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
         {
             AddInclude(x => x.Notes);
             AddInclude(x => x.Customer);
+            AddInclude(x => x.FavoriteAircraft);
         }
     }
 }

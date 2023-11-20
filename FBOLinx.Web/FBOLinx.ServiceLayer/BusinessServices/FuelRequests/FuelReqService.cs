@@ -169,7 +169,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             foreach (TransactionDTO transaction in fuelerlinxContractFuelOrders.Result)
             {
-                var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao);
+                var airport = await _AirportService.GetGeneralAirportInformation(transaction.Icao.Trim());
 
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
 

@@ -21,7 +21,7 @@ namespace FBOLinx.DB.Models
         [NotMapped]
         public string EmailContentTypeDescription
         {
-            get { return Core.Utilities.Enum.GetDescription(EmailContentType); }
+            get { return Core.Utilities.Enums.EnumHelper.GetDescription(EmailContentType); }
         }
 
         [MaxLength(255)]

@@ -173,7 +173,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(UserRoles));
+            var roles = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(UserRoles));
 
             return Ok(roles);
         }

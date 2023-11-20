@@ -80,8 +80,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
         public async Task<IEnumerable<RampFeesGridViewModel>> GetRampFeesByFbo(int fboId)
         {
             //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
-            IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
-                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
+            IEnumerable<FBOLinx.Core.Utilities.Enums.EnumHelper.EnumDescriptionValue> sizes =
+                FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(AircraftSizes));
             var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
             var allAircraft = await _aircraftService.GetAllAircrafts();
 

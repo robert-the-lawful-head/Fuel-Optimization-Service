@@ -1,10 +1,10 @@
-import { identifierName } from '@angular/compiler';
 import {
     Component,
     EventEmitter,
     Input,
     OnInit,
     Output,
+    SimpleChanges,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,11 +24,12 @@ import { CustomeraircraftsService } from '../../../services/customeraircrafts.se
 // Components
 import { CustomerAircraftsDialogNewAircraftComponent } from '../customer-aircrafts-dialog-new-aircraft/customer-aircrafts-dialog-new-aircraft.component';
 import { CustomerAircraftsEditComponent } from '../customer-aircrafts-edit/customer-aircrafts-edit.component';
-import { CustomerAircraftSelectModelComponent } from '../customer-aircrafts-select-model-dialog/customer-aircrafts-select-model-dialog.component';
 
 // Models
-import { CustomerAircraftNote } from '../../../models/customer-aircraft-note';
 import { CustomerAircraft } from '../../../models/customer-aircraft';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { FavoritesService } from 'src/app/services/favorites.service';
+import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 
 @Component({
     selector: 'app-customer-aircrafts-grid',
@@ -59,7 +60,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     public isLoadingAircraftTypes = false;
     public pageIndex = 0;
     public customerInfobyGroupId : any;
-
+    public isFavoriteCompany = false;
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
     results = '[]';
@@ -75,16 +76,15 @@ export class CustomerAircraftsGridComponent implements OnInit {
         private aircraftPricesService: AircraftpricesService,
         private customCustomerTypeService: CustomcustomertypesService,
         private sharedService: SharedService ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private snackbarService: SnackBarService,
+        private favoritesService: FavoritesService
     ) {
         this.isLoadingAircraftTypes = true;
         this.aircraftsService.getAll().subscribe((data: any) => {
             this.aircraftTypes = data;
             this.isLoadingAircraftTypes = false;
         });
-
-
-
     }
 
     ngOnInit() {
@@ -168,7 +168,11 @@ export class CustomerAircraftsGridComponent implements OnInit {
         //    userId: '1',
         //});
     }
-
+    ngOnChanges(changes: SimpleChanges) {
+        if(changes.customer){
+            this.isFavoriteCompany = changes.customer.currentValue.favoriteCompany != null;
+        }
+    }
     public newCustomerAircraft() {
         const dialogRef = this.newCustomerAircraftDialog.open(
             CustomerAircraftsDialogNewAircraftComponent,
@@ -184,8 +188,8 @@ export class CustomerAircraftsGridComponent implements OnInit {
             }
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
-            result.customerId = this.customer.customerId;            
-            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid).subscribe(() => {
+            result.customerId = this.customer.customerId;
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid,this.isFavoriteCompany, this.sharedService.currentUser.fboId).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,
@@ -206,7 +210,6 @@ export class CustomerAircraftsGridComponent implements OnInit {
 
     public editCustomerAircraft(customerAircraft: any) {
         if (customerAircraft) {
-            console.log(this.route.snapshot.paramMap.get('id'));
             const dialogRef = this.editCustomerAircraftDialog.open(
                 CustomerAircraftsEditComponent,
                 {
@@ -352,6 +355,14 @@ export class CustomerAircraftsGridComponent implements OnInit {
             return notesForFbo[0].notes;
         }
         return '';
+    }
+
+    setIsFavoriteProperty(aircraft: any): any {
+        aircraft.isFavorite = aircraft.favoriteAircraft != null;
+        return aircraft;
+    }
+    get getCallBackComponent(): CallbackComponent{
+        return CallbackComponent.aircraft;
     }
 
     //[#hz0jtd] FlatFile importer was requested to be removed

@@ -131,7 +131,9 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     customerDeleted() {
         this.loadCustomers();
     }
-
+    refreshAircrafts() {
+        this.loadCustomerAircraft();
+    }
     // Private Methods
     private loadCustomers() {
         this.customersData = null;
@@ -163,7 +165,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.pricingTemplatesData = data;
             });
     }
-
     private loadCustomerAircraft() {
         this.aircraftData = null;
         this.customerAircraftService

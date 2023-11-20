@@ -1,11 +1,20 @@
 <div class="settings-filter">
-    <mat-form-field >
+    <mat-form-field class="example-full-width">
         <mat-label>Select Airport</mat-label>
-        <mat-select [(ngModel)]="icao" (ngModelChange)="updateIcao($event)">
-            <ng-container *ngFor="let icao of icaoList">
-                <mat-option value="{{ icao }}">{{ icao }}</mat-option>
-            </ng-container>
-        </mat-select>
+        <input #input
+                type="text"
+                placeholder="Select Airport"
+                matInput
+                [formControl]="myControl"
+                [matAutocomplete]="auto"
+                (input)="filter()"
+                (focus)="loadAllAirports()"
+                (blur)="validateTypedValue()">
+        <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+            <mat-option *ngFor="let option of filteredOptions" [value]="option">
+            {{option}}
+            </mat-option>
+        </mat-autocomplete>
     </mat-form-field>
     <mat-form-field *ngIf="!isSearchAirportHidden">
         <mat-label>Search Aircraft</mat-label>

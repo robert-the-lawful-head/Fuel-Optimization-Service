@@ -78,8 +78,8 @@ export class CustomeraircraftsService {
         });
     }
 
-    public add(payload , userId) {
-        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
+    public add(payload , userId, isFavorite: boolean = false, fboId: number = 0) {
+        return this.http.post(`${this.accessPointUrl}/${userId}/?isFavorite=${isFavorite}&fboId=${fboId}`, payload, {
             headers: this.headers,
         });
     }

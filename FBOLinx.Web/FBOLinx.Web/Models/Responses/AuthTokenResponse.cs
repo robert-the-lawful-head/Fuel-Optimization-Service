@@ -41,7 +41,7 @@ namespace FBOLinx.Web.Models.Responses
             UserId = userId;
             GroupName = groupName;
             GroupId = groupId;
-            Role = FBOLinx.Core.Utilities.Enum.GetDescription(role);
+            Role = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(role);
             Icao = icao;
             Fbo = fbo;
         }

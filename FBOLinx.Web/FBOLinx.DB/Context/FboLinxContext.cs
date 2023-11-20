@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FBOLinx.Core.BaseModels.Entities;
-using System.Linq;
-using System;
 
 namespace FBOLinx.DB.Context
 {
@@ -168,7 +165,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
         public virtual DbSet<CustomerAircraftNote> CustomerAircraftNotes { get; set; }
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
-
+        public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
+        public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

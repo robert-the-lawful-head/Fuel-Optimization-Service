@@ -181,9 +181,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 //Load all of the required information to get the quote
                 var universalTime = DateTime.UtcNow;
                 var customer = await _CustomerInfoByGroupService.GetCustomersByGroup(groupId, customerInfoByGroupId);
+                var customCustomerTypes = await _CustomerService.GetCustomCustomerTypes(fboId);
+
+                if (customer.Count > 1)
+                    customer = (from c in customer
+                               join cct in customCustomerTypes on c.CustomerId equals cct.CustomerId
+                               select c).ToList();
+
                 var customerInfoByGroup = customer[0];
                 //var customerInfoByGroup = await _CustomerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerInfoByGroupId, groupId));
-                var customCustomerTypes = await _CustomerService.GetCustomCustomerTypes(fboId);
                 //#17nvxpq: Fill-in missing template IDs if one isn't properly provided
                 if (!pricingTemplateIds.Any(x => x > 0))
                 {
@@ -274,7 +280,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                               { CustomerCompanyType = ccot.Oid, GroupId = ccot.GroupId == 0 ? groupId : ccot.GroupId }
                                                   into leftJoinCCOT
                                               from ccot in leftJoinCCOT.DefaultIfEmpty()
-                                              where (c.Oid == customerInfoByGroupId) || (customerInfoByGroupId == 0)
+                                              where fp.Price > 0 && ((c.Oid == customerInfoByGroupId) || (customerInfoByGroupId == 0))
                                               select new CustomerWithPricing()
                                               {
                                                   CustomerId = c.Customer.Oid,
@@ -311,7 +317,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                                                   Fbo = (fbo == null ? "" : fbo.Fbo),
                                                   Group = (fbo.Group == null ? "" : fbo.Group.GroupName),
                                                   PriceBreakdownDisplayType = priceBreakdownDisplayType,
-                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A") + ((flightTypePassedIn == FlightTypeClassifications.Private || flightTypePassedIn == FlightTypeClassifications.Commercial) ? " (" + FBOLinx.Core.Utilities.Enum.GetDescription(flightTypePassedIn) + ")" : "")
+                                                  Product = fp.Product.Replace(" Cost", "").Replace(" Retail", "").Replace("JetA", "Jet A") + ((flightTypePassedIn == FlightTypeClassifications.Private || flightTypePassedIn == FlightTypeClassifications.Commercial) ? " (" + FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(flightTypePassedIn) + ")" : "")
                                               }).OrderBy(x => x.Company).ThenBy(x => x.PricingTemplateId).ThenBy(x => x.Product).ThenBy(x => x.MinGallons).ToList();
 
                 // If getting pricing by template for price checker, just use the first customer

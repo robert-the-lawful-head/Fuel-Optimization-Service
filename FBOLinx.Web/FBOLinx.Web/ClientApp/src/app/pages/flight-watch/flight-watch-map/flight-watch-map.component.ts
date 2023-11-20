@@ -32,6 +32,7 @@ import { AcukwikairportsService } from 'src/app/services/acukwikairports.service
 import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { Subscription } from 'rxjs';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -52,7 +53,6 @@ export class FlightWatchMapComponent
     @Input() icao: string;
 
     @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
-    @Output() airportClick = new EventEmitter<AcukwikAirport>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
 
     @ViewChild('aircraftPopupContainer')
@@ -102,6 +102,8 @@ export class FlightWatchMapComponent
         }
     }
 
+    subscription: Subscription;
+
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
         private sharedService: SharedService,
@@ -144,7 +146,6 @@ export class FlightWatchMapComponent
                 }
 
             });
-
     }
 
     ngAfterViewInit() {
@@ -155,6 +156,7 @@ export class FlightWatchMapComponent
     }
     ngOnDestroy(): void {
         this.mapRemove();
+        if(this.subscription) this.subscription.unsubscribe();
     }
     async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -167,9 +169,6 @@ export class FlightWatchMapComponent
         this.addSource(this.mapMarkers.airports.sourceId, this.flightWatchMapService.getGeojsonFeatureSourceJsonData(markers));
 
         this.addLayer(this.aircraftFlightWatchService.getAirportLayerJsonData(this.mapMarkers.airports.layerId, this.mapMarkers.airports.sourceId));
-
-        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
-        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
     }
     async updateICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -187,16 +186,6 @@ export class FlightWatchMapComponent
         if(!source) return;
 
         source.setData(data);
-        this.addHoverPointerActions(this.mapMarkers.airports.layerId);
-        this.onClick(this.mapMarkers.airports.layerId, (e) => this.clickActionOnAirportICon(e) );
-    }
-    clickActionOnAirportICon(e: any): void{
-        let id = e.features[0].properties.id;
-        var clickedAirport = this.acukwikairports.filter((airport) => {
-            return airport.oid == id;
-        });
-        let icaoClicked = clickedAirport[0];
-        this.airportClick.emit(icaoClicked);
     }
     async loadMapIcons(): Promise<unknown> {
         var promisesArray = []
@@ -282,6 +271,8 @@ export class FlightWatchMapComponent
             this.updateFlightOnMap(this.mapMarkers.flightsReversed,true);
         }
         if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
+        if(changes.center)
+            this.flyTo(this.center);
     }
     setPopUpContainerData(selectedPopUp: FlightWatchModelResponse) {
         var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(selectedPopUp.make,selectedPopUp.model);
@@ -503,11 +494,10 @@ export class FlightWatchMapComponent
     }
     goToAirport(icao: string){
         let airport = this.acukwikairports.find( x => x.icao == icao);
-        let flyToCenter = {
-            lat: airport.latitudeInDegrees,
-            lng: airport.longitudeInDegrees,
-        };
-        this.flyTo(flyToCenter);
+        this.flyToCoordinates(airport.latitudeInDegrees,airport.longitudeInDegrees);
+    }
+    flyToCoordinates(latitudeInDegrees: number, longitudeInDegrees: number): void{
+        this.flyTo(this.flightWatchMapService.getMapCenterByCoordinates(latitudeInDegrees,longitudeInDegrees));
     }
     openAircraftPopUpByTailNumber(tailNumber: string): void {
         let selectedFlight = keys(this.data).find(

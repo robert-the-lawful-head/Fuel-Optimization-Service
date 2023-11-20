@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.DTO;
 
 namespace FBOLinx.Service.Mapping.Dto
@@ -37,5 +39,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public int Oid { get; set; }
         public CustomersDto Customer { get; set; }
         public List<CustomerInfoByGroupNoteDto> Notes { get; set; }
+        public FboFavoriteCompany FavoriteCompany { get; set; }
     }
 }

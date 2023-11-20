@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
@@ -11,7 +9,6 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using Geolocation;
-using SQLitePCL;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
 {
@@ -146,6 +143,20 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             }
         }
 
+        public string SourceOfCoordinates
+        {
+            get
+            {
+                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
+                    _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                    return "Antenna";
+                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                    (_SwimFlightLeg?.Longitude).HasValue)
+                    return "SWIM";
+                return "None";
+            }
+        }
+
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround
             : _SwimFlightLeg?.IsAircraftOnGround;
@@ -180,7 +191,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? FuelerlinxCompanyId => _CustomerAircraft?.FuelerlinxCompanyId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
         public string TransactionStatus => ID > 0 ? "LIVE" : "";
-        public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode;
+        public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode?.Trim() ?? _SwimFlightLeg?.ICAOAircraftCode?.Trim();
         public bool IsInNetwork => (_CustomerAircraft?.IsInNetwork()).GetValueOrDefault();
         public bool IsOutOfNetwork => (_CustomerAircraft?.IsOutOfNetwork()).GetValueOrDefault();
 
@@ -245,6 +256,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public void SetCustomerAircraft(CustomerAircraftsViewModel customerAircraft)
         {
             _CustomerAircraft = customerAircraft;
+            IsCustomerManagerAircraft = customerAircraft != null;
+            FavoriteAircraft = customerAircraft?.FavoriteAircraft;
+            CustomerAircraftId = customerAircraft?.Oid;
         }
 
         public CustomerAircraftsViewModel GetCustomerAircraft()
@@ -278,5 +292,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             _TrackingDegree = trackingDegree;
         }
+        public FboFavoriteAircraft FavoriteAircraft { get; set; }
+        public bool IsCustomerManagerAircraft { get; set; } =  false;
+        public int? CustomerAircraftId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 import { FlightLegStatus } from "../enums/flight-watch.enum";
+import { FboFavoriteAircraft } from "./favorites/favoriteAircraft";
 
 export type FlightWatchDictionary = {
     [oid: number]: FlightWatchModelResponse;
@@ -111,4 +112,6 @@ export interface FlightWatchModelResponse {
     currentPricing: string;
     customerInfoByGroupId: number;
     faaRegisteredOwner: string;
+    favoriteAircraft: FboFavoriteAircraft | null;
+    isCustomerManagerAircraft: boolean;
 }

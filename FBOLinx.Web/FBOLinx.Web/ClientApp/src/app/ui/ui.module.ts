@@ -47,6 +47,7 @@ import { LogoComponent } from './components/logo/logo.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { AppPipesModule } from "../app-pipes.module";
+import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @NgModule({
     declarations: [
@@ -56,6 +57,7 @@ import { AppPipesModule } from "../app-pipes.module";
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     exports: [
         HorizontalNavbarComponent,
@@ -64,6 +66,7 @@ import { AppPipesModule } from "../app-pipes.module";
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     imports: [
         HttpClientModule,

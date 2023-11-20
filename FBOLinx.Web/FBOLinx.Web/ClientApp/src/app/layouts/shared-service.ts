@@ -136,6 +136,14 @@ export class SharedService {
         this.currentUser.icao = icao;
         localStorage.setItem(localStorageAccessConstant.icao, icao);
     }
+    setCurrentUserPropertyValue(property: string, value: string): void{
+        this.currentUser[property] = value;
+        localStorage.setItem(localStorageAccessConstant[property],value);
+    }
+    resetCurrentUserPropertyValue(property: string, resetvalue: any =  null): void{
+        this.currentUser[property] = resetvalue;
+        localStorage.removeItem(property);
+    }
     getCurrentUserPropertyValue(property: string): string{
         return (this.currentUser[property]) ? this.currentUser[property] : localStorage.getItem(property);
     }

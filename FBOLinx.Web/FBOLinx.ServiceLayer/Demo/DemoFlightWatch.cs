@@ -1,5 +1,4 @@
-﻿using Azure;
-using FBOLinx.Core.Enums;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.SWIM;
@@ -9,14 +8,14 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using FBOLinx.DB.Specifications.Fbo;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace FBOLinx.ServiceLayer.Demo
 {
     public interface IDemoFlightWatch
     {
-        bool isDemoDataVisibleByFboId(int? fboId);
+        bool IsDemoDataVisibleByFboId(int? fboId);
         FuelReqDto GetFuelReqDemo();
         FlightWatchModel GetFlightWatchModelDemo(FbosDto fbo);
 
@@ -24,17 +23,19 @@ namespace FBOLinx.ServiceLayer.Demo
     public class DemoFlightWatch : IDemoFlightWatch
     {
         private IOptions<DemoData> _demoData;
-        public DemoFlightWatch(IOptions<DemoData> demoData) {
+        private IWebHostEnvironment _env;
+        public DemoFlightWatch(IOptions<DemoData> demoData, IWebHostEnvironment env) {
             _demoData = demoData;
+            _env = env;
         }
 
         private  Func<int?, bool> _isDemoDataVisibleByFboId = fboId =>
         {
             return fboId == 276 || fboId == 525;
         };
-        public bool isDemoDataVisibleByFboId(int? fboId)
+        public bool IsDemoDataVisibleByFboId(int? fboId)
         {
-            return _isDemoDataVisibleByFboId(fboId);
+            return _isDemoDataVisibleByFboId(fboId)  && !_env.IsProduction();
         } 
         public FuelReqDto GetFuelReqDemo()
         {
@@ -67,6 +68,7 @@ namespace FBOLinx.ServiceLayer.Demo
                 return null;
 
             var demoData = _demoData.Value.FlightWatch;
+            
             var swim = new SWIMFlightLegDTO()
             {
                 FAAMake = "CESSNA",
@@ -87,7 +89,8 @@ namespace FBOLinx.ServiceLayer.Demo
                 ArrivalICAO = fbo.FboAirport.Icao,
                 ActualSpeed = demoData.GroundSpeedKts,
                 FlightDepartment = "Test Company",
-                FAARegisteredOwner = "Test FAA Owner"
+                FAARegisteredOwner = "Test FAA Owner",
+                ICAOAircraftCode = "KVNYTest"
             };
             var airportWatchLiveData = new AirportWatchLiveDataDto()
             {
@@ -103,14 +106,16 @@ namespace FBOLinx.ServiceLayer.Demo
                 GpsAltitude = demoData.GpsAltitude,
                 IsAircraftOnGround = demoData.IsAircraftOnGround,
                 Latitude = demoData.Latitude,
-                Longitude = demoData.Longitude
+                Longitude = demoData.Longitude,
+                AircraftICAO = "AircraftICAOtKVNY"
             };
             var airportWatchHistoricalDataCollection = new List<AirportWatchHistoricalDataDto>();
 
             var flightWatch = new FlightWatchModel(airportWatchLiveData, airportWatchHistoricalDataCollection, swim, null);
 
+            flightWatch.FavoriteAircraft = new FboFavoriteAircraft() { CustomerAircraftsId = 0, FboId = 276 };
             flightWatch.FocusedAirportICAO = fbo.FboAirport.Icao;
-
+            flightWatch.IsCustomerManagerAircraft = true;
             return flightWatch;
         }
     }

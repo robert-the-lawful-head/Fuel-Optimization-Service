@@ -19,6 +19,12 @@ export class FlightWatchMapService {
                 lng: convertDMSToDEG(selectedAirport.longitude),
             };
     }
+    getMapCenterByCoordinates(latitudeInDegrees: number, longitudeInDegrees: number): mapboxgl.LngLatLike {
+            return {
+                lat: latitudeInDegrees,
+                lng: longitudeInDegrees,
+            };
+    }
     getDictionaryByTailNumberAsKey(
         data: FlightWatchModelResponse[]
     ): Dictionary<FlightWatchModelResponse> {

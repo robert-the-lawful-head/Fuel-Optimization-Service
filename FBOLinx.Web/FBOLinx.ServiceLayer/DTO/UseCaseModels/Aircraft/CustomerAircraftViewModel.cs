@@ -31,10 +31,14 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
         public string Phone { get; set; }
         public int CustomerInfoByGroupId { get; set; }
         public int? FuelerlinxCompanyId { get; set; }
+        public int CustomerAircraftId { get; set; }
+
+        public FboFavoriteAircraft? FavoriteAircraft { get; set; }
+        public bool IsCustomerManagerAircraft { get; set; } = true;
 
         public string AircraftSizeDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Size ?? AircraftSizes.NotSet); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(Size ?? AircraftSizes.NotSet); }
         }
         public List<CustomerAircraftNoteDto> Notes { get; set; }
 
@@ -57,6 +61,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft
             CustomerInfoByGroupId = (customerAircraft?.Customer?.CustomerInfoByGroup?.FirstOrDefault()?.Oid).GetValueOrDefault();
             FuelerlinxCompanyId = (customerAircraft?.Customer?.FuelerlinxId);
             Notes = customerAircraft.Notes;
+            FavoriteAircraft = customerAircraft.FavoriteAircraft;
+            CustomerAircraftId = customerAircraft.Oid;
         }
 
         public static CustomerAircraftsViewModel Cast(CustomerAircraftsDto customerAircraft)
