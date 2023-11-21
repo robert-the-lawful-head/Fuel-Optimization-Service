@@ -126,28 +126,8 @@ export class FlightWatchMapComponent
             :  this.icao;
     }
     ngOnInit(): void {
-        this.buildMap(this.center, this.mapContainer, this.mapStyle)
-            .addNavigationControls()
-            .onStyleData(async () => {
-                this.styleLoaded = true;
-            })
-            .onLoad(async () => {
-                this.resizeMap();
-                await this.loadMapIcons();
-                this.loadFlightOnMap();
-                this.loadICAOIconOnMap(this.icao);
-                this.getFbosAndLoad();
-                this.isMapDataLoaded = true;
-            })
-            .onSourcedata(async () => {
-                let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
-                let airportlayer = this.map.getLayer(this.mapMarkers.airports.layerId);
-                let fbolayer = this.map.getLayer(this.mapMarkers.fbos.layerId);
-                if(flightslayer && airportlayer && fbolayer){
-                    this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
-                    this.map.moveLayer(this.mapMarkers.flights.layerId);
-                }
-            });
+        if(this.center == null) return;
+        this.loadMap();
     }
 
     ngAfterViewInit() {
@@ -159,6 +139,56 @@ export class FlightWatchMapComponent
     ngOnDestroy(): void {
         this.mapRemove();
         if(this.subscription) this.subscription.unsubscribe();
+    }
+    ngOnChanges(changes: SimpleChanges): void {
+        if(this.center && !this.map)
+            this.loadMap();
+
+        return;
+
+        if(!this.map) return;
+
+        if(changes.center)
+            this.flyTo(this.center);
+
+        if (changes.data && this.styleLoaded) {
+            this.startTime = Date.now();
+            this.setMapMarkersData(keys(changes.data.currentValue));
+            this.checkForPopupOpen();
+            this.updateFlightOnMap(this.mapMarkers.flights);
+        }
+        if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
+    }
+    private loadMap(): void {
+        this.buildMap(this.center, this.mapContainer, this.mapStyle)
+        .addNavigationControls()
+        .onStyleData(async () => {
+            this.styleLoaded = true;
+        })
+        .onLoad(async () => {
+            this.resizeMap();
+            await this.loadMapIcons();
+            await this.loadMapDataAsync();
+            this.isMapDataLoaded = true;
+        })
+        .onSourcedata(async () => {
+            let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
+            let airportlayer = this.map.getLayer(this.mapMarkers.airports.layerId);
+            let fbolayer = this.map.getLayer(this.mapMarkers.fbos.layerId);
+            if(flightslayer && airportlayer && fbolayer){
+                this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
+                this.map.moveLayer(this.mapMarkers.flights.layerId);
+            }
+        });
+    }
+    async loadMapDataAsync(): Promise<unknown> {
+        var promisesArray = []
+        promisesArray.push(this.getFncAsAsync(this.loadFlightOnMap()));
+        promisesArray.push(this.getFncAsAsync(this.loadICAOIconOnMap(this.icao)));
+        promisesArray.push(this.getFncAsAsync(this.getFbosAndLoad()));
+        promisesArray.concat();
+
+        return Promise.all(promisesArray);
     }
     async loadICAOIconOnMap(currentIcao: string): Promise<void>{
         this.acukwikairports = await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise();
@@ -263,19 +293,6 @@ export class FlightWatchMapComponent
                 }
             )
         );
-    }
-    ngOnChanges(changes: SimpleChanges): void {
-        if(!this.map) return;
-
-        if (changes.data && this.styleLoaded) {
-            this.startTime = Date.now();
-            this.setMapMarkersData(keys(changes.data.currentValue));
-            this.checkForPopupOpen();
-            this.updateFlightOnMap(this.mapMarkers.flights);
-        }
-        if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
-        if(changes.center)
-            this.flyTo(this.center);
     }
     private checkForPopupOpen(): void {
         if(!this.currentPopup.isPopUpOpen && this.currentPopup.popupInstance == null) return;

@@ -245,7 +245,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.resizeMap(this.drawer.opened);
     }
     isDrawerOpen() {
-        return this.drawer.opened;
+        return this.drawer?.opened ?? true;
     }
     filterCommercialAircrafts(isCommercialAircraftVisible: boolean) {
         this.currentFilters.isCommercialAircraftVisible =

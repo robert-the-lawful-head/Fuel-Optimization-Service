@@ -51,7 +51,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     ngOnInit() {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.data) {
+        if (changes.data && changes.data.currentValue) {
             this.processFlightWatchData(changes.data.currentValue,changes.data.previousValue);
             this.flightWatchDictionary = this.getFilteredData(
                 changes.data.currentValue

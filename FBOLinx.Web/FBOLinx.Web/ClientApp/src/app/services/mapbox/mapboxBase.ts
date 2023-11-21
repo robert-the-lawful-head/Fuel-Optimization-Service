@@ -242,7 +242,7 @@ export abstract class MapboxglBase {
             elem.remove();
         });
     }
-    loadPNGImageAsync(src: string,imageId: string){
+    async loadPNGImageAsync(src: string,imageId: string){
         return new Promise((resolve, reject) => {
             this.map.loadImage(src,
                 (error, image) => {
@@ -252,7 +252,7 @@ export abstract class MapboxglBase {
             });
           });
     }
-    loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
+   async loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
         return new Promise((resolve, reject) => {
             let img = new Image(width, height);
             img.onload = () => {
@@ -262,6 +262,11 @@ export abstract class MapboxglBase {
             img.onerror = reject;
             img.src = src;
         });
+    }
+    async getFncAsAsync(callBack): Promise<unknown>{
+        return new Promise((resolve, reject) => {
+            resolve(callBack);
+          });
     }
     openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):mapboxgl.Popup{
         return new mapboxgl.Popup()
