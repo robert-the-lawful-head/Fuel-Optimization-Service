@@ -671,8 +671,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 }
                 else // FBO was changed
                 {
-                    if (orderDetailsList.Count > 1)
-                        orderDetails = orderDetailsList.Where(o => !o.IsCancelled.GetValueOrDefault()).FirstOrDefault();
+                    orderDetails = orderDetailsList.Where(o => !o.IsCancelled.GetValueOrDefault()).FirstOrDefault();
 
                     fuelerlinxTransaction.FboHandlerId = await FboChangedHandler(orderDetails, customerAircraft, fbo, fuelerlinxTransaction);
                     orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.FboHandlerId));
@@ -687,9 +686,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
             else  // FBO was changed
             {
-
-                if (orderDetailsList.Count > 1)
-                    orderDetails = orderDetailsList.Where(o => !o.IsCancelled.GetValueOrDefault()).FirstOrDefault();
+                orderDetails = orderDetailsList.Where(o => !o.IsCancelled.GetValueOrDefault()).FirstOrDefault();
 
                 fuelerlinxTransaction.FboHandlerId = await FboChangedHandler(orderDetails, customerAircraft, fbo, fuelerlinxTransaction);
                 orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.FboHandlerId));
@@ -712,59 +709,60 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         private async Task<int> FboChangedHandler(OrderDetailsDto orderDetails, CustomerAircraftsViewModel customerAircraft, FbosDto fbo, FuelReqRequest fuelerlinxTransaction)
         {
             var oldFboHandlerId = orderDetails.FboHandlerId;
-
-            if (oldFboHandlerId == null)
-                oldFboHandlerId = orderDetails.FboHandlerId;
-
-            var oldFbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(oldFboHandlerId.GetValueOrDefault()));
-
-            var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), oldFbo.Oid));
-
-            // Update old FuelReq record to cancelled for current FBO, add new record for new FBO if it doesn't exist
-            if (fuelReq != null && fuelReq.Oid > 0)
+            if (oldFboHandlerId != null)
             {
-                fuelReq.Cancelled = true;
-                await UpdateAsync(fuelReq);
 
-                fuelReq.Oid = 0;
-                fuelReq.Cancelled = false;
-                fuelReq.Fboid = fbo.Oid;
-                fuelReq.CustomerAircraftId = customerAircraft.Oid;
-                await AddAsync(fuelReq);
+                var oldFbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(oldFboHandlerId.GetValueOrDefault()));
+
+                var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), oldFbo.Oid));
+
+                // Update old FuelReq record to cancelled for current FBO, add new record for new FBO if it doesn't exist
+                if (fuelReq != null && fuelReq.Oid > 0)
+                {
+                    fuelReq.Cancelled = true;
+                    await UpdateAsync(fuelReq);
+
+                    fuelReq.Oid = 0;
+                    fuelReq.Cancelled = false;
+                    fuelReq.Fboid = fbo.Oid;
+                    fuelReq.CustomerAircraftId = customerAircraft.Oid;
+                    await AddAsync(fuelReq);
+                }
+
+                // Add new ServiceOrder record for new FBO if it doesn't exist
+                ServiceOrderDto serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), oldFbo.Oid));
+                if (serviceOrder != null && serviceOrder.Oid > 0)
+                {
+                    serviceOrder.Oid = 0;
+                    serviceOrder.Fboid = fbo.Oid;
+                    serviceOrder.GroupId = fbo.GroupId;
+                    await _serviceOrderService.AddAsync(serviceOrder);
+                }
+
+                // Update old OrderDetails record for current FBO
+                orderDetails.IsCancelled = true;
+                orderDetails.DateTimeUpdated = DateTime.UtcNow;
+                await _orderDetailsService.UpdateAsync(orderDetails);
+
+                // Add new OrderDetails record for new FBO
+                orderDetails.Oid = 0;
+                orderDetails.IsCancelled = false;
+                orderDetails.FboHandlerId = fbo.AcukwikFBOHandlerId;
+                orderDetails.OldFboHandlerId = oldFboHandlerId;
+                orderDetails.CustomerAircraftId = customerAircraft.Oid;
+                await _orderDetailsService.AddAsync(orderDetails);
+
+                // Send new FBO an email
+                SendOrderNotificationRequest request = new SendOrderNotificationRequest();
+                request.QuotedVolume = fuelReq == null ? 0 : fuelReq.QuotedVolume.Value;
+                request.TailNumber = fuelReq == null ? customerAircraft.TailNumber : fuelReq.TailNumber;
+                request.Arrival = fuelReq == null ? (serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)") : (fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard);
+                request.Departure = fuelReq == null ? (serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)") : (fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard);
+                await SendFuelOrderNotificationEmail(fuelerlinxTransaction.FboHandlerId, fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.CompanyId.GetValueOrDefault(), request);
+
+                return oldFboHandlerId.GetValueOrDefault();
             }
-
-            // Add new ServiceOrder record for new FBO if it doesn't exist
-            ServiceOrderDto serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), oldFbo.Oid));
-            if (serviceOrder != null && serviceOrder.Oid > 0)
-            {
-                serviceOrder.Oid = 0;
-                serviceOrder.Fboid = fbo.Oid;
-                serviceOrder.GroupId = fbo.GroupId;
-                await _serviceOrderService.AddAsync(serviceOrder);
-            }
-
-            // Update old OrderDetails record for current FBO
-            orderDetails.IsCancelled = true;
-            orderDetails.DateTimeUpdated = DateTime.UtcNow;
-            await _orderDetailsService.UpdateAsync(orderDetails);
-
-            // Add new OrderDetails record for new FBO
-            orderDetails.Oid = 0;
-            orderDetails.IsCancelled = false;
-            orderDetails.FboHandlerId = fbo.AcukwikFBOHandlerId;
-            orderDetails.OldFboHandlerId = oldFboHandlerId;
-            orderDetails.CustomerAircraftId = customerAircraft.Oid;
-            await _orderDetailsService.AddAsync(orderDetails);
-
-            // Send new FBO an email
-            SendOrderNotificationRequest request = new SendOrderNotificationRequest();
-            request.QuotedVolume = fuelReq == null ? 0 : fuelReq.QuotedVolume.Value;
-            request.TailNumber = fuelReq == null ? customerAircraft.TailNumber : fuelReq.TailNumber;
-            request.Arrival = fuelReq == null ? (serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)") : (fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard);
-            request.Departure = fuelReq == null ? (serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)") : (fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard);
-            await SendFuelOrderNotificationEmail(fuelerlinxTransaction.FboHandlerId, fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.CompanyId.GetValueOrDefault(), request);
-
-            return oldFboHandlerId.GetValueOrDefault();
+            return 0;
         }
 
         private async Task<bool> SendFuelOrderUpdateEmail(string fuelVendor, int fboAcukwikHandlerId, string requestStatus, int sourceId)
