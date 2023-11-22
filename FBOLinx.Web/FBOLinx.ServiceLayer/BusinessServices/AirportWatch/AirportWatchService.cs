@@ -434,11 +434,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                       join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
                       from hextail in leftJoinedhextail.DefaultIfEmpty()
                           select new AirportWatchHistoricalDataResponse
-                      {
-                          AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
-                          CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                          CompanyId = h.CustomerId,
-                          Company = string.IsNullOrEmpty(h.Company)? h.Company : hextail.FAARegisteredOwner,
+                          {
+                              AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
+                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                              CompanyId = h.CustomerId,
+                              Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner: h.Company,
                           DateTime = h.AircraftPositionDateTimeUtc,
                           TailNumber = h.TailNumber,
                           FlightNumber = h.AtcFlightNumber,
