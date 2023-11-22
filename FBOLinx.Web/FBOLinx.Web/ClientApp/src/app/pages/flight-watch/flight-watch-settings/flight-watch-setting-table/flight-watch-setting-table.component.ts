@@ -180,7 +180,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
             case swimTableColumns.flightDepartment:
                 return row.flightDepartment ?? row.faaRegisteredOwner;
             case swimTableColumns.icaoAircraftCode:
-                return row.icaoAircraftCode ?? this.getMakeModelDisplayString(row);
+                return this.getMakeModelDisplayString(row);
 
             default:
                 let col = this.columns.find( c => {
