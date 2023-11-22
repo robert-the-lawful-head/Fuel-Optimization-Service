@@ -173,7 +173,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
             case swimTableColumns.ete:
                 return !row.ete ? '' : this.toReadableTime.transform(row.ete);
             case swimTableColumns.isAircraftOnGround:
-                return this.booleanToText.transform(row.isAircraftOnGround);    ``
+                return this.booleanToText.transform(row.isAircraftOnGround);
             case swimTableColumns.status:
                 row.statusDisplayString = FlightLegStatus[row.status];
                 return row.statusDisplayString;
