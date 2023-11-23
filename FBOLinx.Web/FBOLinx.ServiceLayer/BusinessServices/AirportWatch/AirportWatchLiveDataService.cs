@@ -71,8 +71,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Load historical data
             List<AirportWatchHistoricalDataDto> historicalData =
                 await GetHistoricalData(liveData, airportIdentifier, pastDaysForHistoricalData);
-            
-
+                
             //Group the live data with past historical events over the last day
             var result = (from live in liveData
                           join historical in historicalData on new { live.AtcFlightNumber, live.AircraftHexCode } equals new { historical.AtcFlightNumber, historical.AircraftHexCode }
@@ -86,7 +85,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
                               Latitude = groupedResult.FirstOrDefault().live.Latitude,
                               Longitude = groupedResult.FirstOrDefault().live.Longitude,
-                              AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.CreatedDateTime) ?? groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                              AircraftPositionDateTimeUtc = (new List<DateTime>(){
+                                groupedResult.Max(x => x.live.CreatedDateTime  ?? DateTime.MinValue),
+                                groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                                groupedResult.Max(x => x.historical?.BoxTransmissionDateTimeUtc ?? DateTime.MinValue)
+                                }).Max(),
                               IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
                               RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical).ToList(),
                               AirportWatchLiveData = groupedResult.Where(x => x.live != null).Select(x => x.live).FirstOrDefault()
