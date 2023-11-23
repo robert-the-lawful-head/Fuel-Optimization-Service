@@ -158,9 +158,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         if (this.canUserSeePricing()) {
             this.loadCurrentPrices();
             this.loadLocations();
-            this.loadFboInfo();
             this.loadNeedsAttentionCustomers();
         }
+        this.loadFboInfo();
 
         this.subscription = this.sharedService.changeEmitted$.subscribe(
             (message) => {
