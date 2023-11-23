@@ -78,7 +78,7 @@ export class FlightWatchMapComponent
 
     public clusters: AirportFboGeoFenceCluster[];
 
-    public isMapDataLoaded: boolean = false;
+    public isMapDataLoading: boolean = false;
 
     public startTime: number = Date.now();
     private animationFrameIds: number[] = [];
@@ -141,11 +141,8 @@ export class FlightWatchMapComponent
         if(this.subscription) this.subscription.unsubscribe();
     }
     ngOnChanges(changes: SimpleChanges): void {
-        if(this.center && !this.map)
+        if(this.center && !this.map && this.isMapDataLoading)
             this.loadMap();
-
-        return;
-
         if(!this.map) return;
 
         if(changes.center)
@@ -166,10 +163,11 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
+            this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
             await this.loadMapDataAsync();
-            this.isMapDataLoaded = true;
+            this.isMapDataLoading = false;
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -350,7 +348,7 @@ export class FlightWatchMapComponent
         this.applyMouseFunctions(marker.layerId);
     }
     updateFlightOnMap(marker: MapMarkerInfo) {
-        if (!this.map || !this.isMapDataLoaded) return;
+        if (!this.map || this.isMapDataLoading) return;
 
         const source = this.getSource(marker.sourceId);
 
@@ -380,22 +378,30 @@ export class FlightWatchMapComponent
 
                     let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
                     let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
+                    let currentCoordinates = [lng, lat];
 
-                    pointSource.geometry.coordinates = [lng, lat];
+                    let liveBearing = turf.bearing(
+                        turf.point(currentCoordinates),
+                        turf.point(targetCoordinates)
+                        );
+
+                    let isBackwardsBearing = !this.isValidBearing(pointSource.properties.bearing,liveBearing);
+
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
                     if(this.currentPopup.popupId == pointSource.properties.id){
-                        popUpCoordinates = pointSource.geometry.coordinates;
+                        popUpCoordinates = isBackwardsBearing ? pointSource.geometry.coordinates : currentCoordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
                     }else{
                         const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = defaultIcon;
                     }
-                    let liveBearing = turf.bearing(
-                        turf.point(pointSource.geometry.coordinates),
-                        turf.point(targetCoordinates)
-                        );
+
+                    if(isBackwardsBearing) return;
+
+                    pointSource.geometry.coordinates = currentCoordinates;
+
                     pointSource.properties.bearing = liveBearing == 0 ? pointSource.properties.bearing : liveBearing;
                 });
 
@@ -410,6 +416,15 @@ export class FlightWatchMapComponent
         const animationFrameId = requestAnimationFrame(animate);
 
         this.animationFrameIds.push(animationFrameId);
+    }
+    private isValidBearing(bearing: number,liveBearing: number): boolean {
+        const bearingTolerance = 30;
+        liveBearing = turf.bearingToAzimuth(liveBearing);
+        const oppositeBearing = turf.bearingToAzimuth(bearing+180);
+        return this.isBearingWithinTolerance(liveBearing,bearingTolerance,bearing) || this.isBearingWithinTolerance(oppositeBearing,bearingTolerance,bearing);
+    }
+    private isBearingWithinTolerance(liveBearing: number,bearingTolerance: number,bearing: number): boolean {
+        return liveBearing >= bearing - bearingTolerance && liveBearing <= bearing + bearingTolerance;
     }
     private refreshPopUp(popUpCoordinates: number[]): void {
         if (!this.currentPopup.isPopUpOpen && this.currentPopup.popupId == null) return;
