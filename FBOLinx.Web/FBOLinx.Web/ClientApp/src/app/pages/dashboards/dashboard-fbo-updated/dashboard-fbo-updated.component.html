@@ -42,14 +42,16 @@
                          title="Flight Watch - Live Flight Tracking">
                     <div class="map-container" (click)="gotoFlightWatch()">
                         <mat-spinner *ngIf="isMapLoading"></mat-spinner>
-                        <app-flight-watch-map *ngIf="!isMapLoading"
-                                              (markerClicked)="null"
-                                              (airportClick)="null"
-                                              (setIcaoList)="null"
-                                              class="app-flight-watch-map"
-                                              [center]="center"
-                                              [data]="flightWatchDictionary"
-                                              [isStable]="isStable"></app-flight-watch-map>
+                            <app-flight-watch-map-wrapper *ngIf="!isMapLoading"
+                                (markerClicked)="null"
+                                (airportClick)="null"
+                                (setIcaoList)="null"
+                                [center]="center"
+                                [data]="flightWatchData"
+                                [isStable]="isStable"
+                                [icao]="selectedICAO"
+                                [showFilters]="false"
+                        ></app-flight-watch-map-wrapper>
                     </div>
                 </ni-card>
             </div>
