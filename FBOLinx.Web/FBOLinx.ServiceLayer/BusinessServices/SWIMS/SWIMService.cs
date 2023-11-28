@@ -360,7 +360,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (unrecognizedFlightLegsToInsert.Count > 0)
             {
-                await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert);
+                //await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert);
             }
 
             //stopwatch.Stop();
