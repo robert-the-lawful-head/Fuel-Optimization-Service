@@ -119,14 +119,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
     setData(data: FlightWatchModelResponse[]): void {
-        this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
-            return row.arrivalICAO == row.focusedAirportICAO
-        });
-        this.departures = data?.filter((row: FlightWatchModelResponse) => {
-            return (
-                row.departureICAO == row.focusedAirportICAO
-            );
-        });
+        this.arrivals = this.flightWatchMapService.filterArrivals(data);
+        this.departures = this.flightWatchMapService.filterDepatures(data);
 
         this.arrivalsAllRecords = this.arrivals;
         this.departuresAllRecords = this.departures;

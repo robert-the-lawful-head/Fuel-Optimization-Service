@@ -50,10 +50,30 @@ export class FlightWatchMapService {
                 features: features,
             },
             buffer: 0,
-            tolerance: 10,
+            tolerance: 5,
         };
     }
     public buildAircraftId(aircraftId: any): string {
         return `aircraft_${aircraftId}`;
+    }
+    public filterArrivals(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
+        return data?.filter((row: FlightWatchModelResponse) => {
+            return row.arrivalICAO == row.focusedAirportICAO
+        });
+    }
+    public filterDepatures(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
+        return data?.filter((row: FlightWatchModelResponse) => {
+            return (
+                row.departureICAO == row.focusedAirportICAO
+            );
+        });
+    }
+    public filterArrivalsAndDepartures(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
+        return data?.filter((row: FlightWatchModelResponse) => {
+            return (
+                row.arrivalICAO == row.focusedAirportICAO ||
+                row.departureICAO == row.focusedAirportICAO
+            );
+        });
     }
 }
