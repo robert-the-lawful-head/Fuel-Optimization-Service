@@ -17,8 +17,7 @@ namespace FBOLinx.Web.Controllers
         private IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
 
 
-        public FavoritesController(IFboAircraftFavoritesService fboAircraftFavoritesService, IFboCompaniesFavoritesService fboCompaniesFavoritesService, ILoggingService logger,
-            IAirportTimeService airportTimeService) : base(logger)
+        public FavoritesController(IFboAircraftFavoritesService fboAircraftFavoritesService, IFboCompaniesFavoritesService fboCompaniesFavoritesService, ILoggingService logger) : base(logger)
         {
             _fboAircraftFavoritesService = fboAircraftFavoritesService;
             _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
@@ -32,10 +31,10 @@ namespace FBOLinx.Web.Controllers
             return Ok(result);
         }
         //POST api/favorites/aircraft
-        [HttpPost("aircraft")]
-        public async Task<ActionResult<FboFavoriteAircraft>> CreateAoircraftFavorite([FromBody] FboFavoriteAircraft fboFavoriteAircraft)
+        [HttpPost("aircraft/group/{groupId}")]
+        public async Task<ActionResult<FboFavoriteAircraft>> CreateAoircraftFavorite([FromBody] FboFavoriteAircraft fboFavoriteAircraft, int groupid)
         {
-            var result = await _fboAircraftFavoritesService.AddAircraftFavorite(fboFavoriteAircraft);
+            var result = await _fboAircraftFavoritesService.AddAircraftFavorite(fboFavoriteAircraft, groupid);
             return Ok(result);
         }
         //DELETE api/favorites/company/{oid}        
@@ -45,11 +44,11 @@ namespace FBOLinx.Web.Controllers
             await _fboCompaniesFavoritesService.DeleteCompanyFavorite(oid);
             return NoContent();
         }
-        //DELETE api/favorites/aircraft/{oid}
-        [HttpDelete("aircraft/{oid}")]
-        public async Task<IActionResult> DeleteFavoriteAircraft(int oid)
+        //DELETE api/favorites/aircraft/{oid}/group/{groupId}
+        [HttpDelete("aircraft/{oid}/group/{groupId}")]
+        public async Task<IActionResult> DeleteFavoriteAircraft(int oid,int groupId)
         {
-            await _fboAircraftFavoritesService.DeleteAircraftFavorite(oid);
+            await _fboAircraftFavoritesService.DeleteAircraftFavorite(oid, groupId);
             return NoContent();
         }
     }

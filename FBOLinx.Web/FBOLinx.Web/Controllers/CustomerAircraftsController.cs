@@ -274,9 +274,9 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
 
             if(isFavorite && fboId  > 0)
-                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircrafts.Oid, FboId = fboId } );
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircrafts.Oid, FboId = fboId }, customerAircrafts.GroupId);
 
-            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId);
+            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId, fboId);
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
@@ -461,7 +461,7 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
             if(customerAircrafts?.FavoriteAircraft != null)
-                await _fboAircraftFavoritesService.DeleteAircraftFavorite(customerAircrafts.FavoriteAircraft.Oid);
+                await _fboAircraftFavoritesService.DeleteAircraftFavorite(customerAircrafts.FavoriteAircraft.Oid, customerAircrafts.GroupId);
 
             _context.CustomerAircrafts.Remove(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);

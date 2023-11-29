@@ -27,13 +27,13 @@ export class FavoritesService {
             headers: this.headers,
         });
     }
-    public saveAircraftFavorite(fboId: number,customerAircraftId: number) {
+    public saveAircraftFavorite(fboId: number,customerAircraftId: number, groupId: number) {
         var payload : FboFavoriteAircraft = {
             oid: 0,
             fboId: fboId,
             customerAircraftsId: customerAircraftId
         };
-        return this.http.post(`${this.accessPointUrl}/aircraft`,payload, {
+        return this.http.post(`${this.accessPointUrl}/aircraft/group/${groupId}`,payload, {
             headers: this.headers,
         });
     }
@@ -42,8 +42,8 @@ export class FavoritesService {
             headers: this.headers,
         });
     }
-    public deleteAircraftFavorite(oid: number) {
-        return this.http.delete(`${this.accessPointUrl}/aircraft/${oid}`, {
+    public deleteAircraftFavorite(oid: number, groupId: number) {
+        return this.http.delete(`${this.accessPointUrl}/aircraft/${oid}/group/${groupId}`, {
             headers: this.headers,
         });
     }
