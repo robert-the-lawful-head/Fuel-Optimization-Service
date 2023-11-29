@@ -48,7 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         public async Task<bool> DeleteAircraftFavorite(int oid, int groupId)
         {
             var result = await _fboFavoriteAircraftsRepo.DeleteAsync(oid);
-            _CustomerAircraftService.ClearCache(result.FboId, groupId);
+            _CustomerAircraftService.ClearCache(groupId, result.FboId);
             return true;
         }
 
@@ -65,19 +65,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
             }
             await _fboFavoriteAircraftsRepo.AddRangeAsync(fboFavoriteAircrafts);
 
-            _CustomerAircraftService.ClearCache(fboId, groupId);
+            _CustomerAircraftService.ClearCache(groupId, fboId);
         }
         public async Task BulkDeleteCustomerFavoriteAircraftByCustomerAicraftId(List<int> customerAircraftIds,int fboId, int groupId)
         {
             var customerAircrafts = await _fboFavoriteAircraftsRepo.Where(x => customerAircraftIds.Contains(x.CustomerAircraftsId)).ToListAsync();
 
             await _fboFavoriteAircraftsRepo.DeleteRangeAsync(customerAircrafts);
-            _CustomerAircraftService.ClearCache(fboId, groupId);
+            _CustomerAircraftService.ClearCache(groupId, fboId);
         }
 
         public async Task BulkDeleteCustomerFavoriteAircrafts(List<FboFavoriteAircraft> CustomerAicrafts, int fboId, int groupId)
         {
             await _fboFavoriteAircraftsRepo.DeleteRangeAsync(CustomerAicrafts);
+            _CustomerAircraftService.ClearCache(groupId, fboId);
         }
     }
 }
