@@ -6,9 +6,7 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.EntityServices;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Logging;
-using StackifyLib;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 {
@@ -27,7 +25,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
         private ICustomerInfoByGroupService _CustomerInfoByGroupService;
         private static ILogger<FboCompaniesFavoritesService> _logger { get; set; }
 
-        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompany, FboLinxContext> FboFavoriteCompanyRepo, ICustomerInfoByGroupService CustomerInfoByGroupService, IFboAircraftFavoritesService FboAircraftFavoritesService, ILogger<FboCompaniesFavoritesService> logger)
+        public FboCompaniesFavoritesService(IRepository<FboFavoriteCompany, FboLinxContext> FboFavoriteCompanyRepo, ICustomerInfoByGroupService CustomerInfoByGroupService, IFboAircraftFavoritesService FboAircraftFavoritesService,
+            ILogger<FboCompaniesFavoritesService> logger)
         {
             _FboFavoriteCompanyRepo = FboFavoriteCompanyRepo;
             _CustomerInfoByGroupService = CustomerInfoByGroupService;
@@ -49,7 +48,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
             try
             {
-                await _FboAircraftFavoritesService.SaveBulkCustomerFavoriteAircraft(aircrafts, fboFavoriteCompany.FboId);
+                await _FboAircraftFavoritesService.SaveBulkCustomerFavoriteAircraft(aircrafts, fboFavoriteCompany.FboId,customerInfo.GroupId);
             }
             catch(Exception ex)
             {
@@ -57,7 +56,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
                 await _FboFavoriteCompanyRepo.DeleteAsync(result.Oid);
                 throw new Exception(ex.Message);
             }
-
             return result;
         }
         public async Task<bool> DeleteCompanyFavorite(int oid)
@@ -69,7 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
             try
             {
-                await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircrafts(aircrafts);
+                await _FboAircraftFavoritesService.BulkDeleteCustomerFavoriteAircrafts(aircrafts, favoriteData.FboId, customerInfo.GroupId);
             }
             catch (Exception ex)
             {
