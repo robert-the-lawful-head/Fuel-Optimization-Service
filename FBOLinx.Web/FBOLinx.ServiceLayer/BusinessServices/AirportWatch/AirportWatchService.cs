@@ -1,27 +1,18 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EFCore.BulkExtensions;
-using FBOLinx.DB;
 using System.Diagnostics;
 using FBOLinx.Core.Enums;
-using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AirportWatchData;
-using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.DB.Specifications.FuelRequests;
-using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
-using Fuelerlinx.SDK;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -29,24 +20,21 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
-using Microsoft.Extensions.Caching.Memory;
 using FBOLinx.ServiceLayer.DTO;
-using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.Requests.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Requests.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
-using FBOLinx.ServiceLayer.EntityServices.SWIM;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.Extensions.Customer;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.Core.Utilities;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -79,6 +67,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportService _AirportService;
         private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
             IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
@@ -94,7 +83,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
             ISWIMFlightLegService swimFlightLegService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            IAircraftHexTailMappingService aircraftHexTailMappingService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;
@@ -116,6 +106,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AFSAircraftEntityService = afsAircraftEntityService;
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
             _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
+            _AircraftHexTailMappingService = aircraftHexTailMappingService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -430,6 +421,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
+            var distinctTails = historicalData.Select(x => x.TailNumber).Distinct().ToList();
+            var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
+
             var result = (from h in historicalData
                       join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
                       into leftJoinedCV
@@ -437,17 +431,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                       join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
                       into leftJoinedParkingAndLandingAssociation
                       from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
-                      select new AirportWatchHistoricalDataResponse
-                      {
-                          AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
-                          CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                          CompanyId = h.CustomerId,
-                          Company = h.Company,
+                      join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
+                      from hextail in leftJoinedhextail.DefaultIfEmpty()
+                          select new AirportWatchHistoricalDataResponse
+                          {
+                              AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
+                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                              CompanyId = h.CustomerId,
+                              Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner: h.Company,
                           DateTime = h.AircraftPositionDateTimeUtc,
                           TailNumber = h.TailNumber,
                           FlightNumber = h.AtcFlightNumber,
                           HexCode = h.AircraftHexCode,
-                          AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
+                          AircraftType = string.IsNullOrEmpty(h.Make) ?
+                           string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR)? null: hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL : 
+                           h.Make + " / " + h.Model,
                           Status = h.AircraftStatusDescription,
                           AirportIcao = h.AirportICAO,
                           AircraftTypeCode = h.AircraftTypeCode,
