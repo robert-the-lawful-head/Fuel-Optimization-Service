@@ -11,6 +11,9 @@ using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using FBOLinx.DB.Models;
+using System.Collections.Generic;
+using Microsoft.Extensions.Azure;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -60,6 +63,33 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 var result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByIdSpecification(serviceOrderId));
+                return Ok(new ServiceOrderResponse(result));
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new ServiceOrderResponse(false, exception.Message));
+            }
+        }
+
+        /// <summary>
+        /// Fetch a service order by a given FuelerLinx transaction id, FBO id
+        /// </summary>
+        /// <param name="fuelerlinxTransactionId"></param>
+        /// <param name="fboId"></param>
+        /// <returns></returns>
+        [HttpGet("fuelerlinxtransactionid/{fuelerlinxTransactionId}/fboid/{fboId}")]
+        public async Task<ActionResult<ServiceOrderResponse>> GetServiceOrderByFuelerLinxTransactionIdFboId([FromRoute] int fuelerlinxTransactionId, [FromRoute] int fboId)
+        {
+            try
+            {
+                var result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransactionId, fboId));
+
+                if (result == null)
+                {
+                    result = new ServiceOrderDto();
+                    result.ServiceOrderItems = new List<ServiceOrderItemDto>();
+                }
+
                 return Ok(new ServiceOrderResponse(result));
             }
             catch (System.Exception exception)

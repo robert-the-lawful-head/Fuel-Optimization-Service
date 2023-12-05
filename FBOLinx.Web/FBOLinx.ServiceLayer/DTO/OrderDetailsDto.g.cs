@@ -30,5 +30,9 @@ namespace FBOLinx.ServiceLayer.DTO
         public int? FboHandlerId { get; set; }
         public bool? IsCancelled { get; set; }
         public int? OldFboHandlerId { get; set; }
+        public int? AssociatedFuelOrderId
+        {
+            get; set;
+        }
     }
 }

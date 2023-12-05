@@ -28,15 +28,21 @@ import {
 import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { ServiceOrder } from '../../../models/service-order';
+import { ServiceOrdersDialogNewComponent } from '../../service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
+import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
+import { FuelReq } from '../../../models/fuelreq';
+import { ServiceOrderService } from '../../../services/serviceorder.service';
+import { EntityResponseMessage } from '../../../models/entity-response-message';
 
 const initialColumns: ColumnType[] = [
     {
-        id: 'customerName',
-        name: 'Flight Dept.',
+        id: 'tailNumber',
+        name: 'Tail #',
     },
     {
-        id: 'pricingTemplateName',
-        name: 'ITP Margin Template',
+        id: 'customerName',
+        name: 'Flight Dept.',
     },
     {
         id: 'eta',
@@ -44,24 +50,23 @@ const initialColumns: ColumnType[] = [
         sort: 'desc',
     },
     {
-        id: 'etd',
-        name: 'ETD',
+        id: 'paymentMethod',
+        name: 'Payment Method',
     },
-    {
-        id: 'quotedVolume',
-        name: 'Volume (gal.)',
-    },
+
     {
         id: 'quotedPpg',
         name: 'PPG',
     },
     {
-        id: 'tailNumber',
-        name: 'Tail #',
+        id: 'etd',
+        name: 'ETD',
     },
+
+    //SERVICES COMPLETED
     {
-        id: 'phoneNumber',
-        name: 'Phone',
+        id: 'services',
+        name: 'Services',
     },
     {
         id: 'source',
@@ -72,8 +77,19 @@ const initialColumns: ColumnType[] = [
         name: 'Email',
     },
     {
-        id: 'services',
-        name: 'Services',
+        id: 'oid',
+        name: 'ID',
+        hidden: true
+    },
+    {
+        id: 'fuelerlinxid',
+        name: 'FuelerLinx ID',
+        hidden: true
+    },
+    {
+        id: 'created',
+        name: 'Created',
+        hidden: true
     }
 ];
 
@@ -96,6 +112,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
+    @Input() servicesAndFees: string[];
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -118,9 +135,10 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private tableSettingsDialog: MatDialog,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
-        private serviceOrderItemDialog: MatDialog,
         private fuelreqsService: FuelreqsService,
-        private snackBarService: SnackBarService
+        private snackBarService: SnackBarService,
+        private newServiceOrderDialog: MatDialog,
+        private serviceOrderService: ServiceOrderService,
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -141,7 +159,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         }
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
@@ -247,9 +265,9 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
     getPPGDisplayString(fuelreq: any): any{
-        return fuelreq.oid == 0 || fuelreq.quotedPpg == 0
-        ? "CONFIDENTIAL"
-        : this.currencyPipe.transform(fuelreq.quotedPpg,"USD","symbol","1.4-4");
+        return fuelreq.source == 'FuelerLinx' || fuelreq.source == ''
+            ? this.currencyPipe.transform(fuelreq.quotedPpg, "USD", "symbol", "1.4-4")
+            : "CONFIDENTIAL";
     }
     openSettings() {
         const dialogRef = this.tableSettingsDialog.open(
@@ -282,24 +300,16 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     isRowExpanded(elementId: any){
         return this.expandedElement.includes(elementId);
     }
-    toogleExpandedRows(elementId: any){
+    toogleExpandedRows(elementId: any) {
         if(this.isRowExpanded(elementId)){
-            this.expandedElement = this.expandedElement.filter(function(item) {
+            this.expandedElement = this.expandedElement.filter(function (item) {
                 return item !== elementId
-            })
+            });
         }else{
             this.expandedElement.push(elementId);
         }
-
     }
-
-    manageServiceOrderClicked(fuelreq: any) {
-        const config: MatDialogConfig = {
-            disableClose: true,
-            data: fuelreq.serviceOrder
-        };
-        const dialogRef = this.serviceOrderItemDialog.open(ServiceOrdersDialogOrderItemsComponent, config);
-    }
+    
     sendConfirmationNotification(event: Event, fuelreq: any): void{
         event.stopPropagation();
 
@@ -321,5 +331,43 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     getConfirmationButtonText(fuelreq: any): string{
         return  this.isLoadignConfirmationButton(fuelreq) ? "" :
         fuelreq.isConfirmed ? "Confirmation Sent" : "Send Confirmation"
+    }
+
+    public addServiceOrderClicked() {
+        var newServiceOrder: ServiceOrder = {
+            oid: 0,
+            fboId: this.sharedService.currentUser.fboId,
+            serviceOrderItems: [],
+            arrivalDateTimeUtc: null,
+            arrivalDateTimeLocal: null,
+            departureDateTimeUtc: null,
+            departureDateTimeLocal: null,
+            groupId: this.sharedService.currentUser.groupId,
+            customerInfoByGroupId: 0,
+            customerAircraftId: 0,
+            associatedFuelOrderId: 0,
+            serviceOn: ServiceOrderAppliedDateTypes.Arrival,
+            numberOfCompletedItems: 0,
+            isCompleted: false,
+            customerInfoByGroup: null,
+            customerAircraft: null
+        };
+        const config: MatDialogConfig = {
+            disableClose: true,
+            data: newServiceOrder,
+            autoFocus: false,
+            maxWidth: '510px'
+        };
+
+        const dialogRef = this.newServiceOrderDialog.open(ServiceOrdersDialogNewComponent, config);
+
+
+        dialogRef.afterClosed().subscribe((result: FuelReq) => {
+            if (!result)
+                return;
+            this.fuelreqsData.push(result);
+            this.refreshTable();
+            this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
+        });
     }
 }

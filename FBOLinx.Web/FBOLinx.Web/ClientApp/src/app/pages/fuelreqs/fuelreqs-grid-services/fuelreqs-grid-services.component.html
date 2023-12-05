@@ -1,0 +1,71 @@
+<div *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div class="row">
+   
+    <div class="col-10">
+        <div class="row services-cards-container mat-elevation-z">
+            <ng-container *ngFor="let service of fuelreqsServicesAndFeesGridDisplay;">
+                <div class="col-3 service-card">
+                    <ng-container>
+                        <div class="col-7 text" *ngIf="!service.isEditMode && !service.isAddMode">
+                            <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)">
+                            </mat-checkbox>
+                            <span class="pl-3">{{service.serviceName}}</span>
+                        </div>
+                        <div class="col-7 text" *ngIf="service.isEditMode">
+                            <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)">
+                            </mat-checkbox>
+                            <span class="pl-3">
+                                <mat-form-field class="mat-form-field-no-padding pl-1">
+                                    <input matInput [(ngModel)]="service.serviceName">
+                                </mat-form-field>
+                            </span>
+                        </div>
+                        <div class="col-7 text" *ngIf="service.isAddMode">
+                            <span class="pl-3">
+                                <app-autocomplete-search (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFees">
+                                </app-autocomplete-search>
+                            </span>
+                        </div>
+                        <div class="action-buttons" *ngIf="service.isEditMode">
+                            <button [view]="'accent'"
+                                    ni-button
+                                    size="small"
+                                    [disabled]="newServiceOrderItem.serviceName == ''"
+                                    (click)="updateServiceName(service)">
+                                Save
+                            </button>
+                            <button ni-button
+                                    size="small"
+                                    (click)="cancelEdit(service)">
+                                Cancel
+                            </button>&nbsp;
+                        </div>
+                        <div class="action-buttons" *ngIf="service.isAddMode">
+                            <button [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    ni-button
+                                    size="small"
+                                    *ngIf="!service.isAdding"
+                                    [disabled]="newServiceOrderItem.serviceName == ''"
+                                    (click)="add(service)">
+                                Add
+                            </button>
+                            <div *ngIf="service.isAdding">
+                                <mat-spinner diameter="20"></mat-spinner>
+                            </div>
+                        </div>
+                        <div class="actions-buttons" *ngIf="!service.isEditMode && !service.isAddMode">
+                            <span><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
+                            <span><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
+                            <span [matTooltip]="getInfoTooltipText(service)"><mat-icon class="material-icons-outlined">info</mat-icon></span>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div>VIEW NOTES BUTTON</div>
+</div>

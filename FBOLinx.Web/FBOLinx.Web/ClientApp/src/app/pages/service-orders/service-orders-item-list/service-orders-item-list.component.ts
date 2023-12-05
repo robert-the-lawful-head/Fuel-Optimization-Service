@@ -145,7 +145,7 @@ export class ServiceOrdersItemListComponent implements OnInit {
     }
 
     private resetNewServiceOrderItem() {
-        this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
+        //this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: this.serviceOrder.oid, quantity: 1, isCompleted: false, completionDateTimeUtc: null };
     }
 
     private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {

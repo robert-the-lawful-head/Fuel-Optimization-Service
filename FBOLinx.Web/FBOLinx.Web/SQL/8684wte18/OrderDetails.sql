@@ -21,7 +21,8 @@ QuotedVolume float NULL,
 CustomerAircraftID int NULL,
 ETA datetime2(7) NULL,
 FboHandlerId int NULL,
-IsCancelled bit NULL
+IsCancelled bit NULL,
+AssociatedFuelOrderId int null
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC

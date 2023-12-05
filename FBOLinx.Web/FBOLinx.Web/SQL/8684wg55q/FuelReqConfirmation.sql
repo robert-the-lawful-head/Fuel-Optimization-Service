@@ -10,7 +10,8 @@ GO
 CREATE TABLE [dbo].[FuelReqConfirmation](
 	[OID] [int] IDENTITY(1,1) NOT NULL,
 	[SourceId] [int] NOT NULL,
-	[IsConfirmed] [bit] NOT NULL
+	[IsConfirmed] [bit] NOT NULL,
+	AssociatedFuelOrderId int null
 ) ON [PRIMARY]
 GO
 
