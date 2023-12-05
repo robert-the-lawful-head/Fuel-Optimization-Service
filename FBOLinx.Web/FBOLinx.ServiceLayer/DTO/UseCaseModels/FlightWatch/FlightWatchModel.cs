@@ -9,6 +9,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
+using Fuelerlinx.SDK;
 using Geolocation;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
@@ -167,12 +168,27 @@ _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
         {
             get
             {
-                if (this.DateCreated > AircraftPositionDateTimeUtc)
-                    return FlightWatchConstants.PositionDateTimeSource.CreatedDateTime;
-                else if (this.AircraftPositionDateTimeUtc > this.SwimLastUpdated)
-                    return FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
-                else
-                    return FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+                var gratestLiveDataDate = (this.DateCreated.GetValueOrDefault() > this.AircraftPositionDateTimeUtc) ?
+                                (this.DateCreated.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.CreatedDateTime : (this.BoxTransmissionDateTimeUtc > this.AircraftPositionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc
+                                : (this.BoxTransmissionDateTimeUtc > this.AircraftPositionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
+
+                switch (gratestLiveDataDate)
+                {
+                    case FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc:
+                        return (this.AircraftPositionDateTimeUtc > this.SwimLastUpdated) ? FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    case FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc:
+                        return (this.BoxTransmissionDateTimeUtc > this.SwimLastUpdated) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    case FlightWatchConstants.PositionDateTimeSource.CreatedDateTime:
+                        return (this.DateCreated > this.SwimLastUpdated) ? 
+                            FlightWatchConstants.PositionDateTimeSource.CreatedDateTime : 
+                            FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    default:
+                        return FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                }
             }
         }
 

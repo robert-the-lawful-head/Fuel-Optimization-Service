@@ -10,10 +10,10 @@
         }
         public static class PositionDateTimeSource
         {
-            public static readonly string CreatedDateTime = "CreatedDateTime";
-            public static readonly string AircraftPositionDateTimeUtc = "AircraftPositionDateTime";
-            public static readonly string BoxTransmissionDateTimeUtc = "BoxTransmissionDateTime";
-            public static readonly string SwimLastUpdate = "SwimLastUpdate";
+            public  const string CreatedDateTime = "CreatedDateTime";
+            public  const string AircraftPositionDateTimeUtc = "AircraftPositionDateTime";
+            public  const string BoxTransmissionDateTimeUtc = "BoxTransmissionDateTime";
+            public  const string SwimLastUpdate = "SwimLastUpdate";
         }
         public static class TransactionStatus
         {
