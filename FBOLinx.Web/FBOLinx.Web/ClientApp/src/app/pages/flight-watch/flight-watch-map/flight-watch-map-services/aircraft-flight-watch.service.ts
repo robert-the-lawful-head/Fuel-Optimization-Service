@@ -37,8 +37,9 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 'destination-coordinates': [data.longitude, data.latitude],
                 id: data.tailNumber,
                 'default-icon-image': icon,
-                'bearing': data.trackingDegree ?? 0,
+                'bearing': data.trackingDegree,
                 'size': 0.5,
+                'status': data.status,
             },
             type: 'Feature'
         };
