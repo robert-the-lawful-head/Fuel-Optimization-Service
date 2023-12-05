@@ -67,7 +67,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? VerticalSpeedKts => _AirportWatchLiveData?.VerticalSpeedKts;
         public int? TransponderCode => _AirportWatchLiveData?.TransponderCode;
         public string BoxName => _AirportWatchLiveData?.BoxName;
-        public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc ?? _SwimFlightLeg?.LastUpdated;
+        public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc;
+        public DateTime? SwimLastUpdated => _SwimFlightLeg?.LastUpdated;
+        public DateTime? DateCreated => _AirportWatchLiveData?.CreatedDateTime;
         public string AircraftTypeCode => _AirportWatchLiveData?.AircraftTypeCode;
         public int? GpsAltitude => _AirportWatchLiveData?.GpsAltitude;
         public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
@@ -122,10 +124,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Latitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
                     return _AirportWatchLiveData?.Latitude;
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Latitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
                     return _SwimFlightLeg?.Latitude;
                 return null;
             }
@@ -135,10 +136,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
                     return _AirportWatchLiveData?.Longitude;
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Longitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
                     return _SwimFlightLeg?.Longitude;
                 return null;
             }
@@ -148,15 +148,36 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
-                    _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
-                    return FlightWatchConstants.CoordinatesSource.Antenna;
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Longitude).HasValue)
-                    return FlightWatchConstants.CoordinatesSource.Swim;
+                if(this.PositionDateTimeSource == FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate)
+                {
+                    if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+(_SwimFlightLeg?.Longitude).HasValue)
+                        return FlightWatchConstants.CoordinatesSource.Swim;
+                }
+                else
+                {
+                    if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
+_ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                        return FlightWatchConstants.CoordinatesSource.Antenna;
+                }
                 return FlightWatchConstants.CoordinatesSource.None;
             }
         }
+        public string PositionDateTimeSource
+        {
+            get
+            {
+                if (this.DateCreated > AircraftPositionDateTimeUtc)
+                    return FlightWatchConstants.PositionDateTimeSource.CreatedDateTime;
+                else if (this.AircraftPositionDateTimeUtc > this.SwimLastUpdated)
+                    return FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
+                else
+                    return FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+            }
+        }
+
+        public long? SwimOid => _SwimFlightLeg?.Oid;
+        public int? LiveDataOid => _CustomerAircraft?.Oid;
 
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround
