@@ -12,9 +12,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
-using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Demo;
@@ -25,9 +23,9 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
+using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
@@ -56,8 +54,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private List<CompanyPricingLogMostRecentQuoteModel> _MostRecentQuotes;
         private IDemoFlightWatch _demoFlightWatch;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
-        private static ILogger<FlightWatchService> _logger { get; set; }
-
+        private readonly ILoggingService _LoggingService;
         public FlightWatchService(IAirportWatchLiveDataService airportWatchLiveDataService,
             IFboService fboService,
             ISWIMFlightLegService swimFlightLegService,
@@ -66,10 +63,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             ICustomerAircraftService customerAircraftService,
             IAirportFboGeofenceClustersService airportFboGeofenceClustersService,
             ICompanyPricingLogService companyPricingLogService,
-            IPriceFetchingService priceFetchingService,
             IDemoFlightWatch demoFlightWatch,
             IAircraftHexTailMappingService aircraftHexTailMappingService,
-            ILogger<FlightWatchService> logger
+            ILoggingService loggingService
         )
         {
             _AircraftHexTailMappingService = aircraftHexTailMappingService;
@@ -82,7 +78,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _FboService = fboService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _demoFlightWatch = demoFlightWatch;
-            _logger = logger;
+            _LoggingService = loggingService;
         }
 
         public async Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId)
@@ -117,14 +113,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
                 await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 2, daysToCheckBackForHistoricalData);
-            _logger.LogInformation("liveDataWithHistoricalInfo => " + JsonConvert.SerializeObject(liveDataWithHistoricalInfo));
+            _LoggingService.LogError("liveDataWithHistoricalInfo => " + JsonConvert.SerializeObject(liveDataWithHistoricalInfo),string.Empty,LogLevel.Info, LogColorCode.Blue);
 
             //Grab the airport to be considered for arrivals and departures.
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
             var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
-            _logger.LogInformation("swimFlightLegs => " + JsonConvert.SerializeObject(swimFlightLegs));
+            _LoggingService.LogError("swimFlightLegs => " + JsonConvert.SerializeObject(swimFlightLegs),string.Empty,LogLevel.Info, LogColorCode.Blue);
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);

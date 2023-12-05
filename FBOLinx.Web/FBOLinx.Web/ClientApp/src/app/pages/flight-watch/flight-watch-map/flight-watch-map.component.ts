@@ -408,14 +408,14 @@ export class FlightWatchMapComponent
                     let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
                     let currentCoordinates = [lng, lat];
 
-                    let liveBearing = turf.bearing(
+                    let liveBearing = turf.bearingToAzimuth(turf.bearing(
                         turf.point(currentCoordinates),
                         turf.point(targetCoordinates)
-                        );
+                        ));
 
                     let isBackwardsBearing = false;
 
-                    if(this.isValidBearing(pointSource.properties.bearing,liveBearing) && [FlightLegStatus.EnRoute,FlightLegStatus.Landing,FlightLegStatus.Departing].includes(pointSource.properties.status)){
+                    if(this.isValidBearing(pointSource.properties.bearing,liveBearing) && [FlightLegStatus.EnRoute,FlightLegStatus.Landing].includes(pointSource.properties.status)){
                         console.log(pointSource.properties);
                         console.log("currentCoordinates:", currentCoordinates);
                         console.log("targetCoordinates:", targetCoordinates);
@@ -456,7 +456,7 @@ export class FlightWatchMapComponent
         this.animationFrameIds.push(animationFrameId);
     }
     private isValidBearing(bearing: number,liveBearing: number): boolean {
-        const bearingTolerance = 30;
+        const bearingTolerance = 90;
         liveBearing = turf.bearingToAzimuth(liveBearing);
         const start = turf.bearingToAzimuth(bearing-bearingTolerance);
         const end = turf.bearingToAzimuth(bearing+bearingTolerance);
