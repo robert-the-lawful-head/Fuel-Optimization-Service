@@ -20,6 +20,10 @@ using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Analytics;
 using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.Analytics;
+using Microsoft.Extensions.Logging;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
+using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -36,12 +40,13 @@ namespace FBOLinx.Web.Controllers
         private readonly DBSCANService _dBSCANService;
         private IIntraNetworkAntennaDataReportService _IntraNetworkAntennaDataReportService;
         private IAirportWatchHistoricalParkingService _AirportWatchHistoricalParkingService;
+        private ILogger<AirportWatchController> _log;
 
         public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService,
             FboLinxContext context, DBSCANService dBSCANService,
             IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger,
             IIntraNetworkAntennaDataReportService intraNetworkAntennaDataReportService,
-            IAirportWatchHistoricalParkingService airportWatchHistoricalParkingService) : base(logger)
+            IAirportWatchHistoricalParkingService airportWatchHistoricalParkingService, ILogger<AirportWatchController> log) : base(logger)
         {
             _AirportWatchHistoricalParkingService = airportWatchHistoricalParkingService;
             _IntraNetworkAntennaDataReportService = intraNetworkAntennaDataReportService;
@@ -50,6 +55,7 @@ namespace FBOLinx.Web.Controllers
             _context = context;
             _dBSCANService = dBSCANService;
             _airportWatchLiveDataService = airportWatchLiveDataService;
+            _log = log;
         }
 
         [HttpGet("list/group/{groupId}/fbo/{fboId}")]
@@ -86,7 +92,14 @@ namespace FBOLinx.Web.Controllers
             await _airportWatchService.ProcessAirportWatchData(data);
             return Ok(new AirportWatchDataPostResponse(true));
         }
-        
+        [AllowAnonymous]
+        [HttpPost("log-backwards")]
+        public IActionResult logBakcwards([FromBody]FlightWatchModel flightWatch)
+        {
+            _log.LogInformation($"tailnumber {flightWatch.TailNumber} went backwards  => {JsonConvert.SerializeObject(flightWatch)}");
+            return Ok();
+        }
+
         [HttpGet("get-airport-watch-live-data-from-table-storage")]
         public async Task<ActionResult<AirportWatchLiveDataResponse>> GetAirportWatchLiveDataFromTableStorage([FromQuery] IEnumerable<string> boxNames, DateTime startDate, DateTime endDate)
         {

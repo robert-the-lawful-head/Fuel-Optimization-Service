@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Aircraftwatch } from '../models/flight-watch';
+import { Aircraftwatch, FlightWatchModelResponse } from '../models/flight-watch';
 import { AirportWatchHistoricalParking } from '../models/airport-watch-historical-parking';
 
 import {
@@ -19,7 +19,13 @@ export class AirportWatchService {
         });
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
-
+    public logBackwards(body: FlightWatchModelResponse) {
+        return this.http.post<any>(
+            `${this.accessPointUrl}/log-backwards`,
+            body,
+            { headers: this.headers }
+        );
+    }
     public getAll(groupId: number, fboId: number) {
         return this.http.get<any>(
             `${this.accessPointUrl}/list/group/${groupId}/fbo/${fboId}`,
