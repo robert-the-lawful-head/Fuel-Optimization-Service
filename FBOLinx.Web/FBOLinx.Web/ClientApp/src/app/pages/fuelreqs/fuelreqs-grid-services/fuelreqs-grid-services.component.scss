@@ -1,23 +1,25 @@
 @import "../../../../assets/sass/variable";
 
 .service-card {
-    display: flex;
+    /*display: flex;
     justify-content: space-between;
     align-items: center;
-    /*margin-right: 2px;*/
     background-color: #fff;
     border: 1px solid $card-header-bg;
     border-radius: 3px;
-    box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);
-    /*margin-right: auto;*/
+    box-shadow: 1px 1px 5px 0px rgba(main-color(500), 0.25);*/
+    height: 100%;
 
-    .text {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    .row {
+        height: 100%;
 
-        .mat-checkbox {
-            margin-bottom: 0px;
+        .text {
+            margin-top:auto;
+            margin-bottom:auto;
+
+            .mat-checkbox {
+                margin-bottom: 0px;
+            }
         }
     }
 }
