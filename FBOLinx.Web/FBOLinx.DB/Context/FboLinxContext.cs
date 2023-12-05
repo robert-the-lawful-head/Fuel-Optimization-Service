@@ -170,6 +170,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerAircraftNote> CustomerAircraftNotes { get; set; }
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
         public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
+        public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -1074,6 +1075,11 @@ namespace FBOLinx.DB.Context
             .HasMany(p => p.FboCustomServicesAndFees)
             .WithOne(c => c.ServiceType)
             .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AcukwikServicesOfferedDefaults> (entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
         }
 
         [DbFunction("fn_Split")]

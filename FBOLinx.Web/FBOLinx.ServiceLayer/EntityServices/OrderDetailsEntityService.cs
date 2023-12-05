@@ -31,6 +31,13 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var orderDetailsList = await (from orderDetails in _context.OrderDetails
                                       join id in _context.AsTable(ids) on orderDetails.FuelerLinxTransactionId equals System.Convert.ToInt32(id.Value)
                                       select orderDetails).ToListAsync();
+
+            var orderDetailsListDirects = await (from orderDetails in _context.OrderDetails
+                                                 join id in _context.AsTable(ids) on orderDetails.AssociatedFuelOrderId equals System.Convert.ToInt32(id.Value)
+                                                 select orderDetails).ToListAsync();
+
+            orderDetailsList.AddRange(orderDetailsListDirects);
+
             return orderDetailsList;
         }
     }

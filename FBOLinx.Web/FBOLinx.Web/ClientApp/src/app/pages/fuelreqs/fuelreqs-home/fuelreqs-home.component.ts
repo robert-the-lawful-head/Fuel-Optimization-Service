@@ -9,6 +9,7 @@ import { SharedService } from '../../../layouts/shared-service';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
 import * as SharedEvent from '../../../constants/sharedEvents';
+import { ServicesAndFeesService } from '../../../services/servicesandfees.service';
 
 const BREADCRUMBS: any[] = [
     {
@@ -38,11 +39,13 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public missedOrdersData: any[];
     public selectedTabIndex: number = 0;
     public resetMissedOrders: boolean = false;
+    public servicesAndFees: string[] = [];
 
     constructor(
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private servicesAndFeesService: ServicesAndFeesService,
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
@@ -65,7 +68,15 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.stopFuelReqDataServe();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
+        servicesAndFees.forEach((service) => {
+            service.servicesAndFees.forEach((serviceAndFee) => {
+                this.servicesAndFees.push(serviceAndFee.service);
+            });
+        });
+
+        this.servicesAndFees.sort();
         this.loadFuelReqs();
     }
 

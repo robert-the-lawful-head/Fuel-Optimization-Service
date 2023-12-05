@@ -31,6 +31,13 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var fuelReqConfirmationList = await (from fuelReqConfirmation in _context.FuelReqConfirmation
                                           join id in _context.AsTable(ids) on fuelReqConfirmation.SourceId equals System.Convert.ToInt32(id.Value)
                                           select fuelReqConfirmation).ToListAsync();
+
+            var fuelReqConfirmationDirects = await (from fuelReqConfirmation in _context.FuelReqConfirmation
+                                                    join id in _context.AsTable(ids) on fuelReqConfirmation.AssociatedFuelOrderId equals System.Convert.ToInt32(id.Value)
+                                                    select fuelReqConfirmation).ToListAsync();
+
+            fuelReqConfirmationList.AddRange(fuelReqConfirmationDirects);
+
             return fuelReqConfirmationList;
         }
     }

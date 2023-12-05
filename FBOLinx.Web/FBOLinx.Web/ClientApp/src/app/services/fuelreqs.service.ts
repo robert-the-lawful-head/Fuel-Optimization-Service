@@ -73,14 +73,14 @@ export class FuelreqsService {
         );
     }
 
-    public get(payload) {
-        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
+    public get(id) {
+        return this.http.get(this.accessPointUrl + '/' + id, {
             headers: this.headers,
         });
     }
 
     public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+        return this.http.post(this.accessPointUrl + '/create', payload, {
             headers: this.headers,
         });
     }

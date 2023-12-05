@@ -49,19 +49,29 @@
                 </mat-form-field>
             </div>
             <div class="actions col-6 col-md-2">
+                <div class="row d-none d-md-flex">
+                    <div class="col-12 text-right">
+                        <div>
+                            <button [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    class="action-btn"
+                                    ni-button
+                                    size="small"
+                                    (click)="addServiceOrderClicked()">
+                                Add Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon
-                        aria-hidden="true"
-                        class="mat-icon material-icons"
-                        role="img"
-                        >more_vert</mat-icon
-                    >
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">more_vert</mat-icon>
                 </button>
-                <mat-menu
-                    #gridActions="matMenu"
-                    class="switch-nested-menu-left-arrows"
-                    xPosition="before"
-                >
+                <mat-menu #gridActions="matMenu"
+                          class="switch-nested-menu-left-arrows"
+                          xPosition="before">
                     <button (click)="exportCsv()" mat-menu-item>Export</button>
                     <button (click)="openSettings()" mat-menu-item>
                         Settings
@@ -70,12 +80,41 @@
             </div>
         </div>
     </div>
+
     <div class="w-100 table-container" style="overflow-x: auto" (scroll)="onTableScroll($event)">
         <table [dataSource]="dataSource"
                class="col-12 mb-0"
                multiTemplateDataRows
                mat-table
                matSort>
+            <!-- HIDDEN-->
+            <ng-container matColumnDef="oid">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    ID
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.oid }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fuelerlinxid">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    FuelerLinx ID
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.sourceId }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="created">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Created
+                </th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    {{ fuelreq.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{fuelreq.timeZone}}
+                </td>
+            </ng-container>
+
             <!-- EXPAND ICON -->
             <ng-container matColumnDef="expand-icon">
                 <th mat-header-cell *matHeaderCellDef aria-label="row actions">
@@ -85,11 +124,11 @@
                     <button mat-icon-button
                             aria-label="expand row"
                             (click)="
-                            toogleExpandedRows(element.sourceId);
+                            toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString());
                             $event.stopPropagation()
                         ">
-                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)">keyboard_arrow_up</mat-icon>
-                        <mat-icon *ngIf="isRowExpanded(element.sourceId)">keyboard_arrow_down</mat-icon>
+                        <mat-icon *ngIf="!isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">keyboard_arrow_up</mat-icon>
+                        <mat-icon *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">keyboard_arrow_down</mat-icon>
                     </button>
                 </td>
             </ng-container>
@@ -209,37 +248,15 @@
                 </td>
             </ng-container>
 
-            <!--<ng-container matColumnDef="paymentMethod">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.paymentMethod }}
-                </td>
-            </ng-container>-->
-
-            <ng-container matColumnDef="delete">
-                <th *matHeaderCellDef mat-header-cell>
-                    <div class="pull-right">
-                        <button color="accent" mat-flat-button>Add New</button>
-                    </div>
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    <div class="pull-right">
-                        <button color="warn" mat-stroked-button>Delete</button>
-                    </div>
-                </td>
-            </ng-container>
-
             <!-- EXPANDED DETAILS/SERVICES -->
             <ng-container matColumnDef="expandedDetail">
                 <td mat-cell
                     *matCellDef="let element"
                     [attr.colspan]="allColumnsToDisplay.length">
                     <div class="example-element-detail"
-                         [@detailExpand]="isRowExpanded(element.sourceId) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.sourceId)">
+                         [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
                         <div class="example-element-description">
-                            <app-fuelreqs-grid-services [fuelerlinxTransactionId]="element.sourceId"></app-fuelreqs-grid-services>
+                            <app-fuelreqs-grid-services [serviceOrderId]="element.serviceOrder == undefined ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId"></app-fuelreqs-grid-services>
 
 
                             <!--
@@ -289,9 +306,9 @@
             <tr mat-row
                 *matRowDef="let element; columns: getVisibleColumns()"
                 class="example-element-row"
-                [class.example-expanded-row]="isRowExpanded(element.sourceId)"
+                [class.example-expanded-row]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())"
                 (click)="
-                                toogleExpandedRows(element.sourceId)
+                                toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())
                                 "></tr>
             <tr mat-row
                 *matRowDef="let row; columns: ['expandedDetail']"

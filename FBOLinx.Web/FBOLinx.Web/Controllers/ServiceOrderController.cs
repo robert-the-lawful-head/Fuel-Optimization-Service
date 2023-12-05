@@ -11,6 +11,9 @@ using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using FBOLinx.DB.Models;
+using System.Collections.Generic;
+using Microsoft.Extensions.Azure;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -80,6 +83,13 @@ namespace FBOLinx.Web.Controllers
             try
             {
                 var result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransactionId, fboId));
+
+                if (result == null)
+                {
+                    result = new ServiceOrderDto();
+                    result.ServiceOrderItems = new List<ServiceOrderItemDto>();
+                }
+
                 return Ok(new ServiceOrderResponse(result));
             }
             catch (System.Exception exception)

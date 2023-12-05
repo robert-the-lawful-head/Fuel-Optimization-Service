@@ -177,6 +177,7 @@ namespace FBOLinx.ServiceLayer.Extensions
                     AirportWatchHistoricalParkingEntityService>();
             services.AddTransient<IDistributionErrorsEntityService, DistributionErrorsEntityService>();
             services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
+            services.AddTransient<IAcukwikServicesOfferedDefaultsEntityService, AcukwikServicesOfferedDefaultsEntityService>();
 
             return services;
         }

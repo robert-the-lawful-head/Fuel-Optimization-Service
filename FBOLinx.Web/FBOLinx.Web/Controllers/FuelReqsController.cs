@@ -108,7 +108,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fuelReq = await _context.FuelReq.FindAsync(id);
+            var fuelReq = await _fuelReqService.GetSingleBySpec(new FuelReqByIdSpecification(id));
 
             if (fuelReq == null)
             {
@@ -264,6 +264,25 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        [HttpPost("create")]
+        public async Task<ActionResult<List<FuelReqDto>>> CreateFuelOrder([FromBody] FuelReqDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var result = await _fuelReqService.CreateFuelOrder(request);
+                return Ok(result);
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new FuelReqDto());
+            }
         }
 
         [AllowAnonymous]

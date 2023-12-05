@@ -8,4 +8,7 @@ export type ServiceOrderItem = {
     completionDateTimeUtc?: Date;
     completedByUserId?: number;
     completedByName?: string;
+    isEditMode: boolean;
+    isAddMode: boolean;
+    isAdding: boolean;
 }
