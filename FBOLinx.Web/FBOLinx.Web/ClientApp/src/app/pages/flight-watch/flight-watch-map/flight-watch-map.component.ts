@@ -35,6 +35,8 @@ import { FlightWatchHelper } from '../FlightWatchHelper.service';
 import { MapMarkerInfo, MapMarkers } from 'src/app/models/swim';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { Subscription } from 'rxjs';
+import { AirportWatchService } from 'src/app/services/airportwatch.service';
+import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -108,6 +110,8 @@ export class FlightWatchMapComponent
     }
 
     subscription: Subscription;
+     audioContext = new AudioContext();
+
 
     constructor(
         private airportFboGeoFenceClustersService: AirportFboGeofenceClustersService,
@@ -116,7 +120,8 @@ export class FlightWatchMapComponent
         private fboFlightWatchService: FboFlightWatchService,
         private aircraftFlightWatchService: AircraftFlightWatchService,
         private acukwikairportsService: AcukwikairportsService,
-        private flightWatchHelper: FlightWatchHelper
+        private flightWatchHelper: FlightWatchHelper,
+        private airportWatchService: AirportWatchService,
     ) {
         super();
         this.fboId = this.sharedService.currentUser.fboId;
@@ -129,6 +134,27 @@ export class FlightWatchMapComponent
         if(this.center == null) return;
         this.loadMap();
     }
+
+ playBeep(): void {
+  // Create an oscillator node (sound generator)
+  const oscillator = this.audioContext.createOscillator();
+
+  // Connect the oscillator to the audio context's destination (speakers)
+  oscillator.connect(this.audioContext.destination);
+
+  // Set the oscillator properties (frequency and type of sound)
+  oscillator.type = 'sine'; // Set the type of sound (sine wave)
+  oscillator.frequency.setValueAtTime(1000, this.audioContext.currentTime); // Set the frequency (1000 Hz)
+
+  // Start the oscillator to play the sound
+  oscillator.start();
+
+  // Stop the oscillator after a short duration (e.g., 0.5 seconds)
+  setTimeout(() => {
+    oscillator.stop();
+  }, 100); // Stop after 0.5 seconds (adjust duration as needed)
+}
+
 
     ngAfterViewInit() {
         this.aircraftPopupContainer.getCustomersList(
@@ -145,16 +171,18 @@ export class FlightWatchMapComponent
             this.loadMap();
         if(!this.map) return;
 
-        if(changes.center)
-            this.flyTo(this.center);
-
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.checkForPopupOpen();
             this.updateFlightOnMap(this.mapMarkers.flights);
         }
-        if(changes.selectedPopUp)  this.setPopUpContainerData(changes.selectedPopUp.currentValue);
+
+        if(changes.center)
+            this.flyTo(this.center);
+
+        if(changes.selectedPopUp)
+            this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
     private loadMap(): void {
         this.buildMap(this.center, this.mapContainer, this.mapStyle)
@@ -374,7 +402,7 @@ export class FlightWatchMapComponent
                     var coordinates = pointSource.properties['origin-coordinates'];
                     var targetCoordinates = pointSource.properties['destination-coordinates'];
 
-                    if(coordinates == targetCoordinates) return;
+                    if(coordinates[0] == targetCoordinates[0] && coordinates[1] == targetCoordinates[1]) return;
 
                     let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
                     let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
@@ -385,7 +413,17 @@ export class FlightWatchMapComponent
                         turf.point(targetCoordinates)
                         );
 
-                    let isBackwardsBearing = !this.isValidBearing(pointSource.properties.bearing,liveBearing);
+                    let isBackwardsBearing = false;
+
+                    if(this.isValidBearing(pointSource.properties.bearing,liveBearing) && [FlightLegStatus.EnRoute,FlightLegStatus.Landing,FlightLegStatus.Departing].includes(pointSource.properties.status)){
+                        console.log(pointSource.properties);
+                        console.log("currentCoordinates:", currentCoordinates);
+                        console.log("targetCoordinates:", targetCoordinates);
+                        console.log("BE bearing => " + pointSource.properties.bearing);
+                        console.log("live calculated bearing => " + liveBearing);
+                        this.playBeep();
+                        this.airportWatchService.logBackwards(data[pointSource.properties.id]);
+                    }
 
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
@@ -420,11 +458,18 @@ export class FlightWatchMapComponent
     private isValidBearing(bearing: number,liveBearing: number): boolean {
         const bearingTolerance = 30;
         liveBearing = turf.bearingToAzimuth(liveBearing);
-        const oppositeBearing = turf.bearingToAzimuth(bearing+180);
-        return this.isBearingWithinTolerance(liveBearing,bearingTolerance,bearing) || this.isBearingWithinTolerance(oppositeBearing,bearingTolerance,bearing);
+        const start = turf.bearingToAzimuth(bearing-bearingTolerance);
+        const end = turf.bearingToAzimuth(bearing+bearingTolerance);
+
+        return !this.isBearingInRange(liveBearing,start,end);
     }
-    private isBearingWithinTolerance(liveBearing: number,bearingTolerance: number,bearing: number): boolean {
-        return liveBearing >= bearing - bearingTolerance && liveBearing <= bearing + bearingTolerance;
+    private isBearingInRange(bearing: number, rangeStart: number, rangeEnd: number): boolean {
+        if (rangeStart < rangeEnd) {
+            return bearing >= rangeStart && bearing <= rangeEnd;
+        } else {
+            // Handling the case where the range spans across 360 degrees
+            return bearing >= rangeStart || bearing <= rangeEnd;
+        }
     }
     private refreshPopUp(popUpCoordinates: number[]): void {
         if (!this.currentPopup.isPopUpOpen && this.currentPopup.popupId == null) return;
