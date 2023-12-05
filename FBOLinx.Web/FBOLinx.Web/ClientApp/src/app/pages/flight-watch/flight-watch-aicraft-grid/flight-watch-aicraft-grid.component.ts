@@ -185,7 +185,7 @@ export class FlightWatchAicraftGridComponent extends GridBase {
 
     defaultDeparturesCols = [swimTableColumns.atdLocal,swimTableColumns.destinationAirport].concat(this.arrivalsDeparturesCommonCols);
 
-    arrivalsDeparturesLobbyCommonCols: string[] = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.isAircraftOnGround];
+    arrivalsDeparturesLobbyCommonCols: string[] = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.isAircraftOnGround,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode];
 
     lobbyArrivalCols= [swimTableColumns.etaLocal,swimTableColumns.originAirport,swimTableColumns.originCity].concat(this.arrivalsDeparturesLobbyCommonCols);
 

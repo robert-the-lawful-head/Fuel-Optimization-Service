@@ -319,7 +319,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                     _Fbo.GroupId,
                     _Fbo.Oid,
                     0,
-                    _DistinctTailNumbers);
+                    _DistinctTailNumbers, true);
             var matchingCustomerAircraft =
                 _CustomerAircrafts.FirstOrDefault(x => x.TailNumber?.ToUpper() == flightWatchModel.TailNumber);
             if (matchingCustomerAircraft != null)

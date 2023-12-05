@@ -32,6 +32,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 using FBOLinx.ServiceLayer.Extensions.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -62,6 +63,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IAirportService _AirportService;
         private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
             IFboService fboService,
@@ -77,7 +79,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
             ISWIMFlightLegService swimFlightLegService,
-            ICustomerInfoByGroupService customerInfoByGroupService)
+            ICustomerInfoByGroupService customerInfoByGroupService,
+            IAircraftHexTailMappingService aircraftHexTailMappingService)
         {
             _SwimFlightLegService = swimFlightLegService;
             _AirportService = airportService;
@@ -97,6 +100,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AFSAircraftEntityService = afsAircraftEntityService;
             _AirportWatchLiveDataEntityService = airportWatchLiveDataEntityService;
             _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
+            _AircraftHexTailMappingService = aircraftHexTailMappingService;
         }
         public async Task<AircraftWatchLiveData> GetAircraftWatchLiveData(int groupId, int fboId, string tailNumber)
         {
@@ -411,6 +415,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
+            var distinctTails = historicalData.Select(x => x.TailNumber).Distinct().ToList();
+            var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
+
             var result = (from h in historicalData
                       join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
                       into leftJoinedCV
@@ -418,17 +425,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                       join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
                       into leftJoinedParkingAndLandingAssociation
                       from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
-                      select new AirportWatchHistoricalDataResponse
-                      {
-                          AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
-                          CustomerInfoByGroupID = h.CustomerInfoByGroupID,
-                          CompanyId = h.CustomerId,
-                          Company = h.Company,
+                      join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
+                      from hextail in leftJoinedhextail.DefaultIfEmpty()
+                          select new AirportWatchHistoricalDataResponse
+                          {
+                              AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
+                              CustomerInfoByGroupID = h.CustomerInfoByGroupID,
+                              CompanyId = h.CustomerId,
+                              Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner: h.Company,
                           DateTime = h.AircraftPositionDateTimeUtc,
                           TailNumber = h.TailNumber,
                           FlightNumber = h.AtcFlightNumber,
                           HexCode = h.AircraftHexCode,
-                          AircraftType = string.IsNullOrEmpty(h.Make) ? null : h.Make + " / " + h.Model,
+                          AircraftType = string.IsNullOrEmpty(h.Make) ?
+                           string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR)? null: hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL : 
+                           h.Make + " / " + h.Model,
                           Status = h.AircraftStatusDescription,
                           AirportIcao = h.AirportICAO,
                           AircraftTypeCode = h.AircraftTypeCode,
