@@ -34,6 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
     {
         Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options);
         Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId);
+        Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options);
     }
 
     public class FlightWatchService : IFlightWatchService
@@ -134,11 +135,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-
+            return result;
+        }
+        public async Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options)
+        {
+            var result = await GetCurrentFlightWatchData(options);
             result.RemoveAll(x => x.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.None);
-            result.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null );
+            result.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null);
             result = result.Where(x => x.ArrivalICAO == x.FocusedAirportICAO || x.DepartureICAO == x.FocusedAirportICAO).ToList();
-
             return result;
         }
 
