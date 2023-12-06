@@ -157,10 +157,9 @@
             mat-row
             *matRowDef="let element; columns: allColumnsToDisplay"
             class="example-element-row"
+            [ngClass]="{'highlight': expandedElement === element.tailNumber}"
             [class.example-expanded-row]="expandedElement === element.tailNumber"
-            (click)="
-                expandedElement = expandedElement === element.tailNumber ? null : element.tailNumber
-            "
+            (click)="onRowrowSelect(element)"
         ></tr>
         <tr
             mat-row

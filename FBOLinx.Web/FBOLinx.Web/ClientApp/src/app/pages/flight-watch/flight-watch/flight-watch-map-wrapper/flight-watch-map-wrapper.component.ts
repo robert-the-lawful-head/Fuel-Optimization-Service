@@ -7,9 +7,8 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { Dictionary, keyBy } from 'lodash';
+import { Dictionary } from 'lodash';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
-import { SwimFilter } from 'src/app/models/filter';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapService } from '../../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
@@ -37,6 +36,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     @Output() textFilterChanged = new EventEmitter<string>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() showCommercialAircraftFilter = new EventEmitter<boolean>();
+    @Output() aicraftClick = new EventEmitter<FlightWatchModelResponse>();
 
     @ViewChild('map') map: FlightWatchMapComponent;
 
@@ -89,5 +89,6 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
     updateSelectedAircraft($event: FlightWatchModelResponse) {
         this.selectedPopUp = $event;
+        this.aicraftClick.emit($event);
     }
 }

@@ -15,6 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 @Component({
     selector: 'app-flight-watch-setting-table',
     templateUrl: './flight-watch-setting-table.component.html',
@@ -33,6 +34,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() columns: ColumnType[];
     @Input() isLobbyView: boolean =  false;
     @Input() customers: any[] =  [];
+    @Input() selectedAircraft: FlightWatchModelResponse = null;
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() saveSettings = new EventEmitter();
@@ -101,6 +103,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }else{
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
+        }
+        if(changes.selectedAircraft){
+            this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
         }
     }
     updateColumns(columns: ColumnType[]): void{
@@ -279,5 +284,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     get getCallBackComponent(): CallbackComponent{
         return CallbackComponent.aircraft;
+    }
+    onRowrowSelect(element: Swim) {
+        this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
+        this.openAircraftPopup.emit(element.tailNumber);
     }
 }

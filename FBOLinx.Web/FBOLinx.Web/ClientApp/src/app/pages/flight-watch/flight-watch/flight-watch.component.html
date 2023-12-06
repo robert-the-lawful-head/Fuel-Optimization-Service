@@ -29,6 +29,7 @@
                         (textFilterChanged)="onTextFilterChanged($event)"
                         (showCommercialAircraftFilter)="filterCommercialAircrafts($event)"
                         (icaoChanged)="updateIcao($event)"
+                        (aicraftClick)="onAircraftClick($event)"
                         style="width: 100%"
                         [center]="center"
                         [data]="flightWatchData"
@@ -50,8 +51,7 @@
         >
             <ng-container *ngIf="flightWatchData">
                 <app-flight-watch-settings
-                    [arrivals]="arrivals"
-                    [departures]="departures"
+                    [data]="flightWatchData"
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
                     [filteredTypes]="this.currentFilters.filteredTypes"
@@ -61,6 +61,8 @@
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                     [showFilters]="showFilters"
                     [isLobbyView]="isLobbyView"
+                    [selectedAircraft]="selectedFlightWatch"
+                    (openAircraftPopup)="openAircraftPopup($event)"
                 ></app-flight-watch-settings>
             </ng-container>
         </mat-drawer>

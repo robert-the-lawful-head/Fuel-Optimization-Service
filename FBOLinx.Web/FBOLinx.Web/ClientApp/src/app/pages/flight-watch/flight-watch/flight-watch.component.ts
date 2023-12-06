@@ -62,10 +62,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
 
     flightWatchData: FlightWatchModelResponse[];
     filteredFlightWatchData: FlightWatchDictionary;
-    arrivals: FlightWatchModelResponse[];
-    departures: FlightWatchModelResponse[];
-    arrivalsAllRecords: FlightWatchModelResponse[];
-    departuresAllRecords: FlightWatchModelResponse[];
     acukwikairport: AcukwikAirport[];
     airportsICAO: string[];
     selectedICAO: string;
@@ -94,7 +90,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             if(!value.data) return;
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
-                    this.setData(value.data);
+                    this.flightWatchData = value.data;
                     this.isStable = true;
                 }else{
                     this.flightWatchData = [];
@@ -116,22 +112,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
     }
     ngOnDestroy() {
-    }
-    setData(data: FlightWatchModelResponse[]): void {
-        this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
-            return row.arrivalICAO == row.focusedAirportICAO;
-        });
-        this.departures = data?.filter((row: FlightWatchModelResponse) => {
-            return (
-                row.departureICAO == row.focusedAirportICAO &&
-                row.status != null
-            );
-        });
-
-        this.arrivalsAllRecords = this.arrivals;
-        this.departuresAllRecords = this.departures;
-
-        this.applyFiltersToData();
     }
     setIcaoList(airportList: AcukwikAirport[]) {
         this.acukwikairport = airportList;
@@ -161,16 +141,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     applyFiltersToData(): void {
-        this.arrivals = this.filterData(
+        this.flightWatchData = this.filterData(
             this.currentFilters.filterText?.toLowerCase(),
-            this.arrivalsAllRecords
+            this.flightWatchData
         );
-        this.departures = this.filterData(
-            this.currentFilters.filterText?.toLowerCase(),
-            this.departuresAllRecords
-        );
-
-        this.flightWatchData = this.arrivals.concat(this.departures);
     }
     filterData(
         filter: string,
@@ -251,5 +225,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.currentFilters.isCommercialAircraftVisible =
             isCommercialAircraftVisible;
         this.applyFiltersToData();
+    }
+    onAircraftClick(flightWatch: FlightWatchModelResponse) {
+        this.selectedFlightWatch = flightWatch;
     }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -18,22 +18,25 @@ import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup
     templateUrl: './flight-watch-settings.component.html',
 })
 export class FlightWatchSettingsComponent extends GridBase {
-    @Input() arrivals: FlightWatchModelResponse[];
-    @Input() departures: FlightWatchModelResponse[];
+    @Input() data: FlightWatchModelResponse[];
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() filteredTypes: string[];
     @Input() showFilters: boolean =  true;
     @Input() isLobbyView: boolean =  false;
+    @Input() selectedAircraft: FlightWatchModelResponse = null;
 
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
+    @Output() openAircraftPopup = new EventEmitter<string>();
 
     @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
     @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;
 
+    arrivals: FlightWatchModelResponse[] =[];
+    departures: FlightWatchModelResponse[] =[];
 
     searchIcaoTxt: string;
 
@@ -53,6 +56,12 @@ export class FlightWatchSettingsComponent extends GridBase {
     ngOnInit(): void {
         this.initColumns();
         this.getCustomersList(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId);
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.data && changes.data.currentValue) {
+            this.setData(changes.data.currentValue);
+        }
     }
 
     get aircraftTypes() {
@@ -177,6 +186,17 @@ export class FlightWatchSettingsComponent extends GridBase {
             .subscribe((customers: any[]) => {
                 this.customers = customers;
             });
+    }
+
+    setData(data: FlightWatchModelResponse[]): void {
+        this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
+            return row.arrivalICAO == row.focusedAirportICAO
+        });
+        this.departures = data?.filter((row: FlightWatchModelResponse) => {
+            return (
+                row.departureICAO == row.focusedAirportICAO
+            );
+        });
     }
 
     arrivalsDeparturesCommonCols: string[]= [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode,swimTableColumns.ete,swimTableColumns.isAircraftOnGround,swimTableColumns.itpMarginTemplate];
