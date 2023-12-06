@@ -10,7 +10,7 @@ namespace FBOLinx.Web.Middleware.Exceptions
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
-        private static ILoggingService _LoggingService;
+        private readonly ILoggingService _LoggingService;
         public ExceptionHandlerMiddleware(RequestDelegate next, ILoggingService loggingService)
         {
             _next = next;
@@ -25,18 +25,18 @@ namespace FBOLinx.Web.Middleware.Exceptions
             }
             catch (Exception ex)
             {
-                await HandleExceptionMessageAsync(context, ex).ConfigureAwait(false);
+                await HandleExceptionMessageAsync(context, ex, _LoggingService).ConfigureAwait(false);
             }
         }
-        private static Task HandleExceptionMessageAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionMessageAsync(HttpContext context, Exception exception, ILoggingService logger)
         {
             context.Response.ContentType = "application/json";
             int statusCode = (int)HttpStatusCode.InternalServerError;
 
-            _LoggingService.LogError(exception.Message,exception.ToString(), LogLevel.Error, LogColorCode.Red);
-            _LoggingService.LogError(exception.Message, exception.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
+            logger.LogError(exception.Message,exception.ToString(), LogLevel.Error, LogColorCode.Red);
+            logger.LogError(exception.Message, exception.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
             if (exception.InnerException != null)
-                _LoggingService.LogError(exception.Message,exception.InnerException.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
+                logger.LogError(exception.Message,exception.InnerException.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
 
             var result = JsonConvert.SerializeObject(new
             {
