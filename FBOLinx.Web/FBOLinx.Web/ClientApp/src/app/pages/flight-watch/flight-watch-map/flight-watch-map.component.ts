@@ -436,7 +436,8 @@ export class FlightWatchMapComponent
                         console.log(pointSource.properties.id +": last calculated bearing => " + this.lastbearingTrack[pointSource.properties.id]);
 
                         // this.playBeep();
-                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id]);
+                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id]).subscribe((response: any) => {
+                        });
                     }
 
                     //need to update the icon image change on animation
