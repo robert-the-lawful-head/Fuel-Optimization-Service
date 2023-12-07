@@ -192,9 +192,6 @@ _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
             }
         }
 
-        public long? SwimOid => _SwimFlightLeg?.Oid;
-        public int? LiveDataOid => _CustomerAircraft?.Oid;
-
         public bool? IsAircraftOnGround => (_AirportWatchLiveData?.IsAircraftOnGround).HasValue
             ? _AirportWatchLiveData?.IsAircraftOnGround
             : _SwimFlightLeg?.IsAircraftOnGround;

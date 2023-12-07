@@ -11,7 +11,7 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { Dictionary, keys } from 'lodash';
+import { Dictionary, has, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 import { environment } from 'src/environments/environment';
@@ -84,6 +84,8 @@ export class FlightWatchMapComponent
 
     public startTime: number = Date.now();
     private animationFrameIds: number[] = [];
+
+    private lastbearingTrack : Dictionary<number> = {};
 
     // Mapbox and layers IDs
     public mapMarkers: MapMarkers= {
@@ -173,6 +175,16 @@ export class FlightWatchMapComponent
 
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
+            if(changes.data.previousValue){
+                for (let key in changes.data.previousValue) {
+                    this.lastbearingTrack[key] = changes.data.previousValue[key].trackingDegree;
+                }
+            }
+            else{
+                for (let key in changes.data.currentValue) {
+                    this.lastbearingTrack[key] = changes.data.currentValue[key].trackingDegree;
+                }
+            }
             this.setMapMarkersData(keys(changes.data.currentValue));
             this.checkForPopupOpen();
             this.updateFlightOnMap(this.mapMarkers.flights);
@@ -386,7 +398,6 @@ export class FlightWatchMapComponent
             type: 'FeatureCollection',
             features: dataFeatures,
         };
-
         this.cancelExistingAnimationFames();
         this.animateAircrafts(source,data);
         this.applyMouseFunctions(marker.layerId);
@@ -412,23 +423,26 @@ export class FlightWatchMapComponent
                         turf.point(currentCoordinates),
                         turf.point(targetCoordinates)
                         ));
+                    if(liveBearing == 0)return;
 
-                    let isBackwardsBearing = false;
+                    let isBackwards = !this.isValidBearing(this.lastbearingTrack[pointSource.properties.id],liveBearing);
 
-                    if(this.isValidBearing(pointSource.properties.bearing,liveBearing) && [FlightLegStatus.EnRoute,FlightLegStatus.Landing].includes(pointSource.properties.status)){
+                    if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
                         console.log(pointSource.properties);
-                        console.log("currentCoordinates:", currentCoordinates);
-                        console.log("targetCoordinates:", targetCoordinates);
-                        console.log("BE bearing => " + pointSource.properties.bearing);
-                        console.log("live calculated bearing => " + liveBearing);
-                        this.playBeep();
-                        this.airportWatchService.logBackwards(data[pointSource.properties.id]);
+                        console.log(pointSource.properties.id +": currentCoordinates:", currentCoordinates);
+                        console.log(pointSource.properties.id +": targetCoordinates:", targetCoordinates);
+                        console.log(pointSource.properties.id +": BE bearing => " + pointSource.properties.bearing);
+                        console.log(pointSource.properties.id +": live calculated bearing => " + liveBearing);
+                        console.log(pointSource.properties.id +": last calculated bearing => " + this.lastbearingTrack[pointSource.properties.id]);
+
+                        // this.playBeep();
+                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id]);
                     }
 
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
                     if(this.currentPopup.popupId == pointSource.properties.id){
-                        popUpCoordinates = isBackwardsBearing ? pointSource.geometry.coordinates : currentCoordinates;
+                        popUpCoordinates = currentCoordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
                     }else{
@@ -436,30 +450,30 @@ export class FlightWatchMapComponent
                         pointSource.properties['default-icon-image'] = defaultIcon;
                     }
 
-                    if(isBackwardsBearing) return;
+                    // if(isBackwardsBearing) return;
 
                     pointSource.geometry.coordinates = currentCoordinates;
 
                     pointSource.properties.bearing = liveBearing == 0 ? pointSource.properties.bearing : liveBearing;
+
                 });
 
                 source.setData(data);
 
                 this.refreshPopUp(popUpCoordinates)
 
-                const animationFrameId = requestAnimationFrame(animate);
+                const animationFrameId = requestAnimationFrame(() => animate());
                 this.animationFrameIds.push(animationFrameId);
             }
         };
-        const animationFrameId = requestAnimationFrame(animate);
-
-        this.animationFrameIds.push(animationFrameId);
+        const frameid = requestAnimationFrame(() => animate());
+        this.animationFrameIds.push(frameid);
     }
     private isValidBearing(bearing: number,liveBearing: number): boolean {
-        const bearingTolerance = 90;
+        const bearingTolerance = 30;
         liveBearing = turf.bearingToAzimuth(liveBearing);
-        const start = turf.bearingToAzimuth(bearing-bearingTolerance);
-        const end = turf.bearingToAzimuth(bearing+bearingTolerance);
+        const start = turf.bearingToAzimuth(bearing+bearingTolerance);
+        const end = turf.bearingToAzimuth(bearing-bearingTolerance);
 
         return !this.isBearingInRange(liveBearing,start,end);
     }

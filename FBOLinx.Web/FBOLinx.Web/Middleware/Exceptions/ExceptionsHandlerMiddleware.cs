@@ -36,15 +36,15 @@ namespace FBOLinx.Web.Middleware.Exceptions
 
             }
         }
-        private static Task HandleExceptionMessageAsync(HttpContext context, Exception exception)
+        private static Task HandleExceptionMessageAsync(HttpContext context, Exception exception, ILoggingService logger)
         {
             context.Response.ContentType = "application/json";
             int statusCode = (int)HttpStatusCode.InternalServerError;
 
-            _logger.LogError(exception, exception.Message);
-            _logger.LogError(exception.StackTrace, exception.Message);
+            logger.LogError(exception.Message,exception.ToString(), LogLevel.Error, LogColorCode.Red);
+            logger.LogError(exception.Message, exception?.StackTrace?.ToString(), LogLevel.Error, LogColorCode.Red);
             if (exception.InnerException != null)
-                _logger.LogError(exception.InnerException.StackTrace, exception.Message);
+                logger.LogError(exception.Message,exception.InnerException?.StackTrace?.ToString(), LogLevel.Error, LogColorCode.Red);
 
             var result = JsonConvert.SerializeObject(new
             {

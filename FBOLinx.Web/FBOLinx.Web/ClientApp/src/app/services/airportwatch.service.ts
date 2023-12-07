@@ -20,7 +20,8 @@ export class AirportWatchService {
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
     public logBackwards(body: FlightWatchModelResponse) {
-        return this.http.post<any>(
+        console.log("🚀 ~ file: airportwatch.service.ts:23 ~ AirportWatchService ~ logBackwards ~ body:", body)
+        return this.http.post(
             `${this.accessPointUrl}/log-backwards`,
             body,
             { headers: this.headers }

@@ -118,8 +118,6 @@ export interface FlightWatchModelResponse {
     isCustomerManagerAircraft: boolean;
     sourceOfCoordinates: coordinatesSource;
     previousAircraftPositionDateTimeUtc: Date;
-    swimOid: number | null;
-    liveDataOid: number | null;
     positionDateTimeSource: string;
     dateCreated: Date | null;
     swimLastUpdated: Date | null;
