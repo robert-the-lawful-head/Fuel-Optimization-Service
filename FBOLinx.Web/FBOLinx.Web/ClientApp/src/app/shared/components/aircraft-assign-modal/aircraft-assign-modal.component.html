@@ -34,9 +34,17 @@
             [(ngModel)]="selectedCompany"
             optionLabel="company"
             optionValue="companyId"
-            [editable]="true"
+            [editable]="isCustomerEditable"
             [filter]="true"
-        ></p-dropdown>
+            (onFilter)="onFilter($event)"
+        >
+        <ng-template pTemplate="footer">
+            <div class="add-custom-customer">
+                <a (click)="createCustomer()">&lt;Add Custom&gt;</a>
+            </div>
+        </ng-template>
+    </p-dropdown>
+
     </div>
 </div>
 <div mat-dialog-actions class="mt-5 text-center">
