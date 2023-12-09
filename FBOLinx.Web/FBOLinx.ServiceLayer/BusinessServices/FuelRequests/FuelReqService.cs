@@ -369,6 +369,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 foreach (FuelReqDto fuelReq in result)
                 {
                     fuelReq.CustomerName = customers.Where(c => c.CustomerId == fuelReq.CustomerId).Select(cu => cu.Company).FirstOrDefault();
+
+                    if (fuelReq.ServiceOrder == null)
+                    {
+                        fuelReq.ServiceOrder = new ServiceOrderDto();
+                        fuelReq.ServiceOrder.ServiceOrderItems = new List<ServiceOrderItemDto>();
+                    }
                 }
 
                 result.AddRange(serviceOrdersList);
@@ -631,14 +637,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
 
             var serviceOrderItems = new List<ServiceOrderItemDto>();
-            //foreach (string serviceOrderName in request.ServiceNames)
-            //{
-            //    ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
-            //    serviceOrderItem.ServiceOrderId = serviceReq.Oid;
-            //    serviceOrderItem.ServiceName = serviceOrderName;
-            //    serviceOrderItem.IsCompleted = false;
-            //    serviceOrderItems.Add(serviceOrderItem);
-            //}
+            foreach (var service in request.Services)
+            {
+                ServiceOrderItemDto serviceOrderItem = new ServiceOrderItemDto();
+                serviceOrderItem.ServiceOrderId = serviceReq.Oid;
+                serviceOrderItem.ServiceName = service.ServiceName;
+                serviceOrderItem.IsCompleted = false;
+                serviceOrderItems.Add(serviceOrderItem);
+            }
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
 

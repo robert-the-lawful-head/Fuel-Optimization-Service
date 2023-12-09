@@ -164,7 +164,7 @@
         "roles": [ 99999 ]
     },
     {
-        "title": "FBO Services & Fees",
+        "title": "Services & Fees Admin",
         "icon": {
             "class": "fa fa-plane",
             "bg": "rgb(255, 224, 130)",

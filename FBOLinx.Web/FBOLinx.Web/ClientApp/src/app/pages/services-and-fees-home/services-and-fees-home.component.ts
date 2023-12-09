@@ -7,7 +7,7 @@ const BREADCRUMBS: any[] = [
     },
     {
         link: '/default-layout/services-and-fees',
-        title: 'FBO Services and Fees',
+        title: 'Services & Fees Admin',
     },
 ];
 

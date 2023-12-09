@@ -32,6 +32,7 @@ interface ServicesAndFeesGridItem extends ServicesAndFeesResponse {
     encapsulation: ViewEncapsulation.None
 })
 export class FuelreqsGridServicesComponent implements OnInit {
+    @Input() public serviceOrderItems: ServiceOrderItem[];
     @Input() public serviceOrderId: number | null = null;
     @Input() public associatedFuelOrderId: number | null = null;
     @Input() public fuelerlinxTransactionId: number | null = null;
@@ -52,17 +53,22 @@ export class FuelreqsGridServicesComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        if (this.serviceOrderId != null && this.serviceOrderId > 0) {
-            this.serviceOrder = await this.serviceOrderService.getServiceOrderById(this.serviceOrderId).toPromise();
-            if (this.serviceOrder.result != null) {
-                this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrder.result.serviceOrderItems;
-            }
-        }
+        if (this.serviceOrderItems != null)
+            this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems;
 
         this.resetNewServiceOrderItem();
 
         this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
         this.isLoading = false;
+    }
+
+    onArchiveServices(serviceOrderItems: ServiceOrderItem[]) {
+        this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems;
+
+        serviceOrderItems.forEach((serviceOrderItem) => {
+            if (serviceOrderItem.serviceName != "")
+                this.updateCompletedFlag(serviceOrderItem);
+        });
     }
 
     onAddServiceChanged(serviceOrderItem: ServiceOrderItem, changed: any): void {
@@ -187,11 +193,10 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
 
     getInfoTooltipText(serviceAndFees: ServiceOrderItem): string {
-        //if (!serviceAndFees.isCustom)
-        //    return `Source: Acukwik`;
-        //else
-        //    return `Source: ${serviceAndFees.createdByUser} - ${this.datePipe.transform(serviceAndFees.createdDate, 'MM/dd/yyyy')}`;
-        return '';
+        if (this.servicesAndFees.indexOf(serviceAndFees.serviceName) > -1)
+            return `Source: Acukwik`;
+        else
+            return `Source: Custom`;
     }
 
     private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {

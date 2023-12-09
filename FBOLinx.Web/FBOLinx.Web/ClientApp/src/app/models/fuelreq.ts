@@ -2,6 +2,7 @@
 
 import { Customer } from "./customer"
 import { CustomerAircraft } from "./customer-aircraft"
+import { ServiceOrder } from "./service-order"
 import { ServiceOrderItem } from "./service-order-item"
 
 export type FuelReq = {
@@ -38,8 +39,7 @@ export type FuelReq = {
     tailNumber: string;
     fboName: string;
     pricingTemplateName: string;
-
-    serviceOrderItems: ServiceOrderItem[]
+    serviceOrder: ServiceOrder;
     customer: Customer;
     customerAircraft: CustomerAircraft;
     //fbo: 

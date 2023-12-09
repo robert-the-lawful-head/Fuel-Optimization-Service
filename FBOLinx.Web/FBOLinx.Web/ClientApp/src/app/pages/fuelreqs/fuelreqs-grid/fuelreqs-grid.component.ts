@@ -34,8 +34,14 @@ import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-appli
 import { FuelReq } from '../../../models/fuelreq';
 import { ServiceOrderService } from '../../../services/serviceorder.service';
 import { EntityResponseMessage } from '../../../models/entity-response-message';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
 
 const initialColumns: ColumnType[] = [
+    {
+        id: 'archivedCheckbox',
+        name: 'Archived',
+    },
     {
         id: 'tailNumber',
         name: 'Tail #',
@@ -108,11 +114,13 @@ const initialColumns: ColumnType[] = [
 export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
+    @ViewChild(FuelreqsGridServicesComponent) fuelReqGridServicesComponent: FuelreqsGridServicesComponent;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
     @Input() servicesAndFees: string[];
+    @Output() onArchivedChange = new EventEmitter<any>();
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -139,6 +147,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         private snackBarService: SnackBarService,
         private newServiceOrderDialog: MatDialog,
         private serviceOrderService: ServiceOrderService,
+        private templateDialog: MatDialog
     ) {
         super();
         this.dashboardSettings = this.sharedService.dashboardSettings;
@@ -369,5 +378,60 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.refreshTable();
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
         });
+    }
+
+    public updateArchivedFlag(event: Event, fuelReq: FuelReq) {
+        if (fuelReq.archived) {
+            const dialogRef = this.templateDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes, Close & Archive',
+                        title: 'Are you sure you want to mark each item in this order as complete and archive it?',
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    fuelReq.archived = false;
+                    return;
+                }
+
+                fuelReq.serviceOrder.numberOfCompletedItems = fuelReq.serviceOrder.serviceOrderItems.length - 1;
+
+                fuelReq.serviceOrder.serviceOrderItems.forEach((serviceOrderItem) => {
+                    if (serviceOrderItem.serviceName != "")
+                        serviceOrderItem.isCompleted = true;
+                })
+
+                this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+
+                var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
+                fuelReq.serviceOrder.serviceOrderItems = null;
+
+                this.fuelreqsService.update(fuelReq).subscribe(response => {
+                    fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
+                });
+            });
+        }
+        else {
+            fuelReq.serviceOrder.numberOfCompletedItems = 0;
+
+            fuelReq.serviceOrder.serviceOrderItems.forEach((serviceOrderItem) => {
+                if (serviceOrderItem.serviceName != "")
+                    serviceOrderItem.isCompleted = false;
+            })
+
+            this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+
+            var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
+            fuelReq.serviceOrder.serviceOrderItems = null;
+
+            this.fuelreqsService.update(fuelReq).subscribe(response => {
+                fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
+            });
+        }
     }
 }

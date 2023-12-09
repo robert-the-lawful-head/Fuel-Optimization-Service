@@ -121,6 +121,23 @@
                     &nbsp;
                 </th>
                 <td mat-cell *matCellDef="let element">
+                    <div style="position: absolute; left: 0;">
+                        <ni-badge *ngIf="element.cancelled" [arrow]="'left'" [borderRadius]="false"
+                                  [color]="'danger'"
+                                  matTooltipPosition="after">
+                            Cancelled
+                        </ni-badge>
+                        <ni-badge *ngIf="!element.cancelled && (element.serviceOrder == null ? true : element.serviceOrder.isCompleted)" [arrow]="'left'" [borderRadius]="false"
+                                  [color]="'success'"
+                                  matTooltipPosition="after">
+                            Completed
+                        </ni-badge>
+                        <ni-badge *ngIf="element.serviceOrder == null ? false : element.serviceOrder.isActive" [arrow]="'left'" [borderRadius]="false"
+                                  [color]="'active'"
+                                  matTooltipPosition="after">
+                            Active
+                        </ni-badge>
+                    </div>
                     <button mat-icon-button
                             aria-label="expand row"
                             (click)="
@@ -133,27 +150,37 @@
                 </td>
             </ng-container>
 
+            <ng-container matColumnDef="archivedCheckbox">
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    <mat-checkbox [(ngModel)]="fuelreq.archived" (change)=" updateArchivedFlag($event, fuelreq)" clickStopPropagation>
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
             <!-- CUSTOMER NAME -->
             <ng-container matColumnDef="customerName">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Flight Dept.
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    <div style="position: absolute; left: 0;">
-                        <ni-badge *ngIf="fuelreq.cancelled" [arrow]="'left'" [borderRadius]="false"
-                                  [color]="'danger'"
-                                  matTooltipPosition="after">
-                            Cancelled
-                        </ni-badge>
-                    </div>
-
-                    <span style="display: flex;">
+                    <span *ngIf="!fuelreq.archived" style="display:flex;">
                         {{ fuelreq.customerName }} &nbsp;
                         <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
                                   [color]="'warning'"
                                   matTooltipPosition="after">
                             Order Note
                         </ni-badge>
+                    </span>
+                    <span *ngIf="fuelreq.archived" style="display: flex;">
+                        <s>
+                            {{ fuelreq.customerName }} &nbsp;
+                            <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
+                                      [color]="'warning'"
+                                      matTooltipPosition="after">
+                                Order Note
+                            </ni-badge>
+                        </s>
                     </span>
                 </td>
             </ng-container>
@@ -164,7 +191,8 @@
                     Payment Method
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.paymentMethod }}
+                    <span *ngIf="!fuelreq.archived">{{fuelreq.paymentMethod}}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{fuelreq.paymentMethod}}</s></span>
                 </td>
             </ng-container>
 
@@ -172,7 +200,9 @@
             <ng-container matColumnDef="eta">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}</s></span>
+
                 </td>
             </ng-container>
 
@@ -180,7 +210,9 @@
             <ng-container matColumnDef="etd">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}</s></span>
+
                 </td>
             </ng-container>
 
@@ -188,9 +220,19 @@
             <ng-container matColumnDef="quotedPpg">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{
+                    <span *ngIf="!fuelreq.archived">
+                        {{
                         getPPGDisplayString(fuelreq)
-                    }}
+                        }}
+                    </span>
+                    <span *ngIf="fuelreq.archived">
+                        <s>
+                            {{
+                                            getPPGDisplayString(fuelreq)
+                            }}
+                        </s>
+                    </span>
+
                 </td>
             </ng-container>
 
@@ -200,7 +242,9 @@
                     Tail #
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.tailNumber }}
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.tailNumber }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.tailNumber }}</s></span>
+
                 </td>
             </ng-container>
 
@@ -209,7 +253,11 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Source
                 </th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.source }}</td>
+                <td *matCellDef="let fuelreq" mat-cell>
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.source }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.source }}</s></span>
+
+                </td>
             </ng-container>
 
             <!-- EMAIL -->
@@ -218,7 +266,9 @@
                 <td *matCellDef="let fuelreq"
                     [matTooltip]="fuelreq.email"
                     mat-cell>
-                    {{ fuelreq.email }}
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.email }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.email }}</s></span>
+
                 </td>
             </ng-container>
 
@@ -227,7 +277,9 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Services Completed</th>
                 <td *matCellDef="let fuelreq"
                     mat-cell class="services-completed">
-                    {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
+
                 </td>
             </ng-container>
 
@@ -236,14 +288,14 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
                 <td *matCellDef="let fuelreq" mat-cell>
                     <div class="pull-right">
-                        <button (click)="sendConfirmationNotification($event,fuelreq)"
-                                [view]="'primary'"
-                                size="small"
-                                [disabled]="fuelreq.isConfirmed"
-                                ni-button>
+                        <ni-button (click)="sendConfirmationNotification($event,fuelreq)"
+                                   [view]="'success'"
+                                   size="small"
+                                   [disabled]="fuelreq.isConfirmed"
+                                   ni-button>
                             {{ getConfirmationButtonText(fuelreq) }}
                             <mat-spinner *ngIf="isLoadignConfirmationButton(fuelreq)" diameter="20"></mat-spinner>
-                        </button>
+                        </ni-button>
                     </div>
                 </td>
             </ng-container>
@@ -256,47 +308,7 @@
                     <div class="example-element-detail"
                          [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
                         <div class="example-element-description">
-                            <app-fuelreqs-grid-services [serviceOrderId]="element.serviceOrder == undefined ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId"></app-fuelreqs-grid-services>
-
-
-                            <!--
-            <table class="description-table">
-                <tr>
-                    <td>
-                        Customer Order Notes:
-                    </td>
-                    <td>ID: {{ element.oid }}</td>
-                    <td>
-                        Created:
-                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        {{ element.customerOrderNotes }}
-                    </td>
-                    <td>
-                        FuelerLinx ID:
-                        {{ element.sourceId }}
-                    </td>
-                    <td>
-                        Uplift Request:
-                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Customer Requested Payment Method:
-                        {{ element.paymentMethod }}
-                    </td>
-                    <td>
-                        Transaction Status:
-                        {{ element.cancelled ? "Cancelled" : "Live" }}
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            </table>-->
+                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId"></app-fuelreqs-grid-services>
                         </div>
                     </div>
                 </td>

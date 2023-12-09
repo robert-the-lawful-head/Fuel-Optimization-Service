@@ -16,13 +16,13 @@
                                     </mat-checkbox>
                                 </div>
                                 <div class="col-6 text" *ngIf="!service.isEditMode && !service.isAddMode">
-                                    <span>{{service.serviceName}}</span>
+                                    <span *ngIf="!service.isCompleted">{{service.serviceName}}</span>
+                                    <span *ngIf="service.isCompleted"><s>{{service.serviceName}}</s></span>
                                 </div>
                                 <div class="col-6 text" *ngIf="service.isEditMode">
                                     <span>
-                                        <mat-form-field class="mat-form-field-no-padding pl-1">
-                                            <input matInput [(ngModel)]="service.serviceName">
-                                        </mat-form-field>
+                                        <app-autocomplete-search  [filter]="service.serviceName" (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFees">
+                                        </app-autocomplete-search>
                                     </span>
                                 </div>
                                 <div class="col-6 text" *ngIf="service.isAddMode">

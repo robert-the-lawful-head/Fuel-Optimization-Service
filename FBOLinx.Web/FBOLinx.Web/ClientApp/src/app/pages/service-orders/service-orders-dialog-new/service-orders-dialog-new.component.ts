@@ -181,7 +181,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             tailNumber: '',
             fboName: '',
             pricingTemplateName: '',
-            serviceOrderItems: null,
+            serviceOrder: null,
             customer: null,
             customerAircraft: null
         };

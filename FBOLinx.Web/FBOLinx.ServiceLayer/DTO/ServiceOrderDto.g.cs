@@ -55,6 +55,11 @@ namespace FBOLinx.ServiceLayer.DTO
                 return (ServiceOrderItems != null && ServiceOrderItems.Count > 0 && (ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == false).Count()).GetValueOrDefault() == 0);
             }
         }
+
+        public bool IsActive
+        {
+            get { return (ServiceOrderItems != null && (ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == true).Count() > 0) && ServiceOrderItems.Count > 1 && (ServiceOrderItems.Count - ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == true).Count() > 0)); }
+        }
         
         public DateTime? ArrivalDateTimeLocal => _ArrivalDateTimeLocal;
         public DateTime? DepartureDateTimeLocal => _DepartureDateTimeLocal;
