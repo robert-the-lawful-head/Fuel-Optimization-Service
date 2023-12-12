@@ -76,7 +76,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 address: new FormControl(),
                 certificateType: new FormControl(),
                 city: new FormControl(),
-                company: new FormControl('', Validators.required),
+                company: new FormControl('', [Validators.required, this.noWhitespaceValidator]),
                 country: new FormControl(),
                 mainPhone: new FormControl(),
                 state: new FormControl(),
@@ -108,7 +108,9 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.recalculatePriceBreakdown();
             });
     }
-
+    public noWhitespaceValidator(control: FormControl) {
+        return (control.value || '' ).trim().length? null : { 'whitespace': true };
+    }
     get companyFormGroup() {
         return this.customerForm.controls.company as FormGroup;
     }
