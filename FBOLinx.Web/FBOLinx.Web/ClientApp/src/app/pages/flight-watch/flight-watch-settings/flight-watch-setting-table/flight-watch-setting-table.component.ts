@@ -104,7 +104,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
         }
-        if(changes.selectedAircraft){
+        if(changes.selectedAircraft?.currentValue?.tailNumber){
             this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
         }
     }

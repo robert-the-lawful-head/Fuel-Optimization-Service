@@ -90,7 +90,11 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             if(!value.data) return;
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
-                    this.flightWatchData = value.data;
+                    this.flightWatchData = value.data?.filter((row: FlightWatchModelResponse) => {
+                        return (row.arrivalICAO == row.focusedAirportICAO) ||
+                        (row.departureICAO == row.focusedAirportICAO &&
+                            row.status != null);
+                    });
                     this.isStable = true;
                 }else{
                     this.flightWatchData = [];

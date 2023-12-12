@@ -194,7 +194,8 @@ export class FlightWatchSettingsComponent extends GridBase {
         });
         this.departures = data?.filter((row: FlightWatchModelResponse) => {
             return (
-                row.departureICAO == row.focusedAirportICAO
+                row.departureICAO == row.focusedAirportICAO &&
+                row.status != null
             );
         });
     }
