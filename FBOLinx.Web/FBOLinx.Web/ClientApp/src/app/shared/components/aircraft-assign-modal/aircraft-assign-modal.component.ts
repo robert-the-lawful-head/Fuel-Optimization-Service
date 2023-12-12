@@ -45,12 +45,7 @@ export class AircraftAssignModalComponent implements OnInit {
             .getAircraftSizes()
             .subscribe((data: any) => (this.aircraftSizes = data));
         this.filteredCostumers = this.data.customers;
-    }
-    ngOnChanges(changes: SimpleChanges): void {
-        console.log("🚀 ~ file: aircraft-assign-modal.component.ts:49 ~ AircraftAssignModalComponent ~ ngOnChanges ~ changes:", changes)
-        // if(changes.data.data.customers)
-        // this.filteredCostumers = this.data.customers;
-
+        this.selectedCompany = this.data.customers[0].companyId;
     }
     public onClose() {
         this.dialogRef.close();
