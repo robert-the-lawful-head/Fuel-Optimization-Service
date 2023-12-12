@@ -105,6 +105,9 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
         }
+        if(changes.selectedAircraft?.currentValue?.tailNumber){
+            this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
+        }
     }
 
     updateColumns(columns: ColumnType[]): void{
