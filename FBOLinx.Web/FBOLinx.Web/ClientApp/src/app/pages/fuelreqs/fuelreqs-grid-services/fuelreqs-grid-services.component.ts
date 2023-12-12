@@ -37,6 +37,9 @@ export class FuelreqsGridServicesComponent implements OnInit {
     @Input() public associatedFuelOrderId: number | null = null;
     @Input() public fuelerlinxTransactionId: number | null = null;
     @Input() public servicesAndFees: string[];
+    @Output() completedServicesChanged: EventEmitter<number> = new EventEmitter();
+    @Output() totalServicesChanged: EventEmitter<any> = new EventEmitter();
+
     public newServiceOrderItem: ServiceOrderItem;
     fuelreqsServicesAndFeesGridDisplay: ServiceOrderItem[] = [];
     isLoading: boolean = true;
@@ -56,18 +59,32 @@ export class FuelreqsGridServicesComponent implements OnInit {
         if (this.serviceOrderItems != null)
             this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems;
 
+        this.sortGrid();
+
         this.resetNewServiceOrderItem();
 
         this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
         this.isLoading = false;
     }
 
     onArchiveServices(serviceOrderItems: ServiceOrderItem[]) {
-        this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems;
+        this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems.filter((s) => s.serviceName != '');
+        this.sortGrid();
+
+        var isCompleted = this.fuelreqsServicesAndFeesGridDisplay[0].isCompleted;
+        if (isCompleted)
+            this.completedServicesChanged.emit(this.fuelreqsServicesAndFeesGridDisplay.length);
+        else
+            this.completedServicesChanged.emit(0);
+
+        this.resetNewServiceOrderItem();
+
+        this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
 
         serviceOrderItems.forEach((serviceOrderItem) => {
             if (serviceOrderItem.serviceName != "")
-                this.updateCompletedFlag(serviceOrderItem);
+                this.updateCompletedFlag(serviceOrderItem, true);
         });
     }
 
@@ -104,7 +121,9 @@ export class FuelreqsGridServicesComponent implements OnInit {
                         numberOfCompletedItems: 0,
                         isCompleted: false,
                         customerInfoByGroup: null,
-                        customerAircraft: null
+                        customerAircraft: null,
+                        numberOfTotalServices: 0,
+                        isActive: false
                     }
 
                     this.serviceOrderService.createServiceOrder(newServiceOrder).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
@@ -118,10 +137,15 @@ export class FuelreqsGridServicesComponent implements OnInit {
                                 else {
                                     serviceOrderItem.isAddMode = false;
                                     serviceOrderItem.isAdding = false;
+                                    serviceOrderItem.oid = responseItem.result.oid;
+
+                                    this.sortGrid();
 
                                     this.resetNewServiceOrderItem();
 
                                     this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
+                                    this.totalServicesChanged.emit();
                                 }
                             });
                         }
@@ -137,10 +161,15 @@ export class FuelreqsGridServicesComponent implements OnInit {
                 else {
                     serviceOrderItem.isAddMode = false;
                     serviceOrderItem.isAdding = false;
+                    serviceOrderItem.oid = response.result.oid;
+
+                    this.sortGrid();
 
                     this.resetNewServiceOrderItem();
 
                     this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
+                    this.totalServicesChanged.emit();
                 }
             });
         }
@@ -151,12 +180,16 @@ export class FuelreqsGridServicesComponent implements OnInit {
         service.isEditMode = false;
     }
 
-    updateCompletedFlag(serviceAndfee: ServiceOrderItem): void {
+    updateCompletedFlag(serviceAndfee: ServiceOrderItem, isArchiving: boolean = false): void {
         if (serviceAndfee.isCompleted) {
             serviceAndfee.completionDateTimeUtc = moment.utc().toDate();
             serviceAndfee.completedByUserId = this.sharedService.currentUser.oid;
             serviceAndfee.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
+            if (!isArchiving)
+                this.completedServicesChanged.emit(1);
         }
+        else if (!isArchiving)
+            this.completedServicesChanged.emit(-1);
 
         this.saveServiceOrderItem(serviceAndfee);
     }
@@ -187,6 +220,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
                     alert('Error deleting service order item: ' + response.message);
                 else {
                     this.fuelreqsServicesAndFeesGridDisplay.splice(this.fuelreqsServicesAndFeesGridDisplay.indexOf(serviceAndfee), 1);
+                    this.completedServicesChanged.emit(-1);
                 }
             });
         });
@@ -208,5 +242,11 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     private resetNewServiceOrderItem() {
         this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: (this.serviceOrderId == undefined || this.serviceOrderId == null ? 0 : this.serviceOrderId), quantity: 1, isCompleted: false, completionDateTimeUtc: null, isEditMode: false, isAddMode: true, isAdding: false };
+    }
+
+    private sortGrid() {
+        this.fuelreqsServicesAndFeesGridDisplay.sort(((a, b) => {
+            return a.isCompleted && a.serviceName != '' ? 1 : -1 // `false` values first
+        }));
     }
 }

@@ -72,7 +72,9 @@ export class ServiceOrdersListComponent implements OnInit {
             numberOfCompletedItems: 0,
             isCompleted: false,
             customerInfoByGroup: null,
-            customerAircraft: null
+            customerAircraft: null,
+            numberOfTotalServices: 0,
+            isActive: false
         };
         const config: MatDialogConfig = {
             disableClose: true,

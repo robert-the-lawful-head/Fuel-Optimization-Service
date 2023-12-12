@@ -359,7 +359,9 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             numberOfCompletedItems: 0,
             isCompleted: false,
             customerInfoByGroup: null,
-            customerAircraft: null
+            customerAircraft: null,
+            numberOfTotalServices: 0,
+            isActive: false
         };
         const config: MatDialogConfig = {
             disableClose: true,
@@ -374,6 +376,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         dialogRef.afterClosed().subscribe((result: FuelReq) => {
             if (!result)
                 return;
+            result.serviceOrder = newServiceOrder;
             this.fuelreqsData.push(result);
             this.refreshTable();
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
@@ -406,7 +409,11 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                         serviceOrderItem.isCompleted = true;
                 })
 
-                this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+                if (this.fuelReqGridServicesComponent != null)
+                    this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+                else {
+
+                }
 
                 var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
                 fuelReq.serviceOrder.serviceOrderItems = null;
@@ -433,5 +440,40 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
         }
+    }
+
+    completedServicesChanged(fuelReq: FuelReq, valueChanged: number) {
+        if (fuelReq.serviceOrder.numberOfTotalServices == valueChanged)
+            fuelReq.serviceOrder.numberOfCompletedItems = valueChanged;
+        else {
+            if (valueChanged > 0)
+                fuelReq.serviceOrder.numberOfCompletedItems++;
+            else if (valueChanged < 0)
+                fuelReq.serviceOrder.numberOfCompletedItems--;
+            else {
+                fuelReq.serviceOrder.numberOfCompletedItems = 0;
+            }
+        }
+
+        if (fuelReq.serviceOrder.numberOfCompletedItems == 0) {
+            fuelReq.serviceOrder.isActive = false;
+            fuelReq.serviceOrder.isCompleted = false;
+        }
+        else if (fuelReq.serviceOrder.numberOfCompletedItems == 1 && fuelReq.serviceOrder.numberOfTotalServices > 1) {
+            fuelReq.serviceOrder.isActive = true;
+            fuelReq.serviceOrder.isCompleted = false;
+        }
+        else if (fuelReq.serviceOrder.numberOfCompletedItems == fuelReq.serviceOrder.numberOfTotalServices) {
+            fuelReq.serviceOrder.isCompleted = true;
+            fuelReq.serviceOrder.isActive = false;
+        }
+        else {
+            fuelReq.serviceOrder.isCompleted = false;
+            fuelReq.serviceOrder.isActive = true;
+        }
+    }
+
+    totalServicesChanged(fuelReq: FuelReq) {
+        fuelReq.serviceOrder.numberOfTotalServices += 1;
     }
 }

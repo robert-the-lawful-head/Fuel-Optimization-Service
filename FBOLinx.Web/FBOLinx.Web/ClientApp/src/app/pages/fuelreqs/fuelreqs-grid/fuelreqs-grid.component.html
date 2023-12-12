@@ -206,7 +206,7 @@
                 </td>
             </ng-container>
 
-            <!-- ETd -->
+            <!-- ETD -->
             <ng-container matColumnDef="etd">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
                 <td *matCellDef="let fuelreq" mat-cell>
@@ -277,8 +277,8 @@
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>Services Completed</th>
                 <td *matCellDef="let fuelreq"
                     mat-cell class="services-completed">
-                    <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
-                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
+                    <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
+                    <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
 
                 </td>
             </ng-container>
@@ -308,7 +308,7 @@
                     <div class="example-element-detail"
                          [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
                         <div class="example-element-description">
-                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId"></app-fuelreqs-grid-services>
+                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element)"></app-fuelreqs-grid-services>
                         </div>
                     </div>
                 </td>
@@ -319,9 +319,8 @@
                 *matRowDef="let element; columns: getVisibleColumns()"
                 class="example-element-row"
                 [class.example-expanded-row]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())"
-                (click)="
-                                toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())
-                                "></tr>
+                (click)="toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
+            </tr>
             <tr mat-row
                 *matRowDef="let row; columns: ['expandedDetail']"
                 class="example-detail-row"></tr>
