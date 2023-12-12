@@ -54,6 +54,7 @@ export class FlightWatchMapComponent
 
     @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
+    @Output() popUpClosed = new EventEmitter<FlightWatchModelResponse>();
 
     @ViewChild('aircraftPopupContainer')
     aircraftPopupContainer: AircraftPopupContainerComponent;
@@ -333,16 +334,14 @@ export class FlightWatchMapComponent
 
         source.setData(data);
 
-        if (this.currentPopup.isPopUpOpen) {
+        if (Object.keys(this.openedPopUps.length).length > 0) {
             let selectedFlight = marker.data.find(
-                (key) => this.data[key].tailNumber == this.currentPopup.popupId
+                (key) => this.data[key].tailNumber in this.openedPopUps
             );
             if (!selectedFlight){
                 this.closeAllPopUps();
-                this.currentPopup.isPopUpOpen = false;
             }else{
                 this.setDefaultPopUpOpen(selectedFlight);
-                this.currentPopup.isPopUpOpen = true;
             }
         }
         if(!isReversedLayers)
@@ -354,11 +353,11 @@ export class FlightWatchMapComponent
             return;
         }
 
-        this.currentPopup.coordinates = [
+        this.openedPopUps[selectedFlightId].coordinates = [
             this.data[selectedFlightId].longitude,
             this.data[selectedFlightId].latitude,
         ];
-        this.currentPopup.popupInstance.setLngLat(this.currentPopup.coordinates);
+        this.openedPopUps[selectedFlightId].popupInstance.setLngLat(this.openedPopUps[selectedFlightId].coordinates);
     }
     setMapMarkersData(flights: string[]): void{
         let activeFuelRelease = flights.filter((key) => { return this.data[key].isActiveFuelRelease }) || [];
@@ -401,20 +400,23 @@ export class FlightWatchMapComponent
         self.selectedAircraft = id;
         self.markerClicked.emit(this.data[id]);
 
-        self.currentPopup.isPopUpOpen = true;
-        self.currentPopup.coordinates = [
+        self.openedPopUps[self.selectedAircraft] = {
+            coordinates: [0,0],
+            popupId: '',
+            popupInstance: null
+        };
+        self.openedPopUps[self.selectedAircraft].coordinates = [
             this.data[id].longitude,
             this.data[id].latitude,
         ];
-        self.currentPopup.popupId = id;
-        self.currentPopup.popupInstance = self.openPopupRenderComponent(
-            self.currentPopup.coordinates,
-            self.aircraftPopupContainerRef,
-            self.currentPopup
+
+        self.openedPopUps[self.selectedAircraft].popupInstance = self.openPopupRenderComponent(
+            self.openedPopUps[self.selectedAircraft].coordinates,
+            self.aircraftPopupContainerRef
         );
-        self.currentPopup.popupInstance.on('close', function(event) {
+        self.openedPopUps[self.selectedAircraft].popupInstance.on('close', function(event) {
             self.selectedAircraft =  null;
-            self.currentPopup.isPopUpOpen = false;
+            self.popUpClosed.emit();
             try {
                 self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
             } catch (err) {
@@ -506,15 +508,31 @@ export class FlightWatchMapComponent
 
         if (!selectedFlight) return;
 
-        this.currentPopup.coordinates = [
+        this.openedPopUps[selectedFlight] = {
+            coordinates: [0,0],
+            popupId: '',
+            popupInstance: null
+        };
+
+        this.openedPopUps[selectedFlight].coordinates = [
             this.data[selectedFlight].longitude,
             this.data[selectedFlight].latitude,
         ];
         this.openPopupRenderComponent(
-            this.currentPopup.coordinates,
-            this.aircraftPopupContainerRef,
-            this.currentPopup
+            this.openedPopUps[selectedFlight].coordinates,
+            this.aircraftPopupContainerRef
         );
+    }
+    closeAircraftPopUpByTailNumber(tailNumber: string): void {
+        let selectedFlight = keys(this.data).find(
+            (key) => this.data[key].tailNumber == tailNumber
+        );
+
+        if (!selectedFlight) return;
+
+        this.openedPopUps[selectedFlight].popupInstance.remove();
+
+        delete this.openedPopUps[selectedFlight];
     }
     goToCurrentIcao(){
         this.goToAirport(this.icao);
@@ -550,5 +568,7 @@ export class FlightWatchMapComponent
         }
 
         this.map.resize();
+    }
+    onPopUpClosed(): void {
     }
 }

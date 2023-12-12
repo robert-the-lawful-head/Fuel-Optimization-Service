@@ -37,6 +37,8 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() showCommercialAircraftFilter = new EventEmitter<boolean>();
     @Output() aicraftClick = new EventEmitter<FlightWatchModelResponse>();
+    @Output() popUpClosed = new EventEmitter<FlightWatchModelResponse>();
+
 
     @ViewChild('map') map: FlightWatchMapComponent;
 

@@ -25,12 +25,14 @@ export class FlightWatchSettingsComponent extends GridBase {
     @Input() showFilters: boolean =  true;
     @Input() isLobbyView: boolean =  false;
     @Input() selectedAircraft: FlightWatchModelResponse = null;
+    @Input() closedAircraft: FlightWatchModelResponse = null;
 
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
     @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() closeAircraftPopup = new EventEmitter<string>();
 
     @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
     @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;

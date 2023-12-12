@@ -58,6 +58,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     loading = false;
     center: LngLatLike = null;
     selectedFlightWatch: FlightWatchModelResponse;
+    closedFlightWatch: FlightWatchModelResponse;
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
 
     flightWatchData: FlightWatchModelResponse[];
@@ -136,10 +137,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         else this.isMapShowing = true;
     }
 
-    onAircraftInfoClose() {
-        this.selectedFlightWatch = undefined;
-    }
-
     onTextFilterChanged(filter: string): void {
         this.currentFilters.filterText = filter;
         this.applyFiltersToData();
@@ -211,7 +208,12 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     openAircraftPopup(tailNumber: string) {
+        console.log("🚀 ~ file: flight-watch.component.ts:211 ~ FlightWatchComponent ~ openAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
+    }
+    closedAircraftPopup(tailNumber: string) {
+        console.log("🚀 ~ file: flight-watch.component.ts:215 ~ FlightWatchComponent ~ closedAircraftPopup ~ tailNumber:", tailNumber)
+        this.mapWrapper.map.closeAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize() {
         if (!this.drawer.opened) return;
@@ -232,5 +234,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     }
     onAircraftClick(flightWatch: FlightWatchModelResponse) {
         this.selectedFlightWatch = flightWatch;
+    }
+    onPopUpClosed(flightWatch: FlightWatchModelResponse) {
+        this.closedFlightWatch = flightWatch;
     }
 }

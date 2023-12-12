@@ -34,6 +34,7 @@
         [customers]="customers"
         [selectedAircraft]="selectedAircraft"
         (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (closeAircraftPopup)="closeAircraftPopup.emit($event)"
     ></app-flight-watch-setting-table>
 </div>
 <div class="data-container">
@@ -47,5 +48,6 @@
         [customers]="customers"
         [selectedAircraft]="selectedAircraft"
         (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (closeAircraftPopup)="closeAircraftPopup.emit($event)"
     ></app-flight-watch-setting-table>
 </div>

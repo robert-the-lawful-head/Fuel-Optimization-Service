@@ -35,8 +35,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() isLobbyView: boolean =  false;
     @Input() customers: any[] =  [];
     @Input() selectedAircraft: FlightWatchModelResponse = null;
+    @Input() closedAircraft: FlightWatchModelResponse = null;
 
     @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() closeAircraftPopup = new EventEmitter<string>();
+
     @Output() saveSettings = new EventEmitter();
 
     @ViewChild(MatSort) sort: MatSort;
@@ -106,6 +109,10 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
         if(changes.selectedAircraft?.currentValue?.tailNumber){
             this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
+        }
+        if(changes.closedAircraft?.currentValue?.tailNumber){
+            if(this.expandedElement == changes.closedAircraft.currentValue.tailNumber)
+                this.expandedElement = null;
         }
     }
     updateColumns(columns: ColumnType[]): void{
@@ -286,7 +293,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return CallbackComponent.aircraft;
     }
     onRowrowSelect(element: Swim) {
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:289 ~ FlightWatchSettingTableComponent ~ onRowrowSelect ~ element:", element)
         this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
-        this.openAircraftPopup.emit(element.tailNumber);
+        if(this.expandedElement == null)
+            this.closeAircraftPopup.emit(element.tailNumber);
+        else
+            this.openAircraftPopup.emit(element.tailNumber);
     }
 }

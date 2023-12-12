@@ -30,6 +30,7 @@
                         (showCommercialAircraftFilter)="filterCommercialAircrafts($event)"
                         (icaoChanged)="updateIcao($event)"
                         (aicraftClick)="onAircraftClick($event)"
+                        (popUpClosed)="onPopUpClosed($event)"
                         style="width: 100%"
                         [center]="center"
                         [data]="flightWatchData"
@@ -63,6 +64,8 @@
                     [isLobbyView]="isLobbyView"
                     [selectedAircraft]="selectedFlightWatch"
                     (openAircraftPopup)="openAircraftPopup($event)"
+                    [closedAircraft]="closedFlightWatch"
+                    (closeAircraftPopup)="closedAircraftPopup($event)"
                 ></app-flight-watch-settings>
             </ng-container>
         </mat-drawer>

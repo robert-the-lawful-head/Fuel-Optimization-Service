@@ -19,11 +19,7 @@
                 <button
                     mat-icon-button
                     aria-label="expand row"
-                    (click)="
-                        expandedElement =
-                            expandedElement === element.tailNumber ? null : element.tailNumber;
-                        $event.stopPropagation()
-                    "
+                    (click)="onRowrowSelect(element);$event.stopPropagation()                    "
                 >
                     <mat-icon *ngIf="expandedElement !== element.tailNumber"
                         >keyboard_arrow_down</mat-icon
