@@ -264,10 +264,10 @@ export abstract class MapboxglBase {
             img.src = src;
         });
     }
-    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef):mapboxgl.Popup{
+    openPopupRenderComponent(coordinates: [number,number],elemRef: string):mapboxgl.Popup{
         return new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setDOMContent(elemRef.nativeElement)
+            .setHTML(elemRef)
             .setMaxWidth("330px")
             .addTo(this.map);
     }

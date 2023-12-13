@@ -402,10 +402,10 @@ export class FlightWatchMapComponent
         this.createPopUp(self, id);
 
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
-
-        self.markerClicked.emit(this.data[id]);
     }
-    private createPopUp(self: FlightWatchMapComponent, id: string): void{
+    private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
+        self.markerClicked.emit(this.data[id]);
+
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}
 
         self.openedPopUps[id].coordinates = [
@@ -415,9 +415,12 @@ export class FlightWatchMapComponent
 
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
 
+        await new Promise(f => setTimeout(f, 500));
+
+        let html =  self.aircraftPopupContainerRef.nativeElement.innerHTML;
         self.openedPopUps[id].popupInstance = self.openPopupRenderComponent(
             self.openedPopUps[id].coordinates,
-            self.aircraftPopupContainerRef
+            html
         );
         self.openedPopUps[id].popupInstance.on('close', function(event) {
             self.selectedAircraft = self.selectedAircraft.filter(e => e != id);
@@ -429,7 +432,7 @@ export class FlightWatchMapComponent
                 console.log("attempt to filter on an undefined map");
             }
         });
-        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
+        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id]);
     }
     getFbosAndLoad() {
         if (this.clusters) return;
@@ -566,7 +569,5 @@ export class FlightWatchMapComponent
         }
 
         this.map.resize();
-    }
-    onPopUpClosed(): void {
     }
 }

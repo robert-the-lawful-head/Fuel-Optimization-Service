@@ -286,11 +286,15 @@ export class FlightWatchSettingTableComponent implements OnInit {
         return CallbackComponent.aircraft;
     }
     onRowrowClick(element: Swim) {
+        if(this.expandedElement != element.tailNumber)
+            this.closeAircraftPopup.emit(this.expandedElement);
+
         this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
+
         if(this.expandedElement == null)
             this.closeAircraftPopup.emit(element.tailNumber);
         else
-            this.openAircraftPopup.emit(element.tailNumber);
+            this.openAircraftPopup.emit(this.expandedElement);
     }
     expandRow(tailNumber: string):  void {
         if(this.data.find(x => x.tailNumber == tailNumber)){
