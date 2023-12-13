@@ -40,7 +40,7 @@
         >
         <ng-template pTemplate="footer">
             <div class="add-custom-customer">
-                <a (click)="createCustomer()">&lt;Add Custom&gt;</a>
+                <a (click)="addCustomCustomer()">&lt;Add Custom&gt;</a>
             </div>
         </ng-template>
     </p-dropdown>
@@ -49,9 +49,7 @@
 </div>
 <div mat-dialog-actions class="mt-5 text-center">
     <button
-        [disabled]="
-            loading || !data.tailNumber || !selectedAircraft || !selectedCompany
-        "
+        [disabled]="isSubmitDisabled()"
         (click)="onSubmit()"
         class="mr-1"
         color="accent"

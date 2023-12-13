@@ -50,7 +50,7 @@ export class AircraftAssignModalComponent implements OnInit {
     public onClose() {
         this.dialogRef.close();
     }
-    createCustomer(){
+    addCustomCustomer(){
         this.isCustomerEditable = !this.isCustomerEditable;
         this.selectedCompany =  this.customerFilter;
     }
@@ -112,5 +112,8 @@ export class AircraftAssignModalComponent implements OnInit {
                 } as Partial<FlightWatchHistorical>);
             });
         }
+    }
+    isSubmitDisabled(): boolean {
+        return  this.loading || !this.data.tailNumber || !this.selectedAircraft || !this.selectedCompany || this.selectedCompany.toString().trim() === '';
     }
 }

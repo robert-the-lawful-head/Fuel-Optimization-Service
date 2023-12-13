@@ -26,6 +26,7 @@ import { PricingtemplatesService } from 'src/app/services/pricingtemplates.servi
 import { PriceBreakdownComponent } from 'src/app/shared/components/price-breakdown/price-breakdown.component';
 
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { FormValidationHelperService } from 'src/app/helpers/forms/formValidationHelper.service';
 
 enum WizardStep {
     COMPANY_INFO,
@@ -68,7 +69,8 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
         private customCustomerTypesService: CustomcustomertypesService,
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService ,
-        private route : ActivatedRoute
+        private route : ActivatedRoute,
+        private formValidationHelperService: FormValidationHelperService
     ) {
         this.customerForm = new FormGroup({
             aircraft: new FormArray([]),
@@ -76,7 +78,7 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 address: new FormControl(),
                 certificateType: new FormControl(),
                 city: new FormControl(),
-                company: new FormControl('', [Validators.required, this.noWhitespaceValidator]),
+                company: new FormControl('', [Validators.required, this.formValidationHelperService.noWhitespaceValidator]),
                 country: new FormControl(),
                 mainPhone: new FormControl(),
                 state: new FormControl(),
@@ -107,9 +109,6 @@ export class CustomersDialogNewCustomerComponent implements OnInit {
                 this.feesAndTaxes = feesAndTaxes;
                 this.recalculatePriceBreakdown();
             });
-    }
-    public noWhitespaceValidator(control: FormControl) {
-        return (control.value || '' ).trim().length? null : { 'whitespace': true };
     }
     get companyFormGroup() {
         return this.customerForm.controls.company as FormGroup;
