@@ -181,7 +181,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             }
 
             return result
-            .OrderByDescending(row => row.CreatedDateTime)
+            .OrderByDescending(row => (row.BoxTransmissionDateTimeUtc > row.AircraftPositionDateTimeUtc)?row.BoxTransmissionDateTimeUtc:row.AircraftPositionDateTimeUtc)
             .GroupBy(row => row.AircraftHexCode)
             .Select(grouped => grouped.First())
             .ToList();
