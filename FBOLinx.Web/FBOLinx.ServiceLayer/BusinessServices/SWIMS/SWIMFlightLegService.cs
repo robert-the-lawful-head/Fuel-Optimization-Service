@@ -82,8 +82,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
                 result = departures;
                 result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
             }
-
-            return result;
+            return result
+            .OrderByDescending(row => row.LastUpdated)
+            .GroupBy(row => row.AircraftIdentification)
+            .Select(grouped => grouped.First())
+            .ToList();
         }
     }
 }
