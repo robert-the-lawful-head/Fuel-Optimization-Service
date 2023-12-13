@@ -418,7 +418,7 @@ export class FlightWatchMapComponent
         await new Promise(f => setTimeout(f, 500));
 
         let html =  self.aircraftPopupContainerRef.nativeElement.innerHTML;
-        self.openedPopUps[id].popupInstance = self.openPopupRenderComponent(
+        self.openedPopUps[id].popupInstance = self.openPopupRenderHtml(
             self.openedPopUps[id].coordinates,
             html
         );

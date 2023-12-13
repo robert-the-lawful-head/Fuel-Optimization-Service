@@ -264,10 +264,17 @@ export abstract class MapboxglBase {
             img.src = src;
         });
     }
-    openPopupRenderComponent(coordinates: [number,number],elemRef: string):mapboxgl.Popup{
+    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef):mapboxgl.Popup{
         return new mapboxgl.Popup()
             .setLngLat(coordinates)
-            .setHTML(elemRef)
+            .setDOMContent(elemRef.nativeElement)
+            .setMaxWidth("330px")
+            .addTo(this.map);
+    }
+    openPopupRenderHtml(coordinates: [number,number],html: string):mapboxgl.Popup{
+        return new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(html)
             .setMaxWidth("330px")
             .addTo(this.map);
     }
