@@ -111,6 +111,7 @@ import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
 import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
+import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -236,8 +237,8 @@ import { FavoritesService } from './services/favorites.service';
         DocumentService,
         ServiceOrderService,
         SnackBarService,
-        FavoritesService
-
+        FavoritesService,
+        FormValidationHelperService
     ],
 })
 export class AppModule { }
