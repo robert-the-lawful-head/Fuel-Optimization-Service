@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.ServiceLayer.EntityServices;
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore.Storage;
-using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace FBOLinx.ServiceLayer.Test.Repositories
 {
