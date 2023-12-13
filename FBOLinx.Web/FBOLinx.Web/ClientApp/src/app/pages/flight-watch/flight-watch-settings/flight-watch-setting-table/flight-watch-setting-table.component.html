@@ -19,7 +19,7 @@
                 <button
                     mat-icon-button
                     aria-label="expand row"
-                    (click)="onRowrowSelect(element);$event.stopPropagation()                    "
+                    (click)="onRowrowClick(element);$event.stopPropagation()                    "
                 >
                     <mat-icon *ngIf="expandedElement !== element.tailNumber"
                         >keyboard_arrow_down</mat-icon
@@ -155,7 +155,7 @@
             class="example-element-row"
             [ngClass]="{'highlight': expandedElement === element.tailNumber}"
             [class.example-expanded-row]="expandedElement === element.tailNumber"
-            (click)="onRowrowSelect(element)"
+            (click)="onRowrowClick(element)"
         ></tr>
         <tr
             mat-row

@@ -65,7 +65,14 @@ export class FlightWatchSettingsComponent extends GridBase {
             this.setData(changes.data.currentValue);
         }
     }
-
+    expandRow(tailNumber: string): void {
+        this.arrivalsTable.expandRow(tailNumber);
+        this.departuresTable.expandRow(tailNumber);
+    }
+    collapseRow(tailNumber: string): void {
+        this.arrivalsTable.collapseRow(tailNumber);
+        this.departuresTable.collapseRow(tailNumber);
+    }
     get aircraftTypes() {
         return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')
             .map((type) => ({

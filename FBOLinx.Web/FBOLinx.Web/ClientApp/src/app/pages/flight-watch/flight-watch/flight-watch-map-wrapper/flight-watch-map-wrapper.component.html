@@ -2,7 +2,7 @@
     #map
     (setIcaoList)="setIcaoList.emit($event)"
     (markerClicked)="updateSelectedAircraft($event)"
-    (popUpClosed)="popUpClosed.emit(this.selectedPopUp)"
+    (popUpClosed)="popUpClosed.emit($event)"
     style="width: 100%"
     [selectedPopUp]="selectedPopUp"
     [center]="center"

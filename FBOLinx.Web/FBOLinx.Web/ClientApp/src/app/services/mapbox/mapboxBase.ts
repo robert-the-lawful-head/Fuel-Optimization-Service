@@ -6,6 +6,7 @@ export interface PopUpProps{
     coordinates: [number,number];
     popupId: string;
     popupInstance: mapboxgl.Popup
+    isOpen: boolean;
 }
 export abstract class MapboxglBase {
     public map: mapboxgl.Map;
@@ -13,7 +14,8 @@ export abstract class MapboxglBase {
     public popUpPropsNewInstance : PopUpProps = {
         coordinates: [0,0],
         popupId: '',
-        popupInstance: null
+        popupInstance: null,
+        isOpen: true
     };
     buildMap(
         center: mapboxgl.LngLatLike,

@@ -24,6 +24,7 @@ import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-serv
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
+import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 
 const BREADCRUMBS: any[] = [
     {
@@ -50,6 +51,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild(FlightWatchMapWrapperComponent)
     private mapWrapper: FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
+    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
 
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = BREADCRUMBS;
@@ -57,8 +59,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     isStable = true;
     loading = false;
     center: LngLatLike = null;
-    selectedFlightWatch: FlightWatchModelResponse;
-    closedFlightWatch: FlightWatchModelResponse;
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
 
     flightWatchData: FlightWatchModelResponse[];
@@ -233,9 +233,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     onAircraftClick(flightWatch: FlightWatchModelResponse) {
-        this.selectedFlightWatch = flightWatch;
+        this.flightwatchSettings.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.closedFlightWatch = flightWatch;
+        this.flightwatchSettings.collapseRow(flightWatch.tailNumber);
     }
 }

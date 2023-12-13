@@ -52,6 +52,7 @@
         >
             <ng-container *ngIf="flightWatchData">
                 <app-flight-watch-settings
+                    #flightwatchSettings
                     [data]="flightWatchData"
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
@@ -62,9 +63,7 @@
                     (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
                     [showFilters]="showFilters"
                     [isLobbyView]="isLobbyView"
-                    [selectedAircraft]="selectedFlightWatch"
                     (openAircraftPopup)="openAircraftPopup($event)"
-                    [closedAircraft]="closedFlightWatch"
                     (closeAircraftPopup)="closedAircraftPopup($event)"
                 ></app-flight-watch-settings>
             </ng-container>

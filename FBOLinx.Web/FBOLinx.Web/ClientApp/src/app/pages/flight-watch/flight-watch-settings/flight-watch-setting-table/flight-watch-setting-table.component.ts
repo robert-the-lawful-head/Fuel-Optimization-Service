@@ -16,6 +16,7 @@ import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { tail } from 'lodash';
 @Component({
     selector: 'app-flight-watch-setting-table',
     templateUrl: './flight-watch-setting-table.component.html',
@@ -34,8 +35,6 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() columns: ColumnType[];
     @Input() isLobbyView: boolean =  false;
     @Input() customers: any[] =  [];
-    @Input() selectedAircraft: FlightWatchModelResponse = null;
-    @Input() closedAircraft: FlightWatchModelResponse = null;
 
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() closeAircraftPopup = new EventEmitter<string>();
@@ -107,14 +106,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
         }
-        if(changes.selectedAircraft?.currentValue?.tailNumber){
-            this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
-        }
-        if(changes.closedAircraft?.currentValue?.tailNumber){
-            if(this.expandedElement == changes.closedAircraft.currentValue.tailNumber)
-                this.expandedElement = null;
-        }
     }
+
     updateColumns(columns: ColumnType[]): void{
         this.columns = columns;
         this.allColumnsToDisplay = this.getVisibleColumns();
@@ -292,12 +285,27 @@ export class FlightWatchSettingTableComponent implements OnInit {
     get getCallBackComponent(): CallbackComponent{
         return CallbackComponent.aircraft;
     }
-    onRowrowSelect(element: Swim) {
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:289 ~ FlightWatchSettingTableComponent ~ onRowrowSelect ~ element:", element)
+    onRowrowClick(element: Swim) {
         this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
         if(this.expandedElement == null)
             this.closeAircraftPopup.emit(element.tailNumber);
         else
             this.openAircraftPopup.emit(element.tailNumber);
+    }
+    expandRow(tailNumber: string):  void {
+        if(this.data.find(x => x.tailNumber == tailNumber)){
+            this.expandedElement = tailNumber;
+            console.log("row found on "+ (this.isArrival ? "arrivals" : "departures") + " table");
+        }
+        else{
+            this.expandedElement = null;
+        }
+    }
+    collapseRow(tailNumber: string): void {
+        if(!tailNumber)
+            this.expandedElement = null;
+
+        if(this.expandedElement == tailNumber)
+            this.expandedElement = null;
     }
 }
