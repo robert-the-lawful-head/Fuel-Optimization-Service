@@ -406,6 +406,8 @@ export class FlightWatchMapComponent
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
     }
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
+        this.updatePopUpData.emit(self.data[id]);
+
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}
 
         self.openedPopUps[id].coordinates = [
@@ -523,7 +525,6 @@ export class FlightWatchMapComponent
         this.selectedAircraft.push(selectedFlight);
 
        this.createPopUp(this, selectedFlight);
-       this.updatePopUpData.emit(this.data[selectedFlight]);
 
        this.flyTo(this.flightWatchMapService.getMapCenterByCoordinates(this.data[selectedFlight].latitude,this.data[selectedFlight].longitude));
     }
