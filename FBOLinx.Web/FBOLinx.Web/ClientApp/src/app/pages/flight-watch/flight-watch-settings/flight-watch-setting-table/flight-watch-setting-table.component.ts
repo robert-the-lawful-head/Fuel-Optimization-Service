@@ -301,6 +301,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     expandRow(tailNumber: string):  void {
         if(this.hasRowInTable(tailNumber)){
             this.expandedElement = tailNumber;
+            const selectedRow = document.getElementById(tailNumber);
+            selectedRow.scrollIntoView({block: 'center'});
         }
         else{
             this.expandedElement = null;
