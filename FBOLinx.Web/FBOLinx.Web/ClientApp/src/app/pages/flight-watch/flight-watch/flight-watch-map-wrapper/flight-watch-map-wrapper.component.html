@@ -1,7 +1,9 @@
 <app-flight-watch-map
     #map
     (setIcaoList)="setIcaoList.emit($event)"
-    (markerClicked)="updateSelectedAircraft($event)"
+    (markerClicked)="this.aicraftClick.emit($event)"
+    (popUpClosed)="popUpClosed.emit($event)"
+    (updatePopUpData)="updatePopUpData($event)"
     style="width: 100%"
     [selectedPopUp]="selectedPopUp"
     [center]="center"
