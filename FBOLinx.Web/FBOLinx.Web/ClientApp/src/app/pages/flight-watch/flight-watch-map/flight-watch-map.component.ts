@@ -524,6 +524,8 @@ export class FlightWatchMapComponent
 
        this.createPopUp(this, selectedFlight);
        this.updatePopUpData.emit(this.data[selectedFlight]);
+
+       this.flyTo(this.flightWatchMapService.getMapCenterByCoordinates(this.data[selectedFlight].latitude,this.data[selectedFlight].longitude));
     }
     closeAircraftPopUpByTailNumber(tailNumber: string): void {
         let selectedFlight = keys(this.data).find(
