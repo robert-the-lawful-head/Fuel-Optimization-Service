@@ -57,7 +57,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     async ngOnInit() {
         if (this.serviceOrderItems != null)
-            this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems;
+            this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems.filter(s => s.serviceName != "");
 
         this.sortGrid();
 

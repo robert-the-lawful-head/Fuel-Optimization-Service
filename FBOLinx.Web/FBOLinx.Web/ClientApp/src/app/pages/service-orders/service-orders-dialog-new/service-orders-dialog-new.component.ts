@@ -159,7 +159,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             dateCreated: null,
             icao: '',
             customerAircraftId: data.customerAircraftId,
-            timeStandard: 'L',
+            timeStandard: 'Z',
             cancelled: false,
             quotedVolume: 0,
             quotedPpg: 0,

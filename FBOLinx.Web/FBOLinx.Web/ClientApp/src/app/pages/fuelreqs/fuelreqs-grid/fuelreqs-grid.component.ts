@@ -36,6 +36,8 @@ import { ServiceOrderService } from '../../../services/serviceorder.service';
 import { EntityResponseMessage } from '../../../models/entity-response-message';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
+import { ServiceOrderItem } from '../../../models/service-order-item';
+import * as moment from 'moment';
 
 const initialColumns: ColumnType[] = [
     {
@@ -114,7 +116,7 @@ const initialColumns: ColumnType[] = [
 export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
-    @ViewChild(FuelreqsGridServicesComponent) fuelReqGridServicesComponent: FuelreqsGridServicesComponent;
+    @ViewChild(FuelreqsGridServicesComponent, { static: true }) fuelReqGridServicesComponent: FuelreqsGridServicesComponent;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
@@ -412,7 +414,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 if (this.fuelReqGridServicesComponent != null)
                     this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
                 else {
-
+                    this.saveServiceOrderItems(fuelReq.serviceOrder.serviceOrderItems);
+                    this.completedServicesChanged(fuelReq, fuelReq.serviceOrder.serviceOrderItems.length)
                 }
 
                 var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
@@ -431,7 +434,12 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                     serviceOrderItem.isCompleted = false;
             })
 
-            this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+            if (this.fuelReqGridServicesComponent != null)
+                this.fuelReqGridServicesComponent.onArchiveServices(fuelReq.serviceOrder.serviceOrderItems);
+            else {
+                this.completedServicesChanged(fuelReq, 0);
+                this.saveServiceOrderItems(fuelReq.serviceOrder.serviceOrderItems);
+            }
 
             var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
             fuelReq.serviceOrder.serviceOrderItems = null;
@@ -475,5 +483,21 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     totalServicesChanged(fuelReq: FuelReq) {
         fuelReq.serviceOrder.numberOfTotalServices += 1;
+    }
+
+    private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {
+        serviceOrderItems.forEach((serviceOrderItem) => {
+            if (serviceOrderItem.serviceName != "")
+
+                if (serviceOrderItem.isCompleted) {
+                    serviceOrderItem.completionDateTimeUtc = moment.utc().toDate();
+                    serviceOrderItem.completedByUserId = this.sharedService.currentUser.oid;
+                    serviceOrderItem.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
+                }
+
+            this.serviceOrderService.updateServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
+
+            });
+        });
     }
 }

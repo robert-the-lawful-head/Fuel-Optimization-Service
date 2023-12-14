@@ -318,6 +318,7 @@
             <tr mat-row
                 *matRowDef="let element; columns: getVisibleColumns()"
                 class="example-element-row"
+                [class.example-detail-row]="element.archived === true"
                 [class.example-expanded-row]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())"
                 (click)="toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
             </tr>

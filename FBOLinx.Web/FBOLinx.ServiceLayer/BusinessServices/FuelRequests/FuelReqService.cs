@@ -247,13 +247,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 var airport = new GeneralAirportInformation();
                 if (directOrders.Count > 0)
-                {
                     airport = await _AirportService.GetGeneralAirportInformation(directOrders[0].Icao);
-                    FuelReqDto.SetAirportLocalTimes(directOrders[0], airport);
-                }
+                else
+                    airport = await _AirportService.GetGeneralAirportInformation(fboRecord.FboAirport.Icao);
 
                 foreach (FuelReqDto order in directOrders)
                 {
+                    order.Eta = FuelReqDto.GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport);
+                    order.Etd = FuelReqDto.GetAirportLocalTime(order.Etd.GetValueOrDefault(), airport);
                     order.IsConfirmed = orderConfirmations.Any(x => x.SourceId == order.SourceId);
                     order.Fboid = fboId;
                     order.ServiceOrder = serviceOrders.Where(s => (s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == order.SourceId) || (s.AssociatedFuelOrderId > 0 && s.AssociatedFuelOrderId == order.Oid)).FirstOrDefault();
