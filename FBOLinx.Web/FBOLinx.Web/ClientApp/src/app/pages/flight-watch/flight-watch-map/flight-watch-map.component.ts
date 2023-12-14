@@ -55,6 +55,7 @@ export class FlightWatchMapComponent
     @Output() markerClicked = new EventEmitter<FlightWatchModelResponse>();
     @Output() setIcaoList = new EventEmitter<AcukwikAirport[]>();
     @Output() popUpClosed = new EventEmitter<FlightWatchModelResponse>();
+    @Output() updatePopUpData = new EventEmitter<FlightWatchModelResponse>();
 
     @ViewChild('aircraftPopupContainer')
     aircraftPopupContainer: AircraftPopupContainerComponent;
@@ -396,6 +397,7 @@ export class FlightWatchMapComponent
         if (self.selectedAircraft.includes(id)) {
             return;
         }
+        self.markerClicked.emit(this.data[id]);
 
         self.selectedAircraft.push(id);
 
@@ -404,8 +406,6 @@ export class FlightWatchMapComponent
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
     }
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
-        self.markerClicked.emit(this.data[id]);
-
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}
 
         self.openedPopUps[id].coordinates = [
@@ -523,6 +523,7 @@ export class FlightWatchMapComponent
         this.selectedAircraft.push(selectedFlight);
 
        this.createPopUp(this, selectedFlight);
+       this.updatePopUpData.emit(this.data[selectedFlight]);
     }
     closeAircraftPopUpByTailNumber(tailNumber: string): void {
         let selectedFlight = keys(this.data).find(

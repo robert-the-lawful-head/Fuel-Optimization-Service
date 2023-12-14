@@ -24,7 +24,6 @@ type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 export class FlightWatchMapWrapperComponent implements OnInit {
     @Input() center: mapboxgl.LngLatLike;
     @Input() data: FlightWatchModelResponse[];
-    @Input() selectedPopUp: FlightWatchModelResponse;
     @Input() isStable: boolean;
     @Input() icao: string;
     @Input() icaoList: string[];
@@ -47,6 +46,8 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public isShowAirportCodesEnabled = true;
     public isShowTaxiwaysEnabled = true;
     public flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
+    public selectedPopUp: FlightWatchModelResponse;
+
 
     constructor(private flightWatchMapService: FlightWatchMapService) {}
 
@@ -89,8 +90,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     resizeMap(isopen: boolean) {
         this.map.resizeMap(isopen);
     }
-    updateSelectedAircraft($event: FlightWatchModelResponse) {
+    updatePopUpData($event: FlightWatchModelResponse) {
         this.selectedPopUp = $event;
-        this.aicraftClick.emit($event);
     }
 }

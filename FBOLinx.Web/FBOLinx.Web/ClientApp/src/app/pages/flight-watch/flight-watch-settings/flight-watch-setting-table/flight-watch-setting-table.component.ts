@@ -15,8 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
-import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
-import { tail } from 'lodash';
+
 @Component({
     selector: 'app-flight-watch-setting-table',
     templateUrl: './flight-watch-setting-table.component.html',
@@ -296,16 +295,19 @@ export class FlightWatchSettingTableComponent implements OnInit {
         else
             this.openAircraftPopup.emit(this.expandedElement);
     }
+    hasRowInTable(tailNumber: string): boolean{
+        return this.data.find(x => x.tailNumber == tailNumber) ? true : false;
+    }
     expandRow(tailNumber: string):  void {
-        if(this.data.find(x => x.tailNumber == tailNumber)){
+        if(this.hasRowInTable(tailNumber)){
             this.expandedElement = tailNumber;
-            console.log("row found on "+ (this.isArrival ? "arrivals" : "departures") + " table");
         }
         else{
             this.expandedElement = null;
         }
     }
     collapseRow(tailNumber: string): void {
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
         if(!tailNumber)
             this.expandedElement = null;
 
