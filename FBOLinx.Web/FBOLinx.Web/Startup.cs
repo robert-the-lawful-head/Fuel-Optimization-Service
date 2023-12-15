@@ -22,10 +22,6 @@ namespace FBOLinx.Web
         public void ConfigureServices(IServiceCollection services)
         {
             ServiceConfiguration.Configure(services, Configuration);
-            #if DEBUG
-                services.AddMemoryCache();
-                services.AddMiniProfiler(options => options.RouteBasePath = "/profiler").AddEntityFramework();
-            #endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -33,9 +29,6 @@ namespace FBOLinx.Web
         {
             if (env.IsDevelopment())
             {
-                #if DEBUG
-                app.UseMiniProfiler();
-                #endif
                 app.UseDeveloperExceptionPage();
             }
             else

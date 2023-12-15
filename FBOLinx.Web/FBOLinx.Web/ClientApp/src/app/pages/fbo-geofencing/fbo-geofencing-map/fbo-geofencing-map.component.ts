@@ -297,7 +297,7 @@ export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, O
                     },
                     type: 'geojson',
                     buffer: 0,
-                    tolerance: 10,
+                    tolerance: 5,
                 });
 
             this.addLayer({

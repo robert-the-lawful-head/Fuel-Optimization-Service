@@ -15,6 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+
 @Component({
     selector: 'app-flight-watch-aircraft-data-table',
     templateUrl: './flight-watch-aircraft-data-table.component.html',
@@ -35,6 +36,8 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
     @Input() customers: any[] =  [];
 
     @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() closeAircraftPopup = new EventEmitter<string>();
+
     @Output() saveSettings = new EventEmitter();
 
     @ViewChild(MatSort) sort: MatSort;
@@ -103,6 +106,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
             }
         }
     }
+
     updateColumns(columns: ColumnType[]): void{
         this.columns = columns;
         this.allColumnsToDisplay = this.getVisibleColumns();
@@ -279,5 +283,37 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
     }
     get getCallBackComponent(): CallbackComponent{
         return CallbackComponent.aircraft;
+    }
+    onRowrowClick(element: Swim) {
+        if(this.expandedElement != element.tailNumber)
+            this.closeAircraftPopup.emit(this.expandedElement);
+
+        this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
+
+        if(this.expandedElement == null)
+            this.closeAircraftPopup.emit(element.tailNumber);
+        else
+            this.openAircraftPopup.emit(this.expandedElement);
+    }
+    hasRowInTable(tailNumber: string): boolean{
+        return this.data.find(x => x.tailNumber == tailNumber) ? true : false;
+    }
+    expandRow(tailNumber: string):  void {
+        if(this.hasRowInTable(tailNumber)){
+            this.expandedElement = tailNumber;
+            const selectedRow = document.getElementById(tailNumber);
+            selectedRow.scrollIntoView({block: 'center'});
+        }
+        else{
+            this.expandedElement = null;
+        }
+    }
+    collapseRow(tailNumber: string): void {
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
+        if(!tailNumber)
+            this.expandedElement = null;
+
+        if(this.expandedElement == tailNumber)
+            this.expandedElement = null;
     }
 }

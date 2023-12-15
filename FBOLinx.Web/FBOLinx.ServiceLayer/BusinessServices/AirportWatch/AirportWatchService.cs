@@ -658,15 +658,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //_LiveDataToDelete = _LiveDataToDelete.OrderByDescending(x => x.AircraftPositionDateTimeUtc).GroupBy(x => x.Id)
             //    .Select(x => x.First()).ToList();
 
-            //_HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => x.AircraftPositionDateTimeUtc)
-            //    .GroupBy(x => x.Id)
-            //    .Select(x => x.First())
-            //    .Where(x =>
-            //    {
-            //        if (string.IsNullOrEmpty(x?.AirportICAO) || string.IsNullOrEmpty(x?.BoxName)) return false;
-            //        return x.BoxName.ToLower().StartsWith(x.AirportICAO.ToLower());
-            //    })
-            //    .ToList();
+            _HistoricalDataToUpdate = _HistoricalDataToUpdate.OrderByDescending(x => (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc)?x.BoxTransmissionDateTimeUtc:x.AircraftPositionDateTimeUtc)
+                .GroupBy(x => x.Oid)
+                .Select(x => x.First()).ToList();
 
             //_HistoricalDataToInsert = _HistoricalDataToInsert.Where(record =>
             //{
