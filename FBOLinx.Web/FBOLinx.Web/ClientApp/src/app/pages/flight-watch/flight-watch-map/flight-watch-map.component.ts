@@ -87,7 +87,7 @@ export class FlightWatchMapComponent
     public startTime: number = Date.now();
     private animationFrameIds: number[] = [];
 
-    private lastbearingTrack : Dictionary<number> = {};
+    private previousFlightData: Dictionary<FlightWatchModelResponse> = {};
 
     // Mapbox and layers IDs
     public mapMarkers: MapMarkers= {
@@ -179,12 +179,12 @@ export class FlightWatchMapComponent
             this.startTime = Date.now();
             if(changes.data.previousValue){
                 for (let key in changes.data.previousValue) {
-                    this.lastbearingTrack[key] = changes.data.previousValue[key].trackingDegree;
+                    this.previousFlightData[key] = changes.data.previousValue[key];
                 }
             }
             else{
                 for (let key in changes.data.currentValue) {
-                    this.lastbearingTrack[key] = changes.data.currentValue[key].trackingDegree;
+                    this.previousFlightData[key] = changes.data.currentValue[key];
                 }
             }
             this.setMapMarkersData(keys(changes.data.currentValue));
@@ -425,7 +425,7 @@ export class FlightWatchMapComponent
                         ));
                     if(liveBearing == 0)return;
 
-                    let isBackwards = !this.isValidBearing(this.lastbearingTrack[pointSource.properties.id],liveBearing);
+                    let isBackwards = !this.isValidBearing(this.previousFlightData[pointSource.properties.id].trackingDegree,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
                         console.log(pointSource.properties);
@@ -433,20 +433,19 @@ export class FlightWatchMapComponent
                         console.log(pointSource.properties.id +": targetCoordinates:", targetCoordinates);
                         console.log(pointSource.properties.id +": BE bearing => " + pointSource.properties.bearing);
                         console.log(pointSource.properties.id +": live calculated bearing => " + liveBearing);
-                        console.log(pointSource.properties.id +": last calculated bearing => " + this.lastbearingTrack[pointSource.properties.id]);
-
-                        // this.playBeep();
-                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id]).subscribe((response: any) => {
+                        console.log(pointSource.properties.id +": previous fligh data=> ", this.previousFlightData[pointSource.properties.id]);
+                        //this.playBeep();
+                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id],currentCoordinates,targetCoordinates,pointSource.properties.bearing,liveBearing,this.previousFlightData[pointSource.properties.id]).subscribe((response: any) => {
                         });
                     }
 
                     //need to update the icon image change on animation
                     //working with some lag, need to seach for better solution
-                    if(this.openedPopUps[pointSource.properties.id].popupId == pointSource.properties.id){
+                    if(this.selectedAircraft?.includes(pointSource.properties.id)){
                         popUpCoordinates = currentCoordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
-                        this.refreshPopUp(popUpCoordinates,pointSource.properties.id)
+                        this.refreshPopUp(popUpCoordinates,this.selectedAircraft)
                     }else{
                         const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = defaultIcon;
@@ -485,13 +484,16 @@ export class FlightWatchMapComponent
             return bearing >= rangeStart || bearing <= rangeEnd;
         }
     }
-    private refreshPopUp(popUpCoordinates: number[],selectedFlightId: string): void {
-        if (!this.openedPopUps[selectedFlightId].isOpen && this.openedPopUps[selectedFlightId].popupId == null) return;
-        if (!popUpCoordinates == null){
-            this.resetCurrentPopUpState(selectedFlightId);
-        } else {
-            this.updateOpenedPopUpCoordinates(popUpCoordinates,selectedFlightId);
-        }
+    private refreshPopUp(popUpCoordinates: number[], selectedFlights: string[]): void {
+        selectedFlights?.forEach(selectedFlightId => {
+            if (!this.openedPopUps[selectedFlightId].isOpen && this.openedPopUps[selectedFlightId].popupId == null) return;
+
+            if (!popUpCoordinates == null){
+                this.resetCurrentPopUpState(selectedFlightId);
+            } else {
+                this.updateOpenedPopUpCoordinates(popUpCoordinates, selectedFlightId);
+            }
+        });
     }
     private cancelExistingAnimationFames(): void {
         for (const id of this.animationFrameIds) {
@@ -499,9 +501,10 @@ export class FlightWatchMapComponent
         }
         this.animationFrameIds = [];
     }
-    updateOpenedPopUpCoordinates(coordinates: any,selectedFlightId: string): void {
+    updateOpenedPopUpCoordinates(coordinates: any, selectedFlightId: string): void {
         this.openedPopUps[selectedFlightId].coordinates = coordinates;
-        let LngLat: mapboxgl.LngLatLike = {lng: coordinates[0], lat: coordinates[1]}
+        let LngLat: mapboxgl.LngLatLike = {lng: coordinates[0], lat: coordinates[1]};
+
         this.openedPopUps[selectedFlightId].popupInstance.setLngLat(LngLat);
     }
     setMapMarkersData(flights: string[]): void{
@@ -547,10 +550,10 @@ export class FlightWatchMapComponent
         this.createPopUp(self, id);
     }
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
-        this.updatePopUpData.emit(self.data[id]);
+        this.updatePopUpData.emit(this.data[id]);
 
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}
-
+        self.openedPopUps[id].popupId = id;
         self.openedPopUps[id].coordinates = [
             self.data[id].longitude,
             self.data[id].latitude,
@@ -565,10 +568,8 @@ export class FlightWatchMapComponent
         );
         self.openedPopUps[id].popupInstance.on('close', function(event) {
             self.selectedAircraft = self.selectedAircraft.filter(e => e != id);
-            self.popUpClosed.emit(self.data[id]);
             self.openedPopUps[id].isOpen = false;
             self.openedPopUps[id].popupId = null;
-
         });
     }
     getFbosAndLoad() {
@@ -669,7 +670,7 @@ export class FlightWatchMapComponent
         );
 
         if (!selectedFlight) return;
-
+        console.log("🚀 ~ file: flight-watch-map.component.ts:680 ~ closeAircraftPopUpByTailNumber ~ remove:" + tailNumber)
         this.openedPopUps[selectedFlight].popupInstance.remove();
 
         delete this.openedPopUps[selectedFlight];

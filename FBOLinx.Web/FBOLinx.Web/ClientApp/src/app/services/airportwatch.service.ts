@@ -19,9 +19,14 @@ export class AirportWatchService {
         });
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
-    public logBackwards(body: FlightWatchModelResponse) {
-        console.log("🚀 ~ file: airportwatch.service.ts:23 ~ AirportWatchService ~ logBackwards ~ body:", body)
-        return this.http.post(
+    public logBackwards(body: FlightWatchModelResponse,currentCoordinates: number[], targetCoordinates: number[],backendBearing: number, liveBearing: number, previousCorrectModel :FlightWatchModelResponse) {
+        body.currentCoordinates = currentCoordinates;
+        body.targetCoordinates = targetCoordinates;
+        body.backEndBearing = backendBearing;
+        body.liveCaulculatedBearing = liveBearing;
+        body.previousCorrectModel = previousCorrectModel;
+        console.log("🚀 ~ file: airportwatch.service.ts:28 ~ AirportWatchService ~ logBackwards ~ body:", body)
+        return;        return this.http.post(
             `${this.accessPointUrl}/log-backwards`,
             body,
             { headers: this.headers }

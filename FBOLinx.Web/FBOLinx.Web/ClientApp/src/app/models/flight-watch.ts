@@ -121,4 +121,10 @@ export interface FlightWatchModelResponse {
     positionDateTimeSource: string;
     dateCreated: Date | null;
     swimLastUpdated: Date | null;
+    currentCoordinates: number[];
+    targetCoordinates: number[];
+    backEndBearing: number;
+    liveBearing: number;
+    liveCaulculatedBearing: number;
+    previousCorrectModel: FlightWatchModelResponse | null;
 }
