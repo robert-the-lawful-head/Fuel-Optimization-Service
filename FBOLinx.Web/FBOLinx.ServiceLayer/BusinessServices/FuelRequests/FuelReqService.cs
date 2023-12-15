@@ -646,6 +646,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceOrderItem.IsCompleted = false;
                 serviceOrderItems.Add(serviceOrderItem);
             }
+
+            // Add default "Fuel" service
+            var fuelReqGallons = 0.0;
+            if (request.SourceId > 0)
+            {
+                FuelReq fuelReq = await _FuelReqEntityService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
+                fuelReqGallons = fuelReq.QuotedVolume.GetValueOrDefault();
+            }
+
+            ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+            fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+            fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
+            fuelServiceOrderItem.IsCompleted = false;
+            serviceOrderItems.Add(fuelServiceOrderItem);
+
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
 

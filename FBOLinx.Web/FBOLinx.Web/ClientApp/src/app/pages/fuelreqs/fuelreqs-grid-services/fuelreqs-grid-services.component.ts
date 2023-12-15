@@ -57,9 +57,13 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     async ngOnInit() {
         if (this.serviceOrderItems != null)
-            this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems.filter(s => s.serviceName != "");
+            this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems.filter(s => s.serviceName != "" && !s.serviceName.includes("Fuel"));
 
         this.sortGrid();
+
+        var fuelServiceItem = this.serviceOrderItems.find(s => s.serviceName.includes("Fuel"));
+        if (fuelServiceItem != null)
+            this.fuelreqsServicesAndFeesGridDisplay.unshift(fuelServiceItem);
 
         this.resetNewServiceOrderItem();
 
@@ -69,8 +73,13 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
 
     onArchiveServices(serviceOrderItems: ServiceOrderItem[]) {
-        this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems.filter((s) => s.serviceName != '');
+        this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems.filter((s) => s.serviceName != '' && !s.serviceName.includes("Fuel"));
+
         this.sortGrid();
+
+        var fuelServiceItem = this.serviceOrderItems.find(s => s.serviceName.includes("Fuel"));
+        if (fuelServiceItem != null)
+            this.fuelreqsServicesAndFeesGridDisplay.unshift(fuelServiceItem);
 
         var isCompleted = this.fuelreqsServicesAndFeesGridDisplay[0].isCompleted;
         if (isCompleted)
@@ -185,11 +194,27 @@ export class FuelreqsGridServicesComponent implements OnInit {
             serviceAndfee.completionDateTimeUtc = moment.utc().toDate();
             serviceAndfee.completedByUserId = this.sharedService.currentUser.oid;
             serviceAndfee.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
-            if (!isArchiving)
+            if (!isArchiving) 
                 this.completedServicesChanged.emit(1);
         }
         else if (!isArchiving)
             this.completedServicesChanged.emit(-1);
+
+        if (!isArchiving) {
+            var serviceOrderItems = this.fuelreqsServicesAndFeesGridDisplay;
+
+            this.fuelreqsServicesAndFeesGridDisplay = this.fuelreqsServicesAndFeesGridDisplay.filter((s) => s.serviceName != '' && !s.serviceName.includes("Fuel"));
+
+            this.sortGrid();
+
+            var fuelServiceItem = serviceOrderItems.find(s => s.serviceName.includes("Fuel"));
+            if (fuelServiceItem != null)
+                this.fuelreqsServicesAndFeesGridDisplay.unshift(fuelServiceItem);
+
+            this.resetNewServiceOrderItem();
+
+            this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+        }
 
         this.saveServiceOrderItem(serviceAndfee);
     }
