@@ -11,7 +11,7 @@ import {
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
-import { Dictionary, has, keys } from 'lodash';
+import { Dictionary, keys } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 import { environment } from 'src/environments/environment';
@@ -87,7 +87,12 @@ export class FlightWatchMapComponent
     public startTime: number = Date.now();
     private animationFrameIds: number[] = [];
 
-    private previousFlightData: Dictionary<FlightWatchModelResponse> = {};
+    private previousFlightData: Record<string,FlightWatchModelResponse> = {};
+
+    private backwardLogs: Record<string, FlightWatchModelResponse> = {};
+
+    private popupUpdatesTracking: Record<string, number[]> = {};
+
 
     // Mapbox and layers IDs
     public mapMarkers: MapMarkers= {
@@ -177,6 +182,7 @@ export class FlightWatchMapComponent
 
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
+            this.popupUpdatesTracking = {};
             if(changes.data.previousValue){
                 for (let key in changes.data.previousValue) {
                     this.previousFlightData[key] = changes.data.previousValue[key];
@@ -428,15 +434,14 @@ export class FlightWatchMapComponent
                     let isBackwards = !this.isValidBearing(this.previousFlightData[pointSource.properties.id].trackingDegree,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
-                        console.log(pointSource.properties);
-                        console.log(pointSource.properties.id +": currentCoordinates:", currentCoordinates);
-                        console.log(pointSource.properties.id +": targetCoordinates:", targetCoordinates);
-                        console.log(pointSource.properties.id +": BE bearing => " + pointSource.properties.bearing);
-                        console.log(pointSource.properties.id +": live calculated bearing => " + liveBearing);
-                        console.log(pointSource.properties.id +": previous fligh data=> ", this.previousFlightData[pointSource.properties.id]);
                         //this.playBeep();
-                        this.airportWatchService.logBackwards(this.data[pointSource.properties.id],currentCoordinates,targetCoordinates,pointSource.properties.bearing,liveBearing,this.previousFlightData[pointSource.properties.id]).subscribe((response: any) => {
-                        });
+                        this.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
+                        this.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
+                        this.data[pointSource.properties.id].backEndBearing = pointSource.properties.bearing;
+                        this.data[pointSource.properties.id].liveCaulculatedBearing = liveBearing;
+                        this.data[pointSource.properties.id].previousCorrectModel = this.previousFlightData[pointSource.properties.id];
+
+                        this.backwardLogs[pointSource.properties.id] = this.data[pointSource.properties.id];
                     }
 
                     //need to update the icon image change on animation
@@ -445,7 +450,7 @@ export class FlightWatchMapComponent
                         popUpCoordinates = currentCoordinates;
                         const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = reverseIcon;
-                        this.refreshPopUp(popUpCoordinates,this.selectedAircraft)
+                        this.popupUpdatesTracking[pointSource.properties.id] = popUpCoordinates;
                     }else{
                         const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = defaultIcon;
@@ -461,6 +466,11 @@ export class FlightWatchMapComponent
 
                 source.setData(data);
 
+
+                for(let prop in this.popupUpdatesTracking) {
+                    this.refreshPopUp(this.popupUpdatesTracking[prop],prop);
+                }
+
                 const animationFrameId = requestAnimationFrame(() => animate());
                 this.animationFrameIds.push(animationFrameId);
             }
@@ -469,7 +479,7 @@ export class FlightWatchMapComponent
         this.animationFrameIds.push(frameid);
     }
     private isValidBearing(bearing: number,liveBearing: number): boolean {
-        const bearingTolerance = 30;
+        const bearingTolerance = 10;
         liveBearing = turf.bearingToAzimuth(liveBearing);
         const start = turf.bearingToAzimuth(bearing+bearingTolerance);
         const end = turf.bearingToAzimuth(bearing-bearingTolerance);
@@ -484,8 +494,7 @@ export class FlightWatchMapComponent
             return bearing >= rangeStart || bearing <= rangeEnd;
         }
     }
-    private refreshPopUp(popUpCoordinates: number[], selectedFlights: string[]): void {
-        selectedFlights?.forEach(selectedFlightId => {
+    private refreshPopUp(popUpCoordinates: number[],selectedFlightId: string): void {
             if (!this.openedPopUps[selectedFlightId].isOpen && this.openedPopUps[selectedFlightId].popupId == null) return;
 
             if (!popUpCoordinates == null){
@@ -493,9 +502,13 @@ export class FlightWatchMapComponent
             } else {
                 this.updateOpenedPopUpCoordinates(popUpCoordinates, selectedFlightId);
             }
-        });
     }
     private cancelExistingAnimationFames(): void {
+        for(let prop in this.backwardLogs) {
+            this.airportWatchService.logBackwards(this.backwardLogs[prop]).subscribe((response: any) => {
+            });
+        }
+        this.backwardLogs = {};
         for (const id of this.animationFrameIds) {
             cancelAnimationFrame(id);
         }
