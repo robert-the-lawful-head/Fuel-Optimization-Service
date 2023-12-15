@@ -608,34 +608,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var customer = customersWithTail.Where(c => c.Customer.FuelerlinxId == request.CompanyId).FirstOrDefault();
             var customerAircraft = customer.Customer.CustomerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
 
-            var serviceReq = new ServiceOrderDto()
-            {
-                Fboid = fbo.Oid,
-                CustomerAircraftId = customerAircraft.Oid,
-                AssociatedFuelOrderId = request.FboLinxFuelOrderId,
-                FuelerLinxTransactionId = request.SourceId,
-                ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
-                CustomerInfoByGroupId = customer.Oid,
-                GroupId = customer.GroupId
-            };
+            var serviceReq = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
 
-            if (request.TimeStandard == "Local" || request.TimeStandard == "L")
+            if (serviceReq == null || serviceReq.Oid == 0)
             {
-                var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
-                var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+                serviceReq = new ServiceOrderDto()
+                {
+                    Fboid = fbo.Oid,
+                    CustomerAircraftId = customerAircraft.Oid,
+                    AssociatedFuelOrderId = request.FboLinxFuelOrderId,
+                    FuelerLinxTransactionId = request.SourceId,
+                    ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                    CustomerInfoByGroupId = customer.Oid,
+                    GroupId = customer.GroupId
+                };
 
-                serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
-                serviceReq.ArrivalDateTimeUtc = etaUtc;
-                serviceReq.DepartureDateTimeUtc = etdUtc;
+                if (request.TimeStandard == "Local" || request.TimeStandard == "L")
+                {
+                    var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
+                    var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+
+                    serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                    serviceReq.ArrivalDateTimeUtc = etaUtc;
+                    serviceReq.DepartureDateTimeUtc = etdUtc;
+                }
+                else
+                {
+                    serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
+                    serviceReq.ArrivalDateTimeUtc = request.Eta;
+                    serviceReq.DepartureDateTimeUtc = request.Etd;
+                }
+
+                serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
             }
-            else
-            {
-                serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
-                serviceReq.ArrivalDateTimeUtc = request.Eta;
-                serviceReq.DepartureDateTimeUtc = request.Etd;
-            }
-
-            serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
 
             var serviceOrderItems = new List<ServiceOrderItemDto>();
             foreach (var service in request.Services)
@@ -647,19 +652,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceOrderItems.Add(serviceOrderItem);
             }
 
-            // Add default "Fuel" service
-            var fuelReqGallons = 0.0;
-            if (request.SourceId > 0)
+            // Add default "Fuel" service if it doesn't already exist
+            if (serviceReq.ServiceOrderItems.Count == 0)
             {
-                FuelReq fuelReq = await _FuelReqEntityService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(request.SourceId.GetValueOrDefault(), fbo.Oid));
-                fuelReqGallons = fuelReq.QuotedVolume.GetValueOrDefault();
+                ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+                fuelServiceOrderItem.ServiceName = "Fuel - 0 gallons";
+                fuelServiceOrderItem.IsCompleted = false;
+                serviceOrderItems.Add(fuelServiceOrderItem);
             }
-
-            ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
-            fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-            fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
-            fuelServiceOrderItem.IsCompleted = false;
-            serviceOrderItems.Add(fuelServiceOrderItem);
 
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
@@ -697,6 +698,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             if (orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || ((fuelReq == null || fuelReq.Oid == 0 && !orderDetails.IsCancelled.GetValueOrDefault()))))
             {
+                //Update fuel service line item for directs
+                if (fuelReq.Oid > 0)
+                {
+                    var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
+
+                    var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel -")).FirstOrDefault();
+                    fuelServiceLineItem.ServiceName = "Fuel - " + fuelReq.QuotedVolume + " gallon" + (fuelReq.QuotedVolume > 1 ? "s" : "");
+                    await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
+                }
+
                 var isUpdated = false;
 
                 if (orderDetails.FboHandlerId.GetValueOrDefault() == fuelerlinxTransaction.FboHandlerId)

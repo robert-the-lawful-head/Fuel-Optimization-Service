@@ -41,6 +41,10 @@ using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.DB.Specifications.OrderDetails;
 using FBOLinx.DB.Specifications.Fbo;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
+using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -67,6 +71,9 @@ namespace FBOLinx.Web.Controllers
         private readonly IFuelReqPricingTemplateService _fuelReqPricingTemplateService;
         private readonly ICustomerAircraftService _customerAircraftService;
         private readonly IGroupService _groupService;
+        private readonly DateTimeService _dateTimeService;
+        private readonly IServiceOrderService _serviceOrderService;
+        private readonly IServiceOrderItemService _serviceOrderItemService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -77,7 +84,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -97,6 +104,7 @@ namespace FBOLinx.Web.Controllers
             _fuelReqPricingTemplateService = fuelReqPricingTemplateService;
             _customerAircraftService = customerAircraftService;
             _groupService = groupService;
+            _dateTimeService = dateTimeService;
         }
 
         // GET: api/FuelReqs/5
@@ -308,15 +316,15 @@ namespace FBOLinx.Web.Controllers
             orderDetails.PaymentMethod = request.PaymentMethod;
             orderDetails.QuotedVolume = request.FuelEstWeight;
             orderDetails.Eta = request.Eta;
-            orderDetails.FboHandlerId =  fboId == 0 ? request.FboHandlerId : fbo.AcukwikFBOHandlerId;
-            
+            orderDetails.FboHandlerId = fboId == 0 ? request.FboHandlerId : fbo.AcukwikFBOHandlerId;
+
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
             var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
 
-            if (fboId > 0)
+            if (fboId > 0)  //DIRECT ORDERS
             {
                 if (fbo == null)
                     return BadRequest("Invalid FBO");
@@ -365,7 +373,8 @@ namespace FBOLinx.Web.Controllers
                                                        PricingTemplate = pt,
                                                        request.FuelOn,
                                                        request.CustomerNotes,
-                                                       request.PaymentMethod
+                                                       request.PaymentMethod,
+                                                       CustomerInfoByGroupId = cg.Oid
                                                    })
                                             .Distinct()
                                             .ToListAsync();
@@ -397,7 +406,7 @@ namespace FBOLinx.Web.Controllers
 
                         fuelReq = await _fuelReqService.AddAsync(fuelReq);
 
-                        List <FuelReqPricingTemplateDto> fuelReqPricingTemplates = new List<FuelReqPricingTemplateDto>();
+                        List<FuelReqPricingTemplateDto> fuelReqPricingTemplates = new List<FuelReqPricingTemplateDto>();
                         var pricingTemplate = fuelReqsPt[0].PricingTemplate;
                         fuelReqPricingTemplates.Add(new FuelReqPricingTemplateDto
                         {
@@ -431,6 +440,44 @@ namespace FBOLinx.Web.Controllers
 
                         // Add order details
                         orderDetails = await _orderDetailsService.AddAsync(orderDetails);
+
+                        // Add default "Fuel" service
+                        var fuelReqGallons = request.FuelEstWeight;
+
+                        var serviceReq = new ServiceOrderDto()
+                        {
+                            Fboid = fbo.Oid,
+                            CustomerAircraftId = customerAircraft.Oid,
+                            AssociatedFuelOrderId = fuelReq.Oid,
+                            FuelerLinxTransactionId = request.SourceId,
+                            ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                            CustomerInfoByGroupId = fuelReqsPt[0].CustomerInfoByGroupId,
+                            GroupId = fbo.GroupId
+                        };
+
+                        if (request.TimeStandard == "Local" || request.TimeStandard == "L")
+                        {
+                            var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
+                            var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+
+                            serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                            serviceReq.ArrivalDateTimeUtc = etaUtc;
+                            serviceReq.DepartureDateTimeUtc = etdUtc;
+                        }
+                        else
+                        {
+                            serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
+                            serviceReq.ArrivalDateTimeUtc = request.Eta;
+                            serviceReq.DepartureDateTimeUtc = request.Etd;
+                        }
+
+                        serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
+
+                        ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                        fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+                        fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
+                        fuelServiceOrderItem.IsCompleted = false;
+                        await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
                     }
                     else
                     {
@@ -451,14 +498,56 @@ namespace FBOLinx.Web.Controllers
                     }
                 }
                 else
+                {
                     await _orderDetailsService.AddAsync(orderDetails);
+                }
 
                 return Ok(new List<FuelReqDto>() { fuelReq });
             }
-            else
+            else       // CONTRACT ORDERS
             {
                 // Add order details
                 await _orderDetailsService.AddAsync(orderDetails);
+
+                // Add default "Fuel" service
+                var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
+
+                var fuelReqGallons = request.FuelEstWeight;
+
+                var serviceReq = new ServiceOrderDto()
+                {
+                    Fboid = fbo.Oid,
+                    CustomerAircraftId = customerAircraft.Oid,
+                    FuelerLinxTransactionId = request.SourceId,
+                    AssociatedFuelOrderId = 0,
+                    ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
+                    CustomerInfoByGroupId = customerInfoByGroup.Oid,
+                    GroupId = fbo.GroupId
+                };
+
+                if (request.TimeStandard == "Local" || request.TimeStandard == "L")
+                {
+                    var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
+                    var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+
+                    serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                    serviceReq.ArrivalDateTimeUtc = etaUtc;
+                    serviceReq.DepartureDateTimeUtc = etdUtc;
+                }
+                else
+                {
+                    serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
+                    serviceReq.ArrivalDateTimeUtc = request.Eta;
+                    serviceReq.DepartureDateTimeUtc = request.Etd;
+                }
+
+                serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
+
+                ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+                fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+                fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
+                fuelServiceOrderItem.IsCompleted = false;
+                await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
 
                 return Ok();
             }

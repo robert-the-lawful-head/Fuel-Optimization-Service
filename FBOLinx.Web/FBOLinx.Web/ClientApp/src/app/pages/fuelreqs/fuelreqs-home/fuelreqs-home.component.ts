@@ -18,7 +18,7 @@ const BREADCRUMBS: any[] = [
     },
     {
         link: '/default-layout/fuelreqs',
-        title: 'Fuel Orders',
+        title: 'Fuel & Service Orders',
     },
 ];
 
@@ -29,7 +29,7 @@ const BREADCRUMBS: any[] = [
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
-    public pageTitle = 'Fuel Orders';
+    public pageTitle = 'Fuel & Service Orders';
     public breadcrumb: any[] = BREADCRUMBS;
     public fuelreqsData: any[];
     public filterStartDate: Date;
