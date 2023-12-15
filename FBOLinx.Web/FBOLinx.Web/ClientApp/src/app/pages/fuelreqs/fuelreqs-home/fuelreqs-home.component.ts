@@ -106,7 +106,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     }
 
     onTabClick(event) {
-        if (event.tab.textLabel == "Fuel Orders") {
+        if (event.tab.textLabel == "Fuel Orders & Service Orders") {
             this.isFuelOrdersShowing = true;
             this.sharedService.emitChange(SharedEvent.resetMissedOrders);
         }

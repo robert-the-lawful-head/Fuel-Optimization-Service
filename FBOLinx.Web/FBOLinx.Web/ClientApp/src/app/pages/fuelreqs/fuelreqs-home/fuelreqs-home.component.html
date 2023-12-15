@@ -2,7 +2,7 @@
 
 <div class="after-breadcrumb">
     <mat-tab-group (selectedTabChange)="onTabClick($event)" [selectedIndex]="selectedTabIndex">
-        <mat-tab label="Fuel Orders">
+        <mat-tab label="Fuel & Service Orders">
             <div *ngIf="isFuelOrdersShowing">
                 <div *ngIf="fuelreqsData">
                     <app-fuelreqs-grid (dateFilterChanged)="dateFilterChanged($event)"
