@@ -22,8 +22,11 @@ export class AirportWatchService {
     public logBackwards(body: FlightWatchModelResponse) {
         console.log(body.tailNumber +": currentCoordinates:", body.currentCoordinates);
         console.log(body.tailNumber +": targetCoordinates:", body.targetCoordinates);
-        console.log(body.tailNumber +": BE bearing => " + body.backEndBearing);
         console.log(body.tailNumber +": live calculated bearing => " + body.liveBearing);
+
+        console.log(body.tailNumber +": previous currentCoordinates:", body.previousCorrectModel.currentCoordinates);
+        console.log(body.tailNumber +": previous targetCoordinates:", body.previousCorrectModel.targetCoordinates);
+        console.log(body.tailNumber +": previous bearing => " + body.previousCorrectModel.liveBearing);
         console.log("🚀 ~ file: airportwatch.service.ts:28 ~ AirportWatchService ~ logBackwards ~ body:", body)
         return this.http.post(
             `${this.accessPointUrl}/log-backwards`,

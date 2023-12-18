@@ -429,17 +429,31 @@ export class FlightWatchMapComponent
                         turf.point(currentCoordinates),
                         turf.point(targetCoordinates)
                         ));
+
+                    var previousCoordinates = [this.previousFlightData[pointSource.properties.id].previousLongitude, this.previousFlightData[pointSource.properties.id].previousLatitude];
+                    var previoustargetCoordinates = [this.previousFlightData[pointSource.properties.id].longitude, this.previousFlightData[pointSource.properties.id].latitude]
+
+                    let previousiveBearing = turf.bearingToAzimuth(turf.bearing(
+                            turf.point(previousCoordinates),
+                            turf.point(previoustargetCoordinates)
+                            ));
+
                     if(liveBearing == 0)return;
 
-                    let isBackwards = !this.isValidBearing(this.previousFlightData[pointSource.properties.id].trackingDegree,liveBearing);
+                    let isBackwards = !this.isValidBearing(previousiveBearing,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
                         //this.playBeep();
+                        this.data[pointSource.properties.id].liveBearing = liveBearing;
                         this.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
                         this.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
                         this.data[pointSource.properties.id].backEndBearing = pointSource.properties.bearing;
                         this.data[pointSource.properties.id].liveCaulculatedBearing = liveBearing;
                         this.data[pointSource.properties.id].previousCorrectModel = this.previousFlightData[pointSource.properties.id];
+
+                        this.data[pointSource.properties.id].previousCorrectModel.currentCoordinates = previousCoordinates;
+                        this.data[pointSource.properties.id].previousCorrectModel.targetCoordinates = previoustargetCoordinates;
+                        this.data[pointSource.properties.id].previousCorrectModel.liveBearing = previousiveBearing;
 
                         this.backwardLogs[pointSource.properties.id] = this.data[pointSource.properties.id];
                     }
@@ -480,9 +494,9 @@ export class FlightWatchMapComponent
     }
     private isValidBearing(bearing: number,liveBearing: number): boolean {
         const bearingTolerance = 10;
-        liveBearing = turf.bearingToAzimuth(liveBearing);
-        const start = turf.bearingToAzimuth(bearing+bearingTolerance);
-        const end = turf.bearingToAzimuth(bearing-bearingTolerance);
+        liveBearing = liveBearing;
+        const start = bearing+bearingTolerance;
+        const end = bearing-bearingTolerance;
 
         return !this.isBearingInRange(liveBearing,start,end);
     }
