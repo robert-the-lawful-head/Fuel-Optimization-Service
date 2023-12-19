@@ -554,6 +554,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
                 var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
 
+                if(record.BoxName != oldAirportWatchLiveData.BoxName)
+                {
+                    var diffInSeconds = System.Math.Abs((oldAirportWatchLiveData.BoxTransmissionDateTimeUtc - record.BoxTransmissionDateTimeUtc).TotalSeconds);
+                    if (diffInSeconds < 11)
+                        continue;
+                }
+
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
