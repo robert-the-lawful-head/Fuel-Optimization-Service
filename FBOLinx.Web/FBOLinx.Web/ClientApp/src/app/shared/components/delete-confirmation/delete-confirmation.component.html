@@ -7,7 +7,7 @@
     </span>
     <ng-template #fullBlock>{{ data.fullDescription }}</ng-template>
     <ng-template #simpleBlock
-        >You are about to remove this {{ (data.description != null)? data.description : "record" }}. Are you
+        >You are about to remove {{data.includeThis ? "this " : ""}} {{ (data.description != null)? data.description : "record" }}. Are you
         sure?</ng-template
     >
 </div>

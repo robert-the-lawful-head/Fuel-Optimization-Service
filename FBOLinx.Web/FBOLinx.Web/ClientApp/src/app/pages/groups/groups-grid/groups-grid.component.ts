@@ -295,6 +295,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     fullDescription:
                         'You are about to remove this group. This will remove the fbos and all the other data related to the group. Are you sure?',
                     item: record,
+                    includeThis: true
                 },
             }
         );

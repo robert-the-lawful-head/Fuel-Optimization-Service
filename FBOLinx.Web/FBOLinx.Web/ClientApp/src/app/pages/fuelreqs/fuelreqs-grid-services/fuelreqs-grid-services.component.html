@@ -12,7 +12,7 @@
                         <div class="service-card">
                             <div class="row">
                                 <div class="col-1 text">
-                                    <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)">
+                                    <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)" *ngIf="!service.isAddMode">
                                     </mat-checkbox>
                                 </div>
                                 <div class="col-6 text" *ngIf="!service.isEditMode && !service.isAddMode">

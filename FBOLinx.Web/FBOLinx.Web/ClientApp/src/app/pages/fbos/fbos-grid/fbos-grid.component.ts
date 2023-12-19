@@ -122,7 +122,7 @@ export class FbosGridComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'FBO', item: record },
+                data: { description: 'FBO', item: record, includeThis: true },
             }
         );
 

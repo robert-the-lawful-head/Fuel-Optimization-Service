@@ -110,7 +110,7 @@ export class ServiceOrdersListComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'service order', item: serviceOrder },
+                data: { description: 'service order', item: serviceOrder, includeThis: true },
             }
         );
 

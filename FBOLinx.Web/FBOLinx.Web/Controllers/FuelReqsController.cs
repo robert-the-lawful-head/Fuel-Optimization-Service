@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -105,6 +105,8 @@ namespace FBOLinx.Web.Controllers
             _customerAircraftService = customerAircraftService;
             _groupService = groupService;
             _dateTimeService = dateTimeService;
+            _serviceOrderService = serviceOrderService;
+            _serviceOrderItemService = serviceOrderItemService;
         }
 
         // GET: api/FuelReqs/5

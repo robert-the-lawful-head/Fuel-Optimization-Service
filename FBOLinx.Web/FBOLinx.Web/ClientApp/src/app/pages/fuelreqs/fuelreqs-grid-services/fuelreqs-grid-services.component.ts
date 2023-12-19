@@ -232,7 +232,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: serviceName + ' from this order', item: serviceAndfee },
+                data: { description: serviceName + ' from this order', item: serviceAndfee, includeThis: false },
             }
         );
 
@@ -244,8 +244,13 @@ export class FuelreqsGridServicesComponent implements OnInit {
                 if (!response.success)
                     alert('Error deleting service order item: ' + response.message);
                 else {
+                    this.fuelreqsServicesAndFeesGridDisplay = this.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != "");
                     this.fuelreqsServicesAndFeesGridDisplay.splice(this.fuelreqsServicesAndFeesGridDisplay.indexOf(serviceAndfee), 1);
-                    this.completedServicesChanged.emit(-1);
+
+                    this.resetNewServiceOrderItem();
+
+                    this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+                    this.totalServicesChanged.emit(-1);
                 }
             });
         });

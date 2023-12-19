@@ -167,7 +167,8 @@ export class FboGeofencingMapComponent extends MapboxglBase implements OnInit, O
                 autoFocus: false,
                 data: {
                     item: cluster,
-                    description: 'geo-fence'
+                    description: 'geo-fence',
+                    includeThis: true
                 } as DeleteConfirmationData,
             }
         );

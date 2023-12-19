@@ -140,7 +140,7 @@ export class ServicesAndFeesComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'Category', item: serviceAndfee },
+                data: { description: 'Category', item: serviceAndfee, includeThis: true },
             }
         );
 
@@ -166,7 +166,7 @@ export class ServicesAndFeesComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'Category', item: serviceType },
+                data: { description: 'Category', item: serviceType, includeThis: true },
             }
         );
 
