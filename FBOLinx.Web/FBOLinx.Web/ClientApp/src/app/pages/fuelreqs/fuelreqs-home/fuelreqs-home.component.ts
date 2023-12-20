@@ -72,7 +72,8 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
         servicesAndFees.forEach((service) => {
             service.servicesAndFees.forEach((serviceAndFee) => {
-                this.servicesAndFees.push(serviceAndFee.service);
+                if (serviceAndFee.isActive)
+                    this.servicesAndFees.push(serviceAndFee.service);
             });
         });
 
