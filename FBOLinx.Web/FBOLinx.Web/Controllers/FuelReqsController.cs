@@ -457,21 +457,21 @@ namespace FBOLinx.Web.Controllers
                             GroupId = fbo.GroupId
                         };
 
-                        if (request.TimeStandard == "Local" || request.TimeStandard == "L")
-                        {
-                            var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
-                            var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
+                        //if (request.TimeStandard == "Local" || request.TimeStandard == "L")
+                        //{
+                        //    var etaUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Eta.GetValueOrDefault());
+                        //    var etdUtc = await _dateTimeService.ConvertLocalTimeToUtc(fbo.Oid, request.Etd.GetValueOrDefault());
 
-                            serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
-                            serviceReq.ArrivalDateTimeUtc = etaUtc;
-                            serviceReq.DepartureDateTimeUtc = etdUtc;
-                        }
-                        else
-                        {
+                        //    serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? etaUtc : etdUtc;
+                        //    serviceReq.ArrivalDateTimeUtc = etaUtc;
+                        //    serviceReq.DepartureDateTimeUtc = etdUtc;
+                        //}
+                        //else
+                        //{
                             serviceReq.ServiceDateTimeUtc = serviceReq.ServiceOn == Core.Enums.ServiceOrderAppliedDateTypes.Arrival ? request.Eta.GetValueOrDefault() : request.Etd.GetValueOrDefault();
                             serviceReq.ArrivalDateTimeUtc = request.Eta;
                             serviceReq.DepartureDateTimeUtc = request.Etd;
-                        }
+                        //}
 
                         serviceReq = await _serviceOrderService.AddNewOrder(serviceReq);
 
