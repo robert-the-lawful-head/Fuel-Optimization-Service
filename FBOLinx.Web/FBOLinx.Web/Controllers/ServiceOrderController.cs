@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using FBOLinx.DB.Models;
 using System.Collections.Generic;
 using Microsoft.Extensions.Azure;
+using System.Security.Cryptography;
+using FBOLinx.DB.Specifications.ServiceOrder;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -89,6 +91,27 @@ namespace FBOLinx.Web.Controllers
                     result = new ServiceOrderDto();
                     result.ServiceOrderItems = new List<ServiceOrderItemDto>();
                 }
+
+                return Ok(new ServiceOrderResponse(result));
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new ServiceOrderResponse(false, exception.Message));
+            }
+        }
+
+        /// <summary>
+        /// Fetch a serviceOrder for a given associated fuel order id
+        /// </summary>
+        /// <param name="associatedFuelOrderId"></param>
+        /// <returns></returns>
+        [HttpGet("associatedfuelorderid/{associatedFuelOrderId}")]
+        public async Task<ActionResult<ServiceOrderResponse>> GetServiceOrderByAssociatedFuelOrderId(
+            [FromRoute] int associatedFuelOrderId)
+        {
+            try
+            {
+                var result = await _ServiceOrderService.GetSingleBySpec(new ServiceOrderByAssociatedFuelOrderIdSpecification(associatedFuelOrderId));
 
                 return Ok(new ServiceOrderResponse(result));
             }

@@ -291,6 +291,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
                 orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(serviceOrderIds);
                 orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(serviceOrderIds);
+                var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
 
                 foreach (ServiceOrderDto item in serviceOrders)
                 {
@@ -315,7 +316,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             Source = string.Empty,
                             SourceId = item.FuelerLinxTransactionId,
                             TimeStandard = null,
-                            TailNumber = string.Empty,
+                            TailNumber = customerAircrafts.Where(c => c.Oid == item.CustomerAircraftId).Select(a => a.TailNumber).FirstOrDefault(),
                             FboName = string.Empty,
                             Email = string.Empty,
                             PhoneNumber = item.CustomerInfoByGroup?.MainPhone,
@@ -332,7 +333,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 // Cancelled contract orders
                 orderDetails = await _orderDetailsEntityService.GetListBySpec(new OrderDetailsByFboHandlerIdSpecifications(fboRecord.AcukwikFBOHandlerId.GetValueOrDefault()));
                 orderDetails = orderDetails.Where(o => o.IsCancelled == true).ToList();
-                var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
 
                 foreach (OrderDetails item in orderDetails)
                 {
@@ -356,7 +356,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             Source = string.Empty,
                             SourceId = item.FuelerLinxTransactionId,
                             TimeStandard = null,
-                            TailNumber = string.Empty,
+                            TailNumber = customerAircrafts.Where(c => c.Oid == item.CustomerAircraftId).Select(a => a.TailNumber).FirstOrDefault(),
                             FboName = string.Empty,
                             Email = string.Empty,
                             FuelOn = string.Empty,
@@ -369,7 +369,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 foreach (FuelReqDto fuelReq in result)
                 {
-                    fuelReq.CustomerName = customers.Where(c => c.CustomerId == fuelReq.CustomerId).Select(cu => cu.Company).FirstOrDefault();
+                    if (string.IsNullOrEmpty(fuelReq.CustomerName))
+                        fuelReq.CustomerName = customers.Where(c => c.CustomerId == fuelReq.CustomerId).Select(cu => cu.Company).FirstOrDefault();
 
                     if (fuelReq.ServiceOrder == null)
                     {

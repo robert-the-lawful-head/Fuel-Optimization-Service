@@ -24,6 +24,7 @@ export type ServiceOrder = {
     numberOfCompletedItems: number;
     numberOfTotalServices: number;
     isActive: boolean;
+    hasChanged: boolean;
 
     serviceOrderItems: ServiceOrderItem[]
     customerInfoByGroup: CustomerInfoByGroup;

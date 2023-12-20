@@ -363,7 +363,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             customerInfoByGroup: null,
             customerAircraft: null,
             numberOfTotalServices: 0,
-            isActive: false
+            isActive: false,
+            hasChanged: false
         };
         const config: MatDialogConfig = {
             disableClose: true,
@@ -448,6 +449,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
         }
+
+        this.serviceOrderHasChanges(fuelReq);
     }
 
     completedServicesChanged(fuelReq: FuelReq, valueChanged: number) {
@@ -479,10 +482,17 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             fuelReq.serviceOrder.isCompleted = false;
             fuelReq.serviceOrder.isActive = true;
         }
+
+        this.serviceOrderHasChanges(fuelReq);
     }
 
-    totalServicesChanged(fuelReq: FuelReq) {
-        fuelReq.serviceOrder.numberOfTotalServices += 1;
+    totalServicesChanged(fuelReq: FuelReq, valueChanged: number) {
+        fuelReq.serviceOrder.numberOfTotalServices += valueChanged;
+        this.serviceOrderHasChanges(fuelReq);
+    }
+
+    serviceOrderHasChanges(fuelReq: FuelReq) {
+        fuelReq.serviceOrder.hasChanged = true;
     }
 
     private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {

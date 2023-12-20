@@ -121,7 +121,7 @@
                     &nbsp;
                 </th>
                 <td mat-cell *matCellDef="let element">
-                    <div style="position: absolute; left: 0;">
+                    <div style="position: relative; top: 5px; left: -20px;">
                         <ni-badge *ngIf="element.cancelled" [arrow]="'left'" [borderRadius]="false"
                                   [color]="'danger'"
                                   matTooltipPosition="after">
@@ -308,7 +308,7 @@
                     <div class="example-element-detail"
                          [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
                         <div class="example-element-description">
-                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element)"></app-fuelreqs-grid-services>
+                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" [hasChanged]="element.serviceOrder.hasChanged" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element,$event)" (serviceHasChanged)="serviceOrderHasChanges(element)"></app-fuelreqs-grid-services>
                         </div>
                     </div>
                 </td>

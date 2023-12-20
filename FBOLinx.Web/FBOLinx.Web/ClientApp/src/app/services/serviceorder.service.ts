@@ -34,6 +34,11 @@ export class ServiceOrderService {
         return this.http.get(this.accessPointUrl + '/id/' + serviceOrderId);
     }
 
+    //Call the GetServiceOrderByAssociatedFuelOrderId method in the ServiceOrderController
+    public getServiceOrderByAssociatedFuelOrderId(associatedFuelOrderId: number) {
+        return this.http.get(this.accessPointUrl + '/associatedfuelorderid/' + associatedFuelOrderId);
+    }
+
     //Call the PostServiceOrder method in the ServiceOrderController
     public createServiceOrder(serviceOrder: any) {
         const body = JSON.stringify(serviceOrder);
