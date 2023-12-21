@@ -86,7 +86,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
 
                         if (notActiveAcukwikServicesOffered != null)
                         {
-                            var notactiveService = notActiveAcukwikServicesOffered.Where(cs => cs.Service == x.Service);
+                            var serviceDefault = acukwikServicesOfferedDefaults.Where(a => a.AcukwikServicesOfferedId == x.ServiceOfferedId).FirstOrDefault();
+
+                            var notactiveService = notActiveAcukwikServicesOffered.Where(cs => cs.Service == x.Service || serviceDefault.Service == cs.Service);
                             if (notactiveService.Any())
                             {
                                 serviceAndFee.IsActive = false;
@@ -115,7 +117,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             {
                 if (cs.AcukwikServicesOfferedId == null) continue;
                 var service = await _acukwikServicesOfferedEntityService.FindByComposeKeyAsync((int)cs.AcukwikServicesOfferedId);
-                if (service.Service == cs.Service) continue;
+                var serviceDefault = acukwikServicesOfferedDefaults.Where(a => a.AcukwikServicesOfferedId.ToString() == cs.AcukwikServicesOfferedId.GetValueOrDefault().ToString().Replace(service.HandlerId.ToString(), "")).FirstOrDefault();
+                if (service.Service == cs.Service|| serviceDefault.Service == cs.Service) continue;
                 var resouce = cs.Adapt<ServicesAndFeesResponse>();
                 resouce.HandlerId = service.HandlerId;
                 resouce.ServiceOfferedId = service.ServiceOfferedId;
