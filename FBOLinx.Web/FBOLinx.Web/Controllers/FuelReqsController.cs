@@ -128,6 +128,25 @@ namespace FBOLinx.Web.Controllers
             return Ok(fuelReq);
         }
 
+        // GET: api/FuelReqs/sourceid/5/fboId/6
+        [HttpGet("sourceid/{sourceId}/fboid/{fboId}")]
+        public async Task<IActionResult> GetFuelReqBySourceId([FromRoute] int sourceId, [FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fuelReq = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(sourceId, fboId));
+
+            if (fuelReq == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(fuelReq);
+        }
+
         // Get: api/FuelReqs/fbo/5
         [HttpGet("fbo/{fboId}")]
         public async Task<IActionResult> GetFuelReqsByFbo([FromRoute] int fboId)

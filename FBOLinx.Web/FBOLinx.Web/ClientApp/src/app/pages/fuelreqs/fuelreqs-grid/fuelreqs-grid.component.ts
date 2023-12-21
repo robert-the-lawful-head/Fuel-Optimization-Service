@@ -363,8 +363,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             customerInfoByGroup: null,
             customerAircraft: null,
             numberOfTotalServices: 0,
-            isActive: false,
-            hasChanged: false
+            isActive: false
         };
         const config: MatDialogConfig = {
             disableClose: true,
@@ -383,6 +382,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.fuelreqsData.push(result);
             this.refreshTable();
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
+            const selectedRow = document.getElementById(result.oid.toString());
+            selectedRow.scrollIntoView({ block: 'center' });
         });
     }
 
@@ -449,17 +450,15 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
         }
-
-        this.serviceOrderHasChanges(fuelReq);
     }
 
-    completedServicesChanged(fuelReq: FuelReq, valueChanged: number) {
-        if (fuelReq.serviceOrder.numberOfTotalServices == valueChanged)
-            fuelReq.serviceOrder.numberOfCompletedItems = valueChanged;
+    completedServicesChanged(fuelReq: FuelReq, changes: any) {
+        if (fuelReq.serviceOrder.numberOfTotalServices == changes.value)
+            fuelReq.serviceOrder.numberOfCompletedItems = changes.value;
         else {
-            if (valueChanged > 0)
+            if (changes.value > 0)
                 fuelReq.serviceOrder.numberOfCompletedItems++;
-            else if (valueChanged < 0)
+            else if (changes.value < 0)
                 fuelReq.serviceOrder.numberOfCompletedItems--;
             else {
                 fuelReq.serviceOrder.numberOfCompletedItems = 0;
@@ -483,16 +482,12 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             fuelReq.serviceOrder.isActive = true;
         }
 
-        this.serviceOrderHasChanges(fuelReq);
+        fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
     }
 
-    totalServicesChanged(fuelReq: FuelReq, valueChanged: number) {
-        fuelReq.serviceOrder.numberOfTotalServices += valueChanged;
-        this.serviceOrderHasChanges(fuelReq);
-    }
-
-    serviceOrderHasChanges(fuelReq: FuelReq) {
-        fuelReq.serviceOrder.hasChanged = true;
+    totalServicesChanged(fuelReq: FuelReq, changes: any) {
+        fuelReq.serviceOrder.numberOfTotalServices += changes.value;
+        fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
     }
 
     private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {

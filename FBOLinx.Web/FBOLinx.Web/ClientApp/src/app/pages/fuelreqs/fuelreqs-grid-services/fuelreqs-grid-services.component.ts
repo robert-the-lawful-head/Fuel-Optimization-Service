@@ -18,6 +18,7 @@ import * as moment from 'moment';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
+import { FuelReq } from '../../../models/fuelreq';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse {
     isEditMode: boolean,
@@ -37,10 +38,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
     @Input() public associatedFuelOrderId: number | null = null;
     @Input() public fuelerlinxTransactionId: number | null = null;
     @Input() public servicesAndFees: string[];
-    @Input() public hasChanged: boolean;
-    @Output() completedServicesChanged: EventEmitter<number> = new EventEmitter();
+    @Output() completedServicesChanged: EventEmitter<any> = new EventEmitter();
     @Output() totalServicesChanged: EventEmitter<any> = new EventEmitter();
-    @Output() serviceHasChanged: EventEmitter<any> = new EventEmitter();
 
     public newServiceOrderItem: ServiceOrderItem;
     fuelreqsServicesAndFeesGridDisplay: ServiceOrderItem[] = [];
@@ -58,28 +57,6 @@ export class FuelreqsGridServicesComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-        if (this.hasChanged) {
-            if (this.serviceOrderId > 0) {
-                this.serviceOrderService.getServiceOrderItems(this.serviceOrderId).subscribe(
-                    (response: EntityResponseMessage<ServiceOrderItem[]>) => {
-                        if (response.result != null) {
-                            this.serviceOrderItems = response.result;
-                            this.refreshGrid();
-                        }
-                    });
-            }
-            else {
-                this.serviceOrderService.getServiceOrderByAssociatedFuelOrderId(this.associatedFuelOrderId).subscribe(
-                    (response: EntityResponseMessage<ServiceOrder>) => {
-                        if (response.result != null) {
-                            this.serviceOrderItems = response.result.serviceOrderItems;
-                            this.refreshGrid();
-                        }
-                    });
-            }
-        }
-
-        else
             this.refreshGrid();
     }
 
@@ -116,64 +93,25 @@ export class FuelreqsGridServicesComponent implements OnInit {
         serviceOrderItem.isAdding = true;
         if (serviceOrderItem.serviceOrderId == 0) {
             var fuelOrderId = 0;
-            if (this.fuelerlinxTransactionId > 0)
-                fuelOrderId = this.fuelerlinxTransactionId;
-            else
+
+            if (this.fuelerlinxTransactionId == 0) {
                 fuelOrderId = this.associatedFuelOrderId;
 
-            this.fuelReqsService.get(fuelOrderId).subscribe((fuelReq: any) => {
-                if (fuelReq != undefined) {
-                    var newServiceOrder: ServiceOrder = {
-                        oid: 0,
-                        fboId: this.sharedService.currentUser.fboId,
-                        serviceOrderItems: [],
-                        arrivalDateTimeUtc: moment(fuelReq.eta).toDate(),
-                        arrivalDateTimeLocal: null,
-                        departureDateTimeUtc: moment(fuelReq.etd).toDate(),
-                        departureDateTimeLocal: null,
-                        groupId: this.sharedService.currentUser.groupId,
-                        customerInfoByGroupId: 0,
-                        customerAircraftId: fuelReq.customerAircraftId,
-                        associatedFuelOrderId: this.associatedFuelOrderId,
-                        FuelerLinxTransactionId: this.fuelerlinxTransactionId,
-                        serviceOn: fuelReq.FuelOn == "Departure" ? ServiceOrderAppliedDateTypes.Departure : ServiceOrderAppliedDateTypes.Arrival,
-                        serviceDateTimeUtc: fuelReq.FuelOn == "Departure" ? moment(fuelReq.etd).toDate() : moment(fuelReq.eta).toDate(),
-                        numberOfCompletedItems: 0,
-                        isCompleted: false,
-                        customerInfoByGroup: null,
-                        customerAircraft: null,
-                        numberOfTotalServices: 0,
-                        isActive: false,
-                        hasChanged: true
+                this.fuelReqsService.get(fuelOrderId).subscribe((fuelReq: any) => {
+                    if (fuelReq != undefined) {
+                        this.createServiceOrder(fuelReq, serviceOrderItem);
                     }
+                });
+            }
+            else {
+                fuelOrderId = this.fuelerlinxTransactionId;
 
-                    this.serviceOrderService.createServiceOrder(newServiceOrder).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
-                        if (!response.success)
-                            alert('Error creating service order: ' + response.message);
-                        else {
-                            serviceOrderItem.serviceOrderId = response.result.oid;
-                            this.serviceOrderService.createServiceOrderItem(serviceOrderItem).subscribe((responseItem: EntityResponseMessage<ServiceOrderItem>) => {
-                                if (!responseItem.success)
-                                    alert('Error saving service order item: ' + responseItem.message);
-                                else {
-                                    serviceOrderItem.isAddMode = false;
-                                    serviceOrderItem.isAdding = false;
-                                    serviceOrderItem.oid = responseItem.result.oid;
-
-                                    this.sortGrid();
-
-                                    this.resetNewServiceOrderItem();
-
-                                    this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
-
-                                    this.totalServicesChanged.emit(1);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-
+                this.fuelReqsService.getBySourceId(fuelOrderId, this.sharedService.currentUser.fboId).subscribe((fuelReq: any) => {
+                    if (fuelReq != undefined) {
+                        this.createServiceOrder(fuelReq, serviceOrderItem);
+                    }
+                });
+            }
         }
         else {
             this.serviceOrderService.createServiceOrderItem(serviceOrderItem).subscribe((response: EntityResponseMessage<ServiceOrderItem>) => {
@@ -190,7 +128,11 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
                     this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
 
-                    this.totalServicesChanged.emit(1);
+                    let updatedList = {
+                        fuelreqsServicesAndFeesGridDisplay: this.fuelreqsServicesAndFeesGridDisplay,
+                        value: 1
+                    }
+                    this.totalServicesChanged.emit(updatedList);
                 }
             });
         }
@@ -201,15 +143,15 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
 
     updateCompletedFlag(serviceAndfee: ServiceOrderItem, isArchiving: boolean = false): void {
+        var numberCompleted = 0;
         if (serviceAndfee.isCompleted) {
             serviceAndfee.completionDateTimeUtc = moment.utc().toDate();
             serviceAndfee.completedByUserId = this.sharedService.currentUser.oid;
             serviceAndfee.completedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
-            if (!isArchiving) 
-                this.completedServicesChanged.emit(1);
+            numberCompleted = 1;
         }
         else if (!isArchiving)
-            this.completedServicesChanged.emit(-1);
+            numberCompleted = -1;
 
         if (!isArchiving) {
             var serviceOrderItems = this.fuelreqsServicesAndFeesGridDisplay;
@@ -225,6 +167,14 @@ export class FuelreqsGridServicesComponent implements OnInit {
             this.resetNewServiceOrderItem();
 
             this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
+            if (!isArchiving) {
+                let updatedList = {
+                    fuelreqsServicesAndFeesGridDisplay: this.fuelreqsServicesAndFeesGridDisplay,
+                    value: numberCompleted
+                }
+                this.completedServicesChanged.emit(updatedList);
+            }      
         }
 
         this.saveServiceOrderItem(serviceAndfee);
@@ -261,7 +211,12 @@ export class FuelreqsGridServicesComponent implements OnInit {
                     this.resetNewServiceOrderItem();
 
                     this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
-                    this.totalServicesChanged.emit(-1);
+
+                    let updatedList = {
+                        fuelreqsServicesAndFeesGridDisplay: this.fuelreqsServicesAndFeesGridDisplay,
+                        value: -1
+                    }
+                    this.totalServicesChanged.emit(updatedList);
                 }
             });
         });
@@ -272,6 +227,60 @@ export class FuelreqsGridServicesComponent implements OnInit {
             return `Source: Acukwik`;
         else
             return `Source: Custom`;
+    }
+
+    private createServiceOrder(fuelReq: any, serviceOrderItem: ServiceOrderItem) {
+        var newServiceOrder: ServiceOrder = {
+            oid: 0,
+            fboId: this.sharedService.currentUser.fboId,
+            serviceOrderItems: [],
+            arrivalDateTimeUtc: moment(fuelReq.eta).toDate(),
+            arrivalDateTimeLocal: null,
+            departureDateTimeUtc: moment(fuelReq.etd).toDate(),
+            departureDateTimeLocal: null,
+            groupId: this.sharedService.currentUser.groupId,
+            customerInfoByGroupId: 0,
+            customerAircraftId: fuelReq.customerAircraftId,
+            associatedFuelOrderId: this.associatedFuelOrderId,
+            FuelerLinxTransactionId: this.fuelerlinxTransactionId,
+            serviceOn: fuelReq.FuelOn == "Departure" ? ServiceOrderAppliedDateTypes.Departure : ServiceOrderAppliedDateTypes.Arrival,
+            serviceDateTimeUtc: fuelReq.FuelOn == "Departure" ? moment(fuelReq.etd).toDate() : moment(fuelReq.eta).toDate(),
+            numberOfCompletedItems: 0,
+            isCompleted: false,
+            customerInfoByGroup: null,
+            customerAircraft: null,
+            numberOfTotalServices: 0,
+            isActive: false
+        }
+
+        this.serviceOrderService.createServiceOrder(newServiceOrder).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
+            if (!response.success)
+                alert('Error creating service order: ' + response.message);
+            else {
+                serviceOrderItem.serviceOrderId = response.result.oid;
+                this.serviceOrderService.createServiceOrderItem(serviceOrderItem).subscribe((responseItem: EntityResponseMessage<ServiceOrderItem>) => {
+                    if (!responseItem.success)
+                        alert('Error saving service order item: ' + responseItem.message);
+                    else {
+                        serviceOrderItem.isAddMode = false;
+                        serviceOrderItem.isAdding = false;
+                        serviceOrderItem.oid = responseItem.result.oid;
+
+                        this.sortGrid();
+
+                        this.resetNewServiceOrderItem();
+
+                        this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
+                        let updatedList = {
+                            fuelreqsServicesAndFeesGridDisplay: this.fuelreqsServicesAndFeesGridDisplay,
+                            value: 1
+                        }
+                        this.totalServicesChanged.emit(updatedList);
+                    }
+                });
+            }
+        });
     }
 
     private saveServiceOrderItem(serviceOrderItem: ServiceOrderItem) {

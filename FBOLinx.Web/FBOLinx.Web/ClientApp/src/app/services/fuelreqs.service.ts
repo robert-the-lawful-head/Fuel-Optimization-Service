@@ -79,6 +79,13 @@ export class FuelreqsService {
         });
     }
 
+    public getBySourceId(sourceId, fboId) {
+        return this.http.get(this.accessPointUrl + '/sourceid/' + sourceId + '/fboid/' + fboId, {
+            headers: this.headers,
+        });
+    }
+
+
     public add(payload) {
         return this.http.post(this.accessPointUrl + '/create', payload, {
             headers: this.headers,

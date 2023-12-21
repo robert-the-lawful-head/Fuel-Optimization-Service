@@ -242,6 +242,7 @@
                     Tail #
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
+                    {{fuelreq.customerAircraftId}}
                     <span *ngIf="!fuelreq.archived">{{ fuelreq.tailNumber }}</span>
                     <span *ngIf="fuelreq.archived"><s>{{ fuelreq.tailNumber }}</s></span>
 
@@ -308,7 +309,7 @@
                     <div class="example-element-detail"
                          [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
                         <div class="example-element-description">
-                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" [hasChanged]="element.serviceOrder.hasChanged" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element,$event)" (serviceHasChanged)="serviceOrderHasChanges(element)"></app-fuelreqs-grid-services>
+                            <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element,$event)"></app-fuelreqs-grid-services>
                         </div>
                     </div>
                 </td>
@@ -324,7 +325,7 @@
             </tr>
             <tr mat-row
                 *matRowDef="let row; columns: ['expandedDetail']"
-                class="example-detail-row"></tr>
+                class="example-detail-row" id="{{row.oid}}"></tr>
             <tr class="mat-row" *matNoDataRow>
                 <td class="mat-cell" [attr.colspan]="columns.length">
                     {{ getNoDataToDisplayString() }}
