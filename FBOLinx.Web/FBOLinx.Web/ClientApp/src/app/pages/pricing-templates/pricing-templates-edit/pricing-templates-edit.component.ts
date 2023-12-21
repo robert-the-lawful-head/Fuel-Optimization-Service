@@ -4,9 +4,7 @@ import {
     OnInit,
     OnDestroy,
     Output,
-    ViewChild,
-    ElementRef
-} from '@angular/core';
+    ViewChild} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
@@ -38,21 +36,6 @@ export interface DefaultTemplateUpdate {
     isDeleting: boolean;
 }
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/pricing-templates',
-        title: 'ITP Margin Templates',
-    },
-    {
-        link: '',
-        title: 'Edit Margin Template',
-    },
-];
-
 @Component({
     selector: 'app-pricing-templates-edit',
     styleUrls: ['./pricing-templates-edit.component.scss'],
@@ -71,7 +54,20 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
     pricingTemplate: any;
     id             :any;
-    breadcrumb: any[] = BREADCRUMBS;
+    breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/pricing-templates',
+            title: 'ITP Margin Templates',
+        },
+        {
+            link: '',
+            title: 'Edit Margin Template',
+        },
+    ];
     pricingTemplateForm: FormGroup;
     pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [

@@ -1,27 +1,12 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FileInfo, SelectedEventArgs } from '@syncfusion/ej2-angular-inputs';
-import { HtmlEditorService, ImageDropEventArgs, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
+import { HtmlEditorService, ImageService, ImageSettingsModel, LinkService, ToolbarService } from '@syncfusion/ej2-angular-richtexteditor';
 import { FileHelper } from 'src/app/helpers/files/file.helper';
 import { EditorBase } from 'src/app/services/text-editor/editorBase';
 import { SharedService } from '../../../layouts/shared-service';
 import { EmailcontentService } from '../../../services/emailcontent.service';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/email-templates',
-        title: 'Email Templates',
-    },
-    {
-        link: '',
-        title: 'Edit Email Template',
-    },
-];
 
 @Component({
     selector: 'app-email-templates-edit',
@@ -32,7 +17,20 @@ const BREADCRUMBS: any[] = [
 export class EmailTemplatesEditComponent extends EditorBase implements OnInit {
     @ViewChild('fileUpload') fileUploadName;
     private id: any;
-    public breadcrumb: any[] = BREADCRUMBS;
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/email-templates',
+            title: 'Email Templates',
+        },
+        {
+            link: '',
+            title: 'Edit Email Template',
+        },
+    ];
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
     public emailTemplate: any;
