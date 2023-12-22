@@ -625,7 +625,42 @@ namespace FBOLinx.Web.Controllers
             return NoContent();
         }
 
-        
+        // PUT: api/FuelReqs/updatearchived/5
+        [HttpPut("updatearchived/{id}")]
+        public async Task<IActionResult> PutFuelReqArchived([FromRoute] int id, [FromBody] FuelReq fuelReq)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != fuelReq.Oid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var orderDetails = new OrderDetailsDto();
+                if (fuelReq.SourceId > 0)
+                {
+                    var fbo = await _fboService.GetFbo(fuelReq.Fboid.GetValueOrDefault());
+                    orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.AcukwikFBOHandlerId.GetValueOrDefault()));
+                }
+                else
+                    orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByAssociatedFuelOrderIdSpecification(fuelReq.Oid));
+
+                orderDetails.IsArchived = fuelReq.Archived;
+                await _orderDetailsService.UpdateAsync(orderDetails);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return Ok(fuelReq);
+        }
+
+
         // POST: api/FuelReqs
         [HttpPost]
         public async Task<IActionResult> PostFuelReq([FromBody] FuelReq fuelReq)

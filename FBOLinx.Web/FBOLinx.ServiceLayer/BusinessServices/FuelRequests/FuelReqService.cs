@@ -259,6 +259,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     order.Fboid = fboId;
                     order.ServiceOrder = serviceOrders.Where(s => (s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == order.SourceId) || (s.AssociatedFuelOrderId > 0 && s.AssociatedFuelOrderId == order.Oid)).FirstOrDefault();
                     order.PaymentMethod = orderDetails.Where(o => (o.FuelerLinxTransactionId == order.SourceId) || (o.AssociatedFuelOrderId == order.Oid)).Select(d => d.PaymentMethod).FirstOrDefault();
+                    if (!order.Archived.GetValueOrDefault())
+                        order.Archived = orderDetails.Where(o => (o.FuelerLinxTransactionId == order.SourceId) || (o.AssociatedFuelOrderId == order.Oid)).Select(d => d.IsArchived).FirstOrDefault();
                     result.Add(order);
                 }
 
@@ -282,6 +284,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelRequest.ServiceOrder = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == fuelRequest.SourceId).FirstOrDefault();
                         fuelRequest.PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).Select(d => d.PaymentMethod).FirstOrDefault();
                         fuelRequest.Fboid = fboId;
+                        fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
+                        fuelRequest.Archived = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).Select(d => d.IsArchived).FirstOrDefault();
                         result.Add(fuelRequest);
                     }
                 }
@@ -302,7 +306,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             Oid = item.Oid,
                             ActualPpg = 0,
                             ActualVolume = 0,
-                            Archived = false,
+                            Archived = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).Select(d => d.IsArchived).FirstOrDefault(),
                             Cancelled = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).Select(d => d.IsCancelled).FirstOrDefault(),
                             CustomerId = item.CustomerInfoByGroup?.CustomerId,
                             //DateCreated = item.ServiceDateTimeUtc,//check this property

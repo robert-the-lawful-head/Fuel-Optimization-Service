@@ -3,18 +3,21 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import {
     ChangeDetectionStrategy,
     Component,
+    ElementRef,
     EventEmitter,
     Input,
     OnChanges,
     OnInit,
     Output,
+    QueryList,
     SimpleChanges,
     ViewChild,
+    ViewChildren,
 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
@@ -117,6 +120,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(FuelreqsGridServicesComponent, { static: true }) fuelReqGridServicesComponent: FuelreqsGridServicesComponent;
+    @ViewChildren(MatRow, { read: ElementRef }) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
@@ -382,8 +386,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.fuelreqsData.push(result);
             this.refreshTable();
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
-            const selectedRow = document.getElementById(result.oid.toString());
-            selectedRow.scrollIntoView({ block: 'center' });
+            this.scrollToIndex(result.oid);
         });
     }
 
@@ -423,7 +426,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
                 fuelReq.serviceOrder.serviceOrderItems = null;
 
-                this.fuelreqsService.update(fuelReq).subscribe(response => {
+                this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                     fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
                 });
             });
@@ -446,7 +449,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             var serviceOrderItems = fuelReq.serviceOrder.serviceOrderItems;
             fuelReq.serviceOrder.serviceOrderItems = null;
 
-            this.fuelreqsService.update(fuelReq).subscribe(response => {
+            this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
         }
@@ -482,12 +485,20 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             fuelReq.serviceOrder.isActive = true;
         }
 
-        fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+        if (changes.fuelreqsServicesAndFeesGridDisplay != null)
+            fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
     }
 
     totalServicesChanged(fuelReq: FuelReq, changes: any) {
         fuelReq.serviceOrder.numberOfTotalServices += changes.value;
-        fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+        if (changes.fuelreqsServicesAndFeesGridDisplay != null)
+            fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+    }
+
+    private scrollToIndex(id: number): void {
+        let elem = this.rows.find(row => row.nativeElement.id === id.toString());
+
+        elem?.nativeElement.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
 
     private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {

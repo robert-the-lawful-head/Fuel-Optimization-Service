@@ -166,7 +166,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             notes: '',
             actualVolume: 0,
             actualPpg: 0,
-            source: '',
+            source: 'FBO Custom',
             sourceId: 0,
             dispatchNotes: '',
             archived: false,

@@ -318,6 +318,7 @@
                 *matHeaderRowDef="getVisibleColumns(); sticky: true"></tr>
             <tr mat-row
                 *matRowDef="let element; columns: getVisibleColumns()"
+                [id]="element.oid"
                 class="example-element-row"
                 [class.example-detail-row]="element.archived === true"
                 [class.example-expanded-row]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())"
@@ -325,7 +326,7 @@
             </tr>
             <tr mat-row
                 *matRowDef="let row; columns: ['expandedDetail']"
-                class="example-detail-row" id="{{row.oid}}"></tr>
+                class="example-detail-row"></tr>
             <tr class="mat-row" *matNoDataRow>
                 <td class="mat-cell" [attr.colspan]="columns.length">
                     {{ getNoDataToDisplayString() }}

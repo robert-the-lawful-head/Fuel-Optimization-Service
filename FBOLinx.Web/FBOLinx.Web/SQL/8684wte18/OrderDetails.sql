@@ -22,7 +22,8 @@ CustomerAircraftID int NULL,
 ETA datetime2(7) NULL,
 FboHandlerId int NULL,
 IsCancelled bit NULL,
-AssociatedFuelOrderId int null
+AssociatedFuelOrderId int null,
+IsArchived bit null
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC

@@ -104,6 +104,12 @@ export class FuelreqsService {
         });
     }
 
+    public updateArchived(payload) {
+        return this.http.put(this.accessPointUrl + '/updatearchived/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
+
     // Analysis Services
 
     public topCustomersForFbo(fboId, payload) {
