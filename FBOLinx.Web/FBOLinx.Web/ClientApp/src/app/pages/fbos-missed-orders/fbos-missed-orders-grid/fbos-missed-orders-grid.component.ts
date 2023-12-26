@@ -61,6 +61,10 @@ export class FbosMissedOrdersGridComponent implements OnInit {
         });
     }
 
+    get isCsr() {
+        return this.sharedService.currentUser.role === 5;
+    }
+
     private refreshMissedOrdersDataSource() {
         this.NgxUiLoader.startLoader(this.missedOrdersLoader);
         this.fboMissedQuotesLogService.getRecentMissedOrders(this.sharedService.currentUser.fboId)
