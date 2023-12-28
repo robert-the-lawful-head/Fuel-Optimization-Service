@@ -9,6 +9,7 @@ import { PriceCheckerComponent } from '../../../shared/components/price-checker/
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { FbomissedquoteslogService } from '../../../services/fbomissedquoteslog.service';
+import { UserRole } from 'src/app/enums/user-role';
 
 @Component({
     selector: 'app-fbos-missed-orders-grid',
@@ -59,6 +60,10 @@ export class FbosMissedOrdersGridComponent implements OnInit {
                 return;
             }
         });
+    }
+
+    get isCsr() {
+        return this.sharedService.currentUser.role === UserRole.CSR;
     }
 
     private refreshMissedOrdersDataSource() {

@@ -45,7 +45,7 @@
                     </button>
                 </div>
                 <div class="col">
-                    <button (click)="goToCustomerDetails(missedOrder)" [view]="'accent'" size="small" ni-button>
+                    <button *ngIf="!isCsr" (click)="goToCustomerDetails(missedOrder)" [view]="'accent'" size="small" ni-button>
                         Adjust ITP Margin
                     </button>
                 </div>
