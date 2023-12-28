@@ -285,6 +285,7 @@ export abstract class MapboxglBase {
     }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
         this.map.flyTo({
+            zoom: 13,
             center: center,
             essential: hasAnimation // this animation is considered essential with respect to prefers-reduced-motion
         });
