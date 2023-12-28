@@ -11,4 +11,6 @@ export type ServiceOrderItem = {
     isEditMode: boolean;
     isAddMode: boolean;
     isAdding: boolean;
+    addedByUserId?: number;
+    addedByName?: string;
 }

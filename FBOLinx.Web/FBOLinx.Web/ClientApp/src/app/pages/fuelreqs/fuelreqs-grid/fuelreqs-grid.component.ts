@@ -222,7 +222,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         return result;
     }
 
-    refreshTable() {
+    refreshTable(scrollIndex: number = 0) {
         let filter = '';
         if (this.fuelreqsDataSource) {
             filter = this.fuelreqsDataSource.filter;
@@ -236,6 +236,9 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.refreshSort();
 
         this.setVirtualScrollVariables(this.paginator, this.sort, this.fuelreqsDataSource.data);
+
+        if (scrollIndex > 0)
+            this.scrollToIndex(scrollIndex);
     }
 
     refreshSort() {
@@ -384,9 +387,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 return;
             result.serviceOrder = newServiceOrder;
             this.fuelreqsData.push(result);
-            this.refreshTable();
+            this.refreshTable(result.oid);
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
-            this.scrollToIndex(result.oid);
         });
     }
 
@@ -496,9 +498,11 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     }
 
     private scrollToIndex(id: number): void {
-        let elem = this.rows.find(row => row.nativeElement.id === id.toString());
+        let elem = document.getElementById(id.toString());
+        //let elem = this.rows.find(row => row.nativeElement.id === id.toString());
 
-        elem?.nativeElement.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        elem?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        //elem?.nativeElement.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
 
     private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {

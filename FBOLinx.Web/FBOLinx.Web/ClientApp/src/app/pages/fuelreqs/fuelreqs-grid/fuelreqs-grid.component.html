@@ -326,7 +326,7 @@
             </tr>
             <tr mat-row
                 *matRowDef="let row; columns: ['expandedDetail']"
-                class="example-detail-row"></tr>
+                class="example-detail-row" [id]="row.oid == 0 ? row.serviceOrder.oid : row.oid"></tr>
             <tr class="mat-row" *matNoDataRow>
                 <td class="mat-cell" [attr.colspan]="columns.length">
                     {{ getNoDataToDisplayString() }}

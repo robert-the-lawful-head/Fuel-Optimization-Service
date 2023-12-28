@@ -91,6 +91,9 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     add(serviceOrderItem: ServiceOrderItem): void {
         serviceOrderItem.isAdding = true;
+        serviceOrderItem.addedByUserId = this.sharedService.currentUser.oid;
+        serviceOrderItem.addedByName = this.sharedService.currentUser.firstName + ' ' + this.sharedService.currentUser.lastName;
+
         if (serviceOrderItem.serviceOrderId == 0) {
             var fuelOrderId = 0;
 
@@ -226,7 +229,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
         if (this.servicesAndFees.indexOf(serviceAndFees.serviceName) > -1)
             return `Source: Acukwik`;
         else
-            return `Source: Custom`;
+            return `Source: ` + serviceAndFees.addedByName;
     }
 
     private createServiceOrder(fuelReq: any, serviceOrderItem: ServiceOrderItem) {
