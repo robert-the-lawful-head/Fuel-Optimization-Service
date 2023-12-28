@@ -696,7 +696,6 @@ export class FlightWatchMapComponent
         );
 
         if (!selectedFlight) return;
-        console.log("🚀 ~ file: flight-watch-map.component.ts:680 ~ closeAircraftPopUpByTailNumber ~ remove:" + tailNumber)
         this.openedPopUps[selectedFlight].popupInstance.remove();
 
         delete this.openedPopUps[selectedFlight];
