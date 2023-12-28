@@ -90,21 +90,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
                               Latitude = groupedResult.FirstOrDefault().live.Latitude,
                               Longitude = groupedResult.FirstOrDefault().live.Longitude,
-                              AircraftPositionDateTimeUtc = (new List<DateTime>(){
-                                groupedResult.Max(x => x.live.CreatedDateTime  ?? DateTime.MinValue),
-                                groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
-                                groupedResult.Max(x => x.historical?.BoxTransmissionDateTimeUtc ?? DateTime.MinValue)
-                                }).Max(),
+                              //AircraftPositionDateTimeUtc = (new List<DateTime>(){
+                              //groupedResult.Max(x => x.live.CreatedDateTime  ?? DateTime.MinValue),
+                              //groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                              //groupedResult.Max(x => x.historical?.BoxTransmissionDateTimeUtc ?? DateTime.MinValue)
+                              //}).Max(),
+                              AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.BoxTransmissionDateTimeUtc),
                               IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
                               RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical).ToList(),
-                              
+
                               AirportWatchLiveData =
                               groupedResult.Where(x => x.live != null).Select(x => x.live)
-                              .OrderByDescending(x =>
-                              (x.CreatedDateTime.GetValueOrDefault() > x.AircraftPositionDateTimeUtc) ?
-                                (x.CreatedDateTime.GetValueOrDefault() > x.BoxTransmissionDateTimeUtc) ? x.CreatedDateTime : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
-                                : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
-                                ).FirstOrDefault()
+                              .OrderByDescending(x => x.BoxTransmissionDateTimeUtc).FirstOrDefault()
+                              //.OrderByDescending(x =>
+                              //(x.CreatedDateTime.GetValueOrDefault() > x.AircraftPositionDateTimeUtc) ?
+                              //  (x.CreatedDateTime.GetValueOrDefault() > x.BoxTransmissionDateTimeUtc) ? x.CreatedDateTime : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
+                              //  : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
+                              //  ).FirstOrDefault()
                           }
                 )
                 .ToList();

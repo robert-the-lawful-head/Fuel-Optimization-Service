@@ -593,6 +593,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 }
                 else
                 {
+                    if (oldAirportWatchLiveData != null) 
+                    { 
+                        if (record?.BoxName != oldAirportWatchLiveData?.BoxName)
+                        {
+                            var diffInSeconds = Math.Abs((oldAirportWatchLiveData.BoxTransmissionDateTimeUtc - record.BoxTransmissionDateTimeUtc).TotalSeconds);
+                            if (diffInSeconds < 11)
+                                continue;
+                        }
+                        if(record?.BoxTransmissionDateTimeUtc < oldAirportWatchLiveData?.BoxTransmissionDateTimeUtc)
+                        {
+                            continue;
+                        }
+                    }
+ 
                     //Capture the tail from the previous record before copying the new information to prevent needing to lookup the tail again
                     record.TailNumber = oldAirportWatchLiveData.TailNumber;
                     record.Oid = oldAirportWatchLiveData.Oid;
