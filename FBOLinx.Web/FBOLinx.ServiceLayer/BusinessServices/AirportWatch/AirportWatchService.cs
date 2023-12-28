@@ -33,6 +33,7 @@ using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 using FBOLinx.ServiceLayer.Extensions.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using Newtonsoft.Json;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -61,12 +62,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
-        private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegService _SwimFlightLegService;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
-            IFboService fboService,
+           IFboService fboService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
@@ -78,8 +79,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ISWIMFlightLegService swimFlightLegService,
             ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegService swimFlightLegService,
             IAircraftHexTailMappingService aircraftHexTailMappingService)
         {
             _SwimFlightLegService = swimFlightLegService;
@@ -553,14 +554,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
                 var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
-
-                if(record.BoxName != oldAirportWatchLiveData.BoxName)
-                {
-                    var diffInSeconds = System.Math.Abs((oldAirportWatchLiveData.BoxTransmissionDateTimeUtc - record.BoxTransmissionDateTimeUtc).TotalSeconds);
-                    if (diffInSeconds < 11)
-                        continue;
-                }
-
+                
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
@@ -622,8 +616,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             await PrepareRecordsForDatabase(airportWatchDistinctBoxes);
 
-            //if (!isTesting)
-            //    await CommitChanges();
+            if (!isTesting)
+                await CommitChanges();
         }
 
         private async Task PrepareRecordsForDatabase(List<AirportWatchDistinctBoxesDTO> airportWatchDistinctBoxes)
@@ -934,7 +928,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert);
             await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate);
             await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete);
+            _LoggingService.LogError("AirportWatchService: historical data to insert", JsonConvert.SerializeObject(_HistoricalDataToInsert), LogLevel.Info, LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert);
+            _LoggingService.LogError("AirportWatchService: historical data to update", JsonConvert.SerializeObject(_HistoricalDataToUpdate),LogLevel.Info,LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate);
         }
 
