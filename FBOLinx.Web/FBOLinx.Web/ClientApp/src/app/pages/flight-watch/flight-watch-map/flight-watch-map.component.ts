@@ -183,6 +183,7 @@ export class FlightWatchMapComponent
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
             this.popupUpdatesTracking = {};
+            this.previousFlightData = {};
             if(changes.data.previousValue){
                 for (let key in changes.data.previousValue) {
                     this.previousFlightData[key] = changes.data.previousValue[key];
@@ -440,7 +441,7 @@ export class FlightWatchMapComponent
 
                     if(liveBearing == 0)return;
 
-                    let isBackwards = !this.isValidBearing(previousiveBearing,liveBearing);
+                    let isBackwards = !this.IsBackwardsBearing(previousiveBearing,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
                         //this.playBeep();
@@ -456,6 +457,9 @@ export class FlightWatchMapComponent
                         this.data[pointSource.properties.id].previousCorrectModel.liveBearing = previousiveBearing;
 
                         this.backwardLogs[pointSource.properties.id] = this.data[pointSource.properties.id];
+
+                        this.flyToCoordinates(this.data[pointSource.properties.id].previousCorrectModel.latitude,this.data[pointSource.properties.id].previousCorrectModel.longitude);
+                        return;
                     }
 
                     //need to update the icon image change on animation
@@ -469,8 +473,6 @@ export class FlightWatchMapComponent
                         const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
                         pointSource.properties['default-icon-image'] = defaultIcon;
                     }
-
-                    // if(isBackwardsBearing) return;
 
                     pointSource.geometry.coordinates = currentCoordinates;
 
@@ -492,13 +494,10 @@ export class FlightWatchMapComponent
         const frameid = requestAnimationFrame(() => animate());
         this.animationFrameIds.push(frameid);
     }
-    private isValidBearing(bearing: number,liveBearing: number): boolean {
-        const bearingTolerance = 10;
-        liveBearing = liveBearing;
-        const start = bearing+bearingTolerance;
-        const end = bearing-bearingTolerance;
-
-        return !this.isBearingInRange(liveBearing,start,end);
+    private IsBackwardsBearing(bearing: number,liveBearing: number): boolean {
+        let start = turf.bearingToAzimuth( bearing+160);
+        let end = turf.bearingToAzimuth(bearing+200);
+        return this.isBearingInRange(liveBearing,start,end);
     }
     private isBearingInRange(bearing: number, rangeStart: number, rangeEnd: number): boolean {
         if (rangeStart < rangeEnd) {
