@@ -17,7 +17,7 @@ import {
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatRow, MatTableDataSource } from '@angular/material/table';
+import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
@@ -28,7 +28,6 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
-import { ServiceOrdersDialogOrderItemsComponent } from '../../service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { ServiceOrder } from '../../../models/service-order';
@@ -120,6 +119,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(FuelreqsGridServicesComponent, { static: true }) fuelReqGridServicesComponent: FuelreqsGridServicesComponent;
+
     @ViewChildren(MatRow, { read: ElementRef }) rows!: QueryList<ElementRef<HTMLTableRowElement>>;
     @Output() dateFilterChanged = new EventEmitter<any>();
     @Input() fuelreqsData: any[];
@@ -222,7 +222,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         return result;
     }
 
-    refreshTable(scrollIndex: number = 0) {
+    refreshTable() {
         let filter = '';
         if (this.fuelreqsDataSource) {
             filter = this.fuelreqsDataSource.filter;
@@ -236,9 +236,6 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.refreshSort();
 
         this.setVirtualScrollVariables(this.paginator, this.sort, this.fuelreqsDataSource.data);
-
-        if (scrollIndex > 0)
-            this.scrollToIndex(scrollIndex);
     }
 
     refreshSort() {
@@ -327,7 +324,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.expandedElement.push(elementId);
         }
     }
-    
+
     sendConfirmationNotification(event: Event, fuelreq: any): void{
         event.stopPropagation();
 
@@ -387,7 +384,12 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 return;
             result.serviceOrder = newServiceOrder;
             this.fuelreqsData.push(result);
-            this.refreshTable(result.oid);
+            this.dataSource.data.push(result);
+            this.dataSource._updateChangeSubscription();
+            setTimeout(() => {
+              if (result.oid > 0)
+                 this.scrollToIndex(result.oid);
+            }, 100);
             this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
         });
     }
@@ -499,10 +501,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     private scrollToIndex(id: number): void {
         let elem = document.getElementById(id.toString());
-        //let elem = this.rows.find(row => row.nativeElement.id === id.toString());
-
-        elem?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        //elem?.nativeElement.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        elem?.scrollIntoView({ block: 'center', behavior: 'smooth'});
     }
 
     private saveServiceOrderItems(serviceOrderItems: ServiceOrderItem[]) {
