@@ -26,17 +26,6 @@ import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCon
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/flight-watch',
-        title: 'Flight Watch',
-    },
-];
-
 @Component({
     selector: 'app-flight-watch',
     styleUrls: ['./flight-watch.component.scss'],
@@ -54,7 +43,16 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
 
     pageTitle = 'Flight Watch';
-    breadcrumb: any[] = BREADCRUMBS;
+    breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/flight-watch',
+            title: 'Flight Watch',
+        },
+    ];
 
     isStable = true;
     loading = false;

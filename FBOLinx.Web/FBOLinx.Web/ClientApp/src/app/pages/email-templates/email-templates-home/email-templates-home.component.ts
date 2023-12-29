@@ -9,17 +9,6 @@ import { EmailcontentService } from '../../../services/emailcontent.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/email-templates',
-        title: 'Email Templates',
-    },
-];
-
 @Component({
     selector: 'app-email-templates-home',
     styleUrls: ['./email-templates-home.component.scss'],
@@ -29,7 +18,16 @@ export class EmailTemplatesHomeComponent
     implements AfterViewInit, OnDestroy, OnInit
 {
     public pageTitle = 'Email Templates';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/email-templates',
+            title: 'Email Templates',
+        },
+    ];
     public emailTemplates: any[];
     public locationChangedSubscription: any;
 

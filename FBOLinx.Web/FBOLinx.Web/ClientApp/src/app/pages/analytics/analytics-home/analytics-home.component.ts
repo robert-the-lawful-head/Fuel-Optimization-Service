@@ -7,17 +7,6 @@ import { CustomersListType } from '../../../models/customer';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/analytics',
-        title: 'Analytics',
-    },
-];
-
 @Component({
     selector: 'app-analytics-home',
     styleUrls: ['./analytics-home.component.scss'],
@@ -25,7 +14,16 @@ const BREADCRUMBS: any[] = [
 })
 export class AnalyticsHomeComponent implements OnInit {
     public pageTitle = 'Analytics';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public breadcrumb: any[] =  [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/analytics',
+            title: 'Analytics',
+        },
+    ];
     public filterStartDate: Date;
     public filterEndDate: Date;
     public pastThirtyDaysStartDate: Date;
