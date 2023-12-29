@@ -242,7 +242,6 @@
                     Tail #
                 </th>
                 <td *matCellDef="let fuelreq" mat-cell>
-                    {{fuelreq.customerAircraftId}}
                     <span *ngIf="!fuelreq.archived">{{ fuelreq.tailNumber }}</span>
                     <span *ngIf="fuelreq.archived"><s>{{ fuelreq.tailNumber }}</s></span>
 

@@ -253,8 +253,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 foreach (FuelReqDto order in directOrders)
                 {
-                    order.Eta = FuelReqDto.GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport);
-                    order.Etd = FuelReqDto.GetAirportLocalTime(order.Etd.GetValueOrDefault(), airport);
+                    if (order.TimeStandard == "Z")
+                    {
+                        order.Eta = FuelReqDto.GetAirportLocalTime(order.Eta.GetValueOrDefault(), airport);
+                        order.Etd = FuelReqDto.GetAirportLocalTime(order.Etd.GetValueOrDefault(), airport);
+                    }
                     order.IsConfirmed = orderConfirmations.Any(x => x.SourceId == order.SourceId);
                     order.Fboid = fboId;
                     order.ServiceOrder = serviceOrders.Where(s => (s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == order.SourceId) || (s.AssociatedFuelOrderId > 0 && s.AssociatedFuelOrderId == order.Oid)).FirstOrDefault();
