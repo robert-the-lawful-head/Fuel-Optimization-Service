@@ -24,6 +24,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -268,7 +269,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
     }
     getAircrafttypeDisplayString(aircraft: any): string {
-        return this.nullOrEmptyToDefault.transform(aircraft.make, false) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,false);
+        return this.nullOrEmptyToDefault.transform(aircraft.make,defaultStringsEnum.empty) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,defaultStringsEnum.empty);
     }
     setIsFavoriteProperty(aircraft: any): any {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;

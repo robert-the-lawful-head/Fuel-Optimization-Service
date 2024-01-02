@@ -15,6 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -171,11 +172,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
             case swimTableColumns.makeModel:
                 return this.getMakeModelDisplayString(row);
             case swimTableColumns.etaLocal:
-                return this.getTime.transform(row.etaLocal);
+                return this.getTime.transform(row.etaLocal,defaultStringsEnum.tbd);
             case swimTableColumns.atdLocal:
-                return this.getTime.transform(row.atdLocal);
+                return this.getTime.transform(row.atdLocal,defaultStringsEnum.tbd);
             case swimTableColumns.ete:
-                return !row.ete ? '' : this.toReadableTime.transform(row.ete);
+                return  this.toReadableTime.transform(row.ete,defaultStringsEnum.tbd);
             case swimTableColumns.isAircraftOnGround:
                 return this.booleanToText.transform(row.isAircraftOnGround);
             case swimTableColumns.status:
