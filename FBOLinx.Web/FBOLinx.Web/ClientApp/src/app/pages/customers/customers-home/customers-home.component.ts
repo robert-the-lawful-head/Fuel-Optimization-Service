@@ -33,7 +33,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         },
         {
             link: '/default-layout/customers',
-            title: 'Customers',
+            title: 'Customer Manager',
         },
     ];
 
