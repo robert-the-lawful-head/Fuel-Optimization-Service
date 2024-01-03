@@ -17,7 +17,7 @@ import * as SharedEvent from '../../../models/sharedEvents';
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
-    public pageTitle = 'Fuel Orders';
+    public pageTitle = 'Fuel & Service Orders';
     public breadcrumb: any[] = [
         {
             link: '/default-layout',
@@ -25,7 +25,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         },
         {
             link: '/default-layout/fuelreqs',
-            title: 'Fuel Orders',
+            title: 'Fuel & Service Orders',
         },
     ];
     public fuelreqsData: any[];
