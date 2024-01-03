@@ -182,6 +182,7 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                     const row: any = {};
                     row.ICAO = i === 0 ? fboPrice.icao : '';
                     row['Volume Tier'] = fboPrice.prices[i].volumeTier;
+                    row["Product"] = fboPrice.prices[i].product;
                     if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
                         row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
                     } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
