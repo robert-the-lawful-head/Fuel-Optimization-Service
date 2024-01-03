@@ -38,10 +38,10 @@ namespace FBOLinx.Web.Models.Responses
                 }
 
                 var existingPrice = groupCustomerFbo.Prices.FirstOrDefault(p =>
-                    Math.Abs(x.MinGallons.GetValueOrDefault() - p.MinGallons) < 0.0001);
+                    Math.Abs(x.MinGallons.GetValueOrDefault() - p.MinGallons) < 0.0001 && x.Product.Split('(')[0] == p.Product.Split('(')[0]);
                 if (existingPrice == null)
                 {
-                    existingPrice = new Prices() {MinGallons = x.MinGallons.GetValueOrDefault()};
+                    existingPrice = new Prices() {MinGallons = x.MinGallons.GetValueOrDefault(), Product = x.Product.Split('(')[0] };
                     if (x.MaxGallons.GetValueOrDefault() <= 0 || x.MaxGallons.GetValueOrDefault() >= 9999)
                     {
                         existingPrice.VolumeTier =
@@ -78,6 +78,7 @@ namespace FBOLinx.Web.Models.Responses
         public double? DomComm { get; set; }
         public double? DomPrivate { get; set; }
         public double MinGallons { get; set; }
+        public string Product { get; set; }
         public PriceBreakdownDisplayTypes PriceBreakdownDisplayType { get; set; }
 
         public void SetPrice(double price, string product, FlightTypeClassifications flightTypeClassification)
