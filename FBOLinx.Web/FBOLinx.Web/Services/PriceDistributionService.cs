@@ -608,7 +608,7 @@ namespace FBOLinx.Web.Services
                             }
                             else
                             {
-                                row = row.Replace("%FBO%", "");
+                                row = row.Replace("\"%FBO%\"", "");
                             }
 
 
