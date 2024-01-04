@@ -36,6 +36,7 @@
                     <app-aircrafts-grid
                         [aircraftsData]="aircraftData"
                         [pricingTemplatesData]="pricingTemplatesData"
+                        (refreshAircrafts)="refreshAircrafts()"
                     ></app-aircrafts-grid>
                 </div>
                 <div *ngIf="!pricingTemplatesData || !aircraftData">
