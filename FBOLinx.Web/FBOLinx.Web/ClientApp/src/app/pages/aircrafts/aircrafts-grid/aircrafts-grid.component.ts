@@ -35,6 +35,7 @@ import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 export class AircraftsGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
+    @Output() refreshAircrafts = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -165,20 +166,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                     this.customerAircraftsService
                         .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
-                            this.customerAircraftsService
-                                .getCustomerAircraftsByGroup(
-                                    this.sharedService.currentUser.groupId
-                                )
-                                .subscribe((data: any) => {
-                                    this.aircraftsData = data;
-                                    this.aircraftsDataSource =
-                                        new MatTableDataSource(
-                                            this.aircraftsData
-                                        );
-                                    this.aircraftsDataSource.sort = this.sort;
-                                    this.aircraftsDataSource.paginator =
-                                        this.paginator;
-                                });
+                            this.refreshAircrafts.emit();
                         });
                 }
 
