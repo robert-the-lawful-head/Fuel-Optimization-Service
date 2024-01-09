@@ -677,7 +677,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
 
-                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
+                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             }
 
@@ -686,7 +686,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 var nearestAirport = await _AirportService.GetNearestAirportPosition(airportWatchHistoricalDataDto.Latitude, airportWatchHistoricalDataDto.Longitude);
                 var boxAtAirport = airportWatchDistinctBoxes.Where(a => a.BoxName == airportWatchHistoricalDataDto.BoxName).FirstOrDefault();
 
-                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport.Icao)
+                if (boxAtAirport != null && boxAtAirport.AirportICAO == nearestAirport?.Icao)
                     airportWatchHistoricalDataDto.AirportICAO = nearestAirport?.GetProperAirportIdentifier();
             }
 
