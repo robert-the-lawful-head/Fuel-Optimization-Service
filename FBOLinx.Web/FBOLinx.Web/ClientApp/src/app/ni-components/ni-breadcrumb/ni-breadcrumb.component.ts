@@ -25,7 +25,6 @@ export class NiBreadcrumbComponent {
         router.events.subscribe((val) => {
             if(val instanceof NavigationEnd){
                 if (this.whitelist.includes(val.url)) {
-                    console.log("🚀 ~ file: ni-breadcrumb.component.ts:25 ~ NiBreadcrumbComponent ~ router.events.subscribe ~ val:", val.url)
                     this.isDashboard = true;
                 }
                 else {
