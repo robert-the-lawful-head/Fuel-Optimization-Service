@@ -1,16 +1,14 @@
 @import "../../../assets/sass/variable";
 
 :host {
-    display: block;
-    overflow: hidden;
     height: 100px;
-    padding-top: 24px;
-    position: fixed;
-    width: 100%;
     background: $main-bg;
-    z-index: 99997;
     top: $navbar-height;
-
+    align-items: center;
+    .breadcrumb-container{
+        padding: 24px 0 50px 0;
+        margin-top: -100px;
+    }
     .breadcrumb {
         display: flex;
         flex-wrap: wrap;
