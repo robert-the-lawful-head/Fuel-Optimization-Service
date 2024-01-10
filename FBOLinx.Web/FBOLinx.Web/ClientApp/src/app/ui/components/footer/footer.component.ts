@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
 import { PolicyAndAgreementDocuments } from 'src/app/models/policyAndAgreementDocuments';
 import { DocumentService } from 'src/app/services/documents.service';
@@ -26,6 +26,20 @@ export class FooterComponent implements OnInit {
     ngOnInit() {
         this.year = moment().format('YYYY');
     }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.isLandingPage && changes.isLandingPage.currentValue) {
+          this.updateCssVariable();
+        }
+      }
+
+      private updateCssVariable(): void {
+        // Update the CSS variable value
+        const host = document.querySelector('app-footer') as HTMLElement;
+        if (host) {
+          host.style.setProperty('--custom-position', 'relative');
+        }
+      }
 
     private getAppVersion() {
         this.appService.getVersion().subscribe((data: any) => {
