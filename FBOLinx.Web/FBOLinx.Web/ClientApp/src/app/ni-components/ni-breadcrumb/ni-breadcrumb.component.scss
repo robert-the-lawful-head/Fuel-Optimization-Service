@@ -4,8 +4,9 @@
     top: $navbar-height;
     display:flex;
     align-items: center;
-    margin-top: -100px;
-
+    .dashboard-title {
+       margin-top: -100px;
+    }
     @media only screen and (max-width: 767px) {
         margin-top: 0px;
         text-align: center;

@@ -6,11 +6,11 @@
 
 <div [ngClass]="layoutClasses" class="site-container">
 
-    <div [ngClass]="{ 'full-width': !openedSidebar, 'sticky-panel-csr' : isCsr }" class="container-fluid sticky-panel">
+    <div [ngClass]="{ 'full-width': !openedSidebar, 'sticky-panel-csr' : isCsr }" class="container-fluid sticky-panel" *ngIf="isPricePanelVisible()">
         <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
             <div class="col-12 text-md-right pt-md-0">
                 <div class="d-inline-block">
-                    <app-fbo-prices-panel *ngIf="isPricePanelVisible()"
+                    <app-fbo-prices-panel
                                           [enableSaf]="enableSaf"
                                           [enableJetA]="enableJetA"
                                           [costSaf]="costSaf"
