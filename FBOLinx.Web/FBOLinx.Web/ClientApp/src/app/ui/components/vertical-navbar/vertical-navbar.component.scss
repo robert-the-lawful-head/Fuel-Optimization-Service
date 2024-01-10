@@ -6,21 +6,18 @@
 }
 
 :host {
-    position: fixed;
-    top: $navbar-height;
-    bottom: 0;
-    left: 0;
-    z-index: 99997;
-    overflow-x: hidden;
-    overflow-y: auto;
     background: $vertical-navbar-bg;
     display: flex;
     justify-content: flex-end;
     height: 100%;
+    left: 0;
+    position: fixed;
+    top: $navbar-height;
     transform: translate3d(0, 0, 0);
     transition: left 0.2s $animation, right 0.2s $animation;
     width: $vertical-navbar-width;
     will-change: left, right, width;
+    z-index: 99999;
     @media only screen and (max-width: 991px) {
         width: auto;
     }
