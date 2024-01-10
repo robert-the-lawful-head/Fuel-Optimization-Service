@@ -1,9 +1,10 @@
-<div [ngClass]="layoutClasses" class="site-container">
-    <app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
-                         [isMenuVisible]="openedSidebar"></app-vertical-navbar>
+<app-horizontal-navbar (sidebarState)="sidebarState()"
+[title]="pageTitle"></app-horizontal-navbar>
 
-    <app-horizontal-navbar (sidebarState)="sidebarState()"
-                           [title]="pageTitle"></app-horizontal-navbar>
+<app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
+                     [isMenuVisible]="openedSidebar"></app-vertical-navbar>
+
+<div [ngClass]="layoutClasses" class="site-container">
 
     <div [ngClass]="{ 'full-width': !openedSidebar, 'sticky-panel-csr' : isCsr }" class="container-fluid sticky-panel">
         <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
@@ -18,7 +19,7 @@
                                           [retailJetA]="retailJetA"
                                           [effectiveToSaf]="effectiveToSaf"
                                           [effectiveToJetA]="effectiveToJetA"
-                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel><!-- class="d-none d-md-block"-->
+                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel>
                 </div>
             </div>
         </div>
@@ -37,6 +38,4 @@
         </div>
         <app-footer></app-footer>
     </main>
-
-    <div class="app-overlay"></div>
 </div>
