@@ -35,6 +35,7 @@
                 }
 
                 .item-link {
+                    flex-direction: row-reverse;
                     align-items: center;
                     background: menu(item-bg);
                     color: menu(item-color);
