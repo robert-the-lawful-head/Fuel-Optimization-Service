@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
@@ -18,22 +18,27 @@ import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup
     templateUrl: './flight-watch-settings.component.html',
 })
 export class FlightWatchSettingsComponent extends GridBase {
-    @Input() arrivals: FlightWatchModelResponse[];
-    @Input() departures: FlightWatchModelResponse[];
+    @Input() data: FlightWatchModelResponse[];
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() filteredTypes: string[];
     @Input() showFilters: boolean =  true;
     @Input() isLobbyView: boolean =  false;
+    @Input() selectedAircraft: FlightWatchModelResponse = null;
+    @Input() closedAircraft: FlightWatchModelResponse = null;
 
     @Output() typesFilterChanged = new EventEmitter<string[]>();
     @Output() filterChanged = new EventEmitter<SwimFilter>();
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();
+    @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() closeAircraftPopup = new EventEmitter<string>();
 
     @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
     @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;
 
+    arrivals: FlightWatchModelResponse[] =[];
+    departures: FlightWatchModelResponse[] =[];
 
     searchIcaoTxt: string;
 
@@ -55,6 +60,25 @@ export class FlightWatchSettingsComponent extends GridBase {
         this.getCustomersList(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId);
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.data && changes.data.currentValue) {
+            this.setData(changes.data.currentValue);
+        }
+    }
+    expandRow(tailNumber: string): void {
+        this.arrivalsTable.expandRow(tailNumber);
+        this.departuresTable.expandRow(tailNumber);
+    }
+    collapseRow(tailNumber: string): void {
+        let existInArrivals = this.arrivalsTable.hasRowInTable(tailNumber);
+        let existOnDepartures = this.departuresTable.hasRowInTable(tailNumber);
+        if(existInArrivals){
+            this.arrivalsTable.collapseRow(tailNumber);
+        }
+        else if(existOnDepartures){
+            this.departuresTable.collapseRow(tailNumber);
+        }
+    }
     get aircraftTypes() {
         return AIRCRAFT_IMAGES.filter((type) => type.label !== 'Other')
             .map((type) => ({
@@ -179,13 +203,25 @@ export class FlightWatchSettingsComponent extends GridBase {
             });
     }
 
+    setData(data: FlightWatchModelResponse[]): void {
+        this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
+            return row.arrivalICAO == row.focusedAirportICAO
+        });
+        this.departures = data?.filter((row: FlightWatchModelResponse) => {
+            return (
+                row.departureICAO == row.focusedAirportICAO &&
+                row.status != null
+            );
+        });
+    }
+
     arrivalsDeparturesCommonCols: string[]= [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode,swimTableColumns.ete,swimTableColumns.isAircraftOnGround,swimTableColumns.itpMarginTemplate];
 
     defaultArrivalCols = [swimTableColumns.etaLocal,swimTableColumns.originAirport].concat(this.arrivalsDeparturesCommonCols);
 
     defaultDeparturesCols = [swimTableColumns.atdLocal,swimTableColumns.destinationAirport].concat(this.arrivalsDeparturesCommonCols);
 
-    arrivalsDeparturesLobbyCommonCols: string[] = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.isAircraftOnGround];
+    arrivalsDeparturesLobbyCommonCols: string[] = [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.makeModel,swimTableColumns.isAircraftOnGround,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode];
 
     lobbyArrivalCols= [swimTableColumns.etaLocal,swimTableColumns.originAirport,swimTableColumns.originCity].concat(this.arrivalsDeparturesLobbyCommonCols);
 

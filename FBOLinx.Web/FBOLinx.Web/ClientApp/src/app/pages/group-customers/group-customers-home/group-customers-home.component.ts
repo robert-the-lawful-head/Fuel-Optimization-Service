@@ -3,18 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/customers',
-        title: 'Customers',
-    },
-];
-
 @Component({
     selector: 'app-group-customers-home',
     styleUrls: ['./group-customers-home.component.scss'],
@@ -23,7 +11,16 @@ const BREADCRUMBS: any[] = [
 export class GroupCustomersHomeComponent implements OnInit {
     // Public Members
     pageTitle = 'Customers';
-    breadcrumb: any[] = BREADCRUMBS;
+    breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/customers',
+            title: 'Customer Manager',
+        },
+    ];
     customersData: any[];
 
     constructor(

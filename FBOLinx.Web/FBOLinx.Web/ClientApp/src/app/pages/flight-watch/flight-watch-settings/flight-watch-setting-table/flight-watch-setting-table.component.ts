@@ -15,6 +15,7 @@ import { ToReadableTimePipe } from 'src/app/shared/pipes/time/ToReadableTime.pip
 import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
     selector: 'app-flight-watch-setting-table',
@@ -36,6 +37,8 @@ export class FlightWatchSettingTableComponent implements OnInit {
     @Input() customers: any[] =  [];
 
     @Output() openAircraftPopup = new EventEmitter<string>();
+    @Output() closeAircraftPopup = new EventEmitter<string>();
+
     @Output() saveSettings = new EventEmitter();
 
     @ViewChild(MatSort) sort: MatSort;
@@ -104,6 +107,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }
         }
     }
+
     updateColumns(columns: ColumnType[]): void{
         this.columns = columns;
         this.allColumnsToDisplay = this.getVisibleColumns();
@@ -162,22 +166,33 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
 
     getColumnData(row: Swim, column:string){
-        if(column == "expandedDetail") return;
-        if(column == swimTableColumns.makeModel) return this.getMakeModelDisplayString(row);
-        if(column == swimTableColumns.etaLocal) return this.getTime.transform(row.etaLocal);
-        if(column == swimTableColumns.atdLocal) return this.getTime.transform(row.atdLocal);
-        if(column == swimTableColumns.ete) return !row.ete ? '' : this.toReadableTime.transform(row.ete);
-        if(column == swimTableColumns.isAircraftOnGround) return this.booleanToText.transform(row.isAircraftOnGround);
-        if(column == swimTableColumns.status){
-            row.statusDisplayString = FlightLegStatus[row.status];
-            return row.statusDisplayString;
+        switch(column){
+            case "expandedDetail" :
+                return;
+            case swimTableColumns.makeModel:
+                return this.getMakeModelDisplayString(row);
+            case swimTableColumns.etaLocal:
+                return this.getTime.transform(row.etaLocal,defaultStringsEnum.tbd);
+            case swimTableColumns.atdLocal:
+                return this.getTime.transform(row.atdLocal,defaultStringsEnum.tbd);
+            case swimTableColumns.ete:
+                return  this.toReadableTime.transform(row.ete,defaultStringsEnum.tbd);
+            case swimTableColumns.isAircraftOnGround:
+                return this.booleanToText.transform(row.isAircraftOnGround);
+            case swimTableColumns.status:
+                row.statusDisplayString = FlightLegStatus[row.status];
+                return row.statusDisplayString;
+            case swimTableColumns.flightDepartment:
+                return row.flightDepartment ?? row.faaRegisteredOwner;
+            case swimTableColumns.icaoAircraftCode:
+                return this.getMakeModelDisplayString(row);
+
+            default:
+                let col = this.columns.find( c => {
+                    return c.id == column
+                });
+                return row[col.id];
         }
-
-        let col = this.columns.find( c => {
-            return c.id == column
-        });
-
-        return row[col.id];
     }
     getColumnDisplayString(column:string){
         return swimTableColumnsDisplayText[column];
@@ -188,8 +203,11 @@ export class FlightWatchSettingTableComponent implements OnInit {
         : "Destination City";
     }
     getMakeModelDisplayString(element: Swim){
-        var makemodelstr = this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model);
-        return this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
+        let makemodelstr = (element.make) ?
+            this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model) :
+            this.flightWatchHelper.getSlashSeparationDisplayString(element.fAAMake,element.fAAModel);
+
+            return this.flightWatchHelper.getEmptyorDefaultStringText(makemodelstr);
     }
     getTextColor(row: Swim, column:string){
         if(column == swimTableColumns.tailNumber)
@@ -266,5 +284,37 @@ export class FlightWatchSettingTableComponent implements OnInit {
     }
     get getCallBackComponent(): CallbackComponent{
         return CallbackComponent.aircraft;
+    }
+    onRowrowClick(element: Swim) {
+        if(this.expandedElement != element.tailNumber)
+            this.closeAircraftPopup.emit(this.expandedElement);
+
+        this.expandedElement = this.expandedElement === element.tailNumber ? null : element.tailNumber
+
+        if(this.expandedElement == null)
+            this.closeAircraftPopup.emit(element.tailNumber);
+        else
+            this.openAircraftPopup.emit(this.expandedElement);
+    }
+    hasRowInTable(tailNumber: string): boolean{
+        return this.data.find(x => x.tailNumber == tailNumber) ? true : false;
+    }
+    expandRow(tailNumber: string):  void {
+        if(this.hasRowInTable(tailNumber)){
+            this.expandedElement = tailNumber;
+            const selectedRow = document.getElementById(tailNumber);
+            selectedRow.scrollIntoView({block: 'center'});
+        }
+        else{
+            this.expandedElement = null;
+        }
+    }
+    collapseRow(tailNumber: string): void {
+        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
+        if(!tailNumber)
+            this.expandedElement = null;
+
+        if(this.expandedElement == tailNumber)
+            this.expandedElement = null;
     }
 }

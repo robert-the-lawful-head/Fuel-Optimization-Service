@@ -180,7 +180,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     new AirportWatchLiveDataSpecification(DateTime.UtcNow.AddMinutes(-pastMinutesForLiveData), DateTime.UtcNow));
             }
 
-            return result;
+            return result
+            .OrderByDescending(row => (row.BoxTransmissionDateTimeUtc > row.AircraftPositionDateTimeUtc)?row.BoxTransmissionDateTimeUtc:row.AircraftPositionDateTimeUtc)
+            .GroupBy(row => row.AircraftHexCode)
+            .Select(grouped => grouped.First())
+            .ToList();
         }
 
         private async Task<List<AirportWatchHistoricalDataDto>> GetHistoricalData(

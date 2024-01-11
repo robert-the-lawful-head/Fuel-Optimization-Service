@@ -7,21 +7,6 @@ import { DocumentService } from 'src/app/services/documents.service';
 // Services
 import { GroupsService } from '../../../services/groups.service';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/groups',
-        title: 'Groups',
-    },
-    {
-        link: '',
-        title: 'Edit Group',
-    },
-];
-
 @Component({
     selector: 'app-groups-edit',
     styleUrls: ['./groups-edit.component.scss'],
@@ -33,7 +18,20 @@ export class GroupsEditComponent implements OnInit {
 
     // Public Members
     public pageTitle = 'Edit FBO';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/groups',
+            title: 'Groups',
+        },
+        {
+            link: '',
+            title: 'Edit Group',
+        },
+    ];
     public currentContact: any;
     public contactsData: any;
     public documents: any;

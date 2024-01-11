@@ -72,7 +72,7 @@ export class FavoriteIconComponent implements OnInit {
     }
     private toogleAicraftFavorite(favoriteData: any): void {
         if(favoriteData.isFavorite)
-        this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId, favoriteData.customerAircraftId)
+        this.favoritesService.saveAircraftFavorite(this.sharedService.currentUser.fboId, favoriteData.customerAircraftId, this.sharedService.currentUser.groupId)
         .subscribe(
             (data: any) => {
                favoriteData.favoriteAircraft = data;
@@ -86,7 +86,7 @@ export class FavoriteIconComponent implements OnInit {
             }
         );
         else
-        this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid).subscribe(
+        this.favoritesService.deleteAircraftFavorite(favoriteData.favoriteAircraft.oid, this.sharedService.currentUser.groupId).subscribe(
             (data: any) => {
                favoriteData.favoriteAircraft = null;
             },

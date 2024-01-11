@@ -32,7 +32,16 @@ const BREADCRUMBS: any[] = [
 })
 export class GroupAnalyticsHomeComponent implements OnInit {
     pageTitle = 'Group Analytics';
-    breadcrumb: any[] = BREADCRUMBS;
+    breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/fuelreqs',
+            title: 'Fuel Orders',
+        },
+    ];
 
     customers: any[];
     fbos: any[];
