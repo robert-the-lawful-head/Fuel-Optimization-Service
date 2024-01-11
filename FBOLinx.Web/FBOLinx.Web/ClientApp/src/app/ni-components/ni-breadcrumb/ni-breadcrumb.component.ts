@@ -18,7 +18,8 @@ export class NiBreadcrumbComponent {
     whitelist = [
         '/default-layout/dashboard',
         '/default-layout/dashboard-fbo',
-        '/default-layout/dashboard-fbo-updated'
+        '/default-layout/dashboard-fbo-updated',
+        '/default-layout/dashboard-csr'
     ];
 
     constructor(private router: Router) {

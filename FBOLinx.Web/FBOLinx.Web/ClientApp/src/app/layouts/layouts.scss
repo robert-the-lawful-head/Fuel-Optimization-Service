@@ -42,11 +42,6 @@
             }
         }
 
-        .sticky-panel-csr {
-            top: 2rem;
-            padding: 3rem 5rem 0 $vertical-navbar-width;
-        }
-
         &.open-sidebar {
             .app-navbar {
                 left: $vertical-navbar-width;
