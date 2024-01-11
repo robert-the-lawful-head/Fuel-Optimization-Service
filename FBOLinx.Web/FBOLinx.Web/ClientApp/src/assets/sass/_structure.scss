@@ -1,19 +1,6 @@
-html {
-    height: 100%;
-}
-body {
-    height: 100%;
-    overflow-x: hidden;
-}
-app {
-    display: block;
-    height: 100%;
-}
 .site-container {
-    height: 100%;
-    overflow: hidden;
     position: relative;
-
+    padding-top: $navbar-height;
     > * {
         display: block;
     }
@@ -21,8 +8,7 @@ app {
         display: none;
     }
     .main-content {
-        height: 80%;
-        overflow: auto;
+        display: relative;
         -webkit-overflow-scrolling: touch;
 
         .main-content-wrap {
