@@ -1,6 +1,4 @@
-<ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
-
-<div [ngClass]="{ 'after-breadcrumb': breadcrumb }">
+<div class="after-breadcrumb">
     <div *ngIf="fbosData || currentFbo">
         <div *ngIf="currentFbo">
             <app-fbos-edit

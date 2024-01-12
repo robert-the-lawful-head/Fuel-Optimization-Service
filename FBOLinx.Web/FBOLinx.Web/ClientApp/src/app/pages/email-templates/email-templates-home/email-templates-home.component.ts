@@ -18,16 +18,7 @@ export class EmailTemplatesHomeComponent
     implements AfterViewInit, OnDestroy, OnInit
 {
     public pageTitle = 'Email Templates';
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/email-templates',
-            title: 'Email Templates',
-        },
-    ];
+
     public emailTemplates: any[];
     public locationChangedSubscription: any;
 

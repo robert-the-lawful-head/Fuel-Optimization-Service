@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
-import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
@@ -17,7 +16,6 @@ import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
-    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from '../../../models/flight-watch';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
@@ -43,16 +41,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
 
     pageTitle = 'Flight Watch';
-    breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/flight-watch',
-            title: 'Flight Watch',
-        },
-    ];
 
     isStable = true;
     loading = false;

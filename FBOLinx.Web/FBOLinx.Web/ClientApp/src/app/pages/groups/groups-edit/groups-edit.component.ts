@@ -18,20 +18,7 @@ export class GroupsEditComponent implements OnInit {
 
     // Public Members
     public pageTitle = 'Edit FBO';
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/groups',
-            title: 'Groups',
-        },
-        {
-            link: '',
-            title: 'Edit Group',
-        },
-    ];
+
     public currentContact: any;
     public contactsData: any;
     public documents: any;
