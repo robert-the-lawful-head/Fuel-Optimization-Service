@@ -1,4 +1,4 @@
-<div class="after-breadcrumb">
+<section>
     <div *ngIf="pricingTemplatesData">
         <app-pricing-templates-grid
             (deletePricingTemplateClicked)="
@@ -12,4 +12,4 @@
     <div *ngIf="!pricingTemplatesData">
         <mat-spinner></mat-spinner>
     </div>
-</div>
+</section>
