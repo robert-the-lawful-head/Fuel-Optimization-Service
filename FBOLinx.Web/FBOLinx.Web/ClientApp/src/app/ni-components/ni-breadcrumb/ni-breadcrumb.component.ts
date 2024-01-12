@@ -11,15 +11,106 @@ import { NavigationEnd, Router } from '@angular/router';
 export class NiBreadcrumbComponent {
     @Input() menu: Item[] = [];
     @Input() separator = '/';
-
-    private _sectionTitle: Item  = { title: 'None', icon: '', link:'' };
+    private defaultItem : Item  = { title: 'None', icon: '', link:'' };
+    private _sectionTitle: Item  = this.defaultItem;
     isDashboard: boolean = false;
 
-    whitelist = [
+    private whitelist = [
         '/default-layout/dashboard',
         '/default-layout/dashboard-fbo',
         '/default-layout/dashboard-fbo-updated',
         '/default-layout/dashboard-csr'
+    ];
+
+    private breadcrumbs: any[] =  [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/analytics',
+            title: 'Analytics',
+        },
+        {
+            link: '/default-layout/customers',
+            title: 'Customer Manager',
+        },
+        {
+            link: '/default-layout/email-templates',
+            title: 'Email Templates',
+        },
+        {
+            link: '/default-layout/fuelreqs',
+            title: 'Fuel & Service Orders',
+        },
+        {
+            link: '/default-layout/customers',
+            title: 'Customer Manager',
+        },
+        {
+            link: '/default-layout/groups',
+            title: 'Groups',
+        },
+        {
+            link: '/default-layout/fuelreqs',
+            title: 'Fuel Orders',
+        },
+        {
+            link: '/default-layout/pricing-templates',
+            title: 'ITP Margin Templates',
+        },
+        {
+            link: '/default-layout/pricing-templates',
+            title: 'ITP Margin Templates',
+        },
+        {
+            link: '/default-layout/flight-watch',
+            title: 'Flight Watch',
+        },
+        {
+            link: '/default-layout/services-and-fees',
+            title: 'Services & Fees Admin',
+        },
+        {
+            link: '/default-layout/ramp-fees',
+            title: 'Ramp Fees',
+        },
+        {
+            link: '/default-layout/email-templates',
+            title: 'Email Templates',
+        },
+        {
+            link: '/default-layout/customers',
+            title: 'Customers',
+        },
+        {
+            link: '/default-layout/fbos',
+            title: 'FBOs',
+        },
+        {
+            link: '/default-layout/groups',
+            title: 'Groups',
+        },
+        {
+            link: '/default-layout/fbo-geofencing',
+            title: 'FBO Geofencing',
+        },
+        {
+            link: '/default-layout/dashboard-fbo-updated',
+            title: 'Dashboard',
+        },
+        {
+            link: '/default-layout/dashboard-fbo',
+            title: 'Dashboard',
+        },
+        {
+            link: '/default-layout/dashboard',
+            title: 'Dashboard',
+        },
+        {
+            link: '/default-layout/dashboard-csr',
+            title: 'CSR Dashboard',
+        }
     ];
 
     constructor(private router: Router) {
@@ -31,6 +122,13 @@ export class NiBreadcrumbComponent {
                 else {
                     this.isDashboard = false;
                 }
+
+                var breadcrumb = this.breadcrumbs.find((item) => item.link === val.url);
+
+                if(breadcrumb)
+                    this._sectionTitle = breadcrumb;
+                else
+                    this._sectionTitle = this.defaultItem;
             }
         });
       }
