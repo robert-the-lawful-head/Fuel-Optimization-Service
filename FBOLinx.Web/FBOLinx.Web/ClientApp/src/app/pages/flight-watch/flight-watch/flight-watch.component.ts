@@ -16,6 +16,7 @@ import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
+    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from '../../../models/flight-watch';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
@@ -23,6 +24,7 @@ import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/fligh
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-flight-watch',
