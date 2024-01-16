@@ -303,7 +303,7 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(this.hasRowInTable(tailNumber)){
             this.expandedElement = tailNumber;
             const selectedRow = document.getElementById(tailNumber);
-            selectedRow.scrollIntoView({block: 'start', behavior: 'smooth'});
+            selectedRow.scrollIntoView({block: 'center', behavior: 'smooth'});
         }
         else{
             this.expandedElement = null;
