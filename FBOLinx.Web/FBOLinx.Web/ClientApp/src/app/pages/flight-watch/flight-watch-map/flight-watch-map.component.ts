@@ -417,8 +417,6 @@ export class FlightWatchMapComponent
 
         self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
 
-        await new Promise(f => setTimeout(f, 500));
-
         self.openedPopUps[id].popupInstance = self.openPopupRenderComponent(
             self.openedPopUps[id].coordinates,
             self.aircraftPopupContainerRef
@@ -427,6 +425,7 @@ export class FlightWatchMapComponent
             self.selectedAircraft = self.selectedAircraft.filter(e => e != id);
             self.popUpClosed.emit(self.data[id]);
             self.openedPopUps[id].isOpen = false;
+            self.popUpClosed.emit(self.data[id]);
             try {
                 self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', ''])
             } catch (err) {
