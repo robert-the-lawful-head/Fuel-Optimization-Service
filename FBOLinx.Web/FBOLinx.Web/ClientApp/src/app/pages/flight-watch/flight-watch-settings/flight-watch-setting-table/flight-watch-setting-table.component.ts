@@ -303,18 +303,21 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(this.hasRowInTable(tailNumber)){
             this.expandedElement = tailNumber;
             const selectedRow = document.getElementById(tailNumber);
-            selectedRow.scrollIntoView({block: 'center'});
+            selectedRow.scrollIntoView({block: 'start', behavior: 'smooth'});
         }
         else{
             this.expandedElement = null;
         }
     }
     collapseRow(tailNumber: string): void {
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
         if(!tailNumber)
             this.expandedElement = null;
 
         if(this.expandedElement == tailNumber)
             this.expandedElement = null;
     }
+    collapseAllRows(): void {
+            this.expandedElement = null;
+    }
 }
+
