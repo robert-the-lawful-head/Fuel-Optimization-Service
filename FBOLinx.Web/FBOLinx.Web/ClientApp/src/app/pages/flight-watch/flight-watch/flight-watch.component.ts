@@ -24,7 +24,7 @@ import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-serv
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
-import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
+import { FlightWatchSettingsComponent } from '../flight-watch-settings/flight-watch-settings.component';
 
 @Component({
     selector: 'app-flight-watch',
@@ -40,7 +40,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild(FlightWatchMapWrapperComponent)
     private mapWrapper: FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
-    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
+    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingsComponent;
 
     pageTitle = 'Flight Watch';
     breadcrumb: any[] = [

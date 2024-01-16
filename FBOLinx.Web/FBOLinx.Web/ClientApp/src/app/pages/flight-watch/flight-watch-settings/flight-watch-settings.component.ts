@@ -65,6 +65,10 @@ export class FlightWatchSettingsComponent extends GridBase {
             this.setData(changes.data.currentValue);
         }
     }
+    openPopUpAndCloseExpandedRows(tailNumber: string): void {
+        this.openAircraftPopup.emit(tailNumber);
+        this.expandRow(tailNumber);
+    }
     expandRow(tailNumber: string): void {
         this.arrivalsTable.expandRow(tailNumber);
         this.departuresTable.expandRow(tailNumber);
