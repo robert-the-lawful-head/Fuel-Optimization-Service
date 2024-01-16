@@ -206,11 +206,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     openAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:211 ~ FlightWatchComponent ~ openAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
     }
     closedAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:215 ~ FlightWatchComponent ~ closedAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.closeAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize() {
@@ -234,6 +232,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.flightwatchSettings.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchSettings.collapseRow(flightWatch.tailNumber);
+        this.flightwatchSettings.collapseAllRows();
     }
 }

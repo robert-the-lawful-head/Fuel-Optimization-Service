@@ -310,11 +310,14 @@ export class FlightWatchSettingTableComponent implements OnInit {
         }
     }
     collapseRow(tailNumber: string): void {
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
         if(!tailNumber)
             this.expandedElement = null;
 
         if(this.expandedElement == tailNumber)
             this.expandedElement = null;
     }
+    collapseAllRows(): void {
+            this.expandedElement = null;
+    }
 }
+

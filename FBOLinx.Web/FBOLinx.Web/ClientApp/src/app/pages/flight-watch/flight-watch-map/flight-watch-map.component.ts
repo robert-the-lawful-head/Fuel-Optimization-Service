@@ -419,10 +419,9 @@ export class FlightWatchMapComponent
 
         await new Promise(f => setTimeout(f, 500));
 
-        let html =  self.aircraftPopupContainerRef.nativeElement.innerHTML;
-        self.openedPopUps[id].popupInstance = self.openPopupRenderHtml(
+        self.openedPopUps[id].popupInstance = self.openPopupRenderComponent(
             self.openedPopUps[id].coordinates,
-            html
+            self.aircraftPopupContainerRef
         );
         self.openedPopUps[id].popupInstance.on('close', function(event) {
             self.selectedAircraft = self.selectedAircraft.filter(e => e != id);
@@ -522,7 +521,7 @@ export class FlightWatchMapComponent
 
         if (!selectedFlight) return;
 
-        this.selectedAircraft.push(selectedFlight);
+        this.selectedAircraft = [selectedFlight];
 
        this.createPopUp(this, selectedFlight);
 
