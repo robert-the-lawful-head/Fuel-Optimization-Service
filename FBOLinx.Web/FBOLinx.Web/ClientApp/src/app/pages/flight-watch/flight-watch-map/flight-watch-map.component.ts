@@ -405,7 +405,7 @@ export class FlightWatchMapComponent
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
         this.updatePopUpData.emit(self.data[id]);
 
-        this.selectedAircraft = [id];
+        self.selectedAircraft = [id];
         self.closeAllPopUps();
 
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}

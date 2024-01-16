@@ -228,7 +228,10 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             isCommercialAircraftVisible;
         this.applyFiltersToData();
     }
-    onAircraftClick(flightWatch: FlightWatchModelResponse) {
+    async onAircraftClick(flightWatch: FlightWatchModelResponse) {
+        if(!this.drawer.opened){
+            await this.toggleSettingsDrawer();
+        }
         this.flightwatchSettings.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
