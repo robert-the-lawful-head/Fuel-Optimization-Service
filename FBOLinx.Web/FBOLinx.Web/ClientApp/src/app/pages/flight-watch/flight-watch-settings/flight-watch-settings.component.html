@@ -45,7 +45,7 @@
         (saveSettings)="sortChangeSaveSettings()"
         [isLobbyView]="isLobbyView"
         [customers]="customers"
-        (openAircraftPopup)="openAircraftPopup.emit($event)"
-        (closeAircraftPopup)="closeAircraftPopup.emit($event)"
+        (openAircraftPopup)="expandRow($event)"
+        (closeAircraftPopup)="collapseRow($event)"
     ></app-flight-watch-setting-table>
 </div>
