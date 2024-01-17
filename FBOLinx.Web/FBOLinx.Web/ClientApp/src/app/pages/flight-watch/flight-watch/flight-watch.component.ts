@@ -23,7 +23,7 @@ import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-serv
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
-import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
+import { FlightWatchSettingsComponent } from '../flight-watch-settings/flight-watch-settings.component';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -40,7 +40,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild(FlightWatchMapWrapperComponent)
     private mapWrapper: FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
-    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
+    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingsComponent;
 
     pageTitle = 'Flight Watch';
 
@@ -196,11 +196,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     openAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:211 ~ FlightWatchComponent ~ openAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
     }
     closedAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:215 ~ FlightWatchComponent ~ closedAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.closeAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize() {
@@ -220,10 +218,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             isCommercialAircraftVisible;
         this.applyFiltersToData();
     }
-    onAircraftClick(flightWatch: FlightWatchModelResponse) {
+    async onAircraftClick(flightWatch: FlightWatchModelResponse) {
+        if(!this.drawer.opened){
+            await this.toggleSettingsDrawer();
+        }
         this.flightwatchSettings.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchSettings.collapseRow(flightWatch.tailNumber);
+        this.flightwatchSettings.collapseAllRows();
     }
 }
