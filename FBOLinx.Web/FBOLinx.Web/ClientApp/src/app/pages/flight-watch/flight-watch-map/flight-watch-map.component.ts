@@ -399,14 +399,14 @@ export class FlightWatchMapComponent
         }
         self.markerClicked.emit(this.data[id]);
 
-        self.selectedAircraft.push(id);
+        self.createPopUp(self, id);
 
-        this.createPopUp(self, id);
-
-        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
     }
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
         this.updatePopUpData.emit(self.data[id]);
+
+        self.selectedAircraft = [id];
+        self.closeAllPopUps();
 
         self.openedPopUps[id] = {...this.popUpPropsNewInstance}
 
@@ -415,14 +415,9 @@ export class FlightWatchMapComponent
             self.data[id].latitude,
         ];
 
-        self.map.setFilter(self.mapMarkers.flightsReversed.layerId, ['==', 'id', id])
-
-        await new Promise(f => setTimeout(f, 500));
-
-        let html =  self.aircraftPopupContainerRef.nativeElement.innerHTML;
-        self.openedPopUps[id].popupInstance = self.openPopupRenderHtml(
+        self.openedPopUps[id].popupInstance = self.openPopupRenderComponent(
             self.openedPopUps[id].coordinates,
-            html
+            self.aircraftPopupContainerRef
         );
         self.openedPopUps[id].popupInstance.on('close', function(event) {
             self.selectedAircraft = self.selectedAircraft.filter(e => e != id);
@@ -522,7 +517,6 @@ export class FlightWatchMapComponent
 
         if (!selectedFlight) return;
 
-        this.selectedAircraft.push(selectedFlight);
 
        this.createPopUp(this, selectedFlight);
 

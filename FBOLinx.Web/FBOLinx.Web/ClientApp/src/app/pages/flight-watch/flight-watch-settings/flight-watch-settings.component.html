@@ -32,7 +32,7 @@
         (saveSettings)="sortChangeSaveSettings()"
         [isLobbyView]="isLobbyView"
         [customers]="customers"
-        (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
         (closeAircraftPopup)="closeAircraftPopup.emit($event)"
     ></app-flight-watch-setting-table>
 </div>
@@ -45,7 +45,7 @@
         (saveSettings)="sortChangeSaveSettings()"
         [isLobbyView]="isLobbyView"
         [customers]="customers"
-        (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
         (closeAircraftPopup)="closeAircraftPopup.emit($event)"
     ></app-flight-watch-setting-table>
 </div>
