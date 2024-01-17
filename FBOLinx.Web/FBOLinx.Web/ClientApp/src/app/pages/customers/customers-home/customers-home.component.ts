@@ -26,17 +26,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
 
     // Public Members
     pageTitle = 'Customers';
-    breadcrumb: any[] =  [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/customers',
-            title: 'Customer Manager',
-        },
-    ];
-
     customersData: any[];
     aircraftData: any[];
     pricingTemplatesData: any[];

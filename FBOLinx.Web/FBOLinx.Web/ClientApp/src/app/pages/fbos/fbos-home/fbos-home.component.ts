@@ -16,16 +16,6 @@ export class FbosHomeComponent implements OnInit {
     @Input() embed: boolean;
 
     // Public Members
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '',
-            title: 'FBOs',
-        },
-    ];
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
@@ -42,19 +32,6 @@ export class FbosHomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadAllFbosForGroup();
-
-        if (!this.embed) {
-            this.breadcrumb = [
-                {
-                    link: '/default-layout',
-                    title: 'Main',
-                },
-                {
-                    link: '',
-                    title: 'FBOs',
-                },
-            ];
-        }
     }
 
     public editFboClicked(record) {

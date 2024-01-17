@@ -48,20 +48,6 @@ export class CustomersEditComponent implements OnInit {
     private priceBreakdownPreview: PriceBreakdownComponent;
     // Members
     pageTitle = 'Edit Customer';
-    breadcrumb = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/customers',
-            title: 'Customers',
-        },
-        {
-            link: '',
-            title: 'Edit Customer',
-        },
-    ];
     customerInfoByGroup: any;
     customerInfoByGroupNote: CustomerInfoByGroupNote;
     contactsData: any[];

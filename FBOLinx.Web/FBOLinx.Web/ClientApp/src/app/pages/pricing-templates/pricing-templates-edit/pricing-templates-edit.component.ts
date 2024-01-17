@@ -54,20 +54,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
     pricingTemplate: any;
     id             :any;
-    breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/pricing-templates',
-            title: 'ITP Margin Templates',
-        },
-        {
-            link: '',
-            title: 'Edit Margin Template',
-        },
-    ];
     pricingTemplateForm: FormGroup;
     pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [

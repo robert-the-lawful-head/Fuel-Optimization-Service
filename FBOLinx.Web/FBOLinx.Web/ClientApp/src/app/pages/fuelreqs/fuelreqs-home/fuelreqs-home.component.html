@@ -1,6 +1,4 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
-
-<div class="after-breadcrumb">
+<section>
     <mat-tab-group (selectedTabChange)="onTabClick($event)" [selectedIndex]="selectedTabIndex">
         <mat-tab label="Fuel Orders">
             <div *ngIf="isFuelOrdersShowing">
@@ -20,4 +18,4 @@
             <app-missedorders-grid></app-missedorders-grid>
         </mat-tab>
     </mat-tab-group>
-</div>
+</section>
