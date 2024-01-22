@@ -1,14 +1,8 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
-import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
-import { ServicesAndFeesService } from 'src/app/services/servicesandfees.service';
+import { ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
 import { DeleteConfirmationComponent } from 'src/app/shared/components/delete-confirmation/delete-confirmation.component';
-import { DatePipe } from '@angular/common';
-import { ServiceTypeService } from 'src/app/services/serviceTypes.service';
-import { AccountType } from 'src/app/enums/user-role';
-import { SnackBarService } from 'src/app/services/utils/snackBar.service';
-import { ItemInputComponent } from '../../services-and-fees/item-input/item-input.component';
 import { ServiceOrderService } from '../../../services/serviceorder.service';
 import { ServiceOrder } from '../../../models/service-order';
 import { Output } from '@angular/core';
@@ -18,7 +12,6 @@ import * as moment from 'moment';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { FuelReq } from '../../../models/fuelreq';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse {
     isEditMode: boolean,
@@ -48,18 +41,19 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     constructor(
         private serviceOrderService: ServiceOrderService,
-        private serviceTypeService: ServiceTypeService,
         private sharedService: SharedService,
         private dialog: MatDialog,
-        private snackBar: SnackBarService,
-        private datePipe: DatePipe,
         private fuelReqsService: FuelreqsService
     ) { }
 
     async ngOnInit() {
             this.refreshGrid();
     }
-
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.serviceOrderItems) {
+            this.getInfoTooltipText(changes.serviceOrderItems.currentValue);
+        }
+    }
     onArchiveServices(serviceOrderItems: ServiceOrderItem[]) {
         this.fuelreqsServicesAndFeesGridDisplay = serviceOrderItems.filter((s) => s.serviceName != '' && !s.serviceName.includes("Fuel"));
 
@@ -177,7 +171,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
                     value: numberCompleted
                 }
                 this.completedServicesChanged.emit(updatedList);
-            }      
+            }
         }
 
         this.saveServiceOrderItem(serviceAndfee);
@@ -224,7 +218,11 @@ export class FuelreqsGridServicesComponent implements OnInit {
             });
         });
     }
-
+    generateTooltips(serviceAndFees: ServiceOrderItem[]){
+        serviceAndFees.forEach(element => {
+            element.toolTipText = this.getInfoTooltipText(element);
+        });
+    }
     getInfoTooltipText(serviceAndFees: ServiceOrderItem): string {
         if (this.servicesAndFees.indexOf(serviceAndFees.serviceName) > -1)
             return `Source: Acukwik`;
@@ -297,7 +295,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
 
     private resetNewServiceOrderItem() {
-        this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: (this.serviceOrderId == undefined || this.serviceOrderId == null ? 0 : this.serviceOrderId), quantity: 1, isCompleted: false, completionDateTimeUtc: null, isEditMode: false, isAddMode: true, isAdding: false };
+        this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: (this.serviceOrderId == undefined || this.serviceOrderId == null ? 0 : this.serviceOrderId), quantity: 1, isCompleted: false, completionDateTimeUtc: null, isEditMode: false, isAddMode: true, isAdding: false,toolTipText: '' };
+        this.newServiceOrderItem.toolTipText = this.getInfoTooltipText(this.newServiceOrderItem);
     }
 
     private sortGrid() {
@@ -320,5 +319,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
         this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
 
         this.isLoading = false;
+
+        this.generateTooltips(this.serviceOrderItems);
     }
 }
