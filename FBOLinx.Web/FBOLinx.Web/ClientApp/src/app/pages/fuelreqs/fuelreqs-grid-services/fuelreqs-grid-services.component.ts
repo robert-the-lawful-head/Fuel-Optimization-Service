@@ -58,7 +58,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.serviceOrderItems) {
-            this.getInfoTooltipText(changes.serviceOrderItems.currentValue);
+            this.generateTooltips(this.serviceOrderItems);
+
         }
     }
     onArchiveServices(serviceOrderItems: ServiceOrderItem[]) {
@@ -226,6 +227,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
         });
     }
     generateTooltips(serviceAndFees: ServiceOrderItem[]){
+        console.log("🚀 ~ FuelreqsGridServicesComponent ~ getInfoTooltipText ~ this.servicesAndFees:", this.servicesAndFees)
+
         serviceAndFees.forEach(element => {
             element.toolTipText = this.getInfoTooltipText(element);
         });
@@ -317,6 +320,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
     }
 
     private refreshGrid() {
+        this.generateTooltips(this.serviceOrderItems);
+
         this.fuelreqsServicesAndFeesGridDisplay = this.serviceOrderItems.filter(s => s.serviceName != "" && !s.serviceName.includes("Fuel"));
 
         this.sortGrid();
@@ -332,7 +337,5 @@ export class FuelreqsGridServicesComponent implements OnInit {
         this.toggleNotesDrawer();
 
         this.isLoading = false;
-
-        this.generateTooltips(this.serviceOrderItems);
     }
 }
