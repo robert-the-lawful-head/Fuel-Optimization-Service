@@ -48,7 +48,11 @@
                             <div class="row">
                                 <div class="col-7">
                                     <span *ngIf="!note.isEdit">{{note.note}}</span>
-                                    <input matInput [(ngModel)]="note.note" *ngIf="note.isEdit" />
+                                    <span *ngIf="note.isEdit">
+                                        <mat-form-field>
+                                            <input matInput [(ngModel)]="note.note" />
+                                        </mat-form-field>
+                                    </span>
                                 </div>
                                 <div class="col-5 text-right">
                                     <button (click)="saveEditAdditionalNoteClicked(note)" *ngIf="note.isEdit" ni-button size="small" beforeIcon="fa fa-check" [view]="'success'">

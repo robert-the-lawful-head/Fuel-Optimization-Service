@@ -22,6 +22,8 @@ import { CustomerAircraft } from '../../../models/customer-aircraft';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { OrderNote } from '../../../models/order-note';
 import * as moment from 'moment';
+import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { MatDialog } from '@angular/material/dialog';
 
 
 @Component({
@@ -57,6 +59,7 @@ export class FuelreqsNotesComponent implements OnInit {
         private serviceOrderService: ServiceOrderService,
         private fuelReqsService: FuelreqsService,
         private router: Router,
+        private dialog: MatDialog,
     ) {
         
     }
@@ -100,11 +103,22 @@ export class FuelreqsNotesComponent implements OnInit {
     }
 
     deleteAdditionalNoteClicked(additionalNote: OrderNote): void {
-        this.fuelReqsService.deleteAdditionalNote(additionalNote).subscribe((response: any) => {
+        const dialogRef = this.dialog.open(
+            DeleteConfirmationComponent,
+            {
+                autoFocus: false,
+                data: { description: 'note', item: additionalNote, includeThis: true },
+            }
+        );
 
+        dialogRef.afterClosed().subscribe((additionalNote) => {
+            if (!additionalNote) {
+                return;
+            }
+            this.fuelReqsService.deleteAdditionalNote(additionalNote.item).subscribe((response: any) => {
+                this.additionalNotes.splice(this.additionalNotes.indexOf(additionalNote.item), 1);
+            });
         });
-
-        this.additionalNotes.splice(this.additionalNotes.indexOf(additionalNote), 1);
     }
 
     private async loadNotes() {
