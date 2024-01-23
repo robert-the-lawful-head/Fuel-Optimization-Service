@@ -64,7 +64,7 @@
                                     <span *ngIf="!service.serviceName.startsWith('Fuel - ')"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel - ')"><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel - ')"
-                                    matTooltip="{{service.toolTipText}}"><mat-icon class="material-icons-outlined">info</mat-icon></span>
+                                    [matTooltip]="service.toolTipText"><mat-icon class="material-icons-outlined">info</mat-icon></span>
                                 </div>
                             </div>
                         </div>
