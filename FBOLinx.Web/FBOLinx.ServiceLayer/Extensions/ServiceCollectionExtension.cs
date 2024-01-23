@@ -129,6 +129,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();
             services.AddTransient<IAccessTokensService, AccessTokensService>();
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
+            services.AddTransient<IOrderNotesService, OrderNotesService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
@@ -178,6 +179,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IDistributionErrorsEntityService, DistributionErrorsEntityService>();
             services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
             services.AddTransient<IAcukwikServicesOfferedDefaultsEntityService, AcukwikServicesOfferedDefaultsEntityService>();
+            services.AddTransient<IOrderNotesEntityService, OrderNotesEntityService>();
 
             return services;
         }

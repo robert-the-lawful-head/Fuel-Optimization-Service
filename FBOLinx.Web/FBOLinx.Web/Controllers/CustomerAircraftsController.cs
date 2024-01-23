@@ -495,6 +495,29 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpGet("notes/tailnumber/{tailNumber}/groupId/{groupId}/customerid/{customerId}")]
+        public async Task<ActionResult<List<CustomerAircraftNoteDto>>> GetCustomerAircraftNotesByTailNumberGroupId([FromRoute] string tailNumber, [FromRoute] int groupId, [FromRoute] int customerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircrafts = await _CustomerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int>() { groupId }, customerId));
+                var customerAircraft = customerAircrafts.Where(c => c.TailNumber.ToLower() == tailNumber.ToLower()).FirstOrDefault();
+
+                var customerAircraftNotes = await _context.CustomerAircraftNotes.Where(s => s.CustomerAircraftId == customerAircraft.Oid).ToListAsync();
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
         [HttpPost("notes")]
         public async Task<ActionResult<CustomerAircraftNoteDto>> AddCustomerAircraftNotes(
             [FromBody] CustomerAircraftNoteDto customerAircraftNotes)

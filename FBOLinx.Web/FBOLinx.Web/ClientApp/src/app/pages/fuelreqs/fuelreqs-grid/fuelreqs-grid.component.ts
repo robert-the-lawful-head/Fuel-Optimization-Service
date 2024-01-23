@@ -20,6 +20,7 @@ import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatRow, MatTable, MatTableDataSource } from '@angular/material/table';
 import { isEqual } from 'lodash';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
+import { MatDrawer } from '@angular/material/sidenav';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -40,6 +41,7 @@ import { ProceedConfirmationComponent } from '../../../shared/components/proceed
 import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
+import { FuelreqsNotesComponent } from '../fuelreqs-notes/fuelreqs-notes.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -126,7 +128,17 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
     @Input() servicesAndFees: string[];
+    @ViewChild('orderNotes') public drawer: MatDrawer;
     @Output() onArchivedChange = new EventEmitter<any>();
+
+    public serviceOrderId: number | null = null;
+    public associatedFuelOrderId: number | null = null;
+    public fuelerlinxTransactionId: number | null = null;
+    public tailNumber: string;
+    public customerId: number;
+    public customer: string;
+    public isDrawerOpenedByDefault: boolean = false;
+    public isDrawManuallyClicked: boolean = false;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -497,6 +509,33 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         fuelReq.serviceOrder.numberOfTotalServices += changes.value;
         if (changes.fuelreqsServicesAndFeesGridDisplay != null)
             fuelReq.serviceOrder.serviceOrderItems = changes.fuelreqsServicesAndFeesGridDisplay.filter(f => f.serviceName != '');
+    }
+
+    openByDefault(isOpenByDefault: any) {
+        this.isDrawerOpenedByDefault = isOpenByDefault;
+        this.toggleOpenNotesDrawer();
+    }
+
+    toggleDrawerChanged(changes: any) {
+        this.serviceOrderId = changes.serviceOrderId;
+        this.associatedFuelOrderId = changes.associatedFuelOrderId;
+        this.fuelerlinxTransactionId = changes.fuelerLinxTransactionId;
+        this.tailNumber = changes.tailNumber;
+        this.customerId = changes.customerId;
+        this.customer = changes.customer;
+        this.isDrawManuallyClicked = changes.isManuallyClicked;
+        this.toggleOpenNotesDrawer();
+    }
+
+    toggleOpenNotesDrawer() {
+        if (this.drawer != undefined) {
+            if (this.isDrawerOpenedByDefault || this.isDrawManuallyClicked)
+                this.drawer.open();
+        }
+    }
+
+    toggleClosedNotesDrawer() {
+        this.drawer.close();
     }
 
     private scrollToIndex(id: number): void {

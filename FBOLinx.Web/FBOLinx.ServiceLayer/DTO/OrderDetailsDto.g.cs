@@ -15,8 +15,9 @@ using FBOLinx.Core.Enums;
 
 namespace FBOLinx.ServiceLayer.DTO
 {
-    public class OrderDetailsDto : FBOLinxBaseEntityModel<int>
+    public class OrderDetailsDto
     {
+        public int Oid { get; set; }
         public int FuelerLinxTransactionId { get; set; }
         public string ConfirmationEmail { get; set; }
         public string FuelVendor { get; set; }

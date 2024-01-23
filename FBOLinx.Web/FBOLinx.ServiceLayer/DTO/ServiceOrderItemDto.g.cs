@@ -25,6 +25,7 @@ namespace FBOLinx.ServiceLayer.DTO
         [StringLength(255)]
         public string CompletedByName { get; set; }
         public int? AddedByUserId { get; set; }
-        public string AddedByName { get; set; }
+        public string? AddedByName { get; set; }
+        public string? ServiceNote { get; set; }
     }
 }

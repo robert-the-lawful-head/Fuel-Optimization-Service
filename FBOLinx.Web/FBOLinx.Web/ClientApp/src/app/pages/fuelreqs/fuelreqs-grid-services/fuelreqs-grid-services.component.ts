@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FbosServicesAndFeesResponse, ServiceTypeResponse, ServicesAndFees, ServicesAndFeesResponse } from 'src/app/models/services-and-fees/services-and-fees';
@@ -19,6 +19,7 @@ import { ServiceOrderItem } from '../../../models/service-order-item';
 import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-applied-date-types';
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { FuelReq } from '../../../models/fuelreq';
+import { FuelreqsNotesComponent } from '../fuelreqs-notes/fuelreqs-notes.component';
 
 interface ServicesAndFeesGridItem extends ServicesAndFeesResponse {
     isEditMode: boolean,
@@ -38,13 +39,19 @@ export class FuelreqsGridServicesComponent implements OnInit {
     @Input() public associatedFuelOrderId: number | null = null;
     @Input() public fuelerlinxTransactionId: number | null = null;
     @Input() public servicesAndFees: string[];
+    @Input() public tailNumber: string;
+    @Input() public customerId: number;
+    @Input() public customer: string;
     @Output() completedServicesChanged: EventEmitter<any> = new EventEmitter();
     @Output() totalServicesChanged: EventEmitter<any> = new EventEmitter();
+    @Output() toggleDrawerChanged: EventEmitter<any> = new EventEmitter();
+    @ViewChild(FuelreqsNotesComponent, { static: true }) fuelReqNotesComponent: FuelreqsNotesComponent;
 
     public newServiceOrderItem: ServiceOrderItem;
     fuelreqsServicesAndFeesGridDisplay: ServiceOrderItem[] = [];
     isLoading: boolean = true;
     serviceOrder: any;
+    hasNotes: boolean = false;
 
     constructor(
         private serviceOrderService: ServiceOrderService,
@@ -232,6 +239,11 @@ export class FuelreqsGridServicesComponent implements OnInit {
             return `Source: ` + serviceAndFees.addedByName;
     }
 
+    toggleNotesDrawer(isManuallyClicked: boolean = false) {
+        let drawerProperties = { serviceOrderId: this.serviceOrderId, associatedFuelOrderId: this.associatedFuelOrderId, fuelerLinxTransactionId: this.fuelerlinxTransactionId, tailNumber: this.tailNumber, customerId: this.customerId, customer: this.customer, isManuallyClicked: isManuallyClicked };
+        this.toggleDrawerChanged.emit(drawerProperties);
+    }
+
     private createServiceOrder(fuelReq: any, serviceOrderItem: ServiceOrderItem) {
         var newServiceOrder: ServiceOrder = {
             oid: 0,
@@ -318,6 +330,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
         this.resetNewServiceOrderItem();
 
         this.fuelreqsServicesAndFeesGridDisplay.push(this.newServiceOrderItem);
+
+        this.toggleNotesDrawer();
 
         this.isLoading = false;
     }

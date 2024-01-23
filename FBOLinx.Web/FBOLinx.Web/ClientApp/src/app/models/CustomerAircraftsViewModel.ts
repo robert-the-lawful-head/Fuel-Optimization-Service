@@ -1,4 +1,5 @@
 import { AircraftSizes } from "../enums/aircraft-sizes";
+import { CustomerAircraftNote } from "./customer-aircraft-note";
 import { FboFavoriteAircraft } from "./favorites/favoriteAircraft";
 
 export interface CustomerAircraftsViewModel {
@@ -25,13 +26,5 @@ export interface CustomerAircraftsViewModel {
     fuelerlinxCompanyId: number | null;
     favoriteAircraft: FboFavoriteAircraft | null;
     aircraftSizeDescription: string;
-    notes: CustomerAircraftNoteDto[];
-}
-export interface CustomerAircraftNoteDto {
-    oid: number;
-    customerAircraftId: number;
-    fboId: number | null;
-    notes: string;
-    lastUpdatedUtc: string | null;
-    lastUpdatedByUserId: number | null;
+    notes: CustomerAircraftNote[];
 }

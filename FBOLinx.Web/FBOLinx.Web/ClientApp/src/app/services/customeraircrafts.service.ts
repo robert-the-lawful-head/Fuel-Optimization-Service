@@ -137,6 +137,15 @@ export class CustomeraircraftsService {
         );
     }
 
+    public getCustomerAircraftNotesByTailNumberGroupIdCustomerId(tailNumber: string, groupId: number, customerId: number) {
+        return this.http.get(
+            this.accessPointUrl + '/notes/tailnumber/' + tailNumber + '/groupId/' + groupId + '/customerid/' + customerId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     public addCustomerAircraftNotes(payload: CustomerAircraftNote) {
         return this.http.post(this.accessPointUrl + '/notes', payload, {
             headers: this.headers,

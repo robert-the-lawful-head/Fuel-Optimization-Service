@@ -41,6 +41,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
     @Input() customer: any;
     @Input() customerAircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
+    @Input() search: string;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -160,6 +161,9 @@ export class CustomerAircraftsGridComponent implements OnInit {
                     return item[property];
             }
         };
+
+        if (this.search != "")
+            this.applyFilter(this.search);
 
         //FlatfileImporter.setVersion(2);
         //this.initializeImporter();

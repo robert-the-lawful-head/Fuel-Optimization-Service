@@ -3,7 +3,7 @@
 </div>
 
 <div class="row">
-   
+
     <div class="col-10">
         <div class="row mat-elevation-z">
             <ng-container *ngFor="let service of fuelreqsServicesAndFeesGridDisplay;">
@@ -61,18 +61,28 @@
                                     </div>
                                 </div>
                                 <div class="col-4 text" *ngIf="!service.isEditMode && !service.isAddMode">
-                                    <span *ngIf="!service.serviceName.startsWith('Fuel - ')"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
-                                    <span *ngIf="!service.serviceName.startsWith('Fuel - ')"><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
-                                    <span *ngIf="!service.serviceName.startsWith('Fuel - ')" [matTooltip]="getInfoTooltipText(service)"><mat-icon class="material-icons-outlined">info</mat-icon></span>
+                                    <span *ngIf="!service.serviceName.startsWith('Fuel ')"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
+                                    <span *ngIf="!service.serviceName.startsWith('Fuel ')"><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
+                                    <span *ngIf="!service.serviceName.startsWith('Fuel ')" [matTooltip]="getInfoTooltipText(service)"><mat-icon class="material-icons-outlined">info</mat-icon></span>
                                 </div>
                             </div>
                         </div>
                     </ni-card>
-                    
+
 
                 </div>
             </ng-container>
         </div>
     </div>
-    <div>VIEW NOTES BUTTON</div>
+    <div class="col-2">
+        <div (click)="toggleNotesDrawer(true)">
+            <button beforeIcon="fa fa-clipboard"
+                    [view]="'primary'"
+                    ni-button
+                    size="small"
+                    #nodeInput>
+                View Notes
+            </button>
+        </div>
+    </div>
 </div>
