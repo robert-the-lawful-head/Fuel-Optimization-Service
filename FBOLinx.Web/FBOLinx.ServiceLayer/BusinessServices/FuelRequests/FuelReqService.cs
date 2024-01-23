@@ -289,6 +289,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelRequest.Fboid = fboId;
                         fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
                         fuelRequest.Archived = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).Select(d => d.IsArchived).FirstOrDefault();
+                        fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
                         result.Add(fuelRequest);
                     }
                 }
@@ -552,7 +553,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     var serviceNames = new List<string>();
                     if (serviceOrder != null)
                     {
-                        serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName).ToList();
+                        serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName + (s.ServiceNote != null && s.ServiceNote != "" ? ": " + s.ServiceNote + "\n" : "")).ToList();
 
                         if (customerAircraftId == 0)
                             customerAircraftId = serviceOrder.CustomerAircraftId;
@@ -657,6 +658,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceOrderItem.ServiceOrderId = serviceReq.Oid;
                 serviceOrderItem.ServiceName = service.ServiceName;
                 serviceOrderItem.IsCompleted = false;
+                serviceOrderItem.ServiceNote = service.Note;
                 serviceOrderItems.Add(serviceOrderItem);
             }
 
@@ -665,7 +667,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             {
                 ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
                 fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-                fuelServiceOrderItem.ServiceName = "Fuel - 0 gallons";
+                fuelServiceOrderItem.ServiceName = "Fuel 0 gal.";
                 fuelServiceOrderItem.IsCompleted = false;
                 serviceOrderItems.Add(fuelServiceOrderItem);
             }
@@ -711,8 +713,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
-                    var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel -")).FirstOrDefault();
-                    fuelServiceLineItem.ServiceName = "Fuel - " + fuelReq.QuotedVolume + " gallon" + (fuelReq.QuotedVolume > 1 ? "s" : "");
+                    var fuelServiceLineItem = serviceOrder.ServiceOrderItems.Where(s => s.ServiceName.StartsWith("Fuel ")).FirstOrDefault();
+                    fuelServiceLineItem.ServiceName = "Fuel " + fuelReq.QuotedVolume + " gal" + (fuelReq.QuotedVolume > 1 ? "s" : "" +  "@ " + fuelReq.QuotedPpg.GetValueOrDefault().ToString("C"));
                     await _serviceOrderItemService.UpdateAsync(fuelServiceLineItem);
                 }
 

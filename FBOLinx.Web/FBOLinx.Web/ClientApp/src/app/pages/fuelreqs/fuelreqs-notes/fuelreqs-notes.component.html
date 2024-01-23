@@ -1,0 +1,86 @@
+<div *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+</div>
+
+<div *ngIf="!isLoading">
+    <div>
+        <div>
+            <div class="p-2">
+                <div>
+                    <span class="text-gray-dark">
+                        {{customer}}
+                    </span>
+                    <span><i class="fa fa-external-link mr-1 cursor-pointer text-primary" (click)="goToCustomer()"></i></span>
+                </div>
+                <div>
+                    <span class="text-gray-dark">
+                        {{tailNumber}}
+                    </span>
+                    <span>
+                        <i class="fa fa-external-link mr-1 cursor-pointer text-primary"
+                           (click)="goToCustomerAircraft()">
+                        </i>
+                    </span>
+                </div>
+            </div>
+            <div class="p-2" *ngIf="customerNotes != undefined && customerNotes != ''">
+                <div class="text-gray-dark">Customer Note (internal)</div>
+                <div>
+                    {{customerNotes}}
+
+                    {{customerAircraftNotes}}
+                </div>
+                <div><hr /></div>
+            </div>
+            <div class="p-2" *ngIf="serviceOrderNotes.length > 0">
+                <div>Operator Request</div>
+                <div *ngFor="let note of serviceOrderNotes">
+                    <div class="pb-2">
+                        <span *ngIf="!note.isEdit">{{note}}</span>
+                    </div>
+                </div>
+                <div><hr /></div>
+            </div>
+            <div class="p-2" *ngIf="additionalNotes.length > 0">
+                <div>Additional Notes (internal)</div>
+                    <div *ngFor="let note of additionalNotes">
+                        <div class="pb-2">
+                            <div class="row">
+                                <div class="col-7">
+                                    <span *ngIf="!note.isEdit">{{note.note}}</span>
+                                    <input matInput [(ngModel)]="note.note" *ngIf="note.isEdit" />
+                                </div>
+                                <div class="col-5 text-right">
+                                    <button (click)="saveEditAdditionalNoteClicked(note)" *ngIf="note.isEdit" ni-button size="small" beforeIcon="fa fa-check" [view]="'success'">
+                                    </button>
+                                    <button (click)="editAdditionalNoteClicked(note)" *ngIf="!note.isEdit" ni-button size="small" beforeIcon="fa fa-pencil" [view]="'success'">
+                                    </button>
+                                    <button (click)="deleteAdditionalNoteClicked(note);" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small">
+                                    </button>
+                                </div>
+                            </div>
+                            <div><span class="bold">Note Added By: </span>{{note.addedByName}}</div>
+                        </div>
+                </div>
+            </div>
+            <div class="row p-2">
+                <div class="col-10">
+                    <mat-form-field>
+                        <input matInput placeholder="Additional Notes (internal)" [(ngModel)]="newAdditionalNote" />
+                    </mat-form-field>
+                </div>
+                <div class="col-2 mt-3">
+                    <button [view]="'accent'"
+                            beforeIcon="fa fa-plus"
+                            class="action-btn"
+                            ni-button
+                            size="small"
+                            (click)="addAdditionalNoteClicked()">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-footer m-md-3"></div>
+    </div>
+</div>

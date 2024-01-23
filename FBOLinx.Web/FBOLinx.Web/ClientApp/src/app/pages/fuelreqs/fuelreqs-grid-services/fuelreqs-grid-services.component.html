@@ -75,5 +75,15 @@
             </ng-container>
         </div>
     </div>
-    <div>VIEW NOTES BUTTON</div>
+    <div class="col-2">
+        <div (click)="toggleNotesDrawer(true)">
+            <button beforeIcon="fa fa-clipboard"
+                    [view]="'primary'"
+                    ni-button
+                    size="small"
+                    #nodeInput>
+                View Notes
+            </button>
+        </div>
+    </div>
 </div>

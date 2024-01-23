@@ -110,6 +110,42 @@ export class FuelreqsService {
         });
     }
 
+    public getAdditionalOrderNotes(associatedFuelOrderId: number, associatedServiceOrderId: number,associatedFuelerlinxTransactionId: number) {
+        return this.http.get(
+            this.accessPointUrl + '/ordernotes/associatedfuelorderid/' + associatedFuelOrderId + '/associatedserviceorderid/' + associatedServiceOrderId + '/associatedfuelerlinxtransactionid/' + associatedFuelerlinxTransactionId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public addAdditionalNotes(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/ordernotes', payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public editAdditionalNote(payload) {
+        return this.http.put(
+            this.accessPointUrl + '/ordernotes', payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public deleteAdditionalNote(payload) {
+        return this.http.delete(
+            this.accessPointUrl + '/ordernotes/' + payload.oid,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
     // Analysis Services
 
     public topCustomersForFbo(fboId, payload) {

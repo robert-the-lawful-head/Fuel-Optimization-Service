@@ -13,5 +13,6 @@ export type ServiceOrderItem = {
     isAdding: boolean;
     addedByUserId?: number;
     addedByName?: string;
+    serviceNote?: string;
     toolTipText: string;
 }

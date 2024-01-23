@@ -32,7 +32,8 @@ namespace FBOLinx.DB.Models
         [Column("AddedByUserID")]
         public int? AddedByUserId { get; set; }
         [StringLength(255)]
-        public string AddedByName { get; set; }
+        public string? AddedByName { get; set; }
+        public string? ServiceNote { get; set; }
 
         #region Relationships
         [ForeignKey(nameof(ServiceOrderId))]

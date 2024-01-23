@@ -265,6 +265,12 @@ export class CustomerinfobygroupService {
         });
     }
 
+    getCustomerInfoByGroupNoteByCustomerIdGroupId(customerId: number, groupId: number) {
+        return this.http.get(`${this.accessPointUrl}/notes/customerid/${customerId}/groupid/${groupId}`, {
+            headers: this.headers,
+        });
+    }
+
     addCustomerInfoByGroupNote(payload: CustomerInfoByGroupNote) {
         return this.http.post(`${this.accessPointUrl}/notes`, payload, {
             headers: this.headers,

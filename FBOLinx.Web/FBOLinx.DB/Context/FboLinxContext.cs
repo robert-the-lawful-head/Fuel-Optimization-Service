@@ -171,6 +171,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
         public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
         public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
+        public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -1077,6 +1078,10 @@ namespace FBOLinx.DB.Context
             .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<AcukwikServicesOfferedDefaults> (entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
+            modelBuilder.Entity<OrderNote>(entity =>
             {
                 entity.HasKey(e => e.Oid);
             });

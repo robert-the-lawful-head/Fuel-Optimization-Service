@@ -232,6 +232,7 @@ import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.
 import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
+import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
 
 @NgModule({
     declarations: [
@@ -391,7 +392,8 @@ import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services
         ServicesAndFeesHomeComponent,
         RampFeesCategoryComponent,
         ItemInputComponent,
-        FuelreqsGridServicesComponent
+        FuelreqsGridServicesComponent,
+        FuelreqsNotesComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

@@ -45,6 +45,9 @@ using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.OrderNotes;
+using FBOLinx.DB.Specifications.ServiceOrderItem;
+using FBOLinx.ServiceLayer.DTO.Responses.ServiceOrder;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -74,6 +77,7 @@ namespace FBOLinx.Web.Controllers
         private readonly DateTimeService _dateTimeService;
         private readonly IServiceOrderService _serviceOrderService;
         private readonly IServiceOrderItemService _serviceOrderItemService;
+        private readonly IOrderNotesService _orderNotesService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -84,7 +88,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService, IOrderNotesService orderNotesService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -107,6 +111,7 @@ namespace FBOLinx.Web.Controllers
             _dateTimeService = dateTimeService;
             _serviceOrderService = serviceOrderService;
             _serviceOrderItemService = serviceOrderItemService;
+            _orderNotesService = orderNotesService;
         }
 
         // GET: api/FuelReqs/5
@@ -464,6 +469,7 @@ namespace FBOLinx.Web.Controllers
 
                         // Add default "Fuel" service
                         var fuelReqGallons = request.FuelEstWeight;
+                        var fuelReqPrice = request.FuelEstCost;
 
                         var serviceReq = new ServiceOrderDto()
                         {
@@ -496,7 +502,7 @@ namespace FBOLinx.Web.Controllers
 
                         ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
                         fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-                        fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
+                        fuelServiceOrderItem.ServiceName = "Fuel " + fuelReqGallons + " gal" + (fuelReqGallons > 1 ? "s" : "") + " @ " + fuelReqPrice.GetValueOrDefault().ToString("C");
                         fuelServiceOrderItem.IsCompleted = false;
                         await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
                     }
@@ -534,6 +540,7 @@ namespace FBOLinx.Web.Controllers
                 var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
 
                 var fuelReqGallons = request.FuelEstWeight;
+                var fuelReqPrice = request.FuelEstCost;
 
                 var serviceReq = new ServiceOrderDto()
                 {
@@ -566,7 +573,7 @@ namespace FBOLinx.Web.Controllers
 
                 ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
                 fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-                fuelServiceOrderItem.ServiceName = "Fuel - " + fuelReqGallons + " gallon" + (fuelReqGallons > 1 ? "s" : "");
+                fuelServiceOrderItem.ServiceName = "Fuel " + fuelReqGallons + " gal" + (fuelReqGallons > 1 ? "s" : "") + " @ " + fuelReqPrice.GetValueOrDefault().ToString("C");
                 fuelServiceOrderItem.IsCompleted = false;
                 await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
 
@@ -676,7 +683,6 @@ namespace FBOLinx.Web.Controllers
             return CreatedAtAction("GetFuelReq", new { id = fuelReq.Oid }, fuelReq);
         }
 
-        
         // DELETE: api/FuelReqs/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFuelReq([FromRoute] int id)
@@ -725,6 +731,90 @@ namespace FBOLinx.Web.Controllers
             await _fuelReqService.CheckAndSendFuelOrderUpdateEmail(request);
 
             return Ok();
+        }
+
+        // Get: api/ordernotes/associatedfuelorderid/5/associatedserviceorderid/5/associatedfuelerlinxtransactionid/5
+        [HttpGet("ordernotes/associatedfuelorderid/{associatedFuelOrderId}/associatedserviceorderid/{associatedServiceOrderId}/associatedfuelerlinxtransactionid/{associatedFuelerlinxTransactionId}")]
+        public async Task<IActionResult> GetOrderNotes([FromRoute] int associatedFuelOrderId, [FromRoute] int associatedServiceOrderId, int associatedFuelerlinxTransactionId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            List<OrderNoteDto> orderNotes = new List<OrderNoteDto>();
+
+            if (associatedFuelOrderId > 0)
+            {
+                orderNotes = await _orderNotesService.GetListbySpec(new OrderNotesByAssociatedFuelOrderIdSpecification(associatedFuelOrderId));
+            }
+            else
+            {
+                orderNotes = await _orderNotesService.GetListbySpec(new OrderNotesByAssociatedFuelerlinxTransactionIdSpecification(associatedFuelerlinxTransactionId));
+            }
+
+            return Ok(orderNotes);
+        }
+
+        // POST: api/ordernotes
+        [HttpPost("ordernotes")]
+        public async Task<IActionResult> AddOrderNotes([FromBody] OrderNoteDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await _orderNotesService.AddAsync(request);
+                return Ok(result);
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(exception.InnerException);
+            }
+        }
+
+        // PUT: api/ordernotes
+        [HttpPut("ordernotes")]
+        public async Task<ActionResult> PutOrderNote(
+             [FromBody] OrderNoteDto request)
+        {
+            try
+            {
+                await _orderNotesService.UpdateAsync(request);
+                return Ok(request);
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(exception.Message);
+            }
+        }
+
+        // DELETE: api/ordernotes/5
+        [HttpDelete("ordernotes/{orderNoteId}")]
+        public async Task<IActionResult> DeleteOrderNotes([FromRoute] int orderNoteId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var orderNote =
+                    await _orderNotesService.GetSingleBySpec(
+                        new OrderNoteByIdSpecification(orderNoteId));
+
+                if (orderNote != null)
+                    await _orderNotesService.DeleteAsync(orderNote);
+                return Ok();
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(exception.InnerException);
+            }
         }
 
         #region Analysis
