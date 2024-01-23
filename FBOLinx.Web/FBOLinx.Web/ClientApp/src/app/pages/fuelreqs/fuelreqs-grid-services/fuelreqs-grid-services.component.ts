@@ -308,7 +308,6 @@ export class FuelreqsGridServicesComponent implements OnInit {
 
     private resetNewServiceOrderItem() {
         this.newServiceOrderItem = { oid: 0, serviceName: '', serviceOrderId: (this.serviceOrderId == undefined || this.serviceOrderId == null ? 0 : this.serviceOrderId), quantity: 1, isCompleted: false, completionDateTimeUtc: null, isEditMode: false, isAddMode: true, isAdding: false,toolTipText: '' };
-        this.newServiceOrderItem.toolTipText = this.getInfoTooltipText(this.newServiceOrderItem);
     }
 
     private sortGrid() {
