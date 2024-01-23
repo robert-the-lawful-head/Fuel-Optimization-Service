@@ -1,4 +1,4 @@
-<div class="navbar-wrap">
+<nav class="navbar-wrap">
     <button (click)="openSidebar()" *ngIf="!isPublicView"
     [ngClass]="{ open: openedSidebar }"
     mat-icon-button aria-label="open side nav bar">
@@ -220,4 +220,4 @@
         </div>
         <div (click)="close()" class="items-overlay"></div>
     </div>
-</div>
+</nav>
