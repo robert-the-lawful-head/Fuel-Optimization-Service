@@ -531,6 +531,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         if (this.drawer != undefined) {
             if (this.isDrawerOpenedByDefault || this.isDrawManuallyClicked)
                 this.drawer.open();
+            else
+                this.toggleClosedNotesDrawer();
         }
     }
 

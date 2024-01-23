@@ -137,9 +137,13 @@ export class FuelreqsNotesComponent implements OnInit {
 
         if (customerNotes != null && customerNotes.notes != "")
             this.customerNotes = customerNotes.notes;
+        else
+            this.customerNotes = "";
 
         if (customerAircraftNotes.length > 0)
             this.customerAircraftNotes = customerAircraftNotes[0].notes;
+        else
+            this.customerAircraftNotes = "";
 
         var serviceOrder = serviceOrderResults.result as ServiceOrder;
         var serviceOrderNotes: any[] = [];
