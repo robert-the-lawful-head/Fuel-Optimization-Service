@@ -8,16 +8,16 @@ import { GridBase } from 'src/app/services/tables/GridBase';
 import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
 import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
-import { FlightWatchSettingTableComponent } from './flight-watch-setting-table/flight-watch-setting-table.component';
+import { FlightWatchAircraftDataTableComponent } from './flight-watch-aircraft-data-table/flight-watch-aircraft-data-table.component';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    selector: 'app-flight-watch-settings',
-    styleUrls: ['./flight-watch-settings.component.scss'],
-    templateUrl: './flight-watch-settings.component.html',
+    selector: 'app-flight-watch-aicraft-grid',
+    styleUrls: ['./flight-watch-aicraft-grid.component.scss'],
+    templateUrl: './flight-watch-aicraft-grid.component.html',
 })
-export class FlightWatchSettingsComponent extends GridBase {
+export class FlightWatchAicraftGridComponent extends GridBase {
     @Input() data: FlightWatchModelResponse[];
     @Input() icao: string;
     @Input() icaoList: string[];
@@ -34,8 +34,8 @@ export class FlightWatchSettingsComponent extends GridBase {
     @Output() openAircraftPopup = new EventEmitter<string>();
     @Output() closeAircraftPopup = new EventEmitter<string>();
 
-    @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchSettingTableComponent;
-    @ViewChild('departuresTable') public departuresTable: FlightWatchSettingTableComponent;
+    @ViewChild('arrivalsTable') public arrivalsTable: FlightWatchAircraftDataTableComponent;
+    @ViewChild('departuresTable') public departuresTable: FlightWatchAircraftDataTableComponent;
 
     arrivals: FlightWatchModelResponse[] =[];
     departures: FlightWatchModelResponse[] =[];

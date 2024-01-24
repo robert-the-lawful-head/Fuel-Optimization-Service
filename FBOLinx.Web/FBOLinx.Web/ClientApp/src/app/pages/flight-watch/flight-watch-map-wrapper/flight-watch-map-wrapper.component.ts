@@ -11,8 +11,8 @@ import { Dictionary } from 'lodash';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
-import { FlightWatchMapService } from '../../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
-import { FlightWatchMapComponent } from '../../flight-watch-map/flight-watch-map.component';
+import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -54,10 +54,24 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     ngOnInit() {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.data) {
+        if (changes.data && changes.data.currentValue) {
+            this.processFlightWatchData(changes.data.currentValue,changes.data.previousValue);
             this.flightWatchDictionary = this.getFilteredData(
                 changes.data.currentValue
             );
+        }
+    }
+    private processFlightWatchData(currentFlights: FlightWatchModelResponse [], previousFlights: FlightWatchModelResponse [] = []):void {
+        for (let currentData of currentFlights) {
+            let previousData = previousFlights.find((obj) => obj.tailNumber == currentData.tailNumber);
+
+            currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc;
+
+            let isDateTimeSyncronized = (currentData.aircraftPositionDateTimeUtc > currentData.previousAircraftPositionDateTimeUtc);
+
+            currentData.previousLongitude = isDateTimeSyncronized ? previousData?.longitude ?? currentData.longitude : currentData.longitude;
+            currentData.previousLatitude =  isDateTimeSyncronized ? previousData?.latitude ?? currentData.latitude : currentData.latitude;
+
         }
     }
     getFilteredData(

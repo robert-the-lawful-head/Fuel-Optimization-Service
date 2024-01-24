@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using FBOLinx.Core.BaseModels.Specifications;
 
 namespace FBOLinx.DB.Specifications.AirportWatchDistinctBoxes
@@ -12,6 +12,10 @@ namespace FBOLinx.DB.Specifications.AirportWatchDistinctBoxes
 
         public AirportWatchDistinctBoxesSpecification(string boxName)
             : base(x => x.BoxName == boxName)
+        {
+        }
+        public AirportWatchDistinctBoxesSpecification(IList<string> boxNameList)
+        : base(x => boxNameList.Contains(x.BoxName))
         {
         }
     }

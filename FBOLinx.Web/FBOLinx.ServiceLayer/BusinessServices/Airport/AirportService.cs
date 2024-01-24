@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Enums;
 using FBOLinx.Core.Utilities.Geography;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.DB.Specifications.AcukwikAirport;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -18,7 +17,6 @@ using Geolocation;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using SendGrid.Helpers.Mail;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Airport
 {
@@ -38,6 +36,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<AirportPosition>> GetAirportPositions();
         Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
+        Task<string> FindClosestAntenna(Coordinate coordinates, List<string> antennas);
     }
 
     //TODO: Convert this to a DTO and Entity Service!
@@ -52,16 +51,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         private IFboEntityService _FboEntityService;
         private AcukwikAirportEntityService _AcukwikAirportEntityService;
         private FuelerLinxApiService _FuelerLinxApiService;
+        private IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
 
         public AirportService(FboLinxContext fboLinxContext, DegaContext degaContext, IMemoryCache memoryCache, IFboEntityService fboEntityService, 
             AcukwikAirportEntityService acukwikAirportEntityService,
-            FuelerLinxApiService fuelerLinxApiService)
+            FuelerLinxApiService fuelerLinxApiService,
+            IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService)
         {
             _FuelerLinxApiService = fuelerLinxApiService;
             _AcukwikAirportEntityService = acukwikAirportEntityService;
             _FboEntityService = fboEntityService;
             _MemoryCache = memoryCache;
             _degaContext = degaContext;
+            _AirportWatchDistinctBoxesService = airportWatchDistinctBoxesService;
             _fboLinxContext = fboLinxContext;
         }
 
@@ -114,7 +116,30 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             airportIdentifier = airportIdentifier.ToUpper();
             return positions?.Where(x => x.GetProperAirportIdentifier() == airportIdentifier).FirstOrDefault();
         }
+        public async Task<string> FindClosestAntenna(Coordinate coordinates, List<string> antennas)
+        {
+            double minDistance = double.MaxValue;
+            string closestAntenna = null;
 
+            var antennasData = await _AirportWatchDistinctBoxesService.GetBoxByName(antennas);
+
+            foreach (var antenna in antennas)
+            {
+                var antennaBox = antennasData.FirstOrDefault(x => x.BoxName == antenna);
+
+                if (antennaBox?.Longitude == null || antennaBox?.Latitude == null) continue;
+
+                double distance = GeoCalculator.GetDistance(coordinates.Latitude, coordinates.Longitude, (double)antennaBox.Latitude, (double)antennaBox.Longitude, 5, DistanceUnit.Miles);
+
+                if (minDistance == -1 || distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestAntenna = antenna;
+                }
+
+            }
+            return closestAntenna;
+        }
         public async Task<AirportPosition> GetNearestAirportPosition(double latitude, double longitude)
         {
             List<AirportPosition> airportPositions = await GetAirportPositions();

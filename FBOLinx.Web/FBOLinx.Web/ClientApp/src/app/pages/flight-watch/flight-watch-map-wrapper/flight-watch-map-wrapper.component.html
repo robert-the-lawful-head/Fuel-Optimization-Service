@@ -12,7 +12,7 @@
     [isStable]="isStable"
 ></app-flight-watch-map>
 
-<div class="map-controls-button layout-setting-button">
+<div class="map-controls-button layout-setting-button" *ngIf="showFilters">
     <button
         class="mat-black"
         mat-flat-button

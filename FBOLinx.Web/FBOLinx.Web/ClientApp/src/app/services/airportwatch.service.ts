@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { Aircraftwatch } from '../models/flight-watch';
+import { Aircraftwatch, FlightWatchModelResponse } from '../models/flight-watch';
 import { AirportWatchHistoricalParking } from '../models/airport-watch-historical-parking';
 
 import {
@@ -19,7 +19,21 @@ export class AirportWatchService {
         });
         this.accessPointUrl = baseUrl + 'api/airportwatch';
     }
+    public logBackwards(body: FlightWatchModelResponse) {
+        console.log(body.tailNumber +": currentCoordinates:", body.currentCoordinates);
+        console.log(body.tailNumber +": targetCoordinates:", body.targetCoordinates);
+        console.log(body.tailNumber +": live calculated bearing => " + body.liveBearing);
 
+        console.log(body.tailNumber +": previous currentCoordinates:", body.previousCorrectModel.currentCoordinates);
+        console.log(body.tailNumber +": previous targetCoordinates:", body.previousCorrectModel.targetCoordinates);
+        console.log(body.tailNumber +": previous bearing => " + body.previousCorrectModel.liveBearing);
+        console.log("🚀 ~ file: airportwatch.service.ts:28 ~ AirportWatchService ~ logBackwards ~ body:", body)
+        return this.http.post(
+            `${this.accessPointUrl}/log-backwards`,
+            body,
+            { headers: this.headers }
+        );
+    }
     public getAll(groupId: number, fboId: number) {
         return this.http.get<any>(
             `${this.accessPointUrl}/list/group/${groupId}/fbo/${fboId}`,
