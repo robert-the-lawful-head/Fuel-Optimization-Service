@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import {
     MAT_DIALOG_DATA,
     MatDialog,
@@ -243,12 +243,14 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         const searchBox = document.getElementById("searchBox") as HTMLInputElement;
 
         if (searchBox) {
-            searchBox.focus();
+            setTimeout(() => {
+                searchBox.focus();
+            }, 1);
         }
     }
 
     public onFilterInput(event: any, fieldName: string, operator: string): void {
         this.grid.filterByColumn(fieldName, operator, event.target.value);
         this.focusTextbox();
-    }      
+    }
 }
