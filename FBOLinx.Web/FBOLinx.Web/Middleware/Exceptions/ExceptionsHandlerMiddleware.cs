@@ -31,9 +31,6 @@ namespace FBOLinx.Web.Middleware.Exceptions
                 {
                     var scopedServices = scope.ServiceProvider.GetRequiredService<ILoggingService>();
 
-                    // Use the scoped service as needed
-                    // var result = scopedServices.DoSomething();
-
                     await HandleExceptionMessageAsync(context, ex, scopedServices).ConfigureAwait(false);
                 }
 

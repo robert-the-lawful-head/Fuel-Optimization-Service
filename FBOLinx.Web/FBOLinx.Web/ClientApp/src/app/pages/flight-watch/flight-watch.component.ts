@@ -13,17 +13,17 @@ import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import { SharedService } from 'src/app/layouts/shared-service';
+import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
-} from '../../../models/flight-watch';
-import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+} from '../../models/flight-watch';
+import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
-import { FlightWatchSettingsComponent } from '../flight-watch-settings/flight-watch-settings.component';
+import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -40,7 +40,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild(FlightWatchMapWrapperComponent)
     private mapWrapper: FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
-    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingsComponent;
+    @ViewChild('flightwatchAircraftGrid') public flightwatchAircraftGrid: FlightWatchAicraftGridComponent;
 
     pageTitle = 'Flight Watch';
 
@@ -211,7 +211,7 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.resizeMap(this.drawer.opened);
     }
     isDrawerOpen() {
-        return this.drawer.opened;
+        return this.drawer?.opened ?? true;
     }
     filterCommercialAircrafts(isCommercialAircraftVisible: boolean) {
         this.currentFilters.isCommercialAircraftVisible =
@@ -222,9 +222,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         if(!this.drawer.opened){
             await this.toggleSettingsDrawer();
         }
-        this.flightwatchSettings.expandRow(flightWatch.tailNumber);
+        this.flightwatchAircraftGrid.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchSettings.collapseAllRows();
+        this.flightwatchAircraftGrid.collapseAllRows();
     }
 }

@@ -12,6 +12,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
+import { environment } from 'src/environments/environment';
 import { SharedService } from '../../../layouts/shared-service';
 import * as SharedEvents from '../../../models/sharedEvents';
 import {
@@ -143,10 +144,14 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     get favoriteNotificationVisible() {
         return (
-            this.sharedService.currentUser.fboId > 0 ||
-            this.isLobbyViewPage ||
+            this.sharedService.currentUser.fboId > 0 &&
+            !this.isLobbyViewPage &&
             this.router.url != '/public-layout/lobby-view'
         );
+    }
+
+    get favoriteAircraftIconBadgeText(): string {
+        return (this.favoriteAircraftsData?.length == 0)? '':this.favoriteAircraftsData?.length.toString();
     }
 
     ngOnInit() {
@@ -184,7 +189,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.loadUpcomingOrders()
         );
 
-        this.mapLoadSubscription = timer(0, 15000).subscribe(() =>{
+        this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
             if(this.selectedICAO)
                 this.loadAirportWatchData();
         });
@@ -196,7 +201,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.routeSubscription = this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd) {
-                this.isLobbyViewPage = (event.url == '/public-layout/lobby-view')? false : true;
+                this.isLobbyViewPage = (event.url == '/public-layout/lobby-view')? true : false;
             }
         });
     }
@@ -535,7 +540,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     }
 
     loadUpcomingOrders() {
-
         this.fuelOrders.length = 0;
         var startDate = moment().add(-1, 'hour').local().toDate();
         var endDate = moment().add(2, 'd').local().toDate();
@@ -590,43 +594,23 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             this.selectedICAO
         )
         .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
-            if (data.success) {
-                var filteredFavoriteAircrafts = data.result.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null && item.status == FlightLegStatus.EnRoute && item.etaLocal != null);
-                this.favoriteAircraftsData =
-                filteredFavoriteAircrafts?.filter(item =>
-                    !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
-                );
-
-                this.dismissedFavoriteAircrafts = this.dismissedFavoriteAircrafts.filter(item =>
-                    filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
-                );
-                localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
-
-                let notNotifiedFavoriteAircraft =
-                filteredFavoriteAircrafts?.filter(item =>
-                    !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
-                );
-
-                localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
-
-                this.notifiedFavoriteAircraft.push(...notNotifiedFavoriteAircraft);
-                this.sendNotifications(notNotifiedFavoriteAircraft);
-
-            }else{
-                console.log("flight watch data: message", data.message);
-            }
             this.sharedService.valueChange(
             {
                 event: SharedEvents.flightWatchDataEvent,
                 data: data.result ?? null,
             });
+
+            if (!data.success){
+                console.log("flight watch data: message", data.message);
+                return;
+            }
+
+            if(!this.favoriteNotificationVisible) return;
+
+            this.notifyIncomingAircrafts(data.result);
+
         }, (error: any) => {
             console.log("flight watch error:", error)
-        });
-    }
-    sendNotifications(data: FlightWatchModelResponse[]) {
-        data?.forEach(flightwatch => {
-          this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
         });
     }
     removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
@@ -638,6 +622,33 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.incomingFavoriteAircraftInfoComponent.goToFlightWatch(flightwatch);
     }
     // Private Methods
+    private notifyIncomingAircrafts(data: FlightWatchModelResponse[]) {
+        var filteredFavoriteAircrafts = data.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null && item.status == FlightLegStatus.EnRoute && item.etaLocal != null);
+        this.favoriteAircraftsData =
+        filteredFavoriteAircrafts?.filter(item =>
+            !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+        );
+
+        this.dismissedFavoriteAircrafts = this.dismissedFavoriteAircrafts.filter(item =>
+            filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+        );
+        localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+
+        let notNotifiedFavoriteAircraft =
+        filteredFavoriteAircrafts?.filter(item =>
+            !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
+        );
+
+        localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
+
+        this.notifiedFavoriteAircraft.push(...notNotifiedFavoriteAircraft);
+        this.sendNotifications(notNotifiedFavoriteAircraft);
+    }
+    private sendNotifications(data: FlightWatchModelResponse[]) {
+        data?.forEach(flightwatch => {
+          this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
+        });
+    }
     private isOnDashboard(): boolean {
         if (!this.Location) {
             return false;

@@ -11,7 +11,6 @@ using FBOLinx.Core.Enums;
 using FBOLinx.DB.Specifications.Aircraft;
 using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.DB.Specifications.Fbo;
-using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using Microsoft.Extensions.Options;
 using FBOLinx.ServiceLayer.Dto.Responses;
@@ -29,12 +28,12 @@ using FBOLinx.ServiceLayer.DTO.Responses.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
-using FBOLinx.Core.Utilities.Geography;
-using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
+using FBOLinx.ServiceLayer.Extensions.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Core.Utilities;
+using Newtonsoft.Json;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -50,13 +49,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private List<AirportWatchLiveDataDto> _LiveDataToDelete;
         private List<AirportWatchHistoricalDataDto> _HistoricalDataToUpdate;
         private List<AirportWatchHistoricalDataDto> _HistoricalDataToInsert;
-        private FuelerLinxApiService _fuelerLinxApiService;
         private IOptions<DemoData> _demoData;
         private readonly AirportFboGeofenceClustersService _airportFboGeofenceClustersService;
         private readonly IFboPricesService _fboPricesService;
         private ICustomerAircraftEntityService _customerAircraftsEntityService;
         private ICustomerInfoByGroupEntityService _customerInfoByGroupEntityService;
-        private IServiceProvider _ServiceProvider;
         private readonly ILoggingService _LoggingService;
         private IFuelReqService _FuelReqService;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
@@ -65,16 +62,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private readonly AirportWatchLiveDataEntityService _AirportWatchLiveDataEntityService;
         private readonly IAirportWatchDistinctBoxesService _AirportWatchDistinctBoxesService;
         private IAirportService _AirportService;
-        private ISWIMFlightLegService _SwimFlightLegService;
         private readonly ICustomerInfoByGroupService _CustomerInfoByGroupService;
+        private ISWIMFlightLegService _SwimFlightLegService;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
         public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
-            IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
+           IFboService fboService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,
-            IServiceProvider serviceProvider, ILoggingService loggingService,
+            ILoggingService loggingService,
             IFuelReqService fuelReqService,
             IAirportWatchLiveDataService airportWatchLiveDataService,
             AFSAircraftEntityService afsAircraftEntityService,
@@ -82,8 +79,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchDistinctBoxesService airportWatchDistinctBoxesService,
             IAirportService airportService,
-            ISWIMFlightLegService swimFlightLegService,
             ICustomerInfoByGroupService customerInfoByGroupService,
+            ISWIMFlightLegService swimFlightLegService,
             IAircraftHexTailMappingService aircraftHexTailMappingService)
         {
             _SwimFlightLegService = swimFlightLegService;
@@ -92,12 +89,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _AirportWatchLiveDataService = airportWatchLiveDataService;
             _FuelReqService = fuelReqService;
-            _ServiceProvider = serviceProvider;
             _demoData = demoData;
             _context = context;
             _degaContext = degaContext;
             _FboService = fboService;
-            _fuelerLinxApiService = fuelerLinxApiService;
             _airportFboGeofenceClustersService = airportFboGeofenceClustersService;
             _fboPricesService = fboPricesService;
             _customerAircraftsEntityService = customerAircraftsEntityService;
@@ -512,7 +507,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             return noCustomerData.Concat(customerData).OrderByDescending(h => h.DateTime).ToList();
         }
+        private async Task CheckNewDistinctBoxesAndInsert(List<AirportWatchLiveDataDto> data, List<AirportWatchDistinctBoxesDTO> airportWatchDistinctBoxes)
+        {
+            var airportWatchDistinctBoxesToAdd = new List<AirportWatchDistinctBoxesDTO>();
 
+            var distinctBoxesFromData = data.Select(d => d.BoxName).Distinct().ToList();
+
+            foreach (var distinctBoxFromData in distinctBoxesFromData)
+            {
+                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
+                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
+            }
+            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
+        }
         public async Task ProcessAirportWatchData(List<AirportWatchLiveDataDto> data, bool isTesting = false)
         {
             _LiveDataToUpdate = new List<AirportWatchLiveDataDto>();
@@ -521,97 +528,33 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             _HistoricalDataToUpdate = new List<AirportWatchHistoricalDataDto>();
             _HistoricalDataToInsert = new List<AirportWatchHistoricalDataDto>();
 
-            var airports = await _AirportService.GetAirportPositions();
             var airportWatchDistinctBoxes = await _AirportWatchDistinctBoxesService.GetAllAirportWatchDistinctBoxes();
-            var airportWatchDistinctBoxesToAdd = new List<AirportWatchDistinctBoxesDTO>();
 
-            var distinctBoxesFromData = data.Select(d => d.BoxName).Distinct().ToList();
+            CheckNewDistinctBoxesAndInsert(data, airportWatchDistinctBoxes);
 
-            foreach(var distinctBoxFromData in distinctBoxesFromData)
-            {
-                if (airportWatchDistinctBoxes.SingleOrDefault(a => a.BoxName.ToLower() == distinctBoxFromData.ToLower()) == null)
-                    airportWatchDistinctBoxesToAdd.Add(new AirportWatchDistinctBoxesDTO { BoxName = distinctBoxFromData.ToLower() });
-            }
-            await _AirportWatchDistinctBoxesService.BulkInsert(airportWatchDistinctBoxesToAdd);
+            var airports = await _AirportService.GetAirportPositions();
+            var airportWatchDistinctBoxesWithDefaultLongLat = airportWatchDistinctBoxes.SetAirportDefaultLongLat(airports);
+            
+            data.FilterNearestAntennaBox(airportWatchDistinctBoxesWithDefaultLongLat);
 
-            airportWatchDistinctBoxes = airportWatchDistinctBoxes.Where(a => a.AirportICAO != null || a.Latitude != null).ToList();
+            // remove commented code and commented test data, can check removed code on the following commit 9bc8a2d78b8a4b3b7f1aeabb5c26ac9693378a77
 
-            var dataWithLatLng = (from d in data
-                                  join ad in airportWatchDistinctBoxes on d.BoxName equals ad.BoxName
-                                  join a in airports on new { Icao = ad.AirportICAO } equals new { Icao = (string.IsNullOrEmpty(a.Icao) ? a.Faa : a.Icao) }
-                                  into leftJoinedAirports
-                                  from a in leftJoinedAirports.DefaultIfEmpty()
-                                  select new
-                                  {
-                                      d,
-                                      AirportLatitude = a == null ? ad.Latitude.Value : a.Latitude,
-                                      AirportLongitude = a == null ? ad.Latitude.Value : a.Longitude
-                                  ,
-                                      DistanceFromAirport = a == null ? new Coordinates(ad.Latitude.Value, ad.Longitude.Value).DistanceTo(
-                          new Coordinates(d.Latitude, d.Longitude),
-                          UnitOfLength.NauticalMiles
-                                 ) : new Coordinates(a.Latitude, a.Longitude).DistanceTo(
-                          new Coordinates(d.Latitude, d.Longitude),
-                          UnitOfLength.NauticalMiles
-                                 )
-                                  }).ToList();
-
-            //var dataWithLatLng = (from d in data
-            //                      join ad in airportWatchDistinctBoxes on d.BoxName equals ad.BoxName
-            //                      join a in airports on new { Icao = ad.AirportICAO } equals new { Icao = (string.IsNullOrEmpty(a.Icao) ? a.Faa : a.Icao) }
-            //                      select new
-            //                      {
-            //                          d,
-            //                          AirportLatitude = a.Latitude,
-            //                          AirportLongitude = a.Longitude
-            //                      ,
-            //                          DistanceFromAirport = new Coordinates(a.Latitude, a.Longitude).DistanceTo(
-            //              new Coordinates(d.Latitude, d.Longitude),
-            //              UnitOfLength.NauticalMiles
-            //                     )
-            //                      }).ToList();
-
-            data = dataWithLatLng.Where(r => r.DistanceFromAirport < 350).OrderByDescending(r => r.DistanceFromAirport).ThenByDescending(r => r.d.AircraftPositionDateTimeUtc)
-                .GroupBy(r => r.d.AircraftHexCode).Select(grouped => grouped.First().d).ToList();
-
-                     //await using var fboLinxContext = _ServiceProvider.GetService<FboLinxContext>();
-                     //await using var degaContext = _ServiceProvider.GetService<DegaContext>();
-
-                     // TEST DATA
-                     //data.Clear();
-                     //var testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":0,\"GroundSpeedKts\":7,\"TrackingDegree\":17.0,\"Latitude\":33.57487,\"Longitude\":-117.12913,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:12:03\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":-75,\"IsAircraftOnGround\":true,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-                     //var newAircraftWatchLiveData = new AirportWatchLiveDataDto();
-                     //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
-                     //data.Add(newAircraftWatchLiveData);
-                     //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":2100,\"GroundSpeedKts\":89,\"TrackingDegree\":195.0,\"Latitude\":33.56058,\"Longitude\":-117.13237,\"VerticalSpeedKts\":1664,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:16:48\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":2100,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":null,\"Oid\":0}");
-                     //newAircraftWatchLiveData = new AirportWatchLiveDataDto();
-                     //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
-                     //data.Add(newAircraftWatchLiveData);
-
-                     //Grab distinct aircraft for this set of data
-                     //var distinctAircraftHexCodes =
-                     //    data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode)).Select(x => x.AircraftHexCode).Distinct().ToList();
             var distinctHexCodes = data.Where(x => !string.IsNullOrEmpty(x.AircraftHexCode))
                 .Select(x => x.AircraftHexCode).Distinct().ToList();
 
             //Preload the collection of past records from the last 7 days to use in the loop
             var oldAirportWatchLiveDataCollection = await GetAirportWatchLiveDataFromDatabase(distinctHexCodes, DateTime.UtcNow.AddHours(-1));
-            
-            // TEST DATA
-            //testData = Newtonsoft.Json.JsonConvert.DeserializeObject<AirportWatchLiveDataDto>("{\"BoxTransmissionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AtcFlightNumber\":\"N118AT\",\"AltitudeInStandardPressure\":1300,\"GroundSpeedKts\":2,\"TrackingDegree\":298.0,\"Latitude\":33.57458,\"Longitude\":-117.12912,\"VerticalSpeedKts\":0,\"TransponderCode\":1200,\"BoxName\":\"krbk_a01\",\"AircraftPositionDateTimeUtc\":\"2022-07-22T20:11:51\",\"AircraftTypeCode\":\"A1\",\"GpsAltitude\":1225,\"IsAircraftOnGround\":false,\"FuelOrder\":null,\"IsFuelerLinxCustomer\":null,\"AircraftHexCode\":\"A049FD\",\"TailNumber\":\"N118AT\",\"Oid\":29998562}");
-            //newAircraftWatchLiveData = new AirportWatchLiveDataDto();
-            //newAircraftWatchLiveData = (AirportWatchLiveDataDto)testData;
-            //oldAirportWatchLiveDataCollection.Add(newAircraftWatchLiveData);
 
             var oldAirportWatchHistoricalDataCollection = await GetAirportWatchHistoricalDataFromDatabase(distinctHexCodes, DateTime.UtcNow.AddHours(-4));
 
             foreach (var record in data)
             {
+                record.CreatedDateTime = DateTime.UtcNow;
                 var aircraftOldAirportWatchLiveDataCollection = oldAirportWatchLiveDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode).OrderByDescending(a => a.BoxTransmissionDateTimeUtc).ToList();
 
                 var oldAirportWatchLiveData = aircraftOldAirportWatchLiveDataCollection.FirstOrDefault(a => !_LiveDataToUpdate.Any(d => d.Oid == a.Oid) && !_LiveDataToDelete.Any(l => l.Oid == a.Oid));
-
+                
                 var oldAirportWatchHistoricalData = oldAirportWatchHistoricalDataCollection
                     .Where(aw => aw.AircraftHexCode == record.AircraftHexCode)
                     .OrderByDescending(aw => aw.AircraftPositionDateTimeUtc)
@@ -619,14 +562,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
                 var airportWatchHistoricalData = AirportWatchHistoricalDataDto.Cast(record);
 
-                //Record historical status
-
+                //Record historical status 
                 //Compare our last "live" record with the new one to determine if the aircraft is taking off or landing
-
-                //if (record.BoxName == "krbk_a01")
-                //{
-                //_LoggingService.LogError("krbk_a01", Newtonsoft.Json.JsonConvert.SerializeObject(record), LogLevel.Info, LogColorCode.Blue);
-                //}
+                //commented code removed of the comment above, can check removed code on commit 9bc8a2d78b8a4b3b7f1aeabb5c26ac9693378a77
 
                 //Next check if the last live record we have for the aircraft had a different IsAircraftOnGround state than what we see now, if the aircraft was in range of the box
 
@@ -649,6 +587,20 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 }
                 else
                 {
+                    if (oldAirportWatchLiveData != null) 
+                    { 
+                        if (record?.BoxName != oldAirportWatchLiveData?.BoxName)
+                        {
+                            var diffInSeconds = Math.Abs((oldAirportWatchLiveData.BoxTransmissionDateTimeUtc - record.BoxTransmissionDateTimeUtc).TotalSeconds);
+                            if (diffInSeconds < 11)
+                                continue;
+                        }
+                        if(record?.BoxTransmissionDateTimeUtc < oldAirportWatchLiveData?.BoxTransmissionDateTimeUtc)
+                        {
+                            continue;
+                        }
+                    }
+ 
                     //Capture the tail from the previous record before copying the new information to prevent needing to lookup the tail again
                     record.TailNumber = oldAirportWatchLiveData.TailNumber;
                     record.Oid = oldAirportWatchLiveData.Oid;
@@ -976,7 +928,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert);
             await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate);
             await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete);
+            _LoggingService.LogError("AirportWatchService: historical data to insert", JsonConvert.SerializeObject(_HistoricalDataToInsert), LogLevel.Info, LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert);
+            _LoggingService.LogError("AirportWatchService: historical data to update", JsonConvert.SerializeObject(_HistoricalDataToUpdate),LogLevel.Info,LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate);
         }
 

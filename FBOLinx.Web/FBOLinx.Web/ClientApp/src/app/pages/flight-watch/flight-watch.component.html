@@ -49,8 +49,8 @@
             opened
         >
             <ng-container *ngIf="flightWatchData">
-                <app-flight-watch-settings
-                    #flightwatchSettings
+                <app-flight-watch-aicraft-grid
+                    #flightwatchAircraftGrid
                     [data]="flightWatchData"
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
@@ -63,7 +63,7 @@
                     [isLobbyView]="isLobbyView"
                     (openAircraftPopup)="openAircraftPopup($event)"
                     (closeAircraftPopup)="closedAircraftPopup($event)"
-                ></app-flight-watch-settings>
+                ></app-flight-watch-aicraft-grid>
             </ng-container>
         </mat-drawer>
     </mat-drawer-container>

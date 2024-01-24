@@ -10,3 +10,8 @@ export enum SwimType {
     Arrival ,
     Departure
 }
+export enum coordinatesSource {
+    Antenna = 'Antenna',
+    Swim = 'SWIM',
+    None = 'None'
+}

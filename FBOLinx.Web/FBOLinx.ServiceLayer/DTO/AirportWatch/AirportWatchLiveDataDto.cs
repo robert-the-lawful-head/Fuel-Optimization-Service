@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
@@ -32,7 +34,7 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool? IsActiveFuelRelease { get; set; }
         public bool? IsFuelerLinxClient { get; set; }
         public FuelReqDto FuelOrder { get; set; }
-
+        public DateTime? CreatedDateTime { get; set; }
         public string ToCsvString()
         {
             return $"{AircraftHexCode},{AtcFlightNumber.ToStringOrEmpty()},{BoxName.ToStringOrEmpty()},{AircraftTypeCode.ToStringOrEmpty()},{BoxTransmissionDateTimeUtc},{AircraftPositionDateTimeUtc},{AltitudeInStandardPressure.ToStringOrEmpty()},{GroundSpeedKts.ToStringOrEmpty()},{TrackingDegree.ToStringOrEmpty()},{Latitude},{Longitude},{VerticalSpeedKts.ToStringOrEmpty()},{TransponderCode.ToStringOrEmpty()},{GpsAltitude.ToStringOrEmpty()},{IsAircraftOnGround}";

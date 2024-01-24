@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                var result = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
+                var result = await _FlightWatchService.GetFilteredCurrentFlightWatchData(new FlightWatchDataRequestOptions()
                 {
                     FboIdForCenterPoint = fboId,
                     NauticalMileRadiusForData = nauticalMileRange,

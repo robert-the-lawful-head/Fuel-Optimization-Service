@@ -13,7 +13,7 @@ import {
     Output,
 } from '@angular/core';
 
-import { FlightWatch } from '../../../models/flight-watch';
+import { FlightWatch } from '../../../../models/flight-watch';
 
 @Component({
     animations: [
