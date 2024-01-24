@@ -457,8 +457,6 @@ export class FlightWatchMapComponent
                         this.data[pointSource.properties.id].previousCorrectModel.liveBearing = previousiveBearing;
 
                         this.backwardLogs[pointSource.properties.id] = this.data[pointSource.properties.id];
-
-                        this.flyToCoordinates(this.data[pointSource.properties.id].previousCorrectModel.latitude,this.data[pointSource.properties.id].previousCorrectModel.longitude);
                         return;
                     }
 
