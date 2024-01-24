@@ -14,25 +14,12 @@ import { State } from '../../../store/reducers';
 import { GroupGridState } from '../../../store/reducers/group';
 import { getGroupGridState } from '../../../store/selectors';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '',
-        title: 'Groups',
-    },
-];
-
 @Component({
     selector: 'app-groups-home',
     styleUrls: ['./groups-home.component.scss'],
     templateUrl: './groups-home.component.html',
 })
 export class GroupsHomeComponent implements OnInit {
-    // Members
-    breadcrumb = BREADCRUMBS;
     groupsFbosData: any;
     currentGroup: any;
     groupGridState: GroupGridState;

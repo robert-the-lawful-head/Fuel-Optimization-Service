@@ -24,6 +24,7 @@ import { CustomerAircraftsEditComponent } from '../../customer-aircrafts/custome
 import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
     selector: 'app-aircrafts-grid',
@@ -34,6 +35,7 @@ import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favor
 export class AircraftsGridComponent extends GridBase implements OnInit {
     // Input/Output Bindings
     @Output() editAircraftClicked = new EventEmitter<any>();
+    @Output() refreshAircrafts = new EventEmitter<any>();
     @Input() aircraftsData: Array<any>;
     @Input() pricingTemplatesData: Array<any>;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -164,20 +166,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
                     this.customerAircraftsService
                         .remove(result , this.sharedService.currentUser.oid)
                         .subscribe(() => {
-                            this.customerAircraftsService
-                                .getCustomerAircraftsByGroup(
-                                    this.sharedService.currentUser.groupId
-                                )
-                                .subscribe((data: any) => {
-                                    this.aircraftsData = data;
-                                    this.aircraftsDataSource =
-                                        new MatTableDataSource(
-                                            this.aircraftsData
-                                        );
-                                    this.aircraftsDataSource.sort = this.sort;
-                                    this.aircraftsDataSource.paginator =
-                                        this.paginator;
-                                });
+                            this.refreshAircrafts.emit();
                         });
                 }
 
@@ -268,7 +257,7 @@ export class AircraftsGridComponent extends GridBase implements OnInit {
         this.exportCsvFile(this.columns,this.customersCsvOptions.fileName,this.customersCsvOptions.sheetName,computePropertyFnc);
     }
     getAircrafttypeDisplayString(aircraft: any): string {
-        return this.nullOrEmptyToDefault.transform(aircraft.make, false) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,false);
+        return this.nullOrEmptyToDefault.transform(aircraft.make,defaultStringsEnum.empty) +' '+ this.nullOrEmptyToDefault.transform(aircraft.model,defaultStringsEnum.empty);
     }
     setIsFavoriteProperty(aircraft: any): any {
         aircraft.isFavorite = aircraft.favoriteAircraft != null;

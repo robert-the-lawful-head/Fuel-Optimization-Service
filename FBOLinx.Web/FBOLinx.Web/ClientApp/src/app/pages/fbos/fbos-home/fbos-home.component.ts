@@ -6,17 +6,6 @@ import { FboairportsService } from '../../../services/fboairports.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '',
-        title: 'FBOs',
-    },
-];
-
 @Component({
     selector: 'app-fbos-home',
     styleUrls: ['./fbos-home.component.scss'],
@@ -27,7 +16,6 @@ export class FbosHomeComponent implements OnInit {
     @Input() embed: boolean;
 
     // Public Members
-    public breadcrumb: any[];
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
@@ -44,10 +32,6 @@ export class FbosHomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadAllFbosForGroup();
-
-        if (!this.embed) {
-            this.breadcrumb = BREADCRUMBS;
-        }
     }
 
     public editFboClicked(record) {

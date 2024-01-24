@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
@@ -35,21 +34,6 @@ export class AntennaStatusHomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadAntennaStatus();
-        this.setupBreadcrumb();
-    }
-
-    // PRIVATE METHODS
-    private setupBreadcrumb() {
-        this.breadcrumb = [
-            {
-                link: '/default-layout',
-                title: 'Main',
-            },
-            {
-                link: '',
-                title: 'Antenna Status',
-            }
-        ];
     }
 
     private loadAntennaStatus() {

@@ -142,7 +142,7 @@
         "roles": [ 1, 4 ]
     },
     {
-        "title": "Fuel Orders",
+        "title": "Fuel & Service Orders",
         "icon": {
             "class": "fa fa-tags",
             "bg": "#B3E5FC",

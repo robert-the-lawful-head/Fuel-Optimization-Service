@@ -1,15 +1,16 @@
+<app-horizontal-navbar (sidebarState)="sidebarState()"
+[title]="pageTitle"></app-horizontal-navbar>
+
+<app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
+                     [isMenuVisible]="openedSidebar"></app-vertical-navbar>
+
 <div [ngClass]="layoutClasses" class="site-container">
-    <app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
-                         [isMenuVisible]="openedSidebar"></app-vertical-navbar>
 
-    <app-horizontal-navbar (sidebarState)="sidebarState()"
-                           [title]="pageTitle"></app-horizontal-navbar>
-
-    <div [ngClass]="{ 'full-width': !openedSidebar, 'sticky-panel-csr' : isCsr }" class="container-fluid sticky-panel">
+    <div [ngClass]="{ 'full-width': !openedSidebar}" class="container-fluid sticky-panel" *ngIf="isPricePanelVisible()">
         <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
             <div class="col-12 text-md-right pt-md-0">
                 <div class="d-inline-block">
-                    <app-fbo-prices-panel *ngIf="isPricePanelVisible()"
+                    <app-fbo-prices-panel
                                           [enableSaf]="enableSaf"
                                           [enableJetA]="enableJetA"
                                           [costSaf]="costSaf"
@@ -18,7 +19,7 @@
                                           [retailJetA]="retailJetA"
                                           [effectiveToSaf]="effectiveToSaf"
                                           [effectiveToJetA]="effectiveToJetA"
-                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel><!-- class="d-none d-md-block"-->
+                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel>
                 </div>
             </div>
         </div>
@@ -37,6 +38,4 @@
         </div>
         <app-footer></app-footer>
     </main>
-
-    <div class="app-overlay"></div>
 </div>

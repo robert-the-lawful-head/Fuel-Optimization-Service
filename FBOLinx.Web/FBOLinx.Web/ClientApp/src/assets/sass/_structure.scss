@@ -1,19 +1,13 @@
-html {
+html, body {
     height: 100%;
-}
-body {
-    height: 100%;
-    overflow-x: hidden;
-}
-app {
-    display: block;
-    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 .site-container {
-    height: 100%;
-    overflow: hidden;
     position: relative;
-
+    padding-top: $navbar-height;
+    // border: 1px solid #f00;
+    height: 100%;
     > * {
         display: block;
     }
@@ -21,11 +15,13 @@ app {
         display: none;
     }
     .main-content {
-        height: 80%;
-        overflow: auto;
+        // border: 1px solid blue;
+        display: relative;
         -webkit-overflow-scrolling: touch;
+        height: 100%;
 
         .main-content-wrap {
+            // border: 1px solid black;
             display: table;
             height: 100%;
             padding: 22px;

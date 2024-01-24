@@ -10,17 +10,6 @@ import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
 import * as SharedEvent from '../../../models/sharedEvents';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/fuelreqs',
-        title: 'Fuel Orders',
-    },
-];
-
 @Component({
     selector: 'app-fuelreqs-home',
     styleUrls: ['./fuelreqs-home.component.scss'],
@@ -28,8 +17,17 @@ const BREADCRUMBS: any[] = [
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
-    public pageTitle = 'Fuel Orders';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public pageTitle = 'Fuel & Service Orders';
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/fuelreqs',
+            title: 'Fuel & Service Orders',
+        },
+    ];
     public fuelreqsData: any[];
     public filterStartDate: Date;
     public filterEndDate: Date;

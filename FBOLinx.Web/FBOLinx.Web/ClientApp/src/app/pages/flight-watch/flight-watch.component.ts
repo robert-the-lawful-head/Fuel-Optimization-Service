@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
-import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
@@ -25,17 +24,7 @@ import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/fligh
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/flight-watch',
-        title: 'Flight Watch',
-    },
-];
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-flight-watch',
@@ -54,7 +43,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild('flightwatchAircraftGrid') public flightwatchAircraftGrid: FlightWatchAicraftGridComponent;
 
     pageTitle = 'Flight Watch';
-    breadcrumb: any[] = BREADCRUMBS;
 
     isStable = true;
     loading = false;
@@ -230,10 +218,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
             isCommercialAircraftVisible;
         this.applyFiltersToData();
     }
-    onAircraftClick(flightWatch: FlightWatchModelResponse) {
+    async onAircraftClick(flightWatch: FlightWatchModelResponse) {
+        if(!this.drawer.opened){
+            await this.toggleSettingsDrawer();
+        }
         this.flightwatchAircraftGrid.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchAircraftGrid.collapseRow(flightWatch.tailNumber);
+        this.flightwatchAircraftGrid.collapseAllRows();
     }
 }

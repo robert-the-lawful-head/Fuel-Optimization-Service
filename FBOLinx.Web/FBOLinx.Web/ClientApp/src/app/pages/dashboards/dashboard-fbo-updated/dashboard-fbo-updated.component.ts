@@ -21,7 +21,6 @@ import {localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCons
     templateUrl: './dashboard-fbo-updated.component.html',
 })
 export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
-    public breadcrumb: any[];
     public pageTitle = 'Dashboard';
     public fboid: any;
     public groupid: any;
@@ -61,23 +60,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);
 
-        this.breadcrumb = [
-            {
-                link: '/default-layout',
-                title: 'Main',
-            },
-        ];
-        if (!this.isCsr) {
-            this.breadcrumb.push({
-                link: '/default-layout/dashboard-fbo-updated',
-                title: 'Dashboard',
-            });
-        } else {
-            this.breadcrumb.push({
-                link: '/default-layout/dashboard-csr',
-                title: 'CSR Dashboard',
-            });
-        }
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
     }
 
