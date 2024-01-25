@@ -170,6 +170,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             };
         }
         
+        // NOT IN USE
         public async Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRefactored(int groupId, int fboId, Geolocation.Coordinate coordinate)
         {
             List<AirportWatchLiveDataDto> filteredResult = new List<AirportWatchLiveDataDto>();
