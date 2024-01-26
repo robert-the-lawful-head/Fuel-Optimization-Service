@@ -16,13 +16,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
     public interface IAirportWatchHistoricalParkingService : IBaseDTOService<AirportWatchHistoricalParkingDto,
         DB.Models.AirportWatchHistoricalParking>
     {
-
+        Task UpdateParkingHistoricalComfirmation(string AirportICAO, string AtcFlightNumber, string AircraftHexCode);
     }
 
     public class AirportWatchHistoricalParkingService : BaseDTOService<AirportWatchHistoricalParkingDto, DB.Models.AirportWatchHistoricalParking, FboLinxContext>, IAirportWatchHistoricalParkingService
     {
         public AirportWatchHistoricalParkingService(IAirportWatchHistoricalParkingEntityService entityService) : base(entityService)
         {
+        }
+        public Task UpdateParkingHistoricalComfirmation(string AirportICAO, string AtcFlightNumber, string AircraftHexCode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

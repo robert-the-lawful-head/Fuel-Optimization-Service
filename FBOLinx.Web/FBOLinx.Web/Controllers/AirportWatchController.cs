@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Web.Models.Responses.AirportWatch;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.Web.Services;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Specifications.AirportWatchData;
 using FBOLinx.Service.Mapping.Dto;
@@ -21,6 +22,7 @@ using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Newtonsoft.Json;
+using YamlDotNet.Core.Events;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -34,20 +36,25 @@ namespace FBOLinx.Web.Controllers
         private readonly IAirportWatchLiveDataService _airportWatchLiveDataService;
         private readonly IFboService _fboService;
         private readonly FboLinxContext _context;
+        private readonly DBSCANService _dBSCANService;
         private IIntraNetworkAntennaDataReportService _IntraNetworkAntennaDataReportService;
+        private IAirportWatchHistoricalDataService _AirportWatchHistoricalDataService;
         private IAirportWatchHistoricalParkingService _AirportWatchHistoricalParkingService;
         private ILoggingService _logger;
         public AirportWatchController(AirportWatchService airportWatchService, IFboService fboService,
-            FboLinxContext context,
+            FboLinxContext context, DBSCANService dBSCANService,
             IAirportWatchLiveDataService airportWatchLiveDataService, ILoggingService logger,
             IIntraNetworkAntennaDataReportService intraNetworkAntennaDataReportService,
+            IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
             IAirportWatchHistoricalParkingService airportWatchHistoricalParkingService) : base(logger)
         {
+            _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _AirportWatchHistoricalParkingService = airportWatchHistoricalParkingService;
             _IntraNetworkAntennaDataReportService = intraNetworkAntennaDataReportService;
             _airportWatchService = airportWatchService;
             _fboService = fboService;
             _context = context;
+            _dBSCANService = dBSCANService;
             _airportWatchLiveDataService = airportWatchLiveDataService;
             _logger = logger;
         }
@@ -190,18 +197,32 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("historical-parking")]
-        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> CreateHistoricalParking(
-            [FromBody] AirportWatchHistoricalParkingDto dto)
+        public async Task<ActionResult<AirportWatchHistoricalDataResponse>> CreateHistoricalParking(
+            [FromBody] AirportWatchHistoricalDataResponse dto)
         {
-            var result = await _AirportWatchHistoricalParkingService.AddAsync(dto);
-            return Ok(result);
+            var historicalData = await  _AirportWatchHistoricalDataService.FindAsync(dto.AirportWatchHistoricalDataId);
+
+            historicalData.AircraftStatus = Core.Enums.AircraftStatusType.Parking;
+            historicalData.AircraftPositionDateTimeUtc = historicalData.AircraftPositionDateTimeUtc.AddMinutes(10);
+            historicalData.Oid = 0;
+            var parking = await _AirportWatchHistoricalDataService.AddAsync(historicalData);
+
+            dto.AirportWatchHistoricalParking.AirportWatchHistoricalDataId = parking.Oid;
+            var result = await _AirportWatchHistoricalParkingService.AddAsync(dto.AirportWatchHistoricalParking);
+            parking.AirportWatchHistoricalParking = result;
+            return Ok(parking);
         }
 
         [HttpPut("historical-parking")]
-        public async Task<ActionResult<AirportWatchHistoricalParkingDto>> UpdateHistoricalParking(
-            [FromBody] AirportWatchHistoricalParkingDto dto)
+        public async Task<ActionResult<AirportWatchHistoricalDataResponse>> UpdateHistoricalParking(
+            [FromBody] AirportWatchHistoricalDataResponse dto)
         {
-            await _AirportWatchHistoricalParkingService.UpdateAsync(dto);
+            var parking = await _AirportWatchHistoricalDataService.GetLastParkingOcurrence(dto.AirportIcao, dto.FlightNumber, dto.HexCode);
+
+            parking.AirportWatchHistoricalParking.IsConfirmed = dto.IsConfirmedVisit;
+            
+            await _AirportWatchHistoricalParkingService.UpdateAsync(dto.AirportWatchHistoricalParking);
+
             return Ok();
         }
 
