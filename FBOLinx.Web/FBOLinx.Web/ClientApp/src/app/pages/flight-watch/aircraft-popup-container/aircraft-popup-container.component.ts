@@ -70,6 +70,7 @@ export class AircraftPopupContainerComponent {
     .afterClosed()
     .subscribe((result: any) => {
         if (result) {
+            this.hasAircraft = true;
             this.aircraftWatch.aircraftMakeModel = result.aircraftType;
             this.aircraftWatch.flightDepartment = result.company;
             this.refreshAircraftProperties.emit(this.aircraftWatch);
