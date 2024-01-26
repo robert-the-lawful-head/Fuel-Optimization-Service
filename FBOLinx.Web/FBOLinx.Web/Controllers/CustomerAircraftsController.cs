@@ -391,7 +391,9 @@ namespace FBOLinx.Web.Controllers
                 }
             });
 
-            await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircraft.Oid, FboId = request.FboId }, customerAircraft.GroupId);
+            if(request.isFavoriteAircraft){
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircraft.Oid, FboId = request.FboId }, customerAircraft.GroupId);
+            }
 
             var result = new CustomerWithAicraftDto()
             {
