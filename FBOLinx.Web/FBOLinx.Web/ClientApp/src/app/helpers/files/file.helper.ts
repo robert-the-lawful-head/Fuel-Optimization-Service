@@ -5,7 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   providedIn: 'root'
 })
 export class FileHelper{
-    private imgSizeLimitinBytes: number = 60000;
+    private imgSizeLimitinBytes: number = 5242880;  // 5 MB in bytes;
     private imgLargeImageErrorMsg: string = "This image file size is too large, please use a smaller image.";
 
     constructor(private snackBar: MatSnackBar) { }
