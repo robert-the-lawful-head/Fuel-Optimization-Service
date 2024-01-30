@@ -369,9 +369,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                    var pastVisits = g
-                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking && ah.AirportWatchHistoricalParking?.IsConfirmed == true);
+                       .Where(ah => (ah.AircraftStatus == AircraftStatusType.Parking && (ah.AirportWatchHistoricalParking == null || ah.AirportWatchHistoricalParking?.IsConfirmed == true)));
 
-                   var visitsToMyFboCount = g.Count(p => fbos.Where(f => f.AcukwikFBOHandlerId > 0).Any(f => f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId && p.AirportWatchHistoricalParking?.IsConfirmed == true));                  
+                   var visitsToMyFboCount = g.Count(p => fbos.Where(f => f.AcukwikFBOHandlerId > 0).Any(f => f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId && (p.AircraftStatus == AircraftStatusType.Parking && (p.AirportWatchHistoricalParking == null || p.AirportWatchHistoricalParking?.IsConfirmed == true))));                  
 
                    return new AirportWatchHistoricalDataResponse
                    {

@@ -397,11 +397,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService.updateHistoricalParking(row).subscribe((response: any) => {
+                this.refreshData();
             });
         } else {
             this.airportWatchService.createHistoricalParking(row).subscribe((response: any) => {
-                console.log("🚀 ~ AnalyticsAirportArrivalsDepaturesComponent ~ this.airportWatchService.createHistoricalParking ~ response:", response)
-                row = response;
+                this.refreshData();
             })
         }
 
