@@ -187,7 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                 x.AirportICAO == airportICAO &&
                 x.AtcFlightNumber == atcFlightNumber && 
                 x.AircraftHexCode == aircraftHexCode
-            ).OrderByDescending(x => x.Oid).FirstOrDefaultAsync();
+            ).Include(x => x.AirportWatchHistoricalParking).OrderByDescending(x => x.Oid).FirstOrDefaultAsync();
         }
     }
 }

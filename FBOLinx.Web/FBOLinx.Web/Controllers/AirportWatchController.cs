@@ -217,10 +217,6 @@ namespace FBOLinx.Web.Controllers
         public async Task<ActionResult<AirportWatchHistoricalDataResponse>> UpdateHistoricalParking(
             [FromBody] AirportWatchHistoricalDataResponse dto)
         {
-            var parking = await _AirportWatchHistoricalDataService.GetLastParkingOcurrence(dto.AirportIcao, dto.FlightNumber, dto.HexCode);
-
-            parking.AirportWatchHistoricalParking.IsConfirmed = dto.IsConfirmedVisit;
-            
             await _AirportWatchHistoricalParkingService.UpdateAsync(dto.AirportWatchHistoricalParking);
 
             return Ok();
