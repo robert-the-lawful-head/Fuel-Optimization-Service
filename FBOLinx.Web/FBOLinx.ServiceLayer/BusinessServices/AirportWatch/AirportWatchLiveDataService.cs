@@ -42,6 +42,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         Task<List<AirportWatchLiveDataDto>> GetAirportWatchLiveDataRecordsFromTableStorage(IEnumerable<string> boxNames, DateTime startDate, DateTime endDate);
         Task<AirportWatchIntegrityCheckResult> CheckAirportWatchDataIntegrity(DateTime day);
         Task SaveAirportWatchLiveDataToTableStorage(IEnumerable<AirportWatchLiveDataDto> data);
+        Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1);
     }
 
     public class AirportWatchLiveDataService : BaseDTOService<AirportWatchLiveDataDto, DB.Models.AirportWatchLiveData, FboLinxContext>, IAirportWatchLiveDataService
@@ -180,7 +181,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             return result;
         }
 
-        private async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
+        public async Task<List<AirportWatchLiveDataDto>> GetLiveData(string airportIdentifier = null, int pastMinutesForLiveData = 1)
         {
             List<AirportWatchLiveDataDto> result = new List<AirportWatchLiveDataDto>();
             if (!string.IsNullOrEmpty(airportIdentifier))

@@ -34,7 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
     {
         Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options);
         Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId);
-        Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options);
+        Task<List<FlightWatchModel>> GetCurrentLightWeightFlightWatchData(FlightWatchDataRequestOptions options);
     }
 
     public class FlightWatchService : IFlightWatchService
@@ -136,15 +136,38 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-            return result;
+            return FilterFlightWatchData(result);
         }
-        public async Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options)
+        public async Task<List<FlightWatchModel>> GetCurrentLightWeightFlightWatchData(FlightWatchDataRequestOptions options)
         {
-            var result = await GetCurrentFlightWatchData(options);
-            result.RemoveAll(x => x.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.None);
-            result.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null);
-            result = result.Where(x => x.ArrivalICAO == x.FocusedAirportICAO || x.DepartureICAO == x.FocusedAirportICAO).ToList();
-            return result;
+            _Options = options;
+            _Fbo = await _FboService.GetSingleBySpec(
+                new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
+
+            var liveData = await _AirportWatchLiveDataService.GetLiveData(GetFocusedAirportIdentifier(), 2);
+
+            //Grab the airport to be considered for arrivals and departures.
+            var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
+
+            //Then load all SWIM flight legs that we have from the last hour.
+            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+
+            //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
+            var result = CombineAirportWatchAndSWIMData(liveData, swimFlightLegs);
+
+            await PopulateAdditionalDataFromOptions(result);
+
+            if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
+                AddDemoDataToFlightWatchResult(result, _Fbo);
+
+            return FilterFlightWatchData(result);
+        }
+        private List<FlightWatchModel> FilterFlightWatchData(List<FlightWatchModel> FlightWatchList)
+        {
+            FlightWatchList.RemoveAll(x => x.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.None);
+            FlightWatchList.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null);
+            FlightWatchList = FlightWatchList.Where(x => x.ArrivalICAO == x.FocusedAirportICAO || x.DepartureICAO == x.FocusedAirportICAO).ToList();
+            return FlightWatchList;
         }
 
         private void AddDemoDataToFlightWatchResult(List<FlightWatchModel> result, FbosDto fbo)
@@ -179,7 +202,53 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 _Options.NauticalMileRadiusForData);
             return nearbyAirports?.Select(x => x.ProperAirportIdentifier).Distinct().ToList();
         }
+        private List<FlightWatchModel> CombineAirportWatchAndSWIMData(List<AirportWatchLiveDataDto> liveDataList,
+            IEnumerable<SWIMFlightLegDTO> swimFlightLegs)
+        {
+            var result = new List<FlightWatchModel>();
 
+            //Combine SWIM and AirportWatch data by tail number
+            result = (from liveData in liveDataList
+                      join flightLeg in swimFlightLegs on liveData.TailNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
+                      select new FlightWatchModel(liveData,null,flightLeg,null){}).ToList();
+
+            //Combine SWIM and AirportWatch data by flight number
+            result.AddRange((from liveData in liveDataList
+                             join flightLeg in swimFlightLegs on liveData.AtcFlightNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
+                             join existing in result on liveData.Oid equals existing.AirportWatchLiveDataId.GetValueOrDefault()
+                                 into leftJoinResult
+                             from existing in leftJoinResult.DefaultIfEmpty()
+                             where existing == null
+                             select new FlightWatchModel(liveData,null,flightLeg, null) {}).ToList());
+
+            //Add any remaining AirportWatch data to the result without a SWIM match
+            result.AddRange((from liveData in liveDataList
+                             join resultItem in result on liveData.Oid equals resultItem.AirportWatchLiveDataId.GetValueOrDefault()
+                                 into leftJoinResult
+                             from resultItem in leftJoinResult.DefaultIfEmpty()
+                             where resultItem == null
+                             select new FlightWatchModel(liveData, null)));
+
+            //Add any remaining SWIM data to the result without an AirportWatch match
+            result.AddRange(from swimFlight in swimFlightLegs
+                            join resultItem in result on swimFlight.Oid equals resultItem.SWIMFlightLegId.GetValueOrDefault()
+                                into leftJoinResult
+                            from resultItem in leftJoinResult.DefaultIfEmpty()
+                            where resultItem == null
+                            select new FlightWatchModel(null, swimFlight));
+
+            //If we are focused on an FBO then remove any potential records that we've lost track of on antenna + swim data
+            if (_Options.FboIdForCenterPoint.GetValueOrDefault() > 0)
+            {
+                var cutoffDateTime = DateTime.UtcNow.AddMinutes(-15);
+                result.RemoveAll(x =>
+                    x.AirportWatchLiveDataId.GetValueOrDefault() == 0 &&
+                    (!(x.GetSwimFlightLeg()?.LastUpdated).HasValue ||
+                     x.GetSwimFlightLeg().LastUpdated < cutoffDateTime));
+            }
+
+            return result;
+        }
         private List<FlightWatchModel> CombineAirportWatchAndSWIMData(List<AirportWatchLiveDataWithHistoricalStatusDto> liveDataWithHistoricalInfo,
             IEnumerable<SWIMFlightLegDTO> swimFlightLegs,
             List<AircraftHexTailMappingDTO> hexTailMapping)

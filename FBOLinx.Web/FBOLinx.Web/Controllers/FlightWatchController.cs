@@ -49,7 +49,7 @@ namespace FBOLinx.Web.Controllers
         {
             try
             {
-                var result = await _FlightWatchService.GetFilteredCurrentFlightWatchData(new FlightWatchDataRequestOptions()
+                var result = await _FlightWatchService.GetCurrentFlightWatchData(new FlightWatchDataRequestOptions()
                 {
                     FboIdForCenterPoint = fboId,
                     NauticalMileRadiusForData = nauticalMileRange,
@@ -58,6 +58,28 @@ namespace FBOLinx.Web.Controllers
                     IncludeFuelOrderInformation = true,
                     IncludeVisitsAtFbo = true,
                     IncludeCompanyPricingLogLastQuoteDate = true
+                });
+                return Ok(new FlightWatchListResponse(result));
+            }
+            catch (System.Exception exception)
+            {
+                return Ok(new FlightWatchListResponse(false, exception.Message));
+            }
+        }
+        [HttpGet("list/fbo/{fboId}/airport/{icao}/light-weight")]
+        public async Task<ActionResult<FlightWatchListResponse>> GetLightWeightFlightWatchDataForFboAndAirport([FromRoute] int fboId, [FromRoute] string icao, int nauticalMileRange = 250)
+        {
+            try
+            {
+                var result = await _FlightWatchService.GetCurrentLightWeightFlightWatchData(new FlightWatchDataRequestOptions()
+                {
+                    FboIdForCenterPoint = fboId,
+                    NauticalMileRadiusForData = nauticalMileRange,
+                    AirportIdentifier = icao,
+                    IncludeCustomerAircraftInformation = true,
+                    IncludeFuelOrderInformation = false,
+                    IncludeVisitsAtFbo = false,
+                    IncludeCompanyPricingLogLastQuoteDate = false
                 });
                 return Ok(new FlightWatchListResponse(result));
             }
