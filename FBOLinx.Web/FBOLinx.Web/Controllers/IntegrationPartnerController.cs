@@ -32,6 +32,7 @@ using Azure.Core;
 using FBOLinx.DB.Specifications.User;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.OrderDetails;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -51,9 +52,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IFboPreferencesService _fboPreferencesService;
         private readonly IFboService _fboService;
         private readonly ICustomerAircraftService _customerAircraftService;
+        private readonly ICustomerService _customerService;
 
         public IntegrationPartnerController(IIntegrationStatusService integrationStatusService, IHttpContextAccessor httpContextAccessor, JwtManager jwtManager, IAPIKeyManager apiKeyManager, FboLinxContext context, IFboPricesService fbopricesService, ILoggingService logger,
-                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService, ICustomerAircraftService customerAircraftService) : base(logger)
+                IFuelReqService fuelReqService, IOrderDetailsService orderDetailsService, IFboPreferencesService fboPreferencesService, IFboService fboService, ICustomerAircraftService customerAircraftService, ICustomerService customerService) : base(logger)
         {
             _IntegrationStatusService = integrationStatusService;
             _httpContextAccessor = httpContextAccessor;
@@ -66,6 +68,7 @@ namespace FBOLinx.Web.Controllers
             _fboPreferencesService = fboPreferencesService;
             _fboService = fboService;
             _customerAircraftService = customerAircraftService;
+            _customerService = customerService;
         }
 
 
@@ -133,8 +136,9 @@ namespace FBOLinx.Web.Controllers
             orderDetails.Eta = request.Eta;
             orderDetails.FboHandlerId = handlerId;
 
+            var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
-            var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
+            var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber == request.TailNumber).FirstOrDefault();
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;

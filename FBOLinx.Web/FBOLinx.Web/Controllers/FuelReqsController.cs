@@ -78,6 +78,7 @@ namespace FBOLinx.Web.Controllers
         private readonly IServiceOrderService _serviceOrderService;
         private readonly IServiceOrderItemService _serviceOrderItemService;
         private readonly IOrderNotesService _orderNotesService;
+        private readonly ICustomerService _customerService;
 
         public FuelReqsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             FuelerLinxApiService fuelerLinxService, IAircraftService aircraftService,
@@ -88,7 +89,7 @@ namespace FBOLinx.Web.Controllers
             ICustomerInfoByGroupService customerInfoByGroupService,
             IOrderConfirmationService orderConfirmationService,
             IOrderDetailsService orderDetailsService,
-            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService, IOrderNotesService orderNotesService) : base(logger)
+            IFuelReqPricingTemplateService fuelReqPricingTemplateService, ICustomerAircraftService customerAircraftService, IGroupService groupService, DateTimeService dateTimeService, IServiceOrderService serviceOrderService, IServiceOrderItemService serviceOrderItemService, IOrderNotesService orderNotesService, ICustomerService customerService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _fuelerLinxService = fuelerLinxService;
@@ -112,6 +113,7 @@ namespace FBOLinx.Web.Controllers
             _serviceOrderService = serviceOrderService;
             _serviceOrderItemService = serviceOrderItemService;
             _orderNotesService = orderNotesService;
+            _customerService = customerService;
         }
 
         // GET: api/FuelReqs/5
@@ -344,8 +346,9 @@ namespace FBOLinx.Web.Controllers
             orderDetails.Eta = request.Eta;
             orderDetails.FboHandlerId = fboId == 0 ? request.FboHandlerId : fbo.AcukwikFBOHandlerId;
 
+            var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
-            var customerAircraft = customerAircrafts.Where(c => c.TailNumber == request.TailNumber).FirstOrDefault();
+            var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber == request.TailNumber).FirstOrDefault();
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
