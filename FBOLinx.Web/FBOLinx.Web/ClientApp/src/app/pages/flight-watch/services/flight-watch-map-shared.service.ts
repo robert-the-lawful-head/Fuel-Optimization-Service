@@ -17,7 +17,7 @@ export class FlightWatchMapSharedService {
     getAndUpdateAircraftWithHistorical(fboId: number, icao: string, data: any) {
         let id = data.airportWatchLiveDataId ?? data.swimFlightLegId;
         this.flightWatchService.getAircarftLiveDataHistorical(fboId, icao, id).subscribe(response => {
-            this.sharedDataSubject.next(response.result);
+            this.sharedDataSubject.next(response);
         });
     }
 }
