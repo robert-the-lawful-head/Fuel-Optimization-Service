@@ -56,10 +56,6 @@ tr.example-element-row:not(.example-expanded-row):active {
     line-height: normal;
 }
 
-.example-element-description {
-    padding: 16px;
-}
-
 .example-element-description-attribution {
     opacity: 0.5;
 }
@@ -73,16 +69,6 @@ th.mat-header-cell {
 th {
     font-weight: bolder;
     font-size: 14px;
-}
-table.description-table {
-    border-collapse: collapse;
-    width: 100%;
-    th,
-    td {
-        text-align: left;
-        padding: 4px;
-        font-size: 12px;
-    }
 }
 
 .table-container {

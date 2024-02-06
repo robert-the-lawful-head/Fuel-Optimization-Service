@@ -16,6 +16,9 @@ import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
+import { FlightWatchService } from 'src/app/services/flightwatch.service';
+import { FlightWatchMapSharedService } from '../../services/flight-watch-map-shared.service';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
 @Component({
     selector: 'app-flight-watch-aircraft-data-table',
@@ -44,6 +47,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
     @ViewChild(MatSort) sort: MatSort;
 
     dataSource: MatTableDataSource<Swim>;
+    expandedDetailData: FlightWatchModelResponse | Swim | null;
 
     allColumnsToDisplay: string[];
     dataColumnsToDisplay: string[];
@@ -52,6 +56,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
     columnsToDisplayWithExpand : any[];
     expandedElement: any | null;
 
+    fboId: number;
     fbo: string;
     icao: string
 
@@ -61,10 +66,17 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
                 private toReadableTime: ToReadableTimePipe,
                 private sharedService: SharedService,
                 private booleanToText: BooleanToTextPipe,
-                private flightWatchHelper: FlightWatchHelper) { }
+                private flightWatchHelper: FlightWatchHelper,
+                private flightWatchService: FlightWatchService,
+                private flightWatchMapSharedService: FlightWatchMapSharedService) {
+                    this.flightWatchMapSharedService.sharedData$.subscribe( (data: FlightWatchModelResponse) => {
+                    this.expandedDetailData = data;
+                    });
+                }
 
     ngOnInit() {
         this.fbo = localStorage.getItem('fbo');
+        this.fboId = this.sharedService.currentUser.fboId;
         this.icao = this.sharedService.currentUser.icao;
     }
     ngAfterViewInit() {
@@ -200,11 +212,6 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
     getColumnDisplayString(column:string){
         return swimTableColumnsDisplayText[column];
     }
-    getOriginCityLabel(){
-        return this.isArrival
-        ? "Origin City"
-        : "Destination City";
-    }
     getMakeModelDisplayString(element: Swim){
         let makemodelstr = (element.make) ?
             this.flightWatchHelper.getSlashSeparationDisplayString(element.make,element.model) :
@@ -234,11 +241,6 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
 
         return tailNumberTextColor.outOfNetwork;
     }
-    getPastArrivalsValue(row: Swim): number{
-        return this.isArrival
-            ? row.arrivals
-            : row.departures;
-}
     sortData(sort: Sort){
         this.hasChangeDefaultSort = true;
         this.dataSource.data.sort((a, b) => {
@@ -289,6 +291,9 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
         return CallbackComponent.aircraft;
     }
     onRowrowClick(element: Swim) {
+        this.flightWatchMapSharedService.getAndUpdateAircraftWithHistorical(this.fboId, this.icao, element);
+        this.expandedDetailData = element;
+
         if(this.expandedElement != element.tailNumber)
             this.closeAircraftPopup.emit(this.expandedElement);
 

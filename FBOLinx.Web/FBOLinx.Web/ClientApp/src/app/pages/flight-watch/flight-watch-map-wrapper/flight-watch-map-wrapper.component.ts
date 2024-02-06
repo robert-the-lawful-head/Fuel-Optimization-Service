@@ -13,6 +13,7 @@ import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
+import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -49,7 +50,12 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public selectedPopUp: FlightWatchModelResponse;
 
 
-    constructor(private flightWatchMapService: FlightWatchMapService) {}
+    constructor(private flightWatchMapService: FlightWatchMapService,
+        flightWatchMapSharedService: FlightWatchMapSharedService) {
+        flightWatchMapSharedService.sharedData$.subscribe( (data: FlightWatchModelResponse) => {
+            this.updatePopUpData(data);
+        });
+    }
 
     ngOnInit() {}
 
