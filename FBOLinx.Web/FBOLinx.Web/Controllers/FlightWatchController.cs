@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.Responses.FlightWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Logging;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.Web.Controllers
@@ -88,7 +85,21 @@ namespace FBOLinx.Web.Controllers
                 return Ok(new FlightWatchListResponse(false, exception.Message));
             }
         }
-
+        [HttpGet("aircraft/fbo/{fboId}/airport/{icao}/livedata/{livedataId}")]
+        public async Task<ActionResult<FlightWatchModel>> GetFlightWatchDataForFboAndAirportAndHexcode([FromRoute] int fboId, [FromRoute] string icao, [FromRoute] int livedataId, int nauticalMileRange = 250)
+        {
+            var result = await _FlightWatchService.GetCurrentFlightWatchLiveDataWithHistorical(new FlightWatchDataRequestOptions()
+                {
+                    FboIdForCenterPoint = fboId,
+                    NauticalMileRadiusForData = nauticalMileRange,
+                    AirportIdentifier = icao,
+                    IncludeCustomerAircraftInformation = true,
+                    IncludeFuelOrderInformation = true,
+                    IncludeVisitsAtFbo = true,
+                    IncludeCompanyPricingLogLastQuoteDate = true
+                }, livedataId);
+                return Ok(result);
+        }
         [HttpGet("leg/{swimFlightLegId}")]
         public async Task<ActionResult<FlightWatchLegAdditionalDetailsResponse>> GetFlightWatchLegAdditionalDetails(
             [FromRoute] int swimFlightLegId)

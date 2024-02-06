@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Constants;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
@@ -25,6 +26,7 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -35,6 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options);
         Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId);
         Task<List<FlightWatchModel>> GetCurrentLightWeightFlightWatchData(FlightWatchDataRequestOptions options);
+        Task<FlightWatchModel> GetCurrentFlightWatchLiveDataWithHistorical(FlightWatchDataRequestOptions options,int liveDataOid);
     }
 
     public class FlightWatchService : IFlightWatchService
@@ -137,6 +140,44 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
             return FilterFlightWatchData(result);
+        }
+        public async Task<FlightWatchModel> GetCurrentFlightWatchLiveDataWithHistorical(FlightWatchDataRequestOptions options, int liveDataOid)
+        {
+            _Options = options;
+            _Fbo = await _FboService.GetSingleBySpec(
+                new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
+
+            //Default to 1 day back unless we need to check on visits for the past 30 days.
+            var daysToCheckBackForHistoricalData = options.IncludeRecentHistoricalRecords ? 1 : 0;
+            if (options.IncludeVisitsAtFbo)
+                daysToCheckBackForHistoricalData = 30;
+
+            var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
+
+            var liveData = await _AirportWatchLiveDataService.FindAsync(liveDataOid);
+
+            var flightLeg = (liveData == null) ?
+                (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => x.Oid == liveDataOid).FirstOrDefault() :
+                (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => x.AircraftIdentification == liveData.TailNumber).FirstOrDefault();
+
+
+            var tailNumber = liveData?.TailNumber ?? flightLeg?.AircraftIdentification;
+
+            var aicraftHistoricalInfo =
+                (await _AirportWatchLiveDataService.GetHistoricalData(new List<string>() { liveData?.AircraftHexCode }, GetFocusedAirportIdentifier(), daysToCheckBackForHistoricalData)).Where(x => x.TailNumber == tailNumber ).ToList();
+
+            var hexTailMapping = (liveData?.Oid == null) ? null : (await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails((tailNumber == null)? new List<string>() : new List<string>() { tailNumber })).FirstOrDefault();
+
+            var flightWatch = new FlightWatchModel(liveData,
+                          aicraftHistoricalInfo,
+                          flightLeg,
+                          hexTailMapping) { };
+
+            var result = new List<FlightWatchModel>() { flightWatch };
+            //Load any additional data needed that was related to each flight.
+            await PopulateAdditionalDataFromOptions(result);
+
+            return result.FirstOrDefault();
         }
         public async Task<List<FlightWatchModel>> GetCurrentLightWeightFlightWatchData(FlightWatchDataRequestOptions options)
         {
