@@ -114,21 +114,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Load all AirportWatch Live data along with related Historical data.
             var liveDataWithHistoricalInfo =
                 await _AirportWatchLiveDataService.GetAirportWatchLiveDataWithHistoricalStatuses(GetFocusedAirportIdentifier(), 2, daysToCheckBackForHistoricalData);
-            _LoggingService.LogError("FlightWatchService: liveDataWithHistoricalInfo => ",JsonConvert.SerializeObject(liveDataWithHistoricalInfo),LogLevel.Info, LogColorCode.Blue);
 
             //Grab the airport to be considered for arrivals and departures.
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
             var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
-            _LoggingService.LogError("FlightWatchService: swimFlightLegs => ", JsonConvert.SerializeObject(swimFlightLegs),LogLevel.Info, LogColorCode.Blue);
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveDataWithHistoricalInfo, swimFlightLegs, hexTailMappings);
-            _LoggingService.LogError("FlightWatchService: CombineAirportWatchAndSWIMData => ", JsonConvert.SerializeObject(swimFlightLegs), LogLevel.Info, LogColorCode.Blue);
 
             //Load any additional data needed that was related to each flight.
             await PopulateAdditionalDataFromOptions(result);
