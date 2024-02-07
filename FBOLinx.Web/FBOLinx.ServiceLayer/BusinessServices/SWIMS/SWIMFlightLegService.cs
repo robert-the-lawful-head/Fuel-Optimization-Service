@@ -13,6 +13,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 {
@@ -36,10 +37,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         private SWIMFlightLegEntityService _SwimFlightLegEntityService;
         private IRepository<DB.Models.SWIMFlightLeg, DegaContext> _repository;
 
-        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IAirportService airportService) : base(swimFlightLegEntityService)
+        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IAirportService airportService, IRepository<DB.Models.SWIMFlightLeg, DegaContext> repository) : base(swimFlightLegEntityService)
         {
             _SwimFlightLegEntityService = swimFlightLegEntityService;
             _AirportService = airportService;
+            _repository = repository;
         }
 
         public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegs(List<string> gufiList)
@@ -59,15 +61,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30, int maxRecords = 50000)
         {
-            List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-
-            var query = await _repository.GetListBySpec(
+            var query = _repository.GetListBySpecAsQueryable(
             new SWIMFlightLegByDateSpecification(
                 DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
-            query.OrderByDescending(x => x.Oid).Take(maxRecords);
 
+            var result = await query.OrderByDescending(x => x.Oid).Take(maxRecords).ToListAsync();
 
-            return result;
+            return result.Adapt<List<SWIMFlightLegDTO>>();
         }
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
         {
