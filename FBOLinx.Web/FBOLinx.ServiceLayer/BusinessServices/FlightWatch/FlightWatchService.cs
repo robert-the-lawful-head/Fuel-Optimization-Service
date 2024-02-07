@@ -139,7 +139,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result,_Fbo);
 
-            return FilterFlightWatchData(result);
+            return result;
         }
         public async Task<FlightWatchModel> GetCurrentFlightWatchLiveDataWithHistorical(FlightWatchDataRequestOptions options, int liveDataOid)
         {
