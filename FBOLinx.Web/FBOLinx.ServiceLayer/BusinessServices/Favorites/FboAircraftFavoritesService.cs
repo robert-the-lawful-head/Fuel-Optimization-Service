@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
@@ -34,7 +35,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
         public async Task<FboFavoriteAircraft> AddAircraftFavorite(FboFavoriteAircraft fboFavoriteAircraft, int groupId)
         {
-            var existingEntity = (await _fboFavoriteAircraftsRepo.GetAsync(x => x.CustomerAircraftsId == fboFavoriteAircraft.CustomerAircraftsId && x.FboId == fboFavoriteAircraft.FboId)).FirstOrDefault();
+            var queryOptions = new QueryableOptions<FboFavoriteAircraft>();
+            queryOptions.Predicate = (x => x.CustomerAircraftsId == fboFavoriteAircraft.CustomerAircraftsId && x.FboId == fboFavoriteAircraft.FboId);
+
+            var existingEntity = (await _fboFavoriteAircraftsRepo.GetAsync(queryOptions)).FirstOrDefault();
 
             if (existingEntity != null) return existingEntity;
 
