@@ -17,20 +17,6 @@ import { EmailcontentService } from '../../../services/emailcontent.service';
 export class EmailTemplatesEditComponent extends EditorBase implements OnInit {
     @ViewChild('fileUpload') fileUploadName;
     private id: any;
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/email-templates',
-            title: 'Email Templates',
-        },
-        {
-            link: '',
-            title: 'Edit Email Template',
-        },
-    ];
     public pageTitle = 'Edit Email Template';
     public emailTemplateForm: FormGroup;
     public emailTemplate: any;

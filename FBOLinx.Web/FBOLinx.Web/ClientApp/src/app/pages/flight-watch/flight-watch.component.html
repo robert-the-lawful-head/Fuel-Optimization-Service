@@ -1,6 +1,4 @@
-<ni-breadcrumb [menu]="breadcrumb" *ngIf="showBreadcrumb"></ni-breadcrumb>
-
-<div [ngClass]="{'after-breadcrumb': showBreadcrumb}" class="flight-watch-tabs">
+<section class="flight-watch-tabs">
     <mat-drawer-container autosize>
         <mat-drawer-content>
             <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
@@ -51,8 +49,8 @@
             opened
         >
             <ng-container *ngIf="flightWatchData">
-                <app-flight-watch-settings
-                    #flightwatchSettings
+                <app-flight-watch-aicraft-grid
+                    #flightwatchAircraftGrid
                     [data]="flightWatchData"
                     [icaoList]="airportsICAO"
                     [icao]="selectedICAO"
@@ -65,8 +63,8 @@
                     [isLobbyView]="isLobbyView"
                     (openAircraftPopup)="openAircraftPopup($event)"
                     (closeAircraftPopup)="closedAircraftPopup($event)"
-                ></app-flight-watch-settings>
+                ></app-flight-watch-aicraft-grid>
             </ng-container>
         </mat-drawer>
     </mat-drawer-container>
-</div>
+</section>

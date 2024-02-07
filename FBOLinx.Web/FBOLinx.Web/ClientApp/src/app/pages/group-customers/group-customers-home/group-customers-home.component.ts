@@ -11,16 +11,6 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 export class GroupCustomersHomeComponent implements OnInit {
     // Public Members
     pageTitle = 'Customers';
-    breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/customers',
-            title: 'Customer Manager',
-        },
-    ];
     customersData: any[];
 
     constructor(

@@ -14,17 +14,6 @@ import {
     GroupAnalyticsGenerateDialogData,
 } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '',
-        title: 'Group Analytics',
-    },
-];
-
 @Component({
     selector: 'app-group-analytics-home',
     styleUrls: ['./group-analytics-home.component.scss'],
@@ -32,16 +21,6 @@ const BREADCRUMBS: any[] = [
 })
 export class GroupAnalyticsHomeComponent implements OnInit {
     pageTitle = 'Group Analytics';
-    breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/fuelreqs',
-            title: 'Fuel Orders',
-        },
-    ];
 
     customers: any[];
     fbos: any[];

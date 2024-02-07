@@ -8,23 +8,23 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
-import { MatTableDataSource } from '@angular/material/table';
 import { ResizeEvent } from 'angular-resizable-element';
 import { isEmpty } from 'lodash';
 import { LngLatLike } from 'mapbox-gl';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
-import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import { SharedService } from 'src/app/layouts/shared-service';
+import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
     FlightWatchDictionary,
     FlightWatchModelResponse,
-} from '../../../models/flight-watch';
-import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+} from '../../models/flight-watch';
+import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
-import { FlightWatchSettingTableComponent } from '../flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
+import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-flight-watch',
@@ -40,19 +40,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     @ViewChild(FlightWatchMapWrapperComponent)
     private mapWrapper: FlightWatchMapWrapperComponent;
     @ViewChild('mapfilters') public drawer: MatDrawer;
-    @ViewChild('flightwatchSettings') public flightwatchSettings: FlightWatchSettingTableComponent;
+    @ViewChild('flightwatchAircraftGrid') public flightwatchAircraftGrid: FlightWatchAicraftGridComponent;
 
     pageTitle = 'Flight Watch';
-    breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/flight-watch',
-            title: 'Flight Watch',
-        },
-    ];
 
     isStable = true;
     loading = false;
@@ -206,11 +196,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.applyFiltersToData();
     }
     openAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:211 ~ FlightWatchComponent ~ openAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.openAircraftPopUpByTailNumber(tailNumber);
     }
     closedAircraftPopup(tailNumber: string) {
-        console.log("🚀 ~ file: flight-watch.component.ts:215 ~ FlightWatchComponent ~ closedAircraftPopup ~ tailNumber:", tailNumber)
         this.mapWrapper.map.closeAircraftPopUpByTailNumber(tailNumber);
     }
     async updateButtonOnDrawerResize() {
@@ -223,17 +211,20 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.resizeMap(this.drawer.opened);
     }
     isDrawerOpen() {
-        return this.drawer.opened;
+        return this.drawer?.opened ?? true;
     }
     filterCommercialAircrafts(isCommercialAircraftVisible: boolean) {
         this.currentFilters.isCommercialAircraftVisible =
             isCommercialAircraftVisible;
         this.applyFiltersToData();
     }
-    onAircraftClick(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchSettings.expandRow(flightWatch.tailNumber);
+    async onAircraftClick(flightWatch: FlightWatchModelResponse) {
+        if(!this.drawer.opened){
+            await this.toggleSettingsDrawer();
+        }
+        this.flightwatchAircraftGrid.expandRow(flightWatch.tailNumber);
     }
     onPopUpClosed(flightWatch: FlightWatchModelResponse) {
-        this.flightwatchSettings.collapseRow(flightWatch.tailNumber);
+        this.flightwatchAircraftGrid.collapseAllRows();
     }
 }

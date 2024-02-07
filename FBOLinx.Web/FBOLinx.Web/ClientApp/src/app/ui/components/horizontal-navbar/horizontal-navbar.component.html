@@ -1,4 +1,4 @@
-<div class="navbar-wrap">
+<nav class="navbar-wrap">
     <button (click)="openSidebar()" *ngIf="!isPublicView"
     [ngClass]="{ open: openedSidebar }"
     mat-icon-button aria-label="open side nav bar">
@@ -154,9 +154,9 @@
         <!--favorite aircrafts notifications/alerts-->
         <div *ngIf="favoriteNotificationVisible" [ngClass]="{ opened: favoriteAircrafts.isOpened }" class="nav-item fuel-order">
             <a (click)="openfavoriteAircrafts()" class="nav-link">
-                <span >
-                    <mat-icon [matBadge]="(favoriteAircraftsData?.length>0)?favoriteAircraftsData?.length:''" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
-                 </span>
+                <span>
+                    <mat-icon [matBadge]="favoriteAircraftIconBadgeText" matBadgeColor="accent" matBadgeSize="small" aria-hidden="false" aria-label="Favorite Aircrafts">star</mat-icon>
+                </span>
             </a>
             <div class="dropdown-menu">
                 <h4 class="menu-title">
@@ -264,7 +264,7 @@
         </div>
         <div (click)="close()" class="items-overlay"></div>
     </div>
-</div>
+</nav>
 <ng-container *ngIf="favoriteNotificationVisible">
     <app-incoming-favorite-aircraft-info></app-incoming-favorite-aircraft-info>
 </ng-container>

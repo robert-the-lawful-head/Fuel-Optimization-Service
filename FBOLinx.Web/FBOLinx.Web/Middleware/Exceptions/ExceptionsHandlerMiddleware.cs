@@ -31,9 +31,6 @@ namespace FBOLinx.Web.Middleware.Exceptions
                 {
                     var scopedServices = scope.ServiceProvider.GetRequiredService<ILoggingService>();
 
-                    // Use the scoped service as needed
-                    // var result = scopedServices.DoSomething();
-
                     await HandleExceptionMessageAsync(context, ex, scopedServices).ConfigureAwait(false);
                 }
 
@@ -47,7 +44,7 @@ namespace FBOLinx.Web.Middleware.Exceptions
             logger.LogError(exception.Message,exception.ToString(), LogLevel.Error, LogColorCode.Red);
             logger.LogError(exception.Message, exception.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
             if (exception.InnerException != null)
-                logger.LogError(exception.Message,exception.InnerException.StackTrace.ToString(), LogLevel.Error, LogColorCode.Red);
+                logger.LogError(exception.Message,exception.InnerException?.StackTrace?.ToString(), LogLevel.Error, LogColorCode.Red);
 
             var result = JsonConvert.SerializeObject(new
             {

@@ -22,16 +22,6 @@ import { State } from '../../../store/reducers';
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
     public pageTitle = 'ITP Margin Templates';
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/pricing-templates',
-            title: 'ITP Margin Templates',
-        },
-    ];
     public pricingTemplatesData: Array<any>;
     public locationChangedSubscription: any;
 

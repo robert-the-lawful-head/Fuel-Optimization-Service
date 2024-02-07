@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FBOLinx.Core.Constants;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
@@ -8,6 +9,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
+using Fuelerlinx.SDK;
 using Geolocation;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
@@ -67,6 +69,8 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? TransponderCode => _AirportWatchLiveData?.TransponderCode;
         public string BoxName => _AirportWatchLiveData?.BoxName;
         public DateTime? AircraftPositionDateTimeUtc => _AirportWatchLiveData?.AircraftPositionDateTimeUtc;
+        public DateTime? SwimLastUpdated => _SwimFlightLeg?.LastUpdated;
+        public DateTime? DateCreated => _AirportWatchLiveData?.CreatedDateTime;
         public string AircraftTypeCode => _AirportWatchLiveData?.AircraftTypeCode;
         public int? GpsAltitude => _AirportWatchLiveData?.GpsAltitude;
         public string AircraftHexCode => _AirportWatchLiveData?.AircraftHexCode;
@@ -91,7 +95,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             get
             {
                 if (string.IsNullOrEmpty(FocusedAirportICAO))
-                    return "";
+                    return string.Empty;
                 return FocusedAirportICAO == DepartureICAO ? ArrivalICAO : DepartureICAO;
             }
         }
@@ -101,7 +105,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
             get
             {
                 if (string.IsNullOrEmpty(FocusedAirportICAO))
-                    return "";
+                    return string.Empty;
                 return FocusedAirportICAO == DepartureICAO ? ArrivalCity : DepartureCity;
             }
         }
@@ -121,10 +125,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Latitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
                     return _AirportWatchLiveData?.Latitude;
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Latitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
                     return _SwimFlightLeg?.Latitude;
                 return null;
             }
@@ -134,10 +137,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >= _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
                     return _AirportWatchLiveData?.Longitude;
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Longitude).HasValue)
+                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
                     return _SwimFlightLeg?.Longitude;
                 return null;
             }
@@ -147,13 +149,46 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
-                    _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
-                    return "Antenna";
-                if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
-                    (_SwimFlightLeg?.Longitude).HasValue)
-                    return "SWIM";
-                return "None";
+                if(this.PositionDateTimeSource == FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate)
+                {
+                    if ((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+(_SwimFlightLeg?.Longitude).HasValue)
+                        return FlightWatchConstants.CoordinatesSource.Swim;
+                }
+                else
+                {
+                    if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
+_ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
+                        return FlightWatchConstants.CoordinatesSource.Antenna;
+                }
+                return FlightWatchConstants.CoordinatesSource.None;
+            }
+        }
+        public string PositionDateTimeSource
+        {
+            get
+            {
+                var gratestLiveDataDate = (this.DateCreated.GetValueOrDefault() > this.AircraftPositionDateTimeUtc) ?
+                                (this.DateCreated.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.CreatedDateTime : (this.BoxTransmissionDateTimeUtc > this.AircraftPositionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc
+                                : (this.BoxTransmissionDateTimeUtc > this.AircraftPositionDateTimeUtc) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
+
+                switch (gratestLiveDataDate)
+                {
+                    case FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc:
+                        return (this.AircraftPositionDateTimeUtc > this.SwimLastUpdated) ? FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    case FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc:
+                        return (this.BoxTransmissionDateTimeUtc > this.SwimLastUpdated) ? FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc : FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    case FlightWatchConstants.PositionDateTimeSource.CreatedDateTime:
+                        return (this.DateCreated > this.SwimLastUpdated) ? 
+                            FlightWatchConstants.PositionDateTimeSource.CreatedDateTime : 
+                            FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                    default:
+                        return FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
+
+                }
             }
         }
 
@@ -190,7 +225,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public int? FuelerlinxFuelOrderId => _UpcomingFuelOrderCollection?.FirstOrDefault()?.SourceId;
         public int? FuelerlinxCompanyId => _CustomerAircraft?.FuelerlinxCompanyId;
         public string Vendor => _UpcomingFuelOrderCollection?.FirstOrDefault()?.Source;
-        public string TransactionStatus => ID > 0 ? "LIVE" : "";
+        public string TransactionStatus => ID > 0 ? FlightWatchConstants.TransactionStatus.Live : string.Empty;
         public string ICAOAircraftCode => _CustomerAircraft?.ICAOAircraftCode?.Trim() ?? _SwimFlightLeg?.ICAOAircraftCode?.Trim();
         public bool IsInNetwork => (_CustomerAircraft?.IsInNetwork()).GetValueOrDefault();
         public bool IsOutOfNetwork => (_CustomerAircraft?.IsOutOfNetwork()).GetValueOrDefault();
@@ -216,7 +251,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         public DateTime? LastQuoteDate { get; set; }
 
         public string LastQuote =>
-            (!LastQuoteDate.HasValue ? "" : LastQuoteDate.GetValueOrDefault().ToShortDateString());
+            (!LastQuoteDate.HasValue ? string.Empty: LastQuoteDate.GetValueOrDefault().ToShortDateString());
 
         public SWIMFlightLegDTO GetSwimFlightLeg()
         {

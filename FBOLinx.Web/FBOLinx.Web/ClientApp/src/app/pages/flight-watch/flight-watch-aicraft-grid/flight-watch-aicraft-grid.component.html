@@ -24,7 +24,7 @@
     </ng-container>
 </div>
 <div class="data-container" >
-    <app-flight-watch-setting-table
+    <app-flight-watch-aircraft-data-table
         #arrivalsTable
         [data]="arrivals"
         [isArrival]="true"
@@ -32,12 +32,12 @@
         (saveSettings)="sortChangeSaveSettings()"
         [isLobbyView]="isLobbyView"
         [customers]="customers"
-        (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
         (closeAircraftPopup)="closeAircraftPopup.emit($event)"
-    ></app-flight-watch-setting-table>
+    ></app-flight-watch-aircraft-data-table>
 </div>
 <div class="data-container">
-    <app-flight-watch-setting-table
+    <app-flight-watch-aircraft-data-table
         #departuresTable
         [data]="departures"
         [isArrival]="false"
@@ -45,7 +45,7 @@
         (saveSettings)="sortChangeSaveSettings()"
         [isLobbyView]="isLobbyView"
         [customers]="customers"
-        (openAircraftPopup)="openAircraftPopup.emit($event)"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
         (closeAircraftPopup)="closeAircraftPopup.emit($event)"
-    ></app-flight-watch-setting-table>
+    ></app-flight-watch-aircraft-data-table>
 </div>

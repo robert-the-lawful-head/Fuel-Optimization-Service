@@ -20,17 +20,6 @@ import { getGroupGridState } from '../../../store/selectors';
     templateUrl: './groups-home.component.html',
 })
 export class GroupsHomeComponent implements OnInit {
-    // Members
-    breadcrumb : any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '',
-            title: 'Groups',
-        },
-    ];
     groupsFbosData: any;
     currentGroup: any;
     groupGridState: GroupGridState;

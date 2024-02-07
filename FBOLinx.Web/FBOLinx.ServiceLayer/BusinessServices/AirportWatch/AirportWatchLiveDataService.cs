@@ -15,6 +15,7 @@ using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.AirportWatch;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
@@ -26,7 +27,9 @@ using Fuelerlinx.SDK;
 using Geolocation;
 using Mapster;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using StackifyLib;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -49,18 +52,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private IFboService _FboService;
         private readonly AirportWatchDataTableEntityService _airportWatchDataTableEntityService;
         private readonly TableStorageLogEntityService _TableStorageLogEntityService;
+        private static ILogger<AirportWatchLiveDataService> _logger { get; set; }
 
         public AirportWatchLiveDataService(IRepository<DB.Models.AirportWatchLiveData, 
                 FboLinxContext> entityService,
             IAirportWatchHistoricalDataService airportWatchHistoricalDataService,
                 IAirportService airportService,
-            IFboService fboService, AirportWatchDataTableEntityService airportWatchDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService) : base(entityService)
+            IFboService fboService, AirportWatchDataTableEntityService airportWatchDataTableEntityService, TableStorageLogEntityService tableStorageLogEntityService,
+            ILogger<AirportWatchLiveDataService> logger) : base(entityService)
         {
             _FboService = fboService;
             _AirportService = airportService;
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
             _airportWatchDataTableEntityService = airportWatchDataTableEntityService;
             _TableStorageLogEntityService = tableStorageLogEntityService;
+            _logger = logger;
         }
 
         public async Task<List<AirportWatchLiveDataWithHistoricalStatusDto>> GetAirportWatchLiveDataWithHistoricalStatuses(string airportIdentifier = null, int pastMinutesForLiveData = 1, int pastDaysForHistoricalData = 1)
@@ -71,8 +77,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             //Load historical data
             List<AirportWatchHistoricalDataDto> historicalData =
                 await GetHistoricalData(liveData, airportIdentifier, pastDaysForHistoricalData);
-            
-
             //Group the live data with past historical events over the last day
             var result = (from live in liveData
                           join historical in historicalData on new { live.AtcFlightNumber, live.AircraftHexCode } equals new { historical.AtcFlightNumber, historical.AircraftHexCode }
@@ -86,10 +90,23 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AtcFlightNumber = groupedResult.Key.AtcFlightNumber,
                               Latitude = groupedResult.FirstOrDefault().live.Latitude,
                               Longitude = groupedResult.FirstOrDefault().live.Longitude,
-                              AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                              //AircraftPositionDateTimeUtc = (new List<DateTime>(){
+                              //groupedResult.Max(x => x.live.CreatedDateTime  ?? DateTime.MinValue),
+                              //groupedResult.Max(x => x.live.AircraftPositionDateTimeUtc),
+                              //groupedResult.Max(x => x.historical?.BoxTransmissionDateTimeUtc ?? DateTime.MinValue)
+                              //}).Max(),
+                              AircraftPositionDateTimeUtc = groupedResult.Max(x => x.live.BoxTransmissionDateTimeUtc),
                               IsAircraftOnGround = groupedResult.FirstOrDefault().live.IsAircraftOnGround,
                               RecentAirportWatchHistoricalDataCollection = groupedResult.Where(x => x.historical != null).Select(x => x.historical).ToList(),
-                              AirportWatchLiveData = groupedResult.Where(x => x.live != null).Select(x => x.live).FirstOrDefault()
+
+                              AirportWatchLiveData =
+                              groupedResult.Where(x => x.live != null).Select(x => x.live)
+                              .OrderByDescending(x => x.BoxTransmissionDateTimeUtc).FirstOrDefault()
+                              //.OrderByDescending(x =>
+                              //(x.CreatedDateTime.GetValueOrDefault() > x.AircraftPositionDateTimeUtc) ?
+                              //  (x.CreatedDateTime.GetValueOrDefault() > x.BoxTransmissionDateTimeUtc) ? x.CreatedDateTime : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
+                              //  : (x.BoxTransmissionDateTimeUtc > x.AircraftPositionDateTimeUtc) ? x.BoxTransmissionDateTimeUtc : x.AircraftPositionDateTimeUtc
+                              //  ).FirstOrDefault()
                           }
                 )
                 .ToList();

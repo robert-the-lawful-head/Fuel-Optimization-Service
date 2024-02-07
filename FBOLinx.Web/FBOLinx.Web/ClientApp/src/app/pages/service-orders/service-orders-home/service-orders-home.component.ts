@@ -9,16 +9,6 @@ export class ServiceOrdersHomeComponent implements OnInit {
     public serviceOrdersData: Array<ServiceOrder>;
     public currentOrdersData: Array<ServiceOrder>;
     public pastOrdersData: Array<ServiceOrder>;
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/fuelreqs',
-            title: 'Fuel Orders',
-        },
-    ];
 
     constructor() {
     }

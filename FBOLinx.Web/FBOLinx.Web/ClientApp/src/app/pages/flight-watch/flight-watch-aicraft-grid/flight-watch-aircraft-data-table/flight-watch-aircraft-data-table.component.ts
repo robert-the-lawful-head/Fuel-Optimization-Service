@@ -18,9 +18,9 @@ import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favor
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Component({
-    selector: 'app-flight-watch-setting-table',
-    templateUrl: './flight-watch-setting-table.component.html',
-    styleUrls: ['./flight-watch-setting-table.component.scss'],
+    selector: 'app-flight-watch-aircraft-data-table',
+    templateUrl: './flight-watch-aircraft-data-table.component.html',
+    styleUrls: ['./flight-watch-aircraft-data-table.component.scss'],
     animations: [
         trigger('detailExpand', [
             state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
@@ -29,7 +29,7 @@ import { defaultStringsEnum } from 'src/app/enums/strings.enums';
     ],
     providers: [GetTimePipe,ToReadableTimePipe,BooleanToTextPipe]
 })
-export class FlightWatchSettingTableComponent implements OnInit {
+export class FlightWatchAircraftDataTableComponent implements OnInit {
     @Input() data: Swim[];
     @Input() isArrival: boolean;
     @Input() columns: ColumnType[];
@@ -105,6 +105,9 @@ export class FlightWatchSettingTableComponent implements OnInit {
             }else{
                 this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
             }
+        }
+        if(changes.selectedAircraft?.currentValue?.tailNumber){
+            this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
         }
     }
 
@@ -303,18 +306,21 @@ export class FlightWatchSettingTableComponent implements OnInit {
         if(this.hasRowInTable(tailNumber)){
             this.expandedElement = tailNumber;
             const selectedRow = document.getElementById(tailNumber);
-            selectedRow.scrollIntoView({block: 'center'});
+            selectedRow.scrollIntoView({block: 'center', behavior: 'smooth'});
         }
         else{
             this.expandedElement = null;
         }
     }
     collapseRow(tailNumber: string): void {
-        console.log("🚀 ~ file: flight-watch-setting-table.component.ts:310 ~ FlightWatchSettingTableComponent ~ collapseRow ~ tailNumber: " + tailNumber+" = "+this.expandedElement)
         if(!tailNumber)
             this.expandedElement = null;
 
         if(this.expandedElement == tailNumber)
             this.expandedElement = null;
     }
+    collapseAllRows(): void {
+            this.expandedElement = null;
+    }
 }
+

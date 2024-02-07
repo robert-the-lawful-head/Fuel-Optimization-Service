@@ -22,7 +22,7 @@ import { EmailTemplatesHomeComponent } from './pages/email-templates/email-templ
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
 import { FbosEditComponent } from './pages/fbos/fbos-edit/fbos-edit.component';
 import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
-import { FlightWatchComponent } from './pages/flight-watch/flight-watch/flight-watch.component';
+import { FlightWatchComponent } from './pages/flight-watch/flight-watch.component';
 import { FuelreqsHomeComponent } from './pages/fuelreqs/fuelreqs-home/fuelreqs-home.component';
 import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
 import { GroupCustomersHomeComponent } from './pages/group-customers/group-customers-home/group-customers-home.component';
@@ -213,7 +213,7 @@ const defaultRoutes: Routes = [
         canActivate: [AuthGuard],
         component: DashboardHomeComponent,
         path: '**',
-    }    
+    }
 ];
 
 const outsideTheGateRoutes: Routes = [

@@ -14,16 +14,6 @@ import { CustomerinfobygroupService } from '../../../services/customerinfobygrou
 })
 export class AnalyticsHomeComponent implements OnInit {
     public pageTitle = 'Analytics';
-    public breadcrumb: any[] =  [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/analytics',
-            title: 'Analytics',
-        },
-    ];
     public filterStartDate: Date;
     public filterEndDate: Date;
     public pastThirtyDaysStartDate: Date;
