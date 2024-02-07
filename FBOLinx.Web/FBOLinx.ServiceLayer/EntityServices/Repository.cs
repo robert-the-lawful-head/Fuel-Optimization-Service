@@ -76,7 +76,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
             if (queryableOptions.OrderByExpression != null)
                 query = query.OrderBy(queryableOptions.OrderByExpression);
             if (queryableOptions.OrderByDescendingExpression != null)
-                query = query.OrderBy(queryableOptions.OrderByDescendingExpression);
+                query = query.OrderByDescending(queryableOptions.OrderByDescendingExpression);
             return await query.ToListAsync();
         }
         public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
