@@ -119,7 +119,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
             //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            IEnumerable<SWIMFlightLegDTO> swimFlightLegs;
+            if ((airportsForArrivalsAndDepartures?.Count).GetValueOrDefault() > 0)
+                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            else
+                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(50000)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);

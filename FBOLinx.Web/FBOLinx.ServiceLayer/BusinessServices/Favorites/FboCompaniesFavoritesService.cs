@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
@@ -36,7 +37,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
         public async Task<FboFavoriteCompany> AddCompanyFavorite(FboFavoriteCompany fboFavoriteCompany)
         {
-            var existingEntity = (await _FboFavoriteCompanyRepo.GetAsync(x => x.CustomerInfoByGroupId == fboFavoriteCompany.CustomerInfoByGroupId && x.FboId == fboFavoriteCompany.FboId)).FirstOrDefault();
+            var queryOptions = new QueryableOptions<FboFavoriteCompany>();
+            queryOptions.Predicate = (x => x.CustomerInfoByGroupId == fboFavoriteCompany.CustomerInfoByGroupId && x.FboId == fboFavoriteCompany.FboId);
+
+            var existingEntity = (await _FboFavoriteCompanyRepo.GetAsync(queryOptions)).FirstOrDefault();
 
             if (existingEntity != null) return existingEntity;
 
@@ -87,7 +91,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Favorites
 
         public async Task DeleteFavoritesByFboId(int fboId)
         {
-            var fboFavoriteCompany = await _FboFavoriteCompanyRepo.GetAsync(x => x.FboId == fboId);
+            var queryOptions = new QueryableOptions<FboFavoriteCompany>();
+            queryOptions.Predicate = (x => x.FboId == fboId);
+
+            var fboFavoriteCompany = await _FboFavoriteCompanyRepo.GetAsync(queryOptions);
             await _FboFavoriteCompanyRepo.DeleteRangeAsync(fboFavoriteCompany.ToList());
         }
     }

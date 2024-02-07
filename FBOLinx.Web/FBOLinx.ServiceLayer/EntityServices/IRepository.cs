@@ -7,12 +7,13 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore.Storage;
+using FBOLinx.Core.BaseModels.Queries;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface IRepository<TEntity, TContext>
+    public interface IRepository<TEntity, TContext> where TEntity : class
     {
-        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<List<TEntity>> GetAsync(QueryableOptions<TEntity> queryableOptions);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetAsync(int id);
         Task<TEntity> AddAsync(TEntity entity);
