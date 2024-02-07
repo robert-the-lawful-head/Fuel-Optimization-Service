@@ -85,7 +85,10 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var queryable = GetEntityListQueryable(spec);
             return await queryable.ToListAsync();
         }
-
+        public virtual IQueryable<TEntity> GetListBySpecAsQueryable(ISpecification<TEntity> spec)
+        {
+            return GetEntityListQueryable(spec);
+        }
         public async Task<List<TProjection>> GetListBySpec<TProjection>(ISpecification<TEntity, TProjection> spec)
         {
             var queryable = GetEntityListQueryable((Specification<TEntity>)spec);

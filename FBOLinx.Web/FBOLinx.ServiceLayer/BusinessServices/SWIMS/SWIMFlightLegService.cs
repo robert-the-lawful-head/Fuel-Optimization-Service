@@ -24,7 +24,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,
             bool? isPlaceHolder = null);
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30, int maxRecords = 50000);
 
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null,
             int pastMinutesForDepartureOrArrival = 30);
@@ -34,7 +34,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
     {
         private IAirportService _AirportService;
         private SWIMFlightLegEntityService _SwimFlightLegEntityService;
-        
+        private IRepository<DB.Models.SWIMFlightLeg, DegaContext> _repository;
+
         public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IAirportService airportService) : base(swimFlightLegEntityService)
         {
             _SwimFlightLegEntityService = swimFlightLegEntityService;
@@ -56,16 +57,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result == null ? null : result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30, int maxRecords = 50000)
         {
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-                result = await GetListbySpec(
-                    new SWIMFlightLegByDateSpecification(
-                        DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+
+            var query = await _repository.GetListBySpec(
+            new SWIMFlightLegByDateSpecification(
+                DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+            query.OrderByDescending(x => x.Oid).Take(maxRecords);
+
 
             return result;
         }
-
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
         {
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
