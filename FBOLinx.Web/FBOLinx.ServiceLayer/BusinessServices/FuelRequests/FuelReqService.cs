@@ -578,7 +578,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                     var aircraft = await _aircraftService.GetSingleBySpec(new DB.Specifications.Aircraft.AircraftSpecification(new List<int>() { customerAircraft.AircraftId }));
 
-                    var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
+                    //var link = "https://" + _httpContextAccessor.HttpContext.Request.Host + "/outside-the-gate-layout/auth?token=" + HttpUtility.UrlEncode(authentication.AccessToken);
+                    var link = "https://fbolinx.com/#about-content";
 
                     var dynamicTemplateData = new ServiceLayer.DTO.UseCaseModels.Mail.SendGridAutomatedFuelOrderNotificationTemplateData
                     {
