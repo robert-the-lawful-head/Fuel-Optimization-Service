@@ -27,7 +27,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Common
         Task BulkUpdate(List<TDTO> dtos, BulkConfig? bulkConfig = null);
     }
 
-    public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T>
+    public class BaseDTOService<TDTO, T, TContext> : IBaseDTOService<TDTO, T> where T : class
     {
         protected IRepository<T, TContext> _EntityService;
 

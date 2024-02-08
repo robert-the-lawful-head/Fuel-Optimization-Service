@@ -33,11 +33,11 @@ namespace FBOLinx.ServiceLayer.Extensions.Aircraft
         }
         public static bool IsInNetwork(this CustomerAircrafts? ca)
         {
-            return ((ca?.Oid > 0));
+            return (ca?.Oid > 0);
         }
         public static bool IsInNetwork(this CustomerAircraftsViewModel? ca)
         {
-            return ((ca?.Oid > 0));
+            return (ca?.Oid > 0);
         }
         public static bool isFuelerLinxCustomer(this CustomerAircrafts? ca)
         {

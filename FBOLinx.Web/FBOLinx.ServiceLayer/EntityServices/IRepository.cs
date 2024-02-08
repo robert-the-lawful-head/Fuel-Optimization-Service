@@ -7,12 +7,13 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore.Storage;
+using FBOLinx.Core.BaseModels.Queries;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
-    public interface IRepository<TEntity, TContext>
+    public interface IRepository<TEntity, TContext> where TEntity : class
     {
-        Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<List<TEntity>> GetAsync(QueryableOptions<TEntity> queryableOptions);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> GetAsync(int id);
         Task<TEntity> AddAsync(TEntity entity);
@@ -27,6 +28,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         Task BulkDeleteEntities(List<TEntity> entities, BulkConfig? bulkConfig = null);
         Task BulkDeleteEntities(ISpecification<TEntity> spec, BulkConfig? bulkConfig = null);
         IQueryable<TEntity> Where(Expression<Func<TEntity, bool>> predicate);
+        IQueryable<TEntity> GetListBySpecAsQueryable(ISpecification<TEntity> spec);
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);
         Task<TEntity> FindAsync(int id);
         Task BulkInsert(List<TEntity> entities, BulkConfig? bulkConfig = null);

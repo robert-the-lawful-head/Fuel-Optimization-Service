@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.SWIM;
@@ -13,6 +14,7 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.EntityServices.SWIM;
 using Mapster;
+using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 {
@@ -24,9 +26,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,
             bool? isPlaceHolder = null);
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords);
 
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null,
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
             int pastMinutesForDepartureOrArrival = 30);
     }
 
@@ -34,11 +36,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
     {
         private IAirportService _AirportService;
         private SWIMFlightLegEntityService _SwimFlightLegEntityService;
-        
-        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IAirportService airportService) : base(swimFlightLegEntityService)
+        private IRepository<DB.Models.SWIMFlightLeg, DegaContext> _repository;
+
+        public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IAirportService airportService, IRepository<DB.Models.SWIMFlightLeg, DegaContext> repository) : base(swimFlightLegEntityService)
         {
             _SwimFlightLegEntityService = swimFlightLegEntityService;
             _AirportService = airportService;
+            _repository = repository;
         }
 
         public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegs(List<string> gufiList)
@@ -56,37 +60,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result == null ? null : result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords)
         {
-            List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-                result = await GetListbySpec(
-                    new SWIMFlightLegByDateSpecification(
-                        DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival)));
+            var queryOptions = new QueryableOptions<SWIMFlightLeg>();
+            queryOptions.MaxRecords = maxRecords;
+            queryOptions.OrderByDescendingExpression = (x => x.Oid);
 
-            return result;
+            var result = await _repository.GetAsync(queryOptions);
+
+            return result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers = null, int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
+            int pastMinutesForDepartureOrArrival = 30)
         {
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
-            if ((airportIdentifiers?.Count).GetValueOrDefault() <= 0)
-            {
-                return await GetRecentSWIMFlightLegs(pastMinutesForDepartureOrArrival);
-            }
-            else
-            {
-                var departures = await GetSwimFlightLegs(DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival), DateTime.UtcNow, airportIdentifiers);
-                var arrivals = await GetSwimFlightLegs(DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival),
-                    DateTime.UtcNow, null, airportIdentifiers);
 
-                result = departures;
-                result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
-            }
+            var departures = await GetSwimFlightLegs(DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival),
+                DateTime.UtcNow, airportIdentifiers);
+            var arrivals = await GetSwimFlightLegs(DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival),
+                DateTime.UtcNow, null, airportIdentifiers);
+
+            result = departures;
+            result.AddRange(arrivals.Where(x => !departures.Any(d => d.Oid == x.Oid)));
             return result
-            .OrderByDescending(row => row.LastUpdated)
-            .GroupBy(row => row.AircraftIdentification)
-            .Select(grouped => grouped.First())
-            .ToList();
+                .OrderByDescending(row => row.LastUpdated)
+                .GroupBy(row => row.AircraftIdentification)
+                .Select(grouped => grouped.First())
+                .ToList();
         }
     }
 }
