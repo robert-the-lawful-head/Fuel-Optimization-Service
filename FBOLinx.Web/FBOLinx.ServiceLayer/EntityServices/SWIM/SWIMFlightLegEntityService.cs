@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.DTO.SWIM;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
@@ -39,8 +39,27 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
                 select swim);
             return query;
         }
+        private Expression<Func<SWIMFlightLeg, bool>> ArrivalsAndDeparturesQuerylogic(int minutesThreshold)
+        {
+            return swim =>  swim.LastUpdated > DateTime.UtcNow.AddMinutes(minutesThreshold) &&
+                            swim.ATD <= DateTime.UtcNow.AddMinutes(minutesThreshold) &&
+                            swim.ETA != null &&
+                            swim.ETA > DateTime.UtcNow.AddMinutes(minutesThreshold);
+        }
 
-        private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
+        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int minutesThreshold)
+        {
+            var arrivals = context.SWIMFlightLegs
+                .Where(swim => swim.ArrivalICAO == icao)
+                .Where(ArrivalsAndDeparturesQuerylogic(minutesThreshold));
+
+            var departures = context.SWIMFlightLegs
+                .Where(swim => swim.DepartureICAO == icao)
+                .Where(ArrivalsAndDeparturesQuerylogic(minutesThreshold));
+
+            return await arrivals.Concat(departures).ToListAsync();
+        }
+            private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
             DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,

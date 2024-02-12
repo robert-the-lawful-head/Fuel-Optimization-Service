@@ -26,13 +26,12 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 {
     public interface IFlightWatchService
     {
-        Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options);
+        Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options, bool isFlightWatchMapData = false);
         Task<FlightWatchLegAdditionalDetailsModel> GetAdditionalDetailsForLeg(int swimFlightLegId);
         Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options);
     }
@@ -100,7 +99,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             return result;
         }
 
-        public async Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options)
+        public async Task<List<FlightWatchModel>> GetCurrentFlightWatchData(FlightWatchDataRequestOptions options, bool isFlightWatchMapData = false)
         {
             _Options = options;
             _Fbo = await _FboService.GetSingleBySpec(
@@ -118,12 +117,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Grab the airport to be considered for arrivals and departures.
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
-            //Then load all SWIM flight legs that we have from the last hour.
-            IEnumerable<SWIMFlightLegDTO> swimFlightLegs;
-            if ((airportsForArrivalsAndDepartures?.Count).GetValueOrDefault() > 0)
-                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
-            else
-                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(30000)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            //Then load all SWIM flight legs that we have.
+             var swimFlightLegs = await _SwimFlightLegService.GetSWIMFlightLegs(airportsForArrivalsAndDepartures, isFlightWatchMapData);
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
@@ -141,7 +136,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         }
         public async Task<List<FlightWatchModel>> GetFilteredCurrentFlightWatchData(FlightWatchDataRequestOptions options)
         {
-            var result = await GetCurrentFlightWatchData(options);
+            var result = await GetCurrentFlightWatchData(options, true);
             result.RemoveAll(x => x.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.None);
             result.RemoveAll(x => x.DepartureICAO == x.FocusedAirportICAO && x.Status == null);
             result = result.Where(x => x.ArrivalICAO == x.FocusedAirportICAO || x.DepartureICAO == x.FocusedAirportICAO).ToList();
