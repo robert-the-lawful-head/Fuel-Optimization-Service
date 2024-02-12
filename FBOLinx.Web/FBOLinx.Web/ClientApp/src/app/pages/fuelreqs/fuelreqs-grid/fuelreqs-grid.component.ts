@@ -335,6 +335,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         }else{
             this.expandedElement.push(elementId);
         }
+
+        this.toggleClosedNotesDrawer();
     }
 
     sendConfirmationNotification(event: Event, fuelreq: any): void{
