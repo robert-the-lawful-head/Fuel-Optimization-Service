@@ -34,7 +34,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         private SWIMFlightLegEntityService _SwimFlightLegEntityService;
         private IRepository<DB.Models.SWIMFlightLeg, DegaContext> _repository;
         private int flightWatchMaxRecords = 30000;
-        private int minutesThreshold = 15;
+        private int minutesThreshold = 30;
 
         public SWIMFlightLegService(SWIMFlightLegEntityService swimFlightLegEntityService, IRepository<DB.Models.SWIMFlightLeg, DegaContext> repository) : base(swimFlightLegEntityService)
         {
@@ -72,7 +72,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result.Adapt<List<SWIMFlightLegDTO>>();
         }
         public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
-           int pastMinutesForDepartureOrArrival = 15)
+           int pastMinutesForDepartureOrArrival = 30)
         {
             List<SWIMFlightLegDTO> result = new List<SWIMFlightLegDTO>();
 
@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
         {
             if (isFlightWatchMapData)
             {
-                return (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(airportsForArrivalsAndDepartures.FirstOrDefault(), -minutesThreshold)).Adapt<List<SWIMFlightLegDTO>>();
+                return (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(airportsForArrivalsAndDepartures.FirstOrDefault(), minutesThreshold)).Adapt<List<SWIMFlightLegDTO>>();
             }
            else if ((airportsForArrivalsAndDepartures?.Count).GetValueOrDefault() > 0)
                 return (await GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));   

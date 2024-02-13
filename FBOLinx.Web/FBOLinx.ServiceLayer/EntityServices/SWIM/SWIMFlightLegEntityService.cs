@@ -41,10 +41,12 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         }
         private Expression<Func<SWIMFlightLeg, bool>> ArrivalsAndDeparturesQuerylogic(int minutesThreshold)
         {
-            return swim =>  swim.LastUpdated > DateTime.UtcNow.AddMinutes(minutesThreshold) &&
-                            swim.ATD <= DateTime.UtcNow.AddMinutes(minutesThreshold) &&
-                            swim.ETA != null &&
-                            swim.ETA > DateTime.UtcNow.AddMinutes(minutesThreshold);
+            var minDateTimeThreshold = DateTime.UtcNow.AddMinutes(-minutesThreshold);
+            var maxDateTimeThreshold = DateTime.UtcNow.AddMinutes(minutesThreshold);
+
+            return swim => swim.LastUpdated > minDateTimeThreshold &&
+                           ((swim.ATD > minDateTimeThreshold) || (swim.ETA.HasValue && swim.ETA.Value > minDateTimeThreshold)) &&
+                           ((swim.ATD < maxDateTimeThreshold) || (swim.ETA.HasValue && swim.ETA.Value < maxDateTimeThreshold));
         }
 
         public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int minutesThreshold)
