@@ -25,19 +25,18 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private AirportWatchLiveDataDto _AirportWatchLiveData;
         private FlightLegStatus? _Status;
         private bool _DoesSWIMFlightLegNeedUpdate = false;
-        private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow;
+        private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-15);
         private AircraftHexTailMappingDTO _HexTailMapping;
 
         public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData, 
             List<AirportWatchHistoricalDataDto> airportWatchHistoricalDataCollection, 
             SWIMFlightLegDTO swimFlightLeg,
-            AircraftHexTailMappingDTO hexTailMapping, int validpositionMinutesThershold = 15)
+            AircraftHexTailMappingDTO hexTailMapping)
         {
             _HexTailMapping = hexTailMapping;
             _SwimFlightLeg = swimFlightLeg;
             _AirportWatchHistoricalDataCollection = airportWatchHistoricalDataCollection;
             _AirportWatchLiveData = airportWatchLiveData;
-            _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-validpositionMinutesThershold);
         }
         public string FAARegisteredOwner => string.IsNullOrEmpty(_HexTailMapping?.FAARegisteredOwner) ? _SwimFlightLeg?.FAARegisteredOwner : _HexTailMapping.FAARegisteredOwner;
         public int? AirportWatchLiveDataId => _AirportWatchLiveData?.Oid;
