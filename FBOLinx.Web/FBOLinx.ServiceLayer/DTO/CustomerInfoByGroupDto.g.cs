@@ -40,5 +40,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public CustomersDto Customer { get; set; }
         public List<CustomerInfoByGroupNoteDto> Notes { get; set; }
         public FboFavoriteCompany FavoriteCompany { get; set; }
+        public IList<CustomerTag> CustomerTags { get; set; }
     }
 }
