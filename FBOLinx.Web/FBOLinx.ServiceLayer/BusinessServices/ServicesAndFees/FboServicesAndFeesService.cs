@@ -155,7 +155,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
             var fboCustomServicesAndFees = await _fboCustomServicesAndFeesRepo.GetListBySpec(new FboCustomServicesAndFeesSpecifications(fboId));
             var fboUsers = await _userEntityService.GetListBySpec(new UsersByFboIdSpecification(fboId));
 
-            var fboCustomServicesAndFeesResponse = from fc in fboCustomServicesAndFees
+            var fboCustomServicesAndFeesResponse = (from fc in fboCustomServicesAndFees
                                                    join fu in fboUsers on fc.CreatedByUserId equals fu.Oid
                                                    select new ServicesAndFeesResponse()
                                                    {
@@ -164,8 +164,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees
                                                        IsActive = fc.ServiceActionType == ServiceActionType.Active,
                                                        CreatedDate = fc.CreatedDate,
                                                        CreatedByUserId = fu.Oid,
-                                                       IsCustom = true
-                                                    };
+                                                       IsCustom = true,
+                                                       ServiceTypeId= fc.ServiceTypeId,
+                                                       HandlerId = fc.AcukwikServicesOfferedId,
+                                                       ServiceOfferedId = fc.AcukwikServicesOfferedId,
+                                                       CreatedByUser = fu.Username
+                                                    }).ToList();
 
             foreach (var service in fboCustomServiceTypes)
             {
