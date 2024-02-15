@@ -191,7 +191,7 @@ export class ServicesAndFeesComponent implements OnInit {
                 name: "",
                 isCustom : true,
                 createdDate: new Date(),
-                createdByUser: "",
+                createdByName: "",
                 createdByUserId: this.sharedService.currentUser.oid
             };
         }

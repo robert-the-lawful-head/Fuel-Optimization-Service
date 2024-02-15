@@ -332,11 +332,11 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.expandedElement = this.expandedElement.filter(function (item) {
                 return item !== elementId
             });
+
+            this.toggleClosedNotesDrawer();
         }else{
             this.expandedElement.push(elementId);
         }
-
-        this.toggleClosedNotesDrawer();
     }
 
     sendConfirmationNotification(event: Event, fuelreq: any): void{
@@ -404,7 +404,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
               if (result.oid > 0)
                  this.scrollToIndex(result.oid);
             }, 100);
-            this.toogleExpandedRows(result.oid.toString() + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "0")
+            this.toogleExpandedRows(result.oid.toString() + "|" + (result.sourceId == undefined ? 0 : result.sourceId).toString() + "|0|" + this.tailNumber + '|' + this.customerId + '|' + this.customer)
         });
     }
 
@@ -526,20 +526,35 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.customerId = changes.customerId;
         this.customer = changes.customer;
         this.isDrawManuallyClicked = changes.isManuallyClicked;
-        this.toggleOpenNotesDrawer();
+        if (this.isDrawManuallyClicked)
+            this.toggleOpenNotesDrawer();
     }
 
-    toggleOpenNotesDrawer() {
+    async toggleOpenNotesDrawer() {
         if (this.drawer != undefined) {
-            if (this.isDrawerOpenedByDefault || this.isDrawManuallyClicked)
+            if (this.isDrawerOpenedByDefault || this.isDrawManuallyClicked) {
+                if (this.isDrawerOpenedByDefault && this.drawer.opened) {
+                    this.toggleClosedNotesDrawer();
+                    await this.sleep(100);
+                }
                 this.drawer.open();
+            } 
             else
                 this.toggleClosedNotesDrawer();
         }
     }
 
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     toggleClosedNotesDrawer() {
         this.drawer.close();
+
+        //if (this.expandedElement.length > 0) {
+        //    var lastOrder = this.expandedElement[this.expandedElement.length - 1];
+        //    var changes = { serviceOrderId: 0, associatedFuelOrderId: 0, fuelerLinxTransactionId: 0, tailNumber: '', customerId: 0, customer: '', isManuallyClicked: false };
+        //}
     }
 
     private scrollToIndex(id: number): void {

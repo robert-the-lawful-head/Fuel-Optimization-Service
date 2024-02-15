@@ -5,7 +5,7 @@ export interface FbosServicesAndFeesResponse {
 
 export interface ServiceTypeResponse extends FboCustomServiceType{
     isCustom: boolean;
-    createdByUser: string;
+    createdByName: string;
 }
 
 export interface FboCustomServiceType {

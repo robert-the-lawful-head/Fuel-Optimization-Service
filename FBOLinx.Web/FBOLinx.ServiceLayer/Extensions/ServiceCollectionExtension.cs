@@ -130,6 +130,7 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAccessTokensService, AccessTokensService>();
             services.AddTransient<IRefreshTokensService, RefreshTokensService>();
             services.AddTransient<IOrderNotesService, OrderNotesService>();
+            services.AddTransient<IUserEntityService, UserEntityService>();
                         
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 

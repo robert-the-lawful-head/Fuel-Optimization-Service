@@ -576,7 +576,7 @@ namespace FBOLinx.Web.Controllers
 
                 ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
                 fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-                fuelServiceOrderItem.ServiceName = "Fuel " + fuelReqGallons + " gal" + (fuelReqGallons > 1 ? "s" : "") + " @ " + fuelReqPrice.GetValueOrDefault().ToString("C");
+                fuelServiceOrderItem.ServiceName = "Fuel " + fuelReqGallons + " gal" + (fuelReqGallons > 1 ? "s" : "");
                 fuelServiceOrderItem.IsCompleted = false;
                 await _serviceOrderItemService.AddAsync(fuelServiceOrderItem);
 

@@ -132,11 +132,9 @@
                             <button mat-icon-button
                                     aria-label="expand row"
                                     (click)="
-                            toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString());
-                            $event.stopPropagation()
-                        ">
-                                <mat-icon *ngIf="!isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">keyboard_arrow_up</mat-icon>
-                                <mat-icon *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">keyboard_arrow_down</mat-icon>
+                            toogleExpandedRows((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName); $event.stopPropagation()">
+                                <mat-icon *ngIf="!isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">keyboard_arrow_up</mat-icon>
+                                <mat-icon *ngIf="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">keyboard_arrow_down</mat-icon>
                             </button>
                         </td>
                     </ng-container>
@@ -297,7 +295,7 @@
                             *matCellDef="let element"
                             [attr.colspan]="allColumnsToDisplay.length">
                             <div class="example-element-detail"
-                                 [@detailExpand]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString()) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
+                                 [@detailExpand]="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber + '|' + element.customerId + '|' + element.customerName) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber + '|' + element.customerId + '|' + element.customerName)">
                                 <div class="example-element-description">
                                     <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" [customerId]="element.customerId" [customer]="element.customerName" [tailNumber]="element.tailNumber" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element,$event)" (toggleDrawerChanged)="toggleDrawerChanged($event)"></app-fuelreqs-grid-services>
                                 </div>
@@ -311,8 +309,8 @@
                         [id]="element.oid"
                         class="example-element-row"
                         [class.example-detail-row]="element.archived === true"
-                        [class.example-expanded-row]="isRowExpanded(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())"
-                        (click)="toogleExpandedRows(element.oid.toString() + (element.sourceId == undefined ? 0 : element.sourceId).toString() + (element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString())">
+                        [class.example-expanded-row]="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)"
+                        (click)="toogleExpandedRows((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">
                     </tr>
                     <tr mat-row
                         *matRowDef="let row; columns: ['expandedDetail']"

@@ -65,7 +65,7 @@ export class FuelreqsNotesComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.tailNumber) {
+        if (changes.serviceOrderId || changes.fuelOrderId || changes.fuelerlinxTransactionId) {
             this.loadNotes();
         }
     }
@@ -122,7 +122,6 @@ export class FuelreqsNotesComponent implements OnInit {
     }
 
     private async loadNotes() {
-        this.openByDefault.emit(false);
         const results = await combineLatest([
             //0
             this.customerInfoByGroupService.getCustomerInfoByGroupNoteByCustomerIdGroupId(this.customerId, this.sharedService.currentUser.groupId),
