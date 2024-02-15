@@ -216,6 +216,8 @@ export class DefaultLayoutComponent implements OnInit {
             '/default-layout/dashboard-fbo',
             '/default-layout/dashboard-fbo-updated'
         ];
+        if(this.isCsr) return false;
+
         if (
             whitelist.findIndex((v) =>
                 window.location.pathname.startsWith(v)
@@ -254,6 +256,8 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     checkCurrentPrices() {
+        if(this.isCsr) return;
+
         const currentRoute = this.router.url;
 
         if (currentRoute == '/default-layout/groups') return;
