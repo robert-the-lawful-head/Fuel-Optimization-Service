@@ -240,8 +240,8 @@ export class FuelreqsGridServicesComponent implements OnInit {
             return `Source: ` + serviceAndFees.addedByName;
     }
 
-    toggleNotesDrawer(isManuallyClicked: boolean = false) {
-        let drawerProperties = { serviceOrderId: this.serviceOrderId, associatedFuelOrderId: this.associatedFuelOrderId, fuelerLinxTransactionId: this.fuelerlinxTransactionId, tailNumber: this.tailNumber, customerId: this.customerId, customer: this.customer, isManuallyClicked: isManuallyClicked };
+    toggleNotesDrawer(isDrawerManuallyClicked: boolean = false) {
+        let drawerProperties = { serviceOrderId: this.serviceOrderId, associatedFuelOrderId: this.associatedFuelOrderId, fuelerLinxTransactionId: this.fuelerlinxTransactionId, tailNumber: this.tailNumber, customerId: this.customerId, customer: this.customer, isDrawerManuallyClicked: isDrawerManuallyClicked };
         this.toggleDrawerChanged.emit(drawerProperties);
     }
 

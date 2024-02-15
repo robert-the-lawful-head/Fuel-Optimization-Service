@@ -42,6 +42,7 @@ export class FuelreqsNotesComponent implements OnInit {
     @Input() public tailNumber: string;
     @Input() public customerId: number;
     @Input() public customer: string;
+    @Input() public isDrawerManuallyClicked: boolean;
     @Output() openByDefault: EventEmitter<any> = new EventEmitter();
     public customerNotes: string;
     public customerAircraftNotes: string;
@@ -65,7 +66,7 @@ export class FuelreqsNotesComponent implements OnInit {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.serviceOrderId || changes.fuelOrderId || changes.fuelerlinxTransactionId) {
+        if (changes.serviceOrderId || changes.fuelOrderId || changes.fuelerlinxTransactionId || changes.isDrawerManuallyClicked) {
             this.loadNotes();
         }
     }
@@ -173,9 +174,11 @@ export class FuelreqsNotesComponent implements OnInit {
 
         this.isLoading = false;
 
-        if (this.customerNotes || this.customerAircraftNotes || this.serviceOrderNotes.length > 0 || this.additionalNotes.length > 0)
-            this.openByDefault.emit(true);
-        else
-            this.openByDefault.emit(false);
+        if (!this.isDrawerManuallyClicked) {
+            if (this.customerNotes || this.customerAircraftNotes || this.serviceOrderNotes.length > 0 || this.additionalNotes.length > 0)
+                this.openByDefault.emit(true);
+            else
+                this.openByDefault.emit(false);
+        }
     }
 }

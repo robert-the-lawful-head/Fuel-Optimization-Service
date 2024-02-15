@@ -138,7 +138,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     public customerId: number;
     public customer: string;
     public isDrawerOpenedByDefault: boolean = false;
-    public isDrawManuallyClicked: boolean = false;
+    public isDrawerManuallyClicked: boolean = false;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -518,25 +518,26 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.toggleOpenNotesDrawer();
     }
 
-    toggleDrawerChanged(changes: any) {
+    async toggleDrawerChanged(changes: any) {
+        if (this.isDrawerOpenedByDefault && this.drawer.opened) {
+            this.toggleClosedNotesDrawer();
+            await this.sleep(100);
+        }
+
         this.serviceOrderId = changes.serviceOrderId;
         this.associatedFuelOrderId = changes.associatedFuelOrderId;
         this.fuelerlinxTransactionId = changes.fuelerLinxTransactionId;
         this.tailNumber = changes.tailNumber;
         this.customerId = changes.customerId;
         this.customer = changes.customer;
-        this.isDrawManuallyClicked = changes.isManuallyClicked;
-        if (this.isDrawManuallyClicked)
+        this.isDrawerManuallyClicked = changes.isDrawerManuallyClicked;
+        if (this.isDrawerManuallyClicked)
             this.toggleOpenNotesDrawer();
     }
 
     async toggleOpenNotesDrawer() {
         if (this.drawer != undefined) {
-            if (this.isDrawerOpenedByDefault || this.isDrawManuallyClicked) {
-                if (this.isDrawerOpenedByDefault && this.drawer.opened) {
-                    this.toggleClosedNotesDrawer();
-                    await this.sleep(100);
-                }
+            if (this.isDrawerOpenedByDefault || this.isDrawerManuallyClicked) {
                 this.drawer.open();
             } 
             else
@@ -553,7 +554,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
         //if (this.expandedElement.length > 0) {
         //    var lastOrder = this.expandedElement[this.expandedElement.length - 1];
-        //    var changes = { serviceOrderId: 0, associatedFuelOrderId: 0, fuelerLinxTransactionId: 0, tailNumber: '', customerId: 0, customer: '', isManuallyClicked: false };
+        //    var changes = { serviceOrderId: 0, associatedFuelOrderId: 0, fuelerLinxTransactionId: 0, tailNumber: '', customerId: 0, customer: '', isDrawerManuallyClicked: false };
         //}
     }
 
