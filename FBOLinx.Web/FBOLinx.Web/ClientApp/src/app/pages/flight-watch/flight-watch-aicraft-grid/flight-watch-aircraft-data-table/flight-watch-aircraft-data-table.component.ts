@@ -1,5 +1,5 @@
 import { state, style, trigger } from '@angular/animations';
-import { OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatSort, MatSortable, MatSortHeader, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -16,7 +16,6 @@ import { FlightWatchHelper } from "../../FlightWatchHelper.service";
 import { FlightLegStatus } from "../../../../enums/flight-watch.enum";
 import { CallbackComponent } from 'src/app/shared/components/favorite-icon/favorite-icon.component';
 import { defaultStringsEnum } from 'src/app/enums/strings.enums';
-import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchMapSharedService } from '../../services/flight-watch-map-shared.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
@@ -67,9 +66,9 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
                 private sharedService: SharedService,
                 private booleanToText: BooleanToTextPipe,
                 private flightWatchHelper: FlightWatchHelper,
-                private flightWatchService: FlightWatchService,
-                private flightWatchMapSharedService: FlightWatchMapSharedService) {
-                    this.flightWatchMapSharedService.sharedData$.subscribe( (data: FlightWatchModelResponse) => {
+                private flightWatchMapSharedService: FlightWatchMapSharedService,
+                private cdr: ChangeDetectorRef) {
+                    this.flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
                     this.expandedDetailData = data;
                     });
                 }
@@ -316,6 +315,8 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
         else{
             this.expandedElement = null;
         }
+
+        this.cdr.detectChanges();
     }
     collapseRow(tailNumber: string): void {
         if(!tailNumber)
@@ -323,9 +324,12 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
 
         if(this.expandedElement == tailNumber)
             this.expandedElement = null;
+
+        this.cdr.detectChanges();
     }
     collapseAllRows(): void {
-            this.expandedElement = null;
+        this.expandedElement = null;
+        this.cdr.detectChanges();
     }
 }
 

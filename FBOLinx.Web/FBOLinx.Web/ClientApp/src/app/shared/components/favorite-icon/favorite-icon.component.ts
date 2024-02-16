@@ -4,6 +4,8 @@ import { FavoritesService } from 'src/app/services/favorites.service';
 import { SnackBarService } from 'src/app/services/utils/snackBar.service';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from '../aircraft-assign-modal/aircraft-assign-modal.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Aircraftwatch } from 'src/app/models/flight-watch';
+import { FlightWatchMapSharedService } from 'src/app/pages/flight-watch/services/flight-watch-map-shared.service';
 export enum CallbackComponent {
     aircraft,
     Company,
@@ -27,7 +29,8 @@ export class FavoriteIconComponent implements OnInit {
     constructor(private favoritesService: FavoritesService,
         private sharedService: SharedService,
         private snackbarService: SnackBarService,
-        private newCustomerAircraftDialog: MatDialog
+        private newCustomerAircraftDialog: MatDialog,
+        private flightWatchMapSharedService: FlightWatchMapSharedService
         ) { }
 
     ngOnInit() {
@@ -111,10 +114,26 @@ export class FavoriteIconComponent implements OnInit {
         let result = await dialogRef
         .afterClosed().toPromise();
         if (result) {
+            let aircraftWatch: Aircraftwatch = {
+                customerInfoByGroupId : result.customerInfoByGroupID,
+                tailNumber: this.favoriteData.tailNumber,
+                atcFlightNumber: this.favoriteData.atcFlightNumber,
+                aircraftTypeCode: this.favoriteData.aircraftTypeCode,
+                isAircraftOnGround: false,
+                flightDepartment: result.company,
+                aircraftMakeModel: result.aircraftType,
+                lastQuote: this.favoriteData.lastQuote,
+                currentPricing: this.favoriteData.currentPricing,
+                aircraftICAO: this.favoriteData.aircraftICAO,
+                faaRegisteredOwner: this.favoriteData.faaRegisteredOwner,
+                origin: this.favoriteData.origin,
+                destination: this.favoriteData.destination
+            };
             this.favoriteData.isFavorite = this.isFavorite;
             this.favoriteData.isCustomerManagerAircraft = true;
             this.favoriteData.customerInfoByGroupId = result.customerInfoByGroupID;
             this.favoriteData.customerAircraftId = result.customerAircraftId;
+            this.flightWatchMapSharedService.updateCustomerAicraftData(aircraftWatch);
             this.toogleAicraftFavorite(this.favoriteData);
         }else{
             this.isFavorite = !this.isFavorite;

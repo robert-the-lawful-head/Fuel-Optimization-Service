@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Dictionary } from 'lodash';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
-import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { Aircraftwatch, FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
@@ -52,8 +52,11 @@ export class FlightWatchMapWrapperComponent implements OnInit {
 
     constructor(private flightWatchMapService: FlightWatchMapService,
         flightWatchMapSharedService: FlightWatchMapSharedService) {
-        flightWatchMapSharedService.sharedData$.subscribe( (data: FlightWatchModelResponse) => {
+        flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
             this.updatePopUpData(data);
+        });
+        flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
+            this.updateAircraftCompanyAssignData(data);
         });
     }
 
@@ -112,5 +115,10 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
     updatePopUpData($event: FlightWatchModelResponse) {
         this.selectedPopUp = $event;
+    }
+    updateAircraftCompanyAssignData(aicarftWatch: Aircraftwatch){
+        this.map.updateAircraft(aicarftWatch);
+        this.selectedPopUp = this.flightWatchDictionary[aicarftWatch.tailNumber];
+        this.map.openAircraftPopUpByTailNumber(aicarftWatch.tailNumber);
     }
 }
