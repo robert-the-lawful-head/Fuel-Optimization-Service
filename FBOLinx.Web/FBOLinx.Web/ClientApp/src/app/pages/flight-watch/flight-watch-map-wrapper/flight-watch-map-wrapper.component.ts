@@ -118,7 +118,7 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     }
     updateAircraftCompanyAssignData(aicarftWatch: Aircraftwatch){
         this.map.updateAircraft(aicarftWatch);
-        this.selectedPopUp = this.flightWatchDictionary[aicarftWatch.tailNumber];
+        this.map.setPopUpData(aicarftWatch);
         this.map.openAircraftPopUpByTailNumber(aicarftWatch.tailNumber);
     }
 }

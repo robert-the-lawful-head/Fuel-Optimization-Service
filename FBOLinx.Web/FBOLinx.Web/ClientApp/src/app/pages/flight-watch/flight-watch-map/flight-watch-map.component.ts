@@ -375,6 +375,9 @@ export class FlightWatchMapComponent
 
         this.popupData = Object.assign({}, obj);
     }
+    setPopUpData(selectedPopUp: Aircraftwatch) {
+        this.popupData = Object.assign({}, selectedPopUp);
+    }
     loadFlightOnMap() {
         this.setMapMarkersData(keys(this.data));
 
@@ -669,6 +672,7 @@ export class FlightWatchMapComponent
         this.data[selectedFlight].isInNetwork = true;
         this.data[selectedFlight].flightDepartment = event.flightDepartment;
         this.data[selectedFlight].aircraftTypeCode = event.aircraftTypeCode;
+
         this.markerClicked.emit(this.data[selectedFlight]);
     }
     goToAirport(icao: string){
