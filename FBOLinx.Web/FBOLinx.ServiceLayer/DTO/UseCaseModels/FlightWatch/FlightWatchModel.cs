@@ -27,6 +27,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         private bool _DoesSWIMFlightLegNeedUpdate = false;
         private DateTime _ValidPositionDateTimeUtc = DateTime.UtcNow.AddMinutes(-2);
         private AircraftHexTailMappingDTO _HexTailMapping;
+        public FlightWatchModel(){  }
         public FlightWatchModel(AirportWatchLiveDataDto airportWatchLiveData,SWIMFlightLegDTO swimFlightLeg)
         {
             _SwimFlightLeg = swimFlightLeg;
