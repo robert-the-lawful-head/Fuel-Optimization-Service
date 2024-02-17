@@ -155,6 +155,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     expandedElement: any[] = [];
 
     isConfirmedLoadingDictionary: { [key: string]: boolean; } = {};
+    openedNotes: any[] = [];
+    previouslyOpenedOrder: string = "";
 
     constructor(
         private sharedService: SharedService,
@@ -333,9 +335,14 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 return item !== elementId
             });
 
-            this.toggleClosedNotesDrawer();
+            this.previouslyOpenedOrder = elementId;
+
+            this.toggleClosedNotesDrawer(true);
         }else{
             this.expandedElement.push(elementId);
+
+            if (this.previouslyOpenedOrder != "" && this.previouslyOpenedOrder == elementId)
+                this.isDrawerManuallyClicked = true;
         }
     }
 
@@ -515,6 +522,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     openByDefault(isOpenByDefault: any) {
         this.isDrawerOpenedByDefault = isOpenByDefault;
+        if (isOpenByDefault && !this.openedNotes.includes(this.expandedElement[this.expandedElement.length - 1]))
+            this.openedNotes.push(this.expandedElement[this.expandedElement.length - 1]);
         this.toggleOpenNotesDrawer();
     }
 
@@ -549,13 +558,20 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    toggleClosedNotesDrawer() {
+    async toggleClosedNotesDrawer(isManuallyClosed: boolean = false) {
         this.drawer.close();
+        await this.sleep(100);
 
-        //if (this.expandedElement.length > 0) {
-        //    var lastOrder = this.expandedElement[this.expandedElement.length - 1];
-        //    var changes = { serviceOrderId: 0, associatedFuelOrderId: 0, fuelerLinxTransactionId: 0, tailNumber: '', customerId: 0, customer: '', isDrawerManuallyClicked: false };
-        //}
+        if (isManuallyClosed && this.openedNotes.length > 0) {
+            await this.sleep(300);
+            this.openedNotes.pop();
+            if (this.openedNotes.length > 0) {
+                var lastOrder = this.openedNotes[this.openedNotes.length - 1];
+                var lastOrderInfo = lastOrder.split("|");
+                var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
+                this.toggleDrawerChanged(changes);
+            }
+        }
     }
 
     private scrollToIndex(id: number): void {

@@ -321,7 +321,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             Notes = string.Empty,
                             QuotedPpg = 0,
                             QuotedVolume = 0,
-                            Source = string.Empty,
+                            Source = "Service only",
                             SourceId = item.FuelerLinxTransactionId,
                             TimeStandard = null,
                             TailNumber = customerAircrafts.Where(c => c.Oid == item.CustomerAircraftId).Select(a => a.TailNumber).FirstOrDefault(),
