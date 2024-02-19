@@ -42,6 +42,7 @@ import { FuelreqsGridServicesComponent } from '../fuelreqs-grid-services/fuelreq
 import { ServiceOrderItem } from '../../../models/service-order-item';
 import * as moment from 'moment';
 import { FuelreqsNotesComponent } from '../fuelreqs-notes/fuelreqs-notes.component';
+import { element } from 'protractor';
 
 const initialColumns: ColumnType[] = [
     {
@@ -157,6 +158,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     isConfirmedLoadingDictionary: { [key: string]: boolean; } = {};
     openedNotes: any[] = [];
     previouslyOpenedOrder: string = "";
+    currentElementId: string = "";
 
     constructor(
         private sharedService: SharedService,
@@ -337,12 +339,14 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
             this.previouslyOpenedOrder = elementId;
 
-            this.toggleClosedNotesDrawer(true);
+            this.toggleClosedNotesDrawer(elementId, true);
         }else{
             this.expandedElement.push(elementId);
 
             if (this.previouslyOpenedOrder != "" && this.previouslyOpenedOrder == elementId)
                 this.isDrawerManuallyClicked = true;
+
+            this.currentElementId = elementId;
         }
     }
 
@@ -529,7 +533,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     async toggleDrawerChanged(changes: any) {
         if (this.isDrawerOpenedByDefault && this.drawer.opened) {
-            this.toggleClosedNotesDrawer();
+            var elementId= changes.serviceOrderId + "|" + changes.associatedFuelOrderId + "|" + changes.fuelerLinxTransactionId + "|" + changes.tailNumber + "|" + changes.customerId + "|" + changes.customer;
+            this.toggleClosedNotesDrawer(elementId);
             await this.sleep(100);
         }
 
@@ -548,9 +553,10 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         if (this.drawer != undefined) {
             if (this.isDrawerOpenedByDefault || this.isDrawerManuallyClicked) {
                 this.drawer.open();
-            } 
-            else
-                this.toggleClosedNotesDrawer();
+            }
+            else {
+                this.toggleClosedNotesDrawer(this.currentElementId);
+            }
         }
     }
 
@@ -558,18 +564,28 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async toggleClosedNotesDrawer(isManuallyClosed: boolean = false) {
+    async toggleClosedNotesDrawer(elementId: string, isManuallyClosed: boolean = false) {
         this.drawer.close();
         await this.sleep(100);
 
         if (isManuallyClosed && this.openedNotes.length > 0) {
             await this.sleep(300);
-            this.openedNotes.pop();
             if (this.openedNotes.length > 0) {
-                var lastOrder = this.openedNotes[this.openedNotes.length - 1];
-                var lastOrderInfo = lastOrder.split("|");
-                var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
-                this.toggleDrawerChanged(changes);
+                const index = this.openedNotes.indexOf(elementId);
+                if (index === -1) {
+                    // the task doesn't exist in the array, no need to continue
+                    return;
+                }
+
+                // delete 1 item starting at the given index
+                this.openedNotes.splice(index, 1);
+
+                if (this.openedNotes.length > 0) {
+                    var lastOrder = this.openedNotes[this.openedNotes.length - 1];
+                    var lastOrderInfo = lastOrder.split("|");
+                    var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
+                    this.toggleDrawerChanged(changes);
+                }
             }
         }
     }
