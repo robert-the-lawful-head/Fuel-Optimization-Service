@@ -569,7 +569,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         await this.sleep(100);
 
         if (isManuallyClosed && this.openedNotes.length > 0) {
-            await this.sleep(500);
+            await this.sleep(300);
             if (this.openedNotes.length > 0) {
                 const index = this.openedNotes.indexOf(elementId);
                 if (index === -1) {
