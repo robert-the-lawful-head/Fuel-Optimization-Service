@@ -580,7 +580,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 this.openedNotes.splice(index, 1);
 
                 if (this.openedNotes.length > 0) {
-                    await this.sleep(400);
+                    await this.sleep(300);
                     var lastOrder = this.openedNotes[this.openedNotes.length - 1];
                     var lastOrderInfo = lastOrder.split("|");
                     var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
