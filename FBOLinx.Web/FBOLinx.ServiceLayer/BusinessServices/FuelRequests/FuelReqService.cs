@@ -664,7 +664,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             }
 
             // Add default "Fuel" service if it doesn't already exist
-            if (serviceReq.ServiceOrderItems.Count == 0)
+            if (serviceReq.ServiceOrderItems == null || serviceReq.ServiceOrderItems.Count == 0)
             {
                 ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
                 fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
