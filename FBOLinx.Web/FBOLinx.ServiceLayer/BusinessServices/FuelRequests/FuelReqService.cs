@@ -663,15 +663,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 serviceOrderItems.Add(serviceOrderItem);
             }
 
-            // Add default "Fuel" service if it doesn't already exist
-            if (serviceReq.ServiceOrderItems == null || serviceReq.ServiceOrderItems.Count == 0)
-            {
-                ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
-                fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
-                fuelServiceOrderItem.ServiceName = "Fuel 0 gal.";
-                fuelServiceOrderItem.IsCompleted = false;
-                serviceOrderItems.Add(fuelServiceOrderItem);
-            }
+            //// Add default "Fuel" service if it doesn't already exist
+            //if (serviceReq.ServiceOrderItems == null || serviceReq.ServiceOrderItems.Count == 0)
+            //{
+            //    ServiceOrderItemDto fuelServiceOrderItem = new ServiceOrderItemDto();
+            //    fuelServiceOrderItem.ServiceOrderId = serviceReq.Oid;
+            //    fuelServiceOrderItem.ServiceName = "Fuel 0 gal.";
+            //    fuelServiceOrderItem.IsCompleted = false;
+            //    serviceOrderItems.Add(fuelServiceOrderItem);
+            //}
 
             await _serviceOrderItemService.BulkInsert(serviceOrderItems);
         }
