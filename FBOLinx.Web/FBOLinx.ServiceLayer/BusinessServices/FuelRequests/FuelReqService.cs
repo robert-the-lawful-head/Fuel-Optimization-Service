@@ -707,10 +707,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var sendEmail = false;
             var requestStatus = "updated";
 
-            if (orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || ((fuelReq == null || fuelReq.Oid == 0 && !orderDetails.IsCancelled.GetValueOrDefault()))))
+            if (!fuelerlinxTransaction.IsCancelled && orderDetails != null && ((fuelReq != null && fuelReq.Oid > 0 && !fuelerlinxTransaction.IsCancelled) || ((fuelReq == null || fuelReq.Oid == 0 && !orderDetails.IsCancelled.GetValueOrDefault()))))
             {
                 //Update fuel service line item for directs
-                if (fuelReq.Oid > 0)
+                if (fuelReq != null && fuelReq.Oid > 0)
                 {
                     var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
 
@@ -772,8 +772,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     requestStatus = "cancelled";
                 }
             }
-            else if ((fuelReq != null && fuelReq.Cancelled.GetValueOrDefault()) || (orderDetails != null && orderDetails.IsCancelled.GetValueOrDefault()))
+            else if ((fuelReq != null && fuelReq.Cancelled.GetValueOrDefault()) || (orderDetails != null && orderDetails.IsCancelled.GetValueOrDefault()) || fuelerlinxTransaction.IsCancelled)
             {
+                if (fuelReq != null)
+                {
+                    fuelReq.Cancelled = true;
+                    await UpdateAsync(fuelReq);
+                }
+
+                orderDetails.IsCancelled = true;
+                await _orderDetailsService.UpdateAsync(orderDetails);
+
                 sendEmail = true;
                 requestStatus = "cancelled";
             }

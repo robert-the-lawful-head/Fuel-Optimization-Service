@@ -545,14 +545,18 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.customerId = changes.customerId;
         this.customer = changes.customer;
         this.isDrawerManuallyClicked = changes.isDrawerManuallyClicked;
-        if (this.isDrawerManuallyClicked)
+        if (this.isDrawerManuallyClicked) {
             this.toggleOpenNotesDrawer();
+        }
     }
 
     async toggleOpenNotesDrawer() {
         if (this.drawer != undefined) {
             if (this.isDrawerOpenedByDefault || this.isDrawerManuallyClicked) {
-                this.drawer.open();
+                if (this.isDrawerManuallyClicked) {
+                    await this.sleep(334);
+                }
+                this.drawer.toggle();
             }
             else {
                 this.toggleClosedNotesDrawer(this.currentElementId);
@@ -580,7 +584,6 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 this.openedNotes.splice(index, 1);
 
                 if (this.openedNotes.length > 0) {
-                    await this.sleep(300);
                     var lastOrder = this.openedNotes[this.openedNotes.length - 1];
                     var lastOrderInfo = lastOrder.split("|");
                     var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
