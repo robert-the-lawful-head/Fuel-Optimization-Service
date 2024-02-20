@@ -17,7 +17,13 @@ export class FlightWatchService {
 
     public getAirportLiveData(fboId: number, icao: string) {
         return this.http.get<ApiResponseWraper<FlightWatchModelResponse[]>>(
-            `${this.accessPointUrl}/list/fbo/${fboId}/airport/${icao}`,
+            `${this.accessPointUrl}/list/fbo/${fboId}/airport/${icao}/light-weight`,
+            { headers: this.headers }
+        );
+    }
+    public getAircarftLiveDataHistorical(fboId: number, icao: string, id : number) {
+        return this.http.get<any>(
+            `${this.accessPointUrl}/aircraft/fbo/${fboId}/airport/${icao}/livedata/${id}`,
             { headers: this.headers }
         );
     }

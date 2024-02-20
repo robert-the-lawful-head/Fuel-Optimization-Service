@@ -112,6 +112,7 @@ import { ServiceOrderService } from './services/serviceorder.service';
 import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
 import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';
+import { FlightWatchMapSharedService } from './pages/flight-watch/services/flight-watch-map-shared.service';
 @NgModule({
     bootstrap: [AppComponent],
     declarations: [
@@ -238,7 +239,8 @@ import { FormValidationHelperService } from './helpers/forms/formValidationHelpe
         ServiceOrderService,
         SnackBarService,
         FavoritesService,
-        FormValidationHelperService
+        FormValidationHelperService,
+        FlightWatchMapSharedService
     ],
 })
 export class AppModule { }
