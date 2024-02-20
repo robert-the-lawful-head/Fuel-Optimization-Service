@@ -25,6 +25,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import * as SharedEvents from '../../../models/sharedEvents';
 
 @Component({
     host: {
@@ -64,6 +65,7 @@ export class AdditionNavbarComponent
     private pricesExpired: boolean;
     private retailPrice: number;
     private costPrice: number;
+    changedSubscription: any;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -91,6 +93,12 @@ export class AdditionNavbarComponent
             this.message = message;
         });
 
+        this.changedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === 'fbo-prices-loaded' || message === SharedEvents.fboPricesClearedEvent) {
+                    this.getPrices();
+                }
+            });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
