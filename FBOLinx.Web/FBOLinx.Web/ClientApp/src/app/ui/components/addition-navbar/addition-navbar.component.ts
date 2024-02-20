@@ -25,6 +25,7 @@ import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import * as SharedEvents from '../../../models/sharedEvents';
 
 @Component({
     host: {
@@ -64,6 +65,7 @@ export class AdditionNavbarComponent
     private pricesExpired: boolean;
     private retailPrice: number;
     private costPrice: number;
+    changedSubscription: any;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -91,6 +93,12 @@ export class AdditionNavbarComponent
             this.message = message;
         });
 
+        this.changedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
+                if (message === 'fbo-prices-loaded' || message === SharedEvents.fboPricesClearedEvent) {
+                    this.getPrices();
+                }
+            });
     }
 
     ngOnChanges(changes: SimpleChanges): void {
@@ -301,10 +309,20 @@ export class AdditionNavbarComponent
     }
 
     async confirmSendEmails() {
-        this.pricesExpired = false;
-        //await this.checkExpiredPrices();
+        if (this.retailPrice == undefined)
+            this.getPrices();
 
-        if (!this.pricesExpired) {
+        if (!this.retailPrice && !this.costPrice) {
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'Your fuel pricing has expired. Please update your cost/retail values.',
+                    title: 'Pricing Expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
+        else {
             this.sendEmails();
         }
     }
@@ -378,7 +396,7 @@ export class AdditionNavbarComponent
         };
     }
 
-    private async checkExpiredPrices(marginTypeProduct) {
+    private async getPrices() {
         const data: any = await this.fboPricesService
             .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
             .toPromise();
@@ -389,6 +407,10 @@ export class AdditionNavbarComponent
         this.costPrice = data.filter(
             (r) => r.product === 'JetA Cost'
         )?.[0].price;
+    }
+
+    private async checkExpiredPrices(marginTypeProduct) {
+        this.getPrices();
 
         if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
             this.pricesExpired = true;
