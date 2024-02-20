@@ -38,6 +38,7 @@ using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.Requests;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 using FBOLinx.ServiceLayer.Logging;
+using System.Web;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -614,7 +615,7 @@ namespace FBOLinx.Web.Controllers
                         Group = p.Group,
                         Product = p.Product,
                         MinVolume = (p.MinGallons ?? 0),
-                        Notes = p.Notes,
+                        Notes = HttpUtility.HtmlDecode(p.Notes),
                         Default = string.IsNullOrEmpty(p.TailNumbers),
                         Price = (p.AllInPrice ?? 0),
                         TailNumberList = p.TailNumbers,
