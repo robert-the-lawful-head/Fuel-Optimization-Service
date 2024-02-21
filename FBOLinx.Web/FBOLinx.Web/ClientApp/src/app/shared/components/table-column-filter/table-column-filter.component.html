@@ -17,11 +17,6 @@
             <span class="material-icons"> filter_list </span>
         </mat-icon>
     </button>
-    <!-- <button #table_header_menu_trigger="matMenuTrigger" [matMenuTriggerFor]="table_header_menu"
-             aria-label="Table header filter"
-             mat-icon-button onclick="event.stopPropagation();">
-         <mat-icon aria-hidden="true" class="mat-icon material-icons" role="img">more_vert</mat-icon>
-     </button>-->
     <mat-menu #table_header_menu="matMenu" [id]="columnId">
         <div (click)="$event.stopPropagation()" class="">
             <div *ngIf="allowEditHeading" class="">
