@@ -1025,6 +1025,10 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Name).IsUnicode(false);
 
+                entity.HasOne(c => c.CustomerInfoByGroup)
+                    .WithMany(p => p.CustomerTags)
+                    .HasForeignKey(c => new { c.GroupId, c.CustomerId })
+                    .HasPrincipalKey(p => new { p.GroupId, p.CustomerId });
             });
 
             modelBuilder.Entity<ContactInfoByFbo>(entity =>
