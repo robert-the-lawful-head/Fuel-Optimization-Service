@@ -40,14 +40,6 @@
                 mat-sort-header="{{ column }}"
             >
                 {{ getColumnDisplayString(column) }}
-                <span *ngIf="dataSource">
-                    <app-table-column-filter
-                        [matDataSource]="dataSource"
-                        [matSort]="sort"
-                        columnId="{{ column }}"
-                        propertyName="{{ column }}"
-                    ></app-table-column-filter>
-                </span>
             </th>
             <td
                 mat-cell

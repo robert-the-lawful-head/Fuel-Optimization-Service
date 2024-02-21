@@ -96,10 +96,6 @@
             <ng-container matColumnDef="company">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Company</span>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="company" propertyName="company"></app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.company }}
@@ -132,11 +128,6 @@
             <ng-container matColumnDef="tags">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Tags
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort" columnId="tags"
-                                                 propertyName="tags" optionLabel="label" optionValue="value" [columnFormat]="11"
-                                                 [options]="tags"></app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <p-multiSelect class="tags-dropdown-filter" [options]="customer.availableTags" #multiInput
@@ -177,11 +168,6 @@
                         <div>FuelerLinx</div>
                         <div>Network</div>
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [columnFormat]="8" [matDataSource]="dataSource"
-                                                 [matSort]="sort" columnId="isFuelerLinxCustomer" propertyName="isFuelerLinxCustomer">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ getIsInNetworkDisplayString(customer) }}
@@ -194,10 +180,6 @@
                         <div>Fleet</div>
                         <div>Size</div>
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
-                                                 [matSort]="sort" columnId="fleetSize" propertyName="fleetSize"></app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.fleetSize }}
@@ -207,12 +189,6 @@
             <ng-container matColumnDef="pricingTemplateName">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     ITP Margin Template
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="pricingTemplateId" propertyName="pricingTemplateId" [columnFormat]="10"
-                                                 optionLabel="name" optionValue="oid" [options]="pricingTemplatesData">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <select (ngModelChange)="onMarginChange($event, customer)" [(ngModel)]="customer.pricingTemplateId"
@@ -227,11 +203,6 @@
             <ng-container matColumnDef="fuelVendors">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Fuel Vendors
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="fuelVendors" propertyName="fuelVendors" optionLabel="label" optionValue="value"
-                                                 [columnFormat]="11" [options]="fuelVendors"></app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
                     <p-multiSelect class="fuelvendors-dropdown-filter" [options]="customer.fuelVendors"
@@ -280,11 +251,6 @@
                         <div>Customer</div>
                         <div>Type</div>
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.customerCompanyTypeName }}
@@ -297,11 +263,6 @@
                         <div>Certificate</div>
                         <div>Type</div>
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="certificateTypeDescription" propertyName="certificateTypeDescription">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.certificateTypeDescription }}
@@ -316,11 +277,6 @@
                         <div>Previous</div>
                         <div>Visits</div>
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [columnFormat]="1" [matDataSource]="dataSource"
-                                                 [matSort]="sort" columnId="aircraftsVisits" propertyName="aircraftsVisits">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.aircraftsVisits }}
@@ -332,11 +288,6 @@
                     <div>
                         Pricing Formula
                     </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [columnFormat]="0" [matDataSource]="dataSource"
-                                                 [matSort]="sort" columnId="pricingFormula" propertyName="pricingFormula">
-                        </app-table-column-filter>
-                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.pricingFormula }}
