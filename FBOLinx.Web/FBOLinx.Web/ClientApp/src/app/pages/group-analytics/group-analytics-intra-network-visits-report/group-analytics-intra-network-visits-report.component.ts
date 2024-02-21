@@ -57,10 +57,10 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     dynamicColumns: ColumnType[] = [];
     columns: ColumnType[] = [];
 
-    csvFileOptions: csvFileOptions = { fileName: 'Intra-Network ADS-B Data', sheetName: 'Intra-Network ADS-B Data' };
+    csvFileOptions: csvFileOptions = { fileName: 'FBO Network Arrival/Departures', sheetName: 'FBO Network Arrival/Departures' };
 
     filterStartDate: Date;
-    filterEndDate: Date;    
+    filterEndDate: Date;
     data: IntraNetworkVisitsReportItem[];
     customers: any[] = [];
     tailNumbers: any[] = [];
@@ -104,7 +104,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     ngOnInit() {
-        this.loadFbos();        
+        this.loadFbos();
     }
 
     public initColumns() {
@@ -195,11 +195,11 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 }
                 catch (e) {
 
-                }                
+                }
             }
             _this.refreshSort(_this.sort, _this.columns);
             _this.saveSettings(_this.tableLocalStorageKey, _this.columns);
-        });        
+        });
     }
 
     private loadFbos() {
@@ -209,7 +209,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 var columnForAirport: ColumnType = { id: fbo.icao, name: 'Visits to ' + fbo.icao };
                 var columnForFbo: ColumnType = { id: fbo.icao + fbo.acukwikFboHandlerId, name: 'Visits to ' + fbo.fbo + ' ' + fbo.icao };
                 this.dynamicColumns.push(columnForAirport);
-                this.dynamicColumns.push(columnForFbo);                
+                this.dynamicColumns.push(columnForFbo);
             }
             this.refreshData(true);
         });
@@ -221,8 +221,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         var populateTailNumbersDataSource = this.tailNumbers.length == 0;
         //this.fbos = [];
         var dataSource = [];
-                
-            
+
+
 
         var filteredData = this.data.filter(x => (this.selectedCustomers.length == 0 || this.selectedCustomers.some(s => s.toLowerCase() == x.company.toLowerCase())) &&
             (this.selectedTailNumbers.length == 0 || this.selectedTailNumbers.some(s => s.toLowerCase() == x.tailNumber.toLowerCase())) &&
@@ -234,7 +234,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 this.populateCustomersFromReportItem(item);
             if (populateTailNumbersDataSource)
                 this.populateTailNumbersFromReportItem(item);
-                      
+
 
             var newRow = {
                 company: item.company,
@@ -243,14 +243,14 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 aircraftTypeCode: item.aircraftTypeCode,
                 customerInfoByGroupId: item.customerInfoByGroupId,
             };
-            
+
             for (let airport of item.visitsByAirport) {
 
                 if (this.selectedFbos.length > 0 && !this.selectedFbos.some(x => x.acukwikFboHandlerId == airport.acukwikFboHandlerId))
                     continue;
 
                 var columnForAirport: ColumnType = { id: airport.icao, name: 'Visits to ' + airport.icao };
-                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };                
+                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };
                 newRow[columnForAirport.id] = !airport.visitsToAirport ? 0 : airport.visitsToAirport;
                 newRow[columnForFbo.id] = !airport.visitsToFbo ? 0 : airport.visitsToFbo;
             }
