@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
@@ -85,8 +88,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Customers
 
         public async Task<CustomerInfoByGroupDto> GetById(int customerInfoByGroupId)
         {
-            var groupId = (await _EntityService.GetAsync(x => x.Oid == customerInfoByGroupId)).FirstOrDefault().GroupId;
-            return (await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId,customerInfoByGroupId))).FirstOrDefault();
+            var queryOptions = new QueryableOptions<CustomerInfoByGroup>();
+            queryOptions.Predicate = (x => x.Oid == customerInfoByGroupId);
+            var groupId = (await _EntityService.GetAsync(queryOptions))?.FirstOrDefault()?.GroupId;
+            return (await GetListbySpec(new CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(groupId.GetValueOrDefault(),customerInfoByGroupId))).FirstOrDefault();
         }
     }
 }

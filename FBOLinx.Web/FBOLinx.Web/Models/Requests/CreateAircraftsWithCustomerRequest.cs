@@ -15,5 +15,6 @@ namespace FBOLinx.Web.Models.Requests
         public string TailNumber { get; set; }
         public AircraftSizes Size { get; set; }
         public string Customer { get; set; }
+        public bool isFavoriteAircraft { get; set; } = false;
     }
 }

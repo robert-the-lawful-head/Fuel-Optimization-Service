@@ -19,7 +19,7 @@ namespace FBOLinx.ServiceLayer.Extensions.Customer
         }
         public static bool IsInNetwork(this CustomersDto? c)
         {
-            return ((c?.Oid > 0));
+            return (c?.Oid > 0);
         }
         public static bool isFuelerLinxCustomer(this CustomersDto? c)
         {

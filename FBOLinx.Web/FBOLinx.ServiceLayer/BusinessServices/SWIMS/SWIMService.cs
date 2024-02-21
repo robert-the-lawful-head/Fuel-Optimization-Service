@@ -738,7 +738,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         continue;
                     }
 
-                    var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.Value.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.Value.AddHours(2));
+                    // Added in a check for ArrivalICAO so that it doesn't flag a departuring tail with an existing fuel order #8685tdtgn
+                    var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Icao == flightLeg.ArrivalICAO && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.Value.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.Value.AddHours(2));
                     if (existingFuelOrder != null)
                     {
                         flightLeg.ID = existingFuelOrder.Oid;

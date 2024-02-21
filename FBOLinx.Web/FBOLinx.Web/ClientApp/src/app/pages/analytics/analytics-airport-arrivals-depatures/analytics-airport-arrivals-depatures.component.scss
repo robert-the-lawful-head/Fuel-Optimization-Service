@@ -6,7 +6,7 @@
 
 .table-container {
     position: relative;
-    height: 593px;
+    height: calc(100vh - 420px);
     overflow: auto;
 }
 

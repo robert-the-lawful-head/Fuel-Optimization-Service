@@ -68,6 +68,7 @@ export class AircraftAssignModalComponent implements OnInit {
             groupId: this.sharedService.currentUser.groupId,
             size: this.selectedAircraft.size,
             tailNumber: this.data.tailNumber,
+            isFavoriteAircraft : false
         };
         if (typeof this.selectedCompany === 'string') {
             payload.customer = this.selectedCompany;
@@ -95,7 +96,7 @@ export class AircraftAssignModalComponent implements OnInit {
                 });
         } else {
             payload.customerId = this.selectedCompany;
-            this.customerAircraftsService.add(payload , this.sharedService.currentUser.oid ).subscribe((result: any) => {
+            this.customerAircraftsService.add(payload , this.sharedService.currentUser.oid, this.sharedService.currentUser.fboId  ).subscribe((result: any) => {
                 const selectedCompany = this.data.customers.find(
                     (customer) => customer.companyId === this.selectedCompany
                 );

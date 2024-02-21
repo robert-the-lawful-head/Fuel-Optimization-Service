@@ -189,7 +189,7 @@ export class CustomerAircraftsGridComponent implements OnInit {
             const id = this.route.snapshot.paramMap.get('id');
             result.groupId = this.sharedService.currentUser.groupId;
             result.customerId = this.customer.customerId;
-            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid,this.isFavoriteCompany, this.sharedService.currentUser.fboId).subscribe(() => {
+            this.customerAircraftsService.add(result , this.sharedService.currentUser.oid, this.sharedService.currentUser.fboId,this.isFavoriteCompany).subscribe(() => {
                 this.customerAircraftsService
                     .getCustomerAircraftsByGroupAndCustomerId(
                         this.sharedService.currentUser.groupId,

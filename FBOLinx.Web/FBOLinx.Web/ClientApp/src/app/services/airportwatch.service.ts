@@ -113,16 +113,16 @@ export class AirportWatchService {
         );
     }
 
-    public createHistoricalParking(record: AirportWatchHistoricalParking) {
-        return this.http.post<AirportWatchHistoricalParking>(
+    public createHistoricalParking(record: FlightWatchHistorical) {
+        return this.http.post<FlightWatchHistorical>(
             `${this.accessPointUrl}/historical-parking`,
             record,
             { headers: this.headers }
         );
     }
 
-    public updateHistoricalParking(record: AirportWatchHistoricalParking) {
-        return this.http.put<any>(
+    public updateHistoricalParking(record: FlightWatchHistorical) {
+        return this.http.put<FlightWatchHistorical>(
             `${this.accessPointUrl}/historical-parking`,
             record,
             { headers: this.headers }
