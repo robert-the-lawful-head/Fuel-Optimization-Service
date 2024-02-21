@@ -543,8 +543,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     if (fuelReq != null)
                     {
                         customerAircraftId = fuelReq.CustomerAircraftId.GetValueOrDefault();
-                        arrivalDateTime = fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard;
-                        departureDateTime = fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard;
+                        arrivalDateTime = fuelReq.Eta.ToString() + " " + fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)";
+                        departureDateTime = fuelReq.Etd.ToString() + " " + fuelReq.TimeStandard == "L" ? "(Local)" : "(Zulu)";
                         quotedVolume = fuelReq.QuotedVolume.GetValueOrDefault();
                     }
 
@@ -558,8 +558,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         if (customerAircraftId == 0)
                             customerAircraftId = serviceOrder.CustomerAircraftId;
 
-                        arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
-                        departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
+                        if (arrivalDateTime == "")
+                        {
+                            arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
+                            departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
+                        }
                     }
 
                     if (customer.Oid == 0 || fuelReq == null || fuelReq.Oid == 0)

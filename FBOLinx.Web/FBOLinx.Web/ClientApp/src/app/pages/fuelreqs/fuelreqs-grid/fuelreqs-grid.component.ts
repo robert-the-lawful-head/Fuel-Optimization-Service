@@ -140,6 +140,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     public customer: string;
     public isDrawerOpenedByDefault: boolean = false;
     public isDrawerManuallyClicked: boolean = false;
+    test: any;
 
     tableLocalStorageKey = 'fuel-req-table-settings';
 
@@ -538,6 +539,15 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             await this.sleep(100);
         }
 
+        this.updateChanges(changes);
+        
+        if (this.isDrawerManuallyClicked) {
+            //await this.sleep(10);
+            this.toggleOpenNotesDrawer();
+        }
+    }
+
+    updateChanges(changes: any) {
         this.serviceOrderId = changes.serviceOrderId;
         this.associatedFuelOrderId = changes.associatedFuelOrderId;
         this.fuelerlinxTransactionId = changes.fuelerLinxTransactionId;
@@ -545,16 +555,14 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
         this.customerId = changes.customerId;
         this.customer = changes.customer;
         this.isDrawerManuallyClicked = changes.isDrawerManuallyClicked;
-        if (this.isDrawerManuallyClicked) {
-            //await this.sleep(10);
-            this.toggleOpenNotesDrawer();
-        }
     }
 
     async toggleOpenNotesDrawer() {
         if (this.drawer != undefined) {
             if (this.isDrawerOpenedByDefault || this.isDrawerManuallyClicked) {
-                this.drawer.open();
+                this.drawer.open().then((sidenavIsOpen) => {
+                    this.test = sidenavIsOpen
+                })
             }
             else {
                 this.toggleClosedNotesDrawer(this.currentElementId);
@@ -569,7 +577,10 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     async toggleClosedNotesDrawer(elementId: string, isManuallyClosed: boolean = false) {
         //this.drawer.close();
         //await this.sleep(100);
-        var changes = {};
+
+        this.drawer.close();
+        //this.test = "close";
+
         if (isManuallyClosed && this.openedNotes.length > 0) {
             if (this.openedNotes.length > 0) {
                 const index = this.openedNotes.indexOf(elementId);
@@ -584,18 +595,16 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 if (this.openedNotes.length > 0) {
                     var lastOrder = this.openedNotes[this.openedNotes.length - 1];
                     var lastOrderInfo = lastOrder.split("|");
-                    changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
+                    var changes = { serviceOrderId: lastOrderInfo[0], associatedFuelOrderId: lastOrderInfo[1], fuelerLinxTransactionId: lastOrderInfo[2], tailNumber: lastOrderInfo[3], customerId: lastOrderInfo[4], customer: lastOrderInfo[5], isDrawerManuallyClicked: true };
+                    this.updateChanges(changes);
+                    this.drawer.close().then((sidebarNav) => {
+                        this.test = sidebarNav;
+                        this.toggleOpenNotesDrawer();
+                    });
+                    
                 }
             }
         }
-
-        this.drawer.close().then(() => {
-            if (isManuallyClosed && changes) {
-                    if (this.openedNotes.length > 0) {
-                        this.toggleDrawerChanged(changes);
-                    }
-            }
-        })
     }
 
     private scrollToIndex(id: number): void {
