@@ -37,6 +37,7 @@ import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCon
 import { Subscription } from 'rxjs';
 import { AirportWatchService } from 'src/app/services/airportwatch.service';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -131,6 +132,7 @@ export class FlightWatchMapComponent
         private acukwikairportsService: AcukwikairportsService,
         private flightWatchHelper: FlightWatchHelper,
         private airportWatchService: AirportWatchService,
+        private flightWatchMapSharedService: FlightWatchMapSharedService
     ) {
         super();
         this.fboId = this.sharedService.currentUser.fboId;
@@ -373,6 +375,9 @@ export class FlightWatchMapComponent
 
         this.popupData = Object.assign({}, obj);
     }
+    setPopUpData(selectedPopUp: Aircraftwatch) {
+        this.popupData = Object.assign({}, selectedPopUp);
+    }
     loadFlightOnMap() {
         this.setMapMarkersData(keys(this.data));
 
@@ -573,6 +578,7 @@ export class FlightWatchMapComponent
 
     }
     private async createPopUp(self: FlightWatchMapComponent, id: string): Promise<void>{
+        this.flightWatchMapSharedService.getAndUpdateAircraftWithHistorical(this.fboId, this.icao, this.data[id]);
         this.updatePopUpData.emit(this.data[id]);
 
         self.selectedAircraft = [id];
@@ -666,6 +672,7 @@ export class FlightWatchMapComponent
         this.data[selectedFlight].isInNetwork = true;
         this.data[selectedFlight].flightDepartment = event.flightDepartment;
         this.data[selectedFlight].aircraftTypeCode = event.aircraftTypeCode;
+
         this.markerClicked.emit(this.data[selectedFlight]);
     }
     goToAirport(icao: string){

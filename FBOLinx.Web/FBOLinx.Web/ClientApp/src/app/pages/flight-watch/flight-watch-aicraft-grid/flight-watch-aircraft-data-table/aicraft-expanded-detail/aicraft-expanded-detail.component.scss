@@ -1,0 +1,13 @@
+table.description-table {
+    border-collapse: collapse;
+    width: 100%;
+    th,
+    td {
+        text-align: left;
+        padding: 4px;
+        font-size: 12px;
+    }
+}
+.example-element-description {
+    padding: 16px;
+}
