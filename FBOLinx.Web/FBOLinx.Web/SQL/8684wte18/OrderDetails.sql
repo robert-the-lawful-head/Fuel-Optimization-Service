@@ -23,7 +23,9 @@ ETA datetime2(7) NULL,
 FboHandlerId int NULL,
 IsCancelled bit NULL,
 AssociatedFuelOrderId int null,
-IsArchived bit null
+IsArchived bit null,
+TimeStandard char(1) null
+
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (
 	[OID] ASC

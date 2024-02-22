@@ -561,8 +561,16 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                         if (arrivalDateTime == "")
                         {
-                            arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
-                            departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
+                            if (orderDetails.TimeStandard == "Z")
+                            {
+                                arrivalDateTime = serviceOrder.ArrivalDateTimeUtc.ToString() + " (Zulu)";
+                                departureDateTime = serviceOrder.DepartureDateTimeUtc.ToString() + " (Zulu)";
+                            }
+                            else
+                            {
+                                arrivalDateTime = await _AirportTimeService.GetAirportLocalDateTime(fbo.Oid, serviceOrder.ArrivalDateTimeUtc) + " (Local)";
+                                departureDateTime = await _AirportTimeService.GetAirportLocalDateTime(fbo.Oid, serviceOrder.DepartureDateTimeUtc) + " (Local)";
+                            }
                         }
                     }
 

@@ -135,6 +135,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.PaymentMethod = request.PaymentMethod;
             orderDetails.Eta = request.Eta;
             orderDetails.FboHandlerId = handlerId;
+            orderDetails.TimeStandard = request.TimeStandard;
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
