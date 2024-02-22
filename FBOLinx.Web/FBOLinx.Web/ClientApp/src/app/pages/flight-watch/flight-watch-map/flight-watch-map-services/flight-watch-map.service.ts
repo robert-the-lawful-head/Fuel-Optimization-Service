@@ -68,12 +68,4 @@ export class FlightWatchMapService {
             );
         });
     }
-    public filterArrivalsAndDepartures(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
-        return data?.filter((row: FlightWatchModelResponse) => {
-            return (
-                row.arrivalICAO == row.focusedAirportICAO ||
-                row.departureICAO == row.focusedAirportICAO
-            );
-        });
-    }
 }
