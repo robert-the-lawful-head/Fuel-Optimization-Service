@@ -1,4 +1,5 @@
-﻿using FBOLinx.Core.Enums;
+﻿using Azure.Core;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.AcukwikAirport;
@@ -120,8 +121,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Auth
             }
 
             //Return URL with authentication for 7 days
-            AccessTokensDto accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
-            return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };
+            //AccessTokensDto accessToken = await _OAuthService.GenerateAccessToken(user, 10080);
+            //return new AuthenticatedLinkResponse() { AccessToken = accessToken.AccessToken, FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };
+            return new AuthenticatedLinkResponse() { FboEmails = importedFboEmail.Email.Trim(), Fbo = fbo.Fbo };
         }
 
         public async Task<string> CreateNonRevAccount(int handlerId)
