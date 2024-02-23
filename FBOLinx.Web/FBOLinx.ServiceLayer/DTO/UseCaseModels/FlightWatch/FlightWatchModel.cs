@@ -9,7 +9,6 @@ using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Airport;
 using FBOLinx.ServiceLayer.Extensions.Aircraft;
-using Fuelerlinx.SDK;
 using Geolocation;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
@@ -149,7 +148,6 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
                 return null;
             }
         }
-
         public string SourceOfCoordinates
         {
             get
@@ -158,22 +156,22 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
                 switch (this.PositionDateTimeSource)
                 {
                     case FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate:
-                        if((_SwimFlightLeg?.LastUpdated).GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
+                       if (_SwimFlightLeg?.LastUpdated.GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
 (_SwimFlightLeg?.Longitude).HasValue)
                             sourceOfCoordinates = FlightWatchConstants.CoordinatesSource.Swim;
-                    break;
+                        break;
                     case FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc:
-                        if ((_AirportWatchLiveData?.BoxTransmissionDateTimeUtc).GetValueOrDefault() >=
+                       if (_AirportWatchLiveData?.BoxTransmissionDateTimeUtc >=
 _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
                             sourceOfCoordinates = FlightWatchConstants.CoordinatesSource.Antenna;
                         break;
                     case FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc:
-                        if ((_AirportWatchLiveData?.AircraftPositionDateTimeUtc).GetValueOrDefault() >=
+                       if (_AirportWatchLiveData?.AircraftPositionDateTimeUtc >=
 _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
                             sourceOfCoordinates = FlightWatchConstants.CoordinatesSource.Antenna;
                         break;
                     case FlightWatchConstants.PositionDateTimeSource.CreatedDateTime:
-                        if ((_AirportWatchLiveData?.CreatedDateTime).GetValueOrDefault() >=
+                       if (_AirportWatchLiveData?.CreatedDateTime.GetValueOrDefault() >=
 _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
                             sourceOfCoordinates = FlightWatchConstants.CoordinatesSource.Antenna;
                         break;
@@ -186,11 +184,11 @@ _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
             get
             {
                 var gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.CreatedDateTime;
-                if (this.SwimLastUpdated.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.AircraftPositionDateTimeUtc.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc)
+                if (this.SwimLastUpdated.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.AircraftPositionDateTimeUtc.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc.GetValueOrDefault())
                     gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
-                else if (this.AircraftPositionDateTimeUtc > this.DateCreated.GetValueOrDefault() && this.AircraftPositionDateTimeUtc > this.BoxTransmissionDateTimeUtc)
+                else if (this.AircraftPositionDateTimeUtc.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.AircraftPositionDateTimeUtc.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc.GetValueOrDefault())
                     gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
-                else if (this.BoxTransmissionDateTimeUtc > this.DateCreated.GetValueOrDefault() && this.BoxTransmissionDateTimeUtc > this.AircraftPositionDateTimeUtc)
+                else if (this.BoxTransmissionDateTimeUtc.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.BoxTransmissionDateTimeUtc.GetValueOrDefault() > this.AircraftPositionDateTimeUtc.GetValueOrDefault())
                     gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc;
 
                 return gratestLiveDataDate;

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Core.Constants;
 using FBOLinx.Core.Enums;
-using FBOLinx.DB.Models;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.Service.Mapping.Dto;
@@ -26,7 +25,6 @@ using FBOLinx.ServiceLayer.DTO.UseCaseModels.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using FBOLinx.ServiceLayer.Logging;
 using Geolocation;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
@@ -120,8 +118,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Grab the airport to be considered for arrivals and departures.
             var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
 
-            //Then load all SWIM flight legs that we have.
-             var swimFlightLegs = await _SwimFlightLegService.GetSWIMFlightLegs(airportsForArrivalsAndDepartures, isFlightWatchMapData);
+            //Then load all SWIM flight legs that we have from the last hour.
+            IEnumerable<SWIMFlightLegDTO> swimFlightLegs;
+            if ((airportsForArrivalsAndDepartures?.Count).GetValueOrDefault() > 0)
+                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            else
+                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(30000)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
@@ -181,13 +183,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _Fbo = await _FboService.GetSingleBySpec(
                 new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
 
-            var liveData = await _AirportWatchLiveDataService.GetLiveData(GetFocusedAirportIdentifier(), 2);
+            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, 2);
 
-            //Grab the airport to be considered for arrivals and departures.
-            var airportsForArrivalsAndDepartures = await GetViableAirportsForSWIMData();
-
-            //Then load all SWIM flight legs that we have from the last hour.
-            var swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+            var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,30,30);
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveData, swimFlightLegs);
@@ -196,8 +194,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
             if (_demoFlightWatch.IsDemoDataVisibleByFboId(options.FboIdForCenterPoint))
                 AddDemoDataToFlightWatchResult(result, _Fbo);
-
-            return FilterFlightWatchData(result);
+            return result;
         }
         private List<FlightWatchModel> FilterFlightWatchData(List<FlightWatchModel> FlightWatchList)
         {
@@ -247,7 +244,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             //Combine SWIM and AirportWatch data by tail number
             result = (from liveData in liveDataList
                       join flightLeg in swimFlightLegs on liveData.TailNumber?.ToUpper() equals flightLeg.AircraftIdentification?.ToUpper()
-                      select new FlightWatchModel(liveData,null,flightLeg,null){}).ToList();
+                      select new FlightWatchModel(liveData,flightLeg){}).ToList();
 
             //Combine SWIM and AirportWatch data by flight number
             result.AddRange((from liveData in liveDataList
@@ -256,15 +253,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                                  into leftJoinResult
                              from existing in leftJoinResult.DefaultIfEmpty()
                              where existing == null
-                             select new FlightWatchModel(liveData,null,flightLeg, null) {}).ToList());
-
-            //Add any remaining AirportWatch data to the result without a SWIM match
-            result.AddRange((from liveData in liveDataList
-                             join resultItem in result on liveData.Oid equals resultItem.AirportWatchLiveDataId.GetValueOrDefault()
-                                 into leftJoinResult
-                             from resultItem in leftJoinResult.DefaultIfEmpty()
-                             where resultItem == null
-                             select new FlightWatchModel(liveData, null)));
+                             select new FlightWatchModel(liveData,flightLeg) {}).ToList());
 
             //Add any remaining SWIM data to the result without an AirportWatch match
             result.AddRange(from swimFlight in swimFlightLegs
@@ -273,16 +262,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                             from resultItem in leftJoinResult.DefaultIfEmpty()
                             where resultItem == null
                             select new FlightWatchModel(null, swimFlight));
-
-            //If we are focused on an FBO then remove any potential records that we've lost track of on antenna + swim data
-            if (_Options.FboIdForCenterPoint.GetValueOrDefault() > 0)
-            {
-                var cutoffDateTime = DateTime.UtcNow.AddMinutes(-15);
-                result.RemoveAll(x =>
-                    x.AirportWatchLiveDataId.GetValueOrDefault() == 0 &&
-                    (!(x.GetSwimFlightLeg()?.LastUpdated).HasValue ||
-                     x.GetSwimFlightLeg().LastUpdated < cutoffDateTime));
-            }
 
             return result;
         }

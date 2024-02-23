@@ -43,6 +43,9 @@ export interface Swim {
     faaRegisteredOwner: string;
     airportWatchLiveDataId: number | any;
     swimFlightLegId: number | any;
+    sourceOfCoordinates: string;
+    positionDateTimeSource: string;
+    dateCreated: string;
 }
 export const swimTableColumns = {
     status: 'status',

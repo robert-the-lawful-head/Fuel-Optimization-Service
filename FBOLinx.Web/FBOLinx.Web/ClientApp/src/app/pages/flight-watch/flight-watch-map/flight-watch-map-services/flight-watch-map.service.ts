@@ -5,6 +5,7 @@ import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import { convertDMSToDEG } from 'src/utils/coordinates';
 import { AircraftImageData, AIRCRAFT_IMAGES } from '../aircraft-images';
+import { coordinatesSource } from 'src/app/enums/flight-watch.enum';
 
 @Injectable({
     providedIn: 'root',
@@ -63,8 +64,15 @@ export class FlightWatchMapService {
     }
     public filterDepatures(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
         return data?.filter((row: FlightWatchModelResponse) => {
+            return row.departureICAO == row.focusedAirportICAO
+        });
+    }
+    public filterArrivalsAndDepartures(data: FlightWatchModelResponse[] ): FlightWatchModelResponse[]{
+        return data?.filter((row: FlightWatchModelResponse) => {
             return (
-                row.departureICAO == row.focusedAirportICAO
+                row.sourceOfCoordinates != coordinatesSource.None &&
+                (row.arrivalICAO == row.focusedAirportICAO ||
+                row.departureICAO == row.focusedAirportICAO)
             );
         });
     }
