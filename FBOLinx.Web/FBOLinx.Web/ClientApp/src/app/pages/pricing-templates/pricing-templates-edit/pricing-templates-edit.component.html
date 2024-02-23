@@ -291,7 +291,7 @@
                                                     formControlName="notes"
                                                     id="rteNotes"
                                                     height="400"
-                                                    [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
+                                                    [toolbarSettings]='tools' (actionBegin)="onActionBegin($event)"></ejs-richtexteditor>
                                 <h6 class="mt-2">File Attachment</h6>
                                 <div>
                                     <input type="file"
