@@ -619,8 +619,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                     // FLIGHT DEPARTMENT INFO
                     var flightDepartmentInfo = new List<FlightDepartmentInfoForSendGrid>();
-                    flightDepartmentInfo.Add(new FlightDepartmentInfoForSendGrid { info = "Email: " + fuelReq.Email });
-                    if (!string.IsNullOrEmpty(fuelReq.PhoneNumber))
+                    if (fuelReq != null && !string.IsNullOrEmpty(fuelReq.Email))
+                        flightDepartmentInfo.Add(new FlightDepartmentInfoForSendGrid { info = "Email: " + fuelReq.Email }); 
+                    else
+                        flightDepartmentInfo.Add(new FlightDepartmentInfoForSendGrid { info = "Email: " + orderDetails.ConfirmationEmail });
+                    if (fuelReq != null && !string.IsNullOrEmpty(fuelReq.PhoneNumber))
                         flightDepartmentInfo.Add(new FlightDepartmentInfoForSendGrid { info = "Phone: " + fuelReq.PhoneNumber });
                     if (!string.IsNullOrEmpty(request.CallSign))
                         flightDepartmentInfo.Add(new FlightDepartmentInfoForSendGrid { info = "Call Sign: " + request.CallSign });
