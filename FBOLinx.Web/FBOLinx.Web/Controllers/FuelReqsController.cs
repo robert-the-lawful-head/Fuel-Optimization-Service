@@ -148,7 +148,7 @@ namespace FBOLinx.Web.Controllers
 
             if (fuelReq == null)
             {
-                return NotFound();
+                fuelReq = await _fuelReqService.GetContractOrder(fboId, sourceId);
             }
 
             return Ok(fuelReq);

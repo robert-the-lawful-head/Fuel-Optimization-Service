@@ -43,6 +43,9 @@ using FBOLinx.DB.Specifications.Customers;
 using EllipticCurve.Utils;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 {
@@ -68,6 +71,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         Task AddServiceOrder(ServiceOrderRequest request, FbosDto fbo);
         Task CheckAndSendFuelOrderUpdateEmail(FuelReqRequest fuelerlinxTransaction);
         Task<FuelReqDto> CreateFuelOrder(FuelReqDto request);
+        Task<FuelReqDto> GetContractOrder(int fboId, int fuelerLinxTransactionId);
     }
 
     public class FuelReqService : BaseDTOService<FuelReqDto, DB.Models.FuelReq, FboLinxContext>, IFuelReqService
@@ -395,6 +399,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             }
             return null;
+        }
+
+        public async Task<FuelReqDto> GetContractOrder(int fboId, int fuelerLinxTransactionId)
+        {
+            var result = new FuelReqDto();
+            var fboRecord = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId));
+            if (fboRecord == null)
+                return result;
+
+            var airport = await _AirportService.GetGeneralAirportInformation(fboRecord.FboAirport.Icao);
+
+            var customers =
+               await _CustomerInfoByGroupEntityService.GetListBySpec(
+                   new CustomerInfoByGroupByGroupIdSpecification(fboRecord.GroupId));
+
+            var customerAircrafts = await _customerAircraftService.GetAircraftsList(fboRecord.GroupId, fboRecord.Oid);
+
+            FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _fuelerLinxService.GetContractFuelRequests(new FBOLinxOrdersRequest()
+            { EndDateTime = DateTime.Now, StartDateTime = DateTime.Now, Icao = fboRecord.FboAirport.Icao, Fbo = fboRecord.Fbo, FuelerLinxTransactionId = fuelerLinxTransactionId });
+
+            if (fuelerlinxContractFuelOrders.Result.Count > 0)
+            {
+                var transaction = fuelerlinxContractFuelOrders.Result.FirstOrDefault();
+                var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
+                fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
+                fuelRequest.Fboid = fboId;
+                fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
+                fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
+                fuelRequest.CustomerAircraftId = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
+                result = fuelRequest;
+            }
+
+            return result;
         }
         private async Task<List<FuelReqDto>> GetUpcomingOrdersFromCache(int groupId, int fboId)
         {

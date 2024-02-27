@@ -266,8 +266,8 @@
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>Services Completed</th>
                         <td *matCellDef="let fuelreq"
                             mat-cell class="services-completed">
-                            <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
-                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.oid == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
 
                         </td>
                     </ng-container>

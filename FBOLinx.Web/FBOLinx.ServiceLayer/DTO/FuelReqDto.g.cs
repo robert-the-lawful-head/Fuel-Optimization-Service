@@ -120,12 +120,21 @@ namespace FBOLinx.Service.Mapping.Dto
 
         public static FuelReqDto Cast(TransactionDTO transaction, string companyName, Fuelerlinx.SDK.GeneralAirportInformation airport, bool isConfirmed = false)
         {
-            FuelReqDto fuelRequest = new FuelReqDto();
-            fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName, isConfirmed);
-            SetAirportLocalTimes(fuelRequest, airport);
-            SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
+            try
+            {
+                FuelReqDto fuelRequest = new FuelReqDto();
+                fuelRequest.CastFromFuelerLinxTransaction(transaction, companyName, isConfirmed);
+                SetAirportLocalTimes(fuelRequest, airport);
+                SetCustomerNotesAndPaymentMethod(transaction, fuelRequest);
 
-            return fuelRequest;
+                return fuelRequest;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error casting FuelReqDto from Fuelerlinx Transaction", ex);
+            }
+
+            return new FuelReqDto();
         }
         private static DateTime GetUtcTimeFromFuelerLinxServerTime(DateTime pacificDateime)
         {
@@ -136,9 +145,12 @@ namespace FBOLinx.Service.Mapping.Dto
         {
             if (transaction.TransactionDetails.CopyFbo.HasValue && transaction.TransactionDetails.CopyFbo.Value)
             {
-                var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
-                if (fboNotes != null)
-                    fuelRequest.CustomerNotes = fboNotes.Note;
+                if (transaction.TransactionNotes != null)
+                {
+                    var fboNotes = transaction.TransactionNotes.Where(t => t.NoteType == TransactionNoteTypes.FboNote).FirstOrDefault();
+                    if (fboNotes != null)
+                        fuelRequest.CustomerNotes = fboNotes.Note;
+                }
 
                 if (transaction.TransactionDetails.SendPaymentToFbo.HasValue && transaction.TransactionDetails.SendPaymentToFbo.Value)
                     fuelRequest.PaymentMethod = transaction.TransactionDetails.PaymentMethod;
