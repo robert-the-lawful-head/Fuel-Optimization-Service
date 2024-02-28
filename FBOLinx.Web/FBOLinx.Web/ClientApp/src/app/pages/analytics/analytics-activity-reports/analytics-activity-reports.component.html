@@ -1,0 +1,12 @@
+<ni-card [headerBgColor]="'gray'" title="Activity Reports">
+    <ng-container *ngFor="let report of reports">
+        <div class="report-item">
+            <div class="report-title">
+              <p>{{report.title}}</p>
+            </div>
+            <div class="report-description">
+                <p>{{report.description}}</p>
+            </div>
+          </div>
+    </ng-container>
+</ni-card>
