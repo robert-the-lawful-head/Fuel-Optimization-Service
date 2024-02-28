@@ -902,7 +902,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
             if ((fuelerlinxTransaction.IsOkToSendEmail != null && fuelerlinxTransaction.IsOkToSendEmail == true) && sendEmail && fuelerlinxTransaction.FboHandlerId > 0)
             {
-                var success = await SendFuelOrderNotificationEmail(fuelerlinxTransaction.FboHandlerId, fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.CompanyId.GetValueOrDefault(), new SendOrderNotificationRequest { QuotedVolume = fuelReq.QuotedVolume.GetValueOrDefault() }, requestStatus == "cancelled" ? true : false, fuelReq);
+                var success = await SendFuelOrderNotificationEmail(fuelerlinxTransaction.FboHandlerId, fuelerlinxTransaction.SourceId.GetValueOrDefault(), fuelerlinxTransaction.CompanyId.GetValueOrDefault(), new SendOrderNotificationRequest { QuotedVolume = fuelReq == null ? orderDetails.QuotedVolume.GetValueOrDefault() : fuelReq.QuotedVolume.GetValueOrDefault() }, requestStatus == "cancelled" ? true : false, fuelReq);
                 //var success = await SendFuelOrderUpdateEmail(orderDetails.FuelVendor, fuelerlinxTransaction.FboHandlerId, requestStatus, orderDetails.FuelerLinxTransactionId);
                 if (success)
                 {
