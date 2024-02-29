@@ -643,7 +643,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                                 if (orderDetails.FuelVendor == "Directs: Custom")
                                     vendor = "Flight Dept.";
                                 else if (orderDetails.FuelVendor.ToLower() == "fbolinx")
-                                    vendor = fbo.Fbo;
+                                    vendor = fbo.Fbo + " (FBOLinx Direct)";
                                 else
                                     vendor = orderDetails.FuelVendor;
                                 services.Add(new ServicesForSendGrid { service = serviceCount + ". " + service + " " + "via " + vendor});
@@ -782,7 +782,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
         public async Task<FuelReqDto> CreateFuelOrder(FuelReqDto request)
         {
             var customerAircraft = await _customerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(request.CustomerAircraftId.GetValueOrDefault()));
-            var icao = await _fboService.GetFBOIcao(request.Fboid.GetValueOrDefault());
+            var fbo = await _fboService.GetFbo(request.Fboid.GetValueOrDefault());
+            var icao = fbo.FboAirport.Icao;
 
             request.Icao = icao;
             request.CustomerId = customerAircraft.CustomerId;
@@ -792,6 +793,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             var customer = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupByCustomerIdSpecification(request.CustomerId.GetValueOrDefault()));
             request.CustomerName = customer.Company;
             request.TailNumber = customerAircraft.TailNumber;
+            request.CustomerId = customer.CustomerId;
+
+            var orderDetails = new OrderDetailsDto();
+            orderDetails.ConfirmationEmail = request.Email;
+            orderDetails.FuelVendor = "FBO Custom";
+            orderDetails.QuotedVolume = request.QuotedVolume;
+            orderDetails.Eta = request.Eta;
+            orderDetails.FboHandlerId = fbo.AcukwikFBOHandlerId;
+            orderDetails.CustomerAircraftId = customerAircraft.Oid;
+            orderDetails.AssociatedFuelOrderId = request.Oid;
+            orderDetails = await _orderDetailsService.AddAsync(orderDetails);
 
             return request;
         }

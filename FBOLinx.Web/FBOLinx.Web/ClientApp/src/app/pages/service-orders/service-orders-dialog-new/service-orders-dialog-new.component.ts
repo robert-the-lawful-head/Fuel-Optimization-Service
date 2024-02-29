@@ -191,6 +191,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
                 newFuelOrder.oid = response.oid;
                 newFuelOrder.customerName = response.customerName;
                 newFuelOrder.tailNumber = response.tailNumber;
+                newFuelOrder.customerId = response.customerId;
 
                 if (data.serviceOrderItems.length > 0) {
                     data.associatedFuelOrderId = response.oid;
