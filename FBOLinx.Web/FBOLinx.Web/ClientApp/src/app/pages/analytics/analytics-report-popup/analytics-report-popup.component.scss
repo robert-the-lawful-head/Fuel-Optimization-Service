@@ -1,0 +1,41 @@
+:host {
+    .report-popup-container {
+        display: flex;
+        z-index: 9999;
+        position: fixed;
+        height: 100%;
+        padding: 0px;
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distribute space evenly between rows */
+            background-color: white;
+            border: 1px solid #252d47;
+            height: calc(100vh - 140px);
+            width: 100%;
+            .element{
+                flex-grow: 1; /* Allow elements to grow and share space equally */
+            }
+            .full-height {
+                overflow: auto;
+                flex-grow: 999; /* A high value to make the middle element take up all available space */
+            }
+            .mat-toolbar,
+            .mat-toolbar-multiple-rows {
+                min-height: 40px; /* Set the minimum height of the toolbar */
+                height: 40px;
+            }
+            /* Add space between title and button */
+            .spacer {
+                flex: 1;
+            }
+            .close-icon{
+                cursor: pointer;
+            }
+            .action-buttons {
+                padding: 0 0 15px 0;
+            }
+        }
+    }
+}

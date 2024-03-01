@@ -1,3 +1,4 @@
+<app-analytics-report-popup [report]="selectedRerport"></app-analytics-report-popup>
 <section class="statistics-tab">
     <mat-tab-group>
         <mat-tab label="Statistics">
@@ -24,7 +25,8 @@
             </div>
             <section class="row">
                 <div class="col-12">
-                    <app-analytics-activity-reports></app-analytics-activity-reports>
+                    <app-analytics-activity-reports
+                    (reportClicked)="openReport($event)"></app-analytics-activity-reports>
                 </div>
             </section>
             <div class="row">
@@ -51,17 +53,13 @@
         <mat-tab [label]="((!authenticatedIcao ? '' : authenticatedIcao) + ' Arrivals/Departures')">
             <div class="row mt-3">
                 <div class="col-12">
-                    <app-analytics-airport-arrivals-depatures
-                        [customers]="customers"
-                        (refreshCustomers)="getCustomersList()"
-                    ></app-analytics-airport-arrivals-depatures>
+
                 </div>
             </div>
         </mat-tab>
         <mat-tab label="Network Arrivals/Departures">
             <div class="row mt-3">
                 <div class="col-12">
-                    <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
                 </div>
             </div>
         </mat-tab>

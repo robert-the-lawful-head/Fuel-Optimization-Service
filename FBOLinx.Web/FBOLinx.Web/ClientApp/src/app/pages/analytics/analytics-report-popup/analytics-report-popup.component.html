@@ -1,0 +1,66 @@
+<div
+    *ngIf="isPopUpOpen"
+    [@fadeInOut]="isPopUpOpen ? 'in' : 'out'"
+    class="report-popup-container col-md-10"
+>
+    <div class="popup-content mat-elevation-z8">
+        <mat-toolbar class="element" color="primary">
+            <mat-toolbar-row>
+                <span>{{ report?.title }}</span>
+                <span class="spacer"></span>
+                <mat-icon class="close-icon"(click)="closePopUp()">close</mat-icon>
+            </mat-toolbar-row>
+        </mat-toolbar>
+        <div class="element full-height">
+            <div
+                *ngIf="isReportVisible[analiticsReportTypes.CustomerStatistics]"
+            >
+                <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
+            </div>
+            <div
+                *ngIf="isReportVisible[analiticsReportTypes.ArrivalsDepartures]"
+            >
+                <app-analytics-airport-arrivals-depatures
+                    [customers]="customers"
+                    (refreshCustomers)="getCustomersList()"
+                ></app-analytics-airport-arrivals-depatures>
+            </div>
+            <div
+                *ngIf="
+                    isReportVisible[
+                        analiticsReportTypes.FBONetworkArrivalDepartures
+                    ]
+                "
+            >
+                <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
+            </div>
+            <div
+                *ngIf="isReportVisible[analiticsReportTypes.LostToCompetition]"
+            >
+                <app-missedorders-grid></app-missedorders-grid>
+            </div>
+            <div
+                *ngIf="
+                    isReportVisible[
+                        analiticsReportTypes.FuelerLinxCustomerCaptureRate
+                    ]
+                "
+            >
+                Component on going
+            </div>
+        </div>
+        <div class="action-buttons">
+            <div class="pull-right">
+                <button
+                    (click)="exportReport()"
+                    class="mr-3"
+                    ni-button
+                    size="big"
+                    view="accent"
+                >
+                    Export
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

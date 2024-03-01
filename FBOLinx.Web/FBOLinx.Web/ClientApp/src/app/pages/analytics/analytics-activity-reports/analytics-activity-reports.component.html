@@ -1,7 +1,7 @@
 <ni-card [headerBgColor]="'gray'" title="Activity Reports">
     <ng-container *ngFor="let report of reports">
         <div class="report-item">
-            <div class="report-title">
+            <div class="report-title" (click)="openReport(report)">
               <p>{{report.title}}</p>
             </div>
             <div class="report-description">
