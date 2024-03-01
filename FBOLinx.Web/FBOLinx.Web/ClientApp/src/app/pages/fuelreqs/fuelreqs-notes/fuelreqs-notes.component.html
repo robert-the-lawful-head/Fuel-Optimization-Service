@@ -23,31 +23,39 @@
                     </span>
                 </div>
             </div>
-            <div class="p-2" *ngIf="customerNotes != undefined && customerNotes != ''">
+            <div class="p-2 "*ngIf="(customerNotes != undefined && customerNotes != '') || (customerAircraftNotes != undefined && customerAircraftNotes != '')">
                 <div class="text-gray-dark">Customer Note (internal)</div>
                 <div>
-                    {{customerNotes}}
+                    <div class="padding-5" style="width: 280px; max-width: 280px;">
+                        {{customerNotes}}
+                    </div>
 
-                    {{customerAircraftNotes}}
+                    <div class="padding-5" style="width: 280px; max-width: 280px;">
+                        {{customerAircraftNotes}}
+                    </div>
+                    <div><hr /></div>
                 </div>
-                <div><hr /></div>
             </div>
             <div class="p-2" *ngIf="serviceOrderNotes.length > 0">
                 <div>Operator Request</div>
                 <div *ngFor="let note of serviceOrderNotes">
                     <div class="pb-2">
-                        <span *ngIf="!note.isEdit">{{note}}</span>
+                        <div *ngIf="!note.isEdit" class="padding-5" style="width: 280px; max-width: 280px;">
+                            {{note}}
+                        </div>
                     </div>
                 </div>
                 <div><hr /></div>
             </div>
-            <div class="p-2" *ngIf="additionalNotes.length > 0">
+            <div class="p-2">
                 <div>Additional Notes (internal)</div>
                     <div *ngFor="let note of additionalNotes">
                         <div class="pb-2">
                             <div class="row">
                                 <div class="col-7">
-                                    <span *ngIf="!note.isEdit">{{note.note}}</span>
+                                    <div *ngIf="!note.isEdit" class="padding-5" style="width: 200px; max-width: 200px;">
+                                        {{note.note}}
+                                    </div>
                                     <span *ngIf="note.isEdit">
                                         <mat-form-field>
                                             <input matInput [(ngModel)]="note.note" />

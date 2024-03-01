@@ -8,30 +8,30 @@
         <div class="row mat-elevation-z">
             <ng-container *ngFor="let service of fuelreqsServicesAndFeesGridDisplay;">
                 <div class="col-3">
-                    <ni-card customStyle="padding: 5px 5px; height: 88px;">
+                    <ni-card customStyle="height: 88px;">
                         <div class="service-card">
-                            <div class="row">
-                                <div class="col-1 text">
-                                    <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)" *ngIf="!service.isAddMode">
+                            <div class="row" [ngStyle]="service.isAddMode ? 'services-add' : ''">
+                                <div class="col-1 text" *ngIf="!service.isAddMode">
+                                    <mat-checkbox [(ngModel)]="service.isCompleted" (change)="updateCompletedFlag(service)">
                                     </mat-checkbox>
                                 </div>
-                                <div class="col-6 text" *ngIf="!service.isEditMode && !service.isAddMode">
-                                    <span *ngIf="!service.isCompleted">{{service.serviceName}}</span>
-                                    <span *ngIf="service.isCompleted"><s>{{service.serviceName}}</s></span>
+                                <div class="col-5 text" *ngIf="!service.isEditMode && !service.isAddMode">
+                                    <div class="padding-5" style="width: 110px; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" [matTooltip]="service.serviceName" *ngIf="!service.isCompleted">{{service.serviceName}}</div>
+                                    <div class="padding-5" style="width: 110px; max-width: 110px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" [matTooltip]="service.serviceName" *ngIf="service.isCompleted"><s>{{service.serviceName}}</s></div>
                                 </div>
-                                <div class="col-6 text" *ngIf="service.isEditMode">
+                                <div class="col-5 text" *ngIf="service.isEditMode">
                                     <span>
                                         <app-autocomplete-search [panelWidth]="250" [filter]="service.serviceName" (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFees">
                                         </app-autocomplete-search>
                                     </span>
                                 </div>
-                                <div class="col-6 text" *ngIf="service.isAddMode">
+                                <div class="col-7 text" *ngIf="service.isAddMode">
                                     <span>
                                         <app-autocomplete-search [panelWidth]="250" (selectionChanged)="onAddServiceChanged(service, $event)" (filterChanged)="onAddServiceChanged(service, $event)" [options]="servicesAndFees">
                                         </app-autocomplete-search>
                                     </span>
                                 </div>
-                                <div class="col-4 text" *ngIf="service.isEditMode">
+                                <div class="col-5 text" *ngIf="service.isEditMode">
                                     <button [view]="'accent'"
                                             beforeIcon="fa fa-save"
                                             ni-button
@@ -60,7 +60,7 @@
                                         <mat-spinner diameter="20"></mat-spinner>
                                     </div>
                                 </div>
-                                <div class="col-4 text" *ngIf="!service.isEditMode && !service.isAddMode">
+                                <div class="col-5 text" *ngIf="!service.isEditMode && !service.isAddMode">
                                     <span *ngIf="!service.serviceName.startsWith('Fuel: ')"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel: ')"><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel: ')"
