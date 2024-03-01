@@ -232,6 +232,7 @@ import { FavoriteIconComponent } from '../shared/components/favorite-icon/favori
 import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/aicraft-expanded-detail/aicraft-expanded-detail.component';
 import { AnalyticsActivityReportsComponent } from './analytics/analytics-activity-reports/analytics-activity-reports.component';
 import { AnalyticsReportPopupComponent } from './analytics/analytics-report-popup/analytics-report-popup.component';
+import { PresetDateFilterComponent } from '../shared/components/preset-date-filter/preset-date-filter.component';
 
 @NgModule({
     declarations: [
@@ -390,7 +391,8 @@ import { AnalyticsReportPopupComponent } from './analytics/analytics-report-popu
         FeeAndTaxBreakdownDialogWrapperComponent,
         FavoriteIconComponent,
         AnalyticsActivityReportsComponent,
-        AnalyticsReportPopupComponent
+        AnalyticsReportPopupComponent,
+        PresetDateFilterComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

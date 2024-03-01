@@ -1,0 +1,17 @@
+.mat-button-toggle-group {
+    display: flex;
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+}
+
+.mat-button-toggle {
+    width: 60px;
+    background-color: transparent;
+    border-right: 1px solid #e0e0e0;
+}
+
+.mat-button-toggle.mat-button-toggle-checked {
+    color: #1a73e8;
+    border-bottom: 4px solid #1a73e8;
+}
