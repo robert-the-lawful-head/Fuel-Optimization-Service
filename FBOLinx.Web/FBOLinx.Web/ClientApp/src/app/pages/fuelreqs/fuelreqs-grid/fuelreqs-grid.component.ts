@@ -158,7 +158,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
     isConfirmedLoadingDictionary: { [key: string]: boolean; } = {};
     //openedNotes: any[] = [];
-    //previouslyOpenedOrder: string = "";
+    previouslyOpenedOrder: string = "";
     //currentElementId: string = "";
 
     constructor(
@@ -339,7 +339,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             //});
             this.expandedElement = [];
 
-            //this.previouslyOpenedOrder = elementId;
+            this.previouslyOpenedOrder = elementId;
 
             this.toggleClosedNotesDrawer();
         } else {
@@ -348,8 +348,8 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
 
             this.expandedElement.push(elementId);
 
-            //if (this.previouslyOpenedOrder != "" && this.previouslyOpenedOrder == elementId)
-            //    this.isDrawerManuallyClicked = true;
+            if (this.previouslyOpenedOrder != "" && this.previouslyOpenedOrder == elementId)
+                this.isDrawerManuallyClicked = true;
 
             //this.currentElementId = elementId;
         }

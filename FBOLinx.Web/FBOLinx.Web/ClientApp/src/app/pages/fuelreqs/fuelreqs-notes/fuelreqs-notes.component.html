@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="!isLoading">
-    <div>
+    <div style="min-width:330px; max-width:330px;">
         <div>
             <div class="p-2">
                 <div>
@@ -26,11 +26,11 @@
             <div class="p-2 "*ngIf="(customerNotes != undefined && customerNotes != '') || (customerAircraftNotes != undefined && customerAircraftNotes != '')">
                 <div class="text-gray-dark">Customer Note (internal)</div>
                 <div>
-                    <div class="padding-5" style="width: 280px; max-width: 280px;">
+                    <div class="padding-5" style="width: 300px; max-width: 300px;">
                         {{customerNotes}}
                     </div>
 
-                    <div class="padding-5" style="width: 280px; max-width: 280px;">
+                    <div class="padding-5" style="width: 300px; max-width: 300px;">
                         {{customerAircraftNotes}}
                     </div>
                     <div><hr /></div>
@@ -40,7 +40,7 @@
                 <div>Operator Request</div>
                 <div *ngFor="let note of serviceOrderNotes">
                     <div class="pb-2">
-                        <div *ngIf="!note.isEdit" class="padding-5" style="width: 280px; max-width: 280px;">
+                        <div *ngIf="!note.isEdit" class="padding-5" style="width: 300px; max-width: 300px;">
                             {{note}}
                         </div>
                     </div>
@@ -53,14 +53,14 @@
                         <div class="pb-2">
                             <div class="row">
                                 <div class="col-7">
-                                    <div *ngIf="!note.isEdit" class="padding-5" style="width: 200px; max-width: 200px;">
+                                    <div *ngIf="!note.isEdit" class="padding-5" style="width: 220px; max-width: 220px;">
                                         {{note.note}}
                                     </div>
-                                    <span *ngIf="note.isEdit">
+                                    <div *ngIf="note.isEdit" style="min-width:220px;">
                                         <mat-form-field>
-                                            <input matInput [(ngModel)]="note.note" />
+                                            <textarea matInput [(ngModel)]="note.note" rows="6" cols="150"></textarea>
                                         </mat-form-field>
-                                    </span>
+                                    </div>
                                 </div>
                                 <div class="col-5 text-right">
                                     <button (click)="saveEditAdditionalNoteClicked(note)" *ngIf="note.isEdit" ni-button size="small" beforeIcon="fa fa-check" [view]="'success'">
