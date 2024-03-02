@@ -15,11 +15,12 @@
             height: calc(100vh - 140px);
             width: 100%;
             .element{
-                flex-grow: 1; /* Allow elements to grow and share space equally */
+                flex-grow: 1;
             }
-            .full-height {
+            .middle-element {
                 overflow: auto;
-                flex-grow: 999; /* A high value to make the middle element take up all available space */
+                flex-grow: 999;
+                padding: 5px 25px 0 5px;
             }
             .mat-toolbar,
             .mat-toolbar-multiple-rows {
@@ -34,7 +35,7 @@
                 cursor: pointer;
             }
             .action-buttons {
-                padding: 0 0 15px 0;
+                padding: 15px 0 15px 0;
             }
         }
     }

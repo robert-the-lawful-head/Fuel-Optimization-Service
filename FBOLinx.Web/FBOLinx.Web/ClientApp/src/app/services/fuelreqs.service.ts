@@ -243,14 +243,13 @@ export class FuelreqsService {
         groupId: number,
         fboId: number,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
+        icao?: string
     ) {
+        let query = icao ? `?icao=${icao}` : '';
+
         return this.http.post(
-            this.accessPointUrl +
-                '/analysis/company-quoting-deal-statistics/group/' +
-                groupId +
-                '/fbo/' +
-                fboId,
+            `${this.accessPointUrl}/analysis/company-quoting-deal-statistics/group/${groupId}/fbo/${fboId}${query}`,
             {
                 endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm')

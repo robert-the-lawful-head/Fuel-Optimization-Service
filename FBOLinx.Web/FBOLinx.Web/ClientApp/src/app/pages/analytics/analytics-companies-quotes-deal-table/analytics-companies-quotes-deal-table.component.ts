@@ -22,6 +22,8 @@ import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
+import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
+import { PresetDateFilterEnum, SelectedPresetDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
@@ -37,6 +39,8 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     filterStartDate: Date;
     filterEndDate: Date;
     icao: string;
+    airportsICAO: string[];
+    nearbyMiles: number = 150;
     fbo: string;
     icaoChangedSubscription: any;
     chartName = 'companies-quotes-deal-table';
@@ -61,14 +65,16 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
 
     csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
 
+    selectedpresetDateFilter: PresetDateFilterEnum;
+
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private exportDialog: MatDialog,
         private router: Router,
-        private tableSettingsDialog: MatDialog
+        private tableSettingsDialog: MatDialog,
+        private acukwikairportsService: AcukwikairportsService
     ) {
         super();
         this.icao = this.sharedService.currentUser.icao;
@@ -81,7 +87,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         this.initColumns();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.fbosService
             .get({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
@@ -104,6 +110,10 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         });
 
         this.refreshData();
+
+        this.airportsICAO =  (await this.acukwikairportsService.getNearByAcukwikAirportsByICAO(this.icao,this.nearbyMiles).toPromise()).map((data) => {
+            return data.icao;
+        });
     }
 
     ngAfterViewInit() {
@@ -157,7 +167,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
             },
             {
                 id: 'airportOrders',
-                name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+                name: `Total Orders at ${this.icao}`,
             },
             {
                 id: 'customerBusiness',
@@ -165,7 +175,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
             },
             {
                 id: 'lastPullDate',
-                name: `${this.sharedService.currentUser.icao} Last Quoted`,
+                name: `${this.icao} Last Quoted`,
                 sort: 'desc',
             },
             {
@@ -186,12 +196,13 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
     }
 
-    fetchData(startDate: Date, endDate: Date) {
+    fetchData(startDate: Date, endDate: Date,icao?: string) {
         return this.fuelreqsService.getCompaniesQuotingDealStatistics(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             startDate,
-            endDate
+            endDate,
+            icao
         );
     }
 
@@ -215,11 +226,13 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     }
 
     refreshData() {
+        let queryIcao = this.icao != this.sharedService.currentUser.icao ? this.icao : null;
+        console.log("🚀 ~ refreshData ~ queryIcao:", queryIcao)
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
 
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(startDate, endDate).subscribe(
+        this.fetchData(startDate, endDate,queryIcao).subscribe(
             (data: any) => {
                 this.dataSource.data = data;
                  this.dataSource.sortingDataAccessor = (item, property) => {
@@ -295,5 +308,14 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    changeIcaoFilter($event: string) {
+        this.icao = $event;
+        this.refreshData();
+    }
+    applyPresetDateFilter(filter: SelectedPresetDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshData();
     }
 }
