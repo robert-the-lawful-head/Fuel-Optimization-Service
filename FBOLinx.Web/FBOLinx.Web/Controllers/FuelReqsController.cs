@@ -1198,7 +1198,7 @@ namespace FBOLinx.Web.Controllers
         }
         
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
-        public async Task<ActionResult<List<CompanyStaticResponse>>> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        public async Task<ActionResult<List<CompanyStaticResponse>>> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null,[FromQuery] string icao = null)
         {
             if (!ModelState.IsValid)
             {
@@ -1207,7 +1207,9 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+                
+                icao = (icao == null) ? await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync() : icao;
+
                 var fuelReqs = await _fuelReqService.GetValidFuelRequestTotals(fboId, request.StartDateTime, request.EndDateTime);
                 var groupedPricingLogs =
                     await _CompanyPricingLogService.GetCompanyPricingLogCountByAirport(request.StartDateTime,
