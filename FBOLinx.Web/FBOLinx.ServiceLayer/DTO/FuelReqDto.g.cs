@@ -53,6 +53,7 @@ namespace FBOLinx.Service.Mapping.Dto
             }
             set => _TailNumber = value;
         }
+        public bool? ShowConfirmationButton { get; set; } = false;
 
         public string FboName
         {

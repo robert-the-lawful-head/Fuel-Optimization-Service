@@ -39,6 +39,7 @@ namespace FBOLinx.DB.Models
             get; set;
         }
         public bool? IsArchived { get; set; }
-        public string? TimeStandard { get; set; } 
+        public string? TimeStandard { get; set; }
+        public bool? IsOkToEmail { get; set; }
     }
 }

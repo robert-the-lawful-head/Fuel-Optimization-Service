@@ -183,7 +183,8 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             pricingTemplateName: '',
             serviceOrder: null,
             customer: null,
-            customerAircraft: null
+            customerAircraft: null,
+            showConfirmationButton: true
         };
 
         this.fuelreqsService.add(newFuelOrder).subscribe((response: any) => {

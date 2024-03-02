@@ -37,5 +37,6 @@ namespace FBOLinx.ServiceLayer.DTO
         }
         public bool? IsArchived { get; set; }
         public string? TimeStandard { get; set; }
+        public bool? IsOkToEmail { get; set; }
     }
 }

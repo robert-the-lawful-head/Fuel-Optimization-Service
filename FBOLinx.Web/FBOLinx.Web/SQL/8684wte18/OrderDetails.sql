@@ -24,7 +24,8 @@ FboHandlerId int NULL,
 IsCancelled bit NULL,
 AssociatedFuelOrderId int null,
 IsArchived bit null,
-TimeStandard char(1) null
+TimeStandard char(1) null,
+IsOkToEmail bit null
 
  CONSTRAINT [PK_OrderDetails] PRIMARY KEY CLUSTERED 
 (

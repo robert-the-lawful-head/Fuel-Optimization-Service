@@ -277,6 +277,7 @@
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
                         <td *matCellDef="let fuelreq" mat-cell>
                             <div class="pull-right">
+                                <!-- *ngIf="fuelreq.showConfirmationButton"-->
                                 <ni-button (click)="sendConfirmationNotification($event,fuelreq)"
                                            [view]="'success'"
                                            size="small"

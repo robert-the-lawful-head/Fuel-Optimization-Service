@@ -42,6 +42,7 @@ export type FuelReq = {
     serviceOrder: ServiceOrder;
     customer: Customer;
     customerAircraft: CustomerAircraft;
+    showConfirmationButton: boolean;
     //fbo: 
     //FuelReqPricingTemplate
 }
