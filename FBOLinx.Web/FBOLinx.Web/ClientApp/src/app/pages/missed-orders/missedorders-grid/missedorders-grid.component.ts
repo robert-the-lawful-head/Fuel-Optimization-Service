@@ -23,7 +23,7 @@ import {
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as SharedEvent from '../../../models/sharedEvents';
-import { GridBase } from 'src/app/services/tables/GridBase';
+import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
 
 const initialColumns: ColumnType[] = [
     {
@@ -84,6 +84,8 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     dashboardSettings: any;
 
     resetMissedOrdersSubscription: any;
+
+    csvFileOptions: csvFileOptions = { fileName: 'Missed Orders', sheetName: 'Missed Orders' };
 
     constructor(
         private sharedService: SharedService,
@@ -254,5 +256,8 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    exportCsv() {
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,null);
     }
 }

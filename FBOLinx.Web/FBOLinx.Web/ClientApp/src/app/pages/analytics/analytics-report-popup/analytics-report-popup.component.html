@@ -8,19 +8,22 @@
             <mat-toolbar-row>
                 <span>{{ report?.title }}</span>
                 <span class="spacer"></span>
-                <mat-icon class="close-icon"(click)="closePopUp()">close</mat-icon>
+                <mat-icon class="close-icon" (click)="closePopUp()">close</mat-icon>
             </mat-toolbar-row>
         </mat-toolbar>
         <div class="element middle-element">
             <div
                 *ngIf="isReportVisible[analiticsReportTypes.CustomerStatistics]"
             >
-                <app-analytics-companies-quotes-deal></app-analytics-companies-quotes-deal>
+                <app-analytics-companies-quotes-deal
+                    #customerStatitics
+                ></app-analytics-companies-quotes-deal>
             </div>
             <div
                 *ngIf="isReportVisible[analiticsReportTypes.ArrivalsDepartures]"
             >
                 <app-analytics-airport-arrivals-depatures
+                    #airportArrivalsDepartures
                     [customers]="customers"
                     (refreshCustomers)="getCustomersList()"
                 ></app-analytics-airport-arrivals-depatures>
@@ -32,12 +35,14 @@
                     ]
                 "
             >
-                <app-group-analytics-intra-network-visits-report></app-group-analytics-intra-network-visits-report>
+                <app-group-analytics-intra-network-visits-report
+                    #fboNetworkArrivalsDepartures
+                ></app-group-analytics-intra-network-visits-report>
             </div>
             <div
                 *ngIf="isReportVisible[analiticsReportTypes.LostToCompetition]"
             >
-                <app-missedorders-grid></app-missedorders-grid>
+                <app-missedorders-grid #missedOrders></app-missedorders-grid>
             </div>
             <div
                 *ngIf="
