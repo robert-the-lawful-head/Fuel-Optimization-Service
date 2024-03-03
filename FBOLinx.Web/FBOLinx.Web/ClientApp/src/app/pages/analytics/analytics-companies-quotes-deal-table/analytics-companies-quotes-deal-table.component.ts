@@ -25,7 +25,7 @@ import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import {
     PresetDateFilterEnum,
-    SelectedPresetDateFilter,
+    SelectedDateFilter,
 } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 
 @Component({
@@ -43,8 +43,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     filterStartDate: Date;
     filterEndDate: Date;
     icao: string;
-    airportsICAO: string[];
-    nearbyMiles: number = 150;
     fbo: string;
     icaoChangedSubscription: any;
     chartName = 'companies-quotes-deal-table';
@@ -58,7 +56,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         sheetName: 'Customer Statistics',
     };
 
-    selectedpresetDateFilter: PresetDateFilterEnum;
+    selectedDateFilter: SelectedDateFilter;
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -67,7 +65,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         private ngxLoader: NgxUiLoaderService,
         private router: Router,
         private tableSettingsDialog: MatDialog,
-        private acukwikairportsService: AcukwikairportsService
     ) {
         super();
         this.icao = this.sharedService.currentUser.icao;
@@ -77,6 +74,11 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.filterEndDate = new Date(
             moment().add(7, 'd').format('MM/DD/YYYY')
         );
+        this.selectedDateFilter = {
+            selectedFilter: null,
+            offsetDate: this.filterStartDate,
+            limitDate: this.filterEndDate,
+        }
         this.initColumns();
     }
 
@@ -103,14 +105,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         });
 
         this.refreshData();
-
-        this.airportsICAO = (
-            await this.acukwikairportsService
-                .getNearByAcukwikAirportsByICAO(this.icao, this.nearbyMiles)
-                .toPromise()
-        ).map((data) => {
-            return data.icao;
-        });
     }
 
     ngAfterViewInit() {
@@ -331,7 +325,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
         this.setColumns();
         this.refreshData();
     }
-    applyPresetDateFilter(filter: SelectedPresetDateFilter) {
+    applyPresetDateFilter(filter: SelectedDateFilter) {
         this.filterEndDate = filter.limitDate;
         this.filterStartDate = filter.offsetDate;
         this.refreshData();

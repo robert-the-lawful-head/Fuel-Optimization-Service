@@ -233,6 +233,7 @@ import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicr
 import { AnalyticsActivityReportsComponent } from './analytics/analytics-activity-reports/analytics-activity-reports.component';
 import { AnalyticsReportPopupComponent } from './analytics/analytics-report-popup/analytics-report-popup.component';
 import { PresetDateFilterComponent } from '../shared/components/preset-date-filter/preset-date-filter.component';
+import { ReportFiltersComponent } from './analytics/analytics-report-popup/report-filters/report-filters.component';
 
 @NgModule({
     declarations: [
@@ -392,7 +393,8 @@ import { PresetDateFilterComponent } from '../shared/components/preset-date-filt
         FavoriteIconComponent,
         AnalyticsActivityReportsComponent,
         AnalyticsReportPopupComponent,
-        PresetDateFilterComponent
+        PresetDateFilterComponent,
+        ReportFiltersComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

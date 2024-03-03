@@ -14,8 +14,8 @@ export enum PresetDateFilterEnum {
     oneYear = '1Y',
     currentYearToDate = 'YTD',
 }
-export interface SelectedPresetDateFilter {
-    selectedFilter: PresetDateFilterEnum;
+export interface SelectedDateFilter {
+    selectedFilter: PresetDateFilterEnum | null;
     offsetDate: Date;
     limitDate: Date;
 }
@@ -26,7 +26,7 @@ export interface SelectedPresetDateFilter {
 })
 export class PresetDateFilterComponent implements OnInit {
     @Input() defaultFilter: PresetDateFilterEnum;
-    @Output() selectedFilterChange = new EventEmitter<SelectedPresetDateFilter>();
+    @Output() selectedFilterChange = new EventEmitter<SelectedDateFilter>();
 
     public selectedFilter: PresetDateFilterEnum;
     dateFilterValues = Object.values(PresetDateFilterEnum) as string[];
@@ -49,7 +49,7 @@ export class PresetDateFilterComponent implements OnInit {
         let filter = this.getPresetDatesFilters(event.value);
         this.selectedFilterChange.emit(filter);
     }
-    private getPresetDatesFilters(value: PresetDateFilterEnum): SelectedPresetDateFilter {
+    private getPresetDatesFilters(value: PresetDateFilterEnum): SelectedDateFilter {
         this.startDate = new Date(this.currentDate);
         switch (value) {
             case PresetDateFilterEnum.sevenDays:
