@@ -77,7 +77,10 @@ export class AnalyticsReportPopupComponent implements OnInit {
         this.getCustomersList();
     }
     ngOnChanges(changes: SimpleChanges): void {
-        if(!changes.report?.currentValue) return;
+        if(!changes.report?.currentValue) {
+            this.isPopUpOpen = false;
+            return;
+        }
         for (const key in this.isReportVisible) {
             if (key == changes.report?.currentValue?.type) {
                 this.isPopUpOpen = true;

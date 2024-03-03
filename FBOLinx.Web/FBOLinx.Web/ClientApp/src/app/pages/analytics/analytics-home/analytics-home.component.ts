@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 
 // Services
@@ -22,7 +22,8 @@ export class AnalyticsHomeComponent implements OnInit {
 
     constructor(
         private customerAircraftsService: CustomeraircraftsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private cdr: ChangeDetectorRef
     ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -50,6 +51,9 @@ export class AnalyticsHomeComponent implements OnInit {
             });
     }
     openReport(reportType: AnatylticsReports) {
+        this.selectedRerport = null;
+        this.cdr.detectChanges();
         this.selectedRerport = reportType;
+        this.cdr.detectChanges();
     }
 }
