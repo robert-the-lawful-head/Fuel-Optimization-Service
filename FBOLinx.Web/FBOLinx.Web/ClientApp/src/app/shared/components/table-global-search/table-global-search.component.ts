@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ThisReceiver } from '@angular/compiler';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
@@ -8,6 +9,8 @@ import * as moment from 'moment';
     templateUrl: 'table-global-search.component.html',
 })
 export class TableGlobalSearchComponent implements OnInit {
+    @ViewChild('content', { read: ElementRef, static: true }) content: ElementRef;
+
     @Input() placeholder: string;
     @Input() matDataSource: any = null;
     @Input() SubmatDataSource: any = null
@@ -21,11 +24,14 @@ export class TableGlobalSearchComponent implements OnInit {
     private page: string = "";
     private idParam: string = "";
 
+    public hasContent = false;
+
     constructor(
         private route: ActivatedRoute,
     ) { }
-
     ngOnInit(): void {
+        this.hasContent = !!this.content.nativeElement.innerHTML;
+
         //if (!this.column) {
         //    this.column = {
         //        propertyName: this.propertyName,

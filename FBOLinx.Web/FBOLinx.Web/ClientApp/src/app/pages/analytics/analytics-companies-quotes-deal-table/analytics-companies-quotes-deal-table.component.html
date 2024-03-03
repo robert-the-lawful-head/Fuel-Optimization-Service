@@ -8,59 +8,60 @@
             (icaoChanged)="changeIcaoFilter($event)"
             ></app-flight-watch-filters>
         </div>
-        <div class="d-inline-block mr-2 ml-2">
-            <app-preset-date-filter
-                [defaultFilter]="selectedpresetDateFilter"
-                (selectedFilterChange)="applyPresetDateFilter($event)"
-            ></app-preset-date-filter>
-        </div>
-        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-            <mat-form-field>
-                <input
-                    (dateChange)="refreshData()"
-                    (focus)="dashboardSettingsStartDateFilter.open()"
-                    [(ngModel)]="filterStartDate"
-                    [matDatepicker]="dashboardSettingsStartDateFilter"
-                    [max]="filterEndDate"
-                    matInput
-                    placeholder="Start Date"
-                />
-                <mat-datepicker-toggle
-                    [for]="dashboardSettingsStartDateFilter"
-                    matSuffix
-                ></mat-datepicker-toggle>
-                <mat-datepicker
-                    #dashboardSettingsStartDateFilter
-                    disabled="false"
-                ></mat-datepicker>
-            </mat-form-field>
-        </div>
-        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-            <mat-form-field>
-                <input
-                    (dateChange)="refreshData()"
-                    (focus)="dashboardSettingsEndDateFilter.open()"
-                    [(ngModel)]="filterEndDate"
-                    [matDatepicker]="dashboardSettingsEndDateFilter"
-                    [min]="filterStartDate"
-                    matInput
-                    placeholder="End Date"
-                />
-                <mat-datepicker-toggle
-                    [for]="dashboardSettingsEndDateFilter"
-                    matSuffix
-                ></mat-datepicker-toggle>
-                <mat-datepicker
-                    #dashboardSettingsEndDateFilter
-                    disabled="false"
-                ></mat-datepicker>
-            </mat-form-field>
-        </div>
         <div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
             <app-table-global-search
                 [matDataSource]="dataSource"
                 placeholder="Search by Company"
-            ></app-table-global-search>
+            >
+            <div class="d-inline-block mr-2 ml-2">
+                <app-preset-date-filter
+                    [defaultFilter]="selectedpresetDateFilter"
+                    (selectedFilterChange)="applyPresetDateFilter($event)"
+                ></app-preset-date-filter>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsStartDateFilter.open()"
+                        [(ngModel)]="filterStartDate"
+                        [matDatepicker]="dashboardSettingsStartDateFilter"
+                        [max]="filterEndDate"
+                        matInput
+                        placeholder="Start Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsStartDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsStartDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+                <mat-form-field>
+                    <input
+                        (dateChange)="refreshData()"
+                        (focus)="dashboardSettingsEndDateFilter.open()"
+                        [(ngModel)]="filterEndDate"
+                        [matDatepicker]="dashboardSettingsEndDateFilter"
+                        [min]="filterStartDate"
+                        matInput
+                        placeholder="End Date"
+                    />
+                    <mat-datepicker-toggle
+                        [for]="dashboardSettingsEndDateFilter"
+                        matSuffix
+                    ></mat-datepicker-toggle>
+                    <mat-datepicker
+                        #dashboardSettingsEndDateFilter
+                        disabled="false"
+                    ></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </app-table-global-search>
         </div>
         <div class="actions">
             <button [matMenuTriggerFor]="gridActions" mat-icon-button>
