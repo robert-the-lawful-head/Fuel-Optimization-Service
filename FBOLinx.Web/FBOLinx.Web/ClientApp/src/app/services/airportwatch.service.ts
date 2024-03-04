@@ -36,15 +36,13 @@ export class AirportWatchService {
     public getArrivalsDepartures(
         groupId: number,
         fboId: number,
-        body: AirportWatchHistoricalDataRequest
+        body: AirportWatchHistoricalDataRequest,
+        icao?: string
     ) {
+        let query = icao ? `?icao=${icao}` : '';
+
         return this.http.post<FlightWatchHistorical[]>(
-            this.accessPointUrl +
-                '/group/' +
-                groupId +
-                '/fbo/' +
-                fboId +
-                '/arrivals-depatures',
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/arrivals-depatures${query}`,
             body,
             { headers: this.headers }
         );
