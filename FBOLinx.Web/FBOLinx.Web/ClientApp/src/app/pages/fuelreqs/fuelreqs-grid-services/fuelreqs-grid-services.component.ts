@@ -31,7 +31,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
     @Input() public serviceOrderId: number | null = null;
     @Input() public associatedFuelOrderId: number | null = null;
     @Input() public fuelerlinxTransactionId: number | null = null;
-    @Input() public servicesAndFees: string[];
+    @Input() public servicesAndFees: any[];
     @Input() public tailNumber: string;
     @Input() public customerId: number;
     @Input() public customer: string;
@@ -45,6 +45,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
     isLoading: boolean = true;
     serviceOrder: any;
     hasNotes: boolean = false;
+    servicesAndFeesOptions: string[];
 
     constructor(
         private serviceOrderService: ServiceOrderService,
@@ -54,8 +55,10 @@ export class FuelreqsGridServicesComponent implements OnInit {
     ) { }
 
     async ngOnInit() {
-            this.refreshGrid();
+        this.refreshGrid();
+        this.servicesAndFeesOptions = this.servicesAndFees.map(s => s.service);
     }
+
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.serviceOrderItems) {
             this.generateTooltips(this.serviceOrderItems);
@@ -234,10 +237,13 @@ export class FuelreqsGridServicesComponent implements OnInit {
         });
     }
     getInfoTooltipText(serviceAndFees: ServiceOrderItem): string {
-        if (this.servicesAndFees.indexOf(serviceAndFees.serviceName) > -1)
-            return `Source: Acukwik`;
-        else
-            return `Source: ` + serviceAndFees.addedByName;
+        var service = this.servicesAndFees.find(s => s.service === serviceAndFees.serviceName);
+        if (service != null && service != undefined) {
+            if (!service.isCustom)
+                return `Source: Acukwik`;
+            else
+                return `Source: ` + serviceAndFees.addedByName;
+        }
     }
 
     toggleNotesDrawer(isDrawerManuallyClicked: boolean = false) {

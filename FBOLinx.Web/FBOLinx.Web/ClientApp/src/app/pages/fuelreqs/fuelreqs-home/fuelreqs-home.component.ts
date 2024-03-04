@@ -39,7 +39,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public missedOrdersData: any[];
     public selectedTabIndex: number = 0;
     public resetMissedOrders: boolean = false;
-    public servicesAndFees: string[] = [];
+    public servicesAndFees: any[] = [];
 
     constructor(
         private fuelReqService: FuelreqsService,
@@ -73,11 +73,11 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         servicesAndFees.forEach((service) => {
             service.servicesAndFees.forEach((serviceAndFee) => {
                 if (serviceAndFee.isActive)
-                    this.servicesAndFees.push(serviceAndFee.service);
+                    this.servicesAndFees.push(serviceAndFee);
             });
         });
 
-        this.servicesAndFees.sort();
+        this.servicesAndFees.sort((a, b) => a.service.localeCompare(b.service));
         this.loadFuelReqs();
     }
 

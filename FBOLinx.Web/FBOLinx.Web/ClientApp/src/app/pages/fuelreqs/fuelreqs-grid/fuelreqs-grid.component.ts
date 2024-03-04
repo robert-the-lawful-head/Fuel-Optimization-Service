@@ -128,7 +128,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     @Input() fuelreqsData: any[];
     @Input() filterStartDate: Date;
     @Input() filterEndDate: Date;
-    @Input() servicesAndFees: string[];
+    @Input() servicesAndFees: any[];
     @ViewChild('orderNotes') public drawer: MatDrawer;
     @Output() onArchivedChange = new EventEmitter<any>();
 
