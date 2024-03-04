@@ -1,16 +1,13 @@
 .actions {
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.paddingTop {
-    padding-top: 30px;
+    position: absolute;
+    right: 0;
+    top: 90px;
+    transform: translateY(-50%);
+    z-index: 9999;
 }
 
 .table-container {
-    height: calc(100vh - 285px);
+    height: 100%;
 }
 
 .mat-column-email {
@@ -18,4 +15,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.actions {
+    position: absolute;
+    right: 0;
+    top: 90px;
+    transform: translateY(-50%);
+    z-index: 9999;
 }

@@ -24,6 +24,7 @@ import {
 } from '../../../shared/components/table-settings/table-settings.component';
 import * as SharedEvent from '../../../models/sharedEvents';
 import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
+import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -70,8 +71,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     chartName = 'missed-orders-table';
 
     searchText: string = '';
-    filterStartDate: Date;
-    filterEndDate: Date;
+
     filtersChanged: Subject<any> = new Subject<any>();
 
     tableLocalStorageKey = 'missed-orders-table-settings';
@@ -132,6 +132,12 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             moment().add(-1, 'week').format('MM/DD/YYYY')
         );
         this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
+
+        this.selectedDateFilter = {
+            selectedFilter: null,
+            offsetDate: this.filterStartDate,
+            limitDate: this.filterEndDate,
+        };
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
@@ -259,5 +265,10 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     }
     exportCsv() {
         this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,null);
+    }
+    applyPresetDateFilter(filter: SelectedDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshTable();
     }
 }
