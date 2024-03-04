@@ -40,8 +40,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    filterStartDate: Date;
-    filterEndDate: Date;
     icao: string;
     fbo: string;
     icaoChangedSubscription: any;

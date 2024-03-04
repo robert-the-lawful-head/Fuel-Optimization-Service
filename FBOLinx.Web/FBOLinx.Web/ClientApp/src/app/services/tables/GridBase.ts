@@ -2,6 +2,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from "@angular/material/table";
+import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -20,6 +21,20 @@ export abstract class GridBase {
     selectedRowIndex: number = null;
     dataSource: any = new MatTableDataSource([]); //data source to be displayed on scroll
 
+    //for reports grid
+    private _icaoFilter:string;
+    filterStartDate: Date;
+    filterEndDate: Date;
+    selectedDateFilter: SelectedDateFilter;
+    hiddenColumns: string[] = [
+        'directOrders',
+        'conversionRate',
+        'conversionRateTotal',
+        'totalOrders',
+        'customerBusiness',
+        'airportVisits',
+    ];
+
     constructor() {
         this.dataSource.sortingDataAccessor = (item, property) => {
             switch(property) {
@@ -35,7 +50,12 @@ export abstract class GridBase {
             }
           }
     }
-
+    get icaoFilter(): string {
+      return this._icaoFilter;
+    }
+    set icaoFilter(value: string) {
+      this._icaoFilter = value;
+    }
     onTableScroll(e): void {
         const tableViewHeight = e.target.offsetHeight; // viewport
         const tableScrollHeight = e.target.scrollHeight; // length of all table
@@ -90,7 +110,7 @@ export abstract class GridBase {
         let exportData = dataToExport.map((item) => {
             let row = {};
             cols.forEach( col => {
-                let calculatedText =  computePropertyFnc(item, col.id);
+                let calculatedText =  !computePropertyFnc ? "" : computePropertyFnc(item, col.id);
                 row[col.name] = calculatedText ? calculatedText : item[col.id];
             });
             return row;
