@@ -12,6 +12,7 @@ export class ReportFiltersComponent implements OnInit {
     @Input() icao: string = '';
     @Input() dataSource: MatTableDataSource<any> =  new MatTableDataSource([]);
     @Input() selectedDateFilter: SelectedDateFilter;
+    @Input() isIcaoFilterHidden: boolean = false;
 
     @Output() onChangeIcaoFilter: EventEmitter<string> = new EventEmitter<string>();
     @Output() onDateChange: EventEmitter<SelectedDateFilter> = new EventEmitter<SelectedDateFilter>();
