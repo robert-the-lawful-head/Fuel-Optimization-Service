@@ -34,6 +34,7 @@ using FBOLinx.ServiceLayer.Extensions.Customer;
 using FBOLinx.ServiceLayer.Extensions.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -347,10 +348,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
         //    return new List<AirportWatchHistoricalDataResponse>();
         //}
-        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request, string icao = null)
         {
             //Only retrieve arrival and departure occurrences.  Remove all parking occurrences.
-            var historicalData = await GetAircraftsHistoricalDataAssociatedWithFboRefactored(groupId, fboId, request);
+            var historicalData = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,
+    fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault(), request.FlightOrTailNumbers, icao);
 
             if (historicalData == null || historicalData.Count() == 0) return new List<AirportWatchHistoricalDataResponse>();
             
@@ -462,7 +464,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         }
         public async Task<List<AirportWatchHistoricalDataResponse>> GetVisits(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
-            var historicalData = await GetAircraftsHistoricalDataAssociatedWithFboRefactored(groupId, fboId, request);
+            var historicalData = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,
+    fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault(), request.FlightOrTailNumbers);
 
             var noCustomerData = historicalData
                 .Where(h => h.Company == null)
@@ -697,21 +700,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             ////Merge the insert data for historical information into the update collection so we can do a BulkInsertUpdate operation
             //_HistoricalDataToUpdate.AddRange(_HistoricalDataToInsert);
         }
-
-        public async Task<List<FboHistoricalDataModel>> GetHistoricalDataAssociatedWithGroupOrFboRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
-        {
-            var result = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,
-                fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault(), request.FlightOrTailNumbers);
-
-            return result;
-        }
         
-        public async Task<List<FboHistoricalDataModel>> GetAircraftsHistoricalDataAssociatedWithFboRefactored(int groupId, int? fboId, AirportWatchHistoricalDataRequest request)
-        {
-            var historicalData = await GetHistoricalDataAssociatedWithGroupOrFboRefactored(groupId, fboId, request);
-            return historicalData;
-        }
-
         public async Task<List<AcukwikAirport>> GetAirportsWithAntennaData()
         {
             try

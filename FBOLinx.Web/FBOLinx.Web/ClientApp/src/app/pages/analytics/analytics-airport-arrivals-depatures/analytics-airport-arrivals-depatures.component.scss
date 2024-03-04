@@ -5,8 +5,7 @@
 }
 
 .table-container {
-    position: relative;
-    height: calc(100vh - 420px);
+    height: 100%;
     overflow: auto;
 }
 
@@ -45,6 +44,7 @@ table {
 .actions {
     position: absolute;
     right: 0;
-    top: 50%;
+    top: 90px;
     transform: translateY(-50%);
+    z-index: 9999;
 }

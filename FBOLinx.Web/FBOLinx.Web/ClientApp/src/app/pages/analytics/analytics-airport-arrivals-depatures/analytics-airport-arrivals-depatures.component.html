@@ -1,259 +1,175 @@
-<ni-card
-    [headerBgColor]="'gray'"
-    title="Airport Departures and Arrivals"
-    class="mb-1"
->
-    <div class="chart-container">
-        <div class="flex mb-2 position-relative">
-            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-                <mat-form-field>
-                    <input
-                        (dateChange)="refreshData()"
-                        (focus)="dashboardSettingsStartDateFilter.open()"
-                        [(ngModel)]="filterStartDate"
-                        [matDatepicker]="dashboardSettingsStartDateFilter"
-                        [max]="filterEndDate"
-                        matInput
-                        placeholder="Start Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsStartDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsStartDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-                <mat-form-field>
-                    <input
-                        (dateChange)="refreshData()"
-                        (focus)="dashboardSettingsEndDateFilter.open()"
-                        [(ngModel)]="filterEndDate"
-                        [matDatepicker]="dashboardSettingsEndDateFilter"
-                        [min]="filterStartDate"
-                        matInput
-                        placeholder="End Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsEndDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsEndDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="d-inline-block mr-2 ml-2">
-                <p-multiSelect
-                    class="airport-dropdown-filter"
-                    [options]="customers"
-                    [(ngModel)]="selectedCustomers"
-                    optionLabel="company"
-                    optionValue="customerInfoByGroupID"
-                    display="chip"
-                    placeholder="Select Customers"
-                    (onChange)="filterChanged()"
-                    [virtualScroll]="true"
-                    itemSize="50"
-                ></p-multiSelect>
-            </div>
-            <div class="d-inline-block mr-2 ml-2">
-                <p-multiSelect
-                    class="
-                        airport-dropdown-filter airport-dropdown-tails-filter
-                    "
-                    [options]="tailNumbers"
-                    [(ngModel)]="selectedTailNumbers"
-                    optionLabel="tailNumber"
-                    optionValue="tailNumber"
-                    display="chip"
-                    placeholder="Select Tail #"
-                    (onChange)="filterChanged()"
-                    [virtualScroll]="true"
-                    itemSize="50"
-                ></p-multiSelect>
-            </div>
-            <div class="d-inline-block mr-2 ml-2">
-                <mat-slide-toggle
-                    color="primary"
-                    [(ngModel)]="isCommercialInvisible"
-                    (change)="filterChanged()"
-                >
-                    Hide Commercial Flights
-                </mat-slide-toggle>
-            </div>
-            <div class="d-inline-block ml-2">
-                <button
-                    (click)="clearAllFilters()"
-                    [view]="'error'"
-                    ni-button
-                    size="small"
-                    [disabled]="!data"
-                >
-                    Clear All Filters
-                </button>
-            </div>
-            <div class="actions">
-                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon
-                        aria-hidden="true"
-                        class="mat-icon material-icons"
-                        role="img"
-                       >settings</mat-icon
-                    >
-                </button>
-                <mat-menu
-                    #gridActions="matMenu"
-                    class="switch-nested-menu-left-arrows"
-                    xPosition="before"
-                >
-                    <button (click)="exportCsv()" mat-menu-item>Export</button>
-                    <button (click)="openSettings()" mat-menu-item>
-                        Settings
-                    </button>
-                </mat-menu>
-            </div>
+<div class="chart-container">
+    <div class="flex mb-2 position-relative">
+        <div class="d-inline-block mr-2 ml-2">
+        <app-report-filters
+            [icao]="icao"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            (onChangeIcaoFilter)="changeIcaoFilter($event)"
+            (onDateChange)="applyPresetDateFilter($event)">
+            </app-report-filters>
         </div>
-
-        <div class="relative mat-elevation-z8">
-            <div class="table-container" (scroll)="onTableScroll($event)">
-                <table [dataSource]="dataSource"
-                       mat-table
-                       matSort
-                       matSortActive="dateTime"
-                       matSortDirection="desc">
-                    <ng-container matColumnDef="company">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Company</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.company }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="tailNumber">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Tail #</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.tailNumber }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="flightNumber">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Flight #</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.flightNumber }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="hexCode">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Hex #</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.hexCode }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="aircraftType">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Aircraft</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.aircraftType }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="dateTime">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Date and Time</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{
-                                info.flightNumber
-                                    ? (info.dateTime | date: "MM/dd/YYYY HH:mm")
-                                    : ""
-                            }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="status">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Departure / Arrival</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.status }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="pastVisits">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Past Visits</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.pastVisits }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="visitsToMyFbo">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Visits to {{fboName}}</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.visitsToMyFbo }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="isConfirmedVisit">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Visit to {{fboName}}?</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell clickStopPropagation>
-                            <mat-slide-toggle *ngIf="info.status == 'Arrival'"
-                                              color="primary"
-                                              [(ngModel)]="info.isConfirmedVisit"
-                                              (change)="confirmedVisitToggled(info)">
-                            </mat-slide-toggle>
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="percentOfVisits">
-                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                            <span>Percent of Visits</span>
-                        </th>
-                        <td *matCellDef="let info" mat-cell>
-                            {{ info.percentOfVisits | percent }}
-                        </td>
-                    </ng-container>
-
-                    <tr *matHeaderRowDef="visibleColumns; sticky: true"
-                        mat-header-row></tr>
-                    <tr *matRowDef="let row; columns: visibleColumns"
-                        mat-row
-                        (click)="onClickAircraft(row)"></tr>
-                </table>
-
-                <ngx-ui-loader
-                    [loaderId]="chartName"
-                    bgsColor="rgb(100, 181, 246)"
-                    bgsPosition="center-center"
-                    bgsType="ball-spin"
-                    overlayColor="rgba(0, 0, 0, 0.1)"
-                ></ngx-ui-loader>
-            </div>
-            <div class="invisible">
-                <mat-paginator
-                    [pageSizeOptions]="[10, 25, 50, 100]"
-                    showFirstLastButtons
-                ></mat-paginator>
-            </div>
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >settings</mat-icon
+                >
+            </button>
+            <mat-menu
+                #gridActions="matMenu"
+                class="switch-nested-menu-left-arrows"
+                xPosition="before"
+            >
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
         </div>
     </div>
-</ni-card>
+
+    <div class="relative mat-elevation-z8">
+        <div class="table-container" (scroll)="onTableScroll($event)">
+            <table
+                [dataSource]="dataSource"
+                mat-table
+                matSort
+                matSortActive="dateTime"
+                matSortDirection="desc"
+            >
+                <ng-container matColumnDef="company">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Company</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.company }} - {{ info.airportIcao }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="tailNumber">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Tail #</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.tailNumber }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="flightNumber">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Flight #</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.flightNumber }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="hexCode">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Hex #</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.hexCode }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="aircraftType">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Aircraft</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.aircraftType }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="dateTime">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Date and Time</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{
+                            info.flightNumber
+                                ? (info.dateTime | date : "MM/dd/YYYY HH:mm")
+                                : ""
+                        }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Departure / Arrival</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.status }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="pastVisits">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Past Visits</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.pastVisits }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="visitsToMyFbo">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Visits to {{ fboName }}</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.visitsToMyFbo }}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="isConfirmedVisit">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Visit to {{ fboName }}?</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell clickStopPropagation>
+                        <mat-slide-toggle
+                            *ngIf="info.status == 'Arrival'"
+                            color="primary"
+                            [(ngModel)]="info.isConfirmedVisit"
+                            (change)="confirmedVisitToggled(info)"
+                        >
+                        </mat-slide-toggle>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="percentOfVisits">
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        <span>Percent of Visits</span>
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.percentOfVisits | percent }}
+                    </td>
+                </ng-container>
+
+                <tr
+                    *matHeaderRowDef="visibleColumns; sticky: true"
+                    mat-header-row
+                ></tr>
+                <tr
+                    *matRowDef="let row; columns: visibleColumns"
+                    mat-row
+                    (click)="onClickAircraft(row)"
+                ></tr>
+            </table>
+
+            <ngx-ui-loader
+                [loaderId]="chartName"
+                bgsColor="rgb(100, 181, 246)"
+                bgsPosition="center-center"
+                bgsType="ball-spin"
+                overlayColor="rgba(0, 0, 0, 0.1)"
+            ></ngx-ui-loader>
+        </div>
+        <div class="invisible">
+            <mat-paginator
+                [pageSizeOptions]="[10, 25, 50, 100]"
+                showFirstLastButtons
+            ></mat-paginator>
+        </div>
+    </div>
+</div>

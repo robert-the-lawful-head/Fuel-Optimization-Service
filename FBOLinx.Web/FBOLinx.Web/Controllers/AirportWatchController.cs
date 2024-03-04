@@ -23,6 +23,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Newtonsoft.Json;
 using YamlDotNet.Core.Events;
+using Fuelerlinx.SDK;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -73,9 +74,9 @@ namespace FBOLinx.Web.Controllers
 
         //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
-        public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
+        public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request, [FromQuery] string icao = null)
         {
-            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request);
+            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request, icao);
             return Ok(data2);
         }
 
