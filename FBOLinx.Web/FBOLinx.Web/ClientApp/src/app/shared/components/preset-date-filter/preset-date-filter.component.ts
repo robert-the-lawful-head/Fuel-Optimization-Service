@@ -11,8 +11,8 @@ export enum PresetDateFilterEnum {
     sevenDays = '7D',
     oneMonth = '1M',
     sixMonths = '6M',
-    oneYear = '1Y',
     currentYearToDate = 'YTD',
+    oneYear = '1Y',
 }
 export interface SelectedDateFilter {
     selectedFilter: PresetDateFilterEnum | null;
