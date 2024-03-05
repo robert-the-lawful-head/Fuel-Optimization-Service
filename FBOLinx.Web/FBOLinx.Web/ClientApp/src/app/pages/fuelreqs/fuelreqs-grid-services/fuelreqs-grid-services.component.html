@@ -71,7 +71,7 @@
                                     <div class="padding-5" style="width: 160px; max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis" [matTooltip]="service.serviceName" *ngIf="service.isCompleted"><s>{{service.serviceName}}</s></div>
                                 </div>
                                 <div class="col-5 text" *ngIf="!service.isEditMode && !service.isAddMode">
-                                    <span *ngIf="!service.serviceName.startsWith('Fuel: ')"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
+                                    <span *ngIf="!service.serviceName.startsWith('Fuel: ') && service.toolTipText != 'Source: Acukwik'"><mat-icon class="material-icons-outlined" (click)="toogleEditModel(service)">edit</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel: ')"><mat-icon class="material-icons-outlined" (click)="deleteItem(service, service.serviceName)">delete</mat-icon></span>
                                     <span *ngIf="!service.serviceName.startsWith('Fuel: ')"
                                           [matTooltip]="service.toolTipText"><mat-icon class="material-icons-outlined">info</mat-icon></span>

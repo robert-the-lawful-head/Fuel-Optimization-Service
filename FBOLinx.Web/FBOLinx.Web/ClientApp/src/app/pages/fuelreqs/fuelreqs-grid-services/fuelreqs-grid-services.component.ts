@@ -230,7 +230,6 @@ export class FuelreqsGridServicesComponent implements OnInit {
         });
     }
     generateTooltips(serviceAndFees: ServiceOrderItem[]){
-        console.log("🚀 ~ FuelreqsGridServicesComponent ~ getInfoTooltipText ~ this.servicesAndFees:", this.servicesAndFees)
 
         serviceAndFees.forEach(element => {
             element.toolTipText = this.getInfoTooltipText(element);
@@ -242,8 +241,10 @@ export class FuelreqsGridServicesComponent implements OnInit {
             if (!service.isCustom)
                 return `Source: Acukwik`;
             else
-                return `Source: ` + serviceAndFees.addedByName;
+                return `Source: ` + service.createdByUser;
         }
+        else if (serviceAndFees.addedByName != null)
+            return `Source: ` + serviceAndFees.addedByName;
     }
 
     toggleNotesDrawer(isDrawerManuallyClicked: boolean = false) {

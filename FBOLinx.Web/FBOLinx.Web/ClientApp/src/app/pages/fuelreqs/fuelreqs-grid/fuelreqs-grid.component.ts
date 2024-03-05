@@ -358,18 +358,48 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
     sendConfirmationNotification(event: Event, fuelreq: any): void{
         event.stopPropagation();
 
-        this.isConfirmedLoadingDictionary[fuelreq.sourceId] = true;
+        var serviceItems = [];
+        var fuelService = fuelreq.serviceOrder.serviceOrderItems.find(f => f.serviceName.indexOf("Fuel: ") > -1);
+        fuelreq.serviceOrder.serviceOrderItems = fuelreq.serviceOrder.serviceOrderItems.filter(f => f.serviceName.indexOf("Fuel: ") == -1);
+        fuelreq.serviceOrder.serviceOrderItems.sort((a, b) => a.serviceName.localeCompare(b.serviceName));
+        fuelreq.serviceOrder.serviceOrderItems.unshift(fuelService);
+        fuelreq.serviceOrder.serviceOrderItems.forEach((serviceOrderItem) => {
+            serviceItems.push("<strong>" + serviceOrderItem.serviceName + (serviceOrderItem.serviceDescription == undefined? "</strong>" : "</strong>: " + serviceOrderItem.serviceDescription));
+        });
 
-        this.fuelreqsService.sendOrderConfirmationNotification(fuelreq).subscribe(response => {
-            fuelreq.isConfirmed = true;
-            this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
-            this.snackBarService.showSuccessSnackBar("Confirmation Sent");
-        }, error => {
-            this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
-            console.log(error);
-            this.snackBarService.showErrorSnackBar("Error sending confirmation try again later");
+        const dialogRef = this.templateDialog.open(
+            ProceedConfirmationComponent,
+            {
+                autoFocus: false,
+                data: {
+                    buttonText: 'Confirm',
+                    title: 'Confirmation Required',
+                    description: 'You are about to send a confirmation email to the flight department regarding the requested service order. Please review the details below carefully:',
+                    listItemsList: serviceItems,
+                    additionalInfo: 'If everything appears accurate, click the “Confirm” button below. Otherwise, click “Cancel” to make any necessary adjustments.',
+                },
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.isConfirmedLoadingDictionary[fuelreq.sourceId] = true;
+
+            this.fuelreqsService.sendOrderConfirmationNotification(fuelreq).subscribe(response => {
+                fuelreq.isConfirmed = true;
+                this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
+                this.snackBarService.showSuccessSnackBar("Confirmation Sent");
+            }, error => {
+                this.isConfirmedLoadingDictionary[fuelreq.sourceId] = false;
+                console.log(error);
+                this.snackBarService.showErrorSnackBar("Error sending confirmation try again later");
+            });
         });
     }
+
     isLoadignConfirmationButton(fuelreq: any): boolean{
         return this.isConfirmedLoadingDictionary[fuelreq.sourceId];
     }

@@ -345,6 +345,7 @@ namespace FBOLinx.Web.Controllers
             orderDetails.QuotedVolume = request.FuelEstWeight;
             orderDetails.Eta = request.Eta;
             orderDetails.FboHandlerId = fboId == 0 ? request.FboHandlerId : fbo.AcukwikFBOHandlerId;
+            orderDetails.IsOkToEmail = request.IsOkToSendEmail;
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);

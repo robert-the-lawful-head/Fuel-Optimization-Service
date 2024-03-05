@@ -323,13 +323,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 {
                     if (!result.Any(f => f.SourceId == item.FuelerLinxTransactionId))
                     {
+                        var transactionOrderDetails = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).FirstOrDefault();
+
                         var fuelreq = new FuelReqDto()
                         {
                             Oid = item.Oid,
                             ActualPpg = 0,
                             ActualVolume = 0,
-                            Archived = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).Select(d => d.IsArchived).FirstOrDefault(),
-                            Cancelled = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).Select(d => d.IsCancelled).FirstOrDefault(),
+                            Archived = transactionOrderDetails.IsArchived,
+                            Cancelled = transactionOrderDetails.IsCancelled,
                             CustomerId = item.CustomerInfoByGroup?.CustomerId,
                             //DateCreated = item.ServiceDateTimeUtc,//check this property
                             DispatchNotes = string.Empty,
@@ -349,9 +351,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             FuelOn = string.Empty,
                             CustomerName = item.CustomerInfoByGroup?.Company,
                             IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
-                            PaymentMethod = orderDetails.Where(o => (o.FuelerLinxTransactionId == item.FuelerLinxTransactionId) || (o.AssociatedFuelOrderId == item.AssociatedFuelOrderId)).Select(d => d.PaymentMethod).FirstOrDefault(),
+                            PaymentMethod = transactionOrderDetails.PaymentMethod,
                             ServiceOrder = item,
-                            ShowConfirmationButton = true
+                            ShowConfirmationButton = transactionOrderDetails.IsOkToEmail.GetValueOrDefault()
                         };
                         serviceOrdersList.Add(fuelreq);
                     }
