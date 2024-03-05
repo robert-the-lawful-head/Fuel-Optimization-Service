@@ -246,7 +246,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             {
                 //Direct orders
                 var directOrders = await GetDirectOrdersFromDatabase(fboId, startDateTime, endDateTime, customers);
-                var directOrderIds = directOrders.Where(s => s.SourceId > 0).Select(s => s.SourceId.GetValueOrDefault()).ToList();
+                var directOrderIds = directOrders.Select(s => s.SourceId.GetValueOrDefault()).ToList();
                 var orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(directOrderIds);
                 var orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(directOrderIds);
 
