@@ -23,7 +23,6 @@ import {
     SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
 import { first, last } from 'lodash';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { fboChangedEvent } from '../../../models/sharedEvents';
@@ -43,6 +42,8 @@ import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-d
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { single } from 'rxjs/operators';
 
 const initialColumns: ColumnType[] = [
     {
@@ -502,6 +503,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.currentUser.fboId = fbo.oid;
 
                 this.sharedService.currentUser.icao = fbo.icao;
+
+                let isSingleSource: boolean = this.groupFbos(fbo.groupId).length == 1;
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSource.toString());
 
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
