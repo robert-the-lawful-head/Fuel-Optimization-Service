@@ -20,7 +20,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
 {
     public interface IIntraNetworkAntennaDataReportService
     {
-        Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc);
+        Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, string icao = null);
     }
 
     public class IntraNetworkAntennaDataReportService : IIntraNetworkAntennaDataReportService
@@ -53,7 +53,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
         }
 
-        public async Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc)
+        public async Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, string icao = null)
         {
             var group = await _GroupService.GetSingleBySpec(new GroupByGroupIdSpecification(groupId));
             var fbos = await _FboService.GetListbySpec(new AllFbosByGroupIdSpecification(groupId));
@@ -63,7 +63,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
                     EndDateTime = endDateTimeUtc,
                     StartDateTime = startDateTimeUtc,
                     KeepParkingEvents = true
-                });
+                },icao);
             var distinctTails = airportWatchData.Select(x => x.TailNumber).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
 

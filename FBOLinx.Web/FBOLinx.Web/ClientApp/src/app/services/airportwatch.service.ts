@@ -104,9 +104,11 @@ export class AirportWatchService {
         );
     }
 
-    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
+    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date, icao?: string) {
+        let query = `?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`;
+        query += icao ? `&icao=${icao}` : '';
         return this.http.get<any>(
-            `${this.accessPointUrl}/intra-network/visits-report/${groupId}?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`,
+            `${this.accessPointUrl}/intra-network/visits-report/${groupId}${query}`,
             { headers: this.headers }
         );
     }

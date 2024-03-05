@@ -171,7 +171,7 @@ namespace FBOLinx.Web.Controllers
 
         [HttpGet("intra-network/visits-report/{groupId}")]
         public async Task<ActionResult<List<IntraNetworkVisitsReportItem>>> GetIntraNetworkVisitsReportForGroup(
-            [FromRoute] int groupId, DateTime? startDateTimeUtc = null, DateTime? endDateTimeUtc = null)
+            [FromRoute] int groupId, DateTime? startDateTimeUtc = null, DateTime? endDateTimeUtc = null, string icao = null)
         {
             try
             {
@@ -180,7 +180,7 @@ namespace FBOLinx.Web.Controllers
                     throw new Exception("Start and end date time are required.  Please provide startDateTimeUtc and endDateTimeUtc values in the querystring.");
                 }
 
-                var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId, startDateTimeUtc.Value, endDateTimeUtc.Value);
+                var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId, startDateTimeUtc.Value, endDateTimeUtc.Value, icao);
                 return Ok(result);
             }
             catch (System.Exception ex)

@@ -1,3 +1,11 @@
 .table-container{
-    height: calc(100vh - 430px);
+    height: 100%;
+}
+
+.actions {
+    position: absolute;
+    right: 0;
+    top: 90px;
+    transform: translateY(-50%);
+    z-index: 9999;
 }
