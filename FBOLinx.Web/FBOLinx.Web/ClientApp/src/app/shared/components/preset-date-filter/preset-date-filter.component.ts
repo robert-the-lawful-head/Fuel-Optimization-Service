@@ -4,7 +4,6 @@ import {
     Input,
     OnInit,
     Output,
-    SimpleChanges,
 } from '@angular/core';
 
 export enum PresetDateFilterEnum {
@@ -36,11 +35,12 @@ export class PresetDateFilterComponent implements OnInit {
 
     constructor() {}
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes.defaultFilter) {
-            this.selectedFilter = changes.defaultFilter.currentValue;
-        }
-    }
+    // ngOnChanges(changes: SimpleChanges): void {
+    //     if (changes.defaultFilter) {
+    //         console.log("🚀 ~ PresetDateFilterComponent ~ ngOnChanges ~ changes.defaultFilter:", changes.defaultFilter)
+    //         this.defaultFilter = changes.defaultFilter.currentValue;
+    //     }
+    // }
     ngOnInit() {
         this.selectedFilter = this.defaultFilter;
     }

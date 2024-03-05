@@ -16,10 +16,11 @@
     padding: 0;
     font-family: sans-serif;
 }
-.mat-button-toggle-checked .select-container{
+.selected-container {
     color: #1a73e8;
     text-align: center;
     border-bottom: 4px solid #1a73e8;
+    border-radius: 4px;
     padding: 3px;
     font-weight: 550;
 }

@@ -13,7 +13,7 @@
     >
         <div class="d-inline-block mr-2 ml-2">
             <app-preset-date-filter
-                [defaultFilter]="selectedDateFilter"
+                [defaultFilter]="selectedDateFilter.selectedFilter"
                 (selectedFilterChange)="applyPresetDateFilter($event)"
             ></app-preset-date-filter>
         </div>
