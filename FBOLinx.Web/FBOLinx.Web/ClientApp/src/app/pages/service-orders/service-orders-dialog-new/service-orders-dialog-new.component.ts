@@ -184,7 +184,7 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
             serviceOrder: null,
             customer: null,
             customerAircraft: null,
-            showConfirmationButton: true
+            showConfirmationButton: false
         };
 
         this.fuelreqsService.add(newFuelOrder).subscribe((response: any) => {
