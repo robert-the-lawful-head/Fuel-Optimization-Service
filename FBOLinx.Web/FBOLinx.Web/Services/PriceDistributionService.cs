@@ -286,6 +286,8 @@ namespace FBOLinx.Web.Services
                 // Add all of the images for the different products
                 //Add the price breakdown as an image to prevent parsing
                 Dictionary<string, byte[]> priceBreakdownImages = await GetPriceBreakdownImage(customer, validPricingTemplates);
+                if (priceBreakdownImages.Count == 0)
+                    return;
 
                 var pricesForProducts = new List<PricesForProducts>();
                 foreach (var priceBreakdownImage in priceBreakdownImages)

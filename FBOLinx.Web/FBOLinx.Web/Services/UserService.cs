@@ -14,9 +14,9 @@ namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
-        Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord);
-        Task<User> CreateGroupLoginIfNeeded(Group groupRecord);
+        Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
+        Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord);
+        Task<FBOLinx.DB.Models.User> CreateGroupLoginIfNeeded(Group groupRecord);
     }
 
     public class UserService : IUserService
@@ -34,9 +34,9 @@ namespace FBOLinx.Web.Services
             _jwtManager = jwtManager;
         }
         
-        public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
+        public async Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
+            FBOLinx.DB.Models.User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
             
             if (user == null)
             {
@@ -72,9 +72,9 @@ namespace FBOLinx.Web.Services
             return user;
         }
         
-        public async Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord)
+        public async Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
+            FBOLinx.DB.Models.User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
             if (user != null)
                 return user;
 
@@ -85,7 +85,7 @@ namespace FBOLinx.Web.Services
                 join c in _Context.Contacts on fc.ContactId equals c.Oid
                 where fc.Fboid == fboRecord.Oid
                 select c).OrderByDescending(x => x.Primary).FirstOrDefaultAsync();
-            user = new User()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = contactRecord?.FirstName,
                 FboId = fboRecord.Oid,
@@ -116,7 +116,7 @@ namespace FBOLinx.Web.Services
             if (string.IsNullOrEmpty(groupRecord.Username) || string.IsNullOrEmpty(groupRecord.Password))
                 return null;
             //User doesn't exist for group - create it
-            user = new User()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = groupRecord.GroupName,
                 FboId = 0,

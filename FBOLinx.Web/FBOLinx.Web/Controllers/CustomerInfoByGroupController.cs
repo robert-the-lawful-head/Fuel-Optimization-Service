@@ -1062,8 +1062,6 @@ namespace FBOLinx.Web.Controllers
 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
                 
-                var customerTags = await _context.CustomerTag.Where(x => x.GroupId == groupId).ToListAsync();
-
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroup(groupId);
@@ -1157,7 +1155,7 @@ namespace FBOLinx.Web.Controllers
                              ,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
-                            Tags = customerTags.Where(x => x.CustomerId == cg.Oid),
+                            Tags = cg.CustomerTags,
                             PricingFormula = ai == null ?
                                                  (FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(defaultPricingTemplate.MarginType) + " " +
                                                      (defaultPricingTemplate.DiscountType == DiscountTypes.Percentage ?
@@ -1193,7 +1191,7 @@ namespace FBOLinx.Web.Controllers
                                 .Where(a => !string.IsNullOrEmpty(a))
                                 .OrderBy(a => a)
                                 .ToList(),
-                            Tags = resultsGroup.Key.Tags.ToList(),
+                            Tags = resultsGroup.Key.Tags,
                             PricingFormula = resultsGroup.Key.PricingFormula,
                             FavoriteCompany = resultsGroup.Key.FavoriteCompany
                         })

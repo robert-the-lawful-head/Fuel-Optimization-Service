@@ -229,6 +229,7 @@ import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders
 import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 import { FavoriteIconComponent } from '../shared/components/favorite-icon/favorite-icon.component';
+import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/aicraft-expanded-detail/aicraft-expanded-detail.component';
 
 @NgModule({
     declarations: [
@@ -369,6 +370,7 @@ import { FavoriteIconComponent } from '../shared/components/favorite-icon/favori
         FbosMissedQuotesGridComponent,
         AircraftPopupContainerComponent,
         FlightWatchAircraftDataTableComponent,
+        AicraftExpandedDetailComponent,
         MissedOrdersGridComponent,
         FlightWatchMapWrapperComponent,
         PriceCheckerDialogComponent,

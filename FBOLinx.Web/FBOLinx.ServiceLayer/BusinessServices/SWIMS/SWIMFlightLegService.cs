@@ -26,7 +26,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,
             bool? isPlaceHolder = null);
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30);
 
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
             int pastMinutesForDepartureOrArrival = 30);
@@ -60,13 +60,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result == null ? null : result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30)
         {
             var queryOptions = new QueryableOptions<SWIMFlightLeg>();
             queryOptions.MaxRecords = maxRecords;
             queryOptions.OrderByDescendingExpression = (x => x.Oid);
 
             var result = await _repository.GetAsync(queryOptions);
+
+            var minimumDateTime = DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival);
+            result = result.Where(x => !string.IsNullOrEmpty(x.AircraftIdentification) && ((x.ATD > minimumDateTime) || (x.ETA.HasValue && x.ETA.Value > minimumDateTime)))
+                .ToList();
 
             return result.Adapt<List<SWIMFlightLegDTO>>();
         }

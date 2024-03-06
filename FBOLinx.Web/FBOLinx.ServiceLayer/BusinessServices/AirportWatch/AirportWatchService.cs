@@ -936,9 +936,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             await _AirportWatchLiveDataService.BulkInsert(_LiveDataToInsert);
             await _AirportWatchLiveDataService.BulkUpdate(_LiveDataToUpdate);
             await _AirportWatchLiveDataService.BulkDeleteAsync(_LiveDataToDelete);
-            _LoggingService.LogError("AirportWatchService: historical data to insert", JsonConvert.SerializeObject(_HistoricalDataToInsert), LogLevel.Info, LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkInsert(_HistoricalDataToInsert);
-            _LoggingService.LogError("AirportWatchService: historical data to update", JsonConvert.SerializeObject(_HistoricalDataToUpdate),LogLevel.Info,LogColorCode.Blue);
             await _AirportWatchHistoricalDataService.BulkUpdate(_HistoricalDataToUpdate);
         }
 
