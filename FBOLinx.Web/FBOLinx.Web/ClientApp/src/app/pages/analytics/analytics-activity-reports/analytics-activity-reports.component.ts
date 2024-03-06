@@ -66,8 +66,11 @@ export class AnalyticsActivityReportsComponent implements OnInit {
 
     ngOnInit() {
         var isSingleSourceFbo:boolean =  JSON.parse(this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo).toLowerCase());
-
         this.reports[AnaliticsReportType.LostToCompetition].isHidden = isSingleSourceFbo;
+
+        var isNetworkFbo:boolean =  JSON.parse(this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo).toLowerCase());
+        this.reports[AnaliticsReportType.FBONetworkArrivalDepartures].isHidden = !isNetworkFbo;
+
     }
 
     openReport(anatylticsReports: AnatylticsReports) {

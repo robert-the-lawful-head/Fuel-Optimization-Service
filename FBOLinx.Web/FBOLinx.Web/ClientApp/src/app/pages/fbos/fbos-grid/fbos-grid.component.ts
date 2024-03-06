@@ -332,7 +332,4 @@ export class FbosGridComponent implements OnInit {
         this.sharedService.emitChange(fboChangedEvent);
         this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
     }
-    getGroupFbos(groupId: number) {
-        return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
-    }
 }
