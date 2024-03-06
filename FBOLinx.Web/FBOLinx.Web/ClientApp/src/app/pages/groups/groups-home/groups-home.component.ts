@@ -13,6 +13,7 @@ import { GroupsService } from '../../../services/groups.service';
 import { State } from '../../../store/reducers';
 import { GroupGridState } from '../../../store/reducers/group';
 import { getGroupGridState } from '../../../store/selectors';
+import { GroupFboViewModel } from 'src/app/models/groups';
 
 @Component({
     selector: 'app-groups-home',
@@ -20,7 +21,7 @@ import { getGroupGridState } from '../../../store/selectors';
     templateUrl: './groups-home.component.html',
 })
 export class GroupsHomeComponent implements OnInit {
-    groupsFbosData: any;
+    groupsFbosData: GroupFboViewModel;
     currentGroup: any;
     groupGridState: GroupGridState;
     isDeletingGroup: boolean = false;
@@ -102,6 +103,6 @@ export class GroupsHomeComponent implements OnInit {
     private loadGroupsFbos() {
         this.groupsService
             .groupsAndFbos()
-            .subscribe((data: any) => (this.groupsFbosData = data));
+            .subscribe((data: GroupFboViewModel) => (this.groupsFbosData = data));
     }
 }

@@ -104,6 +104,7 @@ namespace FBOLinx.Web.Controllers
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
+                                Fbos = x.Fbos,
                             })
                             .ToListAsync();
 

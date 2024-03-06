@@ -43,7 +43,7 @@ import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
-import { single } from 'rxjs/operators';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 
 const initialColumns: ColumnType[] = [
     {
@@ -152,7 +152,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private mergeGroupsDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
         private snackBar: MatSnackBar,
-        private addAssociationDialog: MatDialog
+        private addAssociationDialog: MatDialog,
+        private manageFboGroupsService: ManageFboGroupsService
     ) {}
 
     ngOnInit() {
@@ -496,17 +497,17 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 localStorage.setItem('impersonatedrole', '1');
                 this.sharedService.currentUser.impersonatedRole = 1;
 
-                localStorage.setItem('conductorFbo', 'true');
-                this.sharedService.currentUser.conductorFbo = true;
-
                 localStorage.setItem('fboId', fbo.oid.toString());
                 this.sharedService.currentUser.fboId = fbo.oid;
 
                 this.sharedService.currentUser.icao = fbo.icao;
 
-                let isSingleSource: boolean = this.groupFbos(fbo.groupId).length == 1;
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,this.manageFboGroupsService.isSingleSourceFbo(this.groupsFbosData,fbo.groupId).toString());
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSource.toString());
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo).toString());
+
+                localStorage.setItem('conductorFbo', 'true');
+                this.sharedService.currentUser.conductorFbo = true;
 
                 this.sharedService.emitChange(fboChangedEvent);
                 this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
@@ -651,12 +652,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.childGrid.dataSource = this.fboDataSource;
     }
 
-    groupFbos(groupId: number) {
-        return this.groupsFbosData.fbos.filter(
-            (fbo) => fbo.groupId === groupId
-        );
-    }
-
     editGroup(group: any) {
         this.editGroupClicked.emit({
             group,
@@ -727,6 +722,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     }
     isValidPricing(data: any) {
         return data.expiredFboPricingCount === 0 && data.activeFboCount > 0;
+    }
+    getGroupFbos(groupId: number) {
+        return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
     }
     private saveSettings() {
         localStorage.setItem(

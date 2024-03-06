@@ -26,6 +26,10 @@ import { PricingExpiredNotificationGroupComponent } from '../../../shared/compon
 // Components
 import { FbosDialogNewFboComponent } from '../fbos-dialog-new-fbo/fbos-dialog-new-fbo.component';
 import { FbosGridNewFboDialogComponent } from '../fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { GroupsService } from 'src/app/services/groups.service';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
+import { GroupFboViewModel } from 'src/app/models/groups';
 
 @Component({
     selector: 'app-fbos-grid',
@@ -56,6 +60,8 @@ export class FbosGridComponent implements OnInit {
     public tableSortFbos = 'icao';
     public tableSortOrderFbos = 'asc';
 
+    public groupsFbosData: GroupFboViewModel;
+
     constructor(
         private newFboDialog: MatDialog,
         private fboService: FbosService,
@@ -65,7 +71,9 @@ export class FbosGridComponent implements OnInit {
         private manageFboDialog: MatDialog,
         private snackBar: MatSnackBar,
         private router: Router,
-        private checkPricingDialog: MatDialog
+        private checkPricingDialog: MatDialog,
+        private groupsService: GroupsService,
+        private manageFboGroupsService: ManageFboGroupsService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.canManageFbo = [UserRole.Conductor, UserRole.GroupAdmin].includes(
@@ -84,6 +92,9 @@ export class FbosGridComponent implements OnInit {
         } else {
             this.displayedColumns = ['icao', 'fbo', 'price', 'active', 'edit'];
         }
+        this.groupsService
+            .groupsAndFbos()
+            .subscribe((data: GroupFboViewModel) => (this.groupsFbosData = data));
     }
 
     ngOnInit() {
@@ -314,7 +325,14 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.currentUser.icao = fbo.icao;
 
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,this.manageFboGroupsService.isSingleSourceFbo(this.groupsFbosData,fbo.groupId).toString());
+
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo).toString());
+
         this.sharedService.emitChange(fboChangedEvent);
         this.router.navigate(['/default-layout/dashboard-fbo-updated/']);
+    }
+    getGroupFbos(groupId: number) {
+        return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
     }
 }
