@@ -141,6 +141,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.airportWatchSerice
             .getIntraNetworkVisitsReport(
                 this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
                 this.filterStartDate,
                 this.filterEndDate
             )

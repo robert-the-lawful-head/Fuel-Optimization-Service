@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using FBOLinx.DB.Specifications.AircraftHexTailMapping;
+using FBOLinx.Core.Utilities.Extensions;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.DB.Specifications.Group;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
@@ -20,7 +19,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
 {
     public interface IIntraNetworkAntennaDataReportService
     {
-        Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc);
+        Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, int fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc);
     }
 
     public class IntraNetworkAntennaDataReportService : IIntraNetworkAntennaDataReportService
@@ -53,7 +52,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
             _AirportWatchHistoricalDataService = airportWatchHistoricalDataService;
         }
 
-        public async Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId, DateTime startDateTimeUtc, DateTime endDateTimeUtc)
+        public async Task<List<IntraNetworkVisitsReportItem>> GenerateReportForNetwork(int groupId,int fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc)
         {
             var group = await _GroupService.GetSingleBySpec(new GroupByGroupIdSpecification(groupId));
             var fbos = await _FboService.GetListbySpec(new AllFbosByGroupIdSpecification(groupId));
@@ -92,6 +91,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
                         AircraftTypeCode = groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.AircraftTypeCode,
                         CustomerInfoByGroupId = groupByIcaoAndTail.Key.CustomerInfoByGroupID,
                         FlightNumbers = groupByIcaoAndTail.Select(x => x.AirportWatchData?.FlightNumber).Distinct().ToList(),
+                        Icao = groupByIcaoAndTail.Key.AirportIcao ?? "NA"
                     };
                     result.Add(item);
                 }
@@ -107,7 +107,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
                     {
                         AcukwikFboHandlerId = fbo.AcukwikFBOHandlerId.GetValueOrDefault(),
                         FboName = fbo.Fbo,
-                        Icao = groupByIcaoAndTail.Key.AirportIcao,
+                        Icao = groupByIcaoAndTail.Key.AirportIcao ?? "NA2",
                         VisitsToAirport = groupByIcaoAndTail.Count(),
                         VisitsToFbo = (groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.VisitsToMyFbo).GetValueOrDefault(),
                     });

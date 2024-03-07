@@ -7,6 +7,7 @@ import {
     AirportWatchHistoricalDataRequest,
     FlightWatchHistorical,
 } from '../models/flight-watch-historical';
+import { IntraNetworkVisitsReportItem } from '../models/intra-network-visits-report-item';
 
 @Injectable()
 export class AirportWatchService {
@@ -104,10 +105,10 @@ export class AirportWatchService {
         );
     }
 
-    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
+    public getIntraNetworkVisitsReport(groupId: number,fboId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
         let query = `?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`;
-        return this.http.get<any>(
-            `${this.accessPointUrl}/intra-network/visits-report/${groupId}${query}`,
+        return this.http.get<IntraNetworkVisitsReportItem[]>(
+            `${this.accessPointUrl}/intra-network/visits-report/group/${groupId}/fbo/${fboId}${query}`,
             { headers: this.headers }
         );
     }
