@@ -104,9 +104,8 @@ export class AirportWatchService {
         );
     }
 
-    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date, icao?: string) {
+    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
         let query = `?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`;
-        query += icao ? `&icao=${icao}` : '';
         return this.http.get<any>(
             `${this.accessPointUrl}/intra-network/visits-report/${groupId}${query}`,
             { headers: this.headers }
