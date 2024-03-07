@@ -142,8 +142,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             .getIntraNetworkVisitsReport(
                 this.sharedService.currentUser.groupId,
                 this.filterStartDate,
-                this.filterEndDate,
-                this.icao
+                this.filterEndDate
             )
             .subscribe((data: IntraNetworkVisitsReportItem[]) => {
                 this.data = data;
