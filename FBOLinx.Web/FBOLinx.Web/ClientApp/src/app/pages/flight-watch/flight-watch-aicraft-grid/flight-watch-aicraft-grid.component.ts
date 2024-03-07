@@ -10,6 +10,7 @@ import { FlightWatchModelResponse } from '../../../models/flight-watch';
 import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 import { FlightWatchAircraftDataTableComponent } from './flight-watch-aircraft-data-table/flight-watch-aircraft-data-table.component';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
+import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +52,8 @@ export class FlightWatchAicraftGridComponent extends GridBase {
 
     constructor(private tableSettingsDialog: MatDialog,
         private sharedService: SharedService,
-        private customerInfoByGroupService: CustomerinfobygroupService
+        private customerInfoByGroupService: CustomerinfobygroupService,
+        private flightWatchMapService: FlightWatchMapService
     ) {
         super();
     }
@@ -212,15 +214,8 @@ export class FlightWatchAicraftGridComponent extends GridBase {
     }
 
     setData(data: FlightWatchModelResponse[]): void {
-        this.arrivals = data?.filter((row: FlightWatchModelResponse) => {
-            return row.arrivalICAO == row.focusedAirportICAO
-        });
-        this.departures = data?.filter((row: FlightWatchModelResponse) => {
-            return (
-                row.departureICAO == row.focusedAirportICAO &&
-                row.status != null
-            );
-        });
+        this.arrivals = this.flightWatchMapService.filterArrivals(data);
+        this.departures = this.flightWatchMapService.filterDepatures(data);
     }
 
     arrivalsDeparturesCommonCols: string[]= [swimTableColumns.status,swimTableColumns.tailNumber,swimTableColumns.flightDepartment,swimTableColumns.icaoAircraftCode,swimTableColumns.ete,swimTableColumns.isAircraftOnGround,swimTableColumns.itpMarginTemplate];

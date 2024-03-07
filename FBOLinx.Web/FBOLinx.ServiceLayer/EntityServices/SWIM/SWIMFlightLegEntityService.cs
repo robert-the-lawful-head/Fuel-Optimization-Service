@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Extensions;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.ServiceLayer.DTO.SWIM;
 using Microsoft.EntityFrameworkCore;
 
 namespace FBOLinx.ServiceLayer.EntityServices.SWIM
@@ -39,13 +39,34 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
                 select swim);
             return query;
         }
+        private Expression<Func<SWIMFlightLeg, bool>> ArrivalsAndDeparturesQuerylogic(int estimateTimeMinutesThreshold, int lastUpdateThreshold)
+        {
+            var minDateTimeThreshold = DateTime.UtcNow.AddMinutes(-estimateTimeMinutesThreshold);
+            var maxDateTimeThreshold = DateTime.UtcNow.AddMinutes(estimateTimeMinutesThreshold);
+            var lastUpdateDateTime = DateTime.UtcNow.AddMinutes(-lastUpdateThreshold);
 
+            return swim => swim.LastUpdated >= lastUpdateDateTime &&
+                           ((swim.ATD >= minDateTimeThreshold) || (swim.ETA.HasValue && swim.ETA.Value >= minDateTimeThreshold))
+                             && ((swim.ATD <= maxDateTimeThreshold) || (swim.ETA.HasValue && swim.ETA.Value <= maxDateTimeThreshold));
+        }
+
+        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int estimateTimeMinutesThreshold,int lastUpdateThreshold)
+        {
+            var query = context.SWIMFlightLegs
+                .Where(ArrivalsAndDeparturesQuerylogic(estimateTimeMinutesThreshold, lastUpdateThreshold));
+
+            var arrivals = query.Where(swim => swim.ArrivalICAO == icao);
+
+            var departures = query.Where(swim => swim.DepartureICAO == icao);
+
+            return await arrivals.Concat(departures).ToListAsync();
+        }
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
-            DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
-            List<string> arrivalAirportIcaos = null,
-            List<string> aircraftIdentifications = null,
-            bool? isPlaceHolder = null
-            )
+        DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
+        List<string> arrivalAirportIcaos = null,
+        List<string> aircraftIdentifications = null,
+        bool? isPlaceHolder = null
+        )
         {
             var query = (from swim in context.SWIMFlightLegs
                 join departureAirport in context.AsTable(departureAirportIcaos) on swim.DepartureICAO equals departureAirport.Value
