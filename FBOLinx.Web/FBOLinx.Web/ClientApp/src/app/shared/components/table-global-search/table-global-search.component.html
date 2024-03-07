@@ -1,7 +1,7 @@
 
 <div class="container-fluid flex">
         <div class="flex">
-            <mat-form-field>
+            <mat-form-field *ngIf="!hideSearchInput">
                 <input
                     (keyup)="applyFilter($event.target.value)"
                     [(ngModel)]="userTypedFilter"

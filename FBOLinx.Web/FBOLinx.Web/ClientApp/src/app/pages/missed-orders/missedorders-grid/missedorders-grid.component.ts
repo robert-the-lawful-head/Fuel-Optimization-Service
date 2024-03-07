@@ -25,6 +25,7 @@ import {
 import * as SharedEvent from '../../../models/sharedEvents';
 import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -86,7 +87,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     resetMissedOrdersSubscription: any;
 
     csvFileOptions: csvFileOptions = { fileName: 'Missed Orders', sheetName: 'Missed Orders' };
-
+    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown];
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,

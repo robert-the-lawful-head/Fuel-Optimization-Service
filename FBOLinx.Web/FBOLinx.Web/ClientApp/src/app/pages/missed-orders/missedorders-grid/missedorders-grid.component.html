@@ -1,7 +1,7 @@
 <div class="chart-container">
     <div class="flex position-relative">
         <app-report-filters
-            [isIcaoFilterHidden]="true"
+            [hiddenFilters]="reportHiddenItems"
             [icao]="icaoFilter"
             [dataSource]="dataSource"
             [selectedDateFilter]="selectedDateFilter"

@@ -1,4 +1,4 @@
-<div class="d-inline-block mr-2 ml-2" style="width: 130px" *ngIf="!isIcaoFilterHidden">
+<div class="d-inline-block mr-2 ml-2" style="width: 130px" *ngIf="!isFilterHidden(reportFilterItems.icaoDropDown)">
     <app-flight-watch-filters
         [icaoList]="airportsICAO"
         [icao]="icao"
@@ -8,6 +8,7 @@
 </div>
 <div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
     <app-table-global-search
+        [hideSearchInput]="isFilterHidden(reportFilterItems.searchInput)"
         [matDataSource]="dataSource"
         placeholder="Search by Company"
     >

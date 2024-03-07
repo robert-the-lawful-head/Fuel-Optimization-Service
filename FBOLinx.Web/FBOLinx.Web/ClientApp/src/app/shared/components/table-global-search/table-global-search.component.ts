@@ -1,5 +1,4 @@
-import { ThisReceiver } from '@angular/compiler';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment';
 
@@ -13,6 +12,7 @@ export class TableGlobalSearchComponent implements OnInit {
     @Input() matDataSource: any = null;
     @Input() SubmatDataSource: any = null
     @Input() showClearButton: boolean = true;
+    @Input() hideSearchInput: boolean = false;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
 
