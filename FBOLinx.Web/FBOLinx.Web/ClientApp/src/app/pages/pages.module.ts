@@ -234,6 +234,7 @@ import { AnalyticsActivityReportsComponent } from './analytics/analytics-activit
 import { AnalyticsReportPopupComponent } from './analytics/analytics-report-popup/analytics-report-popup.component';
 import { PresetDateFilterComponent } from '../shared/components/preset-date-filter/preset-date-filter.component';
 import { ReportFiltersComponent } from './analytics/analytics-report-popup/report-filters/report-filters.component';
+import { CustomerCaptureRateComponent } from './analytics/customer-capture-rate/customer-capture-rate.component';
 
 @NgModule({
     declarations: [
@@ -394,7 +395,8 @@ import { ReportFiltersComponent } from './analytics/analytics-report-popup/repor
         AnalyticsActivityReportsComponent,
         AnalyticsReportPopupComponent,
         PresetDateFilterComponent,
-        ReportFiltersComponent
+        ReportFiltersComponent,
+        CustomerCaptureRateComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

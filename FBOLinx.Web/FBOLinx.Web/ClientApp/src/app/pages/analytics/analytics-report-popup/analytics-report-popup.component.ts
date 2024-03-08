@@ -20,6 +20,7 @@ import { MissedOrdersGridComponent } from '../../missed-orders/missedorders-grid
 import { GroupAnalyticsIntraNetworkVisitsReportComponent } from '../../group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { AnalyticsAirportArrivalsDepaturesComponent } from '../analytics-airport-arrivals-depatures/analytics-airport-arrivals-depatures.component';
 import { AnalyticsCompaniesQuotesDealTableComponent } from '../analytics-companies-quotes-deal-table/analytics-companies-quotes-deal-table.component';
+import { CustomerCaptureRateComponent } from '../customer-capture-rate/customer-capture-rate.component';
 
 export enum AnaliticsReportType {
     CustomerStatistics,
@@ -52,6 +53,8 @@ export class AnalyticsReportPopupComponent implements OnInit {
     fboNetworkArrivalsDepartures: GroupAnalyticsIntraNetworkVisitsReportComponent;
     @ViewChild('missedOrders', { static: false })
     missedOrders: MissedOrdersGridComponent;
+    @ViewChild('customerCaptureRate', { static: false })
+    customerCaptureRate: CustomerCaptureRateComponent;
 
     analiticsReportTypes = AnaliticsReportType;
 
@@ -113,6 +116,7 @@ export class AnalyticsReportPopupComponent implements OnInit {
                 this.missedOrders.exportCsv();
                 break;
             case AnaliticsReportType.FuelerLinxCustomerCaptureRate:
+                this.customerCaptureRate.exportCsv();
                 break;
             default:
                 break;
