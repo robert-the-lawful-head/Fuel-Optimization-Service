@@ -103,7 +103,18 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         );
     }
     exportCsv() {
-        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,null);
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "percentCustomerBusiness"){
+                let color = "00FF00"; // green
+                if(item[id] == 0)
+                    color = "FF0000"; // red
+                return { v: item[id], s: { fill: { fgColor: { rgb: color } } } };
+            }else{
+                return { v: item[id] };
+            }
+
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
     }
 
     applyPresetDateFilter(filter: SelectedDateFilter) {

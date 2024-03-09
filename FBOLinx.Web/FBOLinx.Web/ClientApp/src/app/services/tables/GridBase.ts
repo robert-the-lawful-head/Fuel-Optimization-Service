@@ -7,7 +7,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 
 export type csvFileOptions = {
     fileName: string;
@@ -100,7 +100,6 @@ export abstract class GridBase {
         // });
     }
     exportCsvFile(columns: ColumnType[],fileName: string, sheetName: string, computePropertyFnc: any,exportSelectedData: boolean = false) {
-
         let cols = columns.filter(col => (col.id == 'selectAll')? false : !col.hidden);
 
         let dataToExport = (exportSelectedData) ?
@@ -111,6 +110,7 @@ export abstract class GridBase {
             let row = {};
             cols.forEach( col => {
                 let calculatedText =  !computePropertyFnc ? "" : computePropertyFnc(item, col.id);
+                console.log("🚀 ~ GridBase ~ exportData ~ calculatedText:", calculatedText)
                 row[col.name] = calculatedText ? calculatedText : item[col.id];
             });
             return row;
