@@ -130,10 +130,6 @@ export abstract class GridBase {
                 let calculatedText = !computePropertyFnc
                     ? ''
                     : computePropertyFnc(item, col.id);
-                console.log(
-                    '🚀 ~ GridBase ~ exportData ~ calculatedText:',
-                    calculatedText
-                );
                 row[col.name] = calculatedText ? calculatedText : item[col.id];
             });
             return row;
