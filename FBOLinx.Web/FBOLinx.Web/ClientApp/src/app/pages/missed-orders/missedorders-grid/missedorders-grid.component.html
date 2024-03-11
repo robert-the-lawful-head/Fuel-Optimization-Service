@@ -29,7 +29,6 @@
         <div
             class="w-100 table-container"
             style="overflow-x: auto"
-            [ngClass]="{ 'd-none': !dataSource || !missedOrdersData }"
             (scroll)="onTableScroll($event)"
         >
             <table
@@ -102,11 +101,11 @@
                 </ng-container>
 
                 <tr
-                    *matHeaderRowDef="getTableColumns(); sticky: true"
+                    *matHeaderRowDef="visibleColumns; sticky: true"
                     mat-header-row
                 ></tr>
                 <tr
-                    *matRowDef="let row; columns: getTableColumns()"
+                    *matRowDef="let row; columns: visibleColumns"
                     mat-row
                 ></tr>
             </table>
@@ -119,9 +118,12 @@
                 ></mat-paginator>
             </div>
         </div>
-
-        <div *ngIf="!missedOrdersData">
-            <mat-spinner></mat-spinner>
-        </div>
     </div>
 </div>
+<ngx-ui-loader
+[loaderId]="chartName"
+bgsColor="rgb(100, 181, 246)"
+bgsPosition="center-center"
+bgsType="ball-spin"
+overlayColor="rgba(0, 0, 0, 0.1)"
+></ngx-ui-loader>

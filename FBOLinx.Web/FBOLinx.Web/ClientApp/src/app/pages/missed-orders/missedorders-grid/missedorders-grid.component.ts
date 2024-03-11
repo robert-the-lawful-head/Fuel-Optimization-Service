@@ -163,9 +163,17 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
                 return column.id
             });
     }
+    get visibleColumns() {
+        return this.columns
+        .filter((column) => !column.hidden)
+        .map((column) => {
+            if (column.id == 'customer')
+                return 'customerName'
+            return column.id
+        });
+    }
 
     refreshTable() {
-        this.missedOrdersData = null;
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData().subscribe(
             (data: any[]) => {
