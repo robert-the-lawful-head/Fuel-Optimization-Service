@@ -12,9 +12,7 @@ import { MatSort } from '@angular/material/sort';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
-import {
-    ColumnType,
-} from 'src/app/shared/components/table-settings/table-settings.component';
+import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
@@ -27,9 +25,7 @@ import { FbosService } from '../../../services/fbos.service';
 
 //Models
 import { CustomersListType } from '../../../models/customer';
-import {
-    FlightWatchHistorical,
-} from '../../../models/flight-watch-historical';
+import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
@@ -37,14 +33,17 @@ import {
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
-
+import { CustomIcaoList } from '../analytics-report-popup/report-filters/report-filters.component';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
     templateUrl: './analytics-airport-arrivals-depatures.component.html',
 })
-export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase implements OnInit {
+export class AnalyticsAirportArrivalsDepaturesComponent
+    extends GridBase
+    implements OnInit
+{
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -65,9 +64,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         'percentOfVisits',
     ];
 
-    icao:string;
-    filterStartDate: Date;
-    filterEndDate: Date;
+    icao: string;
     selectedDateFilter: SelectedDateFilter;
 
     isCommercialInvisible = true;
@@ -84,9 +81,14 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     columns: ColumnType[] = [];
 
-    fboName: string = "";
+    fboName: string = '';
 
     tailNumbers: any[] = [];
+
+    customIcaoList: CustomIcaoList = {
+        value: ['Other'],
+        isStandAlone: false,
+    };
 
     initialColumns: ColumnType[] = [
         {
@@ -104,7 +106,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         {
             id: 'hexCode',
             name: 'Hex #',
-            hidden: true
+            hidden: true,
         },
         {
             id: 'aircraftType',
@@ -129,7 +131,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         },
         {
             id: 'isConfirmedVisit',
-            name: 'Visit to My FBO?'
+            name: 'Visit to My FBO?',
         },
         {
             id: 'percentOfVisits',
@@ -137,7 +139,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         },
     ];
 
-    csvFileOptions: csvFileOptions = { fileName: 'Airport Departures and Arrivals', sheetName: 'Airport Departures and Arrivals' };
+    csvFileOptions: csvFileOptions = {
+        fileName: 'Airport Departures and Arrivals',
+        sheetName: 'Airport Departures and Arrivals',
+    };
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
@@ -158,8 +163,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             selectedFilter: null,
             offsetDate: this.filterStartDate,
             limitDate: this.filterEndDate,
-        }
-        this.icao = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+        };
+        this.icao = this.sharedService.getCurrentUserPropertyValue(
+            localStorageAccessConstant.icao
+        );
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
@@ -194,8 +201,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         this.refreshData();
     }
     getFboName() {
-        if (this.fboName && this.fboName != "")
-            return;
+        if (this.fboName && this.fboName != '') return;
         this.fbosService
             .get({
                 oid: this.sharedService.currentUser.fboId,
@@ -207,8 +213,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     getCustomersList() {
-        if (this.customers && this.customers.length > 0)
-            return;
+        if (this.customers && this.customers.length > 0) return;
         this.customerInfoByGroupService
             .getCustomersListByGroupAndFbo(
                 this.sharedService.currentUser.groupId,
@@ -233,7 +238,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
-        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.initialColumns);
+        this.columns = this.getClientSavedColumns(
+            this.tableLocalStorageKey,
+            this.initialColumns
+        );
     }
 
     refreshData() {
@@ -255,21 +263,30 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     refreshDataSource() {
-        const data = this.data
-            .map((x) => ({
-                ...x,
-                aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
-            }));
+        const data = this.data.map((x) => ({
+            ...x,
+            aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
+        }));
 
-        this.setVirtualScrollVariables(this.paginator,this.sort,data)
+        this.setVirtualScrollVariables(this.paginator, this.sort, data);
 
         if (!this.dataSource) {
             this.dataSource.filteredData = [];
         }
 
-        this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
-            .map(x => x.tailNumber))]
-            .map(tailNumber => this.data.find(x => x.tailNumber === tailNumber));
+        this.tailNumbers = [
+            ...new Set(
+                this.data
+                    .filter(
+                        (x) =>
+                            !this.isCommercialInvisible ||
+                            !isCommercialAircraft(x.aircraftTypeCode)
+                    )
+                    .map((x) => x.tailNumber)
+            ),
+        ].map((tailNumber) =>
+            this.data.find((x) => x.tailNumber === tailNumber)
+        );
     }
 
     filterChanged() {
@@ -303,12 +320,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     exportCsv() {
         let computePropertyFnc = (item: any[], id: string): any => {
-            if(id == "aircraftTypeCode")
-                    item[id] = this.getAircraftLabel(item[id]);
-            else
-                return null;
-        }
-        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
+            if (id == 'aircraftTypeCode')
+                item[id] = this.getAircraftLabel(item[id]);
+            else return null;
+        };
+        this.exportCsvFile(
+            this.columns,
+            this.csvFileOptions.fileName,
+            this.csvFileOptions.sheetName,
+            computePropertyFnc
+        );
     }
 
     clearAllFilters() {
@@ -346,11 +367,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     openSettings() {
         var _this = this;
-        this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
-            _this.columns = result;
-            _this.refreshSort(_this.sort, _this.columns);
-            _this.saveSettings();
-        });
+        this.openSettingsDialog(
+            this.tableSettingsDialog,
+            this.columns,
+            function (result) {
+                _this.columns = result;
+                _this.refreshSort(_this.sort, _this.columns);
+                _this.saveSettings();
+            }
+        );
     }
 
     saveSettings() {
@@ -361,27 +386,29 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     confirmedVisitToggled(row: FlightWatchHistorical) {
-
         if (row.airportWatchHistoricalParking == null) {
             row.airportWatchHistoricalParking = {
                 airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
                 acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
-                oid: 0
-            }
+                oid: 0,
+            };
         }
 
         row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
 
         if (row.airportWatchHistoricalParking.oid > 0) {
-            this.airportWatchService.updateHistoricalParking(row).subscribe((response: any) => {
-                this.refreshData();
-            });
+            this.airportWatchService
+                .updateHistoricalParking(row)
+                .subscribe((response: any) => {
+                    this.refreshData();
+                });
         } else {
-            this.airportWatchService.createHistoricalParking(row).subscribe((response: any) => {
-                this.refreshData();
-            })
+            this.airportWatchService
+                .createHistoricalParking(row)
+                .subscribe((response: any) => {
+                    this.refreshData();
+                });
         }
-
     }
     changeIcaoFilter($event: string) {
         this.icao = $event;
@@ -393,8 +420,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         this.filterStartDate = filter.offsetDate;
         this.refreshData();
     }
-    private setColumns(){
-        this.columns = (this.icao == this.sharedService.currentUser.icao) ? this.initialColumns : this.filteredColumns;
+    private setColumns() {
+        this.columns =
+            this.icao == this.sharedService.currentUser.icao
+                ? this.initialColumns
+                : this.filteredColumns;
     }
     get filteredColumns() {
         return this.initialColumns.filter((column) => {
