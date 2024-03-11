@@ -64,6 +64,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
     ) {
         super();
         this.tableLocalStorageKey = `analytics-customer-capture-rate-${this.sharedService.currentUser.fboId}`;
+        this.initColumns();
         this.groupId = Number(
             this.sharedService.getCurrentUserPropertyValue(
                 localStorageAccessConstant.groupId
@@ -98,7 +99,31 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         };
         this.refreshData();
     }
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.sort.sortChange.subscribe(() => {
+            this.columns = this.columns.map((column) =>
+                column.id === this.sort.active
+                    ? { ...column, sort: this.sort.direction }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
+            );
+
+            this.saveSettings(
+                this.tableLocalStorageKey,
+                this.columns
+            );
+        });
+    }
+    initColumns() {
+        this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
+        this.columns = this.getClientSavedColumns(
+            this.tableLocalStorageKey,
+            this.columns
+        );
+    }
     refreshData() {
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
@@ -218,7 +243,10 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             function (result) {
                 _this.columns = result;
                 _this.refreshSort(_this.sort, _this.columns);
-                _this.saveSettings(this.tableLocalStorageKey, this.columns);
+                _this.saveSettings(
+                    this.tableLocalStorageKey,
+                    this.columns
+                );
             }
         );
     }
