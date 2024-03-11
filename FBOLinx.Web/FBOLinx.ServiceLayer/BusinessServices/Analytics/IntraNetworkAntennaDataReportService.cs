@@ -91,7 +91,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Analytics
                         AircraftTypeCode = groupByIcaoAndTail.FirstOrDefault()?.AirportWatchData?.AircraftTypeCode,
                         CustomerInfoByGroupId = groupByIcaoAndTail.Key.CustomerInfoByGroupID,
                         FlightNumbers = groupByIcaoAndTail.Select(x => x.AirportWatchData?.FlightNumber).Distinct().ToList(),
-                        Icao = groupByIcaoAndTail.Key.AirportIcao ?? "NA"
                     };
                     result.Add(item);
                 }
