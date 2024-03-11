@@ -75,10 +75,7 @@ export class ReportFiltersComponent implements OnInit {
         this.onDateChange.emit(filter);
     }
     isFilterHidden(filter: ReportFilterItems) {
-        console.log("🚀 ~ ReportFiltersComponent ~ isFilterHidden ~ filter:", filter)
-        console.log("🚀 ~ ReportFiltersComponent ~ isFilterHidden ~ this.hiddenFilters:", this.hiddenFilters)
-
-        return this.hiddenFilters.includes(filter);
+        return this.hiddenFilters?.includes(filter);
     }
     private setCustomIcaoList(customIcaoList: CustomIcaoList) {
         if(customIcaoList.isStandAlone) {
