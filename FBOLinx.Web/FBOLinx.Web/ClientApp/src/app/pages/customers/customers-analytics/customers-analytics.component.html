@@ -46,13 +46,13 @@
             <div class="d-inline-block mr-2 ml-2">
                 <mat-form-field>
                     <mat-label>Company</mat-label>
-                    <input (keyup)="applyFilter($event)" matInput>
+                    <input (keyup)="applyFilter($event)" matInput />
                     <span matPrefix><i class="fa fa-search"></i></span>
                 </mat-form-field>
             </div>
         </div>
 
-        <div class="table-container mat-elevation-z8">
+        <div class="table-container mat-elevation-z3">
             <table
                 [dataSource]="dataSource"
                 mat-table
@@ -61,41 +61,73 @@
                 matSortDirection="desc"
             >
                 <ng-container matColumnDef="company">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Company</th>
-                    <td *matCellDef="let info" mat-cell> {{info.company}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Company
+                    </th>
+                    <td *matCellDef="let info" mat-cell>{{ info.company }}</td>
                 </ng-container>
 
                 <ng-container matColumnDef="directOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Direct Orders</th>
-                    <td *matCellDef="let info" mat-cell> {{info.directOrders}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Direct Orders
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.directOrders }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="companyQuotesTotal">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Number of Quotes</th>
-                    <td *matCellDef="let info" mat-cell> {{info.companyQuotesTotal}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Number of Quotes
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.companyQuotesTotal }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="conversionRate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Conversion Rate</th>
-                    <td *matCellDef="let info" mat-cell> {{info.conversionRate}}%</td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Conversion Rate
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.conversionRate }}%
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="totalOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at {{fbo}} </th>
-                    <td *matCellDef="let info" mat-cell> {{info.totalOrders}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Total Orders at {{ fbo }}
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.totalOrders }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="airportOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> Total Orders at {{icao}}</th>
-                    <td *matCellDef="let info" mat-cell> {{info.airportOrders}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        Total Orders at {{ icao }}
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.airportOrders }}
+                    </td>
                 </ng-container>
 
                 <ng-container matColumnDef="lastPullDate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header> {{icao}} Last Quoted</th>
-                    <td *matCellDef="let info" mat-cell> {{info.lastPullDate}} </td>
+                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                        {{ icao }} Last Quoted
+                    </th>
+                    <td *matCellDef="let info" mat-cell>
+                        {{ info.lastPullDate }}
+                    </td>
                 </ng-container>
-                <tr *matHeaderRowDef="displayedColumns; sticky: true" mat-header-row></tr>
-                <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+                <tr
+                    *matHeaderRowDef="displayedColumns; sticky: true"
+                    mat-header-row
+                ></tr>
+                <tr
+                    *matRowDef="let row; columns: displayedColumns"
+                    mat-row
+                ></tr>
             </table>
         </div>
     </div>

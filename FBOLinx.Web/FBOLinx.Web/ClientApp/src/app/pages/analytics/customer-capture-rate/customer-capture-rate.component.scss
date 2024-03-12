@@ -8,3 +8,10 @@ table{
     transform: translateY(-50%);
     z-index: 9999;
 }
+.chart-container{
+    height: 100%;
+}
+.table-container{
+    height: 89%;
+    overflow: auto;
+}

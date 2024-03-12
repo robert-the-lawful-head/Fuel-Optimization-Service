@@ -1,11 +1,12 @@
 <div class="chart-container">
     <div class="flex position-relative">
         <app-report-filters
-        [icao]="icao"
-        [dataSource]="dataSource"
-        [selectedDateFilter]="selectedDateFilter"
-        (onChangeIcaoFilter)="changeIcaoFilter($event)"
-        (onDateChange)="applyPresetDateFilter($event)"></app-report-filters>
+            [icao]="icao"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            (onChangeIcaoFilter)="changeIcaoFilter($event)"
+            (onDateChange)="applyPresetDateFilter($event)"
+        ></app-report-filters>
         <div class="actions">
             <button [matMenuTriggerFor]="gridActions" mat-icon-button>
                 <mat-icon
@@ -26,7 +27,7 @@
     </div>
 
     <div
-        class="table-container mat-elevation-z8"
+        class="table-container mat-elevation-z3"
         (scroll)="onTableScroll($event)"
     >
         <table [dataSource]="dataSource" mat-table matSort>

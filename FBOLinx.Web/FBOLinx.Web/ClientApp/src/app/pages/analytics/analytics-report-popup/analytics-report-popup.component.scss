@@ -14,13 +14,16 @@
             border: 1px solid #252d47;
             height: calc(100vh - 140px);
             width: 100%;
-            .element{
+            .element {
                 flex-grow: 1;
             }
             .middle-element {
-                overflow: auto;
                 flex-grow: 999;
+                overflow: hidden;
                 padding: 5px 25px 0 5px;
+                div {
+                    height: 100%;
+                }
             }
             .mat-toolbar,
             .mat-toolbar-multiple-rows {
@@ -31,7 +34,7 @@
             .spacer {
                 flex: 1;
             }
-            .close-icon{
+            .close-icon {
                 cursor: pointer;
             }
             .action-buttons {

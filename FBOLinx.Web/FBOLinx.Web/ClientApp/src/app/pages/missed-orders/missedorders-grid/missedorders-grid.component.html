@@ -27,7 +27,7 @@
         </div>
 
         <div
-            class="w-100 table-container"
+            class="table-container mat-elevation-z3"
             style="overflow-x: auto"
             (scroll)="onTableScroll($event)"
         >
@@ -104,10 +104,7 @@
                     *matHeaderRowDef="visibleColumns; sticky: true"
                     mat-header-row
                 ></tr>
-                <tr
-                    *matRowDef="let row; columns: visibleColumns"
-                    mat-row
-                ></tr>
+                <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
             </table>
             <div class="invisible">
                 <mat-paginator
@@ -121,9 +118,9 @@
     </div>
 </div>
 <ngx-ui-loader
-[loaderId]="chartName"
-bgsColor="rgb(100, 181, 246)"
-bgsPosition="center-center"
-bgsType="ball-spin"
-overlayColor="rgba(0, 0, 0, 0.1)"
+    [loaderId]="chartName"
+    bgsColor="rgb(100, 181, 246)"
+    bgsPosition="center-center"
+    bgsType="ball-spin"
+    overlayColor="rgba(0, 0, 0, 0.1)"
 ></ngx-ui-loader>
