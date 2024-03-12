@@ -1327,6 +1327,10 @@ namespace FBOLinx.Web.Controllers
 
                     var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
 
+                    int? percentCustomerBusiness = null;
+                    if(totalOrders > 0)
+                    percentCustomerBusiness = (airportTotalOrders / totalOrders) * 100;
+
                     tableData.Add(new CustomerCaptureRateResponse()
                     {
                         Oid = customer.Oid,
@@ -1334,7 +1338,7 @@ namespace FBOLinx.Web.Controllers
                         Company = customer.Company,
                         TotalOrders = totalOrders,
                         AirportOrders = airportTotalOrders,
-                        PercentCustomerBusiness = (totalOrders == 0)?0:(airportTotalOrders/totalOrders)*100
+                        PercentCustomerBusiness = percentCustomerBusiness
                     });
                 }
                 return Ok(tableData);
