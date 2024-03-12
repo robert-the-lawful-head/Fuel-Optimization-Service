@@ -111,10 +111,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
                       }
             );
 
-            this.saveSettings(
-                this.tableLocalStorageKey,
-                this.columns
-            );
+            this.saveSettings(this.tableLocalStorageKey, this.columns);
         });
     }
     initColumns() {
@@ -159,14 +156,13 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
 
         if (!this.sort.active || this.sort.direction === '') {
             this.dataSource.data = data;
-            return;
         }
 
         // Custom sorting logic for three columns
         this.dataSource.data = data.sort((a, b) => {
             const firstLevel = 'percentCustomerBusiness';
-            const valueA = this.getPropertyValue(a, this.sort.active);
-            const valueB = this.getPropertyValue(b, this.sort.active);
+            const valueA = this.getPropertyValue(a, firstLevel);
+            const valueB = this.getPropertyValue(b, firstLevel);
 
             if (valueA < valueB) {
                 return this.sort.direction === 'asc' ? -1 : 1;
@@ -200,9 +196,9 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             const fouthLevelA = this.getPropertyValue(a, fouthLevel);
             const fouthLevelB = this.getPropertyValue(b, fouthLevel);
 
-            if (thirdLevelA < thirdLevelB) {
+            if (fouthLevelA < fouthLevelB) {
                 return this.sort.direction === 'asc' ? -1 : 1;
-            } else if (thirdLevelA > thirdLevelB) {
+            } else if (fouthLevelA > fouthLevelB) {
                 return this.sort.direction === 'asc' ? 1 : -1;
             }
 
@@ -211,12 +207,14 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         });
         let computePropertyFnc = (item: any[], id: string): any => {
             if (id == 'percentCustomerBusiness') {
-                let color = '00FF00'; // green
-                if (item[id] == 0) color = 'FF0000'; // red
-                return {
-                    v: item[id],
-                    s: { fill: { fgColor: { rgb: color } } },
-                };
+                let value = item[id] == null ? '' : item[id] + '%';
+
+                if(item[id] == null) return { v: value };
+
+                let color = item[id] == 0 ? 'FF0000' : '00FF00';
+
+                return { v: value, s: { fill: { fgColor: { rgb: color } } } };
+
             } else {
                 return { v: item[id] };
             }
@@ -243,10 +241,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             function (result) {
                 _this.columns = result;
                 _this.refreshSort(_this.sort, _this.columns);
-                _this.saveSettings(
-                    this.tableLocalStorageKey,
-                    this.columns
-                );
+                _this.saveSettings(this.tableLocalStorageKey, this.columns);
             }
         );
     }
