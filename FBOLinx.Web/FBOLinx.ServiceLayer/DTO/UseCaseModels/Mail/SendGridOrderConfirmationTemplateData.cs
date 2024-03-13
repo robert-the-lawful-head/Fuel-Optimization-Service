@@ -25,5 +25,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public string fuelVendor { get; set; }
         [JsonProperty("fuelerLinxId")]
         public string fuelerLinxId { get; set; }
+        [JsonProperty("services")]
+        public List<ServicesForSendGrid> services { get; set; }
     }
 }

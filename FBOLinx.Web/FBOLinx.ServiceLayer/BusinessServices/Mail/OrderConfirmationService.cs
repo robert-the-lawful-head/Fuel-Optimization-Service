@@ -1,5 +1,6 @@
 ﻿using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.FuelRequests;
 using FBOLinx.DB.Specifications.OrderDetails;
 using FBOLinx.DB.Specifications.User;
@@ -13,6 +14,8 @@ using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
 using FBOLinx.ServiceLayer.EntityServices;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
 
@@ -55,16 +58,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             var FuelerLinxTransactionId = fuelReq.SourceId.GetValueOrDefault().ToString();
 
             var fuelOrder = await _fuelReqService.GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fuelReq.Fboid.GetValueOrDefault()));
-            var serviceOrder = new DTO.ServiceOrderDto();
-            var fbo = new FbosDto();
+            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelReq.SourceId.GetValueOrDefault()));
+            if (orderDetails != null && orderDetails.Oid > 0)
+            {
+                FuelVendor = orderDetails.FuelVendor;
+            }
+            var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(orderDetails.FboHandlerId.GetValueOrDefault()));
+            var serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.Oid));
 
             if (fuelOrder == null || fuelOrder.Oid == 0)
             {
-                serviceOrder = await _serviceOrderService.GetSingleBySpec(new ServiceOrderByFuelerLinxTransactionIdFboIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.Oid));
-                
                 if (serviceOrder != null && serviceOrder.Oid > 0)     // SERVICE ORDER ONLY
                 {
-                    fbo = await _fboService.GetFbo(serviceOrder.Fboid);
                     await serviceOrder.PopulateLocalTimes(_airportTimeService);
 
                     TailNumber = serviceOrder.CustomerAircraft.TailNumber;
@@ -74,8 +79,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 }
                 else     // CONTRACT FUEL ORDER ONLY
                 {
-                    fbo = await _fboService.GetFbo(fuelReq.Fboid.GetValueOrDefault());
-
                     TailNumber = fuelReq.TailNumber;
                     Fbo = fbo.Fbo;
                     Icao = fbo.FboAirport.Icao;
@@ -84,7 +87,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             }
             else      // DIRECT FUEL ORDER
             {
-                fbo = await _fboService.GetFbo(fuelOrder.Fboid.GetValueOrDefault());
                 await fuelOrder.PopulateLocalTimes(_airportTimeService);
 
                 TailNumber = await _customerAircraftService.GetCustomerAircraftTailNumberByCustomerAircraftId(fuelOrder.CustomerAircraftId.GetValueOrDefault());
@@ -93,10 +95,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 Eta = fuelOrder.ArrivalDateTimeLocal.ToString();
             }
 
-            var orderDetails = await _orderDetailsService.GetSingleBySpec(new OrderDetailsByFuelerLinxTransactionIdFboHandlerIdSpecification(fuelReq.SourceId.GetValueOrDefault(), fbo.AcukwikFBOHandlerId.GetValueOrDefault()));
-            if (orderDetails != null && orderDetails.Oid > 0)
+            // SERVICES
+            var serviceNames = new List<string>();
+            if (serviceOrder != null)
             {
-                FuelVendor = orderDetails.FuelVendor;
+                serviceNames = serviceOrder.ServiceOrderItems.Select(s => s.ServiceName + (s.ServiceNote != null && s.ServiceNote != "" ? ": " + s.ServiceNote + "\n" : "")).ToList();
+            }
+
+            var services = new List<ServicesForSendGrid>();
+            if (serviceNames != null && serviceNames.Count > 0)
+            {
+                int serviceCount = 1;
+                foreach (var service in serviceNames)
+                {
+                    if (service.StartsWith("Fuel") && orderDetails.QuotedVolume > 0)
+                    {
+                        var vendor = "";
+                        if (orderDetails.FuelVendor == "Directs: Custom")
+                            vendor = "Flight Dept.";
+                        else if (orderDetails.FuelVendor.ToLower() == "fbolinx")
+                            vendor = fbo.Fbo + " (FBOLinx Direct)";
+                        else
+                            vendor = orderDetails.FuelVendor;
+                        services.Add(new ServicesForSendGrid { service = serviceCount + ". " + service + " " + "via " + vendor });
+                    }
+                    else
+                        services.Add(new ServicesForSendGrid { service = serviceCount + ". " + service });
+                    serviceCount++;
+                }
             }
 
             var dynamicTemplateData = new SendGridOrderConfirmationTemplateData
@@ -106,7 +132,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 airportICAO = Icao,
                 arrivalDate = Eta,
                 fuelVendor = FuelVendor,
-                fuelerLinxId = FuelerLinxTransactionId
+                fuelerLinxId = FuelerLinxTransactionId,
+                services = services
             };
 
             await SendEmail(dynamicTemplateData, MailService.GetFboLinxAddress(fbo.SenderAddress), orderDetails.ConfirmationEmail);
