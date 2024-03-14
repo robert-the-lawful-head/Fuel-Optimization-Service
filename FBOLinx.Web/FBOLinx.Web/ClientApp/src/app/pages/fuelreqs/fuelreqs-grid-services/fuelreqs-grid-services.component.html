@@ -9,7 +9,7 @@
             <ng-container *ngFor="let service of fuelreqsServicesAndFeesGridDisplay;">
                 <div class="col-3">
                     <ni-card customStyle="height: 88px;">
-                        <div class="service-card">
+                        <div class="service-card-services">
                             <div class="row" style="margin-left: -15px; margin-right: -40px;" *ngIf="service.isAddMode">
                                 <div class="col-7 text" *ngIf="service.isAddMode">
                                     <span>
@@ -50,10 +50,10 @@
                                         Apply
                                     </button>
                                     <!--<button ni-button
-                    size="small"
-                    (click)="cancelEdit(service)">
-                Cancel
-            </button>&nbsp;-->
+                                    size="small"
+                                    (click)="cancelEdit(service)">
+                                Cancel
+                            </button>&nbsp;-->
                                 </div>
                             </div>
 
@@ -77,8 +77,8 @@
                                           [matTooltip]="service.toolTipText"><mat-icon class="material-icons-outlined">info</mat-icon></span>
                                 </div>
                             </div>
-                            </div>
-</ni-card>
+                        </div>
+                    </ni-card>
                 </div>
             </ng-container>
         </div>
