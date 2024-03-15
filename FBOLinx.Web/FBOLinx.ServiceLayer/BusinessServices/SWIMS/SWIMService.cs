@@ -186,6 +186,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Grab existing legs from swimFlightLegs with no Gufi, or non-matching Gufi
             var aircraftIdentifiers = (from s in swimFlightLegDTOs
                                       join e in existingFlightLegs on s.Gufi equals e.Gufi
+                                      into leftJoinedE
+                                      from e in leftJoinedE.DefaultIfEmpty()
                                       where s.Gufi == null || s.Gufi == string.Empty || e.Oid == 0
                                       select new { s.AircraftIdentification, s.ATD }).ToList();
             var minSearchDate = aircraftIdentifiers.Min(x => x.ATD);
@@ -216,7 +218,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
                     if (existingLeg == null)
                         existingLeg = existingFlightLegs.FirstOrDefault(
-                        x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD && x.AircraftIdentification == swimFlightLegDto.AircraftIdentification);
+                        x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ETA == swimFlightLegDto.ETA && x.AircraftIdentification == swimFlightLegDto.AircraftIdentification);
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
