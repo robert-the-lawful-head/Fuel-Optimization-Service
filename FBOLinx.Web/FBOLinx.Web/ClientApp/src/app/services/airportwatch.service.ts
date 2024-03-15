@@ -8,6 +8,7 @@ import {
     FlightWatchHistorical,
 } from '../models/flight-watch-historical';
 import { IntraNetworkVisitsReportItem } from '../models/intra-network-visits-report-item';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AirportWatchService {
@@ -39,7 +40,7 @@ export class AirportWatchService {
         fboId: number,
         body: AirportWatchHistoricalDataRequest,
         icao?: string
-    ) {
+    ) : Observable<FlightWatchHistorical[]>{
         let query = icao ? `?icao=${icao}` : '';
 
         return this.http.post<FlightWatchHistorical[]>(

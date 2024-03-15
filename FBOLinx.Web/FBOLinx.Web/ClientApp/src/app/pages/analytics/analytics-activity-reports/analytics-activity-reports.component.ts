@@ -2,7 +2,6 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AnaliticsReportType } from '../analytics-report-popup/analytics-report-popup.component';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
-import { AccountType } from 'src/app/enums/user-role';
 
 export interface AnatylticsReports {
     type: AnaliticsReportType;
@@ -86,10 +85,6 @@ export class AnalyticsActivityReportsComponent implements OnInit {
                 .toLowerCase()
         );
         this.reports[AnaliticsReportType.FBONetworkArrivalDepartures].isHidden =
-            !isNetworkFbo;
-
-        if(this.sharedService.currentUser.accountType ==  AccountType.Freemium)
-            this.reports[AnaliticsReportType.FBONetworkArrivalDepartures].isHidden =
             !isNetworkFbo;
     }
 

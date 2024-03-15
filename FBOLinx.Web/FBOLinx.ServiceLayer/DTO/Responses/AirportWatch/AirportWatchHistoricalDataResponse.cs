@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
 {
@@ -20,6 +21,7 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.AirportWatch
         public string AirportIcao { get; set; }
         public int? VisitsToMyFbo { get; set; }
         public double? PercentOfVisits { get; set; }
+        public int? ParkingAcukwikFBOHandlerId { get; set; }
 
         public bool IsConfirmedVisit
         {

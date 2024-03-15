@@ -420,7 +420,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     {
                         ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
                         LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
-                        ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent
+                        ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent,
+                        ParkingAcukwikFBOHandlerId = groupedParkingEvent.FirstOrDefault()?.parkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
                     }
                 );
 
@@ -429,36 +430,39 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var distinctTails = historicalData.Select(x => x.TailNumber).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
 
+            var fbosQueryable = _FboService.GetAllFbos();
+
             var result = (from h in historicalData
-                      join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
-                      into leftJoinedCV
-                      from cv in leftJoinedCV.DefaultIfEmpty()
-                      join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
-                      into leftJoinedParkingAndLandingAssociation
-                      from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
-                      join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
-                      from hextail in leftJoinedhextail.DefaultIfEmpty()
+                          join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }
+                          into leftJoinedCV
+                          from cv in leftJoinedCV.DefaultIfEmpty()
+                          join parkingAndLandingAssociation in parkingAndLandingAssociationList on h.AirportWatchHistoricalDataID equals parkingAndLandingAssociation.LandingId
+                          into leftJoinedParkingAndLandingAssociation
+                          from parkingAndLandingAssociation in leftJoinedParkingAndLandingAssociation.DefaultIfEmpty()
+                          join hextail in hexTailMappings on h.TailNumber equals hextail.TailNumber into leftJoinedhextail
+                          from hextail in leftJoinedhextail.DefaultIfEmpty()
                           select new AirportWatchHistoricalDataResponse
                           {
                               AirportWatchHistoricalDataId = h.AirportWatchHistoricalDataID,
                               CustomerInfoByGroupID = h.CustomerInfoByGroupID,
                               CompanyId = h.CustomerId,
-                              Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner: h.Company,
-                          DateTime = h.AircraftPositionDateTimeUtc,
-                          TailNumber = h.TailNumber,
-                          FlightNumber = h.AtcFlightNumber,
-                          HexCode = h.AircraftHexCode,
-                          AircraftType = string.IsNullOrEmpty(h.Make) ?
-                           string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR)? null: hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL : 
+                              Company = string.IsNullOrEmpty(h.Company) ? hextail?.FAARegisteredOwner : h.Company,
+                              DateTime = h.AircraftPositionDateTimeUtc,
+                              TailNumber = h.TailNumber,
+                              FlightNumber = h.AtcFlightNumber,
+                              HexCode = h.AircraftHexCode,
+                              AircraftType = string.IsNullOrEmpty(h.Make) ?
+                           string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR) ? null : hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL :
                            h.Make + " / " + h.Model,
-                          Status = h.AircraftStatusDescription,
-                          AirportIcao = h.AirportICAO,
-                          AircraftTypeCode = h.AircraftTypeCode,
-                          PastVisits = cv == null ? null : cv.PastVisits,
-                          VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                          PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
-                          AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking
-                      }).ToList();
+                              Status = h.AircraftStatusDescription,
+                              AirportIcao = h.AirportICAO,
+                              AircraftTypeCode = h.AircraftTypeCode,
+                              PastVisits = cv == null ? null : cv.PastVisits,
+                              VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
+                              PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
+                              AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
+                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId
+                          }).ToList();
             
             return result;
         }

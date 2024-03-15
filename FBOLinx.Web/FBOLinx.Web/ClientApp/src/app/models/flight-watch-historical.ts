@@ -25,6 +25,7 @@ export type FlightWatchHistorical = {
     percentOfVisits: number;
     isConfirmedVisit: boolean;
     airportWatchHistoricalParking: AirportWatchHistoricalParking;
+    parkingAcukwikFBOHandlerId: number | null;
 };
 
 export type AirportWatchHistoricalDataRequest = {
