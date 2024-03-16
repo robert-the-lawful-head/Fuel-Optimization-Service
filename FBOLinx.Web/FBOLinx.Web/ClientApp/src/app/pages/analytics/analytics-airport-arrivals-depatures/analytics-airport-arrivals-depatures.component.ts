@@ -394,42 +394,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             JSON.stringify(this.columns)
         );
     }
-
-    confirmedVisitToggled(row: FlightWatchHistorical) {
-        if (row.airportWatchHistoricalParking == null) {
-            row.airportWatchHistoricalParking = {
-                airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
-                acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
-                oid: 0,
-            };
-        }
-
-        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
-
-        if (row.airportWatchHistoricalParking.oid > 0) {
-            this.airportWatchService
-                .updateHistoricalParking(row)
-                .subscribe((response: any) => {
-                    this.refreshData();
-                });
-        } else {
-            this.airportWatchService
-                .createHistoricalParking(row)
-                .subscribe((response: any) => {
-                    this.refreshData();
-                });
-        }
-    }
     updateVisitedFbo($event: any , row: FlightWatchHistorical): void{
-        console.log("🚀 ~ updateVisitedFbo ~ $event:", $event.value)
-        console.log("🚀 ~ updateVisitedFbo ~ row:", row.parkingAcukwikFBOHandlerId)
-
         if (row.airportWatchHistoricalParking == null) {
             row.airportWatchHistoricalParking = {
                 airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
                 acukwikFbohandlerId: $event.value,
                 oid: 0,
             };
+        }else{
+            row.airportWatchHistoricalParking.acukwikFbohandlerId= $event.value;
         }
 
         row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
