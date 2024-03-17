@@ -185,8 +185,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         .subscribe((data: FbosGridViewModel[]) => {
             this.allFbos = data.filter((fbo) => fbo.acukwikFBOHandlerId == null);
             let otherOpt = { ...data[0] };
-            otherOpt.oid = null;
-            otherOpt.acukwikFBOHandlerId = null;
+            otherOpt.oid = 0;
+            otherOpt.acukwikFBOHandlerId = 0;
             otherOpt.fbo = 'Other';
             this.allFbos.push(otherOpt);
         });
