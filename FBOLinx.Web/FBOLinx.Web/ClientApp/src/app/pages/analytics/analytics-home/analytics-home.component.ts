@@ -4,7 +4,10 @@ import * as moment from 'moment';
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-import { AnatylticsReports } from '../analytics-activity-reports/analytics-activity-reports.component';
+import { AnatylticsReports, analyticsReports } from '../analytics-activity-reports/analytics-activity-reports.component';
+import { AnaliticsReportType } from '../analytics-report-popup/analytics-report-popup.component';
+import { ActivatedRoute } from '@angular/router';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-analytics-home',
@@ -23,7 +26,8 @@ export class AnalyticsHomeComponent implements OnInit {
     constructor(
         private customerAircraftsService: CustomeraircraftsService,
         private sharedService: SharedService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private route: ActivatedRoute
     ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -38,6 +42,21 @@ export class AnalyticsHomeComponent implements OnInit {
 
     ngOnInit() {
         this.getAircrafts();
+
+        var isSingleSourceFbo: boolean = JSON.parse(
+            this.sharedService
+                .getCurrentUserPropertyValue(
+                    localStorageAccessConstant.isSingleSourceFbo
+                )
+                .toLowerCase()
+        );
+
+        this.route.queryParams.subscribe(params => {
+            const reportType = params['report'] as AnaliticsReportType;
+            if(reportType == AnaliticsReportType.LostToCompetition && !isSingleSourceFbo){
+                this.openReport(analyticsReports[AnaliticsReportType.LostToCompetition]);
+            }
+        });
     }
 
     getAircrafts() {

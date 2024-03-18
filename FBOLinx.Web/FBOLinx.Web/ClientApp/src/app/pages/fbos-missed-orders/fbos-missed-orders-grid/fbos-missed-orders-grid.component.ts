@@ -10,6 +10,7 @@ import { PriceCheckerComponent } from '../../../shared/components/price-checker/
 import { SharedService } from '../../../layouts/shared-service';
 import { FbomissedquoteslogService } from '../../../services/fbomissedquoteslog.service';
 import { UserRole } from 'src/app/enums/user-role';
+import { AnaliticsReportType } from '../../analytics/analytics-report-popup/analytics-report-popup.component';
 
 @Component({
     selector: 'app-fbos-missed-orders-grid',
@@ -37,8 +38,8 @@ export class FbosMissedOrdersGridComponent implements OnInit {
         this.router.navigate(['/default-layout/fuelreqs'], {queryParams: {search: missedOrder.customerName, tab: 1}});
     }
 
-    goToMissedOrdersAll(): void {
-        this.router.navigate(['/default-layout/fuelreqs'], { queryParams: { tab: 1 } });
+    goToAnalyticsReports(): void {
+        this.router.navigate(['/default-layout/analytics'], { queryParams: { report: AnaliticsReportType.LostToCompetition } });
     }
 
     goToCustomerDetails(missedOrder: any): void {

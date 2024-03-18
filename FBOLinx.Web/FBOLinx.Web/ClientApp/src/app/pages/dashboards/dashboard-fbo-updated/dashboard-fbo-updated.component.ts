@@ -44,6 +44,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     isMapLoading: boolean = true;
     isStable: boolean = true;
     selectedICAO: string = "";
+    isSingleSourceFbo: boolean = false;
 
     constructor(private sharedService: SharedService,
         private router: Router,
@@ -61,6 +62,14 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.sharedService.titleChange(this.pageTitle);
 
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.isSingleSourceFbo = JSON.parse(
+            this.sharedService
+                .getCurrentUserPropertyValue(
+                    localStorageAccessConstant.isSingleSourceFbo
+                )
+                .toLowerCase()
+        );
     }
 
     get isCsr() {
