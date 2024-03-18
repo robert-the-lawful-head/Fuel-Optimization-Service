@@ -129,16 +129,6 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             this.paginator.pageIndex = 0;
         }
 
-        this.filterStartDate = new Date(
-            moment().add(-1, 'week').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
-
-        this.selectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        };
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());

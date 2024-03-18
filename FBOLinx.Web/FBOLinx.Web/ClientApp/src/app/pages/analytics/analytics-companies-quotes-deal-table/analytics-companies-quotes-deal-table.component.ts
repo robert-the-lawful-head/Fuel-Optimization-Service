@@ -66,17 +66,6 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     ) {
         super();
         this.icao = this.sharedService.currentUser.icao;
-        this.filterStartDate = new Date(
-            moment().add(-30, 'd').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(
-            moment().add(7, 'd').format('MM/DD/YYYY')
-        );
-        this.selectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        }
         this.initColumns();
     }
 

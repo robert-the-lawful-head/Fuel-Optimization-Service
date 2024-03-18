@@ -152,16 +152,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         private fbosService: FbosService
     ) {
         super();
-        this.filterStartDate = new Date(
-            moment().add(-1, 'M').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-
-        this.selectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        };
         this.icao = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );

@@ -88,15 +88,6 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             this.columns
         );
 
-        this.filterStartDate = new Date(
-            moment().add(-7, 'd').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date();
-        this.selectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        };
         this.refreshData();
     }
     ngOnInit(): void {
@@ -210,10 +201,6 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
                 let value = item[id] == null ? '' : item[id] + '%';
 
                 if(item[id] == null) return { v: value };
-
-                let color = item[id] == 0 ? 'FF0000' : '00FF00';
-
-                return { v: value, s: { fill: { fgColor: { rgb: color } } } };
 
             } else {
                 return { v: item[id] };
