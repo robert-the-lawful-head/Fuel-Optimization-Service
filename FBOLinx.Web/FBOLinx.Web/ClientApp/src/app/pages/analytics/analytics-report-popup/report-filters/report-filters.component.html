@@ -11,9 +11,11 @@
         [hideSearchInput]="isFilterHidden(reportFilterItems.searchInput)"
         [matDataSource]="dataSource"
         placeholder="Search by Company"
+        (clearFilters)="clearFilters()"
     >
         <div class="d-inline-block mr-2 ml-2">
             <app-preset-date-filter
+                [defaultFilter]="selectedDateFilter.selectedFilter"
                 (selectedFilterChange)="applyPresetDateFilter($event)"
             ></app-preset-date-filter>
         </div>

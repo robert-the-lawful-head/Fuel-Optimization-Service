@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
-import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
-
+import { PresetDateFilterEnum, SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import * as moment from 'moment';
 export interface CustomIcaoList{
     value: string[];
     isStandAlone: boolean;
@@ -83,5 +83,19 @@ export class ReportFiltersComponent implements OnInit {
         }else{
             this.airportsICAO = this.airportsICAO.concat(customIcaoList.value);
         }
+    }
+    clearFilters(){
+        console.log("🚀 ~ ReportFiltersComponent ~ clearFilters ~ clearFilters:")
+        this.filterStartDate = new Date(
+            moment().add(-1, 'M').format('MM/DD/YYYY')
+        );
+        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
+        this.selectedDateFilter = {
+            selectedFilter: PresetDateFilterEnum.oneMonth,
+            offsetDate: this.filterStartDate,
+            limitDate: this.filterEndDate,
+        }
+        this.onDateChange.emit(this.selectedDateFilter);
+
     }
 }

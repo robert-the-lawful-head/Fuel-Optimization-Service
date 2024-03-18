@@ -2,7 +2,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { PresetDateFilterEnum, SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import {
     ColumnType,
     TableSettingsComponent,
@@ -40,6 +40,11 @@ export abstract class GridBase {
     ];
 
     constructor() {
+        this.selectedDateFilter = {
+            offsetDate: this.filterStartDate,
+            limitDate: this.filterEndDate,
+            selectedFilter : PresetDateFilterEnum.oneMonth
+        };
         this.dataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'eta':

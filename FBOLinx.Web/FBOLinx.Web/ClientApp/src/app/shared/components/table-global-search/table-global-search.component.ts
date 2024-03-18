@@ -15,6 +15,7 @@ export class TableGlobalSearchComponent implements OnInit {
     @Input() hideSearchInput: boolean = false;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
+    @Output() clearFilters: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
     public userTypedFilter: string = '';
@@ -148,6 +149,8 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public clearAllFilters() {
+        this.clearFilters.emit();
+
         this.globalFilter.filterValue = '';
         this.userTypedFilter = '';
         this.matDataSource.filter = '';
