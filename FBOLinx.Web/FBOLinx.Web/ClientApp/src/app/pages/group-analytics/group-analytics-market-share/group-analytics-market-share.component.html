@@ -49,7 +49,7 @@
                         aria-hidden="true"
                         class="mat-icon material-icons"
                         role="img"
-                       >settings</mat-icon
+                        >settings</mat-icon
                     >
                 </button>
                 <mat-menu
@@ -70,6 +70,15 @@
                 <ng-container matColumnDef="icao">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>ICAO</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter
+                                [matDataSource]="dataSource"
+                                [matSort]="sort"
+                                columnId="icao"
+                                propertyName="icao"
+                                [columnFormat]="0"
+                            ></app-table-column-filter>
+                        </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>{{ info.icao }}</td>
                 </ng-container>
@@ -77,6 +86,15 @@
                 <ng-container matColumnDef="airportOrders">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Total Orders at Airport</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter
+                                [matDataSource]="dataSource"
+                                [matSort]="sort"
+                                columnId="airportOrders"
+                                propertyName="airportOrders"
+                                [columnFormat]="1"
+                            ></app-table-column-filter>
+                        </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
                         {{ info.airportOrders }}
@@ -85,7 +103,18 @@
 
                 <ng-container matColumnDef="fboOrders">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Your Orders at Airport: Contract Fuel Vendors</span>
+                        <span
+                            >Your Orders at Airport: Contract Fuel Vendors</span
+                        >
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter
+                                [matDataSource]="dataSource"
+                                [matSort]="sort"
+                                columnId="fboOrders"
+                                propertyName="fboOrders"
+                                [columnFormat]="1"
+                            ></app-table-column-filter>
+                        </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
                         {{ info.fboOrders }}
@@ -95,6 +124,15 @@
                 <ng-container matColumnDef="yourOrders">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Your Orders at Airport: Directs</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter
+                                [matDataSource]="dataSource"
+                                [matSort]="sort"
+                                columnId="yourOrders"
+                                propertyName="yourOrders"
+                                [columnFormat]="1"
+                            ></app-table-column-filter>
+                        </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
                         {{ info.yourOrders }}
@@ -104,14 +142,25 @@
                 <ng-container matColumnDef="marketShare">
                     <th *matHeaderCellDef mat-header-cell mat-sort-header>
                         <span>Market Share</span>
+                        <span *ngIf="dataSource">
+                            <app-table-column-filter
+                                [matDataSource]="dataSource"
+                                [matSort]="sort"
+                                columnId="marketShare"
+                                propertyName="marketShare"
+                                [columnFormat]="1"
+                            ></app-table-column-filter>
+                        </span>
                     </th>
                     <td *matCellDef="let info" mat-cell>
                         {{ info.marketShare }}%
                     </td>
                 </ng-container>
 
-                <tr *matHeaderRowDef="visibleColumns; sticky: true"
-                    mat-header-row></tr>
+                <tr
+                    *matHeaderRowDef="visibleColumns; sticky: true"
+                    mat-header-row
+                ></tr>
                 <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
             </table>
         </div>

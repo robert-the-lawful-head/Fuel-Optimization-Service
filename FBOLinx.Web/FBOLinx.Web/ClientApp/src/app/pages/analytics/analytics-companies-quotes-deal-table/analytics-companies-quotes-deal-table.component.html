@@ -34,6 +34,15 @@
             <ng-container matColumnDef="company">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Company</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                            [columnFormat]="0"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -47,6 +56,15 @@
             <ng-container matColumnDef="directOrders">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Direct Orders</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="directOrders"
+                            propertyName="directOrders"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -60,6 +78,15 @@
             <ng-container matColumnDef="companyQuotesTotal">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Number of Quotes</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="companyQuotesTotal"
+                            propertyName="companyQuotesTotal"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -73,6 +100,15 @@
             <ng-container matColumnDef="conversionRate">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Conversion Rate (Directs)</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="conversionRate"
+                            propertyName="conversionRate"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -86,6 +122,15 @@
             <ng-container matColumnDef="conversionRateTotal">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Conversion Rate (Total)</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="conversionRateTotal"
+                            propertyName="conversionRateTotal"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -102,6 +147,15 @@
                         <div>Total Orders at</div>
                         <div>{{ fbo }}</div>
                     </div>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="totalOrders"
+                            propertyName="totalOrders"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -115,6 +169,15 @@
             <ng-container matColumnDef="airportOrders">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Total Orders at {{ icao }}</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="airportOrders"
+                            propertyName="airportOrders"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -128,6 +191,15 @@
             <ng-container matColumnDef="customerBusiness">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>% of Customer's Business</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="customerBusiness"
+                            propertyName="customerBusiness"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -141,6 +213,15 @@
             <ng-container matColumnDef="lastPullDate">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>{{ icao }} Last Quoted</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="lastPullDate"
+                            propertyName="lastPullDate"
+                            [columnFormat]="4"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -154,6 +235,15 @@
             <ng-container matColumnDef="airportVisits">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     <span>Arrivals</span>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="airportVisits"
+                            propertyName="airportVisits"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -170,6 +260,15 @@
                         <div>Visits to</div>
                         <div>{{ fbo }}</div>
                     </div>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="visitsToFbo"
+                            propertyName="visitsToFbo"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
@@ -186,6 +285,15 @@
                         <div>% of visits to</div>
                         <div>{{ fbo }}</div>
                     </div>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="percentVisits"
+                            propertyName="percentVisits"
+                            [columnFormat]="1"
+                        ></app-table-column-filter>
+                    </span>
                 </th>
                 <td
                     *matCellDef="let info"
