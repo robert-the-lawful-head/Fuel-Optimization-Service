@@ -34,19 +34,16 @@
             matColumnDef="{{ column }}"
             *ngFor="let column of dataColumnsToDisplay"
         >
-            <th
-                mat-header-cell
-                *matHeaderCellDef
-                mat-sort-header="{{ column }}"
-            >
-                {{ getColumnDisplayString(column) }}
+            <th mat-header-cell *matHeaderCellDef>
                 <span *ngIf="dataSource">
                     <app-table-column-filter
                         [matDataSource]="dataSource"
                         [matSort]="sort"
                         columnId="{{ column }}"
                         propertyName="{{ column }}"
-                    ></app-table-column-filter>
+                    >
+                        <span>{{ getColumnDisplayString(column) }}</span>
+                    </app-table-column-filter>
                 </span>
             </th>
             <td mat-cell *matCellDef="let element">

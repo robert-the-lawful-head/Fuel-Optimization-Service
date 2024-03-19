@@ -42,15 +42,16 @@
             matSortDirection="desc"
         >
             <ng-container matColumnDef="company">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Company</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
                             [matSort]="sort"
                             columnId="company"
                             propertyName="company"
-                        ></app-table-column-filter>
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
@@ -59,15 +60,16 @@
             </ng-container>
 
             <ng-container matColumnDef="tailNumber">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Tail #</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
                             [matSort]="sort"
                             columnId="tailNumber"
                             propertyName="tailNumber"
-                        ></app-table-column-filter>
+                        >
+                            <span>Tail #</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
@@ -76,15 +78,16 @@
             </ng-container>
 
             <ng-container matColumnDef="aircraftType">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Aircraft</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
                             [matSort]="sort"
                             columnId="aircraftType"
                             propertyName="aircraftType"
-                        ></app-table-column-filter>
+                        >
+                            <span>Aircraft</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
@@ -99,8 +102,7 @@
                     index as dynamicColumnIndex
                 "
             >
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>{{ dynamicColumns[dynamicColumnIndex].name }}</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -112,7 +114,11 @@
                                 dynamicColumns[dynamicColumnIndex].id
                             }}"
                             [columnFormat]="1"
-                        ></app-table-column-filter>
+                        >
+                            <span>{{
+                                dynamicColumns[dynamicColumnIndex].name
+                            }}</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>

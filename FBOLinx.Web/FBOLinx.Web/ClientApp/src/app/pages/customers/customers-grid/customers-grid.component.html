@@ -159,15 +159,16 @@
             </ng-container>
 
             <ng-container matColumnDef="company">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Company</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
                             [matSort]="sort"
                             columnId="company"
                             propertyName="company"
-                        ></app-table-column-filter>
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
@@ -180,7 +181,7 @@
                     *matHeaderCellDef
                     class="text-left"
                     mat-header-cell
-                    mat-sort-header
+
                 >
                     <div class="">Needs Attention</div>
                 </th>
@@ -212,8 +213,7 @@
             </ng-container>
 
             <ng-container matColumnDef="tags">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Tags
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -224,7 +224,9 @@
                             optionValue="value"
                             [columnFormat]="11"
                             [options]="tags"
-                        ></app-table-column-filter>
+                        >
+                            <span>Tags</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
@@ -286,12 +288,8 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
-                    <div>
-                        <div>FuelerLinx</div>
-                        <div>Network</div>
-                    </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [columnFormat]="8"
@@ -300,6 +298,10 @@
                             columnId="isFuelerLinxCustomer"
                             propertyName="isFuelerLinxCustomer"
                         >
+                            <div>
+                                <div>FuelerLinx</div>
+                                <div>Network</div>
+                            </div>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -313,12 +315,8 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
-                    <div>
-                        <div>Fleet</div>
-                        <div>Size</div>
-                    </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [columnFormat]="1"
@@ -326,7 +324,12 @@
                             [matSort]="sort"
                             columnId="fleetSize"
                             propertyName="fleetSize"
-                        ></app-table-column-filter>
+                        >
+                            <div>
+                                <div>Fleet</div>
+                                <div>Size</div>
+                            </div>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
@@ -335,8 +338,7 @@
             </ng-container>
 
             <ng-container matColumnDef="pricingTemplateName">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    ITP Margin Template
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -348,6 +350,7 @@
                             optionValue="oid"
                             [options]="pricingTemplatesData"
                         >
+                            <span>ITP Margin Template</span>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -370,8 +373,7 @@
             </ng-container>
 
             <ng-container matColumnDef="fuelVendors">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Fuel Vendors
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -382,7 +384,9 @@
                             optionValue="value"
                             [columnFormat]="11"
                             [options]="fuelVendors"
-                        ></app-table-column-filter>
+                        >
+                            <span>Fuel Vendors</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" clickStopPropagation mat-cell>
@@ -435,7 +439,7 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
                     <div>All-In</div>
                 </th>
@@ -454,12 +458,8 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
-                    <div>
-                        <div>Customer</div>
-                        <div>Type</div>
-                    </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -467,6 +467,10 @@
                             columnId="customerCompanyTypeName"
                             propertyName="customerCompanyTypeName"
                         >
+                            <div>
+                                <div>Customer</div>
+                                <div>Type</div>
+                            </div>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -480,12 +484,8 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
-                    <div>
-                        <div>Certificate</div>
-                        <div>Type</div>
-                    </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [matDataSource]="dataSource"
@@ -493,6 +493,10 @@
                             columnId="certificateTypeDescription"
                             propertyName="certificateTypeDescription"
                         >
+                            <div>
+                                <div>Certificate</div>
+                                <div>Type</div>
+                            </div>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -506,15 +510,11 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                     [matTooltip]="
                         'Since ' + (airportWatchStartDate | date : 'MM/dd/YYYY')
                     "
                 >
-                    <div>
-                        <div>Previous</div>
-                        <div>Visits</div>
-                    </div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [columnFormat]="1"
@@ -523,6 +523,10 @@
                             columnId="aircraftsVisits"
                             propertyName="aircraftsVisits"
                         >
+                            <div>
+                                <div>Previous</div>
+                                <div>Visits</div>
+                            </div>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -536,9 +540,8 @@
                     *matHeaderCellDef
                     class="overflow-label"
                     mat-header-cell
-                    mat-sort-header
+
                 >
-                    <div>Pricing Formula</div>
                     <span *ngIf="dataSource">
                         <app-table-column-filter
                             [columnFormat]="0"
@@ -547,6 +550,7 @@
                             columnId="pricingFormula"
                             propertyName="pricingFormula"
                         >
+                            <div>Pricing Formula</div>
                         </app-table-column-filter>
                     </span>
                 </th>
@@ -556,7 +560,7 @@
             </ng-container>
 
             <ng-container matColumnDef="delete">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header></th>
+                <th *matHeaderCellDef mat-header-cell></th>
                 <td *matCellDef="let customer" mat-cell>
                     <div class="pull-right">
                         <button

@@ -83,15 +83,16 @@
             </ng-container>
 
             <ng-container matColumnDef="company">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Company</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="customersDataSource">
                         <app-table-column-filter
                             [matDataSource]="customersDataSource"
                             [matSort]="sort"
                             columnId="company"
                             propertyName="company"
-                        ></app-table-column-filter>
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
@@ -100,16 +101,7 @@
             </ng-container>
 
             <ng-container matColumnDef="isFuelerLinxCustomer">
-                <th
-                    *matHeaderCellDef
-                    class="overflow-label"
-                    mat-header-cell
-                    mat-sort-header
-                >
-                    <div>
-                        <div>FuelerLinx</div>
-                        <div>Network</div>
-                    </div>
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell>
                     <span *ngIf="customersDataSource">
                         <app-table-column-filter
                             [columnFormat]="8"
@@ -117,7 +109,12 @@
                             [matSort]="sort"
                             columnId="isFuelerLinxCustomer"
                             propertyName="isFuelerLinxCustomer"
-                        ></app-table-column-filter>
+                        >
+                            <div>
+                                <div>FuelerLinx</div>
+                                <div>Network</div>
+                            </div></app-table-column-filter
+                        >
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
@@ -126,23 +123,19 @@
             </ng-container>
 
             <ng-container matColumnDef="certificateTypeDescription">
-                <th
-                    *matHeaderCellDef
-                    class="overflow-label"
-                    mat-header-cell
-                    mat-sort-header
-                >
-                    <div>
-                        <div>Certificate</div>
-                        <div>Type</div>
-                    </div>
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell>
                     <span *ngIf="customersDataSource">
                         <app-table-column-filter
                             [matDataSource]="customersDataSource"
                             [matSort]="sort"
                             columnId="certificateTypeDescription"
                             propertyName="certificateTypeDescription"
-                        ></app-table-column-filter>
+                        >
+                            <div>
+                                <div>Certificate</div>
+                                <div>Type</div>
+                            </div></app-table-column-filter
+                        >
                     </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
