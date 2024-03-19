@@ -1,7 +1,10 @@
 import {
     Component,
+    EventEmitter,
     Input,
     OnInit,
+    Output,
+    Renderer2,
     SimpleChanges,
     ViewChild,
 } from '@angular/core';
@@ -44,6 +47,8 @@ export enum AnaliticsReportType {
 })
 export class AnalyticsReportPopupComponent implements OnInit {
     @Input() report: AnatylticsReports;
+    @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
+
 
     @ViewChild('customerStatitics', { static: false })
     customerStatitics: AnalyticsCompaniesQuotesDealTableComponent;
@@ -64,7 +69,8 @@ export class AnalyticsReportPopupComponent implements OnInit {
 
     constructor(
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private renderer: Renderer2
     ) {
         this.isReportVisible = {
             [AnaliticsReportType.CustomerStatistics]: true,
@@ -81,12 +87,14 @@ export class AnalyticsReportPopupComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if(!changes.report?.currentValue) {
             this.isPopUpOpen = false;
+            this.renderer.removeClass(document.body, 'no-scroll');
             return;
         }
         for (const key in this.isReportVisible) {
             if (key == changes.report?.currentValue?.type) {
                 this.isPopUpOpen = true;
                 this.isReportVisible[key] = true;
+                this.renderer.addClass(document.body, 'no-scroll');
             } else this.isReportVisible[key] = false;
         }
     }
@@ -124,5 +132,6 @@ export class AnalyticsReportPopupComponent implements OnInit {
     }
     closePopUp() {
         this.isPopUpOpen = false;
+        this.renderer.removeClass(document.body, 'no-scroll');
     }
 }

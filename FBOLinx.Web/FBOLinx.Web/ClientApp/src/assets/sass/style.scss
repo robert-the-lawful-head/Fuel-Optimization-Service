@@ -1106,3 +1106,7 @@ div.price-checker-button-bottom {
 ::-webkit-scrollbar-thumb:hover {
     background: #252D47;
 }
+/* No scroll on body for custom popup */
+.no-scroll {
+    overflow: hidden;
+}
