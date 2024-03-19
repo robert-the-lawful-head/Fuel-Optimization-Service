@@ -35,6 +35,9 @@ using FBOLinx.ServiceLayer.Extensions.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.DB.Specifications.CustomerInfoByGroup;
+using FBOLinx.DB.Specifications.SWIM;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -466,6 +469,45 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             
             return result;
         }
+
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate)
+        {
+            var fbo = await _FboService.GetFbo(fboId);
+            var icao = fbo.FboAirport.Icao;
+
+            var swimFlightLegsArrivals = await _SwimFlightLegService.GetListbySpec(new SWIMFlightLegByArrivalAirportDatesSpecification(icao, minDate, maxDate));
+            var swimFlightLegsDepartures = await _SwimFlightLegService.GetListbySpec(new SWIMFLightLegByDepartureAirportDatesSpecification(icao, minDate, maxDate));
+            var swimFlightLegs = swimFlightLegsArrivals.Concat(swimFlightLegsDepartures).ToList();
+
+            var customerInfoByGroup = await _CustomerInfoByGroupService.GetListbySpec(new CustomerInfoByGroupByGroupIdSpecification(fbo.GroupId));
+            var customerAircrafts = await _customerAircraftsEntityService.GetListBySpec(new CustomerAircraftByGroupSpecification(fbo.GroupId));
+
+            var response = new List<AirportWatchHistoricalDataResponse>();
+            response = (from s in swimFlightLegs
+                        join ca in customerAircrafts on s.AircraftIdentification equals ca.TailNumber
+                        into leftJoinCustomerAircrafts
+                        from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
+                        join a in swimFlightLegsArrivals on s.Oid equals a.Oid
+                        into leftJoinArrivals
+                        from a in leftJoinArrivals.DefaultIfEmpty()
+                        join d in swimFlightLegsDepartures on s.Oid equals d.Oid
+                        into leftJoinDepartures
+                        from d in leftJoinDepartures.DefaultIfEmpty()
+                        select new AirportWatchHistoricalDataResponse
+                        {
+                            DateTime = a == null || a.Oid == 0 ? s.ATD.GetValueOrDefault() : s.ETA.GetValueOrDefault(),
+                            TailNumber = s.AircraftIdentification,
+                            AircraftType = s.Make + " " + s.Model,
+                            Status = a == null || a.Oid == 0 ? "Departure" : "Arrival",
+                            Originated = s.DepartureICAO,
+                            Company = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Company).FirstOrDefault() : "",
+                            CompanyId = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Customer.Oid).FirstOrDefault() : 0,
+                            CustomerInfoByGroupID = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
+                        }).ToList();
+
+            return response;
+        }
+
         public async Task<List<AirportWatchHistoricalDataResponse>> GetVisits(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
         {
             var historicalData = await _AirportWatchHistoricalDataService.GetHistoricalDataWithCustomerAndAircraftInfo(groupId,

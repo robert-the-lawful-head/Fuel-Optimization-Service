@@ -244,6 +244,17 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         );
     }
 
+    fetchSwimData(startDate: Date, endDate: Date) {
+        return this.airportWatchService.getArrivalsDeparturesSwim(
+            this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
+            {
+                endDateTime: endDate,
+                startDateTime: startDate,
+            }
+        );
+    }
+
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
         this.columns = this.getClientSavedColumns(
@@ -257,16 +268,30 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
 
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(startDate, endDate).subscribe(
-            (data: FlightWatchHistorical[]) => {
-                this.data = data;
-                this.refreshDataSource();
-            },
-            () => {},
-            () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            }
-        );
+        if (this.sharedService.currentUser.icao == this.icao) {
+            this.fetchData(startDate, endDate).subscribe(
+                (data: FlightWatchHistorical[]) => {
+                    this.data = data;
+                    this.refreshDataSource();
+                },
+                () => { },
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
+        }
+        else {
+            this.fetchData(startDate, endDate).subscribe(
+                (data: FlightWatchHistorical[]) => {
+                    this.data = data;
+                    this.refreshDataSource();
+                },
+                () => { },
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
+        }
     }
 
     refreshDataSource() {

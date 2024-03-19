@@ -50,6 +50,23 @@ export class AirportWatchService {
         );
     }
 
+    public getArrivalsDeparturesSwim(
+        groupId: number,
+        fboId: number,
+        body: AirportWatchHistoricalDataRequest
+    ) {
+        return this.http.post<FlightWatchHistorical[]>(
+            this.accessPointUrl +
+            '/group/' +
+            groupId +
+            '/fbo/' +
+            fboId +
+            '/arrivals-depatures-swim',
+            body,
+            { headers: this.headers }
+        );
+    }
+
     public getVisits(
         groupId: number,
         fboId: number,

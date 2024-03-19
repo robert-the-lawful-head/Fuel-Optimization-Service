@@ -5,6 +5,10 @@ namespace FBOLinx.DB.Specifications.CustomerAircrafts
 {
     public sealed class CustomerAircraftByGroupSpecification : Specification<Models.CustomerAircrafts>
     {
+        public CustomerAircraftByGroupSpecification(int groupId) : base(x => x.GroupId == groupId)
+        {
+        }
+
         public CustomerAircraftByGroupSpecification(List<int> groupIds, int customerId) : base(x => groupIds.Contains(x.GroupId) &&
             !string.IsNullOrEmpty(x.TailNumber) 
             &&
