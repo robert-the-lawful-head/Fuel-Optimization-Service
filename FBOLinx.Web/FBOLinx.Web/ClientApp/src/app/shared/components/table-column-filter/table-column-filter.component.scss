@@ -22,3 +22,13 @@ sub.is-filtered-icon {
 .is-filtered-icon {
     color: #e23936;
 }
+
+.isHidden{
+    display: none;
+}
+
+.text-filter-container{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}

@@ -2,12 +2,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { PresetDateFilterEnum, SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import {
     ColumnType,
     TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
 import * as XLSX from 'xlsx-js-style';
+import * as moment from 'moment';
 
 export type csvFileOptions = {
     fileName: string;
@@ -23,8 +24,11 @@ export abstract class GridBase {
 
     //for reports grid
     private _icaoFilter: string;
-    filterStartDate: Date;
-    filterEndDate: Date;
+    filterStartDate: Date = new Date(
+        moment().add(-1, 'M').format('MM/DD/YYYY')
+    );
+    filterEndDate: Date = new Date(moment().format('MM/DD/YYYY'));
+
     selectedDateFilter: SelectedDateFilter;
     hiddenColumns: string[] = [
         'directOrders',
@@ -36,6 +40,11 @@ export abstract class GridBase {
     ];
 
     constructor() {
+        this.selectedDateFilter = {
+            offsetDate: this.filterStartDate,
+            limitDate: this.filterEndDate,
+            selectedFilter : PresetDateFilterEnum.oneMonth
+        };
         this.dataSource.sortingDataAccessor = (item, property) => {
             switch (property) {
                 case 'eta':

@@ -33,16 +33,14 @@ export class PresetDateFilterComponent implements OnInit {
     currentDate: Date = new Date();
     startDate: Date = new Date();
 
-    constructor() {}
+    constructor() {
+        this.defaultFilter = PresetDateFilterEnum.oneMonth;
+    }
 
-    // ngOnChanges(changes: SimpleChanges): void {
-    //     if (changes.defaultFilter) {
-    //         console.log("🚀 ~ PresetDateFilterComponent ~ ngOnChanges ~ changes.defaultFilter:", changes.defaultFilter)
-    //         this.defaultFilter = changes.defaultFilter.currentValue;
-    //     }
-    // }
     ngOnInit() {
-        this.selectedFilter = this.defaultFilter;
+        this.selectedFilter = PresetDateFilterEnum.oneMonth;
+        let filter = this.getPresetDatesFilters(this.selectedFilter);
+        this.selectedFilterChange.emit(filter);
     }
 
     onToggleChange(event: any) {

@@ -76,15 +76,6 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         private fboService: FbosService
     ) {
         super();
-        this.filterStartDate = new Date(
-            moment().add(-1, 'M').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.selectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        }
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());

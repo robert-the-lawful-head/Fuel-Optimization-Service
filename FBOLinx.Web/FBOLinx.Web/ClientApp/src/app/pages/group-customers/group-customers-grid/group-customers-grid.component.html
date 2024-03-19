@@ -26,7 +26,7 @@
                             aria-hidden="true"
                             class="mat-icon material-icons"
                             role="img"
-                           >settings</mat-icon
+                            >settings</mat-icon
                         >
                     </button>
                     <mat-menu
@@ -83,8 +83,17 @@
             </ng-container>
 
             <ng-container matColumnDef="company">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Company</span>
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.company }}
@@ -92,16 +101,21 @@
             </ng-container>
 
             <ng-container matColumnDef="isFuelerLinxCustomer">
-                <th
-                    *matHeaderCellDef
-                    class="overflow-label"
-                    mat-header-cell
-                    mat-sort-header
-                >
-                    <div>
-                        <div>FuelerLinx</div>
-                        <div>Network</div>
-                    </div>
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [columnFormat]="8"
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="isFuelerLinxCustomer"
+                            propertyName="isFuelerLinxCustomer"
+                        >
+                            <div>
+                                <div>FuelerLinx</div>
+                                <div>Network</div>
+                            </div></app-table-column-filter
+                        >
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.isFuelerLinxCustomer ? "YES" : "NO" }}
@@ -109,16 +123,20 @@
             </ng-container>
 
             <ng-container matColumnDef="certificateTypeDescription">
-                <th
-                    *matHeaderCellDef
-                    class="overflow-label"
-                    mat-header-cell
-                    mat-sort-header
-                >
-                    <div>
-                        <div>Certificate</div>
-                        <div>Type</div>
-                    </div>
+                <th *matHeaderCellDef class="overflow-label" mat-header-cell>
+                    <span *ngIf="customersDataSource">
+                        <app-table-column-filter
+                            [matDataSource]="customersDataSource"
+                            [matSort]="sort"
+                            columnId="certificateTypeDescription"
+                            propertyName="certificateTypeDescription"
+                        >
+                            <div>
+                                <div>Certificate</div>
+                                <div>Type</div>
+                            </div></app-table-column-filter
+                        >
+                    </span>
                 </th>
                 <td *matCellDef="let customer" mat-cell>
                     {{ customer.certificateTypeDescription }}
