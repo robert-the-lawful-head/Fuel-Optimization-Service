@@ -1,8 +1,19 @@
-<div class="table-column-filter">
-    <sub class="is-filtered-icon" *ngIf="filter.isFiltered">
+<div>
+    <span
+        class="text-filter-container"
+        [ngClass]="{ isHidden: showButton }"
+        [matMenuTriggerFor]="table_header_menu"
+    >
+        <ng-content></ng-content>
+        <mat-icon class="red-font is-filtered-icon" *ngIf="filter.isFiltered">
+            <span class="material-icons"> filter_list </span>
+        </mat-icon>
+    </span>
+    <sub class="is-filtered-icon" [ngClass]="{ isHidden: !showButton }" *ngIf="filter.isFiltered">
         <i class="fa fa-circle" aria-hidden="true"></i>
     </sub>
     <button
+        [ngClass]="{ isHidden: !showButton }"
         mat-icon-button
         #table_header_menu_trigger="matMenuTrigger"
         [matMenuTriggerFor]="table_header_menu"
@@ -130,15 +141,20 @@
                 </div>
                 <div
                     *ngIf="[0, 7].indexOf(column.columnFormat) > -1"
-                    class="col-12">
+                    class="col-12"
+                >
                     <div>
                         <mat-form-field *ngIf="isFilterOpen">
                             <mat-label>{{ column.heading }} Filter</mat-label>
-                            <mat-select [(ngModel)]="filter.filterStringCondition">
-                                <mat-option *ngFor="
-                                                let condition of stringFilterConditionOptions
-                                            "
-                                            [value]="condition.value">
+                            <mat-select
+                                [(ngModel)]="filter.filterStringCondition"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let condition of stringFilterConditionOptions
+                                    "
+                                    [value]="condition.value"
+                                >
                                     {{ condition.text }}
                                 </mat-option>
                             </mat-select>
@@ -150,7 +166,8 @@
                             <input
                                 (click)="$event.stopPropagation()"
                                 [(ngModel)]="filter.stringFilter"
-                                matInput/>
+                                matInput
+                            />
                         </mat-form-field>
                     </div>
                 </div>
@@ -217,27 +234,35 @@
                         </div>
                     </div>
                 </div>
-                <div *ngIf="[10, 11].indexOf(column.columnFormat) > -1"
-                     class="col-12">
+                <div
+                    *ngIf="[10, 11].indexOf(column.columnFormat) > -1"
+                    class="col-12"
+                >
                     <div>
                         <mat-form-field *ngIf="isFilterOpen">
                             <mat-label>{{ column.heading }} Filter</mat-label>
-                            <mat-select [(ngModel)]="filter.filterStringCondition">
-                                <mat-option *ngFor="
-                                                let condition of stringFilterConditionOptions
-                                            "
-                                            [value]="condition.value">
+                            <mat-select
+                                [(ngModel)]="filter.filterStringCondition"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let condition of stringFilterConditionOptions
+                                    "
+                                    [value]="condition.value"
+                                >
                                     {{ condition.text }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                     <div (click)="$event.stopPropagation()" class="mb-2 mt-2">
-                        <ejs-multiselect [dataSource]="options"
-                                         [fields]="{ text: optionLabel, value: optionValue }"
-                                         placeholder="Select filters"
-                                         [showSelectAll]="true"
-                                         [(ngModel)]="filter.optionsFilter"></ejs-multiselect>
+                        <ejs-multiselect
+                            [dataSource]="options"
+                            [fields]="{ text: optionLabel, value: optionValue }"
+                            placeholder="Select filters"
+                            [showSelectAll]="true"
+                            [(ngModel)]="filter.optionsFilter"
+                        ></ejs-multiselect>
                     </div>
                 </div>
                 <div *ngIf="isFilterOpen" class="col-12">

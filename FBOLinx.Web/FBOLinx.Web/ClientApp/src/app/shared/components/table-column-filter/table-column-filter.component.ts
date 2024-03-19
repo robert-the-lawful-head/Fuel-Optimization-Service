@@ -62,6 +62,7 @@ export class TableColumnFilterComponent implements OnInit {
     @Input() options: any[] = [];
     @Input() optionLabel: string;
     @Input() optionValue: string;
+    @Input() showButton: boolean = false;
     @Output() columnChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
