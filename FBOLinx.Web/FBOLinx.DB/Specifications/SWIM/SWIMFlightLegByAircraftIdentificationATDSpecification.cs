@@ -8,8 +8,8 @@ namespace FBOLinx.DB.Specifications.SWIM
 {
     public sealed class SWIMFlightLegByAircraftIdentificationATDSpecification : Specification<SWIMFlightLeg>
     {
-        public SWIMFlightLegByAircraftIdentificationATDSpecification(IList<string> aircraftIdentification, DateTime startDate, DateTime endDate)
-            : base(x => aircraftIdentification.Contains(x.AircraftIdentification) && x.ATD > startDate && x.ATD < endDate)
+        public SWIMFlightLegByAircraftIdentificationATDSpecification(string aircraftIdentification, DateTime actualDepartureStartDateRange, DateTime actualDepartureEndDateRange)
+            : base(x => aircraftIdentification.Contains(x.AircraftIdentification) && x.ATD > actualDepartureStartDateRange && x.ATD < actualDepartureEndDateRange)
         {
         }
     }
