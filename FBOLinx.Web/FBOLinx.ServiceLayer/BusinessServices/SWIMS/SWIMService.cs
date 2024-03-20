@@ -201,18 +201,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 {
                     var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
 
-                    if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
-                    {
-                        //Check the DB for a record with the same aircraft and ATD
-                        //There should be very few records that require this search with every SWIM feed so it's OK to run a query in the loop 
-                        var equivalentLegForAircraftAndDeparture = await _SwimFlightLegService.GetSingleBySpec(
-                            new SWIMFlightLegByAircraftIdentificationATDSpecification(
-                                swimFlightLegDto.AircraftIdentification,
-                                swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(-1),
-                                swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(1)));
-                        if (equivalentLegForAircraftAndDeparture != null)
-                            existingLeg = equivalentLegForAircraftAndDeparture.ConvertToEntity();
-                    }
+                    //if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
+                    //{
+                    //    //Check the DB for a record with the same aircraft and ATD
+                    //    //There should be very few records that require this search with every SWIM feed so it's OK to run a query in the loop 
+                    //    var equivalentLegForAircraftAndDeparture = await _SwimFlightLegService.GetSingleBySpec(
+                    //        new SWIMFlightLegByAircraftIdentificationATDSpecification(
+                    //            swimFlightLegDto.AircraftIdentification,
+                    //            swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(-1),
+                    //            swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(1)));
+                    //    if (equivalentLegForAircraftAndDeparture != null)
+                    //        existingLeg = equivalentLegForAircraftAndDeparture.ConvertToEntity();
+                    //}
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
