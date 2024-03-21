@@ -113,14 +113,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.map.goToAirport(icao);
         this.mapWrapper.map.updateICAOIconOnMap(icao);
         this.selectedICAO = icao;
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao, this.selectedICAO);
         this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
     }
-    onTabClick(event) {
-        if (event.tab.textLabel == 'Takeoff/Landing Cycles')
-            this.isMapShowing = false;
-        else this.isMapShowing = true;
-    }
-
     onTextFilterChanged(filter: string): void {
         this.currentFilters.filterText = filter;
         this.applyFiltersToData();
