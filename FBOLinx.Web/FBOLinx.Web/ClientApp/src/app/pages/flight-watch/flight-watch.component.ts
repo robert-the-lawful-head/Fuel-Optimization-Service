@@ -16,7 +16,6 @@ import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from 'src/app/layouts/shared-service';
 import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
-    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from '../../models/flight-watch';
 import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
@@ -71,11 +70,20 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private cdref: ChangeDetectorRef,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.ngxLoader.startLoader(this.chartName);
         this.sharedService.titleChange(this.pageTitle);
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
+    }
+    ngAfterContentChecked() {
+        this.cdref.detectChanges();
+    }
+
+    async ngOnInit() {
+        if(this.center == null)
+            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
+
+        this.ngxLoader.startLoader(this.chartName);
         this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
@@ -92,14 +100,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                 this.center = this.flightWatchMapService.getMapCenterByCoordinates(value.data.latitude,value.data.longitude);
             }
         });
-    }
-    ngAfterContentChecked() {
-        this.cdref.detectChanges();
-    }
-
-    async ngOnInit() {
-        if(this.center == null)
-            this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
     }
     ngOnDestroy() {
     }
