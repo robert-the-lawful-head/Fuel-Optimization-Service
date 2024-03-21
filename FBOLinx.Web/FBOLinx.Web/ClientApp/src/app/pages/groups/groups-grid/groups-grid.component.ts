@@ -475,7 +475,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
             );
 
-            dialogRef.afterClosed().subscribe((result) => {
+            dialogRef.afterClosed().subscribe(async (result) => {
                 if (!result) {
                     return;
                 }
@@ -488,6 +488,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     'managerGroupId',
                     this.sharedService.currentUser.groupId.toString()
                 );
+
                 this.sharedService.currentUser.managerGroupId =
                     this.sharedService.currentUser.groupId;
 
@@ -504,7 +505,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,this.manageFboGroupsService.isSingleSourceFbo(this.groupsFbosData,fbo.groupId).toString());
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo).toString());
+                var isPartOfNetwork = await this.groupsService.isGroupFboPartOfNetwork(fbo.groupId, fbo.fbo, fbo.icao).toPromise();
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isPartOfNetwork.toString());
 
                 localStorage.setItem('conductorFbo', 'true');
                 this.sharedService.currentUser.conductorFbo = true;

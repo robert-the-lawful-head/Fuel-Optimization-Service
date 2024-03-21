@@ -306,7 +306,7 @@ export class FbosGridComponent implements OnInit {
             });
     }
 
-    completeManageProcess(fbo) {
+    async completeManageProcess(fbo) {
         localStorage.setItem(
             'managerGroupId',
             this.sharedService.currentUser.groupId.toString()
@@ -327,7 +327,8 @@ export class FbosGridComponent implements OnInit {
 
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,this.manageFboGroupsService.isSingleSourceFbo(this.groupsFbosData,fbo.groupId).toString());
 
-        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo).toString());
+        var isPartOfNetwork = await this.groupsService.isGroupFboPartOfNetwork(fbo.groupId, fbo.fbo, fbo.icao).toPromise();
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isPartOfNetwork.toString());
 
         this.sharedService.emitChange(fboChangedEvent);
         this.router.navigate(['/default-layout/dashboard-fbo-updated/']);

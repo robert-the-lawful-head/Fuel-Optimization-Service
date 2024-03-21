@@ -13,6 +13,12 @@ export class GroupsService {
         this.accessPointUrl = baseUrl + 'api/groups';
     }
 
+    isGroupFboPartOfNetwork(groupId: number, fboName: string, icao: string) {
+        return this.http.get<boolean>(`${this.accessPointUrl}/group/${groupId}/fbo-name/${fboName}/icao/${icao}/is-part-of-network`, {
+            headers: this.headers,
+        });
+    }
+
     getAllGroups() {
         return this.http.get(this.accessPointUrl, {
             headers: this.headers,

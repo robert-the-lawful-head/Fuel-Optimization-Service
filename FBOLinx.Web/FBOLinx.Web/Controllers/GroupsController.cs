@@ -11,16 +11,14 @@ using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using FBOLinx.Web.DTO;
-using FBOLinx.Web.ViewModels;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.DTO;
-using System.Net;
 using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.Airport;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -37,10 +35,10 @@ namespace FBOLinx.Web.Controllers
         private readonly IGroupService _groupService;
         private readonly ICustomerService _customerService;
         private ICompanyPricingLogService _CompanyPricingLogService;
-
+        private IAirportService _airportService;
 
         public GroupsController(FboLinxContext context, FuelerLinxContext fcontext, IHttpContextAccessor httpContextAccessor, IServiceScopeFactory serviceScopeFactory, GroupFboService groupFboService, ICustomerService customerService, IGroupService groupService, ILoggingService logger,
-            ICompanyPricingLogService companyPricingLogService) : base(logger)
+            ICompanyPricingLogService companyPricingLogService, IAirportService airportService) : base(logger)
         {
             _CompanyPricingLogService = companyPricingLogService;
             _groupFboService = groupFboService;
@@ -50,6 +48,7 @@ namespace FBOLinx.Web.Controllers
             _serviceScopeFactory = serviceScopeFactory;
             _customerService = customerService;
             _groupService = groupService;
+            _airportService = airportService;
         }
 
         // GET: api/Groups
@@ -104,6 +103,7 @@ namespace FBOLinx.Web.Controllers
                                 IsLegacyAccount = x.IsLegacyAccount,
                                 Users = x.Users,
                                 LastLogin = x.Fbos.Max(f => f.LastLogin),
+                                FboCount = x.Fbos.Count(),
                                 Fbos = x.Fbos,
                             })
                             .ToListAsync();
@@ -166,7 +166,12 @@ namespace FBOLinx.Web.Controllers
                 Fbos = fbos
             });
         }
-
+        [HttpGet("group/{groupId}/fbo-name/{fboName}/icao/{icao}/is-part-of-network")]
+        public async Task<ActionResult<bool>> IsFboPartOfNetwork([FromRoute] int groupId, [FromRoute] string fboName, [FromRoute] string icao)
+        {
+            var result = await _airportService.IsFboPartOfNetwork(groupId,fboName,icao);
+            return Ok(result);
+        }
         // GET: api/Groups/5
         [HttpGet("{id}")]
         [UserRole(UserRoles.Conductor, UserRoles.GroupAdmin)]
