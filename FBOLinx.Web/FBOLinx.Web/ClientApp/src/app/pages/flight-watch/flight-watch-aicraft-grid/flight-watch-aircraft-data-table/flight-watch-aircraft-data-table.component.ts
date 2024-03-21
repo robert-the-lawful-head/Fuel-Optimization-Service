@@ -45,7 +45,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
 
     @ViewChild(MatSort) sort: MatSort;
 
-    dataSource: MatTableDataSource<Swim>;
+    dataSource: MatTableDataSource<Swim> = new MatTableDataSource<Swim>();
     expandedDetailData: FlightWatchModelResponse | Swim | null;
 
     allColumnsToDisplay: string[];
@@ -105,7 +105,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
             this.allColumnsToDisplay = this.getVisibleColumns();
             this.dataColumnsToDisplay = this.getVisibleDataColumns();
         }
-        if (changes.data && this.dataSource){
+        if (changes.data){
             if(this.hasChangeDefaultSort){
                 this.dataSource.data =  changes.data.currentValue;
                 return;

@@ -2,14 +2,12 @@
     <p class="table-header">{{ getSwimDataTypeString() }}</p>
 </div>
 <div class="table-container">
-    <mat-spinner *ngIf="!data"></mat-spinner>
     <table
         mat-table
         [dataSource]="dataSource"
         multiTemplateDataRows
         matSort
         (matSortChange)="sortData($event)"
-        [class.hide]="!data"
     >
         <ng-container matColumnDef="expand-icon">
             <th mat-header-cell *matHeaderCellDef aria-label="row actions">
