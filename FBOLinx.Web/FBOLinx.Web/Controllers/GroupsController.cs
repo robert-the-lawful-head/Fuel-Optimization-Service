@@ -166,10 +166,10 @@ namespace FBOLinx.Web.Controllers
                 Fbos = fbos
             });
         }
-        [HttpGet("group/{groupId}/fbo-name/{fboName}/icao/{icao}/is-part-of-network")]
-        public async Task<ActionResult<bool>> IsFboPartOfNetwork([FromRoute] int groupId, [FromRoute] string fboName, [FromRoute] string icao)
+        [HttpGet("group/{groupId}/fbo-name/{fboName}/icao/{icao}/is-single-source")]
+        public async Task<ActionResult<bool>> isSingleSource([FromRoute] int groupId, [FromRoute] string fboName, [FromRoute] string icao)
         {
-            var result = await _airportService.IsFboPartOfNetwork(groupId,fboName,icao);
+            var result = await _airportService.isSingleSource(groupId,fboName,icao);
             return Ok(result);
         }
         // GET: api/Groups/5

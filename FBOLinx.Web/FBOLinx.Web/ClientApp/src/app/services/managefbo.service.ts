@@ -12,8 +12,10 @@ export class ManageFboGroupsService {
         return this.getGroupFbos(groupsFbosData,groupId).length == 1;
     }
     public isNetworkFbo(groupsFbosData: GroupFboViewModel,fbo: any): boolean{
-        return groupsFbosData.groups
-        .filter(group => group.fbos.some(fbo => fbo.fbo === fbo.fbo))
-        .length > 1;
+        return groupsFbosData.groups.filter(
+            (g) => g.fbos.filter(
+                (f) => f.fbo == fbo.fbo
+            ).length > 0
+        ).length > 1;
     }
 }

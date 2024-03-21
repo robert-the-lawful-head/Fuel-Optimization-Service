@@ -503,10 +503,10 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
 
                 this.sharedService.currentUser.icao = fbo.icao;
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,this.manageFboGroupsService.isSingleSourceFbo(this.groupsFbosData,fbo.groupId).toString());
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo.groupId).toString());
 
-                var isPartOfNetwork = await this.groupsService.isGroupFboPartOfNetwork(fbo.groupId, fbo.fbo, fbo.icao).toPromise();
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isPartOfNetwork.toString());
+                var isSingleSource = await this.groupsService.isGroupFboSingleSource(fbo.groupId, fbo.fbo, fbo.icao).toPromise();
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSource.toString());
 
                 localStorage.setItem('conductorFbo', 'true');
                 this.sharedService.currentUser.conductorFbo = true;

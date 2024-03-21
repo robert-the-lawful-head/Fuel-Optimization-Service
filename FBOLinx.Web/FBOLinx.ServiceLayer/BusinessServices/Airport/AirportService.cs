@@ -38,7 +38,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
         Task<string> FindClosestAntenna(Coordinate coordinates, List<string> antennas);
-        Task<bool> IsFboPartOfNetwork(int groupId, string fboName, string icao);
+        Task<bool> isSingleSource(int groupId, string fboName, string icao);
     }
 
     //TODO: Convert this to a DTO and Entity Service!
@@ -310,17 +310,18 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             }
         }
 
-        public async Task<bool> IsFboPartOfNetwork(int groupId, string fboName, string icao)
+        public async Task<bool> isSingleSource(int groupId, string fboName, string icao)
         {
-            var isFboLinxNetwork = _fboLinxContext.Group.Include(x => x.Fbos).Count(g => g.Fbos.Any(f => f.Fbo == fboName)) > 1;
+            var isfbolinxSingleSource = (await _fboLinxContext.Group.Include(x => x.Fbos)
+                .Where(x => x.Oid == groupId).FirstOrDefaultAsync()).Fbos.Count() > 1;
 
-            var isPartDegaNetwork =  await (from a in _degaContext.AcukwikAirports
+            var hasDegaSource =  await (from a in _degaContext.AcukwikAirports
                                      join ad in _degaContext.AcukwikFbohandlerDetail
                                      on a.Oid equals ad.AirportId
                                      where icao == a.Icao
-                                     select ad).CountAsync() > 1;
+                                     select ad).CountAsync() > 0;
 
-            return isPartDegaNetwork|| isFboLinxNetwork;
+            return isfbolinxSingleSource && !hasDegaSource;
         }
     }
 }
