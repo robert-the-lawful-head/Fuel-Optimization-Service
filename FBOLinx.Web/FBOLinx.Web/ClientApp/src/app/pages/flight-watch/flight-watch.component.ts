@@ -25,6 +25,7 @@ import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCon
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
     selector: 'app-flight-watch',
@@ -114,11 +115,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.map.updateICAOIconOnMap(icao);
         this.selectedICAO = icao;
         this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
-    }
-    onTabClick(event) {
-        if (event.tab.textLabel == 'Takeoff/Landing Cycles')
-            this.isMapShowing = false;
-        else this.isMapShowing = true;
     }
 
     onTextFilterChanged(filter: string): void {
