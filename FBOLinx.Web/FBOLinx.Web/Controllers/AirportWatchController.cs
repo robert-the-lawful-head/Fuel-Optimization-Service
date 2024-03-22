@@ -80,10 +80,10 @@ namespace FBOLinx.Web.Controllers
             return Ok(data2);
         }
 
-        [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures-swim")]
+        [HttpPost("fbo/{fboId}/arrivals-depatures-swim")]
         public async Task<IActionResult> GetArrivalsDeparturesSwim([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request, [FromQuery] string icao = null)
         {
-            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request, icao);
+            var data2 = await _airportWatchService.GetArrivalsDeparturesSwim(fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
             return Ok(data2);
         }
 

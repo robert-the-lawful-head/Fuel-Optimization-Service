@@ -88,6 +88,8 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     tailNumbers: any[] = [];
 
+    hiddenColumns: string[] = ['hexCode', 'flightNumber', 'pastVisits', 'visitsToMyFbo', 'isConfirmedVisit', 'percentOfVisits'];
+
     initialColumns: ColumnType[] = [
         {
             id: 'company',
@@ -236,7 +238,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     fetchSwimData(startDate: Date, endDate: Date) {
         return this.airportWatchService.getArrivalsDeparturesSwim(
-            this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             {
                 endDateTime: endDate,
@@ -271,7 +272,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             );
         }
         else {
-            this.fetchData(startDate, endDate).subscribe(
+            this.fetchSwimData(startDate, endDate).subscribe(
                 (data: FlightWatchHistorical[]) => {
                     this.data = data;
                     this.refreshDataSource();
@@ -449,11 +450,21 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     private setColumns() {
         this.columns =
             this.icao == this.sharedService.currentUser.icao
-                ? this.initialColumns
+                ? this.initialColumns.filter((column) => {
+                    return column.id != 'originated';
+                })
                 : this.filteredColumns;
     }
     get filteredColumns() {
-        return this.initialColumns.filter((column) => {
+        var filteredColumns = this.initialColumns;
+        if (!filteredColumns.find((column) => column.id === 'originated')) {
+            filteredColumns.push({
+                id: 'originated',
+                name: 'Origin ICAO',
+            });
+        };
+
+        return filteredColumns.filter((column) => {
             return !this.hiddenColumns.includes(column.id);
         });
     }

@@ -486,7 +486,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             response = (from s in swimFlightLegs
                         join ca in customerAircrafts on s.AircraftIdentification equals ca.TailNumber
                         into leftJoinCustomerAircrafts
-                        from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
+                        from ca in leftJoinCustomerAircrafts.Where(l => l.CustomerId > 0).DefaultIfEmpty()
                         join a in swimFlightLegsArrivals on s.Oid equals a.Oid
                         into leftJoinArrivals
                         from a in leftJoinArrivals.DefaultIfEmpty()
@@ -499,13 +499,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             TailNumber = s.AircraftIdentification,
                             AircraftType = s.Make + " " + s.Model,
                             Status = a == null || a.Oid == 0 ? "Departure" : "Arrival",
-                            Originated = s.DepartureICAO,
+                            Originated = a != null ? s.DepartureICAO : "",
                             Company = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Company).FirstOrDefault() : "",
                             CompanyId = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Customer.Oid).FirstOrDefault() : 0,
                             CustomerInfoByGroupID = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
                         }).ToList();
 
-            return response;
+            return response.Where(r => r.Company != "" && r.TailNumber != "").ToList();
         }
 
         public async Task<List<AirportWatchHistoricalDataResponse>> GetVisits(int groupId, int fboId, AirportWatchHistoricalDataRequest request)
