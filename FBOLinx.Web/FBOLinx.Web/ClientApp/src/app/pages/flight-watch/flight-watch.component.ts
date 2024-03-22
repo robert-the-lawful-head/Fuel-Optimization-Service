@@ -114,9 +114,9 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         this.mapWrapper.map.goToAirport(icao);
         this.mapWrapper.map.updateICAOIconOnMap(icao);
         this.selectedICAO = icao;
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao, this.selectedICAO);
         this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
     }
-
     onTextFilterChanged(filter: string): void {
         this.currentFilters.filterText = filter;
         this.applyFiltersToData();
