@@ -33,8 +33,7 @@
                          theme="small"
                          title="Flight Watch - Live Flight Tracking">
                     <div class="map-container" (click)="gotoFlightWatch()">
-                        <mat-spinner *ngIf="isMapLoading"></mat-spinner>
-                            <app-flight-watch-map-wrapper *ngIf="!isMapLoading"
+                            <app-flight-watch-map-wrapper *ngIf="flightWatchData"
                                 (markerClicked)="null"
                                 (airportClick)="null"
                                 (setIcaoList)="null"

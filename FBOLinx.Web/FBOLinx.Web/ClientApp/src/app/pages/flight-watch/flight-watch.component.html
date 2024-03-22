@@ -1,7 +1,6 @@
 <section class="flight-watch-tabs">
     <mat-drawer-container autosize>
         <mat-drawer-content>
-            <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
             <div *ngIf="flightWatchData">
                 <div class="drawer-button" (click)="toggleSettingsDrawer()">
                     <button class="mat-dark-blue" mat-flat-button>
@@ -68,3 +67,10 @@
         </mat-drawer>
     </mat-drawer-container>
 </section>
+<ngx-ui-loader
+[loaderId]="chartName"
+bgsColor="rgb(100, 181, 246)"
+bgsPosition="center-center"
+bgsType="ball-spin"
+overlayColor="rgba(0, 0, 0, 0.1)"
+></ngx-ui-loader>

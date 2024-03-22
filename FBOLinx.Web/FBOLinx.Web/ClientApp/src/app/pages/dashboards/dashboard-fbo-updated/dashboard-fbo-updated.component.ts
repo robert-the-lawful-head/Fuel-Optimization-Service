@@ -40,8 +40,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
     //flghtWatch
     center: LngLatLike;
-    flightWatchData: FlightWatchModelResponse[];
-    isMapLoading: boolean = true;
+    flightWatchData: FlightWatchModelResponse[] = null;
     isStable: boolean = true;
     selectedICAO: string = "";
     isSingleSourceFbo: boolean = false;
@@ -68,7 +67,7 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                 .getCurrentUserPropertyValue(
                     localStorageAccessConstant.isSingleSourceFbo
                 )
-                .toLowerCase()
+                ?.toLowerCase()
         );
     }
 
@@ -91,7 +90,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                     this.flightWatchData = null;
                     this.isStable = false;
                 }
-                this.isMapLoading = false;
             }
         });
     }
