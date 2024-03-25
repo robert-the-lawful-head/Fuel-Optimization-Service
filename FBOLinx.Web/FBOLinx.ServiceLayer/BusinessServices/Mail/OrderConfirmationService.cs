@@ -162,7 +162,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
         {
             FBOLinxMailMessage mailMessage = new FBOLinxMailMessage();
             mailMessage.From = new MailAddress(senderAddress);
-            foreach (string email in confirmationEmail.Split(";"))
+            foreach (string email in confirmationEmail.Split(","))
             {
                 if (_mailService.IsValidEmailRecipient(email))
                     mailMessage.To.Add(email);
