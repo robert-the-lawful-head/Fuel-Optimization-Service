@@ -42,6 +42,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
         private const int _etaTimeMinutesThreshold = 15;
         private const int _atdTimeMinutesThreshold = 1440;
         private const int _lastUpdateThreshold = 30;
+        private const int _liveDataUpdateThreshold = 2;
         private FlightWatchDataRequestOptions _Options;
         private FbosDto _Fbo;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
@@ -186,7 +187,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _Fbo = await _FboService.GetSingleBySpec(
                 new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
 
-            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, _lastUpdateThreshold);
+            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, _liveDataUpdateThreshold);
 
             var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,_etaTimeMinutesThreshold,_atdTimeMinutesThreshold, _lastUpdateThreshold);
 
