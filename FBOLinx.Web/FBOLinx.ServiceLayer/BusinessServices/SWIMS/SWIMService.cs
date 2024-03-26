@@ -195,23 +195,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //stopwatch.Restart();
 
             //Get tails and ATDs for records that don't have Gufi or non-matching Gufi
-            if (swimFlightLegDTOs != null && existingFlightLegs != null)
-            {
-                var aircraftIdentifiers = (from s in swimFlightLegDTOs
-                                           join e in existingFlightLegs on s.Gufi equals e.Gufi
-                                           into leftJoinedE
-                                           from e in leftJoinedE.DefaultIfEmpty()
-                                           where s.Gufi == null || s.Gufi == string.Empty || e.Oid == 0
-                                           select new { s.AircraftIdentification, s.ATD }).ToList();
+            _LoggingService.LogError("swimFlightLegDTOs records: " + string.Format("{0:N}", swimFlightLegDTOs.Count()), "", LogLevel.Info, LogColorCode.Blue);
+            _LoggingService.LogError("existingFlightLegs records: " + string.Format("{0:N}", existingFlightLegs.Count()), "", LogLevel.Info, LogColorCode.Blue);
 
-                _LoggingService.LogError("swimFlightLegDTOs records: " + string.Format("{0:N}", swimFlightLegDTOs.Count()), "", LogLevel.Info, LogColorCode.Blue);
-                _LoggingService.LogError("existingFlightLegs records: " + string.Format("{0:N}", existingFlightLegs.Count()), "", LogLevel.Info, LogColorCode.Blue);
-                _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count()), "", LogLevel.Info, LogColorCode.Blue);
+            //if (swimFlightLegDTOs != null && existingFlightLegs != null)
+            //{
+            //    var aircraftIdentifiers = (from s in swimFlightLegDTOs
+            //                               join e in existingFlightLegs on s.Gufi equals e.Gufi
+            //                               into leftJoinedE
+            //                               from e in leftJoinedE.DefaultIfEmpty()
+            //                               where s.Gufi == null || s.Gufi == string.Empty || e.Oid == 0
+            //                               select new { s.AircraftIdentification, s.ATD }).ToList();
 
-                var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
-                _LoggingService.LogError("aircraftIdentifiers: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList()), "", LogLevel.Info, LogColorCode.Blue);
-                _LoggingService.LogError("ATDs: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()), "", LogLevel.Info, LogColorCode.Blue);
-            }
+            //    _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count()), "", LogLevel.Info, LogColorCode.Blue);
+
+            //    var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
+            //    _LoggingService.LogError("aircraftIdentifiers: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList()), "", LogLevel.Info, LogColorCode.Blue);
+            //    _LoggingService.LogError("ATDs: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()), "", LogLevel.Info, LogColorCode.Blue);
+            //}
 
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
             {
