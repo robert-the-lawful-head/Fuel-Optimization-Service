@@ -129,11 +129,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
-                    return _AirportWatchLiveData?.Latitude;
-                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
-                    return _SwimFlightLeg?.Latitude;
-                return null;
+                return _AirportWatchLiveData?.Latitude ?? _SwimFlightLeg?.Latitude; 
             }
         }
 
@@ -141,19 +137,17 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch
         {
             get
             {
-                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Antenna)
-                    return _AirportWatchLiveData?.Longitude;
-                if (this.SourceOfCoordinates == FlightWatchConstants.CoordinatesSource.Swim)
-                    return _SwimFlightLeg?.Longitude;
-                return null;
+                return _AirportWatchLiveData?.Longitude ?? _SwimFlightLeg?.Longitude;
             }
         }
         public string SourceOfCoordinates
         {
             get
             {
+                var keyPair = GetGreatesSourceOfCoordinates();
+
                 var sourceOfCoordinates = FlightWatchConstants.CoordinatesSource.None;
-                switch (this.PositionDateTimeSource)
+                switch (keyPair.Key)
                 {
                     case FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate:
                        if (_SwimFlightLeg?.LastUpdated.GetValueOrDefault() >= _ValidPositionDateTimeUtc &&
@@ -179,18 +173,25 @@ _ValidPositionDateTimeUtc && (_AirportWatchLiveData?.Longitude).HasValue)
                 return sourceOfCoordinates;
             }
         }
+        private KeyValuePair<string, DateTime> GetGreatesSourceOfCoordinates()
+        {
+            Dictionary<string, DateTime> dateTimeVariables = new Dictionary<string, DateTime>
+                {
+                    { FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate, this.SwimLastUpdated.GetValueOrDefault() },
+                    { FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc, this.BoxTransmissionDateTimeUtc.GetValueOrDefault() },
+                    { FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc, this.AircraftPositionDateTimeUtc.GetValueOrDefault() },
+                    { FlightWatchConstants.PositionDateTimeSource.CreatedDateTime, this.DateCreated.GetValueOrDefault() }
+                };
+
+            DateTime greatestDateTime = dateTimeVariables.Values.Max();
+
+            return dateTimeVariables.FirstOrDefault(x => x.Value == greatestDateTime);
+        }
         public string PositionDateTimeSource
         {
             get
             {
-                var gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.CreatedDateTime;
-                if (this.SwimLastUpdated.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.AircraftPositionDateTimeUtc.GetValueOrDefault() && this.SwimLastUpdated.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc.GetValueOrDefault())
-                    gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.SwimLastUpdate;
-                else if (this.AircraftPositionDateTimeUtc.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.AircraftPositionDateTimeUtc.GetValueOrDefault() > this.BoxTransmissionDateTimeUtc.GetValueOrDefault())
-                    gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.AircraftPositionDateTimeUtc;
-                else if (this.BoxTransmissionDateTimeUtc.GetValueOrDefault() > this.DateCreated.GetValueOrDefault() && this.BoxTransmissionDateTimeUtc.GetValueOrDefault() > this.AircraftPositionDateTimeUtc.GetValueOrDefault())
-                    gratestLiveDataDate = FlightWatchConstants.PositionDateTimeSource.BoxTransmissionDateTimeUtc;
-
+                var gratestLiveDataDate = GetGreatesSourceOfCoordinates().Key;
                 return gratestLiveDataDate;
             }
         }
