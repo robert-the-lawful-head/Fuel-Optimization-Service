@@ -39,6 +39,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
 
     public class FlightWatchService : IFlightWatchService
     {
+        private const int _etaTimeMinutesThreshold = 15;
+        private const int _atdTimeMinutesThreshold = 1440;
+        private const int _lastUpdateThreshold = 15;
         private FlightWatchDataRequestOptions _Options;
         private FbosDto _Fbo;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
@@ -183,9 +186,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _Fbo = await _FboService.GetSingleBySpec(
                 new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
 
-            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, 2);
+            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, _lastUpdateThreshold);
 
-            var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,30,30);
+            var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,_etaTimeMinutesThreshold,_atdTimeMinutesThreshold,_lastUpdateThreshold);
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveData, swimFlightLegs);
