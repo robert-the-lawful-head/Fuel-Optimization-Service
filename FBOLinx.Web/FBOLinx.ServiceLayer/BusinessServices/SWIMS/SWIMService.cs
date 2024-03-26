@@ -194,6 +194,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Console.WriteLine($"before foreach {stopwatch.ElapsedMilliseconds}");
             //stopwatch.Restart();
 
+            //Get tails and ATDs for records that don't have Gufi or non-matching Gufi
+            var aircraftIdentifiers = (from s in swimFlightLegDTOs
+                                       join e in existingFlightLegs on s.Gufi equals e.Gufi
+                                       into leftJoinedE
+                                       from e in leftJoinedE.DefaultIfEmpty()
+                                       where s.Gufi == null || s.Gufi == string.Empty || e.Oid == 0
+                                       select new { s.AircraftIdentification, s.ATD }).ToList();
+
+            var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
 
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
             {
@@ -201,18 +210,19 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 {
                     var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
 
-                    //if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
-                    //{
-                    //    //Check the DB for a record with the same aircraft and ATD
-                    //    //There should be very few records that require this search with every SWIM feed so it's OK to run a query in the loop 
-                    //    var equivalentLegForAircraftAndDeparture = await _SwimFlightLegService.GetSingleBySpec(
-                    //        new SWIMFlightLegByAircraftIdentificationATDSpecification(
-                    //            swimFlightLegDto.AircraftIdentification,
-                    //            swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(-1),
-                    //            swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(1)));
-                    //    if (equivalentLegForAircraftAndDeparture != null)
-                    //        existingLeg = equivalentLegForAircraftAndDeparture.ConvertToEntity();
-                    //}
+                    if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
+                    {
+                        //Check the DB for a record with the same aircraft and ATD
+                        //There should be very few records that require this search with every SWIM feed so it's OK to run a query in the loop 
+                        //var equivalentLegForAircraftAndDeparture = await _SwimFlightLegService.GetSingleBySpec(
+                        //    new SWIMFlightLegByAircraftIdentificationATDSpecification(
+                        //        swimFlightLegDto.AircraftIdentification,
+                        //        swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(-1),
+                        //        swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(1)));
+                        var equivalentLegForAircraftAndDeparture = swimFlightLegsWithNoOrNonMatchingGufi.FirstOrDefault(x => x.Oid == swimFlightLegDto.Oid);
+                        if (equivalentLegForAircraftAndDeparture != null)
+                            existingLeg = equivalentLegForAircraftAndDeparture;
+                    }
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {

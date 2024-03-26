@@ -15,7 +15,7 @@ namespace FBOLinx.Core.Extensions
             var commaDelimitedList = String.Join(",", listOfStrings == null ? new List<string>() : listOfStrings);
             var delimiter = ",";
             return context.Set<DatabaseStringSplitResult>()
-                .FromSqlInterpolated($"SELECT Value FROM dbo.fn_Split({commaDelimitedList}, {delimiter})");
+                .FromSqlInterpolated($"SELECT Value, Id FROM dbo.fn_Split({commaDelimitedList}, {delimiter})");
         }
 
         public static IQueryable<DatabaseStringSplitResult> AsTable(this DbContext context, List<int> listOfInts)

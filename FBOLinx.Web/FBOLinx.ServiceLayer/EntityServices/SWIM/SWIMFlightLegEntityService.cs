@@ -40,6 +40,15 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
             return query;
         }
 
+        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
+        {
+            var query = (from swim in context.SWIMFlightLegs
+                         join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
+                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = swim.Oid } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
+                         select swim);
+            return query;
+        }
+
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
             DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
             List<string> arrivalAirportIcaos = null,
