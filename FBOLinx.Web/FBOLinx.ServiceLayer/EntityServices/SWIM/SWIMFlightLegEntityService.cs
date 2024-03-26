@@ -46,7 +46,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
             var lastUpdateDateTime = DateTime.UtcNow.AddMinutes(-lastUpdateThreshold);
 
             return swim => swim.LastUpdated >= lastUpdateDateTime &&
-                    ((swim.ATD >= atdDateTimeThreshold) || (swim.ETA.HasValue && swim.ETA.Value >= etaDateTimeThreshold));
+                    (swim.ATD >= atdDateTimeThreshold || (swim.ETA.HasValue && swim.ETA.Value >= etaDateTimeThreshold));
         }
 
         public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold,int lastUpdateThreshold)
