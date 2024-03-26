@@ -44,7 +44,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         {
             var query = (from swim in context.SWIMFlightLegs
                          join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
-                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = tailNumbers.Id } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
+                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = Convert.ToInt64(tailNumbers.Id.ToString()) } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
                          select swim);
             return query;
         }
