@@ -257,15 +257,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                                  into leftJoinResult
                              from existing in leftJoinResult.DefaultIfEmpty()
                              where existing == null
-                             select new FlightWatchModel(liveData,flightLeg) {}).ToList());
+                             select new FlightWatchModel(liveData,flightLeg){}).ToList());
+
+            //Add any remaining AirportWatch data to the result without a SWIM match
+            result.AddRange((from liveData in liveDataList
+                             join resultItem in result on liveData.Oid equals resultItem.AirportWatchLiveDataId.GetValueOrDefault()
+                                 into leftJoinResult
+                             from resultItem in leftJoinResult.DefaultIfEmpty()
+                             where resultItem == null
+                             select new FlightWatchModel(liveData, null){}
+                ).ToList());
 
             //Add any remaining SWIM data to the result without an AirportWatch match
-            result.AddRange(from swimFlight in swimFlightLegs
+            result.AddRange((from swimFlight in swimFlightLegs
                             join resultItem in result on swimFlight.Oid equals resultItem.SWIMFlightLegId.GetValueOrDefault()
                                 into leftJoinResult
                             from resultItem in leftJoinResult.DefaultIfEmpty()
                             where resultItem == null
-                            select new FlightWatchModel(null, swimFlight));
+                            select new FlightWatchModel(null, swimFlight){}).ToList());
 
             return result;
         }
