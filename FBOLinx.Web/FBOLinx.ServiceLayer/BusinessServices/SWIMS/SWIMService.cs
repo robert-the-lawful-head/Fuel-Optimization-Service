@@ -208,7 +208,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                                        join e in existingFlightLegs on s.Gufi equals e.Gufi
                                        into leftJoinedE
                                        from e in leftJoinedE.DefaultIfEmpty()
-                                       where e.Gufi == null || e.Gufi == string.Empty
                                        select new { s.AircraftIdentification, s.ATD }).ToList();
             _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
 
