@@ -41,7 +41,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
     {
         private const int _etaTimeMinutesThreshold = 15;
         private const int _atdTimeMinutesThreshold = 1440;
-        private const int _lastUpdateThreshold = 15;
+        private const int _lastUpdateThreshold = 30;
+        private const int _liveDataUpdateThreshold = 2;
         private FlightWatchDataRequestOptions _Options;
         private FbosDto _Fbo;
         private IAirportWatchLiveDataService _AirportWatchLiveDataService;
@@ -186,9 +187,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             _Fbo = await _FboService.GetSingleBySpec(
                 new FboByIdSpecification(options.FboIdForCenterPoint.GetValueOrDefault()));
 
-            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, _lastUpdateThreshold);
+            var liveData = await _AirportWatchLiveDataService.GetLiveData(options.AirportIdentifier, _liveDataUpdateThreshold);
 
-            var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,_etaTimeMinutesThreshold,_atdTimeMinutesThreshold,_lastUpdateThreshold);
+            var swimFlightLegs = await _SwimFlightLegService.GetSwimFlightLegsForFlightWatchMap(options.AirportIdentifier,_etaTimeMinutesThreshold,_atdTimeMinutesThreshold, _lastUpdateThreshold);
 
             //Combine the results so we see every flight picked up by both AirportWatch and SWIM.
             var result = CombineAirportWatchAndSWIMData(liveData, swimFlightLegs);
@@ -256,15 +257,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
                                  into leftJoinResult
                              from existing in leftJoinResult.DefaultIfEmpty()
                              where existing == null
-                             select new FlightWatchModel(liveData,flightLeg) {}).ToList());
+                             select new FlightWatchModel(liveData,flightLeg){}).ToList());
+
+            //Add any remaining AirportWatch data to the result without a SWIM match
+            result.AddRange((from liveData in liveDataList
+                             join resultItem in result on liveData.Oid equals resultItem.AirportWatchLiveDataId.GetValueOrDefault()
+                                 into leftJoinResult
+                             from resultItem in leftJoinResult.DefaultIfEmpty()
+                             where resultItem == null
+                             select new FlightWatchModel(liveData, null){}
+                ).ToList());
 
             //Add any remaining SWIM data to the result without an AirportWatch match
-            result.AddRange(from swimFlight in swimFlightLegs
+            result.AddRange((from swimFlight in swimFlightLegs
                             join resultItem in result on swimFlight.Oid equals resultItem.SWIMFlightLegId.GetValueOrDefault()
                                 into leftJoinResult
                             from resultItem in leftJoinResult.DefaultIfEmpty()
                             where resultItem == null
-                            select new FlightWatchModel(null, swimFlight));
+                            select new FlightWatchModel(null, swimFlight){}).ToList());
 
             return result;
         }
