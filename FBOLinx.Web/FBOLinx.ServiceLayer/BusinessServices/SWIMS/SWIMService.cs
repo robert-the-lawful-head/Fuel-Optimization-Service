@@ -255,15 +255,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                             flightLegDataMessagesToInsert.Add(swimFlightLegDataToInsert);
                         }
 
-                        if (swimFlightLegDto.SWIMFlightLegDataMessages.Any() && existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
+                        //If the leg has any messages from the FAA feed then we will want to update the LastUpdated time to UTC now.
+                        if (swimFlightLegDto.SWIMFlightLegDataMessages.Any())
                         {
                             existingLeg.LastUpdated = DateTime.UtcNow;
-                            existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
-                            AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
-                            if (arrivalAirport != null && existingLeg.ETA != null)
+
+                            //If the ETA has changed then we will want to update the ETA and ETALocal times using the airport's timezone.
+                            if (existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
                             {
-                                existingLeg.ETALocal = DateTimeHelper.GetLocalTime(existingLeg.ETA.Value, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                                existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
+                                AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
+                                if (arrivalAirport != null && existingLeg.ETA != null)
+                                {
+                                    existingLeg.ETALocal = DateTimeHelper.GetLocalTime(existingLeg.ETA.Value,
+                                        arrivalAirport.IntlTimeZone,
+                                        arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                                }
                             }
+
                             flightLegsToUpdate.Add(existingLeg);
                         }
                     }
