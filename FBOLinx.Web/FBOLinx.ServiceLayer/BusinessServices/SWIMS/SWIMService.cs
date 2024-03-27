@@ -205,9 +205,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             var aircraftIdentifiers = (from s in swimFlightLegsWithGufi
                                        join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
-                                       //into leftJoinedE
-                                       //from e in leftJoinedE.DefaultIfEmpty()
-                                       //where e.Oid == 0
+                                       into leftJoinedE
+                                       from e in leftJoinedE.DefaultIfEmpty()
+                                           //where e.Oid == 0
                                        select new { s.Oid }).ToList();
 
             //if (swimFlightLegsWithNoGufi.Count > 0)
