@@ -207,7 +207,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                                        join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
                                        into leftJoinedE
                                        from e in leftJoinedE.DefaultIfEmpty()
-                                           //where e.Oid == 0
+                                       where e.Gufi is null || e.Gufi == string.Empty
                                        select new { s.Oid }).ToList();
 
             //if (swimFlightLegsWithNoGufi.Count > 0)
