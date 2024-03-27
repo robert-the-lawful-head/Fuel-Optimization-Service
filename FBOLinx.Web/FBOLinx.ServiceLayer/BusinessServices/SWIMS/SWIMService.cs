@@ -184,7 +184,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             }
 
             existingFlightLegs = existingFlightLegs.OrderByDescending(x => x.ATD).ToList();
-            
+
             List<SWIMFlightLegData> flightLegDataMessagesToInsert = new List<SWIMFlightLegData>();
             List<SWIMFlightLeg> flightLegsToUpdate = new List<SWIMFlightLeg>();
             List<SWIMFlightLeg> flightLegsToInsert = new List<SWIMFlightLeg>();
@@ -208,7 +208,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                                        join e in existingFlightLegs on s.Gufi equals e.Gufi
                                        into leftJoinedE
                                        from e in leftJoinedE.DefaultIfEmpty()
-                                       where e.Oid == 0
+                                       where e.Gufi == null || e.Gufi == string.Empty
                                        select new { s.AircraftIdentification, s.ATD }).ToList();
             _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
 
