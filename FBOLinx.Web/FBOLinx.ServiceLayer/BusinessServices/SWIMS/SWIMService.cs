@@ -203,17 +203,17 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             _LoggingService.LogError("existingFlightLegsWithGufi records: " + string.Format("{0:N}", existingFlightLegsWithGufi.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
 
-            var aircraftIdentifiers = (from s in swimFlightLegsWithGufi
-                                       join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
-                                       into leftJoinedE
-                                       from e in leftJoinedE.DefaultIfEmpty()
-                                       where e.Gufi is null || e.Gufi == string.Empty
-                                       select new {s.Oid }).ToList();
+            //var aircraftIdentifiers = (from s in swimFlightLegsWithGufi
+            //                           join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
+            //                           into leftJoinedE
+            //                           from e in leftJoinedE.DefaultIfEmpty()
+            //                           where e.Gufi is null || e.Gufi == string.Empty
+            //                           select new {s.Oid }).ToList();
 
             //if (swimFlightLegsWithNoGufi.Count > 0)
             //    aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
 
-            _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
+            //_LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
 
 
             //    _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count()), "", LogLevel.Info, LogColorCode.Blue);
