@@ -22,7 +22,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,
             bool? isPlaceHolder = null);
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30);
 
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
             int pastMinutesForDepartureOrArrival = 30);
@@ -56,7 +56,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result == null ? null : result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30)
         {
             //Use the maximum OID to get the last 30 minutes of data 
             var minimumLastUpdatedDateTime = DateTime.UtcNow.AddMinutes(-30);
