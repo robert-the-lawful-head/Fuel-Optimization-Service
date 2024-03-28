@@ -16,6 +16,12 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         {
         }
 
+        public async Task<long> GetMaximumOID()
+        {
+            var result = await context.SWIMFlightLegs.MaxAsync(x => x.Oid);
+            return result;
+        }
+
         public async Task<List<SWIMFlightLeg>> GetSWIMFlightLegs(List<string> gufiList)
         {
             var query = GetSWIMFlightLegsQueryable(gufiList);
