@@ -55,12 +55,17 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
                     (swim.ATD >= atdDateTimeThreshold || (swim.ETA.HasValue && swim.ETA.Value >= etaDateTimeThreshold));
         }
 
-        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold,int lastUpdateThreshold)
+        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdateThreshold)
         {
             var query = context.SWIMFlightLegs
                 .Where(ArrivalsAndDeparturesQuerylogic(etaTimeMinutesThreshold, atdTimeMinutesThreshold, lastUpdateThreshold));
 
             var arrivals = query.Where(swim => swim.ArrivalICAO == icao);
+
+            var departures = query.Where(swim => swim.DepartureICAO == icao);
+
+            return await arrivals.Concat(departures).ToListAsync();
+        }
 
         public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
         {
