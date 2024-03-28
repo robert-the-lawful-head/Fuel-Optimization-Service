@@ -16,6 +16,12 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
         {
         }
 
+        public async Task<long> GetMaximumOID()
+        {
+            var result = await context.SWIMFlightLegs.MaxAsync(x => x.Oid);
+            return result;
+        }
+
         public async Task<List<SWIMFlightLeg>> GetSWIMFlightLegs(List<string> gufiList)
         {
             var query = GetSWIMFlightLegsQueryable(gufiList);
@@ -49,7 +55,7 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
                     (swim.ATD >= atdDateTimeThreshold || (swim.ETA.HasValue && swim.ETA.Value >= etaDateTimeThreshold));
         }
 
-        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold,int lastUpdateThreshold)
+        public async Task<IList<SWIMFlightLeg>> GetSWIMFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdateThreshold)
         {
             var query = context.SWIMFlightLegs
                 .Where(ArrivalsAndDeparturesQuerylogic(etaTimeMinutesThreshold, atdTimeMinutesThreshold, lastUpdateThreshold));
@@ -60,6 +66,16 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 
             return await arrivals.Concat(departures).ToListAsync();
         }
+
+        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
+        {
+            var query = (from swim in context.SWIMFlightLegs
+                         join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
+                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = Convert.ToInt64(tailNumbers.Id.ToString()) } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
+                         select swim);
+            return query;
+        }
+
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
         DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
         List<string> arrivalAirportIcaos = null,
