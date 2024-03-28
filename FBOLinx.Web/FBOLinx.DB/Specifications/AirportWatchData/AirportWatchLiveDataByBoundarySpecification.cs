@@ -12,7 +12,7 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
     public class AirportWatchLiveDataByBoundarySpecification : Specification<DB.Models.AirportWatchLiveData>
     {
         public AirportWatchLiveDataByBoundarySpecification(DateTime aircraftPositionStartDateTime, DateTime aircraftPositionEndDateTime,
-            double minLatitude, double maxLatitude, double minLongitude, double maxLongitude) : base(x => x.AircraftPositionDateTimeUtc >= aircraftPositionStartDateTime && x.AircraftPositionDateTimeUtc <= aircraftPositionEndDateTime
+            double minLatitude, double maxLatitude, double minLongitude, double maxLongitude) : base(x => x.CreatedDateTime >= aircraftPositionStartDateTime && x.CreatedDateTime <= aircraftPositionEndDateTime
         && x.Latitude >= minLatitude
         && x.Latitude <= maxLatitude
         && x.Longitude >= minLongitude

@@ -25,7 +25,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
 
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
             int pastMinutesForDepartureOrArrival = 30);
-        Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int estimateTimeMinutesThreshold, int lastUpdated);
+        Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdated);
     }
 
     public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, DegaContext>, ISWIMFlightLegService
@@ -87,6 +87,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
                 .Select(grouped => grouped.First())
                 .ToList();
         }
-        public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int estimateTimeMinutesThreshold, int lastUpdateThreshold) => (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(icao, estimateTimeMinutesThreshold, lastUpdateThreshold)).Adapt<List<SWIMFlightLegDTO>>();
+        public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdateThreshold) => (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(icao, etaTimeMinutesThreshold, atdTimeMinutesThreshold, lastUpdateThreshold)).Adapt<List<SWIMFlightLegDTO>>();
     }
 }
