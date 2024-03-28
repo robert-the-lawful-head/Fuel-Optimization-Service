@@ -127,7 +127,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FlightWatch
             if ((airportsForArrivalsAndDepartures?.Count).GetValueOrDefault() > 0)
                 swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(airportsForArrivalsAndDepartures)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
             else
-                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs(30000)).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
+                swimFlightLegs = (await _SwimFlightLegService.GetRecentSWIMFlightLegs()).Where(x => !string.IsNullOrEmpty(x.AircraftIdentification));
 
             var distinctTails = liveDataWithHistoricalInfo.Select(x => x.TailNumber).Concat(swimFlightLegs.Select(x => x.AircraftIdentification)).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
