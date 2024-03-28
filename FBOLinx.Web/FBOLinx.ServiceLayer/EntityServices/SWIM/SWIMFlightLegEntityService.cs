@@ -62,10 +62,15 @@ namespace FBOLinx.ServiceLayer.EntityServices.SWIM
 
             var arrivals = query.Where(swim => swim.ArrivalICAO == icao);
 
-            var departures = query.Where(swim => swim.DepartureICAO == icao);
-
-            return await arrivals.Concat(departures).ToListAsync();
+        public IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(List<string> tailNumbersList, List<string> atdsList)
+        {
+            var query = (from swim in context.SWIMFlightLegs
+                         join tailNumbers in context.AsTable(tailNumbersList) on swim.AircraftIdentification equals tailNumbers.Value
+                         join atds in context.AsTable(atdsList) on new { swim.ATD, Id = Convert.ToInt64(tailNumbers.Id.ToString()) } equals new { ATD = DateTime.Parse(atds.Value), Id = Convert.ToInt64(atds.Id.ToString()) }
+                         select swim);
+            return query;
         }
+
         private IQueryable<SWIMFlightLeg> GetSWIMFlightLegsQueryable(DateTime minArrivalOrDepartureDateTimeUtc,
         DateTime maxArrivalOrDepartureDateTimeUtc, List<string> departureAirportIcaos = null,
         List<string> arrivalAirportIcaos = null,
