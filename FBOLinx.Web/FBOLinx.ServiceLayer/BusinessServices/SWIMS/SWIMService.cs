@@ -199,10 +199,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             
             var swimFlightLegsWithGufi = (from s in swimFlightLegDTOs where s.Gufi != null && s.Gufi != string.Empty select s).ToList();
             var existingFlightLegsWithGufi = existingFlightLegs.Where(x => x.Gufi != null && x.Gufi != string.Empty).ToList();
-            _LoggingService.LogError("swimFlightLegsWithGufi records: " + string.Format("{0:N}", swimFlightLegsWithGufi.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
-
-            _LoggingService.LogError("existingFlightLegsWithGufi records: " + string.Format("{0:N}", existingFlightLegsWithGufi.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
-
             var aircraftIdentifiers = (from s in swimFlightLegsWithGufi
                                        join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
                                        into leftJoinedE
@@ -212,17 +208,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (swimFlightLegsWithNoGufi.Count > 0)
                 aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
-
-            _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
-
-
-            //    _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count()), "", LogLevel.Info, LogColorCode.Blue);
-
+            
             var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
-            _LoggingService.LogError("aircraftIdentifiers: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList()), "", LogLevel.Info, LogColorCode.Blue);
-            _LoggingService.LogError("ATDs: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()), "", LogLevel.Info, LogColorCode.Blue);
-            _LoggingService.LogError("swimFlightLegsWithNoOrNonMatchingGufi records: " + string.Format("{0:N}", swimFlightLegsWithNoOrNonMatchingGufi.Count()), "", LogLevel.Info, LogColorCode.Blue);
-
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
             {
                 try
@@ -231,13 +218,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
                     if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
                     {
-                        //Check the DB for a record with the same aircraft and ATD
-                        //There should be very few records that require this search with every SWIM feed so it's OK to run a query in the loop 
-                        //var equivalentLegForAircraftAndDeparture = await _SwimFlightLegService.GetSingleBySpec(
-                        //    new SWIMFlightLegByAircraftIdentificationATDSpecification(
-                        //        swimFlightLegDto.AircraftIdentification,
-                        //        swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(-1),
-                        //        swimFlightLegDto.ATD.GetValueOrDefault().AddMinutes(1)));
                         var equivalentLegForAircraftAndDeparture = swimFlightLegsWithNoOrNonMatchingGufi.FirstOrDefault(x => x.Oid == swimFlightLegDto.Oid);
                         if (equivalentLegForAircraftAndDeparture != null)
                             existingLeg = equivalentLegForAircraftAndDeparture;
