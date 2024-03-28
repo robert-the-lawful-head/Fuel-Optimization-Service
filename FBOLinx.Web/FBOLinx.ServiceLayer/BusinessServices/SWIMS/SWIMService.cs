@@ -220,7 +220,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             //var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
             //_LoggingService.LogError("aircraftIdentifiers: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList()), "", LogLevel.Info, LogColorCode.Blue);
-            _LoggingService.LogError("ATDs: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()), "", LogLevel.Info, LogColorCode.Blue);
+            //_LoggingService.LogError("ATDs: " + string.Format("{0:N}", aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()), "", LogLevel.Info, LogColorCode.Blue);
             //_LoggingService.LogError("swimFlightLegsWithNoOrNonMatchingGufi records: " + string.Format("{0:N}", swimFlightLegsWithNoOrNonMatchingGufi.Count()), "", LogLevel.Info, LogColorCode.Blue);
 
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
