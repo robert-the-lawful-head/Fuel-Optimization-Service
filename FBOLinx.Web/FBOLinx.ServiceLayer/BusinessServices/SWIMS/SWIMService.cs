@@ -210,8 +210,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                                        where e.Gufi is null || e.Gufi == string.Empty
                                        select new { s.AircraftIdentification, s.ATD }).ToList();
 
-            if (swimFlightLegsWithNoGufi.Count > 0)
-                aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
+            //if (swimFlightLegsWithNoGufi.Count > 0)
+            //    aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
 
             _LoggingService.LogError("aircraftIdentifiers records: " + string.Format("{0:N}", aircraftIdentifiers.Count.ToString()), "", LogLevel.Info, LogColorCode.Blue);
 
