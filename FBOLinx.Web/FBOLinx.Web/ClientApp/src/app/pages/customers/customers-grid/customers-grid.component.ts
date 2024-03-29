@@ -86,10 +86,10 @@ const initialColumns: ColumnType[] = [
         id: 'certificateTypeDescription',
         name: 'Certificate Type',
     },
-    {
-        id: 'customerCompanyTypeName',
-        name: 'Customer Type',
-    },
+    //{
+    //    id: 'customerCompanyTypeName',
+    //    name: 'Customer Type',
+    //},
 
     //{
     //    id: 'aircraftsVisits',

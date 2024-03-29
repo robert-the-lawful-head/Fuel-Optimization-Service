@@ -82,13 +82,11 @@
                     <div class="row mx-auto">
                         <span>
                             <input (change)="selectUnique()" [(ngModel)]="customer.selectAll" class="checkboxHeight"
-                            type="checkbox" value="{{ customer.selectAll }}" />
+                                   type="checkbox" value="{{ customer.selectAll }}" />
                         </span>
-                        <app-favorite-icon
-                        [favoriteData]="setIsFavoriteProperty(customer)"
-                        [callbackComponent]="getCallBackComponent"
-                        (favoriteClick)="toogleFavorite(customer)"
-                        ></app-favorite-icon>
+                        <app-favorite-icon [favoriteData]="setIsFavoriteProperty(customer)"
+                                           [callbackComponent]="getCallBackComponent"
+                                           (favoriteClick)="toogleFavorite(customer)"></app-favorite-icon>
                     </div>
                 </td>
             </ng-container>
@@ -274,22 +272,22 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="customerCompanyTypeName">
-                <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
-                    <div>
-                        <div>Customer</div>
-                        <div>Type</div>
-                    </div>
-                    <span *ngIf="dataSource">
-                        <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
-                                                 columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
-                        </app-table-column-filter>
-                    </span>
-                </th>
-                <td *matCellDef="let customer" mat-cell>
-                    {{ customer.customerCompanyTypeName }}
-                </td>
-            </ng-container>
+            <!--<ng-container matColumnDef="customerCompanyTypeName">
+        <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
+            <div>
+                <div>Customer</div>
+                <div>Type</div>
+            </div>
+            <span *ngIf="dataSource">
+                <app-table-column-filter [matDataSource]="dataSource" [matSort]="sort"
+                                         columnId="customerCompanyTypeName" propertyName="customerCompanyTypeName">
+                </app-table-column-filter>
+            </span>
+        </th>
+        <td *matCellDef="let customer" mat-cell>
+            {{ customer.customerCompanyTypeName }}
+        </td>
+    </ng-container>-->
 
             <ng-container matColumnDef="certificateTypeDescription">
                 <th *matHeaderCellDef class="overflow-label" mat-header-cell mat-sort-header>
