@@ -225,15 +225,30 @@
                 (change)="confirmedVisitToggled(info)"
             >
             </mat-slide-toggle> -->
-                    <mat-form-field *ngIf="info.status == 'Arrival'">
-                        <mat-select [(ngModel)]="info.parkingAcukwikFBOHandlerId"
-                                    (selectionChange)="updateVisitedFbo($event, info)">
-                            <mat-option *ngFor="let fbo of allFbos"
-                                        [value]="fbo.acukwikFboHandlerId">
-                                {{ fbo.fbo }}
+            <span *ngIf="info.status == 'Arrival'">
+                <span *ngIf="isCurrentArrivalFboSelected(info)">
+                    <mat-form-field>
+                        <mat-select
+                            [(ngModel)]="
+                                info.parkingAcukwikFBOHandlerId
+                            "
+                            (selectionChange)="
+                                updateVisitedFbo($event, info)
+                            "
+                        >
+                            <mat-option
+                                *ngFor="let f of selectFbos"
+                                [value]="f.acukwikFboHandlerId"
+                            >
+                                {{ f.fbo }}
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
+                </span>
+                <span *ngIf="!isCurrentArrivalFboSelected(info)">
+                    <p>{{getArrivalFboName(info)}}</p>
+                </span>
+            </span>
                 </td>
             </ng-container>
 

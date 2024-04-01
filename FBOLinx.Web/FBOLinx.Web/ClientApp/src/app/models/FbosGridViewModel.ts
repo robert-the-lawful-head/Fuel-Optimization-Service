@@ -14,5 +14,5 @@ export interface FbosGridViewModel {
     orders30Days: number;
     costPrice: number | null;
     retailPrice: number | null;
-    acukwikFBOHandlerId: number | null;
+    acukwikFboHandlerId: number | null;
 }

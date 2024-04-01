@@ -17,7 +17,7 @@ export type FlightWatchHistorical = {
     hexCode: string;
     aircraftType: string;
     aircraftTypeCode: string;
-    status: number;
+    status: number | string;
     pastVisits: number;
     originated: string;
     isFuelerlinx: boolean;

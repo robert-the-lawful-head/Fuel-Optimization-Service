@@ -9,7 +9,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Observable, Subject } from 'rxjs';
 import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
@@ -33,9 +32,7 @@ import {
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
-import { CustomIcaoList } from '../analytics-report-popup/report-filters/report-filters.component';
 import { FbosGridViewModel } from 'src/app/models/FbosGridViewModel';
-import { FormControl } from '@angular/forms';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
@@ -75,6 +72,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
     fbo: any;
     allFbos: FbosGridViewModel[] = [];
+    selectFbos: FbosGridViewModel[] = [];
 
     filtersChanged: Subject<any> = new Subject<any>();
 
@@ -175,14 +173,17 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         this.fbosService
         .getFbosByIcao(this.icao)
         .subscribe((data: FbosGridViewModel[]) => {
-            this.allFbos = data.filter((fbo) => fbo.acukwikFBOHandlerId == null);
-            let otherOpt = { ...data[0] };
+            this.allFbos = data.filter((fbo) => fbo.acukwikFboHandlerId != null);
+            let currentFbo = this.allFbos.find((fbo) =>  fbo.oid == this.sharedService.currentUser.fboId);
+            this.selectFbos.push(currentFbo);
+            let otherOpt = { ...currentFbo };
             otherOpt.oid = 0;
-            otherOpt.acukwikFBOHandlerId = 0;
+            otherOpt.acukwikFboHandlerId = 0;
             otherOpt.fbo = 'Other';
-            this.allFbos.push(otherOpt);
+            this.selectFbos.push(otherOpt);
+            this.fbo = currentFbo;
+            this.fboName = currentFbo.fbo;
         });
-        this.getFboName();
         this.getCustomersList();
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
@@ -199,17 +200,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         });
 
         this.refreshData();
-    }
-    getFboName() {
-        if (this.fboName && this.fboName != '') return;
-        this.fbosService
-            .get({
-                oid: this.sharedService.currentUser.fboId,
-            })
-            .subscribe((data: any) => {
-                this.fbo = data;
-                this.fboName = data.fbo;
-            });
     }
 
     getCustomersList() {
@@ -289,9 +279,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         const data = this.data.map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
-            parkingAcukwikFBOHandlerId: (x.parkingAcukwikFBOHandlerId)?
+            parkingAcukwikFBOHandlerId: (x.parkingAcukwikFBOHandlerId != null)?
              x.parkingAcukwikFBOHandlerId:
-             this.fbo.acukwikFBOHandlerId
+             this.fbo.acukwikFboHandlerId
         }));
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
@@ -421,7 +411,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             row.airportWatchHistoricalParking.acukwikFbohandlerId= $event.value;
         }
 
-        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
+        row.airportWatchHistoricalParking.isConfirmed = true;
 
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService
@@ -467,5 +457,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         return filteredColumns.filter((column) => {
             return !this.hiddenColumns.includes(column.id);
         });
+    }
+    getArrivalFboName(row: FlightWatchHistorical): string {
+        return this.allFbos.find((fbo) => fbo.acukwikFboHandlerId == row.parkingAcukwikFBOHandlerId)?.fbo;
+    }
+    isCurrentArrivalFboSelected(info: FlightWatchHistorical): boolean {
+        return info.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId || info.parkingAcukwikFBOHandlerId == 0;
     }
 }

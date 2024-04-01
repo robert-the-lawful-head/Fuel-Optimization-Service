@@ -33,8 +33,6 @@ using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.Extensions.Customer;
 using FBOLinx.ServiceLayer.Extensions.Airport;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.SWIM;
@@ -384,6 +382,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             (p.AirportWatchHistoricalParking == null || p.AirportWatchHistoricalParking?.IsConfirmed == true)
                         )
                     );                  
+
+                   //we need to fake a visit if there is no records  for arrivals
+                   visitsToMyFboCount = (visitsToMyFboCount == 0 && latest.AircraftStatus != AircraftStatusType.Takeoff) ? 1 : visitsToMyFboCount;
 
                    return new AirportWatchHistoricalDataResponse
                    {
