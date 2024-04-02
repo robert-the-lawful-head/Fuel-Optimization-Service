@@ -1327,9 +1327,8 @@ namespace FBOLinx.Web.Controllers
 
                     var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
 
-                    int? percentCustomerBusiness = null;
-                    if(totalOrders > 0)
-                    percentCustomerBusiness = (airportTotalOrders / totalOrders) * 100;
+                   
+                    var percentCustomerBusiness = (totalOrders > 0)? ((double)((double)totalOrders/ airportTotalOrders)) * 100 : 0;
 
                     tableData.Add(new CustomerCaptureRateResponse()
                     {
@@ -1338,7 +1337,7 @@ namespace FBOLinx.Web.Controllers
                         Company = customer.Company,
                         TotalOrders = totalOrders,
                         AirportOrders = airportTotalOrders,
-                        PercentCustomerBusiness = percentCustomerBusiness
+                        PercentCustomerBusiness = Math.Round(percentCustomerBusiness, 2)
                     });
                 }
                 return Ok(tableData);

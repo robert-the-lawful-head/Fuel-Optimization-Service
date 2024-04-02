@@ -13,6 +13,6 @@ namespace FBOLinx.ServiceLayer.DTO.Responses.Analitics
         public string Company { get; set; }
         public int TotalOrders { get; set; }
         public int AirportOrders { get; set; }
-        public int? PercentCustomerBusiness { get; set; }
+        public double? PercentCustomerBusiness { get; set; }
     }
 }

@@ -11,8 +11,6 @@ import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessCon
 import { CustomerCaptureRateReport } from 'src/app/models/customer-capture-rate-report';
 import { MatDialog } from '@angular/material/dialog';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import * as moment from 'moment';
-
 @Component({
     selector: 'app-customer-capture-rate',
     templateUrl: './customer-capture-rate.component.html',

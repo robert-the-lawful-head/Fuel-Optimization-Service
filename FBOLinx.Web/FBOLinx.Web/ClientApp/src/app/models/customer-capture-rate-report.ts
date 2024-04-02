@@ -6,5 +6,5 @@ export interface CustomerCaptureRateReport {
     company: string;
     totalOrders: number;
     airportOrders: number;
-    PercentCustomerBusiness: number | null;
+    PercentCustomerBusiness: number;
 }
