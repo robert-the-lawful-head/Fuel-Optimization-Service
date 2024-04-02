@@ -313,15 +313,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         public async Task<bool> isSingleSource(int groupId, string fboName, string icao)
         {
             var isfbolinxSingleSource = (await _fboLinxContext.Group.Include(x => x.Fbos)
-                .Where(x => x.Oid == groupId).FirstOrDefaultAsync()).Fbos.Count() > 1;
+                .Where(x => x.Oid == groupId).FirstOrDefaultAsync()).Fbos.Count() == 1;
 
             var hasDegaSource =  await (from a in _degaContext.AcukwikAirports
                                      join ad in _degaContext.AcukwikFbohandlerDetail
                                      on a.Oid equals ad.AirportId
                                      where icao == a.Icao
-                                     select ad).CountAsync() > 0;
+                                     select ad).CountAsync()  == 1;
 
-            return isfbolinxSingleSource && !hasDegaSource;
+            return isfbolinxSingleSource && hasDegaSource;
         }
     }
 }
