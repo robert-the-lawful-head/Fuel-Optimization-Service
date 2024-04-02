@@ -178,7 +178,14 @@ export abstract class GridBase {
         let localStorageColumns: string =
             localStorage.getItem(tableLocalStorageKey);
 
-        if (!localStorageColumns) return initialColumns;
+        if (!localStorageColumns){
+            initialColumns.sort((a, b) => {
+                var indexOfA = initialColumns.findIndex((x) => x.index == a.index);
+                var indexOfB = initialColumns.findIndex((x) => x.index == b.index);
+                return indexOfA - indexOfB;
+            });
+            return initialColumns;
+        }
 
         let storedCols: ColumnType[] = JSON.parse(localStorageColumns);
 

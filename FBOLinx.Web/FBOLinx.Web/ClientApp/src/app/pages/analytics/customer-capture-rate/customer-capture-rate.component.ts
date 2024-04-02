@@ -39,18 +39,22 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         {
             id: 'company',
             name: 'Company',
+            index: 0,
         },
         {
             id: 'airportOrders',
             name: 'Total Orders at airport',
+            index: 1,
         },
         {
             id: 'totalOrders',
             name: `Total Orders at FBO`,
+            index: 2,
         },
         {
             id: 'percentCustomerBusiness',
             name: "% of Customer's Business",
+            index: 3,
         },
     ];
 
