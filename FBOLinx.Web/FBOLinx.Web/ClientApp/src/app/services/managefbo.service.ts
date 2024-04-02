@@ -1,5 +1,6 @@
 import {  Injectable } from '@angular/core';
 import { GroupFboViewModel } from '../models/groups';
+import { foreignKeyData } from '@syncfusion/ej2-angular-grids';
 
 @Injectable()
 export class ManageFboGroupsService {
@@ -8,14 +9,11 @@ export class ManageFboGroupsService {
             (fbo) => fbo.groupId === groupId
         );
     }
-    public isSingleSourceFbo(groupsFbosData: GroupFboViewModel,groupId: number): boolean {
-        return this.getGroupFbos(groupsFbosData,groupId).length == 1;
+    public isSingleSourceFbo(groupsFbosData: GroupFboViewModel,icao: string): boolean {
+        return groupsFbosData.fbos.filter(f => f.icao == icao).length == 1;
     }
-    public isNetworkFbo(groupsFbosData: GroupFboViewModel,fbo: any): boolean{
-        return groupsFbosData.groups.filter(
-            (g) => g.fbos.filter(
-                (f) => f.fbo == fbo.fbo
-            ).length > 0
-        ).length > 1;
+    public isNetworkFbo(groupsFbosData: GroupFboViewModel,groupId: number): boolean{
+        var groupFbos =  groupsFbosData.groups.find(g => g.oid == groupId);
+        return groupFbos.fbos.length > 1;
     }
 }
