@@ -384,7 +384,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     );                  
 
                    //we need to fake a visit if there is no records  for arrivals
-                   visitsToMyFboCount = (visitsToMyFboCount == 0 && latest.AircraftStatus != AircraftStatusType.Takeoff) ? 1 : visitsToMyFboCount;
+                   visitsToMyFboCount = (visitsToMyFboCount == 0 && latest.AircraftStatus != AircraftStatusType.Takeoff) ? visitsToMyFboCount+1 : visitsToMyFboCount;
 
                    return new AirportWatchHistoricalDataResponse
                    {
@@ -402,7 +402,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        AirportIcao = latest.AirportICAO,
                        AircraftTypeCode = latest.AircraftTypeCode,
                        VisitsToMyFbo = visitsToMyFboCount,
-                       PercentOfVisits = visitsToMyFboCount > 0 ? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
+                       PercentOfVisits = (visitsToMyFboCount > 0  && pastVisits.Count() > 0)? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
                    };
                })
                .ToList();
