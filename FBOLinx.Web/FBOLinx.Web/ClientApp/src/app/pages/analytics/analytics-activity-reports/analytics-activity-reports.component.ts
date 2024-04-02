@@ -74,6 +74,9 @@ export class AnalyticsActivityReportsComponent implements OnInit {
         this.reports[AnaliticsReportType.LostToCompetition].isHidden =
             isSingleSourceFbo;
 
+        this.reports[AnaliticsReportType.FuelerLinxCustomerCaptureRate].isHidden =
+            isSingleSourceFbo;
+
         var isNetworkFbo: boolean = JSON.parse(
             this.sharedService
                 .getCurrentUserPropertyValue(

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FBOLinx.Core.Enums;
 using FBOLinx.Core.Utilities.Enums;
@@ -38,7 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
         Task<string> FindClosestAntenna(Coordinate coordinates, List<string> antennas);
-        Task<bool> isSingleSource(int groupId, string fboName, string icao);
+        Task<bool> isSingleSource(string icao);
     }
 
     //TODO: Convert this to a DTO and Entity Service!
@@ -310,18 +309,13 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             }
         }
 
-        public async Task<bool> isSingleSource(int groupId, string fboName, string icao)
+        public async Task<bool> isSingleSource(string icao)
         {
-            var isfbolinxSingleSource = (await _fboLinxContext.Group.Include(x => x.Fbos)
-                .Where(x => x.Oid == groupId).FirstOrDefaultAsync()).Fbos.Count() == 1;
-
-            var hasDegaSource =  await (from a in _degaContext.AcukwikAirports
+            return await (from a in _degaContext.AcukwikAirports
                                      join ad in _degaContext.AcukwikFbohandlerDetail
                                      on a.Oid equals ad.AirportId
                                      where icao == a.Icao
                                      select ad).CountAsync()  == 1;
-
-            return isfbolinxSingleSource && hasDegaSource;
         }
     }
 }
