@@ -39,7 +39,7 @@
                 <div class="col"> {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}</div>
                 <div class="col"> {{ missedOrder.createdDate }}</div>
                 <div class="col">
-                    <button (click)="goToMissedOrders(missedOrder)" [view]="'accent'" size="small" ni-button>
+                    <button (click)="goToAnalyticsReports()" [view]="'accent'" size="small" ni-button>
                         Missed Orders
                     </button>
                 </div>
