@@ -195,7 +195,7 @@
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button [disabled]="!groupFbos(data.index).length"
+                    <button [disabled]="!groupFbos(data.oid).length"
                             [matMenuTriggerFor]="fbosMenu"
                             clickStopPropagation
                             mat-menu-item>
@@ -205,7 +205,7 @@
                 <mat-menu #fbosMenu="matMenu">
                     <button
                         (click)="deleteFbo(fbo)"
-                        *ngFor="let fbo of groupFbos(data.index)"
+                        *ngFor="let fbo of groupFbos(data.oid)"
                         clickStopPropagation
                         mat-menu-item
                     >

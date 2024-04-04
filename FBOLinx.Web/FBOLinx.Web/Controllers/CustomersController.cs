@@ -222,7 +222,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (custWithAircrafts.Count > 0)
                 {
-                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
+                    var aircraftSizes = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(AircraftSizes));
 
                     foreach (var custPlane in custWithAircrafts)
                     {

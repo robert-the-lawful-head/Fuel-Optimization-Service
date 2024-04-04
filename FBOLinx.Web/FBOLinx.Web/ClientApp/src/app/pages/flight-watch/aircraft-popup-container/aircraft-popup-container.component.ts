@@ -6,6 +6,7 @@ import { CustomersListType } from 'src/app/models';
 import { Aircraftwatch } from 'src/app/models/flight-watch';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from 'src/app/shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
+import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 
 @Component({
   selector: 'app-aircraft-popup-container',
@@ -17,7 +18,6 @@ export class AircraftPopupContainerComponent {
   @Input() isLoading: boolean;
   @Input() fboId: any;
   @Input() groupId: any;
-  @Output() refreshAircraftProperties = new EventEmitter<Aircraftwatch>();
 
   public aircraftWatch: Aircraftwatch = {
       customerInfoByGroupId : 0,
@@ -42,12 +42,13 @@ export class AircraftPopupContainerComponent {
   constructor(
     private newCustomerAircraftDialog: MatDialog,
     private customerInfoByGroupService: CustomerinfobygroupService,
-    private router: Router
+    private router: Router,
+    private flightWatchMapSharedService: FlightWatchMapSharedService
   ) { }
   ngOnChanges(changes) {
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;
     if(changes.isLoading?.currentValue) this.isLoading = changes.isLoading.currentValue;
-      if (changes.flightData?.currentValue?.flightDepartment) this.hasAircraft = true;
+    if (changes.flightData?.currentValue?.flightDepartment) this.hasAircraft = true;
     else this.hasAircraft = false;
   }
   ngOnInit(){
@@ -70,9 +71,12 @@ export class AircraftPopupContainerComponent {
     .afterClosed()
     .subscribe((result: any) => {
         if (result) {
+            this.hasAircraft = true;
             this.aircraftWatch.aircraftMakeModel = result.aircraftType;
             this.aircraftWatch.flightDepartment = result.company;
-            this.refreshAircraftProperties.emit(this.aircraftWatch);
+            this.aircraftWatch.tailNumber = this.flightData.tailNumber;
+            this.aircraftWatch.customerInfoByGroupId = result.customerInfoByGroupID;
+            this.flightWatchMapSharedService.updateCustomerAicraftData(this.aircraftWatch);
         }
     });
   }

@@ -9,5 +9,6 @@ namespace FBOLinx.Core.BaseModels.Entities
     public class DatabaseStringSplitResult
     {
         public string Value { get; set; }
+        public int Id { get; set; }
     }
 }

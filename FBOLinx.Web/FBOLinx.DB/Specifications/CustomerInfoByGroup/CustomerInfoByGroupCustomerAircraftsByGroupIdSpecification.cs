@@ -13,24 +13,32 @@ namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomerAircrafts.Where(f => f.GroupId == groupId));
+            AddInclude(x => x.FavoriteCompany);
+            AddInclude("Customer.CustomerAircrafts.FavoriteAircraft");
+            AddInclude(x => x.CustomerTags);
         }
 
         public CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(int groupId, int customerInfoByGroupId) : base(x => x.GroupId == groupId && x.Oid == customerInfoByGroupId && (!x.Customer.Suspended.HasValue || x.Customer.Suspended == false))
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomerAircrafts.Where(f => f.GroupId == groupId));
+            AddInclude(x => x.FavoriteCompany);
+            AddInclude("Customer.CustomerAircrafts.FavoriteAircraft");
+            AddInclude(x => x.CustomerTags);
         }
 
         public CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(int groupId, int customerInfoByGroupId, List<string> tailNumbers) : base(x => x.GroupId == groupId && x.Oid == customerInfoByGroupId && (!x.Customer.Suspended.HasValue || x.Customer.Suspended == false))
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomerAircrafts.Where(f => f.GroupId == groupId && tailNumbers.Contains(f.TailNumber)));
+            AddInclude(x => x.CustomerTags);
         }
 
         public CustomerInfoByGroupCustomerAircraftsByGroupIdSpecification(int groupId, List<string> tailNumbers) : base(x => x.GroupId == groupId && (!x.Suspended.HasValue || x.Suspended == false))
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Customer.CustomerAircrafts.Where(f => f.GroupId == groupId && tailNumbers.Contains(f.TailNumber)));
+            AddInclude(x => x.CustomerTags);
         }
     }
 }

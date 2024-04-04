@@ -39,18 +39,15 @@ export class FboGeofencingHomeComponent implements OnInit {
     ngOnInit() {
         this.loadFbogeofencing();
         this.loadAirportsWithAntennaData();
-        this.setupBreadcrumb();
     }
 
     public onEditAirportFboGeoFence(airportFboGeoFenceClusterViewModel: AirportFboGeoFenceGridViewmodel): void {
         this.airportFboGeofenceGridItem = airportFboGeoFenceClusterViewModel;
-        this.setupBreadcrumb();
     }
 
     public onEditClosed(event: AirportFboGeoFenceGridViewmodel): void {
         this.airportFboGeofenceGridItem = null;
         this.loadAirportsWithAntennaData();
-        this.setupBreadcrumb();
     }
 
     public onAddAirportFboGeoFence(): void {
@@ -70,37 +67,6 @@ export class FboGeofencingHomeComponent implements OnInit {
                     this.onEditAirportFboGeoFence(response);
                 });
         });
-    }
-
-    // PRIVATE METHODS
-    private setupBreadcrumb() {
-        if (this.airportFboGeofenceGridItem) {
-            this.breadcrumb = [
-                {
-                    link: '/default-layout',
-                    title: 'Main',
-                },
-                {
-                    link: '/default-layout/fbo-geofencing',
-                    title: 'FBO Geofencing',
-                },
-                {
-                    link: '',
-                    title: 'Edit Geofencing',
-                }
-            ];
-        } else {
-            this.breadcrumb = [
-                {
-                    link: '/default-layout',
-                    title: 'Main',
-                },
-                {
-                    link: '',
-                    title: 'FBO Geofencing',
-                }
-            ];
-        }
     }
 
     private loadFbogeofencing() {

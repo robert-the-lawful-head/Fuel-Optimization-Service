@@ -7,4 +7,6 @@ export const localStorageAccessConstant = {
     impersonatedrole: 'impersonatedrole',
     managerGroupId: 'managerGroupId',
     accountType: 'accountType',
+    dismissedFavoriteAircrafts: 'dismissedFavoriteAircrafts',
+    notifiedFavoriteAircraft: 'notifiedFavoriteAircraft'
 }

@@ -159,10 +159,10 @@ import { FbosEditComponent } from './fbos/fbos-edit/fbos-edit.component';
 import { FbosGridComponent } from './fbos/fbos-grid/fbos-grid.component';
 import { FbosGridNewFboDialogComponent } from './fbos/fbos-grid-new-fbo-dialog/fbos-grid-new-fbo-dialog.component';
 import { FbosHomeComponent } from './fbos/fbos-home/fbos-home.component';
-import { FlightWatchComponent } from './flight-watch/flight-watch/flight-watch.component';
-import { FlightWatchAircraftInfoComponent } from './flight-watch/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
+import { FlightWatchComponent } from './flight-watch/flight-watch.component';
+import { FlightWatchAircraftInfoComponent } from './flight-watch/aircraft-popup-container/flight-watch-aircraft-info/flight-watch-aircraft-info.component';
 import { FlightWatchMapComponent } from './flight-watch/flight-watch-map/flight-watch-map.component';
-import { FlightWatchSettingsComponent } from './flight-watch/flight-watch-settings/flight-watch-settings.component';
+import { FlightWatchAicraftGridComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
 import { FuelreqsGridComponent } from './fuelreqs/fuelreqs-grid/fuelreqs-grid.component';
 import { FuelreqsHomeComponent } from './fuelreqs/fuelreqs-home/fuelreqs-home.component';
 import { GroupAnalyticsCustomerStatisticsComponent } from './group-analytics/group-analytics-customer-statistics/group-analytics-customer-statistics.component';
@@ -212,9 +212,9 @@ import { AntennaStatusGridComponent } from './antenna-status/antenna-status-grid
 import { FbosMissedOrdersGridComponent } from './fbos-missed-orders/fbos-missed-orders-grid/fbos-missed-orders-grid.component';
 import { FbosMissedQuotesGridComponent } from './fbos-missed-quotes/fbos-missed-quotes-grid/fbos-missed-quotes-grid.component';
 import { AircraftPopupContainerComponent } from './flight-watch/aircraft-popup-container/aircraft-popup-container.component';
-import { FlightWatchSettingTableComponent } from './flight-watch/flight-watch-settings/flight-watch-setting-table/flight-watch-setting-table.component';
+import { FlightWatchAircraftDataTableComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/flight-watch-aircraft-data-table.component';
 import { MissedOrdersGridComponent } from './missed-orders/missedorders-grid/missedorders-grid.component';
-import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch/flight-watch-map-wrapper/flight-watch-map-wrapper.component';
+import { FlightWatchMapWrapperComponent } from './flight-watch/flight-watch-map-wrapper/flight-watch-map-wrapper.component';
 import { PriceCheckerDialogComponent } from './fbo-prices/price-checker-dialog/price-checker-dialog.component';
 import { AircraftLegendComponent } from './flight-watch/aircraft-legend/aircraft-legend.component';
 import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters/flight-watch-filters.component';
@@ -230,6 +230,8 @@ import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service
 import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
 import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.component';
 import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
+import { FavoriteIconComponent } from '../shared/components/favorite-icon/favorite-icon.component';
+import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/aicraft-expanded-detail/aicraft-expanded-detail.component';
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
@@ -350,7 +352,7 @@ import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes
         FlightWatchComponent,
         FlightWatchMapComponent,
         FlightWatchAircraftInfoComponent,
-        FlightWatchSettingsComponent,
+        FlightWatchAicraftGridComponent,
         CsvExportModalComponent,
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
@@ -372,7 +374,8 @@ import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes
         FbosMissedOrdersGridComponent,
         FbosMissedQuotesGridComponent,
         AircraftPopupContainerComponent,
-        FlightWatchSettingTableComponent,
+        FlightWatchAircraftDataTableComponent,
+        AicraftExpandedDetailComponent,
         MissedOrdersGridComponent,
         FlightWatchMapWrapperComponent,
         PriceCheckerDialogComponent,
@@ -389,6 +392,7 @@ import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes
         ServiceOrdersDialogOrderItemsComponent,
         FeeAndTaxBreakdownDialogWrapperComponent,
         ServicesAndFeesComponent,
+        FavoriteIconComponent,
         ServicesAndFeesHomeComponent,
         RampFeesCategoryComponent,
         ItemInputComponent,

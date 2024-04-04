@@ -309,10 +309,6 @@ button.mat-icon-button {
     font-size: 25px !important;
 }
 
-.after-breadcrumb {
-    padding-top: 1rem;
-}
-
 .popover {
     min-width: 350px;
 }
@@ -1043,11 +1039,6 @@ div.price-checker-button-bottom {
         padding-left: 15px;
     }
 
-
-    .after-breadcrumb {
-        padding-top: 0px;
-    }
-
     .ni-breadcrumb-wrap {
         display: none !important;
     }
@@ -1076,6 +1067,7 @@ div.price-checker-button-bottom {
     }
 
     .site-container .main-content .main-content-wrap {
+        // border: 5px solid yellow;
         display: table;
         height: 100%;
         padding-top: 0px !important;

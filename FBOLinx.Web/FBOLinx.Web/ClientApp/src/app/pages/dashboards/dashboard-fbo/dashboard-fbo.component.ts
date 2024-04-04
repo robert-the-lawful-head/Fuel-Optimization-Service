@@ -16,7 +16,6 @@ import { StatisticsTotalOrdersComponent } from '../../../shared/components/stati
     templateUrl: './dashboard-fbo.component.html',
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
-    public breadcrumb: any[];
     public pageTitle = 'Dashboard';
     public fboid: any;
     public groupid: any;
@@ -47,24 +46,6 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);
-
-        this.breadcrumb = [
-            {
-                link: '/default-layout',
-                title: 'Main',
-            },
-        ];
-        if (!this.isCsr) {
-            this.breadcrumb.push({
-                link: '/default-layout/dashboard-fbo',
-                title: 'Dashboard',
-            });
-        } else {
-            this.breadcrumb.push({
-                link: '/default-layout/dashboard-csr',
-                title: 'CSR Dashboard',
-            });
-        }
     }
 
     get isCsr() {

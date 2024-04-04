@@ -14,7 +14,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
 {
     public interface IOAuthService
     {
-        Task<AccessTokensDto> GenerateAccessToken(UserDTO user, int expireMinutes = 60);
+        Task<AccessTokensDto> GenerateAccessToken(int userId, int expireMinutes = 60);
         Task<RefreshTokensDto> GenerateRefreshToken(int userId, int tokenId);
     }
 
@@ -31,7 +31,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
             _refreshTokensService = refreshTokensService;
         }
 
-        public async Task<AccessTokensDto> GenerateAccessToken(UserDTO user, int expireMinutes = 60)
+        public async Task<AccessTokensDto> GenerateAccessToken(int userId, int expireMinutes = 60)
         {
             var accessToken = new AccessTokensDto
             {
@@ -39,7 +39,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.OAuth
                 AccessToken = GetNewToken(),
                 CreatedAt = DateTime.UtcNow,
                 Expired = DateTime.UtcNow.AddMinutes(expireMinutes),
-                UserId = user.Oid
+                UserId = userId
             };
 
             await _accessTokensService.AddAsync(accessToken);

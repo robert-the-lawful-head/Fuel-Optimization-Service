@@ -7,6 +7,7 @@ using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.BusinessServices.DateAndTime;
 using FBOLinx.ServiceLayer.BusinessServices.Documents;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.FboFeesAndTaxesService;
 using FBOLinx.ServiceLayer.BusinessServices.FlightWatch;
@@ -124,6 +125,8 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
             services.AddTransient<IOrderDetailsService, OrderDetailsService>();
             services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
+            services.AddTransient<IFboAircraftFavoritesService, FboAircraftFavoritesService>();
+            services.AddTransient<IFboCompaniesFavoritesService, FboCompaniesFavoritesService>();
             services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
             services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
             services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();

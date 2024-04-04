@@ -16,17 +16,6 @@ import { getCustomerGridState } from '../../../store/selectors';
 import { MatTableDataSource } from '@angular/material/table';
 import { AircraftsGridComponent } from '../../aircrafts/aircrafts-grid/aircrafts-grid.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/customers',
-        title: 'Customers',
-    },
-];
-
 @Component({
     selector: 'app-customers-home',
     styleUrls: ['./customers-home.component.scss'],
@@ -37,7 +26,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
 
     // Public Members
     pageTitle = 'Customers';
-    breadcrumb: any[] = BREADCRUMBS;
     customersData: any[];
     aircraftData: any[];
     pricingTemplatesData: any[];
@@ -139,7 +127,9 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     customerDeleted() {
         this.loadCustomers();
     }
-
+    refreshAircrafts() {
+        this.loadCustomerAircraft();
+    }
     // Private Methods
     private loadCustomers() {
         this.customersData = null;
@@ -171,7 +161,6 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
                 this.pricingTemplatesData = data;
             });
     }
-
     private loadCustomerAircraft() {
         this.aircraftData = null;
         this.customerAircraftService

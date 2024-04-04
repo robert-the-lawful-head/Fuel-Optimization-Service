@@ -13,6 +13,7 @@ namespace FBOLinx.DB.Specifications.CustomerInfoByGroup
         {
             AddInclude(x => x.Customer);
             AddInclude(x => x.Notes);
+            AddInclude(x => x.FavoriteCompany);
         }
     }
 }

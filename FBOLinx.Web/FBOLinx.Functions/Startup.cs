@@ -1,20 +1,29 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using FBOLinx.Functions;
-using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace FBOLinx.Functions
 {
     public class Startup : FunctionsStartup
     {
+        private bool _UseLocalSettings;
         public override void Configure(IFunctionsHostBuilder builder)
         {
             if (builder == null)
                 throw new ArgumentNullException(nameof(builder));
 
-            ServiceConfiguration.Configure(builder.Services, GetSqlConnectionString("DegaDB"), GetSqlConnectionString("ParagonTestDB"));
+            CheckForLocalSettingUsage();
+            if (_UseLocalSettings)
+            {
+                ServiceConfiguration.ConfigureForLocalSettings(builder);
+            } 
+            else
+            {
+                ServiceConfiguration.Configure(builder.Services, GetApplicationSetting("WebApplicationUrl"), GetApplicationSetting("InternalAPIKey"));  
+            }
+
         }
 
         private static string GetSqlConnectionString(string name)
@@ -31,6 +40,20 @@ namespace FBOLinx.Functions
             if (string.IsNullOrEmpty(conStr))
                 conStr = System.Environment.GetEnvironmentVariable($"ConnectionStrings:{name}", EnvironmentVariableTarget.Process);
             return conStr;
+        }
+
+        private static string GetApplicationSetting(string name)
+        {
+            string conStr = System.Environment.GetEnvironmentVariable($"AzureFunctionsSettings_{name}", EnvironmentVariableTarget.Process); // Azure Functions App Service naming convention
+            if (string.IsNullOrEmpty(conStr))
+                conStr = System.Environment.GetEnvironmentVariable($"AzureFunctionsSettings:{name}", EnvironmentVariableTarget.Process);
+            return conStr;
+        }
+
+        [Conditional("DEBUG")]
+        private void CheckForLocalSettingUsage()
+        {
+            _UseLocalSettings = true;
         }
     }
 }

@@ -89,7 +89,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
         public async Task<List<FbopricesResult>> GetPrices(int fboId)
         {
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
 
@@ -241,7 +241,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
         {
             var prices = new List<FboPricesUpdateGenerator>();
             var fboProducts = await _fboPreferencesService.GetFboProducts(fboId);
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes)).ToArray();
+            var products = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(FuelProductPriceTypes)).ToArray();
             var result = await GetPrices(fboId);
 
             foreach (var product in fboProducts)

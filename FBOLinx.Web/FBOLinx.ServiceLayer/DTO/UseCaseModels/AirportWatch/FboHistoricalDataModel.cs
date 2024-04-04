@@ -33,7 +33,7 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch
             {
                 if (string.IsNullOrEmpty(AtcFlightNumber))
                     return "";
-                return FBOLinx.Core.Utilities.Enum.GetDescription(AircraftStatus);
+                return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AircraftStatus);
             }
         }
     }

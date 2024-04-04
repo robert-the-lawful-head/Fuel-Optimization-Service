@@ -1,0 +1,70 @@
+<section class="flight-watch-tabs">
+    <mat-drawer-container autosize>
+        <mat-drawer-content>
+            <mat-spinner *ngIf="!flightWatchData"></mat-spinner>
+            <div *ngIf="flightWatchData">
+                <div class="drawer-button" (click)="toggleSettingsDrawer()">
+                    <button class="mat-dark-blue" mat-flat-button>
+                        <mat-icon *ngIf="!isDrawerOpen()"
+                            >chevron_left</mat-icon
+                        >
+                        <mat-icon *ngIf="isDrawerOpen()"
+                            >chevron_right</mat-icon
+                        >
+                    </button>
+                </div>
+                <div class="aircraft-legend" *ngIf="showLegend">
+                    <app-aircraft-legend></app-aircraft-legend>
+                </div>
+                <div [ngClass]="{
+                    'lobby': isLobbyView,
+                    'default': !isLobbyView
+                }" class="flight-watch-container">
+                    <app-flight-watch-map-wrapper
+                        id="map-wrapper"
+                        #map
+                        (setIcaoList)="setIcaoList($event)"
+                        (textFilterChanged)="onTextFilterChanged($event)"
+                        (showCommercialAircraftFilter)="filterCommercialAircrafts($event)"
+                        (icaoChanged)="updateIcao($event)"
+                        (aicraftClick)="onAircraftClick($event)"
+                        (popUpClosed)="onPopUpClosed($event)"
+                        style="width: 100%"
+                        [center]="center"
+                        [data]="flightWatchData"
+                        [isStable]="isStable"
+                        [icaoList]="airportsICAO"
+                        [icao]="selectedICAO"
+                        [showFilters]="showFilters"
+                    ></app-flight-watch-map-wrapper>
+                </div>
+            </div>
+        </mat-drawer-content>
+
+        <mat-drawer
+            mode="side"
+            #mapfilters
+            position="end"
+            class="drawer-container"
+            opened
+        >
+            <ng-container *ngIf="flightWatchData">
+                <app-flight-watch-aicraft-grid
+                    #flightwatchAircraftGrid
+                    [data]="flightWatchData"
+                    [icaoList]="airportsICAO"
+                    [icao]="selectedICAO"
+                    [filteredTypes]="this.currentFilters.filteredTypes"
+                    (textFilterChanged)="onTextFilterChanged($event)"
+                    (typesFilterChanged)="onTypesFilterChanged($event)"
+                    (icaoChanged)="updateIcao($event)"
+                    (updateDrawerButtonPosition)="updateButtonOnDrawerResize()"
+                    [showFilters]="showFilters"
+                    [isLobbyView]="isLobbyView"
+                    (openAircraftPopup)="openAircraftPopup($event)"
+                    (closeAircraftPopup)="closedAircraftPopup($event)"
+                ></app-flight-watch-aicraft-grid>
+            </ng-container>
+        </mat-drawer>
+    </mat-drawer-container>
+</section>

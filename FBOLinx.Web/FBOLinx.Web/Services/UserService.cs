@@ -15,9 +15,9 @@ namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        Task<UserDTO> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
-        Task<UserDTO> CreateFBOLoginIfNeeded(Fbos fboRecord);
-        Task<UserDTO> CreateGroupLoginIfNeeded(Group groupRecord);
+        Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
+        Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord);
+        Task<FBOLinx.DB.Models.User> CreateGroupLoginIfNeeded(Group groupRecord);
     }
 
     public class UserService : IUserService
@@ -37,9 +37,9 @@ namespace FBOLinx.Web.Services
             _groupRepo = groupRepo;
         }
         
-        public async Task<UserDTO> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
+        public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            UserDTO user = await _userService.GetSingleBySpec(new UserByUsernameSpecification(username));
+            FBOLinx.DB.Models.User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
             
             if (user == null)
             {
@@ -75,9 +75,9 @@ namespace FBOLinx.Web.Services
             return user;
         }
         
-        public async Task<UserDTO> CreateFBOLoginIfNeeded(Fbos fboRecord)
+        public async Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            var user = await _userService.GetSingleBySpec(new PrimaryUserByFboIdSpecification(fboRecord.Oid));
+            FBOLinx.DB.Models.User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
            
             if (user != null)
                 return user;
@@ -89,7 +89,7 @@ namespace FBOLinx.Web.Services
                 join c in _Context.Contacts on fc.ContactId equals c.Oid
                 where fc.Fboid == fboRecord.Oid
                 select c).OrderByDescending(x => x.Primary).FirstOrDefaultAsync();
-            user = new UserDTO()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = contactRecord?.FirstName,
                 FboId = fboRecord.Oid,
@@ -100,21 +100,24 @@ namespace FBOLinx.Web.Services
                 Username = fboRecord.Username,
                 Active = true
             };
-            user = await _userService.AddAsync(user);
+            await _Context.User.AddAsync(user);
+            await _Context.SaveChangesAsync();
 
             return user;
         }
 
-        public async Task<UserDTO> CreateGroupLoginIfNeeded(Group groupRecord)
+        public async Task<User> CreateGroupLoginIfNeeded(Group groupRecord)
         {
-            var user = await _userService.GetSingleBySpec(new ConductorOrGroupAdminUserByGroupIdSpecification(groupRecord.Oid));
+            User user = await _Context.User.Where(
+                (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+
             if (user != null)
                 return user;
 
             if (string.IsNullOrEmpty(groupRecord.Username) || string.IsNullOrEmpty(groupRecord.Password))
                 return null;
             //User doesn't exist for group - create it
-            user = new UserDTO()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = groupRecord.GroupName,
                 FboId = 0,
@@ -126,24 +129,25 @@ namespace FBOLinx.Web.Services
                 Active = true
             };
 
-            user = await _userService.AddAsync(user);
+            await _Context.User.AddAsync(user);
+            await _Context.SaveChangesAsync();
 
             return user;
         }
 
         #region Private Methods
-        private void SetAuthToken(UserDTO user)
+        private void SetAuthToken(User user)
         {
             user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
-        private async Task UpdateLoginCount(UserDTO user)
+        private async Task UpdateLoginCount(User user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
             _Context.SaveChanges();
         }
 
-        private async Task<UserDTO> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
+        private async Task<User> CheckForUserOnOldLogins(string username, string password, bool resetPassword = false)
         {
             var fbo = from f in _Context.Fbos
                       join g in _Context.Group on f.GroupId equals g.Oid

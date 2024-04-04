@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSelectChange } from '@angular/material/select';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { ContactsService } from '../../../services/contacts.service';
@@ -64,43 +63,6 @@ export class FbosEditComponent implements OnInit {
     }
 
     ngOnInit() {
-        if (!this.embed) {
-            if (
-                this.sharedService.currentUser.role === 3 &&
-                !this.sharedService.currentUser.impersonatedRole
-            ) {
-                this.breadcrumb = [
-                    {
-                        link: '/default-layout',
-                        title: 'Main',
-                    },
-                    {
-                        link: '/default-layout/groups',
-                        title: 'Groups',
-                    },
-                    {
-                        link: '',
-                        title: 'Edit FBO',
-                    },
-                ];
-            } else {
-                this.breadcrumb = [
-                    {
-                        link: '/default-layout',
-                        title: 'Main',
-                    },
-                    {
-                        link: '/default-layout/fbos',
-                        title: 'FBOs',
-                    },
-                    {
-                        link: '',
-                        title: 'Edit FBO',
-                    },
-                ];
-            }
-        }
-
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();
         } else {

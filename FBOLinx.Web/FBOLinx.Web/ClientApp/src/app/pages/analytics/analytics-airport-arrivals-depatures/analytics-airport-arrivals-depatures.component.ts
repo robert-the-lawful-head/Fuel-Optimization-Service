@@ -29,7 +29,7 @@ import { FbosService } from '../../../services/fbos.service';
 //Models
 import { CustomersListType } from '../../../models/customer';
 import {
-    FlightWatchHistorical,
+    FlightWatchHistorical, FlightWatchStatus,
 } from '../../../models/flight-watch-historical';
 import {
     AircraftAssignModalComponent,
@@ -384,22 +384,24 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     confirmedVisitToggled(row: FlightWatchHistorical) {
-        var parkingRecord = row.airportWatchHistoricalParking;
-        if (parkingRecord == null) {
-            parkingRecord = {
+
+        if (row.airportWatchHistoricalParking == null) {
+            row.airportWatchHistoricalParking = {
                 airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
                 acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
                 oid: 0
             }
         }
-        parkingRecord.isConfirmed = row.isConfirmedVisit;
-        if (parkingRecord.oid > 0) {
-            this.airportWatchService.updateHistoricalParking(parkingRecord).subscribe((response: any) => {
-                //Nothing to do
+
+        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
+
+        if (row.airportWatchHistoricalParking.oid > 0) {
+            this.airportWatchService.updateHistoricalParking(row).subscribe((response: any) => {
+                this.refreshData();
             });
         } else {
-            this.airportWatchService.createHistoricalParking(parkingRecord).subscribe((response: any) => {
-                row.airportWatchHistoricalParking = response;
+            this.airportWatchService.createHistoricalParking(row).subscribe((response: any) => {
+                this.refreshData();
             })
         }
 

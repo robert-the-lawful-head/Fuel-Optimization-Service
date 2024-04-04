@@ -48,6 +48,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { AppPipesModule } from "../app-pipes.module";
 import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
+import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,8 @@ import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-d
         LogoComponent,
         MenuComponent,
         FooterComponent,
-        DemoRequestStaticDialogComponent
+        DemoRequestStaticDialogComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     exports: [
         HorizontalNavbarComponent,
@@ -66,7 +68,8 @@ import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-d
         LogoComponent,
         MenuComponent,
         FooterComponent,
-        DemoRequestStaticDialogComponent
+        DemoRequestStaticDialogComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     imports: [
         HttpClientModule,

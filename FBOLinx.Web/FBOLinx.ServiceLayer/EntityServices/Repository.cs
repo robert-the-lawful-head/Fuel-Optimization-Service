@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Storage;
+using FBOLinx.Core.BaseModels.Queries;
 
 namespace FBOLinx.ServiceLayer.EntityServices
 {
@@ -67,10 +68,18 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<List<TEntity>> GetAsync(QueryableOptions<TEntity> queryableOptions)
         {
             var query = context.Set<TEntity>().AsQueryable();
-            return await query.Where(predicate).ToListAsync();
+            if (queryableOptions.Predicate != null)
+                query = query.Where(queryableOptions.Predicate);
+            if (queryableOptions.MaxRecords.GetValueOrDefault() > 0)
+                query = query.Take(queryableOptions.MaxRecords.GetValueOrDefault());
+            if (queryableOptions.OrderByExpression != null)
+                query = query.OrderBy(queryableOptions.OrderByExpression);
+            if (queryableOptions.OrderByDescendingExpression != null)
+                query = query.OrderByDescending(queryableOptions.OrderByDescendingExpression);
+            return await query.ToListAsync();
         }
         public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         => await context.Set<TEntity>().FirstOrDefaultAsync(predicate);
@@ -88,7 +97,10 @@ namespace FBOLinx.ServiceLayer.EntityServices
             var queryable = GetEntityListQueryable(spec);
             return await queryable.ToListAsync();
         }
-
+        public virtual IQueryable<TEntity> GetListBySpecAsQueryable(ISpecification<TEntity> spec)
+        {
+            return GetEntityListQueryable(spec);
+        }
         public async Task<List<TProjection>> GetListBySpec<TProjection>(ISpecification<TEntity, TProjection> spec)
         {
             var queryable = GetEntityListQueryable((Specification<TEntity>)spec);
@@ -235,6 +247,12 @@ namespace FBOLinx.ServiceLayer.EntityServices
             }
 
             await dbContextTransaction.RollbackAsync();
+        }
+
+        public async Task DeleteRangeAsync(List<TEntity> entityList)
+        {
+            context.Set<TEntity>().RemoveRange(entityList);
+            await context.SaveChangesAsync();
         }
     }
 }

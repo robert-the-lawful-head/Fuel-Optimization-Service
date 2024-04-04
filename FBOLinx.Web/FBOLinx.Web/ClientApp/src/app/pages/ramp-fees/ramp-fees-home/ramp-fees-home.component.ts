@@ -17,18 +17,6 @@ import { RampfeesService } from '../../../services/rampfees.service';
 import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 // Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
-import { RampFeesImportInformationComponent } from '../ramp-fees-import-information-dialog/ramp-fees-import-information-dialog.component';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/ramp-fees',
-        title: 'Ramp Fees',
-    },
-];
 
 @Component({
     selector: 'app-ramp-fees-home',
@@ -40,7 +28,16 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public customRampFeeCat: RampFeesCategoryComponent;
 
     public pageTitle = 'Ramp Fees';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/ramp-fees',
+            title: 'Ramp Fees',
+        },
+    ];
     public rampFees: any[];
     public requiresUpdate = false;
     public expirationDate: any;

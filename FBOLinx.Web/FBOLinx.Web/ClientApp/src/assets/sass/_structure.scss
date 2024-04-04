@@ -1,6 +1,12 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    }
 .site-container {
     position: relative;
     padding-top: $navbar-height;
+    // border: 1px solid #f00;
+    height: 100%;
     > * {
         display: block;
     }
@@ -10,8 +16,10 @@
     .main-content {
         display: relative;
         -webkit-overflow-scrolling: touch;
+        height: 100%;
 
         .main-content-wrap {
+            // border: 1px solid black;
             display: table;
             height: 100%;
             padding: 22px;

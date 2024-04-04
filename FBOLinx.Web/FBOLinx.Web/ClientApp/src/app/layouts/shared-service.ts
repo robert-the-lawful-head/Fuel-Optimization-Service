@@ -157,9 +157,13 @@ export class SharedService {
             this.currentUser.managerGroupId > 0 &&
             this.currentUser.groupId != this.currentUser.managerGroupId);
     }
-    setCurrentUserPropertyValue(property: string, value: any): void{
+    setCurrentUserPropertyValue(property: string, value: string): void{
         this.currentUser[property] = value;
-        localStorage.setItem(property, value.toString());
+        localStorage.setItem(localStorageAccessConstant[property],value);
+    }
+    resetCurrentUserPropertyValue(property: string, resetvalue: any =  null): void{
+        this.currentUser[property] = resetvalue;
+        localStorage.removeItem(property);
     }
     getCurrentUserPropertyValue(property: string): string{
         return (this.currentUser[property]) ? this.currentUser[property] : localStorage.getItem(property);

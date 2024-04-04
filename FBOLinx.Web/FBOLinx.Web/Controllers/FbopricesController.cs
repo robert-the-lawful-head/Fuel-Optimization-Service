@@ -38,6 +38,7 @@ using FBOLinx.ServiceLayer.BusinessServices.CompanyPricingLog;
 using FBOLinx.ServiceLayer.DTO.Requests;
 using FBOLinx.ServiceLayer.DTO.Responses.FuelPricing;
 using FBOLinx.ServiceLayer.Logging;
+using System.Web;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -163,7 +164,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
+            var products = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(FuelProductPriceTypes));
 
             var activePricingCost = await _fbopricesService.GetCurrentCostPrice(fboId);
             var activePricingRetail = await _fbopricesService.GetCurrentRetailPrice(fboId);
@@ -539,7 +540,7 @@ namespace FBOLinx.Web.Controllers
             List<FBOGroupPriceUpdateVM> groupPriceUpdate = new List<FBOGroupPriceUpdateVM>();
             try
             {
-                var products = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(FuelProductPriceTypes));
+                var products = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(FuelProductPriceTypes));
 
                 var groupFbos = await _iFboService.GetFbosByGroupId(groupId);
                 var groupFboIds = groupFbos.Select(s => s.Oid).ToList();
@@ -612,7 +613,7 @@ namespace FBOLinx.Web.Controllers
                         Group = p.Group,
                         Product = p.Product,
                         MinVolume = (p.MinGallons ?? 0),
-                        Notes = p.Notes,
+                        Notes = HttpUtility.HtmlDecode(p.Notes),
                         Default = string.IsNullOrEmpty(p.TailNumbers),
                         Price = (p.AllInPrice ?? 0),
                         TailNumberList = p.TailNumbers,

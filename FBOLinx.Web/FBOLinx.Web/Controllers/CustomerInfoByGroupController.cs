@@ -396,16 +396,16 @@ namespace FBOLinx.Web.Controllers
 
         // GET: api/CustomerInfoByGroup/CertificateTypes
         [HttpGet("CertificateTypes")]
-        public IEnumerable<Core.Utilities.Enum.EnumDescriptionValue> GetCertificateTypes()
+        public IEnumerable<Core.Utilities.Enums.EnumHelper.EnumDescriptionValue> GetCertificateTypes()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(CertificateTypes));
+            return Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(CertificateTypes));
         }
 
         // GET: api/CustomerInfoByGroup/CustomerSources
         [HttpGet("CustomerSources")]
-        public IEnumerable<Core.Utilities.Enum.EnumDescriptionValue> GetCustomerSources()
+        public IEnumerable<Core.Utilities.Enums.EnumHelper.EnumDescriptionValue> GetCustomerSources()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(CustomerSources));
+            return Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(CustomerSources));
         }
 
         //GET : api/CustomerInfoByGroup/GetCustomerLogger
@@ -444,7 +444,7 @@ namespace FBOLinx.Web.Controllers
                                         infoLoggerVM.OldPricingTemplate = pricingTemplates.FirstOrDefault(x => x.Oid == OldCustomCustomerTypes.CustomerType);
                                         infoLoggerVM.NewPricingTemplate = pricingTemplates.FirstOrDefault(x => x.Oid == NewCustomCustomerTypes.CustomerType);
 
-                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.ItpTemplateAssigned);
+                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.ItpTemplateAssigned);
                                     }
                                 }
                             }
@@ -457,7 +457,7 @@ namespace FBOLinx.Web.Controllers
                                     if (infoLoggerVM.NewCustomerAircrafts != null)
                                     {
                                         infoLoggerVM.NewAircaft = _degaContext.AirCrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.NewCustomerAircrafts.AircraftId);
-                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.AircaftAdded);
+                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.AircaftAdded);
                                     }
                                 }
 
@@ -468,7 +468,7 @@ namespace FBOLinx.Web.Controllers
                                     if (infoLoggerVM.OldCustomerAircrafts != null)
                                     {
                                         infoLoggerVM.OldAircaft = aircrafts.FirstOrDefault(a => a.AircraftId == infoLoggerVM.OldCustomerAircrafts.AircraftId);
-                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.AircraftDeleted);
+                                        infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.AircraftDeleted);
                                     }
                                 }
                             }
@@ -478,7 +478,7 @@ namespace FBOLinx.Web.Controllers
                                 if (item.Type == AuditType.Create.ToString())
                                 {
                                     infoLoggerVM.NewContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.NewValues);
-                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.ContactAdded);
+                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.ContactAdded);
                                 }
 
                                 //Delete Contact
@@ -486,7 +486,7 @@ namespace FBOLinx.Web.Controllers
                                 {
 
                                     infoLoggerVM.OldContact = JsonConvert.DeserializeObject<ContactInfoByGroup>(item.OldValues);
-                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.ContactDeleted);
+                                    infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.ContactDeleted);
                                 }
                             }
                             else if (item.TableName == "CustomerInfoByGroup")
@@ -495,7 +495,7 @@ namespace FBOLinx.Web.Controllers
                                 if (item.Type == AuditType.Create.ToString())
                                 {
                                     infoLoggerVM.NewCustomerInfoByGroup = JsonConvert.DeserializeObject<CustomerInfoByGroup>(item.NewValues);
-                                    infoLoggerVM.Action = infoLoggerVM.NewCustomerInfoByGroup != null ? FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.Created) : null;
+                                    infoLoggerVM.Action = infoLoggerVM.NewCustomerInfoByGroup != null ? FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.Created) : null;
 
                                 }
                                 //in Case Edit Exsit Customer 
@@ -508,15 +508,15 @@ namespace FBOLinx.Web.Controllers
                                     {
                                         if (infoLoggerVM.OldCustomerInfoByGroup.Active.GetValueOrDefault() && !infoLoggerVM.NewCustomerInfoByGroup.Active.GetValueOrDefault())
                                         {
-                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.Deactivated);
+                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.Deactivated);
                                         }
                                         else if (!infoLoggerVM.OldCustomerInfoByGroup.Active.GetValueOrDefault() && infoLoggerVM.NewCustomerInfoByGroup.Active.GetValueOrDefault())
                                         {
-                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.Acitviated);
+                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.Acitviated);
                                         }
                                         else
                                         {
-                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enum.GetDescription(AuditEntryType.Edited);
+                                            infoLoggerVM.Action = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AuditEntryType.Edited);
                                         }
                                     }
                                 }
@@ -528,7 +528,7 @@ namespace FBOLinx.Web.Controllers
                                 if (user != null)
                                 {
                                     infoLoggerVM.Username = user.FirstName;
-                                    infoLoggerVM.Role = FBOLinx.Core.Utilities.Enum.GetDescription(user.Role);
+                                    infoLoggerVM.Role = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(user.Role);
                                 }
                                 infoLoggerVM.TableName = item.TableName;
                                 infoLoggerVM.Type = item.Type;
@@ -1081,8 +1081,6 @@ namespace FBOLinx.Web.Controllers
 
                 var companyTypes = await _context.CustomerCompanyTypes.Where(x => x.Fboid == fboId || x.Fboid == 0).ToListAsync();
                 
-                var customerTags = await _context.CustomerTag.Where(x => x.GroupId == groupId).ToListAsync();
-
                 var needsAttentionCustomers = await _customerService.GetCustomersNeedingAttentionByGroupFbo(groupId, fboId);
 
                 var customerInfoByGroup = await _customerInfoByGroupService.GetCustomersByGroup(groupId);
@@ -1176,7 +1174,7 @@ namespace FBOLinx.Web.Controllers
                              ,
                             PricingTemplateId = (ai?.Oid).GetValueOrDefault() == 0 ? defaultPricingTemplate.Oid : ai.Oid,
                             FuelVendors = cv == null ? "" : cv.FuelVendors,
-                            Tags = customerTags.Where(x => x.CustomerId == cg.Oid),
+                            Tags = cg.CustomerTags,
                             PricingFormula = ai == null ?
                                                  (FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(defaultPricingTemplate.MarginType) + " " +
                                                      (defaultPricingTemplate.DiscountType == DiscountTypes.Percentage ?
@@ -1184,7 +1182,8 @@ namespace FBOLinx.Web.Controllers
                                                          : string.Format("{0:C}", defaultPricingTemplate.DefaultAmount.GetValueOrDefault())))
                                                  : (ai.MarginTypeDescription + " " + (ai.DiscountType == DiscountTypes.Percentage ?
                                                      cm == null ? "0" : cm.Amount.ToString() + "%"
-                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault()))))
+                                                     : string.Format("{0:C}", (cm == null ? 0 : cm.Amount.GetValueOrDefault())))),
+                            FavoriteCompany = cg.FavoriteCompany
                         }
                         into resultsGroup
                         select new CustomersGridViewModel()
@@ -1211,8 +1210,9 @@ namespace FBOLinx.Web.Controllers
                                 .Where(a => !string.IsNullOrEmpty(a))
                                 .OrderBy(a => a)
                                 .ToList(),
-                            Tags = resultsGroup.Key.Tags.ToList(),
-                            PricingFormula = resultsGroup.Key.PricingFormula
+                            Tags = resultsGroup.Key.Tags,
+                            PricingFormula = resultsGroup.Key.PricingFormula,
+                            FavoriteCompany = resultsGroup.Key.FavoriteCompany
                         })
                     .GroupBy(p => p.CustomerId)
                     .Select(g => g.FirstOrDefault())

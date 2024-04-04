@@ -166,7 +166,7 @@ export class FboPricesUpdateGeneratorComponent implements OnInit {
 
     // Methods
     public onSubmitFboPrice(event): void {
-        if (event.pricePap > 0) {
+        if (event.pricePap > 0 || event.priceCost > 0) {
             event.fboId = this.sharedService.currentUser.fboId;
             event.effectiveFrom = moment(event.effectiveFrom).format("MM/DD/YYYY HH:mm");
             event.effectiveTo = moment(event.effectiveTo).format("MM/DD/YYYY HH:mm");

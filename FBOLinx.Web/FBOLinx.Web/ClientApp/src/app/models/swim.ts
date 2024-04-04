@@ -41,6 +41,11 @@ export interface Swim {
     isActiveFuelRelease: boolean | any;
     isFuelerLinxClient: boolean | any;
     faaRegisteredOwner: string;
+    airportWatchLiveDataId: number | any;
+    swimFlightLegId: number | any;
+    sourceOfCoordinates: string;
+    positionDateTimeSource: string;
+    dateCreated: string;
 }
 export const swimTableColumns = {
     status: 'status',

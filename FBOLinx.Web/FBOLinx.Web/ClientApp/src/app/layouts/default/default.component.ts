@@ -214,22 +214,20 @@ export class DefaultLayoutComponent implements OnInit {
         });
     }
     isPricePanelVisible() {
-        const blacklist = [
-            '/default-layout/groups',
-            '/default-layout/fbos',
-            '/default-layout/group-analytics',
-            '/default-layout/fbo-geofencing',
-            '/default-layout/group-customers',
-            '/default-layout/about-fbolinx'
+        const whitelist = [
+            '/default-layout/dashboard',
+            '/default-layout/dashboard-fbo',
+            '/default-layout/dashboard-fbo-updated'
         ];
+        if(this.isCsr) return false;
+
         if (
-            blacklist.findIndex((v) =>
+            whitelist.findIndex((v) =>
                 window.location.pathname.startsWith(v)
             ) >= 0
         ) {
-            return false;
+            return true;
         }
-        return !this.isCsr;
     }
     isAdditionNavBarVisible() {
         const blacklist = [
@@ -261,6 +259,8 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     checkCurrentPrices() {
+        if(this.isCsr) return;
+
         const currentRoute = this.router.url;
 
         if(this.sharedService.currentUser.accountType == AccountType.Freemium) return;

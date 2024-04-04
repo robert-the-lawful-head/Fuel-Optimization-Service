@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
@@ -12,5 +13,7 @@ namespace FBOLinx.DB.Models
         public int? CustomerId { get; set; }
 
         public string Name { get; set; }
+        [JsonIgnore]
+        public CustomerInfoByGroup CustomerInfoByGroup { get; set; }
     }
 }

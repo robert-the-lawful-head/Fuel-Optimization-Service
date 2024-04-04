@@ -50,7 +50,8 @@ namespace FBOLinx.Web.Controllers
         public async Task<IActionResult> PrepareTokenAuthentication()
         {
             var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
-            await HandlePreLoginEvents(user);
+            var fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
+            user.Fbo.Cast(fbo); 
 
             return Ok(user);
         }
@@ -65,7 +66,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync([FromBody] User userParam)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] UserDTO userParam)
         {
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
@@ -77,7 +78,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            await HandlePreLoginEvents(user);
+            user.Fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
 
             return Ok(user);
         }
@@ -166,7 +167,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var roles = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(UserRoles));
+            var roles = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(UserRoles));
 
             return Ok(roles);
         }
@@ -406,24 +407,22 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task HandlePreLoginEvents(UserDTO user)
+        private async Task<Fbos> HandlePreLoginEvents(int fboId, int groupId)
         {
-            var fbo = await _fboService.GetFbo(user.FboId);
+            var fbo = await _fboService.GetFboModel(fboId);
 
             if (fbo != null)
             {
-                if (fbo.GroupId == user.GroupId)
+                if (fbo.GroupId == groupId)
                 {
                     fbo.LastLogin = DateTime.UtcNow;
-                    await _fboService.UpdateAsync(fbo);
-
-                    user.Fbo = fbo;
+                    await _fboService.UpdateModel(fbo);
                 }
             }
 
             try
             {
-                var group = await _context.Group.FindAsync(user.GroupId);
+                var group = await _context.Group.FindAsync(groupId);
 
                 if (group.IsLegacyAccount == true)
                 {
@@ -432,10 +431,12 @@ namespace FBOLinx.Web.Controllers
                     group.IsLegacyAccount = false;
                     await _context.SaveChangesAsync();
                 }
+
+                return fbo;
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                throw ex;
+                return fbo;
             }
         }
 

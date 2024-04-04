@@ -4,12 +4,10 @@ import {
     OnInit,
     OnDestroy,
     Output,
-    ViewChild,
-    ElementRef
-} from '@angular/core';
+    ViewChild} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest } from 'rxjs';
 import {
@@ -25,25 +23,19 @@ import { FbofeesandtaxesService } from '../../../services/fbofeesandtaxes.servic
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
+import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';
 // Components
 import { PriceBreakdownComponent } from '../../../shared/components/price-breakdown/price-breakdown.component';
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
-
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/pricing-templates',
-        title: 'ITP Margin Templates',
-    },
-    {
-        link: '',
-        title: 'Edit Margin Template',
-    },
-];
+import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
+import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
+export interface DefaultTemplateUpdate {
+    currenttemplate: number;
+    newtemplate: number;
+    fboid: number;
+    isDeleting: boolean;
+}
 
 @Component({
     selector: 'app-pricing-templates-edit',
@@ -63,7 +55,6 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
     pricingTemplate: any;
     id             :any;
-    breadcrumb: any[] = BREADCRUMBS;
     pricingTemplateForm: FormGroup;
     pageTitle = 'Edit Margin Template';
     marginTypeDataSource: Array<any> = [
@@ -85,11 +76,20 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     hasSaved = false;
     isSaveQueued = false;
     feesAndTaxes: Array<any>;
+    isDefaultChanged = false;
 
-    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
     theFile: any;
     isUploadingFile: boolean;
     fileName: any = "";
+    public tools: ToolbarSettingsModel = { items: ['Bold', 'Italic', 'Underline', '|', 'Formats', 'Alignments', 'OrderedList', 'UnorderedList', '|', 'CreateLink', '|', 'SourceCode', 'Undo', 'Redo'] };
+
+    public updateModel: DefaultTemplateUpdate = {
+        currenttemplate: 0,
+        fboid: 0,
+        newtemplate: 0,
+        isDeleting: false
+    };
+    pricingTemplates: Array<any>;
 
     constructor(
         private route: ActivatedRoute,
@@ -105,6 +105,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
         private emailContentService: EmailcontentService,
         private marginLessThanOneDialog: MatDialog,
         private pricingTemplateCalcService: PricingTemplateCalcService,
+        public deleteTemplateWarningDialog: MatDialog,
+        public customCustomerService: CustomcustomertypesService,
     ) {
         this.sharedService.titleChange(this.pageTitle);
 
@@ -127,12 +129,20 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             });
     }
 
+    onActionBegin (args: any): void {
+    if (args.type === 'drop' || args.type === 'dragstart') {
+        args.cancel = true;
+    }
+}
+
     async ngOnInit() {
         // Check for passed in id
         this.id = this.route.snapshot.paramMap.get('id');
         this.pricingTemplate = await this.pricingTemplatesService
             .get({ oid: this.id })
             .toPromise();
+
+        this.pricingTemplates = await this.pricingTemplatesService.getByFbo(this.sharedService.currentUser.fboId, this.sharedService.currentUser.groupId).toPromise();
 
         combineLatest([
             this.customerMarginsService.getCustomerMarginsByPricingTemplateId(
@@ -210,8 +220,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
 
             this.pricingTemplateForm.valueChanges.subscribe(() => {
                 this.canSave = true;
-                this.savePricingTemplate();
-
+                if (!this.isDefaultChanged)
+                    this.savePricingTemplate();
             });
 
             // Margin type change event
@@ -267,12 +277,56 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
                 );
                 this.savePricingTemplate();
             }
-        );
+            );
 
+            // Default toggle event
+            this.pricingTemplateForm.controls.default.valueChanges.subscribe(
+                (type) => {
+                    if (!type) {
+                        this.isDefaultChanged = true;
+                        const dialogRef = this.deleteTemplateWarningDialog.open(
+                            PricingTemplatesDialogDeleteWarningComponent,
+                            {
+                                autoFocus: false,
+                                data: { data: this.pricingTemplates, action: "removing" },
+                                width: '600px',
+                                disableClose:false
+                            }
+                        );
 
+                        dialogRef.afterClosed().subscribe((response) => {
+                            if (response !== 'cancel') {
+                                this.updateModel.currenttemplate = this.pricingTemplate.oid;
+                                this.updateModel.fboid = this.pricingTemplate.fboid;
+                                this.updateModel.newtemplate = response;
+                                this.updateModel.isDeleting = false;
+
+                                this.customCustomerService
+                                    .updateDefaultTemplate(this.updateModel)
+                                    .subscribe((result) => {
+                                        if (result) {
+
+                                            if (this.updateModel.newtemplate == this.updateModel.currenttemplate) {
+                                                this.isSaving = false;
+                                                this.hasSaved = true;
+                                                this.pricingTemplateForm.controls.default.setValue(true);
+                                            }
+                                            else {
+                                                this.canSave = true;
+                                                this.savePricingTemplate();
+                                            }
+                                        }
+                                    });
+                            }
+                            else {
+                                this.pricingTemplateForm.controls.default.setValue(true);
+                            }
+                        });
+                    }
+
+                }
+            );
         });
-
-
 
         this.loadPricingTemplateFeesAndTaxes();
         this.loadEmailContentTemplate();

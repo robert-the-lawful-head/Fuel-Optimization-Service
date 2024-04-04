@@ -43,9 +43,9 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("Sizes")]
-        public IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
+        public IEnumerable<FBOLinx.Core.Utilities.Enums.EnumHelper.EnumDescriptionValue> GetAircraftSizes()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(AircraftSizes));
+            return Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(AircraftSizes));
         }
 
         // GET: api/AirCrafts/5

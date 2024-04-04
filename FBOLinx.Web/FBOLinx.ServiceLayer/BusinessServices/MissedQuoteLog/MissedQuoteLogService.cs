@@ -95,8 +95,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog
                     {
                         List<MissedQuoteLogDTO> missedQuotesToLog = new List<MissedQuoteLogDTO>();
                         var customerGroup = await _CustomerInfoByGroupEntityService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customer.Oid, fbo.GroupId));
-
-                        if (customerGroup != null && customerGroup.Oid > 0)
+                       
+                        if (customerGroup != null && customerGroup.Oid > 0 && customer.Suspended == false)
                         {
                             //var debugging = await GetMissedQuotesDebuggingInformation(customer, fbo, validPricing);
 

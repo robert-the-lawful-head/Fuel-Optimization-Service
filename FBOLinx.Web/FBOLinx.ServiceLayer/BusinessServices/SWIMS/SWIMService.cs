@@ -70,7 +70,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public SWIMService(SWIMFlightLegEntityService flightLegEntityService, SWIMFlightLegDataEntityService flightLegDataEntityService,
             AirportWatchLiveDataEntityService airportWatchLiveDataEntityService, AircraftHexTailMappingEntityService aircraftHexTailMappingEntityService,
             AirportWatchHistoricalDataEntityService airportWatchHistoricalDataEntityService, AcukwikAirportEntityService acukwikAirportEntityService,
-            ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService, 
+            ICustomerAircraftEntityService customerAircraftEntityService, AircraftEntityService aircraftEntityService, ILoggingService loggingService,
             AirportWatchService airportWatchService, IFuelReqService fuelReqService, IPricingTemplateService pricingTemplateService,
             AFSAircraftEntityService afsAircraftEntityService,
             FAAAircraftMakeModelEntityService faaAircraftMakeModelEntityService,
@@ -108,8 +108,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public async Task<IEnumerable<FlightLegDTO>> GetArrivals(int groupId, int fboId, string icao)
         {
             IEnumerable<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins), 
-                    new List<FlightLegStatus>(){ FlightLegStatus.TaxiingOrigin, FlightLegStatus.Departing }));
+                new SWIMFlightLegSpecification(null, icao, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins),
+                    new List<FlightLegStatus>() { FlightLegStatus.TaxiingOrigin, FlightLegStatus.Departing }));
             IEnumerable<FlightLegDTO> result = await GetFlightLegs(swimFlightLegs, true, groupId, fboId);
 
             return result;
@@ -118,7 +118,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
         public async Task<IEnumerable<FlightLegDTO>> GetDepartures(int groupId, int fboId, string icao)
         {
             List<SWIMFlightLeg> swimFlightLegs = await _FlightLegEntityService.GetListBySpec(
-                new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins), 
+                new SWIMFlightLegSpecification(icao, null, DateTime.UtcNow.AddMinutes(FlightLegsFetchingThresholdMins),
                     new List<FlightLegStatus>() { FlightLegStatus.Landing, FlightLegStatus.TaxiingDestination, FlightLegStatus.Arrived }));
             List<SWIMFlightLeg> placeholderRecords = await _FlightLegEntityService.GetListBySpec(
                 new SWIMFlightLegSpecification(icao, DateTime.UtcNow.AddMinutes(PlaceholderRecordsFetchingThresholdMins), true));
@@ -130,7 +130,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             return result;
         }
-        
+
         public async Task SaveFlightLegData(IEnumerable<SWIMFlightLegDTO> swimFlightLegs)
         {
             //Stopwatch stopwatch = Stopwatch.StartNew();
@@ -159,7 +159,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 }
                 swimFlightLegDTOs.Add(swimFlightLegDto);
             }
-            
+
             List<string> airportICAOs = swimFlightLegDTOs.Where(x => !string.IsNullOrEmpty(x.DepartureICAO)).Select(x => x.DepartureICAO).ToList();
             airportICAOs.AddRange(swimFlightLegDTOs.Where(x => !string.IsNullOrEmpty(x.ArrivalICAO)).Select(x => x.ArrivalICAO).ToList());
             airportICAOs = airportICAOs.Distinct().ToList();
@@ -182,8 +182,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                 var existingFlightLegsBatch = (await _FlightLegEntityService.GetSWIMFlightLegs(gufiBatch.ToList()));
                 existingFlightLegs.AddRange(existingFlightLegsBatch);
             }
+
             existingFlightLegs = existingFlightLegs.OrderByDescending(x => x.ATD).ToList();
-            
+
             List<SWIMFlightLegData> flightLegDataMessagesToInsert = new List<SWIMFlightLegData>();
             List<SWIMFlightLeg> flightLegsToUpdate = new List<SWIMFlightLeg>();
             List<SWIMFlightLeg> flightLegsToInsert = new List<SWIMFlightLeg>();
@@ -193,13 +194,34 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
             //Console.WriteLine($"before foreach {stopwatch.ElapsedMilliseconds}");
             //stopwatch.Restart();
 
+            //Get tails and ATDs for records that don't have Gufi or non-matching Gufi
+            var swimFlightLegsWithNoGufi = (from s in swimFlightLegDTOs where s.Gufi == null || s.Gufi == string.Empty select new { s.AircraftIdentification, s.ATD }).ToList();
+            
+            var swimFlightLegsWithGufi = (from s in swimFlightLegDTOs where s.Gufi != null && s.Gufi != string.Empty select s).ToList();
+            var existingFlightLegsWithGufi = existingFlightLegs.Where(x => x.Gufi != null && x.Gufi != string.Empty).ToList();
+            var aircraftIdentifiers = (from s in swimFlightLegsWithGufi
+                                       join e in existingFlightLegsWithGufi on s.Gufi equals e.Gufi
+                                       into leftJoinedE
+                                       from e in leftJoinedE.DefaultIfEmpty()
+                                       where e is null
+                                       select new { s.AircraftIdentification, s.ATD }).ToList();
+
+            if (swimFlightLegsWithNoGufi.Count > 0)
+                aircraftIdentifiers.AddRange(swimFlightLegsWithNoGufi);
+            
+            var swimFlightLegsWithNoOrNonMatchingGufi = _FlightLegEntityService.GetSWIMFlightLegsQueryable(aircraftIdentifiers.Select(a => a.AircraftIdentification).ToList(), aircraftIdentifiers.Select(a => a.ATD.ToString()).ToList()).ToList();
             foreach (SWIMFlightLegDTO swimFlightLegDto in swimFlightLegDTOs)
             {
                 try
                 {
                     var existingLeg = existingFlightLegs.FirstOrDefault(x => x.Gufi == swimFlightLegDto.Gufi);
-                    //var existingLeg = existingFlightLegs.FirstOrDefault(
-                    //    x => x.DepartureICAO == swimFlightLegDto.DepartureICAO && x.ArrivalICAO == swimFlightLegDto.ArrivalICAO && x.ATD == swimFlightLegDto.ATD);
+
+                    if (existingLeg == null && !string.IsNullOrEmpty(swimFlightLegDto.AircraftIdentification) && swimFlightLegDto.ATD.HasValue)
+                    {
+                        var equivalentLegForAircraftAndDeparture = swimFlightLegsWithNoOrNonMatchingGufi.FirstOrDefault(x => x.Oid == swimFlightLegDto.Oid);
+                        if (equivalentLegForAircraftAndDeparture != null)
+                            existingLeg = equivalentLegForAircraftAndDeparture;
+                    }
 
                     if (existingLeg == null && (string.IsNullOrWhiteSpace(swimFlightLegDto.DepartureICAO) || swimFlightLegDto.DepartureICAO.Length > 4 || string.IsNullOrWhiteSpace(swimFlightLegDto.ArrivalICAO) || swimFlightLegDto.ArrivalICAO.Length > 4))
                     {
@@ -255,15 +277,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                             flightLegDataMessagesToInsert.Add(swimFlightLegDataToInsert);
                         }
 
-                        if (swimFlightLegDto.SWIMFlightLegDataMessages.Any() && existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
+                        //If the leg has any messages from the FAA feed then we will want to update the LastUpdated time to UTC now.
+                        if (swimFlightLegDto.SWIMFlightLegDataMessages.Any())
                         {
                             existingLeg.LastUpdated = DateTime.UtcNow;
-                            existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
-                            AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
-                            if (arrivalAirport != null && existingLeg.ETA != null)
+
+                            //If the ETA has changed then we will want to update the ETA and ETALocal times using the airport's timezone.
+                            if (existingLeg.ETA != swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA)
                             {
-                                existingLeg.ETALocal = DateTimeHelper.GetLocalTime(existingLeg.ETA.Value, arrivalAirport.IntlTimeZone, arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                                existingLeg.ETA = swimFlightLegDto.SWIMFlightLegDataMessages.First().ETA;
+                                AcukwikAirport arrivalAirport = airports.FirstOrDefault(x => x.Icao == existingLeg.ArrivalICAO);
+                                if (arrivalAirport != null && existingLeg.ETA != null)
+                                {
+                                    existingLeg.ETALocal = DateTimeHelper.GetLocalTime(existingLeg.ETA.Value,
+                                        arrivalAirport.IntlTimeZone,
+                                        arrivalAirport.DaylightSavingsYn?.ToLower() == "y");
+                                }
                             }
+
                             flightLegsToUpdate.Add(existingLeg);
                         }
                     }
@@ -360,7 +391,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
 
             if (unrecognizedFlightLegsToInsert.Count > 0)
             {
-                await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert);
+                //await _SWIMUnrecognizedFlightLegEntityService.BulkInsert(unrecognizedFlightLegsToInsert);
             }
 
             //stopwatch.Stop();
@@ -738,7 +769,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIM
                         continue;
                     }
 
-                    var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.Value.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.Value.AddHours(2));
+                    // Added in a check for ArrivalICAO so that it doesn't flag a departuring tail with an existing fuel order #8685tdtgn
+                    var existingFuelOrder = fuelOrders.FirstOrDefault(x => x.TailNumber == flightLeg.TailNumber && x.Icao == flightLeg.ArrivalICAO && x.Etd >= flightLeg.ATDZulu.AddHours(-2) && x.Etd <= flightLeg.ATDZulu.AddHours(2) && x.Eta >= flightLeg.ETAZulu.Value.AddHours(-2) && x.Eta <= flightLeg.ETAZulu.Value.AddHours(2));
                     if (existingFuelOrder != null)
                     {
                         flightLeg.ID = existingFuelOrder.Oid;

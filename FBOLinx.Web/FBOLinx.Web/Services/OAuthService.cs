@@ -84,7 +84,7 @@ namespace FBOLinx.Web.Services
 
             AccessTokens oldToken = await _context.AccessTokens.FindAsync(oldRefreshToken.AccessTokenId);
 
-            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user, 10080);
+            AccessTokensDto accessToken = await _IOAuthService.GenerateAccessToken(user.Oid, 10080);
 
             string authToken = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
 

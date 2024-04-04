@@ -450,11 +450,11 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.searchValue
                 );
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,group.oid);
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,2);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,"2");
 
                 this.router.navigate(['/default-layout/fbos/']);
             });
@@ -494,15 +494,15 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.searchValue
                 );
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId,this.sharedService.currentUser.groupId);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,fbo.groupId);
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,1);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.impersonatedrole,"1");
 
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.conductorFbo,true);
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.conductorFbo,"true");
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fbo.oid);
 
@@ -664,13 +664,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.childGrid.dataSource = this.fboDataSource;
     }
 
-    groupFbos(groupIndex: number) {
-        const group = (this.grid.dataSource as any[])[groupIndex];
-        if (!group) {
-            return [];
-        }
+    groupFbos(groupId: number) {
         return this.groupsFbosData.fbos.filter(
-            (fbo) => fbo.groupId === group.oid
+            (fbo) => fbo.groupId === groupId
         );
     }
 

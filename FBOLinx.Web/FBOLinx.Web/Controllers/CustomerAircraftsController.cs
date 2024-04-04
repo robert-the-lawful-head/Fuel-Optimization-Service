@@ -18,13 +18,13 @@ using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
-using Azure.Core;
-using System.Security.Cryptography;
 using FBOLinx.DB.Specifications.CustomerAircraftNote;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.DTO;
-using FBOLinx.DB.Specifications.CustomerInfoByGroupNote;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
+using System.Security.Cryptography;
+using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -41,12 +41,16 @@ namespace FBOLinx.Web.Controllers
         private AirportWatchService _AirportWatchService;
         private readonly IGroupCustomersService _GroupCustomersService;
         private ICustomerAircraftNoteService _CustomerAircraftNoteService;
+        private IFboAircraftFavoritesService _fboAircraftFavoritesService;
+
 
         public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
             IAircraftService aircraftService, ICustomerAircraftService customerAircraftService,
             IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService,
             ILoggingService logger, IGroupCustomersService groupCustomersService,
-            ICustomerAircraftNoteService customerAircraftNoteService) : base(logger)
+            ICustomerAircraftNoteService customerAircraftNoteService,
+            IFboAircraftFavoritesService fboAircraftFavoritesService
+        ) : base(logger)
         {
             _CustomerAircraftNoteService = customerAircraftNoteService;
             _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
@@ -56,6 +60,7 @@ namespace FBOLinx.Web.Controllers
             _aircraftService = aircraftService;
             _AirportWatchService = airportWatchService;
             _GroupCustomersService = groupCustomersService;
+            _fboAircraftFavoritesService = fboAircraftFavoritesService;
         }
 
         [HttpGet]
@@ -259,7 +264,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("{userId}")]
-        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts)
+        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts, bool isFavorite = false, int fboId = 0)
         {
             if (!ModelState.IsValid)
             {
@@ -268,7 +273,11 @@ namespace FBOLinx.Web.Controllers
           
             _context.CustomerAircrafts.Add(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
-            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId);
+
+            if(isFavorite && fboId  > 0)
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircrafts.Oid, FboId = fboId }, customerAircrafts.GroupId);
+
+            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId, fboId);
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
@@ -314,67 +323,84 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("create-with-customer")]
-        public async Task<IActionResult> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        public async Task<ActionResult<CustomerWithAicraftDto>> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            using var transaction = _context.Database.BeginTransaction();
 
-            try
+            var customerInfoByGroup = new CustomerInfoByGroup
             {
-                var customer = new Customers
-                {
-                    Company = request.Customer
-                };
+                GroupId = request.GroupId,
+                Company = request.Customer,
+                Active = true,
+            };
 
-                _context.Customers.Add(customer);
-                _context.SaveChanges();
-
-                var customerViewedByFbo = new CustomersViewedByFbo
-                {
-                    Fboid = request.FboId,
-                    CustomerId = customer.Oid,
-                    ViewDate = DateTime.Now,
-                };
-                _context.CustomersViewedByFbo.Add(customerViewedByFbo);
-
-                var customerInfoByGroup = new CustomerInfoByGroup
-                {
-                    GroupId = request.GroupId,
-                    Company = request.Customer,
-                    CustomerId = customer.Oid,
-                    Active = true,
-                };
-                _context.CustomerInfoByGroup.Add(customerInfoByGroup);
-
-
-                var customerAircraft = new CustomerAircrafts
-                {
-                    GroupId = request.GroupId,
-                    AircraftId = request.AircraftId,
-                    TailNumber = request.TailNumber,
-                    Size = request.Size,
-                    CustomerId = customer.Oid,
-                };
-               
-                _context.CustomerAircrafts.Add(customerAircraft);
-
-                _context.SaveChanges();
-
-                await transaction.CommitAsync();
-
-                _CustomerAircraftService.ClearCache(request.GroupId, request.FboId);
-
-                return Ok(customerInfoByGroup);
-            }
-            catch (Exception ex)
+            var customerAircraft = new CustomerAircrafts
             {
-                await transaction.RollbackAsync();
+                GroupId = request.GroupId,
+                AircraftId = request.AircraftId,
+                TailNumber = request.TailNumber,
+                Size = request.Size,
+            };
 
-                return BadRequest(ex);
+            var strategy = _context.Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = _context.Database.BeginTransaction();
+
+                try
+                {
+                    var customer = new Customers
+                    {
+                        Company = request.Customer
+                    };
+
+                    _context.Customers.Add(customer);
+                    _context.SaveChanges();
+
+                    var customerViewedByFbo = new CustomersViewedByFbo
+                    {
+                        Fboid = request.FboId,
+                        CustomerId = customer.Oid,
+                        ViewDate = DateTime.Now,
+                    };
+                    _context.CustomersViewedByFbo.Add(customerViewedByFbo);
+
+                    customerInfoByGroup.CustomerId = customer.Oid;
+
+                    _context.CustomerInfoByGroup.Add(customerInfoByGroup);
+
+                    customerAircraft.CustomerId = customer.Oid;
+
+                    _context.CustomerAircrafts.Add(customerAircraft);
+
+                    _context.SaveChanges();
+
+                    await transaction.CommitAsync();
+
+                    _CustomerAircraftService.ClearCache(request.GroupId, request.FboId);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+
+                    throw new Exception(ex.Message,ex);
+                }
+            });
+
+            if(request.isFavoriteAircraft){
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircraft.Oid, FboId = request.FboId }, customerAircraft.GroupId);
             }
+
+            var result = new CustomerWithAicraftDto()
+            {
+                CustomerInfoByGroup = customerInfoByGroup,
+                CustomerAircraft = customerAircraft
+            };
+            return Ok(result);
         }
 
 
@@ -447,13 +473,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var customerAircrafts = await _context.CustomerAircrafts.FindAsync(id);
+            var customerAircrafts = await _context.CustomerAircrafts.Include(x => x.FavoriteAircraft).Where(x => x.Oid == id).FirstOrDefaultAsync();
             if (customerAircrafts == null)
             {
                 return NotFound();
             }
+            if(customerAircrafts?.FavoriteAircraft != null)
+                await _fboAircraftFavoritesService.DeleteAircraftFavorite(customerAircrafts.FavoriteAircraft.Oid, customerAircrafts.GroupId);
 
-           
             _context.CustomerAircrafts.Remove(customerAircrafts);
             await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
 

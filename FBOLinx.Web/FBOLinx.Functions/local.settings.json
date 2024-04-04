@@ -1,11 +1,12 @@
 {
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet"
-  },
-  "ConnectionStrings": {
-    "ParagonTestDB": "SERVER=10.0.10.9,1433; Initial Catalog=paragon_Test; user=sqlunderling; pwd=hL_Vv4pDU'uW)4tY; Connection Timeout=180;Min Pool Size=30;Max Pool Size=500;",
-    "DegaDB": "SERVER=10.0.10.9,1433; Initial Catalog=Dega; user=sqlunderling; pwd=hL_Vv4pDU'uW)4tY; Connection Timeout=180;Min Pool Size=30;Max Pool Size=500;"
-  }
+	"IsEncrypted": false,
+	"Values": {
+		"AzureWebJobsStorage": "UseDevelopmentStorage=true",
+		"FUNCTIONS_WORKER_RUNTIME": "dotnet"
+	},
+	"ConnectionStrings": {
+		"ParagonTestDB": "SERVER=10.0.10.9,1433; Initial Catalog=paragon_Test; user=sqlunderling; pwd=hL_Vv4pDU'uW)4tY; Connection Timeout=180;Min Pool Size=30;Max Pool Size=500;",
+		"DegaDB": "SERVER=10.0.10.9,1433; Initial Catalog=Dega; user=sqlunderling; pwd=hL_Vv4pDU'uW)4tY; Connection Timeout=180;Min Pool Size=30;Max Pool Size=500;",
+		"WebApplicationUrl": "https://localhost:50176/",
+	},
 }

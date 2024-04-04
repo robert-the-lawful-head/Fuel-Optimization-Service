@@ -182,7 +182,7 @@
                                             <ni-button  (click)="submitPricing(pricing)"
                                                     class="mr-1"
                                                     [view]="'success'"
-                                                    [disabled]="!pricing.pricePap && !pricing.priceCost || (pricing.priceCost > pricing.pricePap)"
+                                                    [disabled]="(!pricing.pricePap && !pricing.priceCost) || (pricing.pricePap && pricing.priceCost > pricing.pricePap)"
                                                     ni-button>
                                                 {{pricing.submitStatus}}
                                             </ni-button>

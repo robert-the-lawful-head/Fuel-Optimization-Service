@@ -30,21 +30,6 @@ import { ContactsDialogNewContactComponent } from '../../contacts/contacts-edit-
 import { CustomerCompanyTypeDialogComponent } from '../customer-company-type-dialog/customer-company-type-dialog.component';
 import { CustomerTagDialogComponent } from '../customer-tag-dialog/customer-tag-dialog.component';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/customers',
-        title: 'Customers',
-    },
-    {
-        link: '',
-        title: 'Edit Customer',
-    },
-];
-
 @Component({
     selector: 'app-customers-edit',
     styleUrls: ['./customers-edit.component.scss'],
@@ -63,7 +48,6 @@ export class CustomersEditComponent implements OnInit {
     private priceBreakdownPreview: PriceBreakdownComponent;
     // Members
     pageTitle = 'Edit Customer';
-    breadcrumb = BREADCRUMBS;
     customerInfoByGroup: any;
     customerInfoByGroupNote: CustomerInfoByGroupNote;
     contactsData: any[];
@@ -221,7 +205,7 @@ export class CustomersEditComponent implements OnInit {
         this.customerForm.valueChanges
             .pipe(
                 map(() => {
-                    
+
                 }),
                 debounceTime(500),
                 switchMap(async () => {

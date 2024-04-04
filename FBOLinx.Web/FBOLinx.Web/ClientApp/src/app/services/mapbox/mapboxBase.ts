@@ -1,15 +1,22 @@
 import { ElementRef } from '@angular/core';
+import { Dictionary } from 'lodash';
 import * as mapboxgl from 'mapbox-gl';
 import { environment } from 'src/environments/environment';
 export interface PopUpProps{
-    isPopUpOpen: boolean;
     coordinates: [number,number];
     popupId: string;
     popupInstance: mapboxgl.Popup
+    isOpen: boolean;
 }
 export abstract class MapboxglBase {
     public map: mapboxgl.Map;
-    public currentPopup: PopUpProps;
+    public openedPopUps: Dictionary<PopUpProps> = {};
+    public popUpPropsNewInstance : PopUpProps = {
+        coordinates: [0,0],
+        popupId: '',
+        popupInstance: null,
+        isOpen: true
+    };
     buildMap(
         center: mapboxgl.LngLatLike,
         container: string,
@@ -17,12 +24,6 @@ export abstract class MapboxglBase {
         zoom: number = 12,
         optimizeMap: boolean = false
     ) {
-        this.currentPopup= {
-            isPopUpOpen: false,
-            popupId: null,
-            coordinates: null,
-            popupInstance: null
-        }
         let optimizeMapFlag = (optimizeMap)?'?optimize=true':'';
         this.map = new mapboxgl.Map({
             container: container,
@@ -242,7 +243,7 @@ export abstract class MapboxglBase {
             elem.remove();
         });
     }
-    loadPNGImageAsync(src: string,imageId: string){
+    async loadPNGImageAsync(src: string,imageId: string){
         return new Promise((resolve, reject) => {
             this.map.loadImage(src,
                 (error, image) => {
@@ -252,7 +253,7 @@ export abstract class MapboxglBase {
             });
           });
     }
-    loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
+   async loadSVGImageAsync(width:number, height:number, src: string, imageName:string){
         return new Promise((resolve, reject) => {
             let img = new Image(width, height);
             img.onload = () => {
@@ -263,15 +264,28 @@ export abstract class MapboxglBase {
             img.src = src;
         });
     }
-    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef,currentPopup: PopUpProps):mapboxgl.Popup{
+    async getFncAsAsync(callBack): Promise<unknown>{
+        return new Promise((resolve, reject) => {
+            resolve(callBack);
+          });
+    }
+    openPopupRenderComponent(coordinates: [number,number],elemRef: ElementRef):mapboxgl.Popup{
         return new mapboxgl.Popup()
             .setLngLat(coordinates)
             .setDOMContent(elemRef.nativeElement)
             .setMaxWidth("330px")
             .addTo(this.map);
     }
+    openPopupRenderHtml(coordinates: [number,number],html: string):mapboxgl.Popup{
+        return new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(html)
+            .setMaxWidth("330px")
+            .addTo(this.map);
+    }
     flyTo(center: mapboxgl.LngLatLike,hasAnimation = true){
         this.map.flyTo({
+            zoom: 13,
             center: center,
             essential: hasAnimation // this animation is considered essential with respect to prefers-reduced-motion
         });

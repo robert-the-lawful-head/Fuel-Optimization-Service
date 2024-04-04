@@ -1,0 +1,43 @@
+<div class="filter-container">
+    <div class="flight-list-settings-button">
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >more_vert</mat-icon
+                >
+            </button>
+            <mat-menu #gridActions="matMenu" xPosition="before">
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
+        </div>
+    </div>
+</div>
+<div class="data-container" >
+    <app-flight-watch-aircraft-data-table
+        #arrivalsTable
+        [data]="arrivals"
+        [isArrival]="true"
+        [columns]="arrivalsColumns"
+        (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
+        [customers]="customers"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
+        (closeAircraftPopup)="closeAircraftPopup.emit($event)"
+    ></app-flight-watch-aircraft-data-table>
+</div>
+<div class="data-container">
+    <app-flight-watch-aircraft-data-table
+        #departuresTable
+        [data]="departures"
+        [isArrival]="false"
+        [columns]="departuresColumns"
+        (saveSettings)="sortChangeSaveSettings()"
+        [isLobbyView]="isLobbyView"
+        [customers]="customers"
+        (openAircraftPopup)="openPopUpAndCloseExpandedRows($event)"
+        (closeAircraftPopup)="closeAircraftPopup.emit($event)"
+    ></app-flight-watch-aircraft-data-table>
+</div>

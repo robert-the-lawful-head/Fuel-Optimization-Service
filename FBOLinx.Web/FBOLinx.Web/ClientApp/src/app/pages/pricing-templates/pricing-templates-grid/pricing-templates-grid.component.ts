@@ -29,6 +29,7 @@ export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
     fboid: number;
+    isDeleting: boolean;
 }
 
 @Component({
@@ -64,6 +65,7 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
         currenttemplate: 0,
         fboid: 0,
         newtemplate: 0,
+        isDeleting: true
     };
 
     constructor(
@@ -145,7 +147,7 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
                 PricingTemplatesDialogDeleteWarningComponent,
                 {
                     autoFocus: false,
-                    data: this.pricingTemplatesData,
+                    data: { data: this.pricingTemplatesData, action: "deleting" },
                     width: '600px',
                 }
             );
@@ -155,6 +157,7 @@ export class PricingTemplatesGridComponent extends GridBase implements OnInit {
                     this.updateModel.currenttemplate = pricingTemplate.oid;
                     this.updateModel.fboid = pricingTemplate.fboid;
                     this.updateModel.newtemplate = response;
+                    this.updateModel.isDeleting = true;
 
                     this.customCustomerService
                         .updateDefaultTemplate(this.updateModel)

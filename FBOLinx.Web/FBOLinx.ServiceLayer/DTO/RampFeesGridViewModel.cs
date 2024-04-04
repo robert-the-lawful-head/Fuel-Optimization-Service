@@ -52,14 +52,14 @@ namespace FBOLinx.ServiceLayer.DTO
             get
             {
                 if (CategoryType.GetValueOrDefault() == RampFeeCategories.AircraftSize)
-                    return FBOLinx.Core.Utilities.Enum.GetDescription((AircraftSizes)CategoryMinValue);
+                    return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription((AircraftSizes)CategoryMinValue);
                 return "";
             }
         }
 
         public string CategoryDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault()); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(CategoryType.GetValueOrDefault()); }
         }
 
         public string AircraftMake { get; set; }

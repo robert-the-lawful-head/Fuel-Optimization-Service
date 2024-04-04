@@ -1,16 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 
-const BREADCRUMBS: any[] = [
-    {
-        link: '/default-layout',
-        title: 'Main',
-    },
-    {
-        link: '/default-layout/services-and-fees',
-        title: 'Services & Fees Admin',
-    },
-];
-
 @Component({
   selector: 'app-services-and-fees-home',
   templateUrl: './services-and-fees-home.component.html',
@@ -18,8 +7,6 @@ const BREADCRUMBS: any[] = [
   encapsulation: ViewEncapsulation.None
 })
 export class ServicesAndFeesHomeComponent implements OnInit {
-    breadcrumb = BREADCRUMBS;
-
     constructor() { }
 
     ngOnInit() {

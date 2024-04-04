@@ -45,7 +45,7 @@ namespace FBOLinx.DB.Models
         public ICollection<AccessTokens> AccessTokens { get; set; }
         public string RoleDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Role); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(Role); }
         }
     }
 }

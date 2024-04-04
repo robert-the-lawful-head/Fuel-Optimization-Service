@@ -1,6 +1,4 @@
-<ni-breadcrumb [menu]="breadcrumb"></ni-breadcrumb>
-
-<div class="after-breadcrumb">
+<section>
     <div *ngIf="!pricingTemplate">
         <mat-spinner></mat-spinner>
     </div>
@@ -240,7 +238,7 @@
                                 </tbody>
                             </table>
                             <h5 class="mt-2">Tax/Fee Exclusions</h5>
-                            <div class="tax-fee-exclusions"
+                            <div
                                  *ngIf="feesAndTaxes">
                                 <price-breakdown #feeAndTaxGeneralBreakdown
                                                  (omitCheckChanged)="
@@ -261,34 +259,36 @@
                                                     formControlName="notes"
                                                     id="rteNotes"
                                                     height="400"
-                                                    [insertImageSettings]='insertImageSettings'></ejs-richtexteditor>
-                                <h6 class="mt-2">File Attachment</h6>
-                                <div>
-                                    <input type="file"
-                                           (change)="onFileChange($event)"
-                                           accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
-                                           #fileUpload />
-                                    <button *ngIf="!isUploadingFile"
-                                            (click)="uploadFile()"
-                                            class="ml-3"
-                                            color="accent"
-                                            mat-raised-button>
-                                        Upload File
-                                    </button>
-                                    <div *ngIf="isUploadingFile">
-                                        <mat-spinner></mat-spinner>
-                                    </div>
-                                    <div class="mt-2" *ngIf="fileName != ''">
-                                        <button (click)="downloadFile()" mat-stroked-button>
-                                            Download {{fileName}}
-                                        </button>
-                                    </div>
-                                    <div class="mt-2" *ngIf="fileName != ''">
-                                        <button (click)="deleteFile()" class="btn btn-danger btn-sm">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
+                                                    [toolbarSettings]='tools' (actionBegin)="onActionBegin($event)"></ejs-richtexteditor>
+                                <!--
+    <h6 class="mt-2">File Attachment</h6>
+    <div>
+        <input type="file"
+               (change)="onFileChange($event)"
+               accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
+               #fileUpload />
+        <button *ngIf="!isUploadingFile"
+                (click)="uploadFile()"
+                class="ml-3"
+                color="accent"
+                mat-raised-button>
+            Upload File
+        </button>
+        <div *ngIf="isUploadingFile">
+            <mat-spinner></mat-spinner>
+        </div>
+        <div class="mt-2" *ngIf="fileName != ''">
+            <button (click)="downloadFile()" mat-stroked-button>
+                Download {{fileName}}
+            </button>
+        </div>
+        <div class="mt-2" *ngIf="fileName != ''">
+            <button (click)="deleteFile()" class="btn btn-danger btn-sm">
+                Delete
+            </button>
+        </div>
+    </div>
+        -->
                             </div>
                         </mat-tab>
 
@@ -311,4 +311,4 @@
             </div>
         </div>
     </div>
-</div>
+</section>

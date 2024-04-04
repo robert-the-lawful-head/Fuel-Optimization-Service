@@ -4,9 +4,13 @@
     .site-container {
         position: relative;
         padding: $navbar-height 0 $footer-height 0;
+        // border: 1px solid #f00;
+        height: 100%;
 
         .main-content {
-            padding: 1rem 0 0 $vertical-navbar-width;
+            height: 100%;
+            // border: 1px solid blue;
+            padding: 0 0 0 $vertical-navbar-width;
             transition: padding 0.2s $animation;
 
             &.full-width {
@@ -18,8 +22,8 @@
             }
 
             .main-content-wrap {
-                height: calc(100% - #{$module-rem * 4});
-                padding-top: 0;
+                // border: 1px solid black;
+                height: 100%;
             }
         }
 
@@ -40,11 +44,6 @@
                 padding-left: 80px;
                 top: 0;
             }
-        }
-
-        .sticky-panel-csr {
-            top: 2rem;
-            padding: 3rem 5rem 0 $vertical-navbar-width;
         }
 
         &.open-sidebar {

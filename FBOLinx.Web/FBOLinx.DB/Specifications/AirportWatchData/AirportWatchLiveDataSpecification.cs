@@ -11,7 +11,7 @@ namespace FBOLinx.DB.Specifications.AirportWatchData
 {
     public class AirportWatchLiveDataSpecification : Specification<DB.Models.AirportWatchLiveData>
     {
-        public AirportWatchLiveDataSpecification(DateTime aircraftPositionStartDateTime, DateTime aircraftPositionEndDateTime) : base(x => x.AircraftPositionDateTimeUtc >= aircraftPositionStartDateTime && x.AircraftPositionDateTimeUtc <= aircraftPositionEndDateTime)
+        public AirportWatchLiveDataSpecification(DateTime aircraftPositionStartDateTime, DateTime aircraftPositionEndDateTime) : base(x => x.CreatedDateTime >= aircraftPositionStartDateTime && x.CreatedDateTime <= aircraftPositionEndDateTime)
         {
         }
     }

@@ -28,7 +28,8 @@ namespace FBOLinx.DB.Models
         public FuelReq FuelOrder { get; set; }
         [NotMapped]
         public bool? IsFuelerLinxCustomer { get; set; }
-        
+        public DateTime? CreatedDateTime { get; set; } = DateTime.UtcNow;
+
         public static void CopyEntity(AirportWatchLiveData oldRecord, AirportWatchLiveData newRecord)
         {
             oldRecord.BoxTransmissionDateTimeUtc = newRecord.BoxTransmissionDateTimeUtc;
@@ -47,6 +48,7 @@ namespace FBOLinx.DB.Models
             oldRecord.GpsAltitude = newRecord.GpsAltitude;
             oldRecord.IsAircraftOnGround = newRecord.IsAircraftOnGround;
             oldRecord.TailNumber = newRecord.TailNumber;
+            oldRecord.CreatedDateTime = newRecord.CreatedDateTime;
         }
     }
 }

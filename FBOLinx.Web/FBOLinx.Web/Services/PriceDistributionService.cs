@@ -290,6 +290,8 @@ namespace FBOLinx.Web.Services
                 // Add all of the images for the different products
                 //Add the price breakdown as an image to prevent parsing
                 Dictionary<string, byte[]> priceBreakdownImages = await GetPriceBreakdownImage(customer, validPricingTemplates);
+                if (priceBreakdownImages.Count == 0)
+                    return;
 
                 var pricesForProducts = new List<PricesForProducts>();
                 foreach (var priceBreakdownImage in priceBreakdownImages)
@@ -612,13 +614,13 @@ namespace FBOLinx.Web.Services
                             }
                             else
                             {
-                                row = row.Replace("%FBO%", "");
+                                row = row.Replace("\"%FBO%\"", "");
                             }
 
 
                             var next = i < groupCustomerFbos.Prices.Count - 1 ? groupCustomerFbos.Prices[i + 1] : null;
 
-                            if (next != null)
+                            if (next != null && next.Product == groupCustomerFbos.Prices[i].Product)
                             {
                                 row = row.Replace("%MIN_GALLON%", model.MinGallons.ToString());
 
@@ -649,6 +651,7 @@ namespace FBOLinx.Web.Services
                             row = row.Replace("%ALL_IN_PRICE_INT_PRIVATE%", String.Format("{0:C}", model.IntPrivate.GetValueOrDefault()));
                             row = row.Replace("%ALL_IN_PRICE_DOMESTIC_COMM%", String.Format("{0:C}", model.DomComm.GetValueOrDefault()));
                             row = row.Replace("%ALL_IN_PRICE_DOMESTIC_PRIVATE%", String.Format("{0:C}", model.DomPrivate.GetValueOrDefault()));
+                            row = row.Replace("%PRODUCT%", model.Product);
 
                             row = row.Replace("%TAIL_NUMBERS%", groupCustomerAnalyticsResponse.TailNumbers);
 

@@ -1,0 +1,50 @@
+<div class="example-element-description">
+    <table class="description-table">
+        <tr>
+            <td>
+                Make/Model:
+                {{ getMakeModelDisplayString(data) }}
+            </td>
+            <td>Altitude: {{ data?.altitude }}</td>
+            <td>
+                ETA:
+                {{ data?.etaZulu | getTime }}
+            </td>
+            <td>
+                {{ getOriginCityLabel() }}:
+                {{ data?.city }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Visit to {{ fbo }} (30 days):
+                {{ data?.visitsToMyFBO }}
+            </td>
+            <td>
+                Past Arrivals at
+                {{ icao }} (30 days):
+                {{ getPastArrivalsValue(data) }}
+            </td>
+            <td>
+                ATD:
+                {{ data?.atdZulu | getTime }}
+            </td>
+            <td>
+                FAA Registered Owner:
+                {{ data?.faaRegisteredOwner }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Fuel Capacity (gal):
+                {{ data?.fuelCapacityGal }}
+            </td>
+            <td>FuelerLinx ID: {{ data?.fuelerlinxID }}</td>
+            <td>
+                Transaction Status:
+                {{ data?.transactionStatus }}
+            </td>
+            <td>{{ data?.phone }}</td>
+        </tr>
+    </table>
+</div>

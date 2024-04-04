@@ -171,6 +171,8 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
         public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
         public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
+        public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
+        public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
         public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -1030,6 +1032,10 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.Name).IsUnicode(false);
 
+                entity.HasOne(c => c.CustomerInfoByGroup)
+                    .WithMany(p => p.CustomerTags)
+                    .HasForeignKey(c => new { c.GroupId, c.CustomerId })
+                    .HasPrincipalKey(p => new { p.GroupId, p.CustomerId });
             });
 
             modelBuilder.Entity<ContactInfoByFbo>(entity =>

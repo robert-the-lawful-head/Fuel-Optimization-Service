@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using FBOLinx.DB.Projections.AirportWatch;
-using FBOLinx.DB.Specifications.AirportWatchData;
-using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.Fbo;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
@@ -16,7 +12,6 @@ using FBOLinx.ServiceLayer.BusinessServices.Customers;
 using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.AirportWatch;
 using FBOLinx.ServiceLayer.EntityServices;
-using Fuelerlinx.SDK;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             List<string> airportIcaos, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
             int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
+        Task<AirportWatchHistoricalData> GetLastParkingOcurrence(string AirportICAO, string AtcFlightNumber, string AircraftHexCode);
     }
 
     public class AirportWatchHistoricalDataService : BaseDTOService<AirportWatchHistoricalDataDto, DB.Models.AirportWatchHistoricalData, FboLinxContext>, IAirportWatchHistoricalDataService
@@ -183,6 +179,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                     AirportWatchHistoricalParking = h.AirportWatchHistoricalParking
                 });
             return result.ToList();
+        }
+
+        public async Task<AirportWatchHistoricalData> GetLastParkingOcurrence(string airportICAO, string atcFlightNumber, string aircraftHexCode)
+        {
+            return await _EntityService.Where( x =>
+                x.AirportICAO == airportICAO &&
+                x.AtcFlightNumber == atcFlightNumber && 
+                x.AircraftHexCode == aircraftHexCode
+            ).Include(x => x.AirportWatchHistoricalParking).OrderByDescending(x => x.Oid).FirstOrDefaultAsync();
         }
     }
 }

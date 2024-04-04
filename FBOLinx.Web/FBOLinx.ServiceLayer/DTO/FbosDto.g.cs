@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Azure;
 using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.DTO.Requests;
+using Fuelerlinx.SDK;
 
 namespace FBOLinx.Service.Mapping.Dto
 {
@@ -61,5 +65,53 @@ namespace FBOLinx.Service.Mapping.Dto
         public ICollection<FbocontactsDto> Contacts { get; set; }
         public ICollection<UserDTO> Users { get; set; }
         //public ICollection<FbopricesDto> Fboprices { get; set; }
+
+        public void Cast(Fbos item)
+        {
+            Oid = item.Oid;
+            Fbo = item.Fbo;
+            GroupId = item.GroupId;
+            Username = item.Username;
+            Password = item.Password;
+            PostedRetail = item.PostedRetail;
+            TotalCost = item.TotalCost;
+            Active = item.Active;
+            DateActivated = item.DateActivated;
+            Address = item.Address;
+            City = item.City;
+            State = item.State;
+            Country = item.Country;
+            TotalCost100Ll = item.TotalCost100Ll;
+            PostedRetail100Ll = item.PostedRetail100Ll;
+            Suspended = item.Suspended;
+            GroupMargin = item.GroupMargin;
+            ApplyGroupMargin = item.ApplyGroupMargin;
+            GroupMarginSetting = item.GroupMarginSetting;
+            GroupMarginFuture = item.GroupMarginFuture;
+            GroupMarginTemplate = item.GroupMarginTemplate;
+            GroupMarginMargin = item.GroupMarginMargin;
+            GroupMarginType = item.GroupMarginType;
+            GroupMargin100Llmargin = item.GroupMargin100Llmargin;
+            GroupMargin100Lltype = item.GroupMargin100Lltype;
+            FuelDeskEmail = item.FuelDeskEmail;
+            Website = item.Website;
+            MainPhone = item.MainPhone;
+            Extension = item.Extension;
+            DefaultMarginTypeJetA = item.DefaultMarginTypeJetA;
+            DefaultMarginType100Ll = item.DefaultMarginType100Ll;
+            SalesTax = item.SalesTax;
+            ApplySalesTax = item.ApplySalesTax;
+            LastLogin = item.LastLogin;
+            PriceUpdateReminderPrompt = item.PriceUpdateReminderPrompt;
+            PriceUpdateNeverPrompt = item.PriceUpdateNeverPrompt;
+            Currency = item.Currency;
+            InitialSetupPhase = item.InitialSetupPhase;
+            DisableCost = item.DisableCost;
+            AcukwikFBOHandlerId = item.AcukwikFBOHandlerId;
+            ExpirationDate = item.ExpirationDate;
+            SenderAddress = item.SenderAddress;
+            ReplyTo = item.ReplyTo;
+            AccountType = item.AccountType;
+        }
     }
 }

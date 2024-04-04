@@ -54,7 +54,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user, 10080);
+            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user.Oid, 10080);
 
             return Ok(accessToken);
         }

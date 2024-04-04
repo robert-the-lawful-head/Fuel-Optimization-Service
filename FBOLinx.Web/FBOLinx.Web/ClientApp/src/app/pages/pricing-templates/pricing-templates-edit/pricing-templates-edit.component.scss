@@ -29,14 +29,9 @@
 }
 
 .card-content {
-    height: calc(100vh - 280px);
+    height: calc(100vh - 200px);
     overflow: auto;
 }
-
-.tax-fee-exclusions {
-    max-width: 700px;
-}
-
 .container-fluid {
     height: 100%;
 }

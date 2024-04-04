@@ -1,17 +1,18 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { defaultStringsEnum } from 'src/app/enums/strings.enums';
 
 @Pipe({
   name: 'getTime'
 })
 export class GetTimePipe implements PipeTransform {
 
-  transform(date?: any, args?: any): any {
-    if(date == null) return "";
+  transform(date?: any, defaultString: defaultStringsEnum = defaultStringsEnum.empty): any {
+    if(date == null) return defaultString;
 
     let dateObject = new Date();
 
     if (typeof date === 'string' || date instanceof String) {
-        if (date === null || date.trim() === "") return "";
+        if (date === null || date.trim() === "") return defaultString;
         dateObject  = new Date(date.toString());
     }
 

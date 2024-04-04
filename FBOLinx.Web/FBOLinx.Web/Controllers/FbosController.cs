@@ -23,6 +23,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
 using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.DB.Specifications.User;
 
@@ -47,20 +48,20 @@ namespace FBOLinx.Web.Controllers
         private readonly IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
         private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-
+        private readonly IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
 
         public FbosController(
             FboLinxContext context,
-            DegaContext degaContext, 
+            DegaContext degaContext,
             IGroupFboService groupFboService,
-            IFboService fboService, 
-            IPriceFetchingService priceFetchingService, 
-            RampFeesService rampFeeService, 
+            IFboService fboService,
+            IPriceFetchingService priceFetchingService,
+            RampFeesService rampFeeService,
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
             IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
             IUserService userService,
-            IHttpContextAccessor httpContextAccessor) : base(logger)
+            IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService) : base(logger)
         {
             _groupFboService = groupFboService;
             _context = context;
@@ -76,6 +77,7 @@ namespace FBOLinx.Web.Controllers
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
         }
 
         // GET: api/Fbos/group/5
@@ -333,16 +335,25 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fbos = await _context.Fbos.FindAsync(id);
-            if (fbos == null)
+            try
             {
-                return NotFound();
+                await _fboCompaniesFavoritesService.DeleteFavoritesByFboId(id);
+
+                var fbos = await _context.Fbos.FindAsync(id);
+                if (fbos == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Fbos.Remove(fbos);
+                await _context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                BadRequest();
             }
 
-            _context.Fbos.Remove(fbos);
-            await _context.SaveChangesAsync();
-
-            return Ok(fbos);
+            return Ok();
         }
 
         [HttpPost("updatelastlogin/{fboId}")]
