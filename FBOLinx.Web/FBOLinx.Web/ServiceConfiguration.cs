@@ -106,12 +106,15 @@ namespace FBOLinx.Web
             services.AddScoped<UserRoleAttribute>();
             services.AddTransient<GroupFboService, GroupFboService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
-            services.AddTransient<EmailContentService, EmailContentService>();
+            services.AddTransient<IEmailContentService, EmailContentService>();
             services.AddTransient<AssociationsService, AssociationsService>();
             services.AddTransient<DBSCANService, DBSCANService>();
             services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
             services.AddTransient<IGroupEntityService, GroupEntityService>();
             services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
+            services.AddTransient<IOrderDetailsEntityService, OrderDetailsEntityService>();
+            services.AddTransient<FuelReqPricingTemplateEntityService, FuelReqPricingTemplateEntityService>();
+            services.AddTransient<IFuelReqConfirmationEntityService, FuelReqConfirmationEntityService>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 

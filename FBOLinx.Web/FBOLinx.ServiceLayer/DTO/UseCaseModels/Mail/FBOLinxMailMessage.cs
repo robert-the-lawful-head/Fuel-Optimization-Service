@@ -20,6 +20,9 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         public SendGridMissedQuoteTemplateData SendGridMissedQuoteTemplateData { get; set; }
         public SendGridGroupCustomerPricingTemplateData SendGridGroupCustomerPricingTemplateData { get; set; }
         public SendGridAutomatedFuelOrderNotificationTemplateData SendGridAutomatedFuelOrderNotificationTemplateData { get; set; }
+        public SendGridOrderConfirmationTemplateData SendGridOrderConfirmationTemplateData { get; set; }
+        public SendGridFuelRequestUpdateOrCancellationTemplateData SendGridFuelRequestUpdateOrCancellationTemplateData { get; set; }
+        public SendGridAutomatedFuelOrderCancellationTemplateData SendGridFuelOrderCancellationTemplateData { get; set; }
 
         #endregion
 

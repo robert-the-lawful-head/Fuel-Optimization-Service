@@ -1,5 +1,6 @@
 <div class="paddingTop">
     <div class="container-fluid">
+        <!-- FILTER -->
         <div class="row">
             <div class="col col-md-4">
                 <app-table-global-search [matDataSource]="dataSource"
@@ -7,60 +8,58 @@
             </div>
             <div class="col-6 col-md-3">
                 <mat-form-field>
-                    <input
-                        (dateChange)="applyDateFilterChange()"
-                        (focus)="dashboardSettingsStartDateFilter.open()"
-                        [(ngModel)]="filterStartDate"
-                        [matDatepicker]="dashboardSettingsStartDateFilter"
-                        [max]="filterEndDate"
-                        matInput
-                        placeholder="Start Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsStartDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsStartDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
+                    <input (dateChange)="applyDateFilterChange()"
+                           (focus)="dashboardSettingsStartDateFilter.open()"
+                           [(ngModel)]="filterStartDate"
+                           [matDatepicker]="dashboardSettingsStartDateFilter"
+                           [max]="filterEndDate"
+                           matInput
+                           placeholder="Start Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsStartDateFilter
+                                    disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="col-6 col-md-3">
                 <mat-form-field>
-                    <input
-                        (dateChange)="applyDateFilterChange()"
-                        (focus)="dashboardSettingsEndDateFilter.open()"
-                        [(ngModel)]="filterEndDate"
-                        [matDatepicker]="dashboardSettingsEndDateFilter"
-                        [min]="filterStartDate"
-                        matInput
-                        placeholder="End Date"
-                    />
-                    <mat-datepicker-toggle
-                        [for]="dashboardSettingsEndDateFilter"
-                        matSuffix
-                    ></mat-datepicker-toggle>
-                    <mat-datepicker
-                        #dashboardSettingsEndDateFilter
-                        disabled="false"
-                    ></mat-datepicker>
+                    <input (dateChange)="applyDateFilterChange()"
+                           (focus)="dashboardSettingsEndDateFilter.open()"
+                           [(ngModel)]="filterEndDate"
+                           [matDatepicker]="dashboardSettingsEndDateFilter"
+                           [min]="filterStartDate"
+                           matInput
+                           placeholder="End Date" />
+                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
+                                           matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #dashboardSettingsEndDateFilter
+                                    disabled="false"></mat-datepicker>
                 </mat-form-field>
             </div>
             <div class="actions col-6 col-md-2">
+                <div class="row d-none d-md-flex">
+                    <div class="col-12 text-right">
+                        <div>
+                            <button [view]="'accent'"
+                                    beforeIcon="fa fa-plus"
+                                    class="action-btn"
+                                    ni-button
+                                    size="small"
+                                    (click)="addServiceOrderClicked()">
+                                Add Order
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon
-                        aria-hidden="true"
-                        class="mat-icon material-icons"
-                        role="img"
-                        >more_vert</mat-icon
-                    >
+                    <mat-icon aria-hidden="true"
+                              class="mat-icon material-icons"
+                              role="img">more_vert</mat-icon>
                 </button>
-                <mat-menu
-                    #gridActions="matMenu"
-                    class="switch-nested-menu-left-arrows"
-                    xPosition="before"
-                >
+                <mat-menu #gridActions="matMenu"
+                          class="switch-nested-menu-left-arrows"
+                          xPosition="before">
                     <button (click)="exportCsv()" mat-menu-item>Export</button>
                     <button (click)="openSettings()" mat-menu-item>
                         Settings
@@ -69,223 +68,283 @@
             </div>
         </div>
     </div>
-    <div class="w-100 table-container" style="overflow-x: auto" (scroll)="onTableScroll($event)">
-        <table [dataSource]="dataSource"
-               class="col-12 mb-0"
-               multiTemplateDataRows
-               mat-table
-               matSort>
-            <ng-container matColumnDef="expand-icon">
-                <th mat-header-cell *matHeaderCellDef aria-label="row actions">
-                    &nbsp;
-                </th>
-                <td mat-cell *matCellDef="let element">
-                    <button mat-icon-button
-                            aria-label="expand row"
-                            (click)="
-                            toogleExpandedRows(element.sourceId);
-                            $event.stopPropagation()
-                        ">
-                        <mat-icon *ngIf="!isRowExpanded(element.sourceId)">keyboard_arrow_down</mat-icon>
-                        <mat-icon *ngIf="isRowExpanded(element.sourceId)">keyboard_arrow_up</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="customerName">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Flight Dept.
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    <div style="position: absolute; left: 0;">
-                        <ni-badge *ngIf="fuelreq.cancelled" [arrow]="'left'" [borderRadius]="false"
-                                  [color]="'danger'"
-                                  matTooltipPosition="after">
-                            Cancelled
-                        </ni-badge>
-                    </div>
 
-                    <span style="display: flex;">
-                        {{ fuelreq.customerName }} &nbsp;
-                        <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
-                                  [color]="'warning'"
-                                  matTooltipPosition="after">
-                            Order Note
-                        </ni-badge>
-                    </span>
-                </td>
-            </ng-container>
 
-            <ng-container matColumnDef="pricingTemplateName">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    ITP Margin Template
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.pricingTemplateName }}
-                </td>
-            </ng-container>
+    <mat-drawer-container style="min-height: 500px" [hasBackdrop]="false">
+        <mat-drawer-content>
+            <div class="w-100 table-container" style="overflow-x: auto" (scroll)="onTableScroll($event)">
+                <table [dataSource]="dataSource"
+                       class="col-12 mb-0"
+                       multiTemplateDataRows
+                       mat-table
+                       matSort>
+                    <!-- HIDDEN-->
+                    <ng-container matColumnDef="oid">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            ID
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            {{ fuelreq.oid }}
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="eta">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}
-                </td>
-            </ng-container>
+                    <ng-container matColumnDef="fuelerlinxid">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            FuelerLinx ID
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            {{ fuelreq.sourceId }}
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="etd">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}
-                </td>
-            </ng-container>
+                    <ng-container matColumnDef="created">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            Created
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            {{ fuelreq.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{fuelreq.timeZone}}
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="quotedVolume">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Volume (gal.)
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.quotedVolume }}
-                </td>
-            </ng-container>
+                    <!-- EXPAND ICON -->
+                    <ng-container matColumnDef="expand-icon">
+                        <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+                            &nbsp;
+                        </th>
+                        <td mat-cell *matCellDef="let element">
+                            <div style="position: relative; top: 5px; left: -20px;">
+                                <ni-badge *ngIf="element.cancelled" [arrow]="'left'" [borderRadius]="false"
+                                          [color]="'danger'"
+                                          matTooltipPosition="after">
+                                    Cancelled
+                                </ni-badge>
+                                <ni-badge *ngIf="!element.cancelled && (element.serviceOrder == null ? true : element.serviceOrder.isCompleted)" [arrow]="'left'" [borderRadius]="false"
+                                          [color]="'success'"
+                                          matTooltipPosition="after">
+                                    Completed
+                                </ni-badge>
+                                <ni-badge *ngIf="element.serviceOrder == null ? false : element.serviceOrder.isActive" [arrow]="'left'" [borderRadius]="false"
+                                          [color]="'active'"
+                                          matTooltipPosition="after">
+                                    Active
+                                </ni-badge>
+                            </div>
+                            <button mat-icon-button
+                                    aria-label="expand row"
+                                    (click)="
+                            toogleExpandedRows((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName); $event.stopPropagation()">
+                                <mat-icon *ngIf="!isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">keyboard_arrow_up</mat-icon>
+                                <mat-icon *ngIf="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">keyboard_arrow_down</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="quotedPpg">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{
+                    <ng-container matColumnDef="archivedCheckbox">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <mat-checkbox [(ngModel)]="fuelreq.archived" (change)=" updateArchivedFlag($event, fuelreq)" clickStopPropagation>
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
+                    <!-- CUSTOMER NAME -->
+                    <ng-container matColumnDef="customerName">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            Flight Dept.
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived" style="display:flex;">
+                                {{ fuelreq.customerName }} &nbsp;
+                                <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
+                                          [color]="'warning'"
+                                          matTooltipPosition="after">
+                                    Order Note
+                                </ni-badge>
+                            </span>
+                            <span *ngIf="fuelreq.archived" style="display: flex;">
+                                <s>
+                                    {{ fuelreq.customerName }} &nbsp;
+                                    <ni-badge *ngIf="fuelreq.customerNotes" [arrow]="'right'" [borderRadius]="false"
+                                              [color]="'warning'"
+                                              matTooltipPosition="after">
+                                        Order Note
+                                    </ni-badge>
+                                </s>
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <!-- PAYMENT METHOD -->
+                    <ng-container matColumnDef="paymentMethod">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            Payment Method
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{fuelreq.paymentMethod}}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{fuelreq.paymentMethod}}</s></span>
+                        </td>
+                    </ng-container>
+
+                    <!-- ETA -->
+                    <ng-container matColumnDef="eta">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.eta | date: "MMM d, yyyy, HH:mm" }}</s></span>
+
+                        </td>
+                    </ng-container>
+
+                    <!-- ETD -->
+                    <ng-container matColumnDef="etd">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>ETD</th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.etd | date: "MMM d, yyyy, HH:mm" }}</s></span>
+
+                        </td>
+                    </ng-container>
+
+                    <!-- PPG -->
+                    <ng-container matColumnDef="quotedPpg">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>PPG</th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">
+                                {{
                         getPPGDisplayString(fuelreq)
-                    }}
-                </td>
-            </ng-container>
+                                }}
+                            </span>
+                            <span *ngIf="fuelreq.archived">
+                                <s>
+                                    {{
+                                            getPPGDisplayString(fuelreq)
+                                    }}
+                                </s>
+                            </span>
 
-            <ng-container matColumnDef="tailNumber">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Tail #
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.tailNumber }}
-                </td>
-            </ng-container>
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="phoneNumber">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Phone</th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    {{ fuelreq.phoneNumber }}
-                </td>
-            </ng-container>
+                    <!-- TAIL NUMBER  -->
+                    <ng-container matColumnDef="tailNumber">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            Tail #
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.tailNumber }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.tailNumber }}</s></span>
 
-            <ng-container matColumnDef="source">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    Source
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>{{ fuelreq.source }}</td>
-            </ng-container>
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="email">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
-                <td *matCellDef="let fuelreq"
-                    [matTooltip]="fuelreq.email"
-                    mat-cell>
-                    {{ fuelreq.email }}
-                </td>
-            </ng-container>
+                    <!-- SOURCE -->
+                    <ng-container matColumnDef="source">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                            Source
+                        </th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.source }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.source }}</s></span>
 
-            <ng-container matColumnDef="services">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Services</th>
-                <td *matCellDef="let fuelreq"
-                    [matTooltip]="'This order has additional services requested'"
-                    mat-cell>
-                    <span *ngIf="fuelreq.serviceOrder != null">
-                        <a class="btn-link" (click)="manageServiceOrderClicked(fuelreq)" clickStopPropagation>Manage</a>
-                    </span>
-                </td>
-            </ng-container>
+                        </td>
+                    </ng-container>
 
-            <ng-container matColumnDef="delete">
-                <th *matHeaderCellDef mat-header-cell>
-                    <div class="pull-right">
-                        <button color="accent" mat-flat-button>Add New</button>
-                    </div>
-                </th>
-                <td *matCellDef="let fuelreq" mat-cell>
-                    <div class="pull-right">
-                        <button color="warn" mat-stroked-button>Delete</button>
-                    </div>
-                </td>
-            </ng-container>
-            <ng-container matColumnDef="expandedDetail">
-                <td mat-cell
-                    *matCellDef="let element"
-                    [attr.colspan]="allColumnsToDisplay.length">
-                    <div class="example-element-detail"
-                         [@detailExpand]="
-                        isRowExpanded(element.sourceId) ? 'expanded' : 'collapsed'
-                        ">
-                        <div class="example-element-description">
-                            <table class="description-table">
-                                <tr>
-                                    <td>
-                                        Customer Order Notes:
-                                    </td>
-                                    <td>ID: {{ element.oid }}</td>
-                                    <td>
-                                        Created:
-                                        {{ element.dateCreated | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        {{ element.customerOrderNotes }}
-                                    </td>
-                                    <td>
-                                        FuelerLinx ID:
-                                        {{ element.sourceId }}
-                                    </td>
-                                    <td>
-                                        Uplift Request:
-                                        {{ (element.fuelOn == "Arrival" ? element.eta : element.etd) | date: "MMM d, yyyy, HH:mm" }} {{element.timeZone}}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Customer Requested Payment Method:
-                                        {{ element.paymentMethod }}
-                                    </td>
-                                    <td>
-                                        Transaction Status:
-                                        {{ element.cancelled ? "Cancelled" : "Live" }}
-                                    </td>
-                                    <td>
-                                    </td>
-                                </tr>
-                            </table>
+                    <!-- EMAIL -->
+                    <ng-container matColumnDef="email">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Email</th>
+                        <td *matCellDef="let fuelreq"
+                            [matTooltip]="fuelreq.email"
+                            mat-cell>
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.email }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.email }}</s></span>
+
+                        </td>
+                    </ng-container>
+
+                    <!-- SERVICES COMPLETED -->
+                    <ng-container matColumnDef="services">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>Services Completed</th>
+                        <td *matCellDef="let fuelreq"
+                            mat-cell class="services-completed">
+                            <span *ngIf="!fuelreq.archived">{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</span>
+                            <span *ngIf="fuelreq.archived"><s>{{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfCompletedItems }} / {{ fuelreq.serviceOrder == null || fuelreq.serviceOrder.numberOfTotalServices == 0 ? 0 : fuelreq.serviceOrder.numberOfTotalServices }}</s></span>
+
+                        </td>
+                    </ng-container>
+
+                    <!-- CONFIRMATION BUTTON -->
+                    <ng-container matColumnDef="receivedConfirmationButton">
+                        <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
+                        <td *matCellDef="let fuelreq" mat-cell>
+                            <div class="pull-right" *ngIf="fuelreq.showConfirmationButton">
+                                <ni-button (click)="sendConfirmationNotification($event,fuelreq)"
+                                           [view]="'success'"
+                                           size="small"
+                                           [disabled]="fuelreq.isConfirmed"
+                                           ni-button>
+                                    {{ getConfirmationButtonText(fuelreq) }}
+                                    <mat-spinner *ngIf="isLoadignConfirmationButton(fuelreq)" diameter="20"></mat-spinner>
+                                </ni-button>
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <!-- EXPANDED DETAILS/SERVICES -->
+                    <ng-container matColumnDef="expandedDetail">
+                        <td mat-cell
+                            *matCellDef="let element"
+                            [attr.colspan]="allColumnsToDisplay.length">
+                            <div class="example-element-detail"
+                                 [@detailExpand]="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber + '|' + element.customerId + '|' + element.customerName) ? 'expanded' : 'collapsed'" *ngIf="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber + '|' + element.customerId + '|' + element.customerName)">
+                                <div class="example-element-description">
+                                    <app-fuelreqs-grid-services [serviceOrderItems]="element.serviceOrder == null ? null : element.serviceOrder.serviceOrderItems" [serviceOrderId]="element.serviceOrder == null ? null : element.serviceOrder.oid" [associatedFuelOrderId]="element.oid" [servicesAndFees]="servicesAndFees" [fuelerlinxTransactionId]="element.sourceId" [customerId]="element.customerId" [customer]="element.customerName" [tailNumber]="element.tailNumber" (completedServicesChanged)="completedServicesChanged(element, $event)" (totalServicesChanged)="totalServicesChanged(element,$event)" (toggleDrawerChanged)="toggleDrawerChanged($event)"></app-fuelreqs-grid-services>
+                                </div>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row
+                        *matHeaderRowDef="getVisibleColumns(); sticky: true"></tr>
+                    <tr mat-row
+                        *matRowDef="let element; columns: getVisibleColumns()"
+                        [id]="element.oid"
+                        class="example-element-row"
+                        [class.example-detail-row]="element.archived === true"
+                        [class.example-expanded-row]="isRowExpanded((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|'  + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)"
+                        (click)="toogleExpandedRows((element.serviceOrder == undefined ? 0 : element.serviceOrder.oid).toString() + '|' + element.oid.toString() + '|' + (element.sourceId == undefined ? 0 : element.sourceId).toString() + '|' + element.tailNumber  + '|' + element.customerId + '|' + element.customerName)">
+                    </tr>
+                    <tr mat-row
+                        *matRowDef="let row; columns: ['expandedDetail']"
+                        class="example-detail-row" [id]="row.oid == 0 ? row.serviceOrder.oid : row.oid"></tr>
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" [attr.colspan]="columns.length">
+                            {{ getNoDataToDisplayString() }}
+                        </td>
+                    </tr>
+                </table>
+                <div class="invisible">
+                    <mat-paginator (page)="(0); onPageChanged($event)"
+                                   [length]="resultsLength"
+                                   [pageSizeOptions]="[10, 25, 50, 100]"
+                                   [pageSize]="pageSize"></mat-paginator>
+                </div>
+            </div>
+        </mat-drawer-content>
+
+        <mat-drawer mode="over" position="end"
+                    class="drawer-container" style="min-width: 390px; max-width: 390px;"
+                    #orderNotes>
+            <ng-container>
+                <div class="mat-drawer-inner-container-width">
+                    <div class="row p-2">
+                        <div class="col-10" *ngIf="tailNumber != null && tailNumber != ''">
+                            <app-fuelreqs-notes [serviceOrderId]="serviceOrderId" [fuelOrderId]="associatedFuelOrderId" [fuelerlinxTransactionId]="fuelerlinxTransactionId" [tailNumber]="tailNumber" [customerId]="customerId" [customer]="customer" [isDrawerManuallyClicked]="isDrawerManuallyClicked" (openByDefault)="openByDefault($event)"></app-fuelreqs-notes>
+                        </div>
+                        <div class="col-2">
+                            <button (click)="toggleClosedNotesDrawer()" beforeIcon="fa fa-times" ni-button [view]="'blank'" size="small"></button>
                         </div>
                     </div>
-                </td>
+                </div>
             </ng-container>
-            <tr mat-header-row
-                *matHeaderRowDef="getVisibleColumns(); sticky: true"></tr>
-            <tr mat-row
-                *matRowDef="let element; columns: getVisibleColumns()"
-                class="example-element-row"
-                [class.example-expanded-row]="isRowExpanded(element.sourceId)"
-                (click)="
-            toogleExpandedRows(element.sourceId)
-            "></tr>
-            <tr mat-row
-                *matRowDef="let row; columns: ['expandedDetail']"
-                class="example-detail-row"></tr>
-            <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" [attr.colspan]="columns.length">
-                    {{ getNoDataToDisplayString() }}
-                </td>
-            </tr>
-        </table>
-        <div class="invisible">
-            <mat-paginator
-                (page)="(0); onPageChanged($event)"
-                [length]="resultsLength"
-                [pageSizeOptions]="[10, 25, 50, 100]"
-                [pageSize]="pageSize"
-            ></mat-paginator>
-        </div>
-    </div>
+        </mat-drawer>
+    </mat-drawer-container>
 </div>

@@ -17,9 +17,11 @@ namespace FBOLinx.ServiceLayer.EntityServices
         private IDbContextTransaction dbContextTransaction;
 
         protected readonly TContext context;
+        public DbSet<TEntity> dbSet;
         public Repository(TContext context)
         {
             this.context = context;
+            this.dbSet = context.Set<TEntity>();
         }
         public async Task<TEntity> AddAsync(TEntity entity)
         {
@@ -41,7 +43,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task<TEntity> DeleteAsync(int id)
         {
-            var entity = context.Set<TEntity>().Find(id);
+            var entity = await context.Set<TEntity>().FindAsync(id);
             if (entity == null)
             {
                 return null;
@@ -50,8 +52,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
             await context.SaveChangesAsync();
             return entity;
         }
-        public async Task<TEntity> GetAsync(int id) => await context.Set<TEntity>().FindAsync(id);
-        
+        public IQueryable<TEntity> Get() => context.Set<TEntity>().AsQueryable();
+
         public async Task UpdateAsync(TEntity entity)
         {
             try
@@ -87,6 +89,7 @@ namespace FBOLinx.ServiceLayer.EntityServices
         => await context.Set<TEntity>().AnyAsync(predicate);
         public async Task<TEntity> FindAsync(int id)
         => await context.Set<TEntity>().FindAsync(id);
+
         public virtual async Task<TEntity> GetSingleBySpec(ISpecification<TEntity> spec) => await GetEntitySingleBySpec(spec);
         
         public virtual async Task<List<TEntity>> GetListBySpec(ISpecification<TEntity> spec)
@@ -129,22 +132,28 @@ namespace FBOLinx.ServiceLayer.EntityServices
         
         public async Task BulkDeleteEntities(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
-            try
+            var executionStrategy = context.Database.CreateExecutionStrategy();
+            await executionStrategy.Execute(async () =>
             {
-                if (bulkConfig == null)
+                using (var transaction = await context.Database.BeginTransactionAsync())
                 {
-                    bulkConfig = new BulkConfig();
-                    bulkConfig.SetOutputIdentity = true;
+                    try
+                    {
+                        if (bulkConfig == null)
+                        {
+                            bulkConfig = new BulkConfig();
+                            bulkConfig.SetOutputIdentity = true;
+                        }
+                        await context.BulkDeleteAsync(entities, bulkConfig);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Something went wrong processing delete bulk operation", ex);
+                    }
                 }
-                await using var transaction = await context.Database.BeginTransactionAsync();
-                await context.BulkDeleteAsync(entities, bulkConfig);
-                await transaction.CommitAsync();
-
-            }
-            catch (System.Exception exception)
-            {
-                //Do nothing... the entities were already deleted
-            }
+            });
         }
         public async Task BulkDeleteEntities(ISpecification<TEntity> spec, BulkConfig? bulkConfig = null)
         {
@@ -161,33 +170,61 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
         public async Task BulkInsert(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
-            if (bulkConfig == null)
+            var executionStrategy = context.Database.CreateExecutionStrategy();
+            await executionStrategy.Execute(async () =>
             {
-                bulkConfig = new BulkConfig();
-                bulkConfig.BatchSize = 500;
-                bulkConfig.SetOutputIdentity = false;
-                bulkConfig.BulkCopyTimeout = 0;
-                bulkConfig.WithHoldlock = false;
-            }
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        if (bulkConfig == null)
+                        {
+                            bulkConfig = new BulkConfig();
+                            bulkConfig.BatchSize = 500;
+                            bulkConfig.SetOutputIdentity = false;
+                            bulkConfig.BulkCopyTimeout = 0;
+                            bulkConfig.WithHoldlock = false;
+                        }
 
-            await using var transaction = await context.Database.BeginTransactionAsync();
-            await context.BulkInsertAsync(entities, bulkConfig);
-            await transaction.CommitAsync();
+                        await context.BulkInsertAsync(entities, bulkConfig);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Something went wrong processing insert bulk operation", ex);
+                    }
+                }
+            });
         }
 
         public async Task BulkUpdate(List<TEntity> entities, BulkConfig? bulkConfig = null)
         {
-            if (bulkConfig == null)
+            var executionStrategy = context.Database.CreateExecutionStrategy();
+            await executionStrategy.Execute(async () =>
             {
-                bulkConfig = new BulkConfig();
-                bulkConfig.BatchSize = 500;
-                bulkConfig.SetOutputIdentity = false;
-                bulkConfig.BulkCopyTimeout = 0;
-                bulkConfig.WithHoldlock = false;
-            }
-            await using var transaction = await context.Database.BeginTransactionAsync();
-            await context.BulkUpdateAsync(entities);
-            await transaction.CommitAsync();
+                using (var transaction = await context.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        if (bulkConfig == null)
+                        {
+                            bulkConfig = new BulkConfig();
+                            bulkConfig.BatchSize = 500;
+                            bulkConfig.SetOutputIdentity = false;
+                            bulkConfig.BulkCopyTimeout = 0;
+                            bulkConfig.WithHoldlock = false;
+                        }
+                        await context.BulkUpdateAsync(entities);
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw new Exception("Something went wrong processing update bulk operation", ex);
+                    }
+                }
+            });
         }
 
         public IExecutionStrategy CreateExecutionStrategy()

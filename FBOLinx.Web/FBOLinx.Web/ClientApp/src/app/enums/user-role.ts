@@ -7,3 +7,7 @@ export enum UserRole {
     CSR = 5,
     NonRev = 6,
 }
+export enum AccountType {
+    Premium = 0,
+    Freemium = 1
+}

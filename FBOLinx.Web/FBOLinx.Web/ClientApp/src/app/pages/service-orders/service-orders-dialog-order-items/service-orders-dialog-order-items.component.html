@@ -7,6 +7,7 @@
     <div *ngIf="selectedServiceOrder">
             <app-service-orders-item-list [serviceOrder]="selectedServiceOrder"
                                           (closeClicked)="dialogRef.close();"
+                                          [isFreemiumAccount]="isFreemiumAccount"
                                           [showClose]="false"></app-service-orders-item-list>
     </div>
 

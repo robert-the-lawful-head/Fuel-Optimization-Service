@@ -35,6 +35,10 @@
                 }
 
                 .item-link {
+                    &.disabled{
+                        color: #BBBFC7;
+                        background-color: #F5F5F6;
+                    }
                     flex-direction: row-reverse;
                     align-items: center;
                     background: menu(item-bg);
@@ -59,6 +63,9 @@
                         margin: 0 ($module-rem / 2);
                         @media only screen and (max-width: 991px) {
                             display: none;
+                        }
+                        .premium-icon{
+                            color: #ffe082;
                         }
                     }
 
@@ -114,6 +121,7 @@
                         }
                     }
                 }
+
 
                 &.menu-item-group {
                     &:after {

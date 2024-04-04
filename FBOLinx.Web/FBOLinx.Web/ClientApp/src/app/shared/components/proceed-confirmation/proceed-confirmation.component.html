@@ -1,20 +1,30 @@
-<h1 mat-dialog-title>{{ title }}</h1>
-<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px">
+<div><h1 mat-dialog-title>{{ title }}</h1></div>
+<div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px;">
     <span>
         {{ data.description }}
     </span>
-    <table class="mat-table mt-2" style="min-width: 65%; max-width: 75%">
+    <table class="mat-table mt-2" style="min-width: 65%; max-width: 75%" *ngIf="data.tableItemsList">
         <tbody>
-            <tr
-                *ngFor="let cell of data.itemsList"
-                class="mat-row mat-row-not-hover text-left"
-            >
+            <tr *ngFor="let cell of data.tableItemsList"
+                class="mat-row mat-row-not-hover text-left">
                 <td class="mat-cell">
                     {{ cell }}
                 </td>
             </tr>
         </tbody>
     </table>
+    <div *ngIf="data.listItemsList">
+        <ul>
+            <li *ngFor="let cell of data.listItemsList">
+                <div [innerHTML]="cell"></div>
+            </li>
+        </ul>
+    </div>
+    <div *ngIf="data.additionalInfo" class="mt-2">
+        <span>
+            {{ data.additionalInfo }}
+        </span>
+    </div>
 </div>
 <div mat-dialog-actions>
     <div class="text-right col-12">

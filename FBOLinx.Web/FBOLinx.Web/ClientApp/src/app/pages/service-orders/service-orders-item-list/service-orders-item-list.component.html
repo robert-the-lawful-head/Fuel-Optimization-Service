@@ -3,38 +3,72 @@
         <div class="col-10">
             <div class="row">
                 <div class="col-12">
-                    <div class="d-inline-block pr-0">{{serviceOrder.customerInfoByGroup?.company}}</div>
+                    <div class="d-inline-block pr-0">
+                        {{ serviceOrder.customerInfoByGroup?.company }}
+                    </div>
                     <div class="d-inline-block">
-                        <button mat-icon-button aria-label="View company details" color="accent" (click)="viewCustomerDetailsClicked()" style="line-height: initial; height: auto; vertical-align: text-top;">
+                        <button
+                            mat-icon-button
+                            aria-label="View company details"
+                            color="accent"
+                            (click)="viewCustomerDetailsClicked()"
+                            style="
+                                line-height: initial;
+                                height: auto;
+                                vertical-align: text-top;
+                            "
+                        >
                             <mat-icon inline="true">open_in_new</mat-icon>
                         </button>
                     </div>
                 </div>
                 <div class="col-12">
-                    <div class="d-inline-block pr-0">{{serviceOrder.customerAircraft?.tailNumber}}</div>
+                    <div class="d-inline-block pr-0">
+                        {{ serviceOrder.customerAircraft?.tailNumber }}
+                    </div>
                     <div class="d-inline-block">
-                        <button mat-icon-button aria-label="View company details" color="accent" (click)="viewAircraftDetailsClicked()" style="line-height: initial; height: auto; vertical-align: text-top;">
+                        <button
+                            mat-icon-button
+                            aria-label="View company details"
+                            color="accent"
+                            (click)="viewAircraftDetailsClicked()"
+                            style="
+                                line-height: initial;
+                                height: auto;
+                                vertical-align: text-top;
+                            "
+                        >
                             <mat-icon inline="true">open_in_new</mat-icon>
                         </button>
                     </div>
                 </div>
                 <div class="col-12">
-                    {{serviceOrder.arrivalDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                    {{
+                        serviceOrder.arrivalDateTimeLocal
+                            | date : "MMM d, yyyy, HH:mm"
+                    }}
+                    (L)
                 </div>
                 <div class="col-12">
-                    {{serviceOrder.departureDateTimeLocal | date: "MMM d, yyyy, HH:mm"}} (L)
+                    {{
+                        serviceOrder.departureDateTimeLocal
+                            | date : "MMM d, yyyy, HH:mm"
+                    }}
+                    (L)
                 </div>
             </div>
         </div>
         <div class="col-2">
             <div *ngIf="showClose">
                 <button mat-icon-button (click)="onCloseClicked()">
-                    <mat-icon aria-hidden="true"
-                              class="mat-icon material-icons"
-                              role="img">close</mat-icon>
+                    <mat-icon
+                        aria-hidden="true"
+                        class="mat-icon material-icons"
+                        role="img"
+                        >close</mat-icon
+                    >
                 </button>
             </div>
-
         </div>
     </div>
     <div class="row">
@@ -44,14 +78,35 @@
             </div>
         </div>
     </div>
-    <mat-selection-list #serviceOrderItemsSelectionList (selectionChange)="serviceItemToggleChanged($event)">
-        <mat-list-option *ngFor="let item of serviceOrder.serviceOrderItems" [value]="item" [selected]="item.isCompleted" togglePosition="before" checkboxPosition="before" labelPosition="after">
+    <mat-selection-list
+        #serviceOrderItemsSelectionList
+        (selectionChange)="serviceItemToggleChanged($event)"
+    >
+        <mat-list-option
+            *ngFor="let item of serviceOrder.serviceOrderItems"
+            [value]="item"
+            [selected]="item.isCompleted"
+            togglePosition="before"
+            checkboxPosition="before"
+            labelPosition="after"
+            [disabled]="isFreemiumAccount"
+        >
             <div class="row">
                 <div class="col-8">
-                    {{item.serviceName}}
+                    {{ item.serviceName }}
                 </div>
                 <div class="col-4 text-right">
-                    <button (click)="deleteServiceOrderItemClicked(item);$event.stopPropagation()" [view]="'error'" beforeIcon="fa fa-trash" ni-button size="small"></button>
+                    <button
+                        (click)="
+                            deleteServiceOrderItemClicked(item);
+                            $event.stopPropagation()
+                        "
+                        [view]="'error'"
+                        beforeIcon="fa fa-trash"
+                        ni-button
+                        size="small"
+                        [disabled]="isFreemiumAccount"
+                    ></button>
                 </div>
             </div>
         </mat-list-option>
@@ -60,22 +115,33 @@
     <div class="row">
         <div class="col-8">
             <mat-form-field>
-                <input matInput [(ngModel)]="newServiceOrderItem.serviceName" placeholder="New Service" (keyup.enter)="addServiceOrderItemClicked()" cdk-focus-start />
+                <input
+                    matInput
+                    [(ngModel)]="newServiceOrderItem.serviceName"
+                    placeholder="New Service"
+                    (keyup.enter)="addServiceOrderItemClicked()"
+                    cdk-focus-start
+                    [disabled]="isFreemiumAccount"
+                />
             </mat-form-field>
         </div>
         <div class="col-4">
-            <button (click)="addServiceOrderItemClicked()" [view]="'accent'" beforeIcon="fa fa-plus" class="action-btn float-right"
-                    ni-button size="small" [disabled]="newServiceOrderItem.serviceName == ''"
-                    style="position: absolute; top: 35%;">
+            <button
+                (click)="addServiceOrderItemClicked()"
+                [view]="'accent'"
+                beforeIcon="fa fa-plus"
+                class="action-btn float-right"
+                ni-button
+                size="small"
+                [disabled]="newServiceOrderItem.serviceName == ''"
+                style="position: absolute; top: 35%"
+            >
                 Add
             </button>
         </div>
     </div>
 
     <div class="">
-        <div class="">
-
-        </div>
+        <div class=""></div>
     </div>
 </div>
-

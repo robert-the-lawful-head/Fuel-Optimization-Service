@@ -1,0 +1,28 @@
+<h1 mat-dialog-title>New Category</h1>
+<div class="mt-1" mat-dialog-content>
+    <div>
+        <mat-form-field>
+            <input
+                [(ngModel)]="data.name"
+                aria-label="Category Name"
+                matInput
+                placeholder="Category Name"
+                type="text"
+            />
+        </mat-form-field>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button
+        [mat-dialog-close]="data"
+        class="mr-1"
+        color="green"
+        mat-stroked-button
+    >
+        <mat-icon  aria-hidden="true"
+        class="mat-icon material-icons"
+        role="img">save</mat-icon>
+        Save Category
+    </button>
+    <button (click)="onNoClick()" mat-stroked-button>Cancel</button>
+</div>

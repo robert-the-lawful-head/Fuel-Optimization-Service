@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TagsService } from 'src/app/services/tags.service';
 
 import { SharedService } from '../../../layouts/shared-service';
-import { locationChangedEvent } from '../../../models/sharedEvents';
+import { locationChangedEvent } from '../../../constants/sharedEvents';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
 // Services
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
@@ -39,6 +39,7 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
     public icao:             string;
     public fbo:              string;
     public id:               string;
+    selectedTabIndex: number = 0;
 
     constructor(
         private store: Store<State>,
@@ -48,7 +49,8 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
         private customerAircraftService: CustomeraircraftsService,
-        private tagService : TagsService
+        private tagService: TagsService,
+        private route: ActivatedRoute,
 
     ) {
         this.sharedService.titleChange(this.pageTitle);
@@ -57,6 +59,12 @@ export class CustomersHomeComponent implements OnInit, OnDestroy {
         this.loadCustomerAircraft();
         this.loadFuelVendors();
         this.loadTags();
+
+        this.route.queryParams.subscribe((params) => {
+            if (params.tab && params.tab) {
+                this.selectedTabIndex = parseInt(params.tab);
+            }
+        });
     }
 
     ngOnInit(): void {

@@ -1,5 +1,5 @@
 <section>
-    <mat-tab-group style="background: white;">
+    <mat-tab-group style="background: white;" [selectedIndex]="selectedTabIndex">
         <mat-tab>
             <ng-template mat-tab-label>
                 Customers ({{customersData?.length}})

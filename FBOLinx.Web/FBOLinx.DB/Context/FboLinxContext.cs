@@ -1,6 +1,7 @@
 ﻿using FBOLinx.Core.BaseModels.Entities;
 using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Models.ServicesAndFees;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -163,10 +164,16 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchHistoricalParking> AirportWatchHistoricalParking { get; set; }
         public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
         public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
+        public virtual DbSet<OrderDetails> OrderDetails { get; set; }
+        public virtual DbSet<FboCustomServicesAndFees> FboCustomServicesAndFees { get; set; }
+        public virtual DbSet<FboCustomServiceType> FboCustomServiceType { get; set; }
         public virtual DbSet<CustomerAircraftNote> CustomerAircraftNotes { get; set; }
         public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
+        public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
+        public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
         public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
         public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
+        public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -1069,6 +1076,20 @@ namespace FBOLinx.DB.Context
             modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
             {
                 entity.HasNoKey();
+            });
+
+            modelBuilder.Entity<FboCustomServiceType>()
+            .HasMany(p => p.FboCustomServicesAndFees)
+            .WithOne(c => c.ServiceType)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AcukwikServicesOfferedDefaults> (entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
+            modelBuilder.Entity<OrderNote>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
             });
         }
 

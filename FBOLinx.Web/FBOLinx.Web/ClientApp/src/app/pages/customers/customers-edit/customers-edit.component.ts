@@ -70,6 +70,7 @@ export class CustomersEditComponent implements OnInit {
     loading: boolean = false;
     Historyupdate: boolean = false;
     isLoadingHistory: boolean = true;
+    searchText: string = "";
 
     constructor(
         private formBuilder: FormBuilder,
@@ -98,8 +99,12 @@ export class CustomersEditComponent implements OnInit {
         this.sharedService.titleChange(this.pageTitle);
 
         this.route.queryParams.subscribe((params) => {
-            if (params.tab && params.tab) {
+            if (params.tab) {
                 this.selectedIndex = parseInt(params.tab);
+            }
+
+            if (params.search) {
+                this.searchText = params.search;
             }
         });
     }

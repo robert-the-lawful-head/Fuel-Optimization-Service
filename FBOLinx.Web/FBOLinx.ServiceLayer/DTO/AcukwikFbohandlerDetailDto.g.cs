@@ -21,5 +21,6 @@ namespace FBOLinx.Service.Mapping.Dto
         public double? AcukwikId { get; set; }
         public AcukwikAirportDTO AcukwikAirport { get; set; }
         public string Email { get; set; }
+        public string HandlerEmail { get; set; }
     }
 }

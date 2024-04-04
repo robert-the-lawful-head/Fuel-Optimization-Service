@@ -19,6 +19,8 @@ namespace FBOLinx.ServiceLayer.DTO
         public bool? EnableJetA { get; set; }
         public bool? EnableSaf { get; set; }
         public bool? OrderNotificationsEnabled { get; set; } = true;
+        public bool? DirectOrderNotificationsEnabled { get; set; } = true;
+
 
     }
 }

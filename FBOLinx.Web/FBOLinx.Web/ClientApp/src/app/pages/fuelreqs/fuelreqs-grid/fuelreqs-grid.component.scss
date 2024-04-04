@@ -26,6 +26,11 @@ table {
 
 tr.example-detail-row {
     height: 0;
+    background-color: #2196f31f;
+    color: black;
+}
+tr.example-detail-row .mat-column-services {
+    color: black;
 }
 .center-items{
     display: flex;
@@ -74,4 +79,15 @@ table.description-table {
         font-size: 12px;
         max-width: 200px;
     }
+}
+
+.services-completed {
+    color: #2196f3
+}
+.mat-row:hover > .mat-cell {
+    color: black;
+  }
+
+.mat-drawer-inner-container-width{
+    width:96%;
 }

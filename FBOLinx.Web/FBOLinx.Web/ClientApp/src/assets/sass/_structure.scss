@@ -1,8 +1,7 @@
 html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
-}
+    }
 .site-container {
     position: relative;
     padding-top: $navbar-height;
@@ -15,7 +14,6 @@ html, body {
         display: none;
     }
     .main-content {
-        // border: 1px solid blue;
         display: relative;
         -webkit-overflow-scrolling: touch;
         height: 100%;

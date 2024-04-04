@@ -22,7 +22,7 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 import { GridBase } from 'src/app/services/tables/GridBase';
 
 const initialColumns: ColumnType[] = [

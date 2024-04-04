@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { interval, Subscription } from 'rxjs';
@@ -8,7 +8,8 @@ import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
+import { ServicesAndFeesService } from '../../../services/servicesandfees.service';
 
 @Component({
     selector: 'app-fuelreqs-home',
@@ -36,11 +37,13 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public missedOrdersData: any[];
     public selectedTabIndex: number = 0;
     public resetMissedOrders: boolean = false;
+    public servicesAndFees: any[] = [];
 
     constructor(
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private servicesAndFeesService: ServicesAndFeesService,
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
@@ -63,7 +66,16 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.stopFuelReqDataServe();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
+        servicesAndFees.forEach((service) => {
+            service.servicesAndFees.forEach((serviceAndFee) => {
+                if (serviceAndFee.isActive)
+                    this.servicesAndFees.push(serviceAndFee);
+            });
+        });
+
+        this.servicesAndFees.sort((a, b) => a.service.localeCompare(b.service));
         this.loadFuelReqs();
     }
 
@@ -93,7 +105,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     }
 
     onTabClick(event) {
-        if (event.tab.textLabel == "Fuel Orders") {
+        if (event.tab.textLabel == "Fuel & Service Orders") {
             this.isFuelOrdersShowing = true;
             this.sharedService.emitChange(SharedEvent.resetMissedOrders);
         }

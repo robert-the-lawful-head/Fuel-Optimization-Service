@@ -1,0 +1,13 @@
+<div class="disabled-dialog" *ngIf="isStaticModalVisible">
+    <div class="dialog">
+            <h4>To see a demo and unlock premium features, click the button below.</h4>
+            <button
+                (click)="openRequestDemo()"
+                [view]="'accent'"
+                ni-button
+                class="m-3"
+            >
+            Request Demo
+            </button>
+    </div>
+</div>

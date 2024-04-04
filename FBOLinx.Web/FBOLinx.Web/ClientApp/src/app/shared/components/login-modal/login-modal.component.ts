@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { SharedService } from '../../../layouts/shared-service';
 //Services
 import { AuthenticationService } from '../../../services/authentication.service';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-login-modal',
@@ -57,7 +58,7 @@ export class LoginModalComponent {
                             } else if (data.role === 2) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else if (data.role === 5) {
-                                this.sharedService.setLocationStorageValues(data.fbo.fboAirport.icao);
+                                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,data.fbo.fboAirport.icao);
                                 this.router.navigate([
                                     '/default-layout/dashboard-csr/',
                                 ]);

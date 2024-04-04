@@ -116,7 +116,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
 
             FBOLinxContractFuelOrdersResponse fuelerlinxContractFuelOrders = await _FuelerLinxApiService.GetContractFuelRequests(new FBOLinxOrdersRequest()
             { EndDateTime = endDateTime, StartDateTime = startDateTime, Icao = fbo.FboAirport?.Icao });
-            var missedOrders = fuelerlinxContractFuelOrders?.Result.Where(f => f.AcukwikHandlerId != fbo.AcukwikFBOHandlerId.GetValueOrDefault()).ToList();
+            var missedOrders = fuelerlinxContractFuelOrders?.Result.Where(f => f.AcukwikHandlerId != fbo.AcukwikFBOHandlerId.GetValueOrDefault() && f.InvoiceStatus != TransactionInvoiceStatuses.Cancelled).ToList();
 
             var groupedFuelerLinxContractFuelOrders = missedOrders.GroupBy(t => t.CompanyId).Select(g => new
             {

@@ -47,6 +47,7 @@ import { LogoComponent } from './components/logo/logo.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { AppPipesModule } from "../app-pipes.module";
+import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
 import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @NgModule({
@@ -57,6 +58,7 @@ import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-fav
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent,
         IncomingFavoriteAircraftInfoComponent
     ],
     exports: [
@@ -66,6 +68,7 @@ import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-fav
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent,
         IncomingFavoriteAircraftInfoComponent
     ],
     imports: [

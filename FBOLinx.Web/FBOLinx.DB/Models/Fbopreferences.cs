@@ -23,6 +23,8 @@ namespace FBOLinx.DB.Models
         public bool? EnableSaf { get; set; }
         [Column("OrderNotificationsEnabled")]
         public bool? OrderNotificationsEnabled { get; set; }
+        [Column("DirectOrdersNotificationsEnabled")]
+        public bool? DirectOrderNotificationsEnabled { get; set; }
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
