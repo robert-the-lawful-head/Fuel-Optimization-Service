@@ -382,12 +382,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         )
                     );
 
-                   var latestHistoricalParking = g.Where(x => x.AircraftStatus == AircraftStatusType.Parking && x.AirportWatchHistoricalParking?.AcukwikFbohandlerId == null).OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).FirstOrDefault();
-
-
-                   //we need to fake a visit if there is no records  for arrivals
-                   visitsToMyFboCount = (latestHistoricalParking?.AirportWatchHistoricalParking == null && latest?.AircraftStatusDescription == FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(latest?.AircraftStatus)) ? visitsToMyFboCount + 1 : visitsToMyFboCount;
-
                    return new AirportWatchHistoricalDataResponse
                    {
                        AirportWatchHistoricalDataId = latest.AirportWatchHistoricalDataID,
@@ -403,10 +397,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        PastVisits = pastVisits.Count(),
                        AirportIcao = latest.AirportICAO,
                        AircraftTypeCode = latest.AircraftTypeCode,
-                       ParkingAcukwikFBOHandlerId = latestHistoricalParking?.AirportWatchHistoricalParking?.AcukwikFbohandlerId,
-                       AirportWatchHistoricalParking = latestHistoricalParking?.AirportWatchHistoricalParking,
-                       VisitsToMyFbo = visitsToMyFboCount,
-                       PercentOfVisits = (visitsToMyFboCount > 0  && pastVisits.Count() > 0)? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
+                       VisitsToMyFbo = visitsToMyFboCount
                    };
                })
                .ToList();
@@ -429,6 +420,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
                         LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
                         ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent,
+                        ParkingAcukwikFBOHandlerId = groupedParkingEvent.FirstOrDefault()?.parkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
                     }
                 );
 
@@ -461,19 +453,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AircraftType = string.IsNullOrEmpty(h.Make) ?
                            string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR) ? null : hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL :
                            h.Make + " / " + h.Model,
-                              Status = cv.Status,
+                              Status = h.AircraftStatusDescription,
                               AirportIcao = h.AirportICAO,
                               AircraftTypeCode = h.AircraftTypeCode,
                               PastVisits = cv == null ? null : cv.PastVisits,
                               VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                              PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
-                              AirportWatchHistoricalParking = cv.AirportWatchHistoricalParking,
-                              ParkingAcukwikFBOHandlerId = cv.ParkingAcukwikFBOHandlerId
+                              PercentOfVisits = GetPercentOfVisits(cv,h, parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId),
+                              AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
+                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId
+
                           }).ToList();
             
             return result;
         }
+        private double? GetPercentOfVisits(AirportWatchHistoricalDataResponse cv, FboHistoricalDataModel h, int? parkingAcukwikFBOHandlerId)
+        {
+            if (cv == null) return null;
+            //fake one visist if there is not parking event registered
+            cv.VisitsToMyFbo = (h?.AircraftStatusDescription == FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AircraftStatusType.Parking) && parkingAcukwikFBOHandlerId == null) ?
+                cv.VisitsToMyFbo + 1 : cv.VisitsToMyFbo;
 
+            return (cv.VisitsToMyFbo > 0 && cv.PastVisits > 0) ? (double)(cv.VisitsToMyFbo / (double)cv.PastVisits) : 0;
+        }
         public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate)
         {
             var fbo = await _FboService.GetFbo(fboId);
