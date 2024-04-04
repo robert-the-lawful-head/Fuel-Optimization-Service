@@ -12,6 +12,7 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -20,10 +21,12 @@ namespace FBOLinx.Web.Controllers
     public class CustomCustomerTypesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly ICustomCustomerTypeService _customCustomerTypeService;
 
-        public CustomCustomerTypesController(FboLinxContext context, ILoggingService logger) : base(logger)
+        public CustomCustomerTypesController(FboLinxContext context, ILoggingService logger, ICustomCustomerTypeService customCustomerTypeService) : base(logger)
         {
             _context = context;
+            _customCustomerTypeService = customCustomerTypeService;
         }
 
         // GET: api/CustomCustomerTypes
@@ -137,6 +140,8 @@ namespace FBOLinx.Web.Controllers
         {
             _context.CustomCustomerTypes.Add(customCustomerTypes);
             await _context.SaveChangesAsync();
+
+            await _customCustomerTypeService.SaveCustomerTypeForNewCustomer(customCustomerTypes.CustomerId);
 
             return CreatedAtAction("GetCustomCustomerTypes", new { id = customCustomerTypes.Oid }, customCustomerTypes);
         }
