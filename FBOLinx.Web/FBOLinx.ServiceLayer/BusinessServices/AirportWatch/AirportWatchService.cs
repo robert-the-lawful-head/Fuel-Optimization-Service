@@ -372,19 +372,21 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                    var pastVisits = g
-                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking && ah.AirportWatchHistoricalParking == null);
+                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
 
                    var visitsToMyFboCount = g.Count(p => 
                         fbos.Where(f => f.AcukwikFBOHandlerId > 0)
                         .Any(f => 
                             f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId && 
-                            p.AircraftStatus == AircraftStatusType.Parking &&
-                            (p.AirportWatchHistoricalParking == null || p.AirportWatchHistoricalParking?.IsConfirmed == true)
+                            p.AircraftStatus == AircraftStatusType.Parking  
                         )
-                    );                  
+                    );
+
+                   var latestHistoricalParking = g.Where(x => x.AircraftStatus == AircraftStatusType.Parking && x.AirportWatchHistoricalParking?.AcukwikFbohandlerId == null).OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).FirstOrDefault();
+
 
                    //we need to fake a visit if there is no records  for arrivals
-                   visitsToMyFboCount = (visitsToMyFboCount == 0 && latest.AircraftStatus != AircraftStatusType.Takeoff) ? visitsToMyFboCount+1 : visitsToMyFboCount;
+                   visitsToMyFboCount = (latestHistoricalParking?.AirportWatchHistoricalParking == null && latest?.AircraftStatusDescription == FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(latest?.AircraftStatus)) ? visitsToMyFboCount + 1 : visitsToMyFboCount;
 
                    return new AirportWatchHistoricalDataResponse
                    {
@@ -401,6 +403,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        PastVisits = pastVisits.Count(),
                        AirportIcao = latest.AirportICAO,
                        AircraftTypeCode = latest.AircraftTypeCode,
+                       ParkingAcukwikFBOHandlerId = latestHistoricalParking?.AirportWatchHistoricalParking?.AcukwikFbohandlerId,
+                       AirportWatchHistoricalParking = latestHistoricalParking?.AirportWatchHistoricalParking,
                        VisitsToMyFbo = visitsToMyFboCount,
                        PercentOfVisits = (visitsToMyFboCount > 0  && pastVisits.Count() > 0)? (double)(visitsToMyFboCount / (double)pastVisits.Count()) : 0
                    };
@@ -425,7 +429,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                         ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
                         LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
                         ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent,
-                        ParkingAcukwikFBOHandlerId = groupedParkingEvent.FirstOrDefault()?.parkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
                     }
                 );
 
@@ -458,14 +461,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               AircraftType = string.IsNullOrEmpty(h.Make) ?
                            string.IsNullOrEmpty(hextail?.FaaAircraftMakeModelReference?.MFR) ? null : hextail?.FaaAircraftMakeModelReference?.MFR + " / " + hextail?.FaaAircraftMakeModelReference?.MODEL :
                            h.Make + " / " + h.Model,
-                              Status = h.AircraftStatusDescription,
+                              Status = cv.Status,
                               AirportIcao = h.AirportICAO,
                               AircraftTypeCode = h.AircraftTypeCode,
                               PastVisits = cv == null ? null : cv.PastVisits,
                               VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
                               PercentOfVisits = cv == null ? null : cv.PercentOfVisits,
-                              AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
-                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId
+                              AirportWatchHistoricalParking = cv.AirportWatchHistoricalParking,
+                              ParkingAcukwikFBOHandlerId = cv.ParkingAcukwikFBOHandlerId
                           }).ToList();
             
             return result;
