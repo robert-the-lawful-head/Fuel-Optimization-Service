@@ -48,7 +48,6 @@ export class AnalyticsHomeComponent implements OnInit {
                 .getCurrentUserPropertyValue(
                     localStorageAccessConstant.isSingleSourceFbo
                 )
-                ?.toLowerCase()
         );
 
         this.route.queryParams.subscribe(params => {

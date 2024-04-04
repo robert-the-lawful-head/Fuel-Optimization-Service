@@ -69,7 +69,6 @@ export class AnalyticsActivityReportsComponent implements OnInit {
                 .getCurrentUserPropertyValue(
                     localStorageAccessConstant.isSingleSourceFbo
                 )
-                ?.toLowerCase()
         );
         this.reports[AnaliticsReportType.LostToCompetition].isHidden =
             isSingleSourceFbo;
@@ -82,7 +81,6 @@ export class AnalyticsActivityReportsComponent implements OnInit {
                 .getCurrentUserPropertyValue(
                     localStorageAccessConstant.isNetworkFbo
                 )
-                ?.toLowerCase()
         );
         this.reports[AnaliticsReportType.FBONetworkArrivalDepartures].isHidden =
             !isNetworkFbo;

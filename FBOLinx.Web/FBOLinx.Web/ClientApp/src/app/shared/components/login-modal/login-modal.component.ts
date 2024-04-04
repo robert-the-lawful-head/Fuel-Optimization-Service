@@ -7,6 +7,9 @@ import { SharedService } from '../../../layouts/shared-service';
 //Services
 import { AuthenticationService } from '../../../services/authentication.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
+import { GroupsService } from 'src/app/services/groups.service';
+import { GroupFboViewModel } from 'src/app/models/groups';
 
 @Component({
     selector: 'app-login-modal',
@@ -16,6 +19,7 @@ import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccess
 export class LoginModalComponent {
     loginForm: FormGroup;
     error: '';
+    public groupsFbosData: GroupFboViewModel;
 
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
@@ -23,6 +27,8 @@ export class LoginModalComponent {
         private router: Router,
         private authenticationService: AuthenticationService,
         private sharedService: SharedService,
+        private manageFboGroupsService: ManageFboGroupsService,
+        private groupsService: GroupsService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
@@ -30,6 +36,7 @@ export class LoginModalComponent {
             remember: new FormControl(false),
             username: new FormControl(''),
         });
+        authenticationService.logout();
     }
 
     onCancelClick(): void {
@@ -58,17 +65,17 @@ export class LoginModalComponent {
                                 ]);
                             } else if (data.role === 2) {
                                 this.router.navigate(['/default-layout/fbos/']);
-                            } else if (data.role === 5) {
-
-                                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,data.fbo.groupId);
-                                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,data.fbo.fboAirport.icao);
-                                this.router.navigate([
-                                    '/default-layout/dashboard-csr/',
-                                ]);
                             } else {
-                                this.router.navigate([
-                                    '/default-layout/dashboard-fbo-updated/',
-                                ]);
+                                this.setFboSessionVariables(data.fbo.groupId, data.fbo.fboAirport.icao);
+
+                                if (data.role === 5)
+                                    this.router.navigate([
+                                        '/default-layout/dashboard-csr/',
+                                    ]);
+                                else
+                                    this.router.navigate([
+                                        '/default-layout/dashboard-fbo-updated/',
+                                    ]);
                             }
                         });
                     },
@@ -78,7 +85,17 @@ export class LoginModalComponent {
                 );
         }
     }
+    private async setFboSessionVariables(groupId: number, icao: string) {
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,groupId.toString());
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
 
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,groupId).toString());
+
+        var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
+
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
+
+    }
     public openRequestDemo() {
         this.dialogRef.close({
             mode: 'request-demo',

@@ -68,37 +68,11 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
 
-        this.checkfboVariables();
-    }
-    async checkfboVariables(){
-        this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
-
-        var singleSource = this.sharedService
-        .getCurrentUserPropertyValue(
-            localStorageAccessConstant.isSingleSourceFbo
-        );
-
-        if(!singleSource){
-            let groupId = this.sharedService.getCurrentUserPropertyValue(
-                localStorageAccessConstant.groupId
-            );
-            let icao = this.sharedService.getCurrentUserPropertyValue(
-                localStorageAccessConstant.icao
-            );
-            this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,Number(groupId)).toString());
-
-            var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
-
-            this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
-
-        }
-
         this.isSingleSourceFbo = JSON.parse(
             this.sharedService
                 .getCurrentUserPropertyValue(
                     localStorageAccessConstant.isSingleSourceFbo
                 )
-                ?.toLowerCase()
         );
     }
 
