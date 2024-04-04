@@ -411,7 +411,7 @@ ALTER TABLE ServiceOrderItems
 ADD
 AddedByUserID int NULL,
 AddedByName varchar(255) NULL,
-ServiceNotes varchar(MAX) null
+ServiceNote varchar(MAX) null
 GO
 --USE [paragon_test]
 --GO
