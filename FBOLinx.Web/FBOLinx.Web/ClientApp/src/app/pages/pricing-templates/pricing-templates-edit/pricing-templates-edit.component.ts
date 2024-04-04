@@ -7,7 +7,7 @@ import {
     ViewChild} from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 import { differenceBy, forOwn } from 'lodash';
 import { combineLatest } from 'rxjs';
 import {
@@ -29,6 +29,7 @@ import { PriceBreakdownComponent } from '../../../shared/components/price-breakd
 import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
 import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 import { PricingTemplatesDialogDeleteWarningComponent } from '../pricing-template-dialog-delete-warning-template/pricing-template-dialog-delete-warning.component';
+import { ToolbarSettingsModel } from '@syncfusion/ej2-angular-dropdowns';
 export interface DefaultTemplateUpdate {
     currenttemplate: number;
     newtemplate: number;
@@ -77,10 +78,10 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     feesAndTaxes: Array<any>;
     isDefaultChanged = false;
 
-    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
     theFile: any;
     isUploadingFile: boolean;
     fileName: any = "";
+    public tools: ToolbarSettingsModel = { items: ['Bold', 'Italic', 'Underline', '|', 'Formats', 'Alignments', 'OrderedList', 'UnorderedList', '|', 'CreateLink', '|', 'SourceCode', 'Undo', 'Redo'] };
 
     public updateModel: DefaultTemplateUpdate = {
         currenttemplate: 0,
@@ -127,6 +128,12 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
             //Do nothing
             });
     }
+
+    onActionBegin (args: any): void {
+    if (args.type === 'drop' || args.type === 'dragstart') {
+        args.cancel = true;
+    }
+}
 
     async ngOnInit() {
         // Check for passed in id

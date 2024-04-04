@@ -238,7 +238,7 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         else {
             this.customerMarginsFormArray.value.every(
                 (customerMargin: any) => {
-                    if (customerMargin.itp <= 0) {
+                    if (customerMargin.amount <= 0) {
                         isMarginLessThanZero = true;
                         return false;
                     }
