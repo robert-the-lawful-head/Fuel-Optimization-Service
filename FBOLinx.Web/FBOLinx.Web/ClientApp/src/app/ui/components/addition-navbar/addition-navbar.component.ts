@@ -232,13 +232,22 @@ export class AdditionNavbarComponent
     }
 
     async openMarginInfo(templateId) {
-        this.pricesExpired = false;
+        this.pricesExpired = null;
         const filteredTemplate = this.pricingTemplatesData.find(
             ({ oid }) => oid === templateId
         );
 
         await this.checkExpiredPrices(filteredTemplate.marginTypeProduct);
 
+        if (this.pricesExpired == null) {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            await sleep(1000);
+            if (this.pricesExpired == null)
+                await sleep(1000);
+        }
+            
         if (!this.pricesExpired) {
             this.checkCustomerContacts(filteredTemplate);
         }
@@ -416,7 +425,8 @@ export class AdditionNavbarComponent
                 setTimeout(resolve, waitTime));
 
         const waitToCheck = async () => {
-            await sleep(3000);
+            await sleep(2000);
+            this.pricesExpired = false;
 
             if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
                 this.pricesExpired = true;
