@@ -416,7 +416,7 @@ export class AdditionNavbarComponent
                 setTimeout(resolve, waitTime));
 
         const waitToCheck = async () => {
-            await sleep(2000);
+            await sleep(3000);
 
             if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
                 this.pricesExpired = true;
