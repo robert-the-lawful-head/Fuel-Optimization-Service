@@ -66,6 +66,7 @@ export class AdditionNavbarComponent
     private retailPrice: number;
     private costPrice: number;
     changedSubscription: any;
+    loadingPrices: boolean = false;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -232,12 +233,21 @@ export class AdditionNavbarComponent
     }
 
     async openMarginInfo(templateId) {
-        this.pricesExpired = false;
+        this.pricesExpired = null;
         const filteredTemplate = this.pricingTemplatesData.find(
             ({ oid }) => oid === templateId
         );
 
         await this.checkExpiredPrices(filteredTemplate.marginTypeProduct);
+
+        if (this.pricesExpired == null) {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            await sleep(1000);
+            if (this.pricesExpired == null)
+                await sleep(1000);
+        }
 
         if (!this.pricesExpired) {
             this.checkCustomerContacts(filteredTemplate);
@@ -309,10 +319,24 @@ export class AdditionNavbarComponent
     }
 
     async confirmSendEmails() {
+        this.loadingPrices = true;
         if (this.retailPrice == undefined)
             this.getPrices();
 
-        if (!this.retailPrice && !this.costPrice) {
+        this.pricesExpired = null;
+        if (this.pricesExpired == null) {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            await sleep(1000);
+            if (this.pricesExpired == null)
+                await sleep(1000);
+        }
+        this.loadingPrices = false;
+
+        if (!this.retailPrice &&
+
+            !this.costPrice) {
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'Your fuel pricing has expired. Please update your cost/retail values.',
@@ -417,6 +441,7 @@ export class AdditionNavbarComponent
 
         const waitToCheck = async () => {
             await sleep(2000);
+            this.pricesExpired = false;
 
             if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
                 this.pricesExpired = true;
