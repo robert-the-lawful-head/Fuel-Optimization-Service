@@ -113,7 +113,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                         var vendor = "";
                         if (orderDetails.FuelVendor == "Directs: Custom")
                             vendor = "Flight Dept.";
-                        else if (orderDetails.FuelVendor.ToLower() == "fbolinx")
+                        else if (orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
                             vendor = fbo.Fbo + " (FBOLinx Direct)";
                         else
                             vendor = orderDetails.FuelVendor;
