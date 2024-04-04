@@ -11,5 +11,6 @@ export const localStorageAccessConstant = {
     dismissedFavoriteAircrafts: 'dismissedFavoriteAircrafts',
     notifiedFavoriteAircraft: 'notifiedFavoriteAircraft',
     isSingleSourceFbo: 'isSingleSourceFbo',
-    isNetworkFbo: 'isNetworkFbo'
+    isNetworkFbo: 'isNetworkFbo',
+    currentUser: 'currentUser'
 }

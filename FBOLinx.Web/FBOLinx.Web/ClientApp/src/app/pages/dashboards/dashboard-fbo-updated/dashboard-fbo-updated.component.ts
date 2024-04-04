@@ -13,7 +13,9 @@ import { StatisticsTotalCustomersComponent } from '../../../shared/components/st
 // Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
 import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/flight-watch-map-services/flight-watch-map.service';
-import {localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import {localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { GroupsService } from 'src/app/services/groups.service';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 
 @Component({
     selector: 'app-dashboard-fbo-updated',
@@ -45,9 +47,13 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
     selectedICAO: string = "";
     isSingleSourceFbo: boolean = false;
 
+    groupsFbosData: any = null;
+
     constructor(private sharedService: SharedService,
         private router: Router,
         private flightWatchMapService: FlightWatchMapService,
+        private manageFboGroupsService: ManageFboGroupsService,
+        private groupsService: GroupsService,
         ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -61,6 +67,31 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.sharedService.titleChange(this.pageTitle);
 
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.checkfboVariables();
+    }
+    async checkfboVariables(){
+        this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
+
+        var singleSource = this.sharedService
+        .getCurrentUserPropertyValue(
+            localStorageAccessConstant.isSingleSourceFbo
+        );
+
+        if(!singleSource){
+            let groupId = this.sharedService.getCurrentUserPropertyValue(
+                localStorageAccessConstant.groupId
+            );
+            let icao = this.sharedService.getCurrentUserPropertyValue(
+                localStorageAccessConstant.icao
+            );
+            this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,Number(groupId)).toString());
+
+            var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
+
+            this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
+
+        }
 
         this.isSingleSourceFbo = JSON.parse(
             this.sharedService
