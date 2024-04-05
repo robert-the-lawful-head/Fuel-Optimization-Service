@@ -371,7 +371,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                    var latest = g
                        .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
-                   var pastVisits = g
+                   var pastVisitsToAirport = g
                        .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
 
                    var visitsToMyFboCount = g.Count(p => 
@@ -394,7 +394,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        HexCode = latest.AircraftHexCode,
                        AircraftType = string.IsNullOrEmpty(latest.Make) ? null : latest.Make + " / " + latest.Model,
                        Status = latest.AircraftStatusDescription,
-                       PastVisits = pastVisits.Count(),
+                       PastVisits = pastVisitsToAirport.Count(),
                        AirportIcao = latest.AirportICAO,
                        AircraftTypeCode = latest.AircraftTypeCode,
                        VisitsToMyFbo = visitsToMyFboCount
@@ -405,31 +405,31 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             var parkingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Parking).Where(x => x.AirportWatchHistoricalParking != null).ToList();
             var landingEvents = historicalData.Where(h => h.AircraftStatus == AircraftStatusType.Landing).ToList();
             var parkingAndLandingAssociationList = (from parkingEvent in parkingEvents
-                    join landing in landingEvents on new
-                        {
-                            parkingEvent.AirportICAO, parkingEvent.AtcFlightNumber, parkingEvent.AircraftHexCode
-                        } equals
-                        new { landing.AirportICAO, landing.AtcFlightNumber, landing.AircraftHexCode }
-                    where parkingEvent.AircraftPositionDateTimeUtc > landing.AircraftPositionDateTimeUtc &&
-                          Math.Abs((parkingEvent.AircraftPositionDateTimeUtc - landing.AircraftPositionDateTimeUtc)
-                              .TotalMinutes) <= 60
-                    group new { parkingEvent, landing } by new { parkingEvent.AirportWatchHistoricalDataID }
+                                                    join landing in landingEvents on new
+                                                    {
+                                                        parkingEvent.AirportICAO,
+                                                        parkingEvent.AtcFlightNumber,
+                                                        parkingEvent.AircraftHexCode
+                                                    } equals
+                                                        new { landing.AirportICAO, landing.AtcFlightNumber, landing.AircraftHexCode }
+                                                    where parkingEvent.AircraftPositionDateTimeUtc > landing.AircraftPositionDateTimeUtc &&
+                                                          Math.Abs((parkingEvent.AircraftPositionDateTimeUtc - landing.AircraftPositionDateTimeUtc)
+                                                              .TotalMinutes) <= 60
+                                                    group new { parkingEvent, landing } by new { parkingEvent.AirportWatchHistoricalDataID }
                     into groupedParkingEvent
-                    select new
-                    {
-                        ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
-                        LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
-                        ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent,
-                        ParkingAcukwikFBOHandlerId = groupedParkingEvent.FirstOrDefault()?.parkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
-                    }
+                                                    select new
+                                                    {
+                                                        ParkingId = groupedParkingEvent.Key.AirportWatchHistoricalDataID,
+                                                        LandingId = groupedParkingEvent.Max(x => x.landing.AirportWatchHistoricalDataID),
+                                                        ParkingEvent = groupedParkingEvent.FirstOrDefault()?.parkingEvent,
+                                                        ParkingAcukwikFBOHandlerId = groupedParkingEvent.FirstOrDefault()?.parkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
+                                                    }
                 );
 
             historicalData?.RemoveAll(x => x.AircraftStatus == AircraftStatusType.Parking);
 
             var distinctTails = historicalData.Select(x => x.TailNumber).Distinct().ToList();
             var hexTailMappings = await _AircraftHexTailMappingService.GetAircraftHexTailMappingsForTails(distinctTails);
-
-            var fbosQueryable = _FboService.GetAllFbos();
 
             var result = (from h in historicalData
                           join cv in customerVisitsData on new { h.CustomerId, h.AirportICAO, h.AircraftHexCode, h.AtcFlightNumber } equals new { CustomerId = cv.CompanyId, AirportICAO = cv.AirportIcao, AircraftHexCode = cv.HexCode, AtcFlightNumber = cv.FlightNumber }

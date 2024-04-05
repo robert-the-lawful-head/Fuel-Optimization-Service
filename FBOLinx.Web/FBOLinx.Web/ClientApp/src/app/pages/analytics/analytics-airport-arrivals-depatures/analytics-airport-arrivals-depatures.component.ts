@@ -279,9 +279,10 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         const data = this.data.map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
-            parkingAcukwikFBOHandlerId: (x.parkingAcukwikFBOHandlerId != null)?
-             x.parkingAcukwikFBOHandlerId:
-             this.fbo.acukwikFboHandlerId
+            parkingAcukwikFBOHandlerId: x.parkingAcukwikFBOHandlerId
+            //parkingAcukwikFBOHandlerId: (x.parkingAcukwikFBOHandlerId != null)?
+            // x.parkingAcukwikFBOHandlerId:
+            // this.fbo.acukwikFboHandlerId
         }));
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
