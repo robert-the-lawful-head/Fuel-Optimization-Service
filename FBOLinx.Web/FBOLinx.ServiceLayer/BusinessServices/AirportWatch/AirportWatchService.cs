@@ -36,6 +36,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.SWIM;
+using System.ComponentModel;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -372,14 +373,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                    var pastVisits = g
-                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking);
+                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking && ah.AirportWatchHistoricalParking?.AcukwikFbohandlerId != 0);
 
-                   var visitsToMyFboCount = g.Count(p => 
-                        fbos.Where(f => f.AcukwikFBOHandlerId > 0)
+                   var visitsToMyFboCount = g.Count(p =>
+                        p.AircraftStatus == AircraftStatusType.Parking &&
+                        (fbos.Where(f => f.AcukwikFBOHandlerId > 0)
                         .Any(f => 
-                            f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId && 
-                            p.AircraftStatus == AircraftStatusType.Parking  
-                        )
+                            f.AcukwikFBOHandlerId == p.AirportWatchHistoricalParking?.AcukwikFbohandlerId
+                        ))
                     );
 
                    return new AirportWatchHistoricalDataResponse
@@ -456,22 +457,27 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               Status = h.AircraftStatusDescription,
                               AirportIcao = h.AirportICAO,
                               AircraftTypeCode = h.AircraftTypeCode,
-                              PastVisits = cv == null ? null : cv.PastVisits,
-                              VisitsToMyFbo = cv == null ? null : cv.VisitsToMyFbo,
-                              PercentOfVisits = GetPercentOfVisits(cv,h, parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId),
+                              PastVisits = GetUpdatedVisits(cv?.PastVisits, parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId, h),
+                              VisitsToMyFbo = GetUpdatedVisits(cv?.VisitsToMyFbo, parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId, h),
+                              PercentOfVisits = GetPercentOfVisits(cv,h, parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId),
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
-                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId
+                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking?.AcukwikFbohandlerId
 
                           }).ToList();
             
             return result;
         }
+        private int? GetUpdatedVisits(int? visits, int? parkingAcukwikFBOHandlerId, FboHistoricalDataModel h)
+        {
+            if (visits == null) return null;
+
+            visits = (h?.AircraftStatusDescription == FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AircraftStatusType.Parking) && (parkingAcukwikFBOHandlerId != null || parkingAcukwikFBOHandlerId == 0))? visits : visits + 1;
+
+            return visits;
+        }
         private double? GetPercentOfVisits(AirportWatchHistoricalDataResponse cv, FboHistoricalDataModel h, int? parkingAcukwikFBOHandlerId)
         {
             if (cv == null) return null;
-            //fake one visist if there is not parking event registered
-            cv.VisitsToMyFbo = (h?.AircraftStatusDescription == FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(AircraftStatusType.Parking) && parkingAcukwikFBOHandlerId == null) ?
-                cv.VisitsToMyFbo + 1 : cv.VisitsToMyFbo;
 
             return (cv.VisitsToMyFbo > 0 && cv.PastVisits > 0) ? (double)(cv.VisitsToMyFbo / (double)cv.PastVisits) : 0;
         }
