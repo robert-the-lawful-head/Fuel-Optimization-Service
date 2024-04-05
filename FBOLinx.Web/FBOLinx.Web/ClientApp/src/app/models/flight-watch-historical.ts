@@ -26,6 +26,7 @@ export type FlightWatchHistorical = {
     isConfirmedVisit: boolean;
     airportWatchHistoricalParking: AirportWatchHistoricalParking;
     parkingAcukwikFBOHandlerId: number | null;
+    isParkedWithinGeofence: boolean;
 };
 
 export type AirportWatchHistoricalDataRequest = {

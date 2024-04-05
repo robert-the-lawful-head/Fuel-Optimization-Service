@@ -279,10 +279,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         const data = this.data.map((x) => ({
             ...x,
             aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
-            parkingAcukwikFBOHandlerId: x.parkingAcukwikFBOHandlerId
-            //parkingAcukwikFBOHandlerId: (x.parkingAcukwikFBOHandlerId != null)?
-            // x.parkingAcukwikFBOHandlerId:
-            // this.fbo.acukwikFboHandlerId
+            isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
         }));
 
         this.setVirtualScrollVariables(this.paginator, this.sort, data);
@@ -401,29 +398,35 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             JSON.stringify(this.columns)
         );
     }
-    updateVisitedFbo($event: any , row: FlightWatchHistorical): void{
+    confirmedVisitToggled(row: FlightWatchHistorical): void{
         if (row.airportWatchHistoricalParking == null) {
             row.airportWatchHistoricalParking = {
                 airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
-                acukwikFbohandlerId: $event.value,
+                acukwikFbohandlerId: 0,
                 oid: 0,
             };
-        }else{
-            row.airportWatchHistoricalParking.acukwikFbohandlerId= $event.value;
         }
 
+        row.airportWatchHistoricalParking.acukwikFbohandlerId = (row.isParkedWithinGeofence)?this.fbo.acukwikFboHandlerId: 0;
+
         row.airportWatchHistoricalParking.isConfirmed = true;
+
+        console.log("🚀 ~ confirmedVisitToggled ~ row.isParkedWithinGeofence:", row.isParkedWithinGeofence)
+
+        console.log("🚀 ~ confirmedVisitToggled ~ row.airportWatchHistoricalParking:", row.airportWatchHistoricalParking)
 
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService
                 .updateHistoricalParking(row)
                 .subscribe((response: any) => {
+                    console.log("🚀 ~ .subscribe ~ response:", response)
                     this.refreshData();
                 });
         } else {
             this.airportWatchService
                 .createHistoricalParking(row)
                 .subscribe((response: any) => {
+                    console.log("🚀 ~ .subscribe ~ response:", response)
                     this.refreshData();
                 });
         }
@@ -458,11 +461,5 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         return filteredColumns.filter((column) => {
             return !this.hiddenColumns.includes(column.id);
         });
-    }
-    getArrivalFboName(row: FlightWatchHistorical): string {
-        return this.allFbos.find((fbo) => fbo.acukwikFboHandlerId == row.parkingAcukwikFBOHandlerId)?.fbo;
-    }
-    isCurrentArrivalFboSelected(info: FlightWatchHistorical): boolean {
-        return info.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId || info.parkingAcukwikFBOHandlerId == 0;
     }
 }
