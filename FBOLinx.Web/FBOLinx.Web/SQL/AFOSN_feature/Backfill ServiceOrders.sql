@@ -22,7 +22,7 @@ left join fbos f on f.acukwikfbohandlerid=afl.acukwikfbohandlerid
 inner join customers c on fr.companyid=c.fuelerlinxid
 inner join customerinfobygroup cibg on c.oid=cibg.customerid and f.groupid=cibg.groupid
 inner join customeraircrafts ca on ca.groupid=f.groupid and ca.customerid=c.oid and fr.tail_number=ca.tailnumber
-WHERE f.oid>0 and fr.fuel_est_weight > 0 and isnull(fr.cancelled,0)=0
+WHERE f.oid>0 and fr.fuel_est_weight > 0 
 order by fr.oid
 
 insert into ServiceOrderItems
@@ -31,4 +31,5 @@ s.oid as serviceorderid, 'Fuel: ' + CAST(fr.fuel_est_weight as varchar(10)) + ca
 from ServiceOrders s
 inner join FuelerLinx_FuelReq fr on fr.oid=s.fuelerlinxtransactionid
 where s.oid>@maxserviceorders
+
 
