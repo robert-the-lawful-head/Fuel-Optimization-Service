@@ -298,7 +298,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelRequest.ServiceOrder = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == fuelRequest.SourceId).FirstOrDefault();
                         fuelRequest.PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).Select(d => d.PaymentMethod).FirstOrDefault();
                         fuelRequest.Fboid = fboId;
-                        fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
+                        fuelRequest.Source = fuelRequest.Source == null ? "" : fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
 
                         var transactionOrderDetails = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).FirstOrDefault();
                         if (transactionOrderDetails != null)
@@ -330,8 +330,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             Oid = item.Oid,
                             ActualPpg = 0,
                             ActualVolume = 0,
-                            Archived = transactionOrderDetails.IsArchived,
-                            Cancelled = transactionOrderDetails.IsCancelled,
+                            Archived = transactionOrderDetails == null ? false : transactionOrderDetails.IsArchived,
+                            Cancelled = transactionOrderDetails == null ? false : transactionOrderDetails.IsCancelled,
                             CustomerId = item.CustomerInfoByGroup?.CustomerId,
                             //DateCreated = item.ServiceDateTimeUtc,//check this property
                             DispatchNotes = string.Empty,
@@ -351,9 +351,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             FuelOn = string.Empty,
                             CustomerName = item.CustomerInfoByGroup?.Company,
                             IsConfirmed = orderConfirmations.Any(x => x.SourceId == item.FuelerLinxTransactionId),
-                            PaymentMethod = transactionOrderDetails.PaymentMethod,
+                            PaymentMethod = transactionOrderDetails == null ? "" : transactionOrderDetails.PaymentMethod,
                             ServiceOrder = item,
-                            ShowConfirmationButton = transactionOrderDetails.IsOkToEmail.GetValueOrDefault()
+                            ShowConfirmationButton = transactionOrderDetails == null ? false : transactionOrderDetails.IsOkToEmail.GetValueOrDefault()
                         };
                         serviceOrdersList.Add(fuelreq);
                     }
