@@ -329,8 +329,8 @@ export class AdditionNavbarComponent
                 new Promise(resolve =>
                     setTimeout(resolve, waitTime));
             await sleep(1000);
-            if (this.pricesExpired == null)
-                await sleep(1000);
+            //if (this.pricesExpired == null)
+            //    await sleep(100);
         }
         this.loadingPrices = false;
 
