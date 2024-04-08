@@ -399,18 +399,31 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
         row.airportWatchHistoricalParking.isConfirmed = true;
 
+        this.ngxLoader.startLoader(this.chartName);
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService
                 .updateHistoricalParking(row)
-                .subscribe((response: any) => {
-                    this.refreshData();
-                });
+                .subscribe(
+                    (response: any) => {
+                        this.refreshData();
+                    },
+                    () => { },
+                    () => {
+                        this.ngxLoader.stopLoader(this.chartName);
+                    }
+                );
         } else {
             this.airportWatchService
                 .createHistoricalParking(row)
-                .subscribe((response: any) => {
-                    this.refreshData();
-                });
+                .subscribe(
+                    (response: any) => {
+                        this.refreshData();
+                    },
+                    () => { },
+                    () => {
+                        this.ngxLoader.stopLoader(this.chartName);
+                    }
+                );
         }
     }
     changeIcaoFilter($event: string) {
