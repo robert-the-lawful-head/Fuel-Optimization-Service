@@ -324,7 +324,7 @@ export class AdditionNavbarComponent
             this.getPrices();
 
         this.pricesExpired = null;
-        if (this.pricesExpired == null) {
+        if (this.pricesExpired == null && !this.retailPrice) {
             const sleep = async (waitTime: number) =>
                 new Promise(resolve =>
                     setTimeout(resolve, waitTime));
@@ -435,52 +435,59 @@ export class AdditionNavbarComponent
     private async checkExpiredPrices(marginTypeProduct) {
         await this.getPrices();
 
-        const sleep = async (waitTime: number) =>
-            new Promise(resolve =>
-                setTimeout(resolve, waitTime));
-
-        const waitToCheck = async () => {
-            await sleep(2000);
-            this.pricesExpired = false;
-
-            if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
-                this.pricesExpired = true;
-
-                const dialogRef = this.templateDialog.open(NotificationComponent, {
-                    data: {
-                        text: 'Your fuel pricing has expired. Please update your cost/retail values.',
-                        title: 'Pricing Expired',
-                    },
-                });
-
-                dialogRef.afterClosed().subscribe();
+        if (this.retailPrice)
+            this.setNotifications(marginTypeProduct);
+        else {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            const waitToCheck = async () => {
+                await sleep(2000);
+                this.setNotifications(marginTypeProduct);
             }
-            else if (marginTypeProduct == "Cost" && this.costPrice == 0) {
-                this.pricesExpired = true;
-
-                const dialogRef = this.templateDialog.open(NotificationComponent, {
-                    data: {
-                        text: 'You need to add a posted cost price to distribute',
-                        title: 'Cost price is expired',
-                    },
-                });
-
-                dialogRef.afterClosed().subscribe();
-            }
-            else if (marginTypeProduct == "Retail" && this.retailPrice == 0) {
-                this.pricesExpired = true;
-
-                const dialogRef = this.templateDialog.open(NotificationComponent, {
-                    data: {
-                        text: 'You need to add a posted retail price to distribute',
-                        title: 'Retail price is expired',
-                    },
-                });
-
-                dialogRef.afterClosed().subscribe();
-            }
+            waitToCheck();
         }
-        waitToCheck();
+    }
+
+    private async setNotifications(marginTypeProduct) {
+        this.pricesExpired = false;
+
+        if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
+            this.pricesExpired = true;
+
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'Your fuel pricing has expired. Please update your cost/retail values.',
+                    title: 'Pricing Expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
+        else if (marginTypeProduct == "Cost" && this.costPrice == 0) {
+            this.pricesExpired = true;
+
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'You need to add a posted cost price to distribute',
+                    title: 'Cost price is expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
+        else if (marginTypeProduct == "Retail" && this.retailPrice == 0) {
+            this.pricesExpired = true;
+
+            const dialogRef = this.templateDialog.open(NotificationComponent, {
+                data: {
+                    text: 'You need to add a posted retail price to distribute',
+                    title: 'Retail price is expired',
+                },
+            });
+
+            dialogRef.afterClosed().subscribe();
+        }
     }
 
     private prepareDataSource(): void {
