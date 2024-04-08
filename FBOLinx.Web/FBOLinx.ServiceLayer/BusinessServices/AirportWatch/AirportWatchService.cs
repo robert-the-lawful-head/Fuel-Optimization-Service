@@ -373,7 +373,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                        .OrderByDescending(ah => ah.AircraftPositionDateTimeUtc).First();
 
                    var pastVisitsToAirport = g
-                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking).Count();   
+                       .Where(ah => ah.AircraftStatus == AircraftStatusType.Parking && ah.AirportWatchHistoricalParking?.AcukwikFbohandlerId != 0).Count();   
 
                    var visitsToMyFboCount = g.Count(p =>
                         p.AircraftStatus == AircraftStatusType.Parking &&
@@ -462,8 +462,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                               VisitsToMyFbo = cv?.VisitsToMyFbo,
                               PercentOfVisits = cv?.PercentOfVisits,
                               AirportWatchHistoricalParking = parkingAndLandingAssociation?.ParkingEvent?.AirportWatchHistoricalParking,
-                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId
-
+                              ParkingAcukwikFBOHandlerId = parkingAndLandingAssociation?.ParkingAcukwikFBOHandlerId,
                           }).ToList();
             
             return result;
