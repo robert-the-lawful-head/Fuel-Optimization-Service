@@ -50,18 +50,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent
     @Output() refreshCustomers = new EventEmitter();
 
     chartName = 'airport-arrivals-depatures-table';
-    displayedColumns: string[] = [
-        'company',
-        'tailNumber',
-        'flightNumber',
-        'hexCode',
-        'aircraftType',
-        'dateTime',
-        'status',
-        'pastVisits',
-        'visitsToMyFbo',
-        'percentOfVisits',
-    ];
 
     icao: string;
     selectedDateFilter: SelectedDateFilter;
@@ -411,22 +399,16 @@ export class AnalyticsAirportArrivalsDepaturesComponent
 
         row.airportWatchHistoricalParking.isConfirmed = true;
 
-        console.log("🚀 ~ confirmedVisitToggled ~ row.isParkedWithinGeofence:", row.isParkedWithinGeofence)
-
-        console.log("🚀 ~ confirmedVisitToggled ~ row.airportWatchHistoricalParking:", row.airportWatchHistoricalParking)
-
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService
                 .updateHistoricalParking(row)
                 .subscribe((response: any) => {
-                    console.log("🚀 ~ .subscribe ~ response:", response)
                     this.refreshData();
                 });
         } else {
             this.airportWatchService
                 .createHistoricalParking(row)
                 .subscribe((response: any) => {
-                    console.log("🚀 ~ .subscribe ~ response:", response)
                     this.refreshData();
                 });
         }
