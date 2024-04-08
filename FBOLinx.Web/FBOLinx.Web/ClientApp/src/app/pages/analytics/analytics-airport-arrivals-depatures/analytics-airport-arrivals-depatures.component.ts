@@ -30,8 +30,8 @@ import {
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { FbosGridViewModel } from 'src/app/models/FbosGridViewModel';
 
 @Component({
@@ -232,11 +232,13 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         );
     }
 
-    refreshData() {
+    refreshData(isLoaderActive: boolean = false) {
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
 
-        this.ngxLoader.startLoader(this.chartName);
+        if (!isLoaderActive)
+            this.ngxLoader.startLoader(this.chartName);
+
         if (this.sharedService.currentUser.icao == this.icao) {
             this.fetchData(startDate, endDate).subscribe(
                 (data: FlightWatchHistorical[]) => {
@@ -403,27 +405,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         if (row.airportWatchHistoricalParking.oid > 0) {
             this.airportWatchService
                 .updateHistoricalParking(row)
-                .subscribe(
-                    (response: any) => {
-                        this.refreshData();
-                    },
-                    () => { },
-                    () => {
-                        this.ngxLoader.stopLoader(this.chartName);
-                    }
-                );
+                .subscribe((response: any) => {
+                    this.refreshData(true);
+                });
         } else {
             this.airportWatchService
                 .createHistoricalParking(row)
-                .subscribe(
-                    (response: any) => {
-                        this.refreshData();
-                    },
-                    () => { },
-                    () => {
-                        this.ngxLoader.stopLoader(this.chartName);
-                    }
-                );
+                .subscribe((response: any) => {
+                    this.refreshData(true);
+                });
         }
     }
     changeIcaoFilter($event: string) {
