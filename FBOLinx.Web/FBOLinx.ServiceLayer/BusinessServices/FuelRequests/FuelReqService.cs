@@ -307,14 +307,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             if (transactionOrderDetails.IsOkToEmail != null)
                                 fuelRequest.ShowConfirmationButton = transactionOrderDetails.IsOkToEmail.GetValueOrDefault();
                         }
-                        fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
+                        var customer = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault();
+                        fuelRequest.CustomerId = customer == null ? 0 : customer.CustomerId;
                         result.Add(fuelRequest);
                     }
                 }
 
                 //Service orders
                 List<FuelReqDto> serviceOrdersList = new List<FuelReqDto>();
-                var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
+                var serviceOrderIds = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.ArrivalDateTimeUtc >= startDateTime && s.ArrivalDateTimeUtc <= endDateTime).Select(s => s.FuelerLinxTransactionId.GetValueOrDefault()).ToList();
                 orderDetails = await _orderDetailsEntityService.GetOrderDetailsByIds(serviceOrderIds);
                 orderConfirmations = await _fuelReqConfirmationEntityService.GetFuelReqConfirmationByIds(serviceOrderIds);
                 var customerAircrafts = await _customerAircraftService.GetAircraftsList(groupId, fboId);
@@ -361,7 +362,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
 
                 // Cancelled contract orders
                 orderDetails = await _orderDetailsEntityService.GetListBySpec(new OrderDetailsByFboHandlerIdSpecifications(fboRecord.AcukwikFBOHandlerId.GetValueOrDefault()));
-                orderDetails = orderDetails.Where(o => o.IsCancelled == true).ToList();
+                orderDetails = orderDetails.Where(o => o.IsCancelled == true && o.Eta >= startDateTime && o.Eta <= endDateTime).ToList();
 
                 foreach (OrderDetails item in orderDetails)
                 {
