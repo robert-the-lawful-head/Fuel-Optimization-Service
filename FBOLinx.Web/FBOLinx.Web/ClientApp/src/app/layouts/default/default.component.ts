@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, HostListener } from '@angular/core';
+import { Component, Input, OnInit, HostListener, Renderer2 } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { NavigationStart, Router, RouterEvent } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -68,7 +68,8 @@ export class DefaultLayoutComponent implements OnInit {
         private store: Store<State>,
         private templateDialog: MatDialog,
         private fbosService: FbosService,
-        private documentService: DocumentService
+        private documentService: DocumentService,
+        private renderer: Renderer2
     ) {
         this.openedSidebar = false;
         this.boxed = false;
@@ -85,6 +86,9 @@ export class DefaultLayoutComponent implements OnInit {
             .subscribe((event: RouterEvent) => {
                 if (!event.url.startsWith('/default-layout/customers')) {
                     this.store.dispatch(customerGridClear());
+                }
+                if (!event.url.startsWith('/default-layout/analytics')) {
+                    this.renderer.removeClass(document.body, 'no-scroll');
                 }
             });
     }

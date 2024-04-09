@@ -47,7 +47,8 @@
         "primeng": "^11.3.0",
         "rxjs": "~6.6.3",
         "tslib": "^2.1.0",
-        "xlsx": "^0.16.9",
+        "xlsx": "^0.18.5",
+        "xlsx-js-style": "^1.2.0",
         "zone.js": "~0.11.3"
     },
     "devDependencies": {

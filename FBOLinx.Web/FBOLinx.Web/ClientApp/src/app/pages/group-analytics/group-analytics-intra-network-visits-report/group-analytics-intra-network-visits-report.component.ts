@@ -8,38 +8,36 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { Subject } from 'rxjs';
 import {
     ColumnType,
-    TableSettingsComponent,
 } from 'src/app/shared/components/table-settings/table-settings.component';
 
-import { isCommercialAircraft, isCommercialAircraftInFlightNumbers } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
 import { AirportWatchService } from '../../../services/airportwatch.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { FbosService } from '../../../services/fbos.service';
 
 //Models
-import { CustomersListType } from '../../../models/customer';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 import { IntraNetworkVisitsReportItem } from 'src/app/models/intra-network-visits-report-item';
-import { IntraNetworkVisitsReportByAirportItem } from 'src/app/models/intra-network-visits-report-by-airport-item';
+import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
 
 @Component({
     selector: 'app-group-analytics-intra-network-visits-report',
     templateUrl: './group-analytics-intra-network-visits-report.component.html',
+    styleUrls: ['./group-analytics-intra-network-visits-report.component.scss'],
 })
 export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase implements OnInit {
     @ViewChild(MatPaginator) paginator: MatPaginator;
     @ViewChild(MatSort) sort: MatSort;
-    //@ViewChild('tableSettings') tableSettings: TableSettingsComponent;
 
     @Input() groupId: number;
     @Input() fboId: number;
@@ -57,22 +55,19 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     dynamicColumns: ColumnType[] = [];
     columns: ColumnType[] = [];
 
-    csvFileOptions: csvFileOptions = { fileName: 'Intra-Network ADS-B Data', sheetName: 'Intra-Network ADS-B Data' };
+    csvFileOptions: csvFileOptions = { fileName: 'FBO Network Arrival & Departures', sheetName: 'FBO Network Arrival&Departures' };
 
-    filterStartDate: Date;
-    filterEndDate: Date;    
+
     data: IntraNetworkVisitsReportItem[];
-    customers: any[] = [];
-    tailNumbers: any[] = [];
     fbos: any[] = [];
-    isCommercialInvisible = true;
-    selectedCustomers: string[] = [];
-    selectedTailNumbers: string[] = [];
     selectedFbos: any[] = [];
 
     filtersChanged: Subject<any> = new Subject<any>();
     aircraftTypes = AIRCRAFT_IMAGES;
     tableLocalStorageKey: string;
+
+    icao:string;
+    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown, ReportFilterItems.searchInput];
 
     constructor(private airportWatchSerice: AirportWatchService,
         private sharedService: SharedService,
@@ -81,13 +76,12 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         private fboService: FbosService
     ) {
         super();
-        this.filterStartDate = new Date(
-            moment().add(-1, 'M').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
+
+        this.icao = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
     }
 
     get visibleColumns() {
@@ -104,7 +98,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     ngOnInit() {
-        this.loadFbos();        
+        this.loadFbos();
     }
 
     public initColumns() {
@@ -113,10 +107,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
     }
 
     public clearAllFilters() {
-        this.selectedCustomers = [];
-        this.selectedTailNumbers = [];
         this.selectedFbos = [];
-        this.isCommercialInvisible = true;
 
         this.dataSource.filter = '';
         for (const filter of this.dataSource.filterCollection) {
@@ -144,6 +135,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
         this.airportWatchSerice
             .getIntraNetworkVisitsReport(
                 this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
                 this.filterStartDate,
                 this.filterEndDate
             )
@@ -195,11 +187,11 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 }
                 catch (e) {
 
-                }                
+                }
             }
             _this.refreshSort(_this.sort, _this.columns);
             _this.saveSettings(_this.tableLocalStorageKey, _this.columns);
-        });        
+        });
     }
 
     private loadFbos() {
@@ -209,7 +201,7 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 var columnForAirport: ColumnType = { id: fbo.icao, name: 'Visits to ' + fbo.icao };
                 var columnForFbo: ColumnType = { id: fbo.icao + fbo.acukwikFboHandlerId, name: 'Visits to ' + fbo.fbo + ' ' + fbo.icao };
                 this.dynamicColumns.push(columnForAirport);
-                this.dynamicColumns.push(columnForFbo);                
+                this.dynamicColumns.push(columnForFbo);
             }
             this.refreshData(true);
         });
@@ -217,24 +209,9 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
 
     //Builds the datasource from the data - creating dynamic columns for each distinct FBO and airport loaded
     private refreshDataSource() {
-        var populateCustomersDataSource = this.customers.length == 0;
-        var populateTailNumbersDataSource = this.tailNumbers.length == 0;
-        //this.fbos = [];
         var dataSource = [];
-                
-            
 
-        var filteredData = this.data.filter(x => (this.selectedCustomers.length == 0 || this.selectedCustomers.some(s => s.toLowerCase() == x.company.toLowerCase())) &&
-            (this.selectedTailNumbers.length == 0 || this.selectedTailNumbers.some(s => s.toLowerCase() == x.tailNumber.toLowerCase())) &&
-            (!this.isCommercialInvisible || !isCommercialAircraftInFlightNumbers(x.flightNumbers)));
-
-        for (let item of filteredData) {
-
-            if (populateCustomersDataSource)
-                this.populateCustomersFromReportItem(item);
-            if (populateTailNumbersDataSource)
-                this.populateTailNumbersFromReportItem(item);
-                      
+        for (let item of this.data) {
 
             var newRow = {
                 company: item.company,
@@ -243,14 +220,14 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 aircraftTypeCode: item.aircraftTypeCode,
                 customerInfoByGroupId: item.customerInfoByGroupId,
             };
-            
+
             for (let airport of item.visitsByAirport) {
 
                 if (this.selectedFbos.length > 0 && !this.selectedFbos.some(x => x.acukwikFboHandlerId == airport.acukwikFboHandlerId))
                     continue;
 
                 var columnForAirport: ColumnType = { id: airport.icao, name: 'Visits to ' + airport.icao };
-                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };                
+                var columnForFbo: ColumnType = { id: airport.icao + airport.acukwikFboHandlerId, name: 'Visits to ' + airport.fboName + ' ' + airport.icao };
                 newRow[columnForAirport.id] = !airport.visitsToAirport ? 0 : airport.visitsToAirport;
                 newRow[columnForFbo.id] = !airport.visitsToFbo ? 0 : airport.visitsToFbo;
             }
@@ -262,19 +239,25 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
             this.dataSource.filteredData = [];
         }
 
-        this.customers.sort((a, b) => a.company?.localeCompare(b.company));
-        this.tailNumbers.sort((a, b) => a.tailNumber?.localeCompare(b.tailNumber));
         this.fbos.sort((a, b) => (a.fbo)?.localeCompare(b.fbo));
         this.columns = this.getAllColumns;
     }
-
-    private populateCustomersFromReportItem(item: IntraNetworkVisitsReportItem) {
-        var customerOption = this.customers.find(x => x.company == item.company);
-        if (customerOption == null && item.company && item.company != '')
-            this.customers.push({ company: item.company });
+    changeIcaoFilter($event: string) {
+        this.icao = $event;
+        this.setColumns();
+        this.refreshData();
     }
-
-    private populateTailNumbersFromReportItem(item: IntraNetworkVisitsReportItem) {
-        this.tailNumbers.push({ tailNumber: item.tailNumber });
+    applyPresetDateFilter(filter: SelectedDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshData();
+    }
+    private setColumns(){
+        this.columns = (this.icao == this.sharedService.currentUser.icao) ? this.getAllColumns : this.filteredColumns;
+    }
+    get filteredColumns() {
+        return this.getAllColumns.filter((column) => {
+            return !this.hiddenColumns.includes(column.id);
+        });
     }
 }

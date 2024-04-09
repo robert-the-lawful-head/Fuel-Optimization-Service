@@ -1519,7 +1519,7 @@ namespace FBOLinx.Web.Controllers
         }
         
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}/fbo/{fboId}")]
-        public async Task<ActionResult<List<CompanyStaticResponse>>> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null)
+        public async Task<ActionResult<List<CompanyStaticResponse>>> GetCompanyStatistics([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] FuelReqsCompanyStatisticsRequest request = null,[FromQuery] string icao = null)
         {
             if (!ModelState.IsValid)
             {
@@ -1528,7 +1528,9 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                string icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+                
+                icao = (icao == null) ? await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync() : icao;
+
                 var fuelReqs = await _fuelReqService.GetValidFuelRequestTotals(fboId, request.StartDateTime, request.EndDateTime);
                 var groupedPricingLogs =
                     await _CompanyPricingLogService.GetCompanyPricingLogCountByAirport(request.StartDateTime,
@@ -1608,6 +1610,58 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ex);
             }
+        }
+
+        [HttpGet("analysis/customer-capture-rate/group/{groupId}/fbo/{fboId}")]
+        public async Task<ActionResult<List<CustomerCaptureRateResponse>>> GetCustomerCaptureRate([FromRoute] int groupId, [FromRoute] int fboId, [FromQuery] DateTime startDateTime, [FromQuery] DateTime endDateTime)
+        {
+
+                var icao = await _context.Fboairports.Where(f => f.Fboid.Equals(fboId)).Select(f => f.Icao).FirstOrDefaultAsync();
+
+                var customers = await _fuelReqService.GetValidCustomers(groupId, null).ToListAsync();
+
+                var fuelerlinxCustomerOrdersCount = await _fuelReqService.GetCustomerTransactionsCountForAirport(icao, startDateTime, endDateTime, null);
+
+                var fbo = await _fboService.GetFbo(fboId);
+                var fuelerlinxCustomerFBOOrdersCount = await _fuelReqService.GetfuelerlinxCustomerFBOOrdersCount(fbo.Fbo, icao, startDateTime, endDateTime);
+
+                //Fill-in customers that don't exist in the group anymore
+                List<int> customerFuelerlinxIds = customers.Where(x => (x.Customer?.FuelerlinxId).GetValueOrDefault() != 0)
+                    .Select(x => Math.Abs((x.Customer?.FuelerlinxId).GetValueOrDefault())).ToList();
+                var fuelerlinxCompanyIdsNotInGroup = fuelerlinxCustomerFBOOrdersCount.Where(x =>
+                    !customerFuelerlinxIds.Contains(x.FuelerLinxCustomerId)).Select(x => x.FuelerLinxCustomerId).Where(x => x > 0).Distinct();
+                foreach (var fuelerlinxCompanyId in fuelerlinxCompanyIdsNotInGroup)
+                {
+                    var existingCustomerRecord = await _context.Customers.FirstOrDefaultAsync(x =>
+                        Math.Abs(x.FuelerlinxId.GetValueOrDefault()) == fuelerlinxCompanyId);
+                    customers.Add(new ValidCustomersProjection() { Oid = 0, CustomerId = (existingCustomerRecord?.Oid).GetValueOrDefault(), Company = existingCustomerRecord?.Company, Customer = existingCustomerRecord });
+                }
+
+                var tableData = new List<CustomerCaptureRateResponse>();
+                foreach (var customer in customers)
+                {
+                    var fuelerLinxCustomerID = Math.Abs((customer.Customer?.FuelerlinxId).GetValueOrDefault());
+
+                    var totalOrders = 0;
+                    if (fuelerlinxCustomerFBOOrdersCount != null)
+                        totalOrders = fuelerlinxCustomerFBOOrdersCount.Where(c => c.FuelerLinxCustomerId == fuelerLinxCustomerID).Select(f => f.TransactionsCount).FirstOrDefault();
+
+                    var airportTotalOrders = _fuelReqService.GetairportTotalOrders(fuelerLinxCustomerID, fuelerlinxCustomerOrdersCount);
+
+                   
+                    var percentCustomerBusiness = (totalOrders > 0)? ((double)((double)totalOrders/ airportTotalOrders)) * 100 : 0;
+
+                    tableData.Add(new CustomerCaptureRateResponse()
+                    {
+                        Oid = customer.Oid,
+                        CustomerId = customer.CustomerId,
+                        Company = customer.Company,
+                        TotalOrders = totalOrders,
+                        AirportOrders = airportTotalOrders,
+                        PercentCustomerBusiness = Math.Round(percentCustomerBusiness, 2)
+                    });
+                }
+                return Ok(tableData);
         }
 
         [HttpPost("analysis/company-quoting-deal-statistics/group/{groupId}")]

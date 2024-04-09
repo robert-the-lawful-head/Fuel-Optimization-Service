@@ -3,13 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.DB.Models;
 using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
-using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.ServiceLayer.DTO.Requests.FBO;
 using FBOLinx.ServiceLayer.EntityServices;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail;
@@ -39,7 +37,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<string> GetFBOIcao(int fboId);
         Task<List<string>> GetToEmailsForEngagementEmails(int fboId);
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
-        public Task<List<FbosDto>> GetFbosByGroupId(int groupId);
+        Task<List<FbosDto>> GetFbosByGroupId(int groupId);
+        IQueryable<Fbos> GetAllFbos();
         Task UpdateModel(Fbos fbo);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
@@ -292,6 +291,10 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             });
 
             return result;
+        }
+        public IQueryable<Fbos> GetAllFbos()
+        {
+            return _context.Fbos.AsQueryable();
         }
     }
 }

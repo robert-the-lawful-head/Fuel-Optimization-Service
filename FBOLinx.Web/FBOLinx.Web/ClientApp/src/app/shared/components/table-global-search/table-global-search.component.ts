@@ -12,8 +12,10 @@ export class TableGlobalSearchComponent implements OnInit {
     @Input() matDataSource: any = null;
     @Input() SubmatDataSource: any = null
     @Input() showClearButton: boolean = true;
+    @Input() hideSearchInput: boolean = false;
     @Output() filterApplied: EventEmitter<any> = new EventEmitter<any>();
     @Output() filteredDataSource: EventEmitter<any> = new EventEmitter<any>();
+    @Output() clearFilters: EventEmitter<any> = new EventEmitter<any>();
 
     public globalFilter: any = { filterValue: '', isGlobal: true };
     public userTypedFilter: string = '';
@@ -21,10 +23,11 @@ export class TableGlobalSearchComponent implements OnInit {
     private page: string = "";
     private idParam: string = "";
 
+    public hasContent = false;
+
     constructor(
         private route: ActivatedRoute,
     ) { }
-
     ngOnInit(): void {
         //if (!this.column) {
         //    this.column = {
@@ -146,6 +149,8 @@ export class TableGlobalSearchComponent implements OnInit {
     }
 
     public clearAllFilters() {
+        this.clearFilters.emit();
+
         this.globalFilter.filterValue = '';
         this.userTypedFilter = '';
         this.matDataSource.filter = '';

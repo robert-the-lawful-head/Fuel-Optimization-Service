@@ -1,0 +1,7 @@
+<mat-button-toggle-group (change)="onToggleChange($event)" aria-label="Font Style">
+    <ng-container *ngFor="let enumValue of dateFilterValues">
+        <mat-button-toggle  value="{{enumValue}}" >
+            <span [ngClass]="{ 'selected-container': defaultFilter == enumValue}">{{enumValue}}</span>
+        </mat-button-toggle>
+    </ng-container>
+</mat-button-toggle-group>

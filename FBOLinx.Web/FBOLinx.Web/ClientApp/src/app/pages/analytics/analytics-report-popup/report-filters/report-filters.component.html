@@ -1,0 +1,65 @@
+<div class="d-inline-block mr-2 ml-2" style="width: 130px" *ngIf="!isFilterHidden(reportFilterItems.icaoDropDown)">
+    <app-flight-watch-filters
+        [icaoList]="airportsICAO"
+        [icao]="icao"
+        [isSearchAicraftHidden]="true"
+        (icaoChanged)="changeIcaoFilter($event)"
+    ></app-flight-watch-filters>
+</div>
+<div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
+    <app-table-global-search
+        [hideSearchInput]="isFilterHidden(reportFilterItems.searchInput)"
+        [matDataSource]="dataSource"
+        placeholder="Search by Company"
+        (clearFilters)="clearFilters()"
+    >
+        <div class="d-inline-block mr-2 ml-2">
+            <app-preset-date-filter
+                [defaultFilter]="selectedDateFilter.selectedFilter"
+                (selectedFilterChange)="applyPresetDateFilter($event)"
+            ></app-preset-date-filter>
+        </div>
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    (dateChange)="applyCustomDateFilter()"
+                    (focus)="dashboardSettingsStartDateFilter.open()"
+                    [(ngModel)]="selectedDateFilter.offsetDate"
+                    [matDatepicker]="dashboardSettingsStartDateFilter"
+                    [max]="filterEndDate"
+                    matInput
+                    placeholder="Start Date"
+                />
+                <mat-datepicker-toggle
+                    [for]="dashboardSettingsStartDateFilter"
+                    matSuffix
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsStartDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+        <div class="d-inline-block mr-2 ml-2" style="width: 130px">
+            <mat-form-field>
+                <input
+                    (dateChange)="applyCustomDateFilter()"
+                    (focus)="dashboardSettingsEndDateFilter.open()"
+                    [(ngModel)]="selectedDateFilter.limitDate"
+                    [matDatepicker]="dashboardSettingsEndDateFilter"
+                    [min]="filterStartDate"
+                    matInput
+                    placeholder="End Date"
+                />
+                <mat-datepicker-toggle
+                    [for]="dashboardSettingsEndDateFilter"
+                    matSuffix
+                ></mat-datepicker-toggle>
+                <mat-datepicker
+                    #dashboardSettingsEndDateFilter
+                    disabled="false"
+                ></mat-datepicker>
+            </mat-form-field>
+        </div>
+    </app-table-global-search>
+</div>

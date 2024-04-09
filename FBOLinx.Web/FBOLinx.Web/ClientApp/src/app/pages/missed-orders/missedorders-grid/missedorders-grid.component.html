@@ -1,62 +1,36 @@
-<div class="paddingTop">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col col-md-4">
-                <app-table-global-search [matDataSource]="dataSource"
-                                         placeholder="Search by Company, Tail, etc."></app-table-global-search>
-            </div>
-            <div class="col-6 col-md-3">
-                <mat-form-field>
-                    <input (dateChange)="refreshTable()"
-                           (focus)="dashboardSettingsStartDateFilter.open()"
-                           [(ngModel)]="filterStartDate"
-                           [matDatepicker]="dashboardSettingsStartDateFilter"
-                           [max]="filterEndDate"
-                           matInput
-                           placeholder="Start Date" />
-                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsStartDateFilter
-                                    disabled="false"></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="col-6 col-md-3">
-                <mat-form-field>
-                    <input (dateChange)="refreshTable()"
-                           (focus)="dashboardSettingsEndDateFilter.open()"
-                           [(ngModel)]="filterEndDate"
-                           [matDatepicker]="dashboardSettingsEndDateFilter"
-                           [min]="filterStartDate"
-                           matInput
-                           placeholder="End Date" />
-                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsEndDateFilter
-                                    disabled="false"></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="actions col-6 col-md-2">
-                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon aria-hidden="true"
-                              class="mat-icon material-icons"
-                              role="img">more_vert</mat-icon>
-                </button>
-                <mat-menu #gridActions="matMenu"
-                          class="switch-nested-menu-left-arrows"
-                          xPosition="before">
-                    <button (click)="openSettings()" mat-menu-item>
-                        Settings
-                    </button>
-                </mat-menu>
-            </div>
+<div class="chart-container">
+    <div class="flex position-relative">
+        <app-report-filters
+            [hiddenFilters]="reportHiddenItems"
+            [icao]="icaoFilter"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            (onDateChange)="applyPresetDateFilter($event)"
+        >
+        </app-report-filters>
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >settings</mat-icon
+                >
+            </button>
+            <mat-menu
+                #gridActions="matMenu"
+                class="switch-nested-menu-left-arrows"
+                xPosition="before"
+            >
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
         </div>
     </div>
-
-    <div class="w-100 table-container" style="overflow-x: auto" [ngClass]="{'d-none': !dataSource || !missedOrdersData}" (scroll)="onTableScroll($event)">
-        <table [dataSource]="dataSource"
-               class="col-12 mb-0"
-               mat-table
-               matSort>
+    <div
+        class="table-container mat-elevation-z3"
+        (scroll)="onTableScroll($event)"
+    >
+        <table [dataSource]="dataSource" class="col-12 mb-0" mat-table matSort>
             <ng-container matColumnDef="customerName">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>
                     Flight Dept.
@@ -78,7 +52,7 @@
             <ng-container matColumnDef="eta">
                 <th *matHeaderCellDef mat-header-cell mat-sort-header>ETA</th>
                 <td *matCellDef="let missedorder" mat-cell>
-                    {{ missedorder.eta  }}
+                    {{ missedorder.eta }}
                 </td>
             </ng-container>
 
@@ -108,25 +82,34 @@
             </ng-container>
 
             <ng-container matColumnDef="createdDate">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>Created</th>
+                <th *matHeaderCellDef mat-header-cell mat-sort-header>
+                    Created
+                </th>
                 <td *matCellDef="let missedorder" mat-cell>
                     {{ missedorder.createdDate }}
                 </td>
             </ng-container>
 
-            <tr *matHeaderRowDef="getTableColumns(); sticky: true"
-                mat-header-row></tr>
-            <tr *matRowDef="let row; columns: getTableColumns()" mat-row></tr>
+            <tr
+                *matHeaderRowDef="visibleColumns; sticky: true"
+                mat-header-row
+            ></tr>
+            <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
         </table>
         <div class="invisible">
-            <mat-paginator (page)="(0); onPageChanged($event)"
-            [length]="resultsLength"
-            [pageSizeOptions]="[10, 25, 50, 100]"
-            [pageSize]="pageSize"></mat-paginator>
+            <mat-paginator
+                (page)="(0); onPageChanged($event)"
+                [length]="resultsLength"
+                [pageSizeOptions]="[10, 25, 50, 100]"
+                [pageSize]="pageSize"
+            ></mat-paginator>
         </div>
     </div>
-
-    <div *ngIf="!missedOrdersData">
-        <mat-spinner></mat-spinner>
-    </div>
 </div>
+<ngx-ui-loader
+    [loaderId]="chartName"
+    bgsColor="rgb(100, 181, 246)"
+    bgsPosition="center-center"
+    bgsType="ball-spin"
+    overlayColor="rgba(0, 0, 0, 0.1)"
+></ngx-ui-loader>

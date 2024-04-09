@@ -52,12 +52,6 @@
     }
 }
 
-.mat-button-wrapper {
-    .mat-icon {
-        font-size: 18px;
-    }
-}
-
 button.mat-icon-button {
     height: 36px;
     line-height: 36px;
@@ -1112,4 +1106,8 @@ div.price-checker-button-bottom {
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #252D47;
+}
+/* No scroll on body for custom popup */
+.no-scroll {
+    overflow: hidden;
 }

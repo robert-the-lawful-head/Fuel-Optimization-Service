@@ -22,66 +22,54 @@ import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
+import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
+import {
+    PresetDateFilterEnum,
+    SelectedDateFilter,
+} from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
     templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
-export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
+export class AnalyticsCompaniesQuotesDealTableComponent
+    extends GridBase
     implements OnInit, AfterViewInit, OnDestroy
 {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    filterStartDate: Date;
-    filterEndDate: Date;
     icao: string;
     fbo: string;
     icaoChangedSubscription: any;
     chartName = 'companies-quotes-deal-table';
-    displayedColumns: string[] = [
-        'company',
-        'directOrders',
-        'companyQuotesTotal',
-        'conversionRate',
-        'conversionRateTotal',
-        'totalOrders',
-        'airportOrders',
-        'customerBusiness',
-        'lastPullDate',
-        'airportVisits',
-        'visitsToFbo',
-        'percentVisits',
-    ];
     tableLocalStorageKey: string;
-    columns: ColumnType[] = [];
+    columns: ColumnType[];
 
     dataLength = 0;
 
-    csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
+    csvFileOptions: csvFileOptions = {
+        fileName: 'Customer Statistics.csv',
+        sheetName: 'Customer Statistics',
+    };
+
+    selectedDateFilter: SelectedDateFilter;
 
     constructor(
         private fuelreqsService: FuelreqsService,
         private fbosService: FbosService,
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
-        private exportDialog: MatDialog,
         private router: Router,
-        private tableSettingsDialog: MatDialog
+        private tableSettingsDialog: MatDialog,
     ) {
         super();
         this.icao = this.sharedService.currentUser.icao;
-        this.filterStartDate = new Date(
-            moment().add(-30, 'd').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(
-            moment().add(7, 'd').format('MM/DD/YYYY')
-        );
         this.initColumns();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.fbosService
             .get({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
@@ -128,9 +116,21 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
                 .map((column) => column.id) || []
         );
     }
-
-    initColumns() {
-        var initialColumns = this.columns = [
+    get filteredColumns() {
+        let hiddenColumns: string[] = [
+            'directOrders',
+            'conversionRate',
+            'conversionRateTotal',
+            'totalOrders',
+            'customerBusiness',
+            'airportVisits',
+        ];
+        return this.initialColumns.filter((column) => {
+            return !hiddenColumns.includes(column.id);
+        });
+    }
+    get initialColumns(): ColumnType[]{
+        return [
             {
                 id: 'company',
                 name: 'Company',
@@ -157,15 +157,15 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
             },
             {
                 id: 'airportOrders',
-                name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+                name: `Total Orders at ${this.icao}`,
             },
             {
                 id: 'customerBusiness',
-                name: '% of Customer\'s Business',
+                name: "% of Customer's Business",
             },
             {
                 id: 'lastPullDate',
-                name: `${this.sharedService.currentUser.icao} Last Quoted`,
+                name: `${this.icao} Last Quoted`,
                 sort: 'desc',
             },
             {
@@ -181,17 +181,22 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
                 name: `% of visits to ${this.fbo}`,
             },
         ];
-
+    }
+    initColumns() {
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
-        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
+        this.columns = this.getClientSavedColumns(
+            this.tableLocalStorageKey,
+            this.initialColumns
+        );
     }
 
-    fetchData(startDate: Date, endDate: Date) {
+    fetchData(startDate: Date, endDate: Date, icao?: string) {
         return this.fuelreqsService.getCompaniesQuotingDealStatistics(
             this.sharedService.currentUser.groupId,
             this.sharedService.currentUser.fboId,
             startDate,
-            endDate
+            endDate,
+            icao
         );
     }
 
@@ -215,14 +220,16 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
     }
 
     refreshData() {
+        let queryIcao =
+            this.icao != this.sharedService.currentUser.icao ? this.icao : null;
         let endDate = this.getEndOfDayTime(this.filterEndDate, true);
         let startDate = this.getStartOfDayTime(this.filterStartDate, true);
 
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(startDate, endDate).subscribe(
+        this.fetchData(startDate, endDate, queryIcao).subscribe(
             (data: any) => {
                 this.dataSource.data = data;
-                 this.dataSource.sortingDataAccessor = (item, property) => {
+                this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
@@ -256,19 +263,23 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    CustomerAnalitycs(element: any )
-    {
-     this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3}  });
+    CustomerAnalitycs(element: any) {
+        this.router.navigate(['/default-layout/customers', element.oid], {
+            state: { tab: 3 },
+        });
     }
 
     exportCsv() {
         let computePropertyFnc = (item: any[], id: string): any => {
-            if(id == "company")
-                return item[id];
-            else
-                return null;
-        }
-        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
+            if (id == 'company') return item[id];
+            else return null;
+        };
+        this.exportCsvFile(
+            this.columns,
+            this.csvFileOptions.fileName,
+            this.csvFileOptions.sheetName,
+            computePropertyFnc
+        );
     }
 
     openSettings() {
@@ -295,5 +306,18 @@ export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    changeIcaoFilter($event: string) {
+        this.icao = $event;
+        this.setColumns();
+        this.refreshData();
+    }
+    applyPresetDateFilter(filter: SelectedDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshData();
+    }
+    private setColumns(){
+        this.columns = (this.icao == this.sharedService.currentUser.icao) ? this.initialColumns : this.filteredColumns;
     }
 }

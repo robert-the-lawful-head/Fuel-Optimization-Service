@@ -676,6 +676,10 @@ export class FlightWatchMapComponent
         this.markerClicked.emit(this.data[selectedFlight]);
     }
     goToAirport(icao: string){
+        if(!this.acukwikairports){
+            console.log('acukwikairports not loaded');
+            return;
+        }
         let airport = this.acukwikairports.find( x => x.icao == icao);
         this.flyToCoordinates(airport.latitudeInDegrees,airport.longitudeInDegrees);
     }

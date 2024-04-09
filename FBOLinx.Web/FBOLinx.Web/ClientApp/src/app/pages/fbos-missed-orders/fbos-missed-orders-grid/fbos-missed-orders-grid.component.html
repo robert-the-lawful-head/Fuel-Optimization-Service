@@ -6,10 +6,9 @@
                    overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
 </div>
 
-<div class="d-none d-md-block" style="position: absolute; right: 10px; top: -30px">
+<div class="d-none d-md-block" style="position: absolute; right: 10px; top: -30px" *ngIf="!isCsr">
     <i class="fa fa-external-link mr-1 text-white cursor-pointer"
-       (click)="goToMissedOrdersAll()">
-
+       (click)="goToAnalyticsReports()">
     </i>
 </div>
 
@@ -29,7 +28,7 @@
                 <div class="col">Aircraft</div>
                 <div class="col">Quantity</div>
                 <div class="col">Time of Dispatch</div>
-                <div class="col"></div>
+                <div class="col" *ngIf="!isCsr"></div>
                 <div class="col"></div>
             </div>
         </div>
@@ -39,8 +38,8 @@
                 <div class="col"> {{missedOrder.tailNumber}}</div>
                 <div class="col"> {{ missedOrder.missedQuotesCount }} Missed order{{missedOrder.missedQuotesCount < 2 ? "" : "s" }}</div>
                 <div class="col"> {{ missedOrder.createdDate }}</div>
-                <div class="col">
-                    <button (click)="goToMissedOrders(missedOrder)" [view]="'accent'" size="small" ni-button>
+                <div class="col" *ngIf="!isCsr">
+                    <button (click)="goToAnalyticsReports()" [view]="'accent'" size="small" ni-button>
                         Missed Orders
                     </button>
                 </div>

@@ -14,6 +14,9 @@ import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.component';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { SharedService } from 'src/app/layouts/shared-service';
+import * as SharedEvents from 'src/app/models/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -49,30 +52,36 @@ export class FlightWatchMapWrapperComponent implements OnInit {
     public flightWatchDictionary: Dictionary<FlightWatchModelResponse>;
     public selectedPopUp: FlightWatchModelResponse;
 
+    public chartName = 'map-wrapper';
 
     constructor(private flightWatchMapService: FlightWatchMapService,
-        flightWatchMapSharedService: FlightWatchMapSharedService) {
+        flightWatchMapSharedService: FlightWatchMapSharedService,
+        private ngxLoader: NgxUiLoaderService,
+        private sharedService: SharedService,) {
         flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
             this.updatePopUpData(data);
         });
         flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
             this.updateAircraftCompanyAssignData(data);
         });
+        this.ngxLoader.startLoader(this.chartName);
+        this.sharedService.valueChange(SharedEvents.locationChangedEvent);
     }
 
     ngOnInit() {}
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.data && changes.data.currentValue) {
+        if (changes.data && changes.data.currentValue != null) {
             this.processFlightWatchData(changes.data.currentValue,changes.data.previousValue);
             this.flightWatchDictionary = this.getFilteredData(
                 changes.data.currentValue
             );
+            this.ngxLoader.stopLoader(this.chartName);
         }
     }
     private processFlightWatchData(currentFlights: FlightWatchModelResponse [], previousFlights: FlightWatchModelResponse [] = []):void {
         for (let currentData of currentFlights) {
-            let previousData = previousFlights.find((obj) => obj.tailNumber == currentData.tailNumber);
+            let previousData = previousFlights?.find((obj) => obj.tailNumber == currentData.tailNumber);
 
             currentData.previousAircraftPositionDateTimeUtc = previousData?.aircraftPositionDateTimeUtc;
 

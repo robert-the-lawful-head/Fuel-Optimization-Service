@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import * as moment from 'moment';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-import { CustomersListType } from '../../../models/customer';
 import { CustomeraircraftsService } from '../../../services/customeraircrafts.service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { AnatylticsReports, analyticsReports } from '../analytics-activity-reports/analytics-activity-reports.component';
+import { AnaliticsReportType } from '../analytics-report-popup/analytics-report-popup.component';
+import { ActivatedRoute } from '@angular/router';
+import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 
 @Component({
     selector: 'app-analytics-home',
@@ -17,14 +19,15 @@ export class AnalyticsHomeComponent implements OnInit {
     public filterStartDate: Date;
     public filterEndDate: Date;
     public pastThirtyDaysStartDate: Date;
-    public customers: CustomersListType[] = [];
     public tailNumbers: any[] = [];
     public authenticatedIcao: string = '';
+    public selectedRerport: AnatylticsReports;
 
     constructor(
-        private customerInfoByGroupService: CustomerinfobygroupService,
         private customerAircraftsService: CustomeraircraftsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private cdr: ChangeDetectorRef,
+        private route: ActivatedRoute
     ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -38,19 +41,21 @@ export class AnalyticsHomeComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.getCustomersList();
         this.getAircrafts();
-    }
 
-    getCustomersList() {
-        this.customerInfoByGroupService
-            .getCustomersListByGroupAndFbo(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId
-            )
-            .subscribe((customers: any[]) => {
-                this.customers = customers;
-            });
+        var isSingleSourceFbo: boolean = JSON.parse(
+            this.sharedService
+                .getCurrentUserPropertyValue(
+                    localStorageAccessConstant.isSingleSourceFbo
+                )
+        );
+
+        this.route.queryParams.subscribe(params => {
+            const reportType = params['report'] as AnaliticsReportType;
+            if(reportType == AnaliticsReportType.LostToCompetition && !isSingleSourceFbo){
+                this.openReport(analyticsReports[AnaliticsReportType.LostToCompetition]);
+            }
+        });
     }
 
     getAircrafts() {
@@ -62,5 +67,11 @@ export class AnalyticsHomeComponent implements OnInit {
             .subscribe((tailNumbers: any[]) => {
                 this.tailNumbers = tailNumbers;
             });
+    }
+    openReport(reportType: AnatylticsReports) {
+        this.selectedRerport = null;
+        this.cdr.detectChanges();
+        this.selectedRerport = reportType;
+        this.cdr.detectChanges();
     }
 }
