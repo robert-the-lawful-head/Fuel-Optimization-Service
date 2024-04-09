@@ -60,8 +60,7 @@ export class LoginModalComponent {
                             } else if (data.role === 2) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else {
-                                this.groupsFbosData = await this.groupsService
-                                .groupsAndFbos().toPromise();
+                                this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
                                 this.setFboSessionVariables(data);
 
                                 if (data.role === 5)
