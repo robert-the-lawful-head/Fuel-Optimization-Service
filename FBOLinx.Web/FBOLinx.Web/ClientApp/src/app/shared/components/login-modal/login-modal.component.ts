@@ -9,7 +9,6 @@ import { AuthenticationService } from '../../../services/authentication.service'
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { GroupsService } from 'src/app/services/groups.service';
-import { GroupFboViewModel } from 'src/app/models/groups';
 
 @Component({
     selector: 'app-login-modal',
@@ -19,7 +18,7 @@ import { GroupFboViewModel } from 'src/app/models/groups';
 export class LoginModalComponent {
     loginForm: FormGroup;
     error: '';
-    public groupsFbosData: GroupFboViewModel;
+    public groupsFbosData: any;
 
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
@@ -38,7 +37,6 @@ export class LoginModalComponent {
         });
         authenticationService.logout();
     }
-
     onCancelClick(): void {
         this.dialogRef.close();
     }
@@ -53,11 +51,7 @@ export class LoginModalComponent {
                 )
                 .subscribe(
                     (data) => {
-                        console.log("🚀 ~ LoginModalComponent ~ onSubmit ~ data:", data)
-                        localStorage.removeItem('impersonatedrole');
-                        localStorage.removeItem('managerGroupId');
-                        localStorage.removeItem('conductorFbo');
-                        this.authenticationService.postAuth().subscribe(() => {
+                        this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
                             if (data.role === 3) {
                                 this.router.navigate([
@@ -66,7 +60,9 @@ export class LoginModalComponent {
                             } else if (data.role === 2) {
                                 this.router.navigate(['/default-layout/fbos/']);
                             } else {
-                                this.setFboSessionVariables(data.fbo.groupId, data.fbo.fboAirport.icao);
+                                this.groupsFbosData = await this.groupsService
+                                .groupsAndFbos().toPromise();
+                                this.setFboSessionVariables(data);
 
                                 if (data.role === 5)
                                     this.router.navigate([
@@ -85,16 +81,17 @@ export class LoginModalComponent {
                 );
         }
     }
-    private async setFboSessionVariables(groupId: number, icao: string) {
-        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.groupId,groupId.toString());
+    private async setFboSessionVariables(fboObj: any) {
+        let icao: string = fboObj.icao ?? '';
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
 
-        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,groupId).toString());
+        let isNetworkFbo = this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fboObj.groupId.toString());
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isNetworkFbo.toString());
 
         var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
-
         this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
-
     }
     public openRequestDemo() {
         this.dialogRef.close({

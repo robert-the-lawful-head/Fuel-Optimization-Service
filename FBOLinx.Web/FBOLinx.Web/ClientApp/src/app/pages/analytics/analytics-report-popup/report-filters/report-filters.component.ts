@@ -85,7 +85,6 @@ export class ReportFiltersComponent implements OnInit {
         }
     }
     clearFilters(){
-        console.log("🚀 ~ ReportFiltersComponent ~ clearFilters ~ clearFilters:")
         this.filterStartDate = new Date(
             moment().add(-1, 'M').format('MM/DD/YYYY')
         );
