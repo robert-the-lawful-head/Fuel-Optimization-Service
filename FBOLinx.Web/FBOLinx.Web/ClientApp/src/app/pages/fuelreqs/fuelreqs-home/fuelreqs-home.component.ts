@@ -2,13 +2,11 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { interval, Subscription } from 'rxjs';
-import * as XLSX from 'xlsx';
 
 import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { ActivatedRoute } from '@angular/router';
-import * as SharedEvent from '../../../constants/sharedEvents';
 import { ServicesAndFeesService } from '../../../services/servicesandfees.service';
 
 @Component({
@@ -35,7 +33,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     public timer: Subscription;
     public isFuelOrdersShowing: boolean = true;
     public missedOrdersData: any[];
-    public selectedTabIndex: number = 0;
     public resetMissedOrders: boolean = false;
     public servicesAndFees: any[] = [];
 
@@ -52,12 +49,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterEndDate = new Date(
             moment().add(30, 'd').format('MM/DD/YYYY')
         );
-
-        this.route.queryParams.subscribe((params) => {
-            if (params.tab && params.tab) {
-                this.selectedTabIndex = parseInt(params.tab);
-            }
-        });
 
         this.startFuelReqDataServe();
     }
@@ -102,24 +93,6 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.restartFuelReqDataServe();
         this.fuelreqsData = null;
         this.loadFuelReqs();
-    }
-
-    onTabClick(event) {
-        if (event.tab.textLabel == "Fuel & Service Orders") {
-            this.isFuelOrdersShowing = true;
-            this.sharedService.emitChange(SharedEvent.resetMissedOrders);
-        }
-        else {
-            this.filterStartDate = new Date(
-                moment().add(-30, 'd').format('MM/DD/YYYY')
-            );
-            this.filterEndDate = new Date(
-                moment().add(30, 'd').format('MM/DD/YYYY')
-            );
-
-            this.loadFuelReqs();
-            this.isFuelOrdersShowing = false;
-        }
     }
 
     // PRIVATE METHODS

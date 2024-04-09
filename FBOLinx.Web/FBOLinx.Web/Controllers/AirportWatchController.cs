@@ -23,6 +23,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Analytics;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.FlightWatch;
 using Newtonsoft.Json;
 using YamlDotNet.Core.Events;
+using Fuelerlinx.SDK;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -73,9 +74,16 @@ namespace FBOLinx.Web.Controllers
 
         //where we work with DBSCAN
         [HttpPost("group/{groupId}/fbo/{fboId}/arrivals-depatures")]
-        public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request)
+        public async Task<IActionResult> GetArrivalsDepartures([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request, [FromQuery] string icao = null)
         {
-            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request);
+            var data2 = await _airportWatchService.GetArrivalsDeparturesRefactored(groupId, fboId, request, icao);
+            return Ok(data2);
+        }
+
+        [HttpPost("fbo/{fboId}/arrivals-depatures-swim")]
+        public async Task<IActionResult> GetArrivalsDeparturesSwim([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request, [FromQuery] string icao = null)
+        {
+            var data2 = await _airportWatchService.GetArrivalsDeparturesSwim(fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
             return Ok(data2);
         }
 
@@ -168,9 +176,9 @@ namespace FBOLinx.Web.Controllers
             return Ok(unassignedAntennas);
         }
 
-        [HttpGet("intra-network/visits-report/{groupId}")]
+        [HttpGet("intra-network/visits-report/group/{groupId}/fbo/{fboId}")]
         public async Task<ActionResult<List<IntraNetworkVisitsReportItem>>> GetIntraNetworkVisitsReportForGroup(
-            [FromRoute] int groupId, DateTime? startDateTimeUtc = null, DateTime? endDateTimeUtc = null)
+            [FromRoute] int groupId, [FromRoute] int fboId, DateTime? startDateTimeUtc = null, DateTime? endDateTimeUtc = null)
         {
             try
             {
@@ -179,7 +187,7 @@ namespace FBOLinx.Web.Controllers
                     throw new Exception("Start and end date time are required.  Please provide startDateTimeUtc and endDateTimeUtc values in the querystring.");
                 }
 
-                var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId, startDateTimeUtc.Value, endDateTimeUtc.Value);
+                var result = await _IntraNetworkAntennaDataReportService.GenerateReportForNetwork(groupId,fboId, startDateTimeUtc.Value, endDateTimeUtc.Value);
                 return Ok(result);
             }
             catch (System.Exception ex)

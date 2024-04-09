@@ -58,7 +58,7 @@
                 aria-hidden="true"
                 class="mat-icon material-icons"
                 role="img"
-                >more_vert</mat-icon
+               >settings</mat-icon
             >
         </button>
         <mat-menu
@@ -174,7 +174,7 @@
                     clickStopPropagation
                     mat-icon-button
                 >
-                    <mat-icon>more_vert</mat-icon>
+                    <mat-icon>settings</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
                     <button (click)="editGroup(data)"
@@ -195,7 +195,7 @@
                         <mat-icon>delete_forever</mat-icon>
                         <span>Delete Group</span>
                     </button>
-                    <button [disabled]="!groupFbos(data.oid).length"
+                    <button [disabled]="!getGroupFbos(data.oid).length"
                             [matMenuTriggerFor]="fbosMenu"
                             clickStopPropagation
                             mat-menu-item>
@@ -205,7 +205,7 @@
                 <mat-menu #fbosMenu="matMenu">
                     <button
                         (click)="deleteFbo(fbo)"
-                        *ngFor="let fbo of groupFbos(data.oid)"
+                        *ngFor="let fbo of getGroupFbos(data.oid)"
                         clickStopPropagation
                         mat-menu-item
                     >

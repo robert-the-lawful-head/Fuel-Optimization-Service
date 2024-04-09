@@ -7,6 +7,8 @@ import { SharedService } from '../../../layouts/shared-service';
 //Services
 import { AuthenticationService } from '../../../services/authentication.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
+import { GroupsService } from 'src/app/services/groups.service';
 
 @Component({
     selector: 'app-login-modal',
@@ -16,6 +18,7 @@ import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccess
 export class LoginModalComponent {
     loginForm: FormGroup;
     error: '';
+    public groupsFbosData: any;
 
     constructor(
         public dialogRef: MatDialogRef<LoginModalComponent>,
@@ -23,6 +26,8 @@ export class LoginModalComponent {
         private router: Router,
         private authenticationService: AuthenticationService,
         private sharedService: SharedService,
+        private manageFboGroupsService: ManageFboGroupsService,
+        private groupsService: GroupsService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.loginForm = this.formBuilder.group({
@@ -30,8 +35,8 @@ export class LoginModalComponent {
             remember: new FormControl(false),
             username: new FormControl(''),
         });
+        authenticationService.logout();
     }
-
     onCancelClick(): void {
         this.dialogRef.close();
     }
@@ -46,10 +51,7 @@ export class LoginModalComponent {
                 )
                 .subscribe(
                     (data) => {
-                        localStorage.removeItem('impersonatedrole');
-                        localStorage.removeItem('managerGroupId');
-                        localStorage.removeItem('conductorFbo');
-                        this.authenticationService.postAuth().subscribe(() => {
+                        this.authenticationService.postAuth().subscribe(async () => {
                             this.dialogRef.close();
                             if (data.role === 3) {
                                 this.router.navigate([
@@ -57,15 +59,18 @@ export class LoginModalComponent {
                                 ]);
                             } else if (data.role === 2) {
                                 this.router.navigate(['/default-layout/fbos/']);
-                            } else if (data.role === 5) {
-                                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,data.fbo.fboAirport.icao);
-                                this.router.navigate([
-                                    '/default-layout/dashboard-csr/',
-                                ]);
                             } else {
-                                this.router.navigate([
-                                    '/default-layout/dashboard-fbo-updated/',
-                                ]);
+                                this.groupsFbosData = await this.groupsService.groupsAndFbos().toPromise();
+                                this.setFboSessionVariables(data);
+
+                                if (data.role === 5)
+                                    this.router.navigate([
+                                        '/default-layout/dashboard-csr/',
+                                    ]);
+                                else
+                                    this.router.navigate([
+                                        '/default-layout/dashboard-fbo-updated/',
+                                    ]);
                             }
                         });
                     },
@@ -75,7 +80,18 @@ export class LoginModalComponent {
                 );
         }
     }
+    private async setFboSessionVariables(fboObj: any) {
+        let icao: string = fboObj.icao ?? '';
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fbo,fboObj.fbo.fbo);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.fboId,fboObj.fboId);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,icao);
 
+        let isNetworkFbo = this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fboObj.groupId.toString());
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,isNetworkFbo.toString());
+
+        var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(icao).toPromise();
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
+    }
     public openRequestDemo() {
         this.dialogRef.close({
             mode: 'request-demo',

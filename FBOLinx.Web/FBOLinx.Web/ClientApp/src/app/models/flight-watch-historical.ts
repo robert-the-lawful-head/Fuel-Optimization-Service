@@ -17,7 +17,7 @@ export type FlightWatchHistorical = {
     hexCode: string;
     aircraftType: string;
     aircraftTypeCode: string;
-    status: number;
+    status: number | string;
     pastVisits: number;
     originated: string;
     isFuelerlinx: boolean;
@@ -25,6 +25,8 @@ export type FlightWatchHistorical = {
     percentOfVisits: number;
     isConfirmedVisit: boolean;
     airportWatchHistoricalParking: AirportWatchHistoricalParking;
+    parkingAcukwikFBOHandlerId: number | null;
+    isParkedWithinGeofence: boolean;
 };
 
 export type AirportWatchHistoricalDataRequest = {

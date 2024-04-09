@@ -1,16 +1,10 @@
-.actions {
-    position: relative;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+.chart-container {
+    height: 100%;
 }
-
-.paddingTop {
-    padding-top: 30px;
-}
-
 .table-container {
-    height: calc(100vh - 285px);
+    height: 89%;
+    width: 100%;
+    overflow: auto;
 }
 
 .mat-column-email {
@@ -18,4 +12,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.actions {
+    position: absolute;
+    right: 10px;
+    top: 90px;
+    transform: translateY(-50%);
+    z-index: 9999;
 }

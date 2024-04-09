@@ -16,7 +16,6 @@ import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from 'src/app/layouts/shared-service';
 import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
-    FlightWatchDictionary,
     FlightWatchModelResponse,
 } from '../../models/flight-watch';
 import { FlightWatchMapService } from './flight-watch-map/flight-watch-map-services/flight-watch-map.service';
@@ -24,6 +23,7 @@ import { FlightWatchMapWrapperComponent } from './flight-watch-map-wrapper/fligh
 import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
 import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
@@ -45,19 +45,17 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     pageTitle = 'Flight Watch';
 
     isStable = true;
-    loading = false;
     center: LngLatLike = null;
     flightWatchDataSource: MatTableDataSource<FlightWatchModelResponse>;
 
-    flightWatchData: FlightWatchModelResponse[];
-    filteredFlightWatchData: FlightWatchDictionary;
+    flightWatchData: FlightWatchModelResponse[] = null;
+    filteredFlightWatchData: FlightWatchModelResponse[];
     acukwikairport: AcukwikAirport[];
     airportsICAO: string[];
     selectedICAO: string;
 
     style: any = {};
-    isMapShowing = true;
-
+    chartName = 'flight-watch';
     currentFilters: SwimFilter = {
         filterText: '',
         dataType: null,
@@ -69,28 +67,13 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private flightWatchMapService: FlightWatchMapService,
         private sharedService: SharedService,
         public dialog: MatDialog,
-        private cdref: ChangeDetectorRef
+        private cdref: ChangeDetectorRef,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
         );
-        this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
-            if(!value.data) return;
-            if(value.event === SharedEvents.flightWatchDataEvent){
-                if(value.data){
-                    this.flightWatchData = this.flightWatchMapService.filterArrivalsAndDepartures(value.data);
-                    this.isStable = true;
-                }else{
-                    this.flightWatchData = [];
-                    this.isStable = false;
-                }
-                this.loading = false;
-            }
-            if (value.event == SharedEvents.flyToOnMapEvent) {
-                this.center = this.flightWatchMapService.getMapCenterByCoordinates(value.data.latitude,value.data.longitude);
-            }
-        });
     }
     ngAfterContentChecked() {
         this.cdref.detectChanges();
@@ -99,6 +82,24 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         if(this.center == null)
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
+
+        this.ngxLoader.startLoader(this.chartName);
+        this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
+            if(value.event === SharedEvents.flightWatchDataEvent){
+                if(value.data){
+                    this.flightWatchData = this.flightWatchMapService.filterArrivalsAndDepartures(value.data);
+                    this.isStable = true;
+                }else{
+                    this.flightWatchData = [];
+                    this.isStable = false;
+                }
+                this.applyFiltersToData();
+                this.ngxLoader.stopLoader(this.chartName);
+            }
+            if (value.event == SharedEvents.flyToOnMapEvent) {
+                this.center = this.flightWatchMapService.getMapCenterByCoordinates(value.data.latitude,value.data.longitude);
+            }
+        });
     }
     ngOnDestroy() {
     }

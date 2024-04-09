@@ -1,7 +1,7 @@
-<div class="container-fluid">
-    <div class="row">
-        <div [ngClass]="{'col-8': showClearButton, 'col-12': !showClearButton}" >
-            <mat-form-field>
+
+<div class="container-fluid flex">
+        <div class="flex">
+            <mat-form-field *ngIf="!hideSearchInput">
                 <input
                     (keyup)="applyFilter($event.target.value)"
                     [(ngModel)]="userTypedFilter"
@@ -10,8 +10,9 @@
                 />
                 <span matPrefix><i class="fa fa-search"></i></span>
             </mat-form-field>
+            <ng-content></ng-content>
         </div>
-        <div class="col-4" style="margin-top: 15px" *ngIf="showClearButton">
+        <div *ngIf="showClearButton">
             <button
                 (click)="clearAllFilters(); $event.stopPropagation()"
                 [view]="'error'"
@@ -21,5 +22,4 @@
                 <span class="d-block d-md-none">Clear</span>
             </button>
         </div>
-    </div>
 </div>

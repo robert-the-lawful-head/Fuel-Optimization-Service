@@ -37,6 +37,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
         Task<List<Fuelerlinx.SDK.GeneralAirportInformation>> GetGeneralAirportInformationList();
         Task<Fuelerlinx.SDK.GeneralAirportInformation> GetGeneralAirportInformation(string airportIdentifier);
         Task<string> FindClosestAntenna(Coordinate coordinates, List<string> antennas);
+        Task<bool> isSingleSource(string icao);
     }
 
     public class AirportService :
@@ -299,6 +300,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Airport
             {
                 return null;
             }
+        }
+
+        public async Task<bool> isSingleSource(string icao)
+        {
+            return await (from a in _degaContext.AcukwikAirports
+                                     join ad in _degaContext.AcukwikFbohandlerDetail
+                                     on a.Oid equals ad.AirportId
+                                     where icao == a.Icao
+                                     select ad).CountAsync()  == 1;
         }
     }
 }

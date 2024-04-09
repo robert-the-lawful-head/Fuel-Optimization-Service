@@ -94,7 +94,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog
                     MissedQuotesLogViewModel missedQuotesLogViewModel = new MissedQuotesLogViewModel();
                     missedQuotesLogViewModel.CustomerName = customer.Company;
 
-                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.DateCreated.GetValueOrDefault());
+                    var localDateTimeCreatedDate = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.DateCreated ?? startDateTime);
                     missedQuotesLogViewModel.CreatedDate = localDateTimeCreatedDate.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone;
                     var localDateTimeEta = await _AirportTimeService.GetAirportLocalDateTime(fbo.FboAirport?.Icao, transaction.Eta.GetValueOrDefault());
                     missedQuotesLogViewModel.Eta = localDateTimeEta.ToString("MM/dd/yyyy, HH:mm", CultureInfo.InvariantCulture) + " " + localTimeZone; ;

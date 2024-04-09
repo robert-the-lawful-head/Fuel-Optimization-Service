@@ -22,8 +22,9 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
-import * as SharedEvent from '../../../constants/sharedEvents';
-import { GridBase } from 'src/app/services/tables/GridBase';
+import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
+import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';
 
 const initialColumns: ColumnType[] = [
     {
@@ -70,8 +71,7 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
     chartName = 'missed-orders-table';
 
     searchText: string = '';
-    filterStartDate: Date;
-    filterEndDate: Date;
+
     filtersChanged: Subject<any> = new Subject<any>();
 
     tableLocalStorageKey = 'missed-orders-table-settings';
@@ -85,6 +85,8 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
 
     resetMissedOrdersSubscription: any;
 
+    csvFileOptions: csvFileOptions = { fileName: 'Missed Orders', sheetName: 'Missed Orders' };
+    reportHiddenItems: ReportFilterItems[] = [ReportFilterItems.icaoDropDown];
     constructor(
         private sharedService: SharedService,
         private tableSettingsDialog: MatDialog,
@@ -126,10 +128,6 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             this.paginator.pageIndex = 0;
         }
 
-        this.filterStartDate = new Date(
-            moment().add(-1, 'week').format('MM/DD/YYYY')
-        );
-        this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshTable());
@@ -137,19 +135,6 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
         this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
 
         this.refreshTable();
-    }
-
-    ngAfterViewInit() {
-        this.resetMissedOrdersSubscription =
-            this.sharedService.changeEmitted$.subscribe((message) => {
-                if (message === SharedEvent.resetMissedOrders) {
-                    this.filterStartDate = new Date(
-                        moment().add(-1, 'week').format('MM/DD/YYYY')
-                    );
-                    this.filterEndDate = new Date(moment().add(3, 'days').format('MM/DD/YYYY'));
-                    this.refreshTable();
-                }
-            });
     }
 
     ngOnDestroy() {
@@ -167,9 +152,17 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
                 return column.id
             });
     }
+    get visibleColumns() {
+        return this.columns
+        .filter((column) => !column.hidden)
+        .map((column) => {
+            if (column.id == 'customer')
+                return 'customerName'
+            return column.id
+        });
+    }
 
     refreshTable() {
-        this.missedOrdersData = null;
         this.ngxLoader.startLoader(this.chartName);
         this.fetchData().subscribe(
             (data: any[]) => {
@@ -254,5 +247,13 @@ export class MissedOrdersGridComponent extends GridBase implements OnInit {
             this.tableLocalStorageKey,
             JSON.stringify(this.columns)
         );
+    }
+    exportCsv() {
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,null);
+    }
+    applyPresetDateFilter(filter: SelectedDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshTable();
     }
 }

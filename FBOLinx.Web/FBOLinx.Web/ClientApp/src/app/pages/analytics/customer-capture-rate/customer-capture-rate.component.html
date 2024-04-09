@@ -1,0 +1,130 @@
+<div class="chart-container">
+    <div class="flex position-relative">
+        <app-report-filters
+            [hiddenFilters]="reportHiddenItems"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            (onDateChange)="applyPresetDateFilter($event)"
+        ></app-report-filters>
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >settings</mat-icon
+                >
+            </button>
+            <mat-menu
+                #gridActions="matMenu"
+                class="switch-nested-menu-left-arrows"
+                xPosition="before"
+            >
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
+        </div>
+    </div>
+
+    <div
+        class="table-container mat-elevation-z3"
+        (scroll)="onTableScroll($event)"
+    >
+        <table [dataSource]="dataSource" mat-table matSort>
+            <ng-container matColumnDef="company">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let info" mat-cell>
+                    {{ info.company }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalOrders">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="totalOrders"
+                            propertyName="totalOrders"
+                        >
+                            <div class="container">
+                                <div>Total Orders at</div>
+                                <div>{{ fbo }}</div>
+                            </div>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let info" mat-cell>
+                    {{ info.totalOrders }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="airportOrders">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="airportOrders"
+                            propertyName="airportOrders"
+                        >
+                            <span>Total Orders at {{ icao }}</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let info" mat-cell>
+                    {{ info.airportOrders }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="percentCustomerBusiness">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="percentCustomerBusiness"
+                            propertyName="percentCustomerBusiness"
+                        >
+                            <span>% of Customer's Business</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td *matCellDef="let info" mat-cell>
+                    {{ info.percentCustomerBusiness }}%
+                </td>
+            </ng-container>
+
+            <tr
+                *matHeaderRowDef="visibleColumns; sticky: true"
+                mat-header-row
+            ></tr>
+            <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
+        </table>
+    </div>
+</div>
+<ngx-ui-loader
+    [loaderId]="chartName"
+    bgsColor="rgb(100, 181, 246)"
+    bgsPosition="center-center"
+    bgsType="ball-spin"
+    overlayColor="rgba(0, 0, 0, 0.1)"
+></ngx-ui-loader>
+<div class="invisible">
+    <mat-paginator
+        (page)="(0); onPageChanged($event)"
+        [length]="this.dataSource.data"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageSize]="pageSize"
+    ></mat-paginator>
+</div>

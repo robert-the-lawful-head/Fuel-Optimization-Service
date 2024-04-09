@@ -2,6 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 
 import * as moment from 'moment';
+import { CustomerCaptureRateReport } from '../models/customer-capture-rate-report';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class FuelreqsService {
@@ -292,14 +294,13 @@ export class FuelreqsService {
         groupId: number,
         fboId: number,
         startDate: Date,
-        endDate: Date
+        endDate: Date,
+        icao?: string
     ) {
+        let query = icao ? `?icao=${icao}` : '';
+
         return this.http.post(
-            this.accessPointUrl +
-                '/analysis/company-quoting-deal-statistics/group/' +
-                groupId +
-                '/fbo/' +
-                fboId,
+            `${this.accessPointUrl}/analysis/company-quoting-deal-statistics/group/${groupId}/fbo/${fboId}${query}`,
             {
                 endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm')
@@ -309,7 +310,20 @@ export class FuelreqsService {
             }
         );
     }
-
+    public getCustomerCaptureRate(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date,
+    ): Observable<CustomerCaptureRateReport[]>{
+        let query = `?startDateTime=${startDate.toISOString()}&endDateTime=${endDate.toISOString()}`;
+        return this.http.get<CustomerCaptureRateReport[]>(
+            `${this.accessPointUrl}/analysis/customer-capture-rate/group/${groupId}/fbo/${fboId}${query}`,
+            {
+                headers: this.headers,
+            }
+        );
+    }
     public getCompaniesQuotingDealStatisticsForGroupFbos(
         groupId: number,
         fboIds: number[],

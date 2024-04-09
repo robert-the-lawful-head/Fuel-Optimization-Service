@@ -7,6 +7,8 @@ import {
     AirportWatchHistoricalDataRequest,
     FlightWatchHistorical,
 } from '../models/flight-watch-historical';
+import { IntraNetworkVisitsReportItem } from '../models/intra-network-visits-report-item';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class AirportWatchService {
@@ -36,15 +38,27 @@ export class AirportWatchService {
     public getArrivalsDepartures(
         groupId: number,
         fboId: number,
+        body: AirportWatchHistoricalDataRequest,
+        icao?: string
+    ) : Observable<FlightWatchHistorical[]>{
+        let query = icao ? `?icao=${icao}` : '';
+
+        return this.http.post<FlightWatchHistorical[]>(
+            `${this.accessPointUrl}/group/${groupId}/fbo/${fboId}/arrivals-depatures${query}`,
+            body,
+            { headers: this.headers }
+        );
+    }
+
+    public getArrivalsDeparturesSwim(
+        fboId: number,
         body: AirportWatchHistoricalDataRequest
     ) {
         return this.http.post<FlightWatchHistorical[]>(
             this.accessPointUrl +
-                '/group/' +
-                groupId +
-                '/fbo/' +
-                fboId +
-                '/arrivals-depatures',
+            '/fbo/' +
+            fboId +
+            '/arrivals-depatures-swim',
             body,
             { headers: this.headers }
         );
@@ -106,9 +120,10 @@ export class AirportWatchService {
         );
     }
 
-    public getIntraNetworkVisitsReport(groupId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
-        return this.http.get<any>(
-            `${this.accessPointUrl}/intra-network/visits-report/${groupId}?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`,
+    public getIntraNetworkVisitsReport(groupId: number,fboId: number, startDateTimeUtc: Date, endDateTimeUtc: Date) {
+        let query = `?startDateTimeUtc=${startDateTimeUtc.toISOString()}&endDateTimeUtc=${endDateTimeUtc.toISOString()}`;
+        return this.http.get<IntraNetworkVisitsReportItem[]>(
+            `${this.accessPointUrl}/intra-network/visits-report/group/${groupId}/fbo/${fboId}${query}`,
             { headers: this.headers }
         );
     }

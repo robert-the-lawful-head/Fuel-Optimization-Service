@@ -12,6 +12,7 @@ export type ColumnType = {
     name: string;
     sort?: SortDirection;
     hidden?: boolean;
+    index?: number;
 };
 
 @Component({

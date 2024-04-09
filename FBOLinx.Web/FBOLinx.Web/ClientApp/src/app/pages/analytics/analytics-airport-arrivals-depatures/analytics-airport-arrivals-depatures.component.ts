@@ -8,14 +8,10 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
-import * as moment from 'moment';
+import { MatSort } from '@angular/material/sort';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
-import { Subject } from 'rxjs';
-import {
-    ColumnType,
-    TableSettingsComponent,
-} from 'src/app/shared/components/table-settings/table-settings.component';
+import { Observable, Subject } from 'rxjs';
+import { ColumnType } from 'src/app/shared/components/table-settings/table-settings.component';
 
 import { isCommercialAircraft } from '../../../../utils/aircraft';
 import { AIRCRAFT_IMAGES } from '../../flight-watch/flight-watch-map/aircraft-images';
@@ -28,22 +24,25 @@ import { FbosService } from '../../../services/fbos.service';
 
 //Models
 import { CustomersListType } from '../../../models/customer';
-import {
-    FlightWatchHistorical, FlightWatchStatus,
-} from '../../../models/flight-watch-historical';
+import { FlightWatchHistorical } from '../../../models/flight-watch-historical';
 import {
     AircraftAssignModalComponent,
     NewCustomerAircraftDialogData,
 } from '../../../shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
-
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { FbosGridViewModel } from 'src/app/models/FbosGridViewModel';
 
 @Component({
     selector: 'app-analytics-airport-arrivals-depatures',
     styleUrls: ['./analytics-airport-arrivals-depatures.component.scss'],
     templateUrl: './analytics-airport-arrivals-depatures.component.html',
 })
-export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase implements OnInit {
+export class AnalyticsAirportArrivalsDepaturesComponent
+    extends GridBase
+    implements OnInit
+{
     @ViewChild(MatSort, { static: true }) sort: MatSort;
     @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -51,29 +50,17 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     @Output() refreshCustomers = new EventEmitter();
 
     chartName = 'airport-arrivals-depatures-table';
-    displayedColumns: string[] = [
-        'company',
-        'tailNumber',
-        'flightNumber',
-        'hexCode',
-        'aircraftType',
-        'dateTime',
-        'status',
-        'pastVisits',
-        'visitsToMyFbo',
-        'percentOfVisits',
-    ];
 
-    filterStartDate: Date;
-    filterEndDate: Date;
+    icao: string;
+    selectedDateFilter: SelectedDateFilter;
 
     isCommercialInvisible = true;
 
     data: FlightWatchHistorical[];
 
-    selectedCustomers: number[] = [];
-    selectedTailNumbers: string[] = [];
     fbo: any;
+    allFbos: FbosGridViewModel[] = [];
+    selectFbos: FbosGridViewModel[] = [];
 
     filtersChanged: Subject<any> = new Subject<any>();
 
@@ -83,9 +70,11 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     columns: ColumnType[] = [];
 
-    fboName: string = "";
+    fboName: string = '';
 
     tailNumbers: any[] = [];
+
+    hiddenColumns: string[] = ['hexCode', 'flightNumber', 'pastVisits', 'visitsToMyFbo', 'isConfirmedVisit', 'percentOfVisits'];
 
     initialColumns: ColumnType[] = [
         {
@@ -103,16 +92,12 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         {
             id: 'hexCode',
             name: 'Hex #',
-            hidden: true
+            hidden: true,
         },
         {
             id: 'aircraftType',
             name: `Aircraft`,
         },
-        //{
-        //    id: 'aircraftTypeCode',
-        //    name: 'Aircraft Type',
-        //},
         {
             id: 'dateTime',
             name: 'Date and Time',
@@ -132,7 +117,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         },
         {
             id: 'isConfirmedVisit',
-            name: 'Visit to My FBO?'
+            name: 'Visit to My FBO?',
         },
         {
             id: 'percentOfVisits',
@@ -140,11 +125,13 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         },
     ];
 
-    csvFileOptions: csvFileOptions = { fileName: 'Airport Departures and Arrivals', sheetName: 'Airport Departures and Arrivals' };
+    csvFileOptions: csvFileOptions = {
+        fileName: 'Airport Departures and Arrivals',
+        sheetName: 'Airport Departures and Arrivals',
+    };
 
     constructor(
         private newCustomerAircraftDialog: MatDialog,
-        private exportDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
         private airportWatchService: AirportWatchService,
         private sharedService: SharedService,
@@ -153,10 +140,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
         private fbosService: FbosService
     ) {
         super();
-        this.filterStartDate = new Date(
-            moment().add(-1, 'M').format('MM/DD/YYYY')
+        this.icao = this.sharedService.getCurrentUserPropertyValue(
+            localStorageAccessConstant.icao
         );
-        this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
         this.filtersChanged
             .debounceTime(500)
             .subscribe(() => this.refreshDataSource());
@@ -172,7 +158,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
     }
 
     ngOnInit() {
-        this.getFboName();
+        this.fbosService
+        .getFbosByIcao(this.icao)
+        .subscribe((data: FbosGridViewModel[]) => {
+            this.allFbos = data.filter((fbo) => fbo.acukwikFboHandlerId != null);
+            let currentFbo = this.allFbos.find((fbo) =>  fbo.oid == this.sharedService.currentUser.fboId);
+            this.selectFbos.push(currentFbo);
+            let otherOpt = { ...currentFbo };
+            otherOpt.oid = 0;
+            otherOpt.acukwikFboHandlerId = 0;
+            otherOpt.fbo = 'Other';
+            this.selectFbos.push(otherOpt);
+            this.fbo = currentFbo;
+            this.fboName = currentFbo.fbo;
+        });
         this.getCustomersList();
         this.sort.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
@@ -190,22 +189,9 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
         this.refreshData();
     }
-    getFboName() {
-        if (this.fboName && this.fboName != "")
-            return;
-        this.fbosService
-            .get({
-                oid: this.sharedService.currentUser.fboId,
-            })
-            .subscribe((data: any) => {
-                this.fbo = data;
-                this.fboName = data.fbo;
-            });
-    }
 
     getCustomersList() {
-        if (this.customers && this.customers.length > 0)
-            return;
+        if (this.customers && this.customers.length > 0) return;
         this.customerInfoByGroupService
             .getCustomersListByGroupAndFbo(
                 this.sharedService.currentUser.groupId,
@@ -216,9 +202,20 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             });
     }
 
-    fetchData(startDate: Date, endDate: Date) {
+    fetchData(startDate: Date, endDate: Date): Observable<FlightWatchHistorical[]>{
         return this.airportWatchService.getArrivalsDepartures(
             this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
+            {
+                endDateTime: endDate,
+                startDateTime: startDate,
+            },
+            this.icao
+        );
+    }
+
+    fetchSwimData(startDate: Date, endDate: Date) {
+        return this.airportWatchService.getArrivalsDeparturesSwim(
             this.sharedService.currentUser.fboId,
             {
                 endDateTime: endDate,
@@ -229,56 +226,71 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     initColumns() {
         this.tableLocalStorageKey = `analytics-airport-arrivals-depatures-${this.sharedService.currentUser.fboId}`;
-        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, this.initialColumns);
-    }
-
-    refreshData() {
-        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
-        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
-
-        this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(startDate, endDate).subscribe(
-            (data: any[]) => {
-                this.data = data;
-
-                this.refreshDataSource();
-            },
-            () => {},
-            () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            }
+        this.columns = this.getClientSavedColumns(
+            this.tableLocalStorageKey,
+            this.initialColumns
         );
     }
 
-    refreshDataSource() {
-        const data = this.data
-            .filter(
-                (x) =>
-                    (!this.isCommercialInvisible ||
-                        !isCommercialAircraft(
-                            x.flightNumber
-                        )) &&
-                    (!this.selectedCustomers.length ||
-                        this.selectedCustomers.includes(
-                            x.customerInfoByGroupID
-                        )) &&
-                    (!this.selectedTailNumbers.length ||
-                        this.selectedTailNumbers.includes(x.tailNumber))
-            )
-            .map((x) => ({
-                ...x,
-                aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
-            }));
+    refreshData(isLoaderActive: boolean = false) {
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
 
-        this.setVirtualScrollVariables(this.paginator,this.sort,data)
+        if (!isLoaderActive)
+            this.ngxLoader.startLoader(this.chartName);
+
+        if (this.sharedService.currentUser.icao == this.icao) {
+            this.fetchData(startDate, endDate).subscribe(
+                (data: FlightWatchHistorical[]) => {
+                    this.data = data;
+                    this.refreshDataSource();
+                },
+                () => { },
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
+        }
+        else {
+            this.fetchSwimData(startDate, endDate).subscribe(
+                (data: FlightWatchHistorical[]) => {
+                    this.data = data;
+                    this.refreshDataSource();
+                },
+                () => { },
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
+        }
+    }
+
+    refreshDataSource() {
+        const data = this.data.map((x) => ({
+            ...x,
+            aircraftTypeCode: this.getAircraftLabel(x.aircraftTypeCode),
+            isParkedWithinGeofence: x.parkingAcukwikFBOHandlerId == this.fbo.acukwikFboHandlerId
+        }));
+
+        this.setVirtualScrollVariables(this.paginator, this.sort, data);
 
         if (!this.dataSource) {
             this.dataSource.filteredData = [];
         }
 
-        this.tailNumbers = [...new Set(this.data.filter(x => (!this.isCommercialInvisible || !isCommercialAircraft(x.aircraftTypeCode)))
-            .map(x => x.tailNumber))]
-            .map(tailNumber => this.data.find(x => x.tailNumber === tailNumber));
+        this.tailNumbers = [
+            ...new Set(
+                this.data
+                    .filter(
+                        (x) =>
+                            !this.isCommercialInvisible ||
+                            !isCommercialAircraft(x.aircraftTypeCode)
+                    )
+                    .map((x) => x.tailNumber)
+            ),
+        ].map((tailNumber) =>
+            this.data.find((x) => x.tailNumber === tailNumber)
+        );
     }
 
     filterChanged() {
@@ -303,18 +315,6 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
                 .afterClosed()
                 .subscribe((result: Partial<FlightWatchHistorical>) => {
                     if (result) {
-                        // const aircrafts = this.data.filter(record => record.flightNumber === row.flightNumber);
-                        //for (let i = 0; i < this.data.length; i++) {
-                        //    if (
-                        //        this.data[i].flightNumber === row.flightNumber
-                        //    ) {
-                        //        this.data[i] = {
-                        //            ...this.data[i],
-                        //            ...result,
-                        //            tailNumber: row.flightNumber,
-                        //        };
-                        //    }
-                        //}
                         this.refreshData();
                         this.refreshCustomers.emit();
                     }
@@ -324,17 +324,19 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     exportCsv() {
         let computePropertyFnc = (item: any[], id: string): any => {
-            if(id == "aircraftTypeCode")
-                    item[id] = this.getAircraftLabel(item[id]);
-            else
-                return null;
-        }
-        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
+            if (id == 'aircraftTypeCode')
+                item[id] = this.getAircraftLabel(item[id]);
+            else return null;
+        };
+        this.exportCsvFile(
+            this.columns,
+            this.csvFileOptions.fileName,
+            this.csvFileOptions.sheetName,
+            computePropertyFnc
+        );
     }
 
     clearAllFilters() {
-        this.selectedCustomers = [];
-        this.selectedTailNumbers = [];
         this.isCommercialInvisible = true;
 
         this.dataSource.filter = '';
@@ -369,11 +371,15 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
 
     openSettings() {
         var _this = this;
-        this.openSettingsDialog(this.tableSettingsDialog, this.columns, function (result) {
-            _this.columns = result;
-            _this.refreshSort(_this.sort, _this.columns);
-            _this.saveSettings();
-        });
+        this.openSettingsDialog(
+            this.tableSettingsDialog,
+            this.columns,
+            function (result) {
+                _this.columns = result;
+                _this.refreshSort(_this.sort, _this.columns);
+                _this.saveSettings();
+            }
+        );
     }
 
     saveSettings() {
@@ -382,28 +388,63 @@ export class AnalyticsAirportArrivalsDepaturesComponent extends GridBase impleme
             JSON.stringify(this.columns)
         );
     }
-
-    confirmedVisitToggled(row: FlightWatchHistorical) {
-
+    confirmedVisitToggled(row: FlightWatchHistorical): void{
         if (row.airportWatchHistoricalParking == null) {
             row.airportWatchHistoricalParking = {
                 airportWatchHistoricalDataId: row.airportWatchHistoricalDataId,
-                acukwikFbohandlerId: this.fbo?.acukwikFBOHandlerId,
-                oid: 0
-            }
+                acukwikFbohandlerId: 0,
+                oid: 0,
+            };
         }
 
-        row.airportWatchHistoricalParking.isConfirmed = row.isConfirmedVisit;
+        row.airportWatchHistoricalParking.acukwikFbohandlerId = (row.isParkedWithinGeofence)?this.fbo.acukwikFboHandlerId: 0;
 
+        row.airportWatchHistoricalParking.isConfirmed = true;
+
+        this.ngxLoader.startLoader(this.chartName);
         if (row.airportWatchHistoricalParking.oid > 0) {
-            this.airportWatchService.updateHistoricalParking(row).subscribe((response: any) => {
-                this.refreshData();
-            });
+            this.airportWatchService
+                .updateHistoricalParking(row)
+                .subscribe((response: any) => {
+                    this.refreshData(true);
+                });
         } else {
-            this.airportWatchService.createHistoricalParking(row).subscribe((response: any) => {
-                this.refreshData();
-            })
+            this.airportWatchService
+                .createHistoricalParking(row)
+                .subscribe((response: any) => {
+                    this.refreshData(true);
+                });
         }
+    }
+    changeIcaoFilter($event: string) {
+        this.icao = $event;
+        this.setColumns();
+        this.refreshData();
+    }
+    applyPresetDateFilter(filter: SelectedDateFilter) {
+        this.filterEndDate = filter.limitDate;
+        this.filterStartDate = filter.offsetDate;
+        this.refreshData();
+    }
+    private setColumns() {
+        this.columns =
+            this.icao == this.sharedService.currentUser.icao
+                ? this.initialColumns.filter((column) => {
+                    return column.id != 'originated';
+                })
+                : this.filteredColumns;
+    }
+    get filteredColumns() {
+        var filteredColumns = this.initialColumns;
+        if (!filteredColumns.find((column) => column.id === 'originated')) {
+            filteredColumns.push({
+                id: 'originated',
+                name: 'Origin ICAO',
+            });
+        };
 
+        return filteredColumns.filter((column) => {
+            return !this.hiddenColumns.includes(column.id);
+        });
     }
 }
