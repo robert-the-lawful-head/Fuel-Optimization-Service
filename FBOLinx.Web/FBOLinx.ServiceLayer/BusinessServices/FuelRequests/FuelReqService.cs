@@ -298,7 +298,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                         fuelRequest.ServiceOrder = serviceOrders.Where(s => s.FuelerLinxTransactionId > 0 && s.FuelerLinxTransactionId == fuelRequest.SourceId).FirstOrDefault();
                         fuelRequest.PaymentMethod = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).Select(d => d.PaymentMethod).FirstOrDefault();
                         fuelRequest.Fboid = fboId;
-                        fuelRequest.Source = fuelRequest.Source == null ? "" : fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
+                        fuelRequest.Source = fuelRequest.Source == null ? "" : fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.").Replace("Manual Price", "Flight Dept.");
 
                         var transactionOrderDetails = orderDetails.Where(o => o.FuelerLinxTransactionId == fuelRequest.SourceId).FirstOrDefault();
                         if (transactionOrderDetails != null)
@@ -411,7 +411,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 }
 
                 result.AddRange(serviceOrdersList);
-                return result;
+                return result.Where(r => r.Eta >= startDateTime && r.Eta <= endDateTime).ToList();
             }
             catch(Exception ex)
             {
@@ -444,7 +444,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                 var fuelRequest = FuelReqDto.Cast(transaction, customers.Where(x => x.Customer?.FuelerlinxId == transaction.CompanyId).Select(x => x.Company).FirstOrDefault(), airport);
                 fuelRequest.Cancelled = transaction.InvoiceStatus == TransactionInvoiceStatuses.Cancelled ? true : false;
                 fuelRequest.Fboid = fboId;
-                fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.");
+                fuelRequest.Source = fuelRequest.Source.Replace("Directs: Custom", "Flight Dept.").Replace("Manual Price", "Flight Dept.");
                 fuelRequest.CustomerId = customers.Where(c => c.Customer.FuelerlinxId == fuelRequest.CustomerId).FirstOrDefault().CustomerId;
                 fuelRequest.CustomerAircraftId = customerAircrafts.Where(c => c.TailNumber == fuelRequest.TailNumber && c.CustomerId==fuelRequest.CustomerId).FirstOrDefault().Oid;
                 result = fuelRequest;
@@ -659,7 +659,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                             if (service.StartsWith("Fuel") && quotedVolume > 0)
                             {
                                 var vendor = "";
-                                if (orderDetails.FuelVendor == "Directs: Custom")
+                                if (orderDetails.FuelVendor == "Directs: Custom" || orderDetails.FuelVendor == "Manual Price")
                                     vendor = "Flight Dept.";
                                 else if (orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
                                     vendor = fbo.Fbo + " (FBOLinx Direct)";
