@@ -19,9 +19,12 @@ using FBOLinx.ServiceLayer.BusinessServices.Mail;
 using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
 using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
 using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.ServiceLayer.BusinessServices.Orders;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.RefreshTokens;
 using FBOLinx.ServiceLayer.BusinessServices.ServiceOrders;
+using FBOLinx.ServiceLayer.BusinessServices.ServicesAndFees;
 using FBOLinx.ServiceLayer.BusinessServices.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.SWIMS;
 using FBOLinx.ServiceLayer.BusinessServices.User;
@@ -111,16 +114,27 @@ namespace FBOLinx.ServiceLayer.Extensions
             services.AddTransient<IAuthService, AuthService>();
             services.AddTransient<IDocumentService, DocumentService>();
             services.AddTransient<ISWIMFlightLegDataService, SWIMFlightLegDataService>();
-            services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
-            services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
             services.AddTransient<IServiceOrderService, ServiceOrderService>();
             services.AddTransient<IServiceOrderItemService, ServiceOrderItemService>();
+            services.AddTransient<IIntraNetworkAntennaDataReportService, IntraNetworkAntennaDataReportService>();
+            services.AddTransient<IAirportWatchHistoricalParkingService, AirportWatchHistoricalParkingService>();
             services.AddTransient<IAircraftHexTailMappingService, AircraftHexTailMappingService>();
+            services.AddTransient<IOrderConfirmationService, OrderConfirmationService>();
+            services.AddTransient<IFboServicesAndFeesService, FboServicesAndFeesService>();
             services.AddTransient<ICustomerAircraftNoteService, CustomerAircraftNoteService>();
             services.AddTransient<ICustomerInfoByGroupNoteService, CustomerInfoByGroupNoteService>();
+            services.AddTransient<IOrderDetailsService, OrderDetailsService>();
+            services.AddTransient<IFuelReqPricingTemplateService, FuelReqPricingTemplateService>();
             services.AddTransient<IFboAircraftFavoritesService, FboAircraftFavoritesService>();
             services.AddTransient<IFboCompaniesFavoritesService, FboCompaniesFavoritesService>();
-
+            services.AddTransient<IAcukwikServicesOfferedEntityService, AcukwikServicesOfferedEntityService>();
+            services.AddTransient<IFboServiceTypeService, FboServiceTypeService>();
+            services.AddTransient<IAcukwikFboHandlerDetailService, AcukwikFboHandlerDetailService>();
+            services.AddTransient<IAccessTokensService, AccessTokensService>();
+            services.AddTransient<IRefreshTokensService, RefreshTokensService>();
+            services.AddTransient<IOrderNotesService, OrderNotesService>();
+            services.AddTransient<IUserEntityService, UserEntityService>();
+                        
             services.AddScoped<FuelerLinxApiService, FuelerLinxApiService>();
 
             return services;
@@ -166,6 +180,10 @@ namespace FBOLinx.ServiceLayer.Extensions
             services
                 .AddTransient<IAirportWatchHistoricalParkingEntityService,
                     AirportWatchHistoricalParkingEntityService>();
+            services.AddTransient<IDistributionErrorsEntityService, DistributionErrorsEntityService>();
+            services.AddTransient<ICustomerContactsEntityService, CustomerContactsEntityService>();
+            services.AddTransient<IAcukwikServicesOfferedDefaultsEntityService, AcukwikServicesOfferedDefaultsEntityService>();
+            services.AddTransient<IOrderNotesEntityService, OrderNotesEntityService>();
 
             return services;
         }

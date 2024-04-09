@@ -74,7 +74,9 @@ export class AuthenticationService {
     }
 
     preAuth(token) {
-        const tempUser : User = new User();
+        const tempUser: User = new User();
+        if (token)
+            tempUser.token = token;
         this.currentUserSubject.next(tempUser);
 
         //call prepare session controller method

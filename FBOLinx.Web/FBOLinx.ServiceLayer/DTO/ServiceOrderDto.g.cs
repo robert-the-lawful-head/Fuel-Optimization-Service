@@ -32,6 +32,14 @@ namespace FBOLinx.ServiceLayer.DTO
         public int? FuelerLinxTransactionId { get; set; }
         public ServiceOrderAppliedDateTypes? ServiceOn { get; set; }
 
+        public int NumberOfTotalServices
+        {
+            get
+            {
+                return ServiceOrderItems.Count;
+            }
+        }
+
         public int NumberOfCompletedItems
         {
             get
@@ -44,8 +52,13 @@ namespace FBOLinx.ServiceLayer.DTO
         {
             get
             {
-                return (ServiceOrderItems != null && ServiceOrderItems.Count > 0 && (ServiceOrderItems?.Where(x => x.IsCompleted == false).Count()).GetValueOrDefault() == 0);
+                return (ServiceOrderItems != null && ServiceOrderItems.Count > 0 && (ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == false).Count()).GetValueOrDefault() == 0);
             }
+        }
+
+        public bool IsActive
+        {
+            get { return (ServiceOrderItems != null && (ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == true).Count() > 0) && ServiceOrderItems.Count > 1 && (ServiceOrderItems.Count - ServiceOrderItems?.Where(x => x.IsCompleted.GetValueOrDefault() == true).Count() > 0)); }
         }
         
         public DateTime? ArrivalDateTimeLocal => _ArrivalDateTimeLocal;

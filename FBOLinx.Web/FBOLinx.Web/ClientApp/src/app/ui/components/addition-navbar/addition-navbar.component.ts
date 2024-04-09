@@ -20,11 +20,11 @@ import { DistributeEmailsConfirmationComponent } from 'src/app/shared/components
 import { SharedService } from '../../../layouts/shared-service';
 import { CustomercontactsService } from '../../../services/customercontacts.service';
 import { DistributionService } from '../../../services/distribution.service';
-import { EmailcontentService } from '../../../services/emailcontent.service';
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
+import { AccountType } from 'src/app/enums/user-role';
 import * as SharedEvents from '../../../models/sharedEvents';
 
 @Component({
@@ -66,6 +66,7 @@ export class AdditionNavbarComponent
     private retailPrice: number;
     private costPrice: number;
     changedSubscription: any;
+    loadingPrices: boolean = false;
 
     constructor(
         private pricingTemplatesService: PricingtemplatesService,
@@ -232,12 +233,21 @@ export class AdditionNavbarComponent
     }
 
     async openMarginInfo(templateId) {
-        this.pricesExpired = false;
+        this.pricesExpired = null;
         const filteredTemplate = this.pricingTemplatesData.find(
             ({ oid }) => oid === templateId
         );
 
         await this.checkExpiredPrices(filteredTemplate.marginTypeProduct);
+
+        if (this.pricesExpired == null) {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            await sleep(1000);
+            if (this.pricesExpired == null)
+                await sleep(1000);
+        }
 
         if (!this.pricesExpired) {
             this.checkCustomerContacts(filteredTemplate);
@@ -309,10 +319,24 @@ export class AdditionNavbarComponent
     }
 
     async confirmSendEmails() {
+        this.loadingPrices = true;
         if (this.retailPrice == undefined)
             this.getPrices();
 
-        if (!this.retailPrice && !this.costPrice) {
+        this.pricesExpired = null;
+        if (this.pricesExpired == null && !this.retailPrice) {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            await sleep(1000);
+            //if (this.pricesExpired == null)
+            //    await sleep(100);
+        }
+        this.loadingPrices = false;
+
+        if (!this.retailPrice &&
+
+            !this.costPrice) {
             const dialogRef = this.templateDialog.open(NotificationComponent, {
                 data: {
                     text: 'Your fuel pricing has expired. Please update your cost/retail values.',
@@ -397,20 +421,36 @@ export class AdditionNavbarComponent
     }
 
     private async getPrices() {
-        const data: any = await this.fboPricesService
-            .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId)
-            .toPromise();
-
-        this.retailPrice = data.filter(
-            (r) => r.product === 'JetA Retail'
-        )?.[0].price;
-        this.costPrice = data.filter(
-            (r) => r.product === 'JetA Cost'
-        )?.[0].price;
+        await this.fboPricesService
+            .getFbopricesByFboIdCurrent(this.sharedService.currentUser.fboId).subscribe((data: any) => {
+                this.retailPrice = data.filter(
+                    (r) => r.product === 'JetA Retail'
+                )?.[0].price;
+                this.costPrice = data.filter(
+                    (r) => r.product === 'JetA Cost'
+                )?.[0].price;
+            });
     }
 
     private async checkExpiredPrices(marginTypeProduct) {
-        this.getPrices();
+        await this.getPrices();
+
+        if (this.retailPrice)
+            this.setNotifications(marginTypeProduct);
+        else {
+            const sleep = async (waitTime: number) =>
+                new Promise(resolve =>
+                    setTimeout(resolve, waitTime));
+            const waitToCheck = async () => {
+                await sleep(2000);
+                this.setNotifications(marginTypeProduct);
+            }
+            waitToCheck();
+        }
+    }
+
+    private async setNotifications(marginTypeProduct) {
+        this.pricesExpired = false;
 
         if (this.sharedService.currentUser.role != 6 && this.sharedService.currentUser.fboId > 0 && !this.retailPrice && !this.costPrice) {
             this.pricesExpired = true;
@@ -461,5 +501,8 @@ export class AdditionNavbarComponent
         this.marginTemplateDataSource.sort = this.sort;
         this.marginTemplateDataSource.paginator = this.paginator;
         this.resultsLength = this.pricingTemplatesData.length;
+    }
+    isEmailDrawerEnabled() {
+        return this.sharedService.currentUser.accountType == AccountType.Premium;
     }
 }

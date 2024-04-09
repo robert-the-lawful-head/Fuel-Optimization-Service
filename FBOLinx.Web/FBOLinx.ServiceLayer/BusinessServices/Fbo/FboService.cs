@@ -18,6 +18,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Airport;
 using Geolocation;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using EFCore.BulkExtensions;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
 {
@@ -27,6 +28,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId);
         Task<string> GetAirportTimeZoneByFboId(int fboId);
         Task<FbosDto> GetFbo(int fboId, bool useCache = true);
+        Task<Fbos> GetFboModel(int fboId);
         Task<Coordinate> GetFBOLocation(int fboid);
         Task DoLegacyGroupTransition(int groupId);
         Task<string> UploadLogo(FboLogoRequest fboLogoRequest);
@@ -37,6 +39,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         Task NotifyFboNoPrices(List<string> toEmails, string fbo, string customerName);
         Task<List<FbosDto>> GetFbosByGroupId(int groupId);
         IQueryable<Fbos> GetAllFbos();
+        Task UpdateModel(Fbos fbo);
     }
     public class FboService : BaseDTOService<FbosDto, DB.Models.Fbos, FboLinxContext>, IFboService
     {
@@ -89,6 +92,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
             if (useCache)
                 return await GetFboFromCache(fboId);
             return await GetSingleBySpec(new FboByIdSpecification(fboId));
+        }
+
+        public async Task<Fbos> GetFboModel(int fboId)
+        {
+            return await _fboEntityService.GetFboModel(fboId);
         }
 
         public async Task<DateTime> GetAirportLocalDateTimeByFboId(int fboId)
@@ -253,6 +261,12 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Fbo
         {
             var fbos = await GetListbySpec(new AllFbosByGroupIdSpecification(groupId));
             return fbos;
+        }
+
+        public async Task UpdateModel(Fbos fbo)
+        {
+            _context.Fbos.Update(fbo);
+            await _context.SaveChangesAsync();
         }
 
         private async Task<FbosDto> GetFboFromCache(int fboId)

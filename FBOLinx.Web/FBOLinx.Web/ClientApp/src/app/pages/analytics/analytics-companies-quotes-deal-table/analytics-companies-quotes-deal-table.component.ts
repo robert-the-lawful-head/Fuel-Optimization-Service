@@ -17,7 +17,7 @@ import {
 } from 'src/app/shared/components/table-settings/table-settings.component';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';

@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 // Services
 import { AircraftsService } from '../../../services/aircrafts.service';
 import { Parametri } from '../../../services/paremeters.service';
+import { rampfeeCategoryType } from 'src/app/enums/ramp-fee.enum';
 
 export interface NewRampFeeDialogData {
     oid: number;
@@ -33,13 +34,19 @@ export class RampFeesDialogNewFeeComponent {
     public aircraftTypes: any[];
     subscription: Subscription;
 
+    //Errors
+    public isWaivedNegative = false;
+    public isCategoryValueNegative = false;
+    public isFeeNegative = false;
+    public isMaxCategoryGrater = true;
+
     constructor(
         public dialogRef: MatDialogRef<RampFeesDialogNewFeeComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewRampFeeDialogData,
         private aircraftsService: AircraftsService,
         private messageService: Parametri
     ) {
-        this.data.categoryType = 2;
+        this.data.categoryType = rampfeeCategoryType.aicraft;
         this.messageService
             .getMessage()
             .subscribe((mymessage) => (this.data.expirationDate = mymessage));
@@ -51,5 +58,37 @@ export class RampFeesDialogNewFeeComponent {
     // Public Methods
     public onCancelClick(): void {
         this.dialogRef.close();
+    }
+
+    public checkForWaivedNegativeValue(value) {
+        this.isWaivedNegative = false;
+
+        if (value < 0)
+            this.isWaivedNegative = true;
+    }
+    public getErrorData() {
+    }
+    public checkCategoryValidation(data): void {
+        this.checkForCategoryValueNegativeValue(data);
+        this.checkForCategoryMinValueGrater(data);
+    }
+    public checkForCategoryMinValueGrater(data): void {
+        this.isMaxCategoryGrater = false;
+
+        if (data.categoryMinValue < data.categoryMaxValue)
+            this.isMaxCategoryGrater = true;
+    }
+    public checkForCategoryValueNegativeValue(data): void {
+        this.isCategoryValueNegative = false;
+
+        if (data.categoryMinValue < 0 || data.categoryMaxValue < 0)
+            this.isCategoryValueNegative = true;
+    }
+
+    public checkForFeeNegativeValue(value) {
+        this.isFeeNegative = false;
+
+        if (value < 0)
+            this.isFeeNegative = true;
     }
 }

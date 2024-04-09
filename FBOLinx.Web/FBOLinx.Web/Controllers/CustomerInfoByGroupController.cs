@@ -953,6 +953,25 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
+        [HttpGet("notes/customerid/{customerId}/groupid/{groupId}")]
+        public async Task<ActionResult<List<CustomerInfoByGroupNoteDto>>> GetCustomerNotesByCustomerIdGroupId([FromRoute] int customerId, [FromRoute] int groupId)
+        {
+            try
+            {
+                var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerId, groupId));
+                var customerInfoByGroupId = customerInfoByGroup.Oid;
+
+                var result = await _CustomerInfoByGroupNoteService.GetSingleBySpec(
+                    new CustomerInfoByGroupNoteByCustomerInfoByGroupIdSpecification(customerInfoByGroupId));
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
         [HttpPost("notes")]
         public async Task<ActionResult<CustomerInfoByGroupNoteDto>> AddCustomerNotes(
             [FromBody] CustomerInfoByGroupNoteDto customerInfoByGroupNoteDto)

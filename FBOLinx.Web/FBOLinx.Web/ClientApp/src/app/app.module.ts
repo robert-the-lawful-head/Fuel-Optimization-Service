@@ -109,6 +109,8 @@ import { FileHelper } from './helpers/files/file.helper';
 import { PricingTemplateCalcService } from './pages/pricing-templates/pricingTemplateCalc.service';
 import { DocumentService } from './services/documents.service';
 import { ServiceOrderService } from './services/serviceorder.service';
+import { ServicesAndFeesService } from './services/servicesandfees.service';
+import { ServiceTypeService } from './services/serviceTypes.service';
 import { SnackBarService } from './services/utils/snackBar.service';
 import { FavoritesService } from './services/favorites.service';
 import { FormValidationHelperService } from './helpers/forms/formValidationHelper.service';
@@ -238,6 +240,8 @@ import { ManageFboGroupsService } from './services/managefbo.service';
         PricingTemplateCalcService,
         DocumentService,
         ServiceOrderService,
+        ServicesAndFeesService,
+        ServiceTypeService,
         SnackBarService,
         FavoritesService,
         FormValidationHelperService,

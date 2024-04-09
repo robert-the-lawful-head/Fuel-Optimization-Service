@@ -1,0 +1,19 @@
+<mat-card [@openClose]="flightWatch ? 'open' : 'closed'" *ngIf="flightWatch">
+    <mat-card-header>
+        <mat-card-title>{{ flightWatch?.atcFlightNumber }}</mat-card-title>
+        <mat-card-subtitle>Hex: {{ flightWatch?.aircraftHexCode }}</mat-card-subtitle>
+
+        <button class="close-btn" mat-icon-button color="primary" aria-label="Close Info" (click)="onClose()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </mat-card-header>
+
+    <mat-card-content>
+        <h6>Type: <span>{{ flightWatch?.aircraftTypeCode }}</span></h6>
+        <h6>Ground Speed: <span>{{ flightWatch?.groundSpeedKts }}</span></h6>
+        <h6>Tracking Degree: <span>{{ flightWatch?.trackingDegree }}</span></h6>
+        <h6>Vertical Speed: <span>{{ flightWatch?.verticalSpeedKts }}</span></h6>
+        <h6>GPS Altitude: <span>{{ flightWatch?.gpsAltitude }}</span></h6>
+        <h6>Is on Ground: <span>{{ flightWatch?.isAircraftOnGround ? "Yes" : "No" }}</span></h6>
+    </mat-card-content>
+</mat-card>

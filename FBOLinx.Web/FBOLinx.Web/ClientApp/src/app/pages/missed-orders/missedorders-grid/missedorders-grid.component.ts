@@ -22,7 +22,6 @@ import {
     ColumnType,
     TableSettingsComponent,
 } from '../../../shared/components/table-settings/table-settings.component';
-import * as SharedEvent from '../../../models/sharedEvents';
 import { GridBase, csvFileOptions } from 'src/app/services/tables/GridBase';
 import { SelectedDateFilter } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
 import { ReportFilterItems } from '../../analytics/analytics-report-popup/report-filters/report-filters.component';

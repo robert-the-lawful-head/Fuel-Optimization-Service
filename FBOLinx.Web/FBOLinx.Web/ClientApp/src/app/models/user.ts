@@ -1,3 +1,5 @@
+import { AccountType } from "../enums/user-role";
+
 export class User {
     oid: number;
     username: string;
@@ -14,4 +16,5 @@ export class User {
     conductorFbo?: boolean;
     isSingleSourceFbo: boolean;
     isNetworkFbo: boolean;
+    accountType?: AccountType;
 }

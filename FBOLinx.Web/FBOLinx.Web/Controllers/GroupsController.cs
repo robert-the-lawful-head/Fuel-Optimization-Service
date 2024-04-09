@@ -139,7 +139,8 @@ namespace FBOLinx.Web.Controllers
                                       GroupId = f.GroupId,
                                   PricingExpired = fprices.fboId == null,
                                   LastLogin = f.LastLogin,
-                                  AccountExpired = f.Active != true
+                                  AccountExpired = f.Active != true,
+                                  AccountType = f.AccountType
                               }).ToListAsync();
 
             var users = (await _context.User.ToListAsync()).GroupBy(t => t.FboId);
@@ -158,6 +159,8 @@ namespace FBOLinx.Web.Controllers
                 g.ActiveFboCount = groupFbos.Where(f => f.Active.GetValueOrDefault()).Count();
                 g.ExpiredFboAccountCount = groupFbos.Count(f => f.AccountExpired == true);
                 g.ExpiredFboPricingCount = groupFbos.Count(f => f.Active.GetValueOrDefault() && f.PricingExpired == true);
+                g.HasPremiumFbos = fbos.Any(f => f.GroupId == g.Oid && f.AccountType == AccountTypes.RevFbo);
+                g.HasActiveFbos = fbos.Any(f => f.GroupId == g.Oid && f.Active == true);
             });
 
             return Ok(new GroupFboViewModel

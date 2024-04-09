@@ -22,7 +22,7 @@ import {
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { DateTimeService } from '../../../services/datetime.service';
 
 import { CustomcustomertypesService } from '../../../services/customcustomertypes.service';

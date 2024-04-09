@@ -2,6 +2,11 @@
 
 :host {
     top: $navbar-height;
+    align-items: center;
+    .breadcrumb-container{
+        padding: 24px 0 50px 0;
+        margin-top: -100px;
+    }
     display:flex;
     align-items: center;
     .dashboard-title {

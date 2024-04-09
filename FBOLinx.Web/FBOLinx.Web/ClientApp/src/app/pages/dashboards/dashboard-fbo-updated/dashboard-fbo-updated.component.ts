@@ -6,7 +6,7 @@ import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
 import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';

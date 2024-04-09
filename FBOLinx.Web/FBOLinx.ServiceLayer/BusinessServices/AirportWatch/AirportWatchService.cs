@@ -36,7 +36,7 @@ using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using FBOLinx.DB.Specifications.CustomerAircrafts;
 using FBOLinx.DB.Specifications.CustomerInfoByGroup;
 using FBOLinx.DB.Specifications.SWIM;
-using System.ComponentModel;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 {
@@ -69,8 +69,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         private ISWIMFlightLegService _SwimFlightLegService;
         private IAircraftHexTailMappingService _AircraftHexTailMappingService;
 
-        public AirportWatchService(FboLinxContext context, DegaContext degaContext, 
-           IFboService fboService,
+        public AirportWatchService(FboLinxContext context, DegaContext degaContext,
+           IFboService fboService, FuelerLinxApiService fuelerLinxApiService,
             IOptions<DemoData> demoData, AirportFboGeofenceClustersService airportFboGeofenceClustersService,
             IFboPricesService fboPricesService, ICustomerAircraftEntityService customerAircraftsEntityService, 
             ICustomerInfoByGroupEntityService customerInfoByGroupEntityService,

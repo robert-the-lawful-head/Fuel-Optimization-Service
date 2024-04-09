@@ -22,7 +22,10 @@ using FBOLinx.ServiceLayer.BusinessServices.OAuth;
 using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
+using FBOLinx.ServiceLayer.BusinessServices.User;
 using FBOLinx.ServiceLayer.BusinessServices.Favorites;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.User;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -43,6 +46,7 @@ namespace FBOLinx.Web.Controllers
         private readonly ILoggingService logger;
         private readonly IAuthService _AuthService;
         private readonly IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
+        private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFboCompaniesFavoritesService _fboCompaniesFavoritesService;
 
@@ -56,6 +60,7 @@ namespace FBOLinx.Web.Controllers
             FuelerLinxApiService fuelerLinxApiService,
             IFboPricesService fbopricesService,
             IPricingTemplateService pricingTemplateService, ILoggingService logger, IAuthService authService, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService,
+            IUserService userService,
             IHttpContextAccessor httpContextAccessor, IFboCompaniesFavoritesService fboCompaniesFavoritesService) : base(logger)
         {
             _groupFboService = groupFboService;
@@ -70,6 +75,7 @@ namespace FBOLinx.Web.Controllers
             this.logger = logger;
             _AuthService = authService;
             _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
+            _userService = userService;
             _httpContextAccessor = httpContextAccessor;
             _fboCompaniesFavoritesService = fboCompaniesFavoritesService;
         }
@@ -184,7 +190,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/Fbos/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFbos([FromRoute] int id, [FromBody] Fbos fbos)
+        public async Task<IActionResult> PutFbos([FromRoute] int id, [FromBody] FbosDto fbos)
         {
             if (!ModelState.IsValid)
             {
@@ -196,19 +202,30 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            bool activeStatus = await _context.Fbos.Where(f => f.Oid.Equals(fbos.Oid))
-                                                   .Select(f => f.Active ?? false)
-                                                   .FirstAsync();
-            if (activeStatus != fbos.Active)
+            var fbo = await _fboService.GetFbo(id, false);
+
+            var accountTypeChanged = false;
+
+            if (fbo.AccountType != fbos.AccountType)
+                accountTypeChanged = true;
+
+            bool activeStatus = fbo.Active.GetValueOrDefault();
+            if (activeStatus != fbos.Active || accountTypeChanged)
             {
-                List<User> users = _context.User.Where(u => u.FboId.Equals(id))
-                                            .ToList();
+                List<UserDTO> users = await _userService.GetListbySpec(new UsersByFboIdSpecification(id));
+                var nonRevUsers = users.Where(u => u.Role == Core.Enums.UserRoles.NonRev).ToList();
+
                 foreach (var user in users)
                 {
                     user.Active = fbos.Active ?? false;
+
+                    if (accountTypeChanged && nonRevUsers.Count == 0 && fbos.AccountType == Core.Enums.AccountTypes.NonRevFBO && user.Role == Core.Enums.UserRoles.Primary)
+                        user.Role = Core.Enums.UserRoles.NonRev;
+                    else if (accountTypeChanged && fbos.AccountType == Core.Enums.AccountTypes.RevFbo && user.Role == Core.Enums.UserRoles.NonRev)
+                        user.Role = Core.Enums.UserRoles.Primary;
                 }
 
-                _context.User.UpdateRange(users);
+                await _userService.BulkUpdate(users);
 
                 if (!fbos.Active.GetValueOrDefault())
                 {
@@ -221,17 +238,16 @@ namespace FBOLinx.Web.Controllers
                     }
 
                     _context.Fboprices.UpdateRange(fboPrices);
+                    await _context.SaveChangesAsync();
                 }
             }
 
             fbos.Fbo = fbos.Fbo.Trim();
 
-            _context.Fbos.Update(fbos);
+            await _fboService.UpdateAsync(fbos);
 
             try
             {
-                await _context.SaveChangesAsync();
-
                 await _fuelPriceAdjustmentCleanUpService.PerformFuelPriceAdjustmentCleanUp(id);
             }
             catch (DbUpdateConcurrencyException)

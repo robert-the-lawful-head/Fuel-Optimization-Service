@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
 
 namespace FBOLinx.ServiceLayer.DTO
@@ -22,5 +23,6 @@ namespace FBOLinx.ServiceLayer.DTO
         public double? CostPrice { get; set; }
         public double? RetailPrice { get; set; }
         public int? AcukwikFboHandlerId { get; set; }
+        public AccountTypes AccountType { get; set; }
     }
 }

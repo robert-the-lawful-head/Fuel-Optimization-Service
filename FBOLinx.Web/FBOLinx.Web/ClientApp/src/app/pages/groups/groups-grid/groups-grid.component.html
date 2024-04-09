@@ -19,12 +19,22 @@
         </mat-form-field>
 
         <mat-form-field class="account-filter">
-            <mat-label>FBO Status</mat-label>
-            <mat-select [(ngModel)]="fboAccountType"
+            <mat-label>FBO Active Status</mat-label>
+            <mat-select [(ngModel)]="fboActiveAccountType"
                         (selectionChange)="filterChanged()">
                 <mat-option value="all">All</mat-option>
                 <mat-option value="active">Active</mat-option>
                 <mat-option value="inactive">Inactive</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="account-filter">
+            <mat-label>FBO Account Type</mat-label>
+            <mat-select [(ngModel)]="fboAccountType"
+                        (selectionChange)="filterChanged()">
+                <mat-option value="all">All</mat-option>
+                <mat-option value="premium">Premium</mat-option>
+                <mat-option value="freemium">Freemium</mat-option>
             </mat-select>
         </mat-form-field>
 
@@ -244,5 +254,11 @@
 <ng-template #accountExpiredTemplate let-data>
     <span [ngClass]="{ good: !data.accountExpired }" class="status">
         {{ data.accountExpired ? "Inactive" : "Active" }}
+    </span>
+</ng-template>
+
+<ng-template #accountTypeTemplate let-data>
+    <span>
+        {{ data.accountType ? "Freemium" : "Premium"}}
     </span>
 </ng-template>
