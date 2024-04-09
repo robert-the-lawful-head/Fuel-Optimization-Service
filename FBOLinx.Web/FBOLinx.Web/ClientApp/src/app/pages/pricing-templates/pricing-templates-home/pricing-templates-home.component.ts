@@ -3,38 +3,25 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
-import { State } from '../../../store/reducers';
-import { pricingTemplateGridSet } from '../../../store/actions';
-
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../constants/sharedEvents';
 // Services
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
+import { FbopricesService } from "../../../services/fboprices.service";
 
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'ITP Margin Templates',
-        link: '/default-layout/pricing-templates',
-    },
-];
+import { pricingTemplateGridSet } from '../../../store/actions';
+import { State } from '../../../store/reducers';
 
 @Component({
     selector: 'app-pricing-templates-home',
+    styleUrls: ['./pricing-templates-home.component.scss'],
     templateUrl: './pricing-templates-home.component.html',
-    styleUrls: [ './pricing-templates-home.component.scss' ],
 })
 export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     // Public Members
     public pageTitle = 'ITP Margin Templates';
-    public breadcrumb: any[] = BREADCRUMBS;
     public pricingTemplatesData: Array<any>;
     public locationChangedSubscription: any;
 
@@ -43,6 +30,7 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
         private store: Store<State>,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
+        private fboPricesService: FbopricesService,
         public deleteFBODialog: MatDialog
     ) {
         this.sharedService.titleChange(this.pageTitle);
@@ -50,13 +38,12 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.loadPricingTemplateData();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -76,24 +63,27 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     public editPricingTemplateClicked($event) {
-        this.store.dispatch(pricingTemplateGridSet({
-            filter: $event.filter,
-            page: $event.page,
-            order: $event.order,
-            orderBy: $event.orderBy,
-        }));
-        this.router.navigate([
-            '/default-layout/pricing-templates/' + $event.pricingTemplateId,
-        ]).then(() => {
-        });
+        this.store.dispatch(
+            pricingTemplateGridSet({
+                filter: $event.filter,
+                order: $event.order,
+                orderBy: $event.orderBy,
+                page: $event.page,
+            })
+        );
+        this.router
+            .navigate([
+                '/default-layout/pricing-templates/' + $event.pricingTemplateId,
+            ])
+            .then(() => {});
     }
 
     public deletePricingTemplateClicked(pricingTemplate) {
         const dialogRef = this.deleteFBODialog.open(
             DeleteConfirmationComponent,
             {
-                data: { item: pricingTemplate, description: 'margin template' },
                 autoFocus: false,
+                data: { description: 'Margin Template', item: pricingTemplate, includeThis: true },
             }
         );
 
@@ -116,6 +106,8 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
                         .subscribe((data: any) => {
                             this.pricingTemplatesData = data;
                         });
+
+                    this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId);
                 });
 
             this.sharedService.NotifyPricingTemplateComponent(

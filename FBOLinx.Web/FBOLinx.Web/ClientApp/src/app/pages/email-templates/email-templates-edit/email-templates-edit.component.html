@@ -1,27 +1,33 @@
-<ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
-
-<div class="after-breadcrumb">
+<section>
     <div *ngIf="!emailTemplate">
         <mat-spinner></mat-spinner>
     </div>
 
     <div *ngIf="emailTemplate">
-        <div *ngIf="isSaving" class="ml-1 mb-1 text-success">Saving Changes <i class="fa fa-spinner fa-spin"></i></div>
-        <div *ngIf="hasSaved" class="ml-1 mb-1 text-success">Changes Saved!</div>
+        <div *ngIf="isSaving" class="ml-1 mb-1 text-success">
+            Saving Changes <i class="fa fa-spinner fa-spin"></i>
+        </div>
+        <div *ngIf="hasSaved" class="ml-1 mb-1 text-success">
+            Changes Saved!
+        </div>
         <div class="card-wrap">
             <h3 class="card-header h5">
                 <div class="row">
                     <div class="col-12">
-                        <span class="card-header-title">{{ emailTemplate.name }}</span>
-                        <button (click)="cancelEmailTemplateEdit()"
-                                class="float-right close-btn"
-                                mat-icon-button>
+                        <span class="card-header-title">{{
+                            emailTemplate.name
+                        }}</span>
+                        <button
+                            (click)="cancelEmailTemplateEdit()"
+                            class="float-right close-btn"
+                            mat-icon-button
+                        >
                             <mat-icon>close</mat-icon>
                         </button>
                     </div>
                 </div>
             </h3>
-            <div class="card-content">
+            <div class="card-content email-template">
                 <div class="container-fluid">
                     <mat-tab-group>
                         <mat-tab label="Email Template">
@@ -34,24 +40,62 @@
                                                matInput
                                                [(ngModel)]="emailTemplate.name"
                                                placeholder="Name"
-                                               (blur)="formChanged($event)">
+                                               (blur)="formChanged($event)" />
                                     </mat-form-field>
                                 </div>
                                 <div>
-                                    <mat-form-field style="max-width: 600px;">
+                                    <mat-form-field style="max-width: 600px">
                                         <input aria-label="Subject"
                                                [(ngModel)]="emailTemplate.subject"
                                                matInput
                                                placeholder="Subject"
-                                               (blur)="formChanged($event)"/>
+                                               (blur)="formChanged($event)" />
                                     </mat-form-field>
                                 </div>
 
-                                <ejs-richtexteditor #typeEmail
-                                                    id="rteEmail"
-                                                    [(ngModel)]="emailTemplate.emailContentHtml"
-                                                    placeholder="Enter email body here..."
-                                                    (blur)="formChanged($event)"></ejs-richtexteditor>
+                                <div style="height:600px;">
+                                    <!--<div>* Any images larger than 700px x 500px will be resized accordingly</div>-->
+                                    <div>
+                                        <ejs-richtexteditor #typeEmail
+                                                            id="rteEmail"
+                                                            [(ngModel)]="emailTemplate.emailContentHtml"
+                                                            placeholder="Enter email body here..."
+                                                            (blur)="formChanged($event)"
+                                                            height="400"
+                                                            [insertImageSettings]='insertImageSettings'
+                                                            (imageSelected)='onImageSelected($event)'
+                                                            (beforeImageDrop)='onImageDrop($event)'
+                                        ></ejs-richtexteditor>
+                                        <h6 class="mt-2">File Attachment</h6>
+                                        <div>
+                                            <input type="file"
+                                                   (change)="onFileChange($event)"
+                                                   accept=".doc,.docx,.xls,.xlsx,.csv,.pdf"
+                                                   #fileUpload />
+                                            <button *ngIf="!isUploadingFile"
+                                                    (click)="uploadFile()"
+                                                    [disabled]="isUploadButtonDisabled"
+                                                    class="ml-3"
+                                                    color="accent"
+                                                    mat-raised-button>
+                                                Upload File
+                                            </button>
+                                            <div *ngIf="isUploadingFile">
+                                                <mat-spinner></mat-spinner>
+                                            </div>
+                                            <div class="mt-2" *ngIf="fileName != ''">
+                                                <button (click)="downloadFile()" mat-stroked-button>
+                                                    Download {{fileName}}
+                                                </button>
+                                            </div>
+                                            <div class="mt-2" *ngIf="fileName != ''">
+                                                <button (click)="deleteFile()" class="btn btn-danger btn-sm">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </mat-tab>
                     </mat-tab-group>
@@ -59,4 +103,4 @@
             </div>
         </div>
     </div>
-</div>
+</section>

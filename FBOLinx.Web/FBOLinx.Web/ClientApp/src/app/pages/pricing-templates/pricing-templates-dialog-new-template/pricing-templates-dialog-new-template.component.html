@@ -28,15 +28,18 @@
                         <mat-slide-toggle
                             color="accent"
                             formControlName="templateDefault"
-                        >Default
-                        </mat-slide-toggle
-                        >
+                            >Default
+                        </mat-slide-toggle>
                     </div>
                 </div>
             </div>
             <div class="text-right mt-2">
-                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
-                <button color="green" mat-stroked-button matStepperNext>Next</button>
+                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>
+                    Cancel
+                </button>
+                <button color="green" mat-stroked-button matStepperNext>
+                    Next
+                </button>
             </div>
         </mat-step>
         <mat-step formGroupName="secondStep">
@@ -61,134 +64,184 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
+
+                    <div class="col-5">
+                        <mat-form-field class="col-8">
+                            <mat-select
+
+                                formControlName="discountType"
+                                placeholder="Discount Type"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let discountType of discountTypeDataSource
+                                    "
+                                    [value]="discountType.value"
+                                >
+                                    {{ discountType.text }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
                 </div>
                 <div
                     class="row mt-2"
-                    style="border-top: 1px solid; border-top-style: outset;">
+                    style="border-top: 1px solid; border-top-style: outset"
+                >
                     <div class="col">
                         <h5>Volume Tiers</h5>
                     </div>
                 </div>
                 <div class="row mb-2">
                     <div class="col">
-                        <table class="mat-table" style="max-width: 75%;">
+                        <table class="mat-table" style="max-width: 75%">
                             <thead>
-                            <tr class="mat-header-row">
-                                <th
-                                    class="text-center mat-header-cell text-lg-center"
-                                >
-                                    Min. (gal)
-                                </th>
-                                <th
-                                    class="text-center mat-header-cell text-lg-center"
-                                >
-                                    Max. (gal)
-                                </th>
-                                <th
-                                    *ngIf="marginType === 1"
-                                    class="text-center mat-header-cell text-lg-center"
-                                >
-                                    Discount
-                                </th>
-                                <th class="text-center mat-header-cell text-lg-center">
-                                    <span>Your ITP Margin</span>
-                                </th>
-                                <th class="text-center mat-header-cell">
-                                    <button
-                                        (click)="addCustomerMargin()"
-                                        [view]="'accent'"
-                                        beforeIcon="fa fa-plus"
-                                        ni-button
-                                        size="small"
-                                    >
-                                        Add New
-                                    </button>
-                                </th>
-                            </tr>
+                                <tr class="mat-header-row">
+                                    <th class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        Min. (gal)
+                                    </th>
+                                    <th class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        Max. (gal)
+                                    </th>
+                                    <th *ngIf="form.value.secondStep.marginType === 1"
+                                        class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        <span>Discount</span>
+                                    </th>
+                                    <th *ngIf="form.value.secondStep.marginType === 0" class="
+                                            text-center
+                                            mat-header-cell
+                                            text-lg-center
+                                        ">
+                                        <span>Total</span>
+                                    </th>
+                                    <th class="text-center mat-header-cell">
+                                        <button (click)="addCustomerMargin()"
+                                                [view]="'accent'"
+                                                beforeIcon="fa fa-plus"
+                                                ni-button
+                                                size="small">
+                                            Add New
+                                        </button>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody formArrayName="customerMargins">
-                            <tr
-                                *ngFor="let customerMargin of customerMarginsFormArray.controls; let i = index"
-                                class="mat-row mat-row-not-hover"
-                            >
-                                <td [formGroupName]="i" class="mat-cell text-center">
-                                    <mat-form-field class="col-6">
-                                        <input
-                                            class="text-lg-right"
-                                            formControlName="min"
-                                            matInput
-                                        />
-                                    </mat-form-field>
-                                </td>
-                                <td [formGroupName]="i" class="mat-cell text-center">
-                                    <mat-form-field class="col-6">
-                                        <input class="text-lg-right"
-                                               formControlName="max"
-                                               matInput
-                                        />
-                                    </mat-form-field>
-                                </td>
-                                <td *ngIf="marginType === 1" [formGroupName]="i" class="mat-cell text-center">
-                                    <div>
+                                <tr *ngFor="
+                                        let customerMargin of customerMarginsFormArray.controls;
+                                        let i = index
+                                    "
+                                    class="mat-row mat-row-not-hover">
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
                                         <mat-form-field class="col-6">
-                                            <input
-                                                (click)="$event.target.select()"
-                                                formControlName="amount"
-                                                matInput
-                                                step="0.01"
-                                                type="number"
-                                            />
-                                            <span class="prefixDollar" matPrefix>$</span>
+                                            <input class="text-lg-right"
+                                                   formControlName="min"
+                                                   (blur)="updateCustomerMarginVolumeValues(i)"
+                                                   matInput />
                                         </mat-form-field>
-                                    </div>
-                                </td>
-                                <td
-                                    *ngIf="marginType === 0"
-                                    [formGroupName]="i"
-                                    class="mat-cell text-center font-weight-bold font-italic text-right"
-                                >
-                                    <div>
+                                    </td>
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
                                         <mat-form-field class="col-6">
-                                            <input
-                                                (click)="$event.target.select()"
-                                                formControlName="amount"
-                                                matInput
-                                                step="0.01"
-                                                type="number"
-                                            />
-                                            <span class="prefixDollar" matPrefix>$</span>
+                                            <input class="text-lg-right"
+                                                   formControlName="max"
+                                                   matInput />
                                         </mat-form-field>
-                                    </div>
-                                </td>
-                                <td
-                                    *ngIf="marginType === 1"
-                                    class="mat-cell text-center font-weight-bold font-italic text-right"
-                                >
-                                    <div>${{ customerMargin.value.itp | number: "1.4-4" }}</div>
-                                </td>
+                                    </td>
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
+                                        <div>
+                                            <mat-form-field class="col-6">
+                                                <input (click)="
+                                                        $event.target.select()
+                                                    "
+                                                       formControlName="amount"
+                                                       matInput
+                                                       step="0.01"
+                                                       type="number" />
+                                                <span *ngIf="form.value.secondStep.discountType == 0"
+                                                      class="prefixDollar"
+                                                      matPrefix>$</span>
 
-                                <td class="text-right mat-cell">
-                                    <button
-                                        (click)="deleteCustomerMargin(i)"
-                                        [view]="'error'"
-                                        beforeIcon="fa fa-trash"
-                                        ni-button
-                                        size="small"
-                                    >
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
+                                                <span *ngIf="form.value.secondStep.discountType == 1"
+                                                      class="prefixPercentage"
+                                                      matSuffix>%</span>
+                                            </mat-form-field>
+                                        </div>
+                                    </td>
+                                    <td [formGroupName]="i"
+                                        class="mat-cell text-center">
+                                        <div>
+                                            <div *ngIf="form.value.secondStep.marginType == 0 &&
+                                                form.value.secondStep.discountType == 0">
+                                                {{
+                                                        jetACost + customerMargin.value.amount / 1
+                                                            | currency:'USD':true:'1.4-4'
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 0 &&
+                                                form.value.secondStep.discountType == 1">
+                                                {{
+                                                        jetACost + (jetACost * customerMargin.value.amount / 100)
+                                                            | currency:'USD':true:'1.4-4'
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 1 &&
+                                                form.value.secondStep.discountType == 0">
+                                                {{
+                                                        jetARetail - customerMargin.value.amount
+                                                            | currency:'USD':true:'1.4-4'
+                                                }}
+                                            </div>
+                                            <div *ngIf="form.value.secondStep.marginType == 1 &&
+                                                form.value.secondStep.discountType == 1">
+                                                {{
+                                                        jetARetail - (jetARetail * customerMargin.value.amount / 100)
+                                                            | currency:'USD':true:'1.4-4'
+                                                }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="text-right mat-cell" *ngIf="customerMarginsFormArray.length > 1">
+                                        <button (click)="deleteCustomerMargin(i)"
+                                                [view]="'error'"
+                                                beforeIcon="fa fa-trash"
+                                                ni-button
+                                                size="small">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
             <div class="text-right mt-2">
-                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
-                <button (click)="resetWizard()" class="mr-1" mat-stroked-button>Reset</button>
-                <button class="mr-1" mat-stroked-button matStepperPrevious>Back</button>
-                <button color="green" mat-stroked-button matStepperNext>Next</button>
+                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>
+                    Cancel
+                </button>
+                <button (click)="resetWizard()" class="mr-1" mat-stroked-button>
+                    Reset
+                </button>
+                <button class="mr-1" mat-stroked-button matStepperPrevious>
+                    Back
+                </button>
+                <button color="green" mat-stroked-button matStepperNext>
+                    Next
+                </button>
             </div>
         </mat-step>
         <mat-step formGroupName="thirdStep">
@@ -197,18 +250,25 @@
                 <div class="row mt-2 mb-2">
                     <div class="col">
                         <mat-form-field>
-                            <mat-select formControlName="emailContentId"
-                                        placeholder="Select Email Template">
-                                <mat-option *ngFor="let emailContentTemplate of emailTemplatesDataSource"
-                                            [value]="emailContentTemplate.oid">
+                            <mat-select
+                                formControlName="emailContentId"
+                                placeholder="Select Email Template"
+                                (selectionChange)="onEmailConentTemplateChanged($event)"
+                            >
+                                <mat-option
+                                    *ngFor="
+                                        let emailContentTemplate of emailTemplatesDataSource
+                                    "
+                                    [value]="emailContentTemplate.oid"
+                                >
                                     {{ emailContentTemplate.name }}
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>
                     </div>
                 </div>
-                <div class="row mt-2 mb-2" style="font-size: 0.8rem;">
-                    <span class="font-weight-bold" style="font-size: 1rem;">
+                <div class="row mt-2 mb-2" style="font-size: 0.8rem">
+                    <span class="font-weight-bold" style="font-size: 1rem">
                         Fuel Notes
                     </span>
                     &nbsp;&nbsp;&nbsp; To show to all FuelerLinx customers
@@ -220,14 +280,25 @@
                             [toolbarSettings]="{ enable: false }"
                             formControlName="notes"
                             placeholder="Hours of operation are from 7:00am-6:00pm..."
+                            [insertImageSettings]='insertImageSettings'
                         ></ejs-richtexteditor>
                     </div>
                 </div>
             </div>
             <div class="text-right mt-2">
-                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>Cancel</button>
-                <button class="mr-1" mat-stroked-button matStepperPrevious>Back</button>
-                <button (click)="addTemplateClicked()" class="mr-1" color="green" mat-stroked-button>
+                <button [mat-dialog-close]="" class="mr-1" mat-stroked-button>
+                    Cancel
+                </button>
+                <button class="mr-1" mat-stroked-button matStepperPrevious>
+                    Back
+                </button>
+                <button
+                    (click)="addTemplateClicked()"
+                    class="mr-1"
+                    color="green"
+                    (disabled)="form.value.thirdStep.emailContentId <= 0"
+                    mat-stroked-button
+                >
                     Save Template
                 </button>
             </div>

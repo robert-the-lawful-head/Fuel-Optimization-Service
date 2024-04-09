@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Add New Airport for Geo-Fencing</h1>
+<div mat-dialog-content>
+    <div>
+        <app-airport-autocomplete (valueChange)="airportValueChanged($event)"
+                                  [airportContainerModel]="data"></app-airport-autocomplete>
+    </div>
+</div>
+<div mat-dialog-actions>
+    <button (click)="onAddAirportClick()"
+            [disabled]="!data.icao || data.icao.length == 0"
+            class="mr-1"
+            color="accent"
+            mat-flat-button>
+        Add Airport
+    </button>
+    <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
+</div>

@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class ContactinfobygroupsService {
@@ -13,13 +13,15 @@ export class ContactinfobygroupsService {
         this.accessPointUrl = baseUrl + 'api/contactinfobygroups';
     }
 
-    public getCustomerContactInfoByGroup(groupId, customerId) {
+    public getCustomerContactInfoByGroup(groupId, fboId, customerId) {
         return this.http.get(
             this.accessPointUrl +
-                '/group/' +
-                groupId +
-                '/customer/' +
-                customerId,
+            '/group/' +
+            groupId +
+            '/fbo/' +
+            fboId +
+            '/customer/' +
+            customerId,
             {
                 headers: this.headers,
             }
@@ -32,14 +34,24 @@ export class ContactinfobygroupsService {
         });
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload, userId, customerId) {
+        return this.http.post(this.accessPointUrl + '/' + userId + '/customer/' + customerId, payload, {
             headers: this.headers,
         });
     }
 
-    public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload, {
+    public addMultiple(groupId, customerId, payload) {
+        return this.http.post(
+            `${this.accessPointUrl}/group/${groupId}/customer/${customerId}/multiple`,
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public remove(payload , userId) {
+        return this.http.delete(this.accessPointUrl + '/' + payload+'/'+userId, {
             headers: this.headers,
         });
     }

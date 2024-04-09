@@ -146,6 +146,14 @@ namespace IO.Swagger.Model {
     [JsonProperty(PropertyName = "writeToTripSheetOnDispatch")]
     public bool? WriteToTripSheetOnDispatch { get; set; }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value></value>
+    [DataMember(Name="tripSheetNotePlacement", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "tripSheetNotePlacement")]
+    public int? TripSheetNotePlacement { get; set; }
+
 
     /// <summary>
     /// Get the string presentation of the object
@@ -173,6 +181,7 @@ namespace IO.Swagger.Model {
       sb.Append("  UserPreferredFbo: ").Append(UserPreferredFbo).Append("\n");
       sb.Append("  NonDispatchTripSheetNotesPreText: ").Append(NonDispatchTripSheetNotesPreText).Append("\n");
       sb.Append("  WriteToTripSheetOnDispatch: ").Append(WriteToTripSheetOnDispatch).Append("\n");
+      sb.Append("  TripSheetNotePlacement: ").Append(TripSheetNotePlacement).Append("\n");
       sb.Append("}\n");
       return sb.ToString();
     }

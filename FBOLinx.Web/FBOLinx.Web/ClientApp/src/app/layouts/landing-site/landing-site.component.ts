@@ -1,17 +1,15 @@
 import { Component, HostListener } from '@angular/core';
+import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Services
-import { SharedService } from '../shared-service';
 import { UserService } from '../../services/user.service';
-
 // Components
 import { ForgotPasswordDialogComponent } from '../../shared/components/forgot-password/forgot-password-dialog/forgot-password-dialog.component';
-import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
-import { RequestDemoModalComponent } from '../../shared/components/request-demo-modal/request-demo-modal.component';
-import { RequestDemoSuccessComponent } from '../../shared/components/request-demo-success/request-demo-success.component';
+// Services
+import { SharedService } from '../shared-service';
+import { urls } from 'src/app/constants/externalUrlsConstants';
 
 export interface ContactUsMessage {
     name: string;
@@ -26,10 +24,10 @@ export interface LoginRequest {
 }
 
 @Component({
-    selector: 'landing-site-layout',
-    templateUrl: './landing-site.component.html',
-    styleUrls: ['./landing-site.component.scss'],
     providers: [SharedService],
+    selector: 'landing-site-layout',
+    styleUrls: ['./landing-site.component.scss'],
+    templateUrl: './landing-site.component.html',
 })
 export class LandingSiteLayoutComponent {
     rememberMeUsernameKey = 'rememberMeUsername';
@@ -48,10 +46,8 @@ export class LandingSiteLayoutComponent {
     paragonSmallLogoImage = '../../../assets/content/paragon-2c-logo_small.png';
     fuelerlinxLogo = '../../../assets/img/FuelerLinxLogo.png';
     x1fboLogo = '../../../assets/img/X1.png';
-    millionAirLogo = '../../../assets/img/million-air.png';
     flightAwareLogo = '../../../assets/img/FlightAware.png';
     titanLogo = '../../../assets/img/titan.png';
-    jetAviation = '../../../assets/img/JetAviation.png';
     amstatLogo = '../../../assets/img/Amstat.png';
     fbodirectorLogo = '../../../assets/img/fbodirector.png';
     fbopartnersLogo = '../../../assets/img/fbopartners.png';
@@ -64,21 +60,9 @@ export class LandingSiteLayoutComponent {
     ];
 
     integrationPartners: Array<any> = [
-        [
-            this.fuelerlinxLogo,
-            this.x1fboLogo,
-            this.millionAirLogo,
-        ],
-        [
-            this.flightAwareLogo,
-            this.titanLogo,
-            this.jetAviation,
-        ],
-        [
-            this.amstatLogo,
-            this.fbodirectorLogo,
-            this.fbopartnersLogo,
-        ],
+        [this.fuelerlinxLogo, this.x1fboLogo],
+        [this.flightAwareLogo, this.titanLogo],
+        [this.amstatLogo, this.fbodirectorLogo, this.fbopartnersLogo],
     ];
 
     integrationPartnerView = 0;
@@ -94,10 +78,7 @@ export class LandingSiteLayoutComponent {
         private forgotPasswordDialog: MatDialog,
         private userService: UserService,
         private loginDialog: MatDialog,
-        private requestDemoDialog: MatDialog,
-        private requestDemoSuccessDialog: MatDialog
-    ) {
-    }
+    ) {}
 
     @HostListener('window:scroll', ['$event'])
     checkScroll(): void {
@@ -106,11 +87,9 @@ export class LandingSiteLayoutComponent {
 
     onLogin() {
         const data = {};
-        const dialogRef = this.loginDialog.open(
-            LoginModalComponent, {
-                data,
-            }
-        );
+        const dialogRef = this.loginDialog.open(LoginModalComponent, {
+            data,
+        });
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
@@ -126,35 +105,38 @@ export class LandingSiteLayoutComponent {
     }
 
     openRequestDemo() {
-        const data = {
-            succeed: false,
-        };
-        const dialogRef = this.requestDemoDialog.open(
-            RequestDemoModalComponent, {
-                width: '600px',
-                height: '650px',
-                panelClass: 'request-demo-container',
-                data,
-            }
-        );
+        window.open(urls.demoRequestUrl, '_blank').focus();
+        //const data = {
+        //    succeed: false,
+        //};
+        //const dialogRef = this.requestDemoDialog.open(
+        //    RequestDemoModalComponent,
+        //    {
+        //        data,
+        //        height: '650px',
+        //        panelClass: 'request-demo-container',
+        //        width: '600px',
+        //    }
+        //);
 
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
+        //dialogRef.afterClosed().subscribe((result) => {
+        //    if (!result) {
+        //        return;
+        //    }
 
-            this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
-        });
+        //    this.requestDemoSuccessDialog.open(RequestDemoSuccessComponent);
+        //});
     }
 
     forgotPassword() {
         const data = {
-            email: ''
+            email: '',
         };
         const dialogRef = this.forgotPasswordDialog.open(
-            ForgotPasswordDialogComponent, {
-                width: '450px',
+            ForgotPasswordDialogComponent,
+            {
                 data,
+                width: '450px',
             }
         );
 
@@ -167,7 +149,8 @@ export class LandingSiteLayoutComponent {
                 () => {
                     this.snackBar.open(
                         'An email has been sent with access instructions',
-                        '', {
+                        '',
+                        {
                             duration: 5000,
                         }
                     );
@@ -206,16 +189,8 @@ export class LandingSiteLayoutComponent {
         switch (Number(event.value)) {
             case 0:
                 this.integrationPartners = [
-                    [
-                        this.fuelerlinxLogo,
-                        this.x1fboLogo,
-                        this.millionAirLogo,
-                    ],
-                    [
-                        this.flightAwareLogo,
-                        this.titanLogo,
-                        this.jetAviation,
-                    ],
+                    [this.fuelerlinxLogo, this.x1fboLogo],
+                    [this.flightAwareLogo, this.titanLogo],
                     [
                         this.amstatLogo,
                         this.fbodirectorLogo,
@@ -230,9 +205,7 @@ export class LandingSiteLayoutComponent {
                         this.flightAwareLogo,
                         this.amstatLogo,
                     ],
-                    [
-                        this.fbopartnersLogo,
-                    ],
+                    [this.fbopartnersLogo],
                 ];
                 break;
             case 2:
@@ -246,11 +219,7 @@ export class LandingSiteLayoutComponent {
                 break;
             case 3:
                 this.integrationPartners = [
-                    [
-                        this.titanLogo,
-                        this.millionAirLogo,
-                        this.jetAviation,
-                    ],
+                    [this.titanLogo],
                 ];
                 break;
             default:

@@ -1,30 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class Customers
-    {
-        public enum CustomerSources
-        {
-            [Description("Not Specified")]
-            NotSpecified = 0,
-            [Description("FuelerLinx")]
-            FuelerLinx = 1,
-            [Description("Base Tenant")]
-            BaseTenant = 2,
-            [Description("Transient")]
-            Transient = 3,
-            [Description("Contract Fuel Vendor")]
-            ContractFuelVendor = 4
-        }
-
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
+    public class Customers : FBOLinxBaseEntityModel<int>
+    {        
         public bool? Action { get; set; }
         public double? Margin { get; set; }
         [StringLength(255)]
@@ -70,24 +53,29 @@ namespace FBOLinx.DB.Models
         [Column("Show100LL")]
         public bool? Show100Ll { get; set; }
         public bool? Suspended { get; set; }
-        public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
+        public CertificateTypes? CertificateType { get; set; }
 
         [InverseProperty("Customer")]
-        public CompaniesByGroup CompanyByGroup { get; set; }
+        public virtual CompaniesByGroup CompanyByGroup { get; set; }
 
         [InverseProperty("Customer")]
-        public CustomerInfoByGroup CustomerInfoByGroup { get; set; }
+        public virtual ICollection<CustomerInfoByGroup> CustomerInfoByGroup { get; set; }
 
         [InverseProperty("Customer")]
-        public CustomCustomerTypes CustomCustomerType { get; set; }
+        public virtual ICollection<CustomCustomerTypes> CustomCustomerType { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<FuelReq> FuelReqs { get; set; }
+        public virtual ICollection<FuelReq> FuelReqs { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<CustomerContacts> CustomerContacts { get; set; }
+        public virtual ICollection<CustomerContacts> CustomerContacts { get; set; }
 
         [InverseProperty("Customer")]
-        public ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
+        public virtual ICollection<CompanyPricingLog> CompanyPricingLogs { get; set; }
+
+        [InverseProperty("Customer")]
+        public ICollection<CustomerAircrafts> CustomerAircrafts { get; set; }
+        [ForeignKey("GroupId")]
+        public virtual FboFavoriteCompany FavoriteCompany { get; set; }
     }
 }

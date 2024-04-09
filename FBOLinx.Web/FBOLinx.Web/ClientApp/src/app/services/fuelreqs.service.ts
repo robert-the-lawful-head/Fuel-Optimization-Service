@@ -1,5 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import * as moment from 'moment';
 
 @Injectable()
 export class FuelreqsService {
@@ -19,12 +21,16 @@ export class FuelreqsService {
         });
     }
 
-    public getForFboAndDateRange(fboId: number, startDate: Date, endDate: Date) {
+    public getForFboAndDateRange(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
             this.accessPointUrl + '/fbo/' + fboId + '/daterange',
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -32,12 +38,22 @@ export class FuelreqsService {
         );
     }
 
-    public getForGroupFboAndDateRange(groupId: number, fboId: number, startDate: Date, endDate: Date) {
+    public getForGroupFboAndDateRange(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId + '/daterange',
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/daterange',
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -46,23 +62,32 @@ export class FuelreqsService {
     }
 
     public getForFboCount(fboId: number, startDate: Date) {
-      return this.http.post(this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
-        {
-          startDateTime: startDate,
-        },
-        {
+        return this.http.post(
+            this.accessPointUrl + '/fbo/' + fboId + '/count' + '/startdate',
+            {
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public get(id) {
+        return this.http.get(this.accessPointUrl + '/' + id, {
             headers: this.headers,
         });
     }
 
-    public get(payload) {
-        return this.http.get(this.accessPointUrl + '/' + payload.oid, {
+    public getBySourceId(sourceId, fboId) {
+        return this.http.get(this.accessPointUrl + '/sourceid/' + sourceId + '/fboid/' + fboId, {
             headers: this.headers,
         });
     }
+
 
     public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+        return this.http.post(this.accessPointUrl + '/create', payload, {
             headers: this.headers,
         });
     }
@@ -77,6 +102,48 @@ export class FuelreqsService {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
+    }
+
+    public updateArchived(payload) {
+        return this.http.put(this.accessPointUrl + '/updatearchived/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
+
+    public getAdditionalOrderNotes(associatedFuelOrderId: number, associatedServiceOrderId: number,associatedFuelerlinxTransactionId: number) {
+        return this.http.get(
+            this.accessPointUrl + '/ordernotes/associatedfuelorderid/' + associatedFuelOrderId + '/associatedserviceorderid/' + associatedServiceOrderId + '/associatedfuelerlinxtransactionid/' + associatedFuelerlinxTransactionId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public addAdditionalNotes(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/ordernotes', payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public editAdditionalNote(payload) {
+        return this.http.put(
+            this.accessPointUrl + '/ordernotes', payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public deleteAdditionalNote(payload) {
+        return this.http.delete(
+            this.accessPointUrl + '/ordernotes/' + payload.oid,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     // Analysis Services
@@ -127,11 +194,13 @@ export class FuelreqsService {
 
     public getQuotesAndOrders(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/quotes-orders-over-time/fbo/' + fboId,
-            {
-                startDateTime: startDate,
-                endDateTime: endDate,
+            this.accessPointUrl +
+                '/analysis/quotes-orders-over-time/fbo/' +
                 fboId,
+            {
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                fboId,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -143,9 +212,9 @@ export class FuelreqsService {
         return this.http.post(
             this.accessPointUrl + '/analysis/orders-won-over-time/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
                 fboId,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -153,13 +222,21 @@ export class FuelreqsService {
         );
     }
 
-    public getVolumesNearbyAirport(fboId: number, startDate: Date, endDate: Date, mile: number) {
+    public getVolumesNearbyAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date,
+        mile: number
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/volumes-nearby-airport/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/volumes-nearby-airport/fbo/' +
+                fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
                 distanceMile: mile,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                icao: '',
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -167,13 +244,16 @@ export class FuelreqsService {
         );
     }
 
-    public getFBOCustomersBreakdown(fboId: number, startDate: Date, endDate: Date, chartType: string) {
+    public getMarketShareAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/customers-breakdown/fbo/' + fboId,
+            this.accessPointUrl + '/analysis/market-share-airport/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
-                chartType,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -181,26 +261,84 @@ export class FuelreqsService {
         );
     }
 
-    public getCompaniesQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date) {
+    public getFBOCustomersBreakdown(
+        fboId: number,
+        groupId: number,
+        customerId: number,
+        startDate: Date,
+        endDate: Date,
+        chartType: string
+    ) {
+        return this.http.post(
+            this.accessPointUrl + '/analysis/customers-breakdown/group/' +
+            groupId +
+            '/fbo/' +
+            fboId +
+            '/customer/' +
+            customerId,
+            {
+                chartType,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                icao: '',
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCompaniesQuotingDealStatistics(
+        groupId: number,
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl +
+                '/analysis/company-quoting-deal-statistics/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
+            {
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm')
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getCompaniesQuotingDealStatisticsForGroupFbos(
+        groupId: number,
+        fboIds: number[],
+        startDate: Date,
+        endDate: Date
+    ) {
+        return this.http.post(
+            this.accessPointUrl +
+            '/analysis/company-quoting-deal-statistics/group/' +
+            groupId,
+            {
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                fboIds,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+            },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    //Get Customer Analytics Id
+    public getCompanyQuotingDealStatistics(groupId: number, fboId: number, startDate: Date, endDate: Date , customerId: number) {
         return this.http.post(
             this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId + '/fbo/' + fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
-            },
-            {
-                headers: this.headers,
-            }
-        );
-    }
-
-    public getCompaniesQuotingDealStatisticsForGroupFbos(groupId: number, fboIds: number[], startDate: Date, endDate: Date) {
-        return this.http.post(
-            this.accessPointUrl + '/analysis/company-quoting-deal-statistics/group/' + groupId,
-            {
-                fboIds,
-                startDateTime: startDate,
-                endDateTime: endDate,
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                customerId: customerId.toString()
             },
             {
                 headers: this.headers,
@@ -210,10 +348,13 @@ export class FuelreqsService {
 
     public getFuelVendorSources(fboId: number, startDate: Date, endDate: Date) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/fbo-fuel-vendor-sources/fbo/' +
+                fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                icao: '',
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -221,12 +362,19 @@ export class FuelreqsService {
         );
     }
 
-    public getMarketShareFboAirport(fboId: number, startDate: Date, endDate: Date) {
+    public getMarketShareFboAirport(
+        fboId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/market-share-fbo-airport/fbo/' + fboId,
+            this.accessPointUrl +
+                '/analysis/market-share-fbo-airport/fbo/' +
+                fboId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                icao: '',
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
             },
             {
                 headers: this.headers,
@@ -234,12 +382,20 @@ export class FuelreqsService {
         );
     }
 
-    public getMarketShareFbosAirports(groupId: number, startDate: Date, endDate: Date) {
+    public getMarketShareFbosAirports(
+        groupId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/market-share-fbos-airports/group/' + groupId,
+            this.accessPointUrl +
+                '/analysis/market-share-fbos-airports/group/' +
+                groupId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                icaos: [],
+                fbos: []
             },
             {
                 headers: this.headers,
@@ -247,13 +403,29 @@ export class FuelreqsService {
         );
     }
 
-    public getFuelVendorSourcesByAirports(groupId: number, startDate: Date, endDate: Date) {
+    public getFuelVendorSourcesByAirports(
+        groupId: number,
+        startDate: Date,
+        endDate: Date
+    ) {
         return this.http.post(
-            this.accessPointUrl + '/analysis/fbo-fuel-vendor-sources/group/' + groupId,
+            this.accessPointUrl +
+                '/analysis/fbo-fuel-vendor-sources/group/' +
+                groupId,
             {
-                startDateTime: startDate,
-                endDateTime: endDate,
+                endDateTime: moment(endDate).format('MM/DD/YYYY HH:mm'),
+                startDateTime: moment(startDate).format('MM/DD/YYYY HH:mm'),
+                icaosfbos: {}
             },
+            {
+                headers: this.headers,
+            }
+        );
+    }
+    public sendOrderConfirmationNotification(payload) {
+        return this.http.post(
+            `${this.accessPointUrl}/send-email-confirmation`,
+            payload,
             {
                 headers: this.headers,
             }

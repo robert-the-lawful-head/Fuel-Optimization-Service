@@ -4,34 +4,35 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.ViewModels;
-using static FBOLinx.DB.Models.RampFees;
 using System.Text.RegularExpressions;
-using System.Globalization;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.BusinessServices.RampFee;
+using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class RampFeesController : ControllerBase
+    public class RampFeesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly RampFeesService _RampFeesService;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
+        private IMailService _MailService;
 
-        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, AircraftService aircraftService)
+        public RampFeesController(FboLinxContext context, RampFeesService rampFeesService, IAircraftService aircraftService, IMailService mailService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _RampFeesService = rampFeesService;
             _aircraftService = aircraftService;
+            _MailService = mailService;
         }
 
         // GET: api/RampFees
@@ -59,67 +60,8 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}")]
         public async Task<ActionResult<IEnumerable<RampFees>>> GetRampFeesForFbo([FromRoute] int fboId)
         {
-            //Grab all of the aircraft sizes and return a record for each size, even if the FBO hasn't customized them
-            IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> sizes =
-                FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
-            var rampFees = await _context.RampFees.Where(x => x.Fboid == fboId).ToListAsync();
-            var allAircraft = await _aircraftService.GetAllAircrafts();
+            var result = await _RampFeesService.GetRampFeesByFbo(fboId);
 
-            List<RampFeesGridViewModel> result = (
-                from s in sizes
-                join r in rampFees on new
-                    {
-                        size = (int?) ((short?) ((AirCrafts.AircraftSizes) s.Value)),
-                        fboId = (int?) fboId
-                    }
-                    equals new
-                    {
-                        size = r.CategoryMinValue,
-                        fboId = r.Fboid
-                    }
-                    into leftJoinRampFees
-                from r in leftJoinRampFees.DefaultIfEmpty()
-                select new RampFeesGridViewModel()
-                {
-                    Oid = r?.Oid ?? 0,
-                    Price = r?.Price,
-                    Waived = r?.Waived,
-                    Fboid = r?.Fboid,
-                    CategoryType = r?.CategoryType,
-                    CategoryMinValue = r?.CategoryMinValue,
-                    CategoryMaxValue = r?.CategoryMaxValue,
-                    ExpirationDate = r?.ExpirationDate,
-                    Size = (AirCrafts.AircraftSizes) s.Value,
-                    AppliesTo = (from a in _aircraftService.GetAllAircraftsAsQueryable()
-                        where a.Size.HasValue && a.Size == (AirCrafts.AircraftSizes) s.Value
-                        select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
-                    LastUpdated = r?.LastUpdated
-
-                }).ToList();
-
-            // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
-            List<RampFeesGridViewModel> customRampFees = (from r in rampFees
-                join a in allAircraft on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
-                from a in leftJoinAircrafts.DefaultIfEmpty()
-                where r.Fboid == fboId && r.CategoryType.HasValue &&
-                      r.CategoryType.Value != RampFeeCategories.AircraftSize
-                select new RampFeesGridViewModel()
-                {
-                    Oid = r.Oid,
-                    Price = r.Price,
-                    Waived = r.Waived,
-                    Fboid = r.Fboid,
-                    CategoryType = r.CategoryType,
-                    CategoryMinValue = r.CategoryMinValue,
-                    CategoryMaxValue = r.CategoryMaxValue,
-                    ExpirationDate = r.ExpirationDate,
-                    AircraftMake = a == null ? "" : a.Make,
-                    AircraftModel = a == null ? "" : a.Model,
-                    CategoryStringValue = r.CategoryStringValue,
-                    LastUpdated = r.LastUpdated
-                }).ToList();
-
-            result.AddRange(customRampFees);
             return Ok(result);
         }
 
@@ -270,109 +212,109 @@ namespace FBOLinx.Web.Controllers
                         switch (rampfee.aircraftsize)
                         {
                             case "Very Light Jet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                newRampFee.Size = AircraftSizes.VeryLightJet;
                                 break;
                             case "VLJ's":
-                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                newRampFee.Size = AircraftSizes.VeryLightJet;
                                 break;
                             case "VLJ":
-                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                newRampFee.Size = AircraftSizes.VeryLightJet;
                                 break;
                             case "VeryLightJet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.VeryLightJet;
+                                newRampFee.Size = AircraftSizes.VeryLightJet;
                                 break;
                             case "Light Jets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                newRampFee.Size = AircraftSizes.LightJet;
                                 break;
                             case "Light Jet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                newRampFee.Size = AircraftSizes.LightJet;
                                 break;
                             case "LightJets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                newRampFee.Size = AircraftSizes.LightJet;
                                 break;
                             case "LightJet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightJet;
+                                newRampFee.Size = AircraftSizes.LightJet;
                                 break;
                             case "Mid Jets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                newRampFee.Size = AircraftSizes.MediumJet;
                                 break;
                             case "Medium Jets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                newRampFee.Size = AircraftSizes.MediumJet;
                                 break;
                             case "MediumJets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                newRampFee.Size = AircraftSizes.MediumJet;
                                 break;
                             case "MediumJet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                newRampFee.Size = AircraftSizes.MediumJet;
                                 break;
                             case "Medium Jet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumJet;
+                                newRampFee.Size = AircraftSizes.MediumJet;
                                 break;
                             case "Heavy Jet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                newRampFee.Size = AircraftSizes.HeavyJet;
                                 break;
                             case "Heavy Jets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                newRampFee.Size = AircraftSizes.HeavyJet;
                                 break;
                             case "HeavyJet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                newRampFee.Size = AircraftSizes.HeavyJet;
                                 break;
                             case "HeavyJets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyJet;
+                                newRampFee.Size = AircraftSizes.HeavyJet;
                                 break;
                             case "Super Heavy Jet":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                newRampFee.Size = AircraftSizes.SuperHeavyJet;
                                 break;
                             case "Super Heavy Jets":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                newRampFee.Size = AircraftSizes.SuperHeavyJet;
                                 break;
                             case "SHJ":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SuperHeavyJet;
+                                newRampFee.Size = AircraftSizes.SuperHeavyJet;
                                 break;
                             case "Wide Body":
-                                newRampFee.Size = AirCrafts.AircraftSizes.WideBody;
+                                newRampFee.Size = AircraftSizes.WideBody;
                                 break;
                             case "Wide Bodies":
-                                newRampFee.Size = AirCrafts.AircraftSizes.WideBody;
+                                newRampFee.Size = AircraftSizes.WideBody;
                                 break;
                             case "Light Helicopter":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightHelicopter;
+                                newRampFee.Size = AircraftSizes.LightHelicopter;
                                 break;
                             case "Medium Helicopter":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumHelicopter;
+                                newRampFee.Size = AircraftSizes.MediumHelicopter;
                                 break;
                             case "Heavy Helicopter":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyHelicopter;
+                                newRampFee.Size = AircraftSizes.HeavyHelicopter;
                                 break;
                             case "Light Twin":
-                                newRampFee.Size = AirCrafts.AircraftSizes.LightTwin;
+                                newRampFee.Size = AircraftSizes.LightTwin;
                                 break;
                             case "Heavy Turbo Prop":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyTurboprop;
+                                newRampFee.Size = AircraftSizes.HeavyTurboprop;
                                 break;
                             case "Heavy TurboProp":
-                                newRampFee.Size = AirCrafts.AircraftSizes.HeavyTurboprop;
+                                newRampFee.Size = AircraftSizes.HeavyTurboprop;
                                 break;
                             case "Medium TurboProp":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumTurboprop;
+                                newRampFee.Size = AircraftSizes.MediumTurboprop;
                                 break;
                             case "Medium Turbo Prop":
-                                newRampFee.Size = AirCrafts.AircraftSizes.MediumTurboprop;
+                                newRampFee.Size = AircraftSizes.MediumTurboprop;
                                 break;
                             case "Single Engine Piston":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SingleEnginePiston;
+                                newRampFee.Size = AircraftSizes.SingleEnginePiston;
                                 break;
                             case "SingleEnginePiston":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SingleEnginePiston;
+                                newRampFee.Size = AircraftSizes.SingleEnginePiston;
                                 break;
                             case "SingleTurboProp":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SingleTurboProp;
+                                newRampFee.Size = AircraftSizes.SingleTurboProp;
                                 break;
                             case "Single Turbo Prop":
-                                newRampFee.Size = AirCrafts.AircraftSizes.SingleTurboProp;
+                                newRampFee.Size = AircraftSizes.SingleTurboProp;
                                 break;
                             default:
-                                newRampFee.Size = AirCrafts.AircraftSizes.NotSet;
+                                newRampFee.Size = AircraftSizes.NotSet;
                                 break;
                         }
 
@@ -440,7 +382,6 @@ namespace FBOLinx.Web.Controllers
             {
                 return Ok(null);
             }
-
         }
     }
 }

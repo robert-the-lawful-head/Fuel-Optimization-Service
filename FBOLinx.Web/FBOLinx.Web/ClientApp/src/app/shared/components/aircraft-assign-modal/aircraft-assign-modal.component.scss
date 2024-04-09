@@ -12,7 +12,7 @@
                 max-width: 100%;
             }
         }
-    
+
         .p-component {
             font-size: 13px;
         }
@@ -28,9 +28,17 @@
         align-items: center;
 
         ::ng-deep {
-            .mat-progress-spinner circle, .mat-spinner circle {
+            .mat-progress-spinner circle,
+            .mat-spinner circle {
                 stroke: white;
             }
         }
     }
+}
+
+.add-custom-customer{
+    background-color: smokewhite;
+    text-align: center;
+    color: black;
+    padding: 10px;
 }

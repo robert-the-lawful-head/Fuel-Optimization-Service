@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class CustomermarginsService {
@@ -53,6 +53,7 @@ export class CustomermarginsService {
             headers: this.headers,
         });
     }
+
 
     public updatecustomermargin(payload) {
         return this.http.post(

@@ -6,7 +6,7 @@
         matInput
         placeholder="Airport"
         type="text"
-    >
+    />
     <mat-autocomplete
         #auto="matAutocomplete"
         (optionSelected)="selected($event)"
@@ -16,7 +16,7 @@
             *ngFor="let airport of filteredAirports | async"
             [value]="airport"
         >
-            {{airport.icao}} - {{airport.fullAirportName}}
+            {{ airport.icao }} - {{ airport.fullAirportName }}
         </mat-option>
     </mat-autocomplete>
 </mat-form-field>

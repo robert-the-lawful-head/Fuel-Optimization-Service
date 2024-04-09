@@ -1,22 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatDialog } from '@angular/material/dialog';
+import { GridBase } from 'src/app/services/tables/GridBase';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
-import { CopyConfirmationComponent } from "../../../shared/components/copy-confirmation/copy-confirmation.component";
-import { EmailTemplatesDialogNewTemplateComponent } from
-    "../email-templates-dialog-new-template/email-templates-dialog-new-template.component";
+import { CopyConfirmationComponent } from '../../../shared/components/copy-confirmation/copy-confirmation.component';
+import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
 
 @Component({
     selector: 'app-email-templates-grid',
-    templateUrl: './email-templates-grid.component.html',
     styleUrls: ['./email-templates-grid.component.scss'],
+    templateUrl: './email-templates-grid.component.html',
 })
-export class EmailTemplatesGridComponent implements OnInit {
+export class EmailTemplatesGridComponent extends GridBase implements OnInit {
     @Output() editEmailTemplateClicked = new EventEmitter<any>();
     @Output() deleteEmailTemplateClicked = new EventEmitter<any>();
     @Output() copyEmailTemplateClicked = new EventEmitter<any>();
@@ -25,22 +31,17 @@ export class EmailTemplatesGridComponent implements OnInit {
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-    public emailTemplatesDataSource: MatTableDataSource<any> = null;
-    public displayedColumns: string[] = [
-        'name',
-        'subject',
-        'copy',
-        'delete'
-    ];
+    public dataSource: MatTableDataSource<any> = null;
+    public displayedColumns: string[] = ['name', 'subject', 'copy', 'delete'];
 
-    public pageIndexTemplate = 0;
-    public pageSizeTemplate = 50;
 
-    constructor(public newTemplateDialog: MatDialog,
+    constructor(
+        public newTemplateDialog: MatDialog,
         public copyTemplateDialog: MatDialog,
         public deleteTemplateWarningDialog: MatDialog,
-        private sharedService: SharedService) {
-
+        private sharedService: SharedService
+    ) {
+        super();
     }
 
     ngOnInit(): void {
@@ -49,11 +50,11 @@ export class EmailTemplatesGridComponent implements OnInit {
         }
 
         this.sort.sortChange.subscribe(() => (this.paginator.pageIndex = 0));
-        this.emailTemplatesDataSource = new MatTableDataSource(
+        this.dataSource = new MatTableDataSource(
             this.emailTemplatesData
         );
-        this.emailTemplatesDataSource.sort = this.sort;
-        this.emailTemplatesDataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+        this.dataSource.paginator = this.paginator;
 
         //this.updateModel.currenttemplate = 0;
 
@@ -76,28 +77,28 @@ export class EmailTemplatesGridComponent implements OnInit {
     public editEmailTemplate(emailTemplate) {
         this.editEmailTemplateClicked.emit({
             emailTemplateId: emailTemplate.oid,
-            filter: this.emailTemplatesDataSource.filter,
-            page: this.emailTemplatesDataSource.paginator.pageIndex,
-            order: this.emailTemplatesDataSource.sort.active,
-            orderBy: this.emailTemplatesDataSource.sort.direction,
+            filter: this.dataSource.filter,
+            order: this.dataSource.sort.active,
+            orderBy: this.dataSource.sort.direction,
+            page: this.dataSource.paginator.pageIndex,
         });
     }
 
     public addNewEmailTemplate() {
-        const dialogRef = this.newTemplateDialog.open(EmailTemplatesDialogNewTemplateComponent, {
-            data: {
-                fboId: this.sharedService.currentUser.fboId,
-            },
-        });
+        const dialogRef = this.newTemplateDialog.open(
+            EmailTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
 
         dialogRef.afterClosed().subscribe((result) => {
             if (!result) {
                 return;
             }
             this.newEmailTemplateAdded.emit(result);
-            //this.sharedService.NotifyPricingTemplateComponent(
-            //    'updateComponent'
-            //);
         });
     }
 
@@ -107,7 +108,7 @@ export class EmailTemplatesGridComponent implements OnInit {
 
     public copyEmailTemplate(emailTemplate) {
         if (emailTemplate) {
-            var clone: any = JSON.parse(JSON.stringify(emailTemplate));
+            const clone: any = JSON.parse(JSON.stringify(emailTemplate));
             clone.oid = 0;
             clone.name = '';
             const dialogRef = this.copyTemplateDialog.open(
@@ -122,15 +123,13 @@ export class EmailTemplatesGridComponent implements OnInit {
                     return;
                 }
 
-                this.copyEmailTemplateClicked.emit(result);;
+                this.copyEmailTemplateClicked.emit(result);
             });
         }
     }
 
     public applyFilter(filterValue: string) {
-        this.emailTemplatesDataSource.filter = filterValue
-            .trim()
-            .toLowerCase();
+        this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
     onPageChanged(event: any) {

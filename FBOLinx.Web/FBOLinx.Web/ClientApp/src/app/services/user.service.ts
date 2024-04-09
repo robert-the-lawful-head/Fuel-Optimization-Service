@@ -1,5 +1,5 @@
-import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class UserService {
@@ -62,23 +62,33 @@ export class UserService {
     }
 
     requestResetPassword(payload) {
-        return this.http.post(this.accessPointUrl + '/request-reset-password', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/request-reset-password',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     resetPassword(payload) {
-        return this.http.post(this.accessPointUrl + '/reset-password', payload, {
-            headers: this.headers,
-        });
+        return this.http.post(
+            this.accessPointUrl + '/reset-password',
+            payload,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     validateResetPasswordToken(token: string) {
         return this.http.post(
-            this.accessPointUrl + '/validate-reset-password-token', {
-                token: decodeURIComponent(token)
-            }, {
-                headers: this.headers
+            this.accessPointUrl + '/validate-reset-password-token',
+            {
+                token: decodeURIComponent(token),
+            },
+            {
+                headers: this.headers,
             }
         );
     }
@@ -91,7 +101,8 @@ export class UserService {
 
     checkemailexists(payload) {
         return this.http.get(
-            this.accessPointUrl + '/checkemailexists/' + payload, {
+            this.accessPointUrl + '/checkemailexists/' + payload,
+            {
                 headers: this.headers,
             }
         );

@@ -1,24 +1,42 @@
+<app-horizontal-navbar (sidebarState)="sidebarState()"
+[title]="pageTitle"></app-horizontal-navbar>
+
+<app-vertical-navbar [ngClass]="{ hideSidebar: !openedSidebar }"
+                     [isMenuVisible]="openedSidebar"></app-vertical-navbar>
+
 <div [ngClass]="layoutClasses" class="site-container">
-    <app-horizontal-navbar (sidebarState)="sidebarState()" [title]="pageTitle"></app-horizontal-navbar>
 
-    <app-vertical-navbar [ngClass]="{ 'hideSidebar': isSidebarInvisible() }"></app-vertical-navbar>
-    <div *ngIf="pricingTemplatesData">
-        <app-addition-navbar #insideElement [templatelst]="pricingTemplatesData"></app-addition-navbar>
+    <div [ngClass]="{ 'full-width': !openedSidebar}" class="container-fluid sticky-panel" *ngIf="isPricePanelVisible()">
+        <div [ngClass]="{ 'row-csr' : isCsr }" class="row">
+            <div class="col-12 text-md-right pt-md-0">
+                <div class="d-inline-block">
+                    <app-fbo-prices-panel
+                                          [enableSaf]="enableSaf"
+                                          [enableJetA]="enableJetA"
+                                          [costSaf]="costSaf"
+                                          [retailSaf]="retailSaf"
+                                          [costJetA]="costJetA"
+                                          [retailJetA]="retailJetA"
+                                          [effectiveToSaf]="effectiveToSaf"
+                                          [effectiveToJetA]="effectiveToJetA"
+                                          (onClearFboPrice)="onClearFboPrice($event)"></app-fbo-prices-panel>
+                </div>
+            </div>
+        </div>
     </div>
+    <ng-container *ngIf="isAdditionNavBarVisible()">
+        <div *ngIf="pricingTemplatesData && isNotGroupAdmin">
+            <app-addition-navbar #insideElement
+                                [templatelst]="pricingTemplatesData"></app-addition-navbar>
+        </div>
+    </ng-container>
+    <main [ngClass]="{ 'full-width': !openedSidebar }"
+          class="main-content">
 
-    <app-fbo-prices-panel
-        *ngIf="isPricePanelVisible()"
-        [cost]="cost"
-        [retail]="retail"
-        class="sticky-panel"
-    ></app-fbo-prices-panel>
-
-    <main [ngClass]="{ 'full-width': isSidebarInvisible() }" class="main-content">
         <div class="main-content-wrap">
+            <!-- <app-demo-request-static-dialog></app-demo-request-static-dialog> -->
             <router-outlet></router-outlet>
         </div>
         <app-footer></app-footer>
     </main>
-
-    <div class="app-overlay"></div>
 </div>

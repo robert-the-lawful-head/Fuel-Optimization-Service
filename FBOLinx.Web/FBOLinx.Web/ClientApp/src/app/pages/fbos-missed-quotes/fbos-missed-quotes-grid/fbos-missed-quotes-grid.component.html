@@ -1,0 +1,27 @@
+<div class="col-12">
+    <ngx-ui-loader [loaderId]="missedQuotesLoader"
+                   bgsColor="rgb(100, 181, 246)"
+                   bgsPosition="center-center"
+                   bgsType="ball-spin"
+                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
+</div>
+
+<div>
+    <div class="subtitle">These flights departments requested a quote and your pricing was expired:</div>
+    <div *ngIf="noMissedQuotes">No Missed Quotes</div>
+    <div *ngIf="!noMissedQuotes">
+        <div *ngFor="let missedQuote of fbosMissedQuotesDataSource;">
+            <div class="row">
+                <div class="col-5 border-bottom pt-3 pb-3">{{ missedQuote.customerName }}</div>
+                <div class="col-3 border-bottom pt-3 pb-3"> {{ missedQuote.missedQuotesCount }} Missed quote{{missedQuote.missedQuotesCount < 2 ? "" : "s" }}</div>
+                <div class="col-4 border-bottom pt-3 pb-3"> {{ missedQuote.createdDate }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 text-right price-checker-button-bottom">
+            <button (click)="openPriceChecker()" view="'default'" size="small" class="btn-sm" ni-button>
+                Price Checker
+            </button>
+    </div>
+</div>

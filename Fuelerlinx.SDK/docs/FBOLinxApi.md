@@ -9,10 +9,12 @@ Method | HTTP request | Description
 [**GetContractFuelVendorsTransactionsCount**](FBOLinxApi.md#getcontractfuelvendorstransactionscount) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-count-at-airport | 
 [**GetContractFuelVendorsTransactionsCountByAirports**](FBOLinxApi.md#getcontractfuelvendorstransactionscountbyairports) | **POST** /api/FBOLinx/get-contract-fuel-vendors-orders-counts-by-airports | 
 [**GetCustomerFBOTransactionsCount**](FBOLinxApi.md#getcustomerfbotransactionscount) | **POST** /api/FBOLinx/get-customer-fbo-orders-count-at-airport | 
+[**GetCustomerFuelVendors**](FBOLinxApi.md#getcustomerfuelvendors) | **GET** /api/FBOLinx/get-customer-fuel-vendors | 
 [**GetCustomerTransactionsCount**](FBOLinxApi.md#getcustomertransactionscount) | **POST** /api/FBOLinx/get-customer-orders-count-at-airport | 
 [**GetCustomerTransactionsCountForMultipleAirports**](FBOLinxApi.md#getcustomertransactionscountformultipleairports) | **POST** /api/FBOLinx/get-customer-orders-count-at-multiple-airports | 
 [**GetFboTransactionsCount**](FBOLinxApi.md#getfbotransactionscount) | **POST** /api/FBOLinx/get-fbo-orders-count-at-airport | 
 [**GetGroupFbosTransactionsCount**](FBOLinxApi.md#getgroupfbostransactionscount) | **POST** /api/FBOLinx/get-fbos-and-airports-orders-count | 
+[**GetLatestPullHistoryFlightDepartmentForICAO**](FBOLinxApi.md#getlatestpullhistoryflightdepartmentforicao) | **POST** /api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao | 
 [**GetTransactionsCount**](FBOLinxApi.md#gettransactionscount) | **POST** /api/FBOLinx/get-orders-count-at-airport | 
 [**GetTransactionsCountForNearbyAirports**](FBOLinxApi.md#gettransactionscountfornearbyairports) | **POST** /api/FBOLinx/get-nearby-airports | FBOLinx only - Fetch transactions associated with a particular airport and airports within X range of that airport.
 [**GetTransactionsDirectOrdersCount**](FBOLinxApi.md#gettransactionsdirectorderscount) | **POST** /api/FBOLinx/get-direct-orders-count | 
@@ -355,6 +357,70 @@ Name | Type | Description  | Notes
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
+<a name="getcustomerfuelvendors"></a>
+# **GetCustomerFuelVendors**
+> FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors ()
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetCustomerFuelVendorsExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOLinxApi();
+
+            try
+            {
+                FboLinxCustomerFuelVendorsResponse result = apiInstance.GetCustomerFuelVendors();
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOLinxApi.GetCustomerFuelVendors: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+This endpoint does not need any parameter.
+
+### Return type
+
+[**FboLinxCustomerFuelVendorsResponse**](FboLinxCustomerFuelVendorsResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
 <a name="getcustomertransactionscount"></a>
 # **GetCustomerTransactionsCount**
 > FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCount (FBOLinxOrdersRequest body)
@@ -615,6 +681,142 @@ Name | Type | Description  | Notes
 ### Return type
 
 [**FBOLinxGroupOrdersResponse**](FBOLinxGroupOrdersResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getgroupfbostransactionscount"></a>
+# **GetGroupFbosTransactionsCount**
+> FBOLinxGroupOrdersResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetGroupFbosTransactionsCountExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOLinxApi();
+            var body = new FBOLinxGroupOrdersRequest(); // FBOLinxGroupOrdersRequest |  (optional) 
+
+            try
+            {
+                FBOLinxGroupOrdersResponse result = apiInstance.GetGroupFbosTransactionsCount(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOLinxApi.GetGroupFbosTransactionsCount: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**FBOLinxGroupOrdersRequest**](FBOLinxGroupOrdersRequest.md)|  | [optional] 
+
+### Return type
+
+[**FBOLinxGroupOrdersResponse**](FBOLinxGroupOrdersResponse.md)
+
+### Authorization
+
+[ApiKeyScheme](../README.md#ApiKeyScheme), [Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/_*+json
+ - **Accept**: text/plain, application/json, text/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+<a name="getlatestpullhistoryflightdepartmentforicao"></a>
+# **GetLatestPullHistoryFlightDepartmentForICAO**
+> int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body)
+
+
+
+### Example
+```csharp
+using System;
+using System.Diagnostics;
+using IO.Swagger.Api;
+using IO.Swagger.Client;
+using IO.Swagger.Model;
+
+namespace Example
+{
+    public class GetLatestPullHistoryFlightDepartmentForICAOExample
+    {
+        public void main()
+        {
+            
+            // Configure API key authorization: ApiKeyScheme
+            Configuration.Default.ApiKey.Add("x-api-key", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("x-api-key", "Bearer");
+            // Configure API key authorization: Bearer
+            Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
+            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
+            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
+
+            var apiInstance = new FBOLinxApi();
+            var body = new FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest(); // FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest |  (optional) 
+
+            try
+            {
+                int? result = apiInstance.GetLatestPullHistoryFlightDepartmentForICAO(body);
+                Debug.WriteLine(result);
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception when calling FBOLinxApi.GetLatestPullHistoryFlightDepartmentForICAO: " + e.Message );
+            }
+        }
+    }
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **body** | [**FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest**](FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest.md)|  | [optional] 
+
+### Return type
+
+**int?**
 
 ### Authorization
 

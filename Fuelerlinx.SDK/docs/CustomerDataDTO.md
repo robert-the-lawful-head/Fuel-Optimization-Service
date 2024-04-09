@@ -15,6 +15,7 @@ Name | Type | Description | Notes
 **PhoneNumber** | **string** |  | [optional] 
 **FullName** | **string** |  | [optional] 
 **Role** | **int?** |  | [optional] 
+**RoleDescription** | **string** |  | [optional] 
 **CompanyUserProfileId** | **int?** |  | [optional] 
 **CredentialsId** | **int?** |  | [optional] 
 **AspNetUserId** | **string** |  | [optional] 

@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using FBOLinx.Core.Enums;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class CustomerAircrafts
+    public partial class CustomerAircrafts : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
+        [ForeignKey("OID")]
         [Column("GroupID")]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
+
+        [ForeignKey("OID")]
         [Column("CustomerID")]
         public int CustomerId { get; set; }
         [Column("AircraftID")]
         public int AircraftId { get; set; }
         [StringLength(25)]
         public string TailNumber { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
         [Column("BasedPAGLocation")]
         [StringLength(50)]
         public string BasedPaglocation { get; set; }
@@ -33,5 +34,13 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("AircraftId")]
         public AirCrafts Aircraft { get; set; }
+
+        [ForeignKey("CustomerId")]
+        public virtual Customers Customer { get; set; }
+        [InverseProperty("CustomerAircraft")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty("CustomerAircraft")]
+        public ICollection<CustomerAircraftNote> Notes { get; set; }
+        public virtual FboFavoriteAircraft FavoriteAircraft { get; set; }
     }
 }

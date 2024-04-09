@@ -1,37 +1,13 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
-    public partial class CustomerInfoByGroup
+    public partial class CustomerInfoByGroup : FBOLinxBaseEntityModel<int>
     {
-        public enum CertificateTypes : short
-        {
-            [Description("Not set")]
-            NotSet = 0,
-            [Description("Part 91")]
-            Part91 = 91,
-            [Description("Part 121")]
-            Part121 = 121,
-            [Description("Part 135")]
-            Part135 = 135
-        }
-
-        //public enum CustomerCompanyTypes
-        //{
-        //    [Description("Flight Department")]
-        //    FlightDepartment = 0,
-        //    [Description("Contract Fuel Vendor")]
-        //    ContractFuelVendor = 1,
-        //    [Description("Base")]
-        //    Base = 2,
-        //    [Description("CAA")]
-        //    CAA = 3,
-        //    [Description("Fue")]
-        //}
-
         [Column("GroupID")]
         public int GroupId { get; set; }
         [Column("CustomerID")]
@@ -70,9 +46,6 @@ namespace FBOLinx.DB.Models
         public bool? EmailSubscription { get; set; }
         [Column("SFID")]
         public string Sfid { get; set; }
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         public CertificateTypes? CertificateType { get; set; }
         public int? CustomerCompanyType { get; set; }
         public bool? PricingTemplateRemoved { get; set; }
@@ -81,5 +54,12 @@ namespace FBOLinx.DB.Models
         [InverseProperty("CustomerInfoByGroup")]
         [ForeignKey("CustomerId")]
         public Customers Customer { get; set; }
+
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<ServiceOrder> ServiceOrders { get; set; }
+        [InverseProperty("CustomerInfoByGroup")]
+        public ICollection<CustomerInfoByGroupNote> Notes { get; set; }
+        public virtual FboFavoriteCompany FavoriteCompany { get; set; }
+        public ICollection<CustomerTag> CustomerTags { get; set; }
     }
 }

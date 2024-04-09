@@ -10,9 +10,17 @@ namespace FBOLinx.DB.Models
         [Column("TemplateID")]
         public int TemplateId { get; set; }
         public double? Amount { get; set; }
+
+
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
+
+
+
+
+
+
 
         [ForeignKey("PriceTierId")]
         [InverseProperty("CustomerMargin")]

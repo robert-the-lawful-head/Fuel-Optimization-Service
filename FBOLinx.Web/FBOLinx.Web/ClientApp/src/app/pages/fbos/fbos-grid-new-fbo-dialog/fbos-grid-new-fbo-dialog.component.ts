@@ -18,12 +18,13 @@ export interface NewFboModel {
 
 @Component({
     selector: 'app-fbos-grid-new-fbo-dialog',
+    styleUrls: ['./fbos-grid-new-fbo-dialog.component.scss'],
     templateUrl: './fbos-grid-new-fbo-dialog.component.html',
-    styleUrls: [ './fbos-grid-new-fbo-dialog.component.scss' ],
 })
 export class FbosGridNewFboDialogComponent {
     @Output() contactAdded = new EventEmitter<any>();
     public errorHappened = false;
+    public errorMessage: string = '';
     // Public Members
     public dataSources: any = {};
 
@@ -32,8 +33,7 @@ export class FbosGridNewFboDialogComponent {
         @Inject(MAT_DIALOG_DATA) public data: NewFboModel,
         private acukwikairportsService: AcukwikairportsService,
         private fboService: FbosService
-    ) {
-    }
+    ) {}
 
     public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
@@ -52,9 +52,18 @@ export class FbosGridNewFboDialogComponent {
     }
 
     public fboSelectionChange() {
-        this.data.fbo = this.data.acukwikFbo.handlerLongName;
-        this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
-        this.data.group = `${ this.data.fbo } - ${ this.data.icao }`;
+        this.fboService.getByAcukwikHandlerId(this.data.acukwikFbo.handlerId).subscribe((result: any) => {
+            //No pre-existing record exists for that FBO in another group - allow adding
+            if (!result || result.oid == 0) {
+                this.errorMessage = '';
+                this.data.fbo = this.data.acukwikFbo.handlerLongName;
+                this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+                this.data.group = `${this.data.fbo} - ${this.data.icao}`;
+            } else {
+                this.errorMessage = 'That FBO is already part of a group.';
+            }
+
+        });
     }
 
     public onCancelClick(): void {
@@ -64,10 +73,11 @@ export class FbosGridNewFboDialogComponent {
     public onSaveClick(data): void {
         this.errorHappened = false;
 
-        this.fboService.addSingleFbo(data).subscribe((newFbo: any) => {
+        this.fboService.addSingleFbo(data).subscribe(
+            (newFbo: any) => {
                 this.dialogRef.close(newFbo);
             },
-            err => {
+            (err) => {
                 this.errorHappened = true;
             }
         );

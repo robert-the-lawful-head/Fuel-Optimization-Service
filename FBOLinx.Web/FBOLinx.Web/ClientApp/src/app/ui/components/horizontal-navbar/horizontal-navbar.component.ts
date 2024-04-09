@@ -1,50 +1,81 @@
-import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, OnInit, Output, } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-
+import { NavigationEnd, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
-
+import { environment } from 'src/environments/environment';
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvents from '../../../constants/sharedEvents';
+import {
+    customerUpdatedEvent,
+    fboChangedEvent,
+} from '../../../constants/sharedEvents';
+import { AuthenticationService } from '../../../services/authentication.service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { FboairportsService } from '../../../services/fboairports.service';
+import { FbopricesService } from '../../../services/fboprices.service';
+import { FbosService } from '../../../services/fbos.service';
+import { FuelreqsService } from '../../../services/fuelreqs.service';
 // Services
 import { UserService } from '../../../services/user.service';
-import { AuthenticationService } from '../../../services/authentication.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
-import { FbopricesService } from '../../../services/fboprices.service';
-import { FboairportsService } from '../../../services/fboairports.service';
-import { FbosService } from '../../../services/fbos.service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-import { customerUpdatedEvent, fboChangedEvent } from '../../../models/sharedEvents';
-
 // Components
 import { AccountProfileComponent } from '../../../shared/components/account-profile/account-profile.component';
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
+import * as moment from 'moment';
+import { AccountType, UserRole } from 'src/app/enums/user-role';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
+import { FlightWatchService } from 'src/app/services/flightwatch.service';
+import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
+import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
+import { IncomingFavoriteAircraftInfoComponent } from '../incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
+
 @Component({
-    selector: 'app-horizontal-navbar',
-    templateUrl: 'horizontal-navbar.component.html',
-    styleUrls: [ 'horizontal-navbar.component.scss' ],
     host: {
         '[class.app-navbar]': 'true',
         '[class.show-overlay]': 'showOverlay',
     },
-    providers: [ WindowRef ],
+    providers: [WindowRef],
+    selector: 'app-horizontal-navbar',
+    styleUrls: ['horizontal-navbar.component.scss'],
+    templateUrl: 'horizontal-navbar.component.html',
 })
-export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() openedSidebar: boolean;
+    @Input() isPublicView: boolean = false;
     @Output() sidebarState = new EventEmitter();
+
+    @ViewChild(IncomingFavoriteAircraftInfoComponent) incomingFavoriteAircraftInfoComponent: IncomingFavoriteAircraftInfoComponent;
+
     showOverlay: boolean;
     isOpened: boolean;
-    isLocationsLoaded: boolean;
+    isLocationsLoading: boolean;
 
     window: any;
 
+    fuelOrdersSubscription: Subscription;
     userFullName: string;
     accountProfileMenu: any = {
-        isOpened: false
+        isOpened: false,
     };
     needsAttentionMenu: any = {
+        isOpened: false,
+    };
+    fuelOrderNotificationsMenu: any = {
+        isOpened: false
+    };
+    favoriteAircrafts: any = {
         isOpened: false
     };
     currrentJetACostPricing: any;
@@ -58,19 +89,33 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     currentUser: any;
     needsAttentionCustomersData: any[];
     subscription: any;
+    fuelOrders: any[] = [];
+
+    mapLoadSubscription: Subscription;
+    selectedICAO: string = "";
+    airportWatchFetchSubscription: Subscription;
+    favoriteAircraftsData : FlightWatchModelResponse[];
+    dismissedFavoriteAircrafts : FlightWatchModelResponse[] = [];
+    notifiedFavoriteAircraft : FlightWatchModelResponse[] = [];
+
+    isLobbyViewPage: boolean = false;
+    routeSubscription: Subscription;
+
 
     constructor(
         private authenticationService: AuthenticationService,
         private customerInfoByGroupService: CustomerinfobygroupService,
         private sharedService: SharedService,
         private router: Router,
-        private route: ActivatedRoute,
         private accountProfileDialog: MatDialog,
         private userService: UserService,
         private fboPricesService: FbopricesService,
         private fboAirportsService: FboairportsService,
         private fbosService: FbosService,
-        private winRef: WindowRef
+        private fuelReqsService: FuelreqsService,
+        private winRef: WindowRef,
+        private Location: Location,
+        private flightWatchService: FlightWatchService
     ) {
         this.openedSidebar = false;
         this.showOverlay = false;
@@ -91,25 +136,74 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     get notificationVisible() {
-        return this.sharedService.currentUser.fboId > 0 && this.sharedService.currentUser.role !== 5;
+        return (
+            this.sharedService.currentUser.fboId > 0 &&
+            this.sharedService.currentUser.role !== 5 &&
+            this.sharedService.currentUser.accountType == AccountType.Premium
+        );
+    }
+
+    get favoriteNotificationVisible() {
+        return (
+            this.sharedService.currentUser.fboId > 0 &&
+            !this.isLobbyViewPage &&
+            this.router.url != '/public-layout/lobby-view'
+        );
+    }
+
+    get favoriteAircraftIconBadgeText(): string {
+        return (this.favoriteAircraftsData?.length == 0)? '':this.favoriteAircraftsData?.length.toString();
     }
 
     ngOnInit() {
-        this.loadCurrentPrices();
-        this.loadLocations();
+        if (this.canUserSeePricing()) {
+            this.loadCurrentPrices();
+            this.loadLocations();
+            this.loadNeedsAttentionCustomers();
+        }
         this.loadFboInfo();
-        this.loadNeedsAttentionCustomers();
-    }
 
-    ngAfterViewInit() {
-        this.subscription = this.sharedService.changeEmitted$.subscribe((message) => {
-            if (message === fboChangedEvent) {
-                this.loadLocations();
-                this.loadFboInfo();
-                this.loadNeedsAttentionCustomers();
+        this.subscription = this.sharedService.changeEmitted$.subscribe(
+            (message) => {
+                if (!this.canUserSeePricing()) {
+                    this.fuelOrders.length = 0;
+                    return;
+                }
+                if (message === fboChangedEvent) {
+                    this.loadLocations();
+                    this.loadFboInfo();
+                    this.loadNeedsAttentionCustomers();
+                    this.loadUpcomingOrders();
+                }
+                if (message === customerUpdatedEvent) {
+                    this.loadNeedsAttentionCustomers();
+                }
+                if (message === SharedEvents.locationChangedEvent) {
+                    this.loadAirportWatchData();
+                }else if(message == SharedEvents.icaoChangedEvent){
+                    this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                    this.loadAirportWatchData();
+                }
             }
-            if (message === customerUpdatedEvent) {
-                this.loadNeedsAttentionCustomers();
+        );
+
+        this.fuelOrdersSubscription = timer(0, 120000).subscribe(() =>
+            this.loadUpcomingOrders()
+        );
+
+        this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
+            if(this.selectedICAO)
+                this.loadAirportWatchData();
+        });
+        this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.notifiedFavoriteAircraft = JSON.parse(localStorage.getItem(localStorageAccessConstant.notifiedFavoriteAircraft)) ?? [];
+
+        this.dismissedFavoriteAircrafts = JSON.parse(localStorage.getItem(localStorageAccessConstant.dismissedFavoriteAircrafts)) ?? [];
+
+        this.routeSubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+                this.isLobbyViewPage = (event.url == '/public-layout/lobby-view')? true : false;
             }
         });
     }
@@ -118,6 +212,13 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+        if (this.fuelOrdersSubscription) {
+            this.fuelOrdersSubscription.unsubscribe();
+        }
+        if (this.mapLoadSubscription) this.mapLoadSubscription.unsubscribe();
+        if (this.airportWatchFetchSubscription) this.airportWatchFetchSubscription
+        if(this.routeSubscription) this.routeSubscription.unsubscribe();
+
     }
 
     toggle(event) {
@@ -143,12 +244,23 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     openUpdate() {
+        if(this.sharedService.currentUser.role == 6) return;
         this.needsAttentionMenu.isOpened = !this.needsAttentionMenu.isOpened;
+    }
+
+    openfavoriteAircrafts() {
+        this.favoriteAircrafts.isOpened = !this.favoriteAircrafts.isOpened;
+    }
+
+    openFuelOrdersUpdate() {
+        this.fuelOrderNotificationsMenu.isOpened = !this.fuelOrderNotificationsMenu.isOpened;
     }
 
     close() {
         this.accountProfileMenu.isOpened = false;
         this.needsAttentionMenu.isOpened = false;
+        this.fuelOrderNotificationsMenu.isOpened = false;
+        this.favoriteAircrafts.isOpened = false;
         this.isOpened = false;
     }
 
@@ -158,24 +270,30 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     logout() {
-        localStorage.removeItem('impersonatedrole');
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('groupId');
-        localStorage.removeItem('conductorFbo');
         this.authenticationService.logout();
-        this.router.navigate([ '/landing-site-layout' ]);
+        this.router.navigate(['/landing-site-layout']);
     }
 
     accountProfileClicked() {
         this.userService.getCurrentUser().subscribe((response: any) => {
             const dialogRef = this.accountProfileDialog.open(
-                AccountProfileComponent, {
+                AccountProfileComponent,
+                {
+                    data: response,
                     height: '550px',
                     width: '1000px',
-                    data: response,
                 }
             );
+
+            dialogRef.componentInstance.productChanged.subscribe(result => {
+                this.sharedService.emitChange(SharedEvents.fboProductPreferenceChangeEvent);
+                this.sharedService.valueChange({
+                    EnableJetA: result.enableJetA,
+                    EnableSaf: result.enableSaf,
+                    message: SharedEvents.fboProductPreferenceChangeEvent,
+                });
+            });
+
             dialogRef.afterClosed().subscribe((result) => {
                 if (!result) {
                     return;
@@ -183,8 +301,8 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
                 this.userService.update(result).subscribe(() => {
                     this.userService
                         .updatePassword({
-                            user: result,
                             newPassword: result.newPassword,
+                            user: result,
                         })
                         .subscribe((newPass: any) => {
                             result.password = newPass;
@@ -196,67 +314,87 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     stopManagingFBOClicked() {
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('impersonatedrole');
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
         this.sharedService.currentUser.fboId = 0;
+        this.sharedService.resetCurrentUserPropertyValue(localStorageAccessConstant.icao);
+        this.selectedICAO = null;
         this.sharedService.currentUser.impersonatedRole = null;
-        if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
-            localStorage.setItem('groupId', this.sharedService.currentUser.managerGroupId.toString());
-            this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
+        if (
+            this.sharedService.currentUser.managerGroupId &&
+            this.sharedService.currentUser.managerGroupId > 0
+        ) {
+            localStorage.setItem(
+                'groupId',
+                this.sharedService.currentUser.managerGroupId.toString()
+            );
+            this.sharedService.currentUser.groupId =
+                this.sharedService.currentUser.managerGroupId;
         } else {
-            localStorage.removeItem('groupId');
+            localStorage.removeItem(localStorageAccessConstant.groupId);
         }
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
+        this.sharedService.emitChange(fboChangedEvent);
         this.close();
         if (this.sharedService.currentUser.conductorFbo) {
-            localStorage.removeItem('conductorFbo');
+            localStorage.removeItem(localStorageAccessConstant.conductorFbo);
             this.sharedService.currentUser.conductorFbo = false;
-            this.router.navigate([ '/default-layout/groups/' ]);
+            this.router.navigate(['/default-layout/groups/']);
         } else {
             if (this.sharedService.currentUser.role === 3) {
                 this.sharedService.currentUser.impersonatedRole = 2;
-                localStorage.setItem('impersonatedrole', '2');
+                localStorage.setItem(localStorageAccessConstant.impersonatedrole, '2');
             }
-            this.router.navigate([ '/default-layout/fbos/' ]);
+            this.router.navigate(['/default-layout/fbos/']);
         }
     }
 
     stopManagingGroupClicked() {
         this.sharedService.currentUser.impersonatedRole = null;
-        localStorage.removeItem('impersonatedrole');
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('groupId');
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.groupId);
         this.sharedService.currentUser.fboId = 0;
-        if (this.sharedService.currentUser.managerGroupId && this.sharedService.currentUser.managerGroupId > 0) {
-            this.sharedService.currentUser.groupId = this.sharedService.currentUser.managerGroupId;
+        if (
+            this.sharedService.currentUser.managerGroupId &&
+            this.sharedService.currentUser.managerGroupId > 0
+        ) {
+            this.sharedService.currentUser.groupId =
+                this.sharedService.currentUser.managerGroupId;
         }
         this.locations = [];
         this.fboAirport = null;
         this.fbo = null;
         this.close();
 
-        this.router.navigate([ '/default-layout/groups/' ]);
+        this.router.navigate(['/default-layout/groups/']);
     }
 
     updatePricingClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/dashboard-fbo' ]);
+        this.router.navigate(['/default-layout/dashboard-fbo-updated']);
         this.close();
     }
 
     gotoCustomer(customer: any) {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/customers/' + customer.oid ]);
+        this.router.navigate(['/default-layout/customers/' + customer.oid]);
         this.close();
     }
 
     viewAllNotificationsClicked() {
         this.needsAttentionMenu.isOpened = false;
-        this.router.navigate([ '/default-layout/customers' ]);
+        this.router.navigate(['/default-layout/customers']);
+        this.close();
+    }
+
+    viewAllFuelOrdersClicked() {
+        this.fuelOrderNotificationsMenu.isOpened = false;
+        this.router.navigate(['/default-layout/fuelreqs']);
         this.close();
     }
 
@@ -290,53 +428,66 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         if (!this.currentUser.groupId) {
             return;
         }
+        this.isLocationsLoading = true;
         this.fbosService.getForGroup(this.currentUser.groupId).subscribe(
             (data: any) => {
-                this.isLocationsLoaded = true;
                 if (data && data.length) {
                     this.locations = _.cloneDeep(data);
                 }
+                this.isLocationsLoading = false;
             },
             (error: any) => {
-                this.isLocationsLoaded = true;
+                this.isLocationsLoading = false;
                 console.log(error);
             }
         );
     }
 
     loadFboInfo() {
-        if (!this.currentUser.fboId && !localStorage.getItem('fboId')) {
+        if (!this.currentUser.fboId && !localStorage.getItem(localStorageAccessConstant.fboId)) {
             return;
         }
 
         if (!this.currentUser.fboId) {
-            this.currentUser.fboId = localStorage.getItem('fboId');
+            this.currentUser.fboId = localStorage.getItem(localStorageAccessConstant.fboId);
         }
 
         this.fboAirportsService
             .getForFbo({
-                oid: this.currentUser.fboId
+                oid: this.currentUser.fboId,
             })
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
-                    this.sharedService.currentUser.icao = this.fboAirport.icao;
-                    this.sharedService.emitChange(SharedEvents.icaoChangedEvent);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,this.fboAirport.icao);
+                    this.sharedService.emitChange(
+                        SharedEvents.icaoChangedEvent
+                    );
                 },
                 (error: any) => {
                     console.log(error);
                 }
             );
-        this.fbosService.get({
-            oid: this.currentUser.fboId
-        }).subscribe(
-            (data: any) => {
-                this.fbo = _.assign({}, data);
-            },
-            (error: any) => {
-                console.log(error);
-            }
-        );
+        this.fbosService
+            .get({
+                oid: this.currentUser.fboId,
+            })
+            .subscribe(
+                (data: any) => {
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
+                    this.fbo = _.assign({}, data);
+                    localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
+
+                    if (this.sharedService.currentUser.role != 3) {
+                        this.fbosService.updateLastLogin(this.currentUser.fboId).subscribe((data: any) => {
+                        });
+                    }
+                },
+                (error: any) => {
+                    console.log(error);
+                }
+            );
     }
 
     changeLocation(location: any) {
@@ -348,16 +499,20 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         this.needsAttentionMenu.isOpened = false;
         this.sharedService.currentUser.fboId = this.fboAirport.fboid;
         this.loadFboInfo();
-        localStorage.setItem('fboId', this.sharedService.currentUser.fboId.toString());
-        if (this.isOnDashboard()) {
-            this.sharedService.emitChange(SharedEvents.locationChangedEvent);
-        } else {
-            this.router.navigate([ '/default-layout/dashboard/' ]).then();
-        }
+        localStorage.setItem(localStorageAccessConstant.fboId,this.sharedService.currentUser.fboId.toString());
+
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,location.icao);
+
+        this.fbosService.manageFbo(this.sharedService.currentUser.fboId).subscribe(() => {
+            if (this.isOnDashboard())
+                this.sharedService.emitChange(SharedEvents.locationChangedEvent);
+            else
+                this.router.navigate(['/default-layout/dashboard-fbo-updated/']).then();
+        });
     }
 
     toggleProfileMenu() {
-        if (!this.isLocationsLoaded) {
+        if (this.isLocationsLoading) {
             return;
         }
         this.accountProfileMenu.isOpened = !this.accountProfileMenu.isOpened;
@@ -366,7 +521,10 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
     loadNeedsAttentionCustomers() {
         if (this.currentUser.fboId) {
             this.customerInfoByGroupService
-                .getNeedsAttentionByGroupAndFbo(this.currentUser.groupId, this.currentUser.fboId)
+                .getNeedsAttentionByGroupAndFbo(
+                    this.currentUser.groupId,
+                    this.currentUser.fboId
+                )
                 .subscribe((data: any) => {
                     this.needsAttentionCustomersData = data;
                 });
@@ -385,19 +543,134 @@ export class HorizontalNavbarComponent implements OnInit, AfterViewInit, OnDestr
         }
     }
 
+    loadUpcomingOrders() {
+        this.fuelOrders.length = 0;
+        var startDate = moment().add(-1, 'hour').local().toDate();
+        var endDate = moment().add(2, 'd').local().toDate();
+
+        this.fuelReqsService
+            .getForGroupFboAndDateRange(
+                this.sharedService.currentUser.groupId,
+                this.sharedService.currentUser.fboId,
+                startDate,
+                endDate
+            )
+            .subscribe((data: any) => {
+                if (data && data != null) {
+                    data.forEach(x => {
+                        if (!x || x.cancelled)
+                            return;
+                        if (x.timeStandard != null && x.timeStandard.toLowerCase() == 'z' ||
+                            x.timeStandard == '0')
+                            x.minutesUntilArrival =
+                                moment.duration(moment(x.eta).diff(moment().utc())).asMinutes();
+                        else
+                            x.minutesUntilArrival =
+                                moment.duration(moment(x.eta).diff(moment())).asMinutes();
+                        x.minutesUntilArrival = Math.round(x.minutesUntilArrival);
+                        x.hoursUntilArrival = Math.round(x.minutesUntilArrival / 60);
+                        this.fuelOrders.push(x);
+                    });
+                }
+
+                this.fuelOrders = this.fuelOrders.sort((x1, x2) => x1.minutesUntilArrival - x2.minutesUntilArrival);
+            }, (error: any) => {
+
+            });
+    }
+    public isLobbyViewVisible():boolean {
+        if(this.currentUser.accountType === AccountType.Freemium) return false;
+        return this.currentUser &&
+        (this.currentUser.role ===  UserRole.Primary ||
+            this.currentUser.role ===  UserRole.CSR ||
+            this.currentUser.role ===  UserRole.Member ||
+            this.currentUser.role ===  UserRole.GroupAdmin ||
+            this.currentUser.role ===  UserRole.Conductor
+        );
+    }
+    public get userRole(){
+        return UserRole;
+    }
+
+    loadAirportWatchData() {
+        return this.airportWatchFetchSubscription = this.flightWatchService
+        .getAirportLiveData(
+            this.sharedService.currentUser.fboId,
+            this.selectedICAO
+        )
+        .subscribe((data: ApiResponseWraper<FlightWatchModelResponse[]>) => {
+            this.sharedService.valueChange(
+            {
+                event: SharedEvents.flightWatchDataEvent,
+                data: data.result ?? null,
+            });
+
+            if (!data.success){
+                console.log("flight watch data: message", data.message);
+                return;
+            }
+
+            if(!this.favoriteNotificationVisible) return;
+
+            this.notifyIncomingAircrafts(data.result);
+
+        }, (error: any) => {
+            console.log("flight watch error:", error)
+        });
+    }
+    removeFavoriteAircraft(flightwatch: FlightWatchModelResponse):void{
+        this.dismissedFavoriteAircrafts.push(flightwatch);
+        this.favoriteAircraftsData = this.favoriteAircraftsData.filter(item => item.tailNumber != flightwatch.tailNumber);
+        localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+    }
+    goToFlightWatch(flightwatch: FlightWatchModelResponse):void{
+        this.incomingFavoriteAircraftInfoComponent.goToFlightWatch(flightwatch);
+    }
     // Private Methods
+    private notifyIncomingAircrafts(data: FlightWatchModelResponse[]) {
+        var filteredFavoriteAircrafts = data.filter(item => item.isCustomerManagerAircraft == true && item.favoriteAircraft != null && item.status == FlightLegStatus.EnRoute && item.etaLocal != null);
+        this.favoriteAircraftsData =
+        filteredFavoriteAircrafts?.filter(item =>
+            !this.dismissedFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+        );
+
+        this.dismissedFavoriteAircrafts = this.dismissedFavoriteAircrafts.filter(item =>
+            filteredFavoriteAircrafts.some(obj => obj.tailNumber == item.tailNumber)
+        );
+        localStorage.setItem(localStorageAccessConstant.dismissedFavoriteAircrafts, JSON.stringify(this.dismissedFavoriteAircrafts));
+
+        let notNotifiedFavoriteAircraft =
+        filteredFavoriteAircrafts?.filter(item =>
+            !this.notifiedFavoriteAircraft.some(obj => obj.tailNumber == item.tailNumber)
+        );
+
+        localStorage.setItem(localStorageAccessConstant.notifiedFavoriteAircraft, JSON.stringify(this.notifiedFavoriteAircraft));
+
+        this.notifiedFavoriteAircraft.push(...notNotifiedFavoriteAircraft);
+        this.sendNotifications(notNotifiedFavoriteAircraft);
+    }
+    private sendNotifications(data: FlightWatchModelResponse[]) {
+        data?.forEach(flightwatch => {
+          this.incomingFavoriteAircraftInfoComponent.pushCustomNotification(flightwatch);
+        });
+    }
     private isOnDashboard(): boolean {
-        if (!this.route || !this.route.url) {
+        if (!this.Location) {
             return false;
         }
-        const urlInfo: any = !this.route.url;
-        if (!urlInfo.value) {
-            return false;
-        }
-        const dashboardResults = urlInfo.value.filter(value => value && value.toLowerCase().indexOf('dashboard') > -1);
-        if (!dashboardResults || dashboardResults.length === 0) {
+
+        const urlInfo: any = this.Location.path();
+        const dashboardResults = urlInfo.toLowerCase().indexOf('dashboard') > -1 ? true : false;
+        if (!dashboardResults) {
             return false;
         }
         return true;
+    }
+
+    private canUserSeePricing(): boolean {
+        return (
+            [1, 4].includes(this.sharedService.currentUser.role) ||
+            [1, 4].includes(this.sharedService.currentUser.impersonatedRole)
+        );
     }
 }

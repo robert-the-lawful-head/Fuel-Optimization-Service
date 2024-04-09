@@ -2,19 +2,23 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
-// Services
-import { FbosService } from '../../../services/fbos.service';
+import { SharedService } from '../../../layouts/shared-service';
+import { ContactsService } from '../../../services/contacts.service';
 import { FboairportsService } from '../../../services/fboairports.service';
 import { FbocontactsService } from '../../../services/fbocontacts.service';
-import { ContactsService } from '../../../services/contacts.service';
+// Services
+import { FbosService } from '../../../services/fbos.service';
 import { GroupsService } from '../../../services/groups.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { CloseConfirmationComponent, CloseConfirmationData } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { AirportWatchService } from '../../../services/airportwatch.service';
+import {
+    CloseConfirmationComponent,
+    CloseConfirmationData,
+} from '../../../shared/components/close-confirmation/close-confirmation.component';
 
 @Component({
     selector: 'app-fbos-edit',
+    styleUrls: ['./fbos-edit.component.scss'],
     templateUrl: './fbos-edit.component.html',
-    styleUrls: [ './fbos-edit.component.scss' ],
 })
 export class FbosEditComponent implements OnInit {
     @Input() fboInfo: any;
@@ -30,6 +34,8 @@ export class FbosEditComponent implements OnInit {
     currentContact: any;
     contactsData: any;
     groups: Array<any>;
+    availableAntennas: any[];
+    availableAccountTypes: any[] = [{ type: "Premium", value: 0 }, { type: "Freemium", value: 1}];
 
     // Private Members
 
@@ -43,56 +49,35 @@ export class FbosEditComponent implements OnInit {
         private groupsService: GroupsService,
         private sharedService: SharedService,
         private confirmDialog: MatDialog,
+        private airportWatchService: AirportWatchService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
 
-    ngOnInit() {
-        if (!this.embed) {
-            if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
-                this.breadcrumb = [ {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
-                    {
-                        title: 'Groups',
-                        link: '/default-layout/groups',
-                    },
-                    {
-                        title: 'Edit FBO',
-                        link: '',
-                    },
-                ];
-            } else {
-                this.breadcrumb = [ {
-                    title: 'Main',
-                    link: '/default-layout',
-                },
-                    {
-                        title: 'FBOs',
-                        link: '/default-layout/fbos',
-                    },
-                    {
-                        title: 'Edit FBO',
-                        link: '',
-                    },
-                ];
-            }
-        }
+    get canChangeActive() {
+        return (
+            !this.embed &&
+            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.impersonatedRole
+        );
+    }
 
+    ngOnInit() {
         if (this.fboInfo) {
             this.loadAdditionalFboInfo();
         } else {
             const id = this.route.snapshot.paramMap.get('id');
-            this.fboService.get({
-                oid: id
-            }).subscribe((data: any) => {
-                this.fboInfo = data;
-                this.loadAdditionalFboInfo();
-            });
+            this.fboService
+                .get({
+                    oid: id,
+                })
+                .subscribe((data: any) => {
+                    this.fboInfo = data;
+                    this.loadAdditionalFboInfo();
+                });
             this.fboAirportsService
                 .getForFbo({
-                    oid: id
+                    oid: id,
                 })
                 .subscribe((data: any) => (this.fboAirportInfo = data));
         }
@@ -126,14 +111,19 @@ export class FbosEditComponent implements OnInit {
     }
 
     navigateToParent() {
-        if (this.sharedService.currentUser.role === 3 && !this.sharedService.currentUser.impersonatedRole) {
+        if (
+            this.sharedService.currentUser.role === 3 &&
+            !this.sharedService.currentUser.impersonatedRole
+        ) {
             if (this.groupInfo) {
-                this.router.navigate([ '/default-layout/groups/' + this.groupInfo.oid ]);
+                this.router.navigate([
+                    '/default-layout/groups/' + this.groupInfo.oid,
+                ]);
             } else {
-                this.router.navigate([ '/default-layout/groups/' ]);
+                this.router.navigate(['/default-layout/groups/']);
             }
         } else {
-            this.router.navigate([ '/default-layout/fbos/' ]);
+            this.router.navigate(['/default-layout/fbos/']);
         }
     }
 
@@ -154,7 +144,7 @@ export class FbosEditComponent implements OnInit {
     editContactClicked(record) {
         this.contactsService
             .get({
-                oid: record.contactId
+                oid: record.contactId,
             })
             .subscribe((data: any) => (this.currentContact = data));
     }
@@ -174,11 +164,12 @@ export class FbosEditComponent implements OnInit {
             this.confirmDialog
                 .open(CloseConfirmationComponent, {
                     data: {
-                        customTitle: 'Account Expired!',
-                        customText: 'Account Expiry date is set. If you activate this account, it will be removed.',
-                        ok: 'Set Active',
                         cancel: 'Cancel',
-                    } as CloseConfirmationData
+                        customText:
+                            'Account Expiry date is set. If you activate this account, it will be removed.',
+                        customTitle: 'Account Expired!',
+                        ok: 'Set Active',
+                    } as CloseConfirmationData,
                 })
                 .afterClosed()
                 .subscribe((confirmed) => {
@@ -204,5 +195,8 @@ export class FbosEditComponent implements OnInit {
         this.groupsService
             .getAllGroups()
             .subscribe((data: any) => (this.groups = data));
+        this.airportWatchService
+            .getUnassignedAntennaBoxes(this.fboInfo.antennaName)
+            .subscribe((data: any) => (this.availableAntennas = data));
     }
 }

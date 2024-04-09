@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FbosService } from 'src/app/services/fbos.service';
 
 // Services
@@ -18,22 +18,22 @@ export interface NewFBODialogData {
 
 @Component({
     selector: 'app-fbos-dialog-new-fbo',
+    styleUrls: ['./fbos-dialog-new-fbo.component.scss'],
     templateUrl: './fbos-dialog-new-fbo.component.html',
-    styleUrls: [ './fbos-dialog-new-fbo.component.scss' ],
 })
 export class FbosDialogNewFboComponent {
     @Output() contactAdded = new EventEmitter<any>();
 
     // Public Members
     public dataSources: any = {};
+    public errorMessage: string = '';
 
     constructor(
         public dialogRef: MatDialogRef<FbosDialogNewFboComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NewFBODialogData,
         private acukwikairportsService: AcukwikairportsService,
         private fbosService: FbosService
-    ) {
-    }
+    ) {}
 
     public airportValueChanged(airport: any) {
         this.data.icao = airport.icao;
@@ -50,8 +50,17 @@ export class FbosDialogNewFboComponent {
     }
 
     public fboSelectionChange() {
-        this.data.fbo = this.data.acukwikFbo.handlerLongName;
-        this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+        this.fbosService.getByAcukwikHandlerId(this.data.acukwikFbo.handlerId).subscribe((result: any) => {
+            //No pre-existing record exists for that FBO in another group - allow adding
+            if (!result || result.oid == 0) {
+                this.errorMessage = '';
+                this.data.fbo = this.data.acukwikFbo.handlerLongName;
+                this.data.acukwikFboHandlerId = this.data.acukwikFbo.handlerId;
+            } else {
+                this.errorMessage = 'That FBO is already part of a group.';
+            }
+
+        });
     }
 
     public onCancelClick(): void {

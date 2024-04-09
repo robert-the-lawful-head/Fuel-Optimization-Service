@@ -1,12 +1,15 @@
 ﻿using FBOLinx.Job.AirportWatch;
+using FBOLinx.Job.EngagementEmails;
 using FBOLinx.Job.Interfaces;
 using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FBOLinx.Job.Base
 {
     public class JobHandler
     {
         private readonly string _AirportWatchJobCmd = "-a";
+        private readonly string _EngagementEmailsJobCmd = "-e";
         private IJobRunner _JobRunner;
         private IConfiguration _config;
 
@@ -15,14 +18,18 @@ namespace FBOLinx.Job.Base
             _config = config;
         }
 
-        public void RunJob(string jobCommand)
+        public async Task RunJob(string jobCommand)
         {
             if (jobCommand == _AirportWatchJobCmd)
             {
                 _JobRunner = new AirportWatchJobRunner(_config);
             }
+            else if(jobCommand== _EngagementEmailsJobCmd)
+            {
+                _JobRunner = new EngagementEmailsStrategy(_config);
+            }
 
-            _JobRunner.Run();
+            await _JobRunner.Run();
         }
     }
 }

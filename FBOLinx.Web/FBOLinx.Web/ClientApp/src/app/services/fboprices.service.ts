@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FbopricesService {
@@ -39,7 +39,10 @@ export class FbopricesService {
 
     public checkFboExpiredPricingGroup(groupid) {
         return this.http.get(
-            this.accessPointUrl + '/group/' + groupid + '/ispricingexpiredgroupadmin',
+            this.accessPointUrl +
+                '/group/' +
+                groupid +
+                '/ispricingexpiredgroupadmin',
             {
                 headers: this.headers,
             }
@@ -49,6 +52,15 @@ export class FbopricesService {
     public getFbopricesByFboIdStaged(fboId) {
         return this.http.get(
             this.accessPointUrl + '/fbo/' + fboId + '/staged',
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFbopricesByFboIdAllStaged(fboId) {
+        return this.http.get(
+            this.accessPointUrl + '/fbo/' + fboId + '/all-staged',
             {
                 headers: this.headers,
             }
@@ -90,14 +102,19 @@ export class FbopricesService {
     }
 
     public suspendPricing(oid) {
-        return this.http.post(
-            this.accessPointUrl + '/suspendpricing/' + oid,
+        return this.http.post(this.accessPointUrl + '/suspendpricing/' + oid, {
+            headers: this.headers,
+        });
+    }
+
+    public suspendPricingGenerator(payload) {
+        return this.http.post(this.accessPointUrl + '/suspend-pricing-generator/', 
+            payload,
             {
                 headers: this.headers,
             }
         );
     }
-
 
     public getPricesByMonthForFbo(fboId, payload) {
         return this.http.post(
@@ -111,7 +128,8 @@ export class FbopricesService {
 
     public getFuelPricesForCompany(payload) {
         return this.http.post(
-            this.accessPointUrl + '/price-lookup-for-customer/', payload,
+            this.accessPointUrl + '/price-lookup-for-customer/',
+            payload,
             {
                 headers: this.headers,
             }
@@ -130,9 +148,28 @@ export class FbopricesService {
         });
     }
 
+    public removePricing(fboid, product) {
+        return this.http.delete(this.accessPointUrl + '/delete-price-by-product/fbo/' + fboid + "/product/" + product, {
+            headers: this.headers,
+        });
+    }
+
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
+    }
+
+    public updatePricingGenerator(payload) {
+        return this.http.post(this.accessPointUrl + '/update-price-generator/', payload, {
+            headers: this.headers,
+        });
+    }
+
+    public handlePriceChangeCleanUp(fboId) {
+        return this.http.post(this.accessPointUrl + '/handle-price-change-cleanup/' + fboId,
+            {
+                headers: this.headers
+            });
     }
 }

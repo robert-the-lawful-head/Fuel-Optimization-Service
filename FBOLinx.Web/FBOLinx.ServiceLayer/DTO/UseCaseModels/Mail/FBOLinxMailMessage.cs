@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net.Mail;
 using FBOLinx.Core.Utilities.Extensions;
+using FBOLinx.Core.Utilities.Mail;
 
 namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 {
@@ -11,14 +12,22 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         #endregion
 
         #region Properties
-        public string AttachmentBase64String { get; set; }
+        public string InlineAttachmentBase64String { get; set; }
+        public List<FileAttachment> AttachmentsCollection { get; set; } = new List<FileAttachment>();
         public LogoDetails Logo { get; set; }
-        public SendGridTemplateData SendGridTemplateData { get; set; }
+        public SendGridDistributionTemplateData SendGridDistributionTemplateData { get; set; }
+        public SendGridEngagementTemplateData SendGridEngagementTemplateData { get; set; }
+        public SendGridMissedQuoteTemplateData SendGridMissedQuoteTemplateData { get; set; }
+        public SendGridGroupCustomerPricingTemplateData SendGridGroupCustomerPricingTemplateData { get; set; }
+        public SendGridAutomatedFuelOrderNotificationTemplateData SendGridAutomatedFuelOrderNotificationTemplateData { get; set; }
+        public SendGridOrderConfirmationTemplateData SendGridOrderConfirmationTemplateData { get; set; }
+        public SendGridFuelRequestUpdateOrCancellationTemplateData SendGridFuelRequestUpdateOrCancellationTemplateData { get; set; }
+        public SendGridAutomatedFuelOrderCancellationTemplateData SendGridFuelOrderCancellationTemplateData { get; set; }
 
         #endregion
 
         #region Public Methods
-        
+
         #endregion
 
         #region Private Methods

@@ -43,6 +43,11 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
+        /// <returns>FboLinxCustomerFuelVendorsResponse</returns>
+        FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors ();
+        /// <summary>
+        ///  
+        /// </summary>
         /// <param name="body"></param>
         /// <returns>FboLinxCustomerTransactionsCountAtAirportResponse</returns>
         FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCount (FBOLinxOrdersRequest body);
@@ -64,6 +69,12 @@ namespace IO.Swagger.Api
         /// <param name="body"></param>
         /// <returns>FBOLinxGroupOrdersResponse</returns>
         FBOLinxGroupOrdersResponse GetGroupFbosTransactionsCount (FBOLinxGroupOrdersRequest body);
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param>
+        /// <returns>int?</returns>
+        int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body);
         /// <summary>
         ///  
         /// </summary>
@@ -314,6 +325,38 @@ namespace IO.Swagger.Api
         /// <summary>
         ///  
         /// </summary>
+        /// <returns>FboLinxCustomerFuelVendorsResponse</returns>            
+        public FboLinxCustomerFuelVendorsResponse GetCustomerFuelVendors ()
+        {
+            
+    
+            var path = "/api/FBOLinx/get-customer-fuel-vendors";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerFuelVendors: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetCustomerFuelVendors: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (FboLinxCustomerFuelVendorsResponse) ApiClient.Deserialize(response.Content, typeof(FboLinxCustomerFuelVendorsResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
         /// <param name="body"></param> 
         /// <returns>FboLinxCustomerTransactionsCountAtAirportResponse</returns>            
         public FboLinxCustomerTransactionsCountAtAirportResponse GetCustomerTransactionsCount (FBOLinxOrdersRequest body)
@@ -445,6 +488,40 @@ namespace IO.Swagger.Api
                 throw new ApiException ((int)response.StatusCode, "Error calling GetGroupFbosTransactionsCount: " + response.ErrorMessage, response.ErrorMessage);
     
             return (FBOLinxGroupOrdersResponse) ApiClient.Deserialize(response.Content, typeof(FBOLinxGroupOrdersResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="body"></param> 
+        /// <returns>int?</returns>            
+        public int? GetLatestPullHistoryFlightDepartmentForICAO (FBOLinxGetLatestFlightDeptPullHistoryByIcaoRequest body)
+        {
+            
+    
+            var path = "/api/FBOLinx/get-latest-pullhistory-flight-dept-by-icao";
+            path = path.Replace("{format}", "json");
+                
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                postBody = ApiClient.Serialize(body); // http body (model) parameter
+    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.POST, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLatestPullHistoryFlightDepartmentForICAO: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetLatestPullHistoryFlightDepartmentForICAO: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (int?) ApiClient.Deserialize(response.Content, typeof(int?), response.Headers);
         }
     
         /// <summary>

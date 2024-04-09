@@ -9,7 +9,6 @@ const getWindow = () =>
     // return the global native browser window object
     window;
 
-
 @Injectable()
 export class WindowRef {
     get nativeWindow(): any {

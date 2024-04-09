@@ -10,17 +10,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbopreferencesController : ControllerBase
+    public class FbopreferencesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public FbopreferencesController(FboLinxContext context)
+        public FbopreferencesController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -54,7 +55,11 @@ namespace FBOLinx.Web.Controllers
 
             if (fbopreferences == null)
             {
-                return NotFound();
+                fbopreferences = new Fbopreferences() { Fboid = fboId, EnableJetA = true, EnableSaf = false };
+                _context.Fbopreferences.Add(fbopreferences);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetFbopreferences", new { id = fbopreferences.Oid }, fbopreferences);
             }
 
             return fbopreferences;

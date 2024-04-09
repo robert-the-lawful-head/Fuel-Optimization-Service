@@ -9,16 +9,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web;
 using FBOLinx.Web.Data;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FboFeesAndTaxesController : ControllerBase
+    public class FboFeesAndTaxesController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public FboFeesAndTaxesController(FboLinxContext context)
+        public FboFeesAndTaxesController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -64,6 +66,8 @@ namespace FBOLinx.Web.Controllers
             result.ForEach(x =>
             {
                 x.IsOmitted = (x.OmitsByCustomer != null && x.OmitsByCustomer.Any(o => o.CustomerId == customerId));
+                if (x.IsOmitted)
+                    x.OmittedFor = "C";
             });
             return Ok(result);
         }
@@ -71,15 +75,18 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("fbo/{fboId}/pricing-template/{pricingTemplateId}")]
         public async Task<ActionResult<List<FboFeesAndTaxes>>> GetFboFeesAndTaxesFboAndPricingTemplate([FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
-            var result = await _context.FbofeesAndTaxes.Where(x => x.Fboid == fboId)
-                .Include(x => x.OmitsByPricingTemplate)
-                .Include(x => x.OmitsByPricingTemplate)
-                .ToListAsync();
-            result.ForEach(x =>
+            var fboFeesAndTaxes = await (from f in _context.FbofeesAndTaxes where f.Fboid == fboId select f).ToListAsync();
+
+            var fboFeeAndTaxOmitsByPricingTemplate = await (from ot in _context.FboFeeAndTaxOmitsByPricingTemplate where ot.PricingTemplateId == pricingTemplateId select ot).ToListAsync();
+
+            fboFeesAndTaxes.ForEach(x =>
             {
-                x.IsOmitted = (x.OmitsByPricingTemplate != null && x.OmitsByPricingTemplate.Any(o => o.PricingTemplateId == pricingTemplateId));
+                x.OmitsByPricingTemplate = fboFeeAndTaxOmitsByPricingTemplate;
+                x.IsOmitted = fboFeeAndTaxOmitsByPricingTemplate.Any(o => o.FboFeeAndTaxId == x.Oid);
+                if (x.IsOmitted)
+                    x.OmittedFor = "P";
             });
-            return Ok(result);
+            return Ok(fboFeesAndTaxes); 
         }
 
         // PUT: api/FboFeesAndTaxes/5

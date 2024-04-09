@@ -1,6 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
-
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface CustomerMatchDialogComponent {
     currentCustomerId: number;
@@ -22,21 +21,16 @@ export interface CustomerMatchDialogComponent {
 
 @Component({
     selector: 'customer-match-dialog',
+    styleUrls: ['./customer-match-dialog.component.scss'],
     templateUrl: './customer-match-dialog.component.html',
-    styleUrls: [ './customer-match-dialog.component.scss' ],
 })
 export class CustomerMatchDialogComponent implements OnInit {
-
     constructor(
         public dialogRef: MatDialogRef<CustomerMatchDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: CustomerMatchDialogComponent
-    ) {
-    }
+    ) {}
 
-    ngOnInit(): void {
-        console.log('in modal');
-        console.log(this.data);
-    }
+    ngOnInit(): void {}
 
     // Public Methods
     public onCancelClick(): void {

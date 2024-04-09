@@ -1,0 +1,20 @@
+export type PricingTemplate = {
+    customerId: number;
+    customersAssigned: number;
+    default: boolean;
+    email: string;
+    emailContentId: number | null;
+    fboid: number;
+    intoPlanePrice: number;
+    isInvalid: boolean;
+    isPricingExpired: boolean;
+    margin: number;
+    marginType: number;
+    marginTypeDescription: string;
+    name: string;
+    notes: string;
+    oid: number;
+    subject: string;
+    type: number;
+    yourMargin: number;
+};

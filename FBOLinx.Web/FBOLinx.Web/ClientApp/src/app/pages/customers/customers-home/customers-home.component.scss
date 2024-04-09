@@ -1,4 +1,4 @@
-﻿@import '../../../../assets/sass/variable';
+﻿@import "../../../../assets/sass/variable";
 
 :host {
     display: block;
@@ -11,14 +11,8 @@
 
     ::ng-deep {
         .mat-tab-header {
-            position: fixed;
             background: $main-bg;
             width: 100%;
-            z-index: 1001;
-        }
-
-        .mat-tab-body-wrapper {
-            margin-top: 49px;
         }
     }
 }

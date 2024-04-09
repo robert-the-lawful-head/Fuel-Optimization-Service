@@ -35,6 +35,12 @@ namespace IO.Swagger.Api
         /// <returns>DeploymentNotesResponse</returns>
         DeploymentNotesResponse GetDeploymentNotesByVersionNumber (int? buildVersionNumber, int? applicationType);
         /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="enumTypeName"></param>
+        /// <returns>EnumOptionsResponse</returns>
+        EnumOptionsResponse GetEnumOptionsByTypeName (string enumTypeName);
+        /// <summary>
         /// Internal use only - Add a new deployment note for the provided build version range. 
         /// </summary>
         /// <param name="body"></param>
@@ -242,6 +248,43 @@ path = path.Replace("{" + "applicationType" + "}", ApiClient.ParameterToString(a
                 throw new ApiException ((int)response.StatusCode, "Error calling GetDeploymentNotesByVersionNumber: " + response.ErrorMessage, response.ErrorMessage);
     
             return (DeploymentNotesResponse) ApiClient.Deserialize(response.Content, typeof(DeploymentNotesResponse), response.Headers);
+        }
+    
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="enumTypeName"></param> 
+        /// <returns>EnumOptionsResponse</returns>            
+        public EnumOptionsResponse GetEnumOptionsByTypeName (string enumTypeName)
+        {
+            
+            // verify the required parameter 'enumTypeName' is set
+            if (enumTypeName == null) throw new ApiException(400, "Missing required parameter 'enumTypeName' when calling GetEnumOptionsByTypeName");
+            
+    
+            var path = "/api/Application/enum-options/{enumTypeName}";
+            path = path.Replace("{format}", "json");
+            path = path.Replace("{" + "enumTypeName" + "}", ApiClient.ParameterToString(enumTypeName));
+    
+            var queryParams = new Dictionary<String, String>();
+            var headerParams = new Dictionary<String, String>();
+            var formParams = new Dictionary<String, String>();
+            var fileParams = new Dictionary<String, FileParameter>();
+            String postBody = null;
+    
+                                                    
+            // authentication setting, if any
+            String[] authSettings = new String[] { "ApiKeyScheme", "Bearer" };
+    
+            // make the HTTP request
+            IRestResponse response = (IRestResponse) ApiClient.CallApi(path, Method.GET, queryParams, postBody, headerParams, formParams, fileParams, authSettings);
+    
+            if (((int)response.StatusCode) >= 400)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetEnumOptionsByTypeName: " + response.Content, response.Content);
+            else if (((int)response.StatusCode) == 0)
+                throw new ApiException ((int)response.StatusCode, "Error calling GetEnumOptionsByTypeName: " + response.ErrorMessage, response.ErrorMessage);
+    
+            return (EnumOptionsResponse) ApiClient.Deserialize(response.Content, typeof(EnumOptionsResponse), response.Headers);
         }
     
         /// <summary>

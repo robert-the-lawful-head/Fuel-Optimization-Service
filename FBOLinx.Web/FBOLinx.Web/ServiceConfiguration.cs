@@ -1,25 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FBOLinx.DB.Context;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.ServiceLayer.BusinessServices.Auth;
+﻿using System.Text;
+using FBOLinx.DB.Extensions;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Customers;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.BusinessServices.FuelRequests;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
 using FBOLinx.ServiceLayer.BusinessServices.Mail;
+using FBOLinx.ServiceLayer.BusinessServices.MissedOrderLog;
+using FBOLinx.ServiceLayer.BusinessServices.MissedQuoteLog;
+using FBOLinx.ServiceLayer.BusinessServices.SWIM;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.ServiceLayer.EntityServices.SWIM;
+using FBOLinx.ServiceLayer.Extensions;
+using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.ScheduledService;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
+using FBOLinx.Web.Extensions;
 using FBOLinx.Web.Services;
-using FBOLinx.Web.Services.Interfaces;
-using IO.Swagger.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.TableStorage;
+using FBOLinx.TableStorage.EntityServices;
+using System.Text.Json.Serialization;
 
 namespace FBOLinx.Web
 {
@@ -32,9 +41,17 @@ namespace FBOLinx.Web
                 o.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
 
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+
+            services.ConfigureSwagger();
+            services.AddMemoryCache();
+
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
-
+            
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -62,26 +79,7 @@ namespace FBOLinx.Web
                     };
                 });
 
-            services.AddDbContext<FboLinxContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("FboLinxContext")));
-
-            services.AddDbContext<DegaContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DegaContext")));
-
-            services.AddDbContext<FuelerLinxContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("FuelerLinxContext")));
-
-            services.AddDbContext<FilestorageContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("FilestorageContext")));
-
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("CorsPolicy",
-            //        builder => builder.AllowAnyOrigin()
-            //            .AllowAnyMethod()
-            //            .AllowAnyHeader()
-            //            .AllowCredentials());
-            //});
+            services.RegisterDbConnections(configuration);
 
             services.AddCors(options =>
             {
@@ -93,33 +91,31 @@ namespace FBOLinx.Web
                 options.AddPolicy("LocalHost", builder => builder.WithOrigins("https://localhost:5001").AllowAnyMethod().AllowAnyHeader());
             }
             );
-
-            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
-            var appParnterSDKSettings = configuration.GetSection("AppPartnerSDKSettings");
-            services.Configure<AppPartnerSDKSettings>(appParnterSDKSettings);
-
+            
             // configure DI for application services
-            services.AddScoped<FuelerLinxService, FuelerLinxService>();
-            services.AddScoped<RampFeesService, RampFeesService>();
+
+            services.RegisterConfigurationSections(configuration);
+            services.RegisterEntityServices();
+            services.RegisterBusinessServices();
+            services.RegisterMappingConfiguration();
+            
+
+            //Services to be migrated to the ServiceLayer and moved into services.RegisterBusinessServices().
             services.AddScoped<IPriceDistributionService, PriceDistributionService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<UserRoleAttribute>();
-            services.AddScoped<GroupTransitionService, GroupTransitionService>();
-
             services.AddTransient<GroupFboService, GroupFboService>();
-            services.AddTransient<CustomerService, CustomerService>();
-            services.AddTransient<FboService, FboService>();
-            services.AddTransient<IPriceFetchingService, PriceFetchingService>();
             services.AddTransient<ResetPasswordService, ResetPasswordService>();
-
-            //Business Services
-            services.AddTransient<AircraftService, AircraftService>();
-            services.AddTransient<IEncryptionService, EncryptionService>();
-            services.AddTransient<IMailTemplateService, MailTemplateService>();
-            services.AddTransient<CustomerAircraftService, CustomerAircraftService>();
-            services.AddTransient<AirportWatchService, AirportWatchService>();
-            services.AddTransient<IMailService, MailService>();
-
+            services.AddTransient<IEmailContentService, EmailContentService>();
+            services.AddTransient<AssociationsService, AssociationsService>();
+            services.AddTransient<DBSCANService, DBSCANService>();
+            services.AddTransient<IIntegrationStatusService, IntegrationStatusService>();
+            services.AddTransient<IGroupEntityService, GroupEntityService>();
+            services.AddTransient<IIntegrationStatusEntityService, IntegrationStatusEntityService>();
+            services.AddTransient<IOrderDetailsEntityService, OrderDetailsEntityService>();
+            services.AddTransient<FuelReqPricingTemplateEntityService, FuelReqPricingTemplateEntityService>();
+            services.AddTransient<IFuelReqConfirmationEntityService, FuelReqConfirmationEntityService>();
+            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             //Auth services
@@ -131,6 +127,20 @@ namespace FBOLinx.Web
             IFileProvider physicalProvider = new PhysicalFileProvider(System.IO.Directory.GetCurrentDirectory());
 
             services.AddSingleton<IFileProvider>(physicalProvider);
+
+            //Scheduled services just for testing.  Will remove soon.
+            //services.AddHostedService<SWIMPlaceholderSyncFunctionScheduledService>();
+            //services.AddHostedService<AirportWatchLiveDataReprocessScheduledService>();
+
+            ConfigureAzureTableStorageEntityServices(services, configuration);
+        }
+
+        private static void ConfigureAzureTableStorageEntityServices(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<AzureTableStorageSettings>(configuration.GetSection("AzureTableStorageSettings"));
+            
+            services.AddTransient<BlobStorageService, BlobStorageService>();
+            services.AddTransient<AirportWatchDataTableEntityService, AirportWatchDataTableEntityService>();
         }
     }
 }

@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class FboairportsService {
@@ -40,6 +40,19 @@ export class FboairportsService {
     public update(payload) {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
+        });
+    }
+
+    public getLocalDateTime(fboId) {
+        return this.http.get(this.accessPointUrl + '/local-datetime-now/fbo/' + fboId, {
+            headers: this.headers,
+        });
+    }
+
+    public getLocalTimeZone(fboid) {
+        return this.http.get(this.accessPointUrl + '/local-timezone/fbo/' + fboid, {
+            headers: this.headers,
+            responseType: 'text',
         });
     }
 }

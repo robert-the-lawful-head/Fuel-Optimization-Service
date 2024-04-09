@@ -1,7 +1,16 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
-import { pricingTemplateFeatureKey, PricingTemplateGridState, pricingTemplateReducer, } from './pricing-template';
-import { customerFeatureKey, CustomerGridState, customerReducer } from './customer';
+
+import {
+    customerFeatureKey,
+    CustomerGridState,
+    customerReducer,
+} from './customer';
 import { groupFeatureKey, GroupGridState, groupReducer } from './group';
+import {
+    pricingTemplateFeatureKey,
+    PricingTemplateGridState,
+    pricingTemplateReducer,
+} from './pricing-template';
 
 export interface State {
     [pricingTemplateFeatureKey]: PricingTemplateGridState;
@@ -10,9 +19,9 @@ export interface State {
 }
 
 export const reducers: ActionReducerMap<State> = {
-    [pricingTemplateFeatureKey]: pricingTemplateReducer,
     [customerFeatureKey]: customerReducer,
     [groupFeatureKey]: groupReducer,
+    [pricingTemplateFeatureKey]: pricingTemplateReducer,
 };
 
 export const metaReducers: MetaReducer<State>[] = [];

@@ -1,0 +1,46 @@
+USE [paragon_Test]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[OrderNotes](
+	[OID] [int] IDENTITY(1,1) NOT NULL,
+	[AssociatedFuelOrderId] [int] NULL,
+	[AssociatedServiceOrderId] [int] NULL,
+	[AssociatedFuelerLinxTransactionId] [int] NULL,
+	[DateAdded] [datetime2](7) NULL,
+	[Note] [varchar](max) NULL,
+	[AddedByUserID] [int] NULL,
+	[AddedByName] [varchar](255) NULL,
+	[TimeZone] [varchar](100) NULL,
+ CONSTRAINT [PK_OrderNotes] PRIMARY KEY CLUSTERED 
+(
+	[OID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+CREATE NONCLUSTERED INDEX [INX_OrderNotes_AssociatedFuelOrderID] ON [dbo].[OrderNotes]
+(
+	[AssociatedFuelOrderID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+
+CREATE NONCLUSTERED INDEX [INX_OrderNotes_AssociatedServiceOrderId] ON [dbo].[OrderNotes]
+(
+	[AssociatedServiceOrderId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+
+
+CREATE NONCLUSTERED INDEX [INX_OrderNotes_AssociatedFuelerLinxTransactionId] ON [dbo].[OrderNotes]
+(
+	[AssociatedFuelerLinxTransactionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO

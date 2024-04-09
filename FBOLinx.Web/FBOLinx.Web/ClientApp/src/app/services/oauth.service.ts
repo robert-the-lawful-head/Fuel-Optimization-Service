@@ -1,7 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class OAuthService {
     private headers: HttpHeaders;
     private accessPointUrl: string;
@@ -14,13 +14,14 @@ export class OAuthService {
     }
 
     public login(username: string, password: string, partnerId: string) {
-        return this.http.post(this.accessPointUrl + '/login',
+        return this.http.post(
+            this.accessPointUrl + '/login',
             {
-                username,
-                password,
                 partnerId,
+                password,
+                username,
             },
-            {headers: this.headers}
+            { headers: this.headers }
         );
     }
 }

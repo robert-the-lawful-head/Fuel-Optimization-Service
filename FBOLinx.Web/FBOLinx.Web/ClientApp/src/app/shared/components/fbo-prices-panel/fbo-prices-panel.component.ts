@@ -1,14 +1,24 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
     selector: 'app-fbo-prices-panel',
+    styleUrls: ['./fbo-prices-panel.component.scss'],
     templateUrl: './fbo-prices-panel.component.html',
-    styleUrls: [ './fbo-prices-panel.component.scss' ],
 })
 export class FboPricesPanelComponent {
-    @Input() retail: number;
-    @Input() cost: number;
+    @Input() enableJetA: boolean;
+    @Input() enableSaf: boolean;
+    @Input() retailSaf: number;
+    @Input() costSaf: number;
+    @Input() retailJetA: number;
+    @Input() costJetA: number;
+    @Input() effectiveToSaf: string;
+    @Input() effectiveToJetA: string;
+    @Output() onClearFboPrice = new EventEmitter<string>();
 
-    constructor() {
+    constructor() { }
+
+    public clear(product) {
+        this.onClearFboPrice.emit(product);
     }
 }

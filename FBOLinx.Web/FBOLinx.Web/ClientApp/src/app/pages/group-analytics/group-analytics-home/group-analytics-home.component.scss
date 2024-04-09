@@ -1,4 +1,4 @@
-.generate-report-button {
+.action-button {
     text-align: left;
     white-space: normal;
 
@@ -6,7 +6,7 @@
         font-size: 1.2rem;
         margin-bottom: 0.5rem;
         margin-top: 1rem;
-        color: #2196F3;
+        color: #2196f3;
     }
 
     p {
@@ -29,4 +29,8 @@
             padding: 0;
         }
     }
+}
+
+.after-breadcrumb {
+    padding-top: 4rem;
 }

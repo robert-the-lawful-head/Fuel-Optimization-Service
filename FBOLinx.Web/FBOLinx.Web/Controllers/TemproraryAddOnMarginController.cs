@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Http;
@@ -14,10 +15,10 @@ namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TemproraryAddOnMarginController : ControllerBase
+    public class TemproraryAddOnMarginController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        public TemproraryAddOnMarginController(FboLinxContext context)
+        public TemproraryAddOnMarginController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

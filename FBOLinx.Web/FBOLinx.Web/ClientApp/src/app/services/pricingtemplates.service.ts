@@ -1,5 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { PricingTemplate } from '../models';
 
 @Injectable()
 export class PricingtemplatesService {
@@ -14,12 +16,30 @@ export class PricingtemplatesService {
     }
 
     public getByFbo(fboId, groupId?) {
-        return this.http.get(this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId, { headers: this.headers });
+        return this.http.get<PricingTemplate[]>(
+            this.accessPointUrl + '/group/' + groupId + '/fbo/' + fboId,
+            { headers: this.headers }
+        );
+    }
+
+    public getWithEmailContentByFbo(fboId, groupId?) {
+        return this.http.get<PricingTemplate[]>(
+            this.accessPointUrl +
+                '/with-email-content/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
+            { headers: this.headers }
+        );
     }
 
     public getByFboDefaultTemplate(groupId, fboId) {
         return this.http.get(
-            this.accessPointUrl + '/fbodefaultpricingtemplate/group/' + groupId + '/fbo/' + fboId,
+            this.accessPointUrl +
+                '/fbodefaultpricingtemplate/group/' +
+                groupId +
+                '/fbo/' +
+                fboId,
             { headers: this.headers }
         );
     }
@@ -73,6 +93,57 @@ export class PricingtemplatesService {
     public checkdefaultpricingtemplates(payload) {
         return this.http.get(
             this.accessPointUrl + '/checkdefaulttemplate/' + payload,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public getFileAttachmentName(pricingTemplateId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachmentname/' +
+            pricingTemplateId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public uploadFileAttachment(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/uploadfileattachment/',
+            payload,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public downloadFileAttachment(pricingTemplateId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachment/' + 
+            pricingTemplateId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public deleteFileAttachment(pricingTemplateId) {
+        return this.http.delete(
+            this.accessPointUrl + '/fileattachment/' + pricingTemplateId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
+
+    public fixCustomCustomerTypes(groupId, fboId) {
+        return this.http.get(
+            this.accessPointUrl + '/fix-custom-customer-types/group/' + groupId + '/fbo/' + fboId,
             {
                 headers: this.headers,
             }

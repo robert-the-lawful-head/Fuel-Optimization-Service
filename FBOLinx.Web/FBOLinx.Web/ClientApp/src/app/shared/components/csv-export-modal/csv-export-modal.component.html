@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>{{data.title}}</h1>
+<h1 mat-dialog-title>{{ data.title }}</h1>
 <div class="mt-1 mb-2" mat-dialog-content>
     <div class="row">
         <div class="col-6">
@@ -43,7 +43,14 @@
 </div>
 <div mat-dialog-actions>
     <div class="text-center col-12">
-        <button [mat-dialog-close]="data" class="mr-1" color="accent" mat-flat-button>Export</button>
+        <button
+            [mat-dialog-close]="data"
+            class="mr-1"
+            color="accent"
+            mat-flat-button
+        >
+            Export
+        </button>
         <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
     </div>
 </div>

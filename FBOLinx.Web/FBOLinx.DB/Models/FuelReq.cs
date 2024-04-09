@@ -26,6 +26,11 @@ namespace FBOLinx.DB.Models
         public bool? Archived { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public string FuelOn { get; set; } = "Departure";
+        public string CustomerNotes { get; set; }
+        public string PaymentMethod { get; set; }
+
+        #region Relationships
 
         [ForeignKey("CustomerId")]
         [InverseProperty("FuelReqs")]
@@ -41,5 +46,13 @@ namespace FBOLinx.DB.Models
 
         [InverseProperty("FuelReq")]
         public FuelReqPricingTemplate FuelReqPricingTemplate { get; set; }
+
+        [InverseProperty("AssociatedFuelOrder")]
+        public ServiceOrder ServiceOrder { get; set; }
+
+        [ForeignKey("SourceId")]
+        public virtual FuelReqConfirmation FuelReqConfirmation { get; set; }
+
+        #endregion
     }
 }

@@ -9,8 +9,8 @@ Method | HTTP request | Description
 [**DeleteSupportedPriceSheetFiles**](FuelPricingApi.md#deletesupportedpricesheetfiles) | **DELETE** /api/FuelPricing/supported-price-sheet-files/{id} | Deletes Supported Price Sheet Files by Id
 [**DeleteWeeklyPricingForFuelVendor**](FuelPricingApi.md#deleteweeklypricingforfuelvendor) | **DELETE** /api/FuelPricing/weekly-pricing/by-fueler/{fuelVendorId} | Internal use only - delete all weekly pricing records for a particular fuel vendor.
 [**GetAssociatedDetailsForFuelOption**](FuelPricingApi.md#getassociateddetailsforfueloption) | **POST** /api/FuelPricing/associated-details | 
-[**GetCurrentPricingForLocation**](FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
-[**GetCurrentPricingForLocationAndFlightType**](FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
+[**GetCurrentPricingForLocation**](FuelPricingApi.md#getcurrentpricingforlocation) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos} | Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
+[**GetCurrentPricingForLocationAndFlightType**](FuelPricingApi.md#getcurrentpricingforlocationandflighttype) | **GET** /api/FuelPricing/current/{commaDelimitedIcaos}/flight-type/{flightType} | Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
 [**GetLiveQuoteForLocations**](FuelPricingApi.md#getlivequoteforlocations) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using their default flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
 [**GetLiveQuoteForLocationsAndFlightType**](FuelPricingApi.md#getlivequoteforlocationsandflighttype) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.
 [**GetLiveQuoteForLocationsAndFlightTypeAndVendor**](FuelPricingApi.md#getlivequoteforlocationsandflighttypeandvendor) | **GET** /api/FuelPricing/live-quote/{commaDelimitedIcaos}/flight-type/{flightType}/fuel-vendor/{fuelVendorId} | Retrieves a live quote from all vendor web services tied to the flight department&#39;s account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
@@ -372,7 +372,7 @@ Name | Type | Description  | Notes
 # **GetCurrentPricingForLocation**
 > CurrentPricingResponse GetCurrentPricingForLocation (string commaDelimitedIcaos)
 
-Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
+Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
 
 ### Example
 ```csharp
@@ -403,7 +403,7 @@ namespace Example
 
             try
             {
-                // Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
+                // Fetch all cached pricing for the specified comma-delimited ICAOs currently available for the user.
                 CurrentPricingResponse result = apiInstance.GetCurrentPricingForLocation(commaDelimitedIcaos);
                 Debug.WriteLine(result);
             }
@@ -441,7 +441,7 @@ Name | Type | Description  | Notes
 # **GetCurrentPricingForLocationAndFlightType**
 > CurrentPricingResponse GetCurrentPricingForLocationAndFlightType (string commaDelimitedIcaos, string flightType)
 
-Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
+Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
 
 ### Example
 ```csharp
@@ -473,7 +473,7 @@ namespace Example
 
             try
             {
-                // Internal use only - Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
+                // Fetch all cached pricing for the specified comma-delimited ICAOs and flight type currently available for the user.
                 CurrentPricingResponse result = apiInstance.GetCurrentPricingForLocationAndFlightType(commaDelimitedIcaos, flightType);
                 Debug.WriteLine(result);
             }
@@ -654,7 +654,7 @@ Name | Type | Description  | Notes
 
 <a name="getlivequoteforlocationsandflighttypeandvendor"></a>
 # **GetLiveQuoteForLocationsAndFlightTypeAndVendor**
-> CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId)
+> CurrentPricingResponse GetLiveQuoteForLocationsAndFlightTypeAndVendor (string commaDelimitedIcaos, string flightType, int? fuelVendorId, bool? isQuotingProximityAirports)
 
 Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
 
@@ -688,11 +688,12 @@ namespace Example
             var commaDelimitedIcaos = commaDelimitedIcaos_example;  // string | 
             var flightType = flightType_example;  // string | 
             var fuelVendorId = 56;  // int? | 
+            var isQuotingProximityAirports = true;  // bool? |  (optional) 
 
             try
             {
                 // Retrieves a live quote from all vendor web services tied to the flight department's account using the specified flight type.  This method can take up to 60 seconds to complete based on the number of airports, fuel vendor web services, and account settings.  Only quotes the specified fuel vendor based on the provided {fuelVendorId}.
-                CurrentPricingResponse result = apiInstance.GetLiveQuoteForLocationsAndFlightTypeAndVendor(commaDelimitedIcaos, flightType, fuelVendorId);
+                CurrentPricingResponse result = apiInstance.GetLiveQuoteForLocationsAndFlightTypeAndVendor(commaDelimitedIcaos, flightType, fuelVendorId, isQuotingProximityAirports);
                 Debug.WriteLine(result);
             }
             catch (Exception e)
@@ -711,6 +712,7 @@ Name | Type | Description  | Notes
  **commaDelimitedIcaos** | **string**|  | 
  **flightType** | **string**|  | 
  **fuelVendorId** | **int?**|  | 
+ **isQuotingProximityAirports** | **bool?**|  | [optional] 
 
 ### Return type
 

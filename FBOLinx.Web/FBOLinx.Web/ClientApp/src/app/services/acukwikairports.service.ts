@@ -1,5 +1,8 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { AcukwikAirport } from '../models/AcukwikAirport';
+import * as moment from 'moment';
 
 @Injectable()
 export class AcukwikairportsService {
@@ -13,8 +16,8 @@ export class AcukwikairportsService {
         this.accessPointUrl = baseUrl + 'api/AcukwikAirports';
     }
 
-    public getAllAirports() {
-        return this.http.get(this.accessPointUrl, { headers: this.headers });
+    public getAllAirports(): Observable<AcukwikAirport[]> {
+        return this.http.get<AcukwikAirport[]>(this.accessPointUrl, { headers: this.headers });
     }
 
     public get(payload) {
@@ -52,5 +55,33 @@ export class AcukwikairportsService {
             this.accessPointUrl + '/' + icao + '/fbo-handler-detail',
             { headers: this.headers }
         );
+    }
+    public getAcukwikAirportByICAO(icao:string): Observable<AcukwikAirport> {
+        return this.http.get<AcukwikAirport>(
+            this.accessPointUrl + '/byicao/' + icao ,
+            { headers: this.headers }
+        );
+    }
+    public getNearByAcukwikAirportsByICAO(icao:string,miles:number): Observable<AcukwikAirport[]> {
+        return this.http.get<AcukwikAirport[]>(
+            this.accessPointUrl + '/' + icao + '/nearby-airports/' + miles + '/nautical-miles',
+            { headers: this.headers }
+        );
+    }
+
+    public getAirportLocalTime(icao: string, fromDateTimeUtc?: Date): Observable<Date> {
+        var route = this.accessPointUrl + '/local-time/' + icao;
+        if (fromDateTimeUtc) {
+            route += '?fromDateTimeUtc=' + encodeURIComponent(moment(fromDateTimeUtc).format("YYYY-MM-DD HH:mm"));
+        }
+        return this.http.get<Date>(route, { headers: this.headers });        
+    }
+
+    public getAirportZuluTime(icao: string, fromDateTimeLocal?: Date): Observable<Date> {
+        var route = this.accessPointUrl + '/zulu-time/' + icao;
+        if (fromDateTimeLocal) {
+            route += '?fromDateTimeLocal=' + encodeURIComponent(moment(fromDateTimeLocal).format("YYYY-MM-DD HH:mm"));
+        }
+        return this.http.get<Date>(route, { headers: this.headers });
     }
 }

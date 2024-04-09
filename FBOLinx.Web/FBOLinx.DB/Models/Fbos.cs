@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,15 +7,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOs")]
-    public partial class Fbos
+    public partial class Fbos : FBOLinxBaseEntityModel<int>
     {
-        [Key]
-        [Column("OID")]
-        public int Oid { get; set; }
         [StringLength(255)]
         public string Fbo { get; set; }
         [Column("GroupID")]
-        public int? GroupId { get; set; }
+        public int GroupId { get; set; }
         [StringLength(50)]
         public string Username { get; set; }
         [StringLength(50)]
@@ -45,7 +43,7 @@ namespace FBOLinx.DB.Models
         public bool? GroupMarginFuture { get; set; }
         public short? GroupMarginTemplate { get; set; }
         public double? GroupMarginMargin { get; set; }
-        public PricingTemplate.MarginTypes? GroupMarginType { get; set; }
+        public MarginTypes? GroupMarginType { get; set; }
         //public short? GroupMarginType { get; set; }
         [Column("GroupMargin100LLMargin")]
         public double? GroupMargin100Llmargin { get; set; }
@@ -59,7 +57,7 @@ namespace FBOLinx.DB.Models
         public string Extension { get; set; }
         public short? DefaultMarginTypeJetA { get; set; }
         [Column("DefaultMarginType100LL")]
-        public PricingTemplate.MarginTypes? DefaultMarginType100Ll { get; set; }
+        public MarginTypes? DefaultMarginType100Ll { get; set; }
         //public short? DefaultMarginType100Ll { get; set; }
         public bool? SalesTax { get; set; }
         public bool? ApplySalesTax { get; set; }
@@ -95,12 +93,16 @@ namespace FBOLinx.DB.Models
         }
         private string _ReplyTo;
 
+        public AccountTypes AccountType { get; set; }
+
+        public string AntennaName { get; set; }
+
         [ForeignKey("GroupId")]
         [InverseProperty("Fbos")]
         public Group Group { get; set; }
         
         [InverseProperty("Fbo")]
-        public Fboairports fboAirport { get; set; }
+        public Fboairports FboAirport { get; set; }
 
         [InverseProperty("Fbo")]
         public ICollection<FuelReq> FuelReqs { get; set; }
@@ -117,7 +119,7 @@ namespace FBOLinx.DB.Models
         [InverseProperty("Fbo")]
         public ICollection<User> Users { get; set; }
 
-        [InverseProperty("Fbo")]
-        public ICollection<Fboprices> Fboprices { get; set; }
+        //[InverseProperty("Fbo")]
+        //public ICollection<Fboprices> Fboprices { get; set; }
     }
 }

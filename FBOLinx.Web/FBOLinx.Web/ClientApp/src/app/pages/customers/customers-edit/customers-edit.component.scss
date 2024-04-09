@@ -5,10 +5,9 @@
     .stickyStyle {
         padding-bottom: 10px;
         padding-top: 5px;
-        background-color: #f8f8f8;
+        //background-color: #f8f8f8;
         z-index: 900;
     }
-
 
     .card-container-right {
         display: inline;
@@ -17,6 +16,22 @@
 
     .card-container-left {
         display: inline;
+    }
+
+    .notes-label {
+        padding-left: 15px;
+
+        label {
+            color: rgba(0, 0, 0, 0.54);
+        }
+    }
+
+    .notes-textarea {        
+        height: 340px;
+        width: 100%;
+        border: 1px solid lightgray;
+        margin-top: -25px;
+        padding: 5px;
     }
 
     ::ng-deep {
@@ -41,6 +56,11 @@
     }
 }
 
+::ng-deep .hide-checkbox .mat-pseudo-checkbox {
+    display: none;
+}
+
+
 .edit-customer-content .mat-tab-body-content {
     overflow: initial !important;
 }
@@ -53,3 +73,14 @@
 .edit-customer-content .mat-tab-body {
     overflow: initial !important;
 }
+
+::ng-deep .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+    background: #2196f3;
+}
+
+.focus  .ui-dropdown, .focus  .ui-multiselect {
+    -moz-box-shadow: 0px 0px 5px #1f89ce;
+    -webkit-box-shadow: 0px 0px 5px #1f89ce;
+    box-shadow: 0px 0px 5px #1f89ce;
+}
+

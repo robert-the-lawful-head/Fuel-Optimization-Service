@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { MatDialog, } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 // Services
 import { UserService } from '../../../services/user.service';
 
 @Component({
     selector: 'app-users-home',
+    styleUrls: ['./users-home.component.scss'],
     templateUrl: './users-home.component.html',
-    styleUrls: [ './users-home.component.scss' ],
 })
 export class UsersHomeComponent implements OnInit {
     // Input/Output Bindings
@@ -21,8 +21,7 @@ export class UsersHomeComponent implements OnInit {
     constructor(
         public newUserDialog: MatDialog,
         private userService: UserService
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         this.loadInitialData();

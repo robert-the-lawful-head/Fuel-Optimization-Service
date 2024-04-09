@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>Notice of Changes to Terms and Conditions</h1>
+<div class="mt-1 mb-2" mat-dialog-content>
+    <div class="text-center">
+        By continuing to use FBOLinx you are consenting to the
+        <a href="{{data.eulaDocument?.document}}" target="_blank">Terms</a> and our
+        <a href="https://www.iubenda.com/privacy-policy/15357855" target="_blank">Privacy Policy</a> and
+        <a href="https://www.iubenda.com/privacy-policy/15357855/cookie-policy" target="_blank">Cookie Policy</a>.
+    </div>
+</div>
+
+<div mat-dialog-actions>
+    <button [mat-dialog-close]="true" (click)="decline()" mat-stroked-button>
+        Decline
+    </button>
+    <button
+        (click)="accept()"
+        class="mr-1"
+        color="accent"
+        mat-raised-button
+    >
+        Accept
+    </button>
+</div>

@@ -1,30 +1,16 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DocumentTypeEnum, DocumentTypeEnumDescription } from 'src/app/enums/documents..enum';
+import { DocumentService } from 'src/app/services/documents.service';
 
 // Services
 import { GroupsService } from '../../../services/groups.service';
 
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'Groups',
-        link: '/default-layout/groups',
-    },
-    {
-        title: 'Edit Group',
-        link: '',
-    },
-];
-
 @Component({
     selector: 'app-groups-edit',
+    styleUrls: ['./groups-edit.component.scss'],
     templateUrl: './groups-edit.component.html',
-    styleUrls: [ './groups-edit.component.scss' ],
 })
 export class GroupsEditComponent implements OnInit {
     @Output() cancelClicked = new EventEmitter<any>();
@@ -32,17 +18,19 @@ export class GroupsEditComponent implements OnInit {
 
     // Public Members
     public pageTitle = 'Edit FBO';
-    public breadcrumb: any[] = BREADCRUMBS;
+
     public currentContact: any;
     public contactsData: any;
+    public documents: any;
+    public policyAndAgreementGroupExemptions: any;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private groupsService: GroupsService,
+        private documentService: DocumentService,
         private snackBar: MatSnackBar
-    ) {
-    }
+    ) {}
 
     ngOnInit() {
         const id = this.route.snapshot.paramMap.get('id');
@@ -50,24 +38,29 @@ export class GroupsEditComponent implements OnInit {
             this.groupsService.get({ oid: id }).subscribe((data: any) => {
                 this.groupInfo = data;
             });
+            this.documentService.getRecentsAvailableDocuments(Number(id)).subscribe((data: any) => {
+                this.documents = data;
+            });
         }
         if (sessionStorage.getItem('isNewFbo')) {
             sessionStorage.removeItem('isNewFbo');
         }
     }
-
     // Public Methods
-    public saveEdit() {
-        this.groupsService.update(this.groupInfo).subscribe(() => {
-            this.snackBar.open('Successfully updated!', '', {
-                duration: 2000,
-                panelClass: [ 'blue-snackbar' ],
-            });
-            this.router.navigate([ '/default-layout/groups/' ]);
+    public async saveEdit() {
+        await this.groupsService.update(this.groupInfo).toPromise();
+        await this.documentService.updateExemptedDocuments(this.groupInfo.oid, this.documents).toPromise();
+        this.snackBar.open('Successfully updated!', '', {
+            duration: 2000,
+            panelClass: ['blue-snackbar'],
         });
+        this.router.navigate(['/default-layout/groups/']);
     }
 
     public cancelEdit() {
-        this.router.navigate([ '/default-layout/groups/' ]);
+        this.router.navigate(['/default-layout/groups/']);
+    }
+    public getDocumentType(documentType: DocumentTypeEnum){
+        return DocumentTypeEnumDescription[documentType];
     }
 }

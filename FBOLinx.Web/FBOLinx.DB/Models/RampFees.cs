@@ -1,7 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using FBOLinx.Core.Enums;
 
 namespace FBOLinx.DB.Models
 {
@@ -11,27 +11,11 @@ namespace FBOLinx.DB.Models
         private int? _CategoryMinValue;
         private string _CategoryDescription = "";
 
-        public enum RampFeeCategories: short
-        {
-            [Description("Not Set")]
-            Notset = 0,
-            [Description("Aircraft Size")]
-            AircraftSize = 1,
-            [Description("Aircraft Type")]
-            AircraftType = 2,
-            [Description("Weight Range")]
-            WeightRange = 3,
-            [Description("Wingspan")]
-            Wingspan = 4,
-            [Description("Tailnumber")]
-            TailNumber = 5
-        }
-
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
         public double? Price { get; set; }
-        public AirCrafts.AircraftSizes? Size { get; set; }
+        public AircraftSizes? Size { get; set; }
         public double? Waived { get; set; }
         [Column("FBOID")]
         public int? Fboid { get; set; }
@@ -40,7 +24,7 @@ namespace FBOLinx.DB.Models
         {
             get
             {
-                if ((!_CategoryType.HasValue || _CategoryType.Value == RampFeeCategories.Notset) && (Size.HasValue && Size.Value != AirCrafts.AircraftSizes.NotSet))
+                if ((!_CategoryType.HasValue || _CategoryType.Value == RampFeeCategories.Notset) && (Size.HasValue && Size.Value != AircraftSizes.NotSet))
                     return RampFeeCategories.AircraftSize;
                 return _CategoryType;
             }
@@ -70,7 +54,7 @@ namespace FBOLinx.DB.Models
             get
             {
                 if (CategoryType.GetValueOrDefault() == RampFeeCategories.AircraftSize)
-                    return FBOLinx.Core.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes) CategoryMinValue);
+                    return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription((AircraftSizes) CategoryMinValue);
                 return "";
             }
         }
@@ -81,7 +65,7 @@ namespace FBOLinx.DB.Models
             get
             {
                 if (string.IsNullOrEmpty(_CategoryDescription))
-                    return FBOLinx.Core.Utilities.Enum.GetDescription(CategoryType.GetValueOrDefault());
+                    return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(CategoryType.GetValueOrDefault());
                 return _CategoryDescription;
             }
             set
@@ -99,7 +83,7 @@ namespace FBOLinx.DB.Models
                     case RampFeeCategories.AircraftType:
                         return "Applies to all  " + CategoryDescription + ".";
                     case RampFeeCategories.AircraftSize:
-                        return "Applies to all aircraft with the size: " + FBOLinx.Core.Utilities.Enum.GetDescription((AirCrafts.AircraftSizes)(System.Convert.ToInt16(CategoryMinValue))) + ".";
+                        return "Applies to all aircraft with the size: " + FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription((AircraftSizes)(System.Convert.ToInt16(CategoryMinValue))) + ".";
                     case RampFeeCategories.TailNumber:
                         return "Applies to the following tails: " + CategoryStringValue;
                     case RampFeeCategories.WeightRange:

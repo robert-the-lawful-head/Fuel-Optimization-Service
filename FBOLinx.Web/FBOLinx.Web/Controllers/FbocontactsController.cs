@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,22 +13,23 @@ using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
-using IO.Swagger.Model;
+using Fuelerlinx.SDK;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FbocontactsController : ControllerBase
+    public class FbocontactsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly FuelerLinxService _fuelerLinxService;
+        private readonly FuelerLinxApiService _fuelerLinxApiService;
 
-        public FbocontactsController(FboLinxContext context, FuelerLinxService fuelerLinxService)
+        public FbocontactsController(FboLinxContext context, FuelerLinxApiService fuelerLinxApiService, ILoggingService logger) : base(logger)
         {
             _context = context;
-            _fuelerLinxService = fuelerLinxService;
+            _fuelerLinxApiService = fuelerLinxApiService;
         }
 
         // GET: api/Fbocontacts/fbo/5
@@ -162,7 +164,7 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpPost("fbo/{fboId}/update-fuel-vendor")]
-        public IActionResult UpdateFuelVendor([FromRoute] int fboId)
+        public async Task<IActionResult> UpdateFuelVendor([FromRoute] int fboId)
         {
             if (!ModelState.IsValid)
             {
@@ -184,7 +186,7 @@ namespace FBOLinx.Web.Controllers
                 Email = fbo.FuelDeskEmail
             };
 
-            var response = _fuelerLinxService.UpdateFuelVendorEmails(request);
+            var response = await _fuelerLinxApiService.UpdateFuelVendorEmails(request);
 
             return Ok(response);
         }

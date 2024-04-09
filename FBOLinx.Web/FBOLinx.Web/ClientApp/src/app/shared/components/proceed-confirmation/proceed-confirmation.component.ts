@@ -1,17 +1,19 @@
 import { Component, Inject, Input } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface ProceedConfirmationData {
     description: string;
-    itemsList: string[];
+    tableItemsList: string[];
     buttonText: string;
     title: string;
+    additionalInfo: string;
+    listItemsList: string[];
 }
 
 @Component({
     selector: 'app-proceed-confirmation',
+    styleUrls: ['./proceed-confirmation.component.scss'],
     templateUrl: './proceed-confirmation.component.html',
-    styleUrls: [ './proceed-confirmation.component.scss' ],
 })
 export class ProceedConfirmationComponent {
     @Input() buttonText = 'Confirm';

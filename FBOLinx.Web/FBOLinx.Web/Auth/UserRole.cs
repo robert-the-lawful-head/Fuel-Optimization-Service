@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Http;
+using FBOLinx.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -14,7 +10,7 @@ namespace FBOLinx.Web.Auth
 {
     public class UserRoleAttribute : TypeFilterAttribute
     {
-        public UserRoleAttribute(params User.UserRoles[] roles) : base(typeof(UserRoleActionFilter))
+        public UserRoleAttribute(params UserRoles[] roles) : base(typeof(UserRoleActionFilter))
         {
             Arguments = new object[] {roles};
         }
@@ -22,9 +18,9 @@ namespace FBOLinx.Web.Auth
 
     public class UserRoleActionFilter : IAsyncActionFilter
     {
-        private readonly User.UserRoles[] _Roles;
+        private readonly UserRoles[] _Roles;
 
-        public UserRoleActionFilter(User.UserRoles[] roles)
+        public UserRoleActionFilter(UserRoles[] roles)
         {
             _Roles = roles;
         }
@@ -32,7 +28,7 @@ namespace FBOLinx.Web.Auth
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var currentRole = context.HttpContext.User.Claims.FirstOrDefault((c => c.Type == ClaimTypes.Role));
-            if (currentRole == null || !_Roles.Contains((User.UserRoles) System.Convert.ToInt16(currentRole.Value)))
+            if (currentRole == null || !_Roles.Contains((UserRoles) System.Convert.ToInt16(currentRole.Value)))
                 context.Result = new UnauthorizedResult();
             else
                 await next();

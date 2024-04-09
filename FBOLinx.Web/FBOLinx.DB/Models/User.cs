@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FBOLinx.Core.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -8,22 +9,6 @@ namespace FBOLinx.DB.Models
 {
     public class User
     {
-        public enum UserRoles : short
-        {
-            [Description("Not set")]
-            NotSet = 0,
-            [Description("Primary")]
-            Primary = 1,
-            [Description("Group Admin")]
-            GroupAdmin = 2,
-            [Description("Conductor")]
-            Conductor = 3,
-            [Description("Member")]
-            Member = 4,
-            [Description("CSR")]
-            CSR = 5
-        }
-
         [Key]
         [Column("OID")]
         public int Oid { get; set; }
@@ -37,7 +22,7 @@ namespace FBOLinx.DB.Models
         public long? LoginCount { get;set; }
         public int? AddOnMarginTries { get; set; }
         public bool? GoOverTutorial { get; set; }
-        public bool? Active { get; set; }
+        public bool? Active { get; set; } = true;
         public string ResetPasswordToken { get; set; }
         public DateTime? ResetPasswordTokenExpiration { get; set; }
         public UserRoles Role { get; set; }
@@ -60,7 +45,7 @@ namespace FBOLinx.DB.Models
         public ICollection<AccessTokens> AccessTokens { get; set; }
         public string RoleDescription
         {
-            get { return FBOLinx.Core.Utilities.Enum.GetDescription(Role); }
+            get { return FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescription(Role); }
         }
     }
 }

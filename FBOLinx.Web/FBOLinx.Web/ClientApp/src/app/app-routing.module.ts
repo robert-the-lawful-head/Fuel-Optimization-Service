@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
+// Guards
+import { AuthGuard } from './guards';
 // Layout Components
 import { DefaultLayoutComponent } from './layouts/default/default.component';
 import { LandingSiteLayoutComponent } from './layouts/landing-site/landing-site.component';
-
+import { OutsideTheGateLayoutComponent } from './layouts/outside-the-gate/outside-the-gate.component';
+import { AnalyticsHomeComponent } from './pages/analytics/analytics-home/analytics-home.component';
 // Page Components
 import { AuthtokenComponent } from './pages/auth/authtoken/authtoken.component';
 import { LoginComponent } from './pages/auth/login/login.component';
@@ -12,202 +15,264 @@ import { ResetPasswordComponent } from './pages/auth/reset-password/reset-passwo
 import { CustomersEditComponent } from './pages/customers/customers-edit/customers-edit.component';
 import { CustomersHomeComponent } from './pages/customers/customers-home/customers-home.component';
 import { DashboardFboComponent } from './pages/dashboards/dashboard-fbo/dashboard-fbo.component';
+import { DashboardFboUpdatedComponent } from './pages/dashboards/dashboard-fbo-updated/dashboard-fbo-updated.component';
 import { DashboardHomeComponent } from './pages/dashboards/dashboard-home/dashboard-home.component';
+import { EmailTemplatesEditComponent } from './pages/email-templates/email-templates-edit/email-templates-edit.component';
+import { EmailTemplatesHomeComponent } from './pages/email-templates/email-templates-home/email-templates-home.component';
 import { FboPricesHomeComponent } from './pages/fbo-prices/fbo-prices-home/fbo-prices-home.component';
-import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
 import { FbosEditComponent } from './pages/fbos/fbos-edit/fbos-edit.component';
+import { FbosHomeComponent } from './pages/fbos/fbos-home/fbos-home.component';
+import { FlightWatchComponent } from './pages/flight-watch/flight-watch.component';
 import { FuelreqsHomeComponent } from './pages/fuelreqs/fuelreqs-home/fuelreqs-home.component';
+import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
+import { GroupCustomersHomeComponent } from './pages/group-customers/group-customers-home/group-customers-home.component';
 import { GroupsEditComponent } from './pages/groups/groups-edit/groups-edit.component';
 import { GroupsHomeComponent } from './pages/groups/groups-home/groups-home.component';
 import { PricingTemplatesEditComponent } from './pages/pricing-templates/pricing-templates-edit/pricing-templates-edit.component';
 import { PricingTemplatesHomeComponent } from './pages/pricing-templates/pricing-templates-home/pricing-templates-home.component';
 import { RampFeesHomeComponent } from './pages/ramp-fees/ramp-fees-home/ramp-fees-home.component';
-import { AnalyticsHomeComponent } from './pages/analytics/analytics-home/analytics-home.component';
 import { UsersEditComponent } from './pages/users/users-edit/users-edit.component';
 import { UsersHomeComponent } from './pages/users/users-home/users-home.component';
-import { GroupAnalyticsHomeComponent } from './pages/group-analytics/group-analytics-home/group-analytics-home.component';
-import { FlightWatchComponent } from './pages/flight-watch/flight-watch/flight-watch.component';
+import { FboGeofencingHomeComponent } from './pages/fbo-geofencing/fbo-geofencing-home/fbo-geofencing-home.component';
+import { AntennaStatusHomeComponent } from './pages/antenna-status/antenna-status-home/antenna-status-home.component';
+import { LobbyViewComponent } from './pages/lobby-view/lobby-view.component';
+import { PublicViewComponent } from './layouts/public-view/public-view.component';
+import { AboutFbolinxComponent } from './pages/about-fbolinx/about-fbolinx.component';
+import { ServiceOrdersHomeComponent } from './pages/service-orders/service-orders-home/service-orders-home.component';
+import { ServicesAndFeesComponent } from './pages/services-and-fees/services-and-fees.component';
+import { ServicesAndFeesHomeComponent } from './pages/services-and-fees-home/services-and-fees-home.component';
 
-// Guards
-import { AuthGuard } from './guards';
-import { EmailTemplatesEditComponent } from
-    "./pages/email-templates/email-templates-edit/email-templates-edit.component";
-import { EmailTemplatesHomeComponent } from
-    "./pages/email-templates/email-templates-home/email-templates-home.component";
 const defaultRoutes: Routes = [
     {
-        path: 'customers',
+        canActivate: [AuthGuard],
         component: CustomersHomeComponent,
-        canActivate: [AuthGuard],
+        path: 'customers',
     },
     {
-        path: 'customers/:id',
+        canActivate: [AuthGuard],
         component: CustomersEditComponent,
-        canActivate: [AuthGuard],
+        path: 'customers/:id',
     },
     {
+        canActivate: [AuthGuard],
+        component: DashboardHomeComponent,
         path: 'dashboard',
-        component: DashboardHomeComponent,
-        canActivate: [AuthGuard],
     },
     {
+        canActivate: [AuthGuard],
+        component: DashboardFboComponent,
         path: 'dashboard-fbo',
-        component: DashboardFboComponent,
-        canActivate: [AuthGuard],
     },
     {
+        canActivate: [AuthGuard],
+        component: DashboardFboUpdatedComponent,
+        path: 'dashboard-fbo-updated',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: DashboardFboUpdatedComponent,
         path: 'dashboard-csr',
-        component: DashboardFboComponent,
-        canActivate: [AuthGuard],
     },
     {
-        path: 'fbo-prices',
+        canActivate: [AuthGuard],
         component: FboPricesHomeComponent,
-        canActivate: [AuthGuard],
+        path: 'fbo-prices',
     },
     {
-        path: 'groups',
+        canActivate: [AuthGuard],
         component: GroupsHomeComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [3],
         },
+        path: 'groups',
     },
     {
-        path: 'groups/:id',
+        canActivate: [AuthGuard],
         component: GroupsEditComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [3],
         },
+        path: 'groups/:id',
     },
     {
-        path: 'fbos',
+        canActivate: [AuthGuard],
         component: FbosHomeComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [2, 3],
         },
+        path: 'fbos',
     },
     {
-        path: 'fbos/:id',
+        canActivate: [AuthGuard],
         component: FbosEditComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [2, 3],
         },
+        path: 'fbos/:id',
     },
     {
-        path: 'group-analytics',
+        canActivate: [AuthGuard],
+        component: FboGeofencingHomeComponent,
+        data: {
+            expectedRoles: [3],
+        },
+        path: 'fbo-geofencing',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: AntennaStatusHomeComponent,
+        data: {
+            expectedRoles: [3],
+        },
+        path: 'antenna-status',
+    },
+    {
+        canActivate: [AuthGuard],
         component: GroupAnalyticsHomeComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [2, 3],
         },
+        path: 'group-analytics',
     },
     {
-        path: 'fuelreqs',
-        component: FuelreqsHomeComponent,
         canActivate: [AuthGuard],
+        component: GroupCustomersHomeComponent,
+        data: {
+            expectedRoles: [2, 3],
+        },
+        path: 'group-customers',
     },
     {
-        path: 'pricing-templates',
+        canActivate: [AuthGuard],
+        component: FuelreqsHomeComponent,
+        path: 'fuelreqs',
+    },
+    {
+        canActivate: [AuthGuard],
         component: PricingTemplatesHomeComponent,
-        canActivate: [AuthGuard],
+        path: 'pricing-templates',
     },
     {
-        path: 'pricing-templates/:id',
+        canActivate: [AuthGuard],
         component: PricingTemplatesEditComponent,
-        canActivate: [AuthGuard],
+        path: 'pricing-templates/:id',
     },
     {
-        path: 'email-templates',
+        canActivate: [AuthGuard],
         component: EmailTemplatesHomeComponent,
-        canActivate: [AuthGuard],
+        path: 'email-templates',
     },
     {
-        path: 'email-templates/:id',
+        canActivate: [AuthGuard],
         component: EmailTemplatesEditComponent,
-        canActivate: [AuthGuard],
+        path: 'email-templates/:id',
     },
     {
-        path: 'fuelreqs',
-        component: FuelreqsHomeComponent,
         canActivate: [AuthGuard],
+        component: ServicesAndFeesHomeComponent,
+        path: 'services-and-fees',
     },
     {
-        path: 'rampfees',
-        component: RampFeesHomeComponent,
         canActivate: [AuthGuard],
-    },
-    {
-        path: 'analytics',
         component: AnalyticsHomeComponent,
-        canActivate: [AuthGuard],
+        path: 'analytics',
     },
     {
-        path: 'users',
+        canActivate: [AuthGuard],
         component: UsersHomeComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [1, 2, 3],
         },
+        path: 'users',
     },
     {
-        path: 'users/:id',
+        canActivate: [AuthGuard],
         component: UsersEditComponent,
-        canActivate: [AuthGuard],
         data: {
             expectedRoles: [1, 2, 3],
         },
+        path: 'users/:id',
     },
     {
-        path: 'flight-watch',
-        component: FlightWatchComponent,
         canActivate: [AuthGuard],
+        component: FlightWatchComponent,
+        path: 'flight-watch',
     },
     {
-        path: '**',
+        canActivate: [AuthGuard],
+        component: AboutFbolinxComponent,
+        data: {
+            expectedRoles: [6],
+        },
+        path: 'about-fbolinx',
+    },
+    {
+        canActivate: [AuthGuard],
+        component: ServiceOrdersHomeComponent,
+        path: 'service-orders',
+    },
+    {
+        canActivate: [AuthGuard],
         component: DashboardHomeComponent,
-        canActivate: [AuthGuard]
+        path: '**',
+    }
+];
+
+const outsideTheGateRoutes: Routes = [
+    {
+        component: AuthtokenComponent,
+        path: 'auth',
     },
 ];
 
-const landingSiteRoutes: Routes = [{
-  path: 'authtoken/:token',
-  component: AuthtokenComponent,
-  data: {
-    expectedRoles: [],
-  },
-}, ];
+const publicViewRoutes: Routes = [
+    {
+        canActivate: [AuthGuard],
+        component: LobbyViewComponent,
+        path: 'lobby-view',
+    },
+];
 
-const routes: Routes = [{
-    path: '',
-    component: LandingSiteLayoutComponent,
-    children: landingSiteRoutes,
-  },
-  {
-    path: 'default-layout',
-    component: DefaultLayoutComponent,
-    children: defaultRoutes,
-  },
-  {
-    path: 'app-login',
-    component: LoginComponent,
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent
-  },
-  {
-    path: '**',
-    component: LandingSiteLayoutComponent,
-    children: landingSiteRoutes,
-  },
+const routes: Routes = [
+    {
+        component: LandingSiteLayoutComponent,
+        path: '',
+        //children: landingSiteRoutes,
+    },
+    {
+        children: defaultRoutes,
+        component: DefaultLayoutComponent,
+        path: 'default-layout',
+    },
+    {
+        children: publicViewRoutes,
+        component: PublicViewComponent,
+        path: 'public-layout',
+    },
+    {
+        children: outsideTheGateRoutes,
+        component: OutsideTheGateLayoutComponent,
+        path: 'outside-the-gate-layout',
+    },
+    {
+        component: LoginComponent,
+        path: 'app-login',
+    },
+    {
+        component: ResetPasswordComponent,
+        path: 'reset-password',
+    },
+    {
+        component: LandingSiteLayoutComponent,
+        path: '**',
+        //children: landingSiteRoutes,
+    },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
-  exports: [RouterModule]
+    exports: [RouterModule],
+    imports: [
+        RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }),
+    ],
 })
 export class AppRoutingModule {}

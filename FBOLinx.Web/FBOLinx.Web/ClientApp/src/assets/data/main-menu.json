@@ -4,6 +4,17 @@
         "groupTitle": true
     },
     {
+        "title": "About FBOLinx",
+        "icon": {
+            "class": "fa fa-home",
+            "bg": "#ea8080",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Know more about FBOLinx.",
+        "routing": "/default-layout/about-fbolinx",
+        "roles": []
+    },
+    {
         "title": "Dashboard",
         "icon": {
             "class": "fa fa-home",
@@ -11,8 +22,8 @@
             "color": "rgba(0,0,0,.87)"
         },
         "tooltip": "Enter your current retail and cost values and their effective dates, click Publish Live Pricing to stream to customers.",
-        "routing": "/default-layout/dashboard-fbo",
-        "roles": [ 1, 4 ]
+        "routing": "/default-layout/dashboard-fbo-updated",
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "CSR Dashboard",
@@ -23,6 +34,17 @@
         },
         "routing": "/default-layout/dashboard-csr",
         "roles": [ 5 ]
+    },
+    {
+        "title": "Flight Watch",
+        "icon": {
+            "class": "fa fa-eye",
+            "bg": "#7fadd4",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "tooltip": "Flight Watch",
+        "routing": "/default-layout/flight-watch",
+        "roles": [ 1, 4, 5, 6 ]
     },
     {
         "title": "FBO Group",
@@ -45,6 +67,16 @@
         "roles": [ 2 ]
     },
     {
+        "title": "Group Customers",
+        "icon": {
+            "class": "fa fa-group",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/group-customers",
+        "roles": [ 2 ]
+    },
+    {
         "title": "Groups",
         "icon": {
             "class": "fa fa-group",
@@ -55,7 +87,29 @@
         "roles": [ 3 ]
     },
     {
-        "title": "ITP Margin Templates",
+
+        "title": "FBO Geofencing",
+        "icon": {
+            "class": "fa fa-map-marker",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/fbo-geofencing",
+        "roles": [ 3 ]
+    },
+    {
+
+        "title": "Antenna Status",
+        "icon": {
+            "class": "fa fa-map-marker",
+            "bg": "#FFCCBC",
+            "color": "rgba(0,0,0,.87)"
+        },
+        "routing": "/default-layout/antenna-status",
+        "roles": [ 3 ]
+    },
+    {
+        "title": "ITP Margin Template",
         "icon": {
             "class": "fa fa-sitemap",
             "bg": "#C5CAE9",
@@ -63,7 +117,7 @@
         },
         "tooltip": "Create and manage margin templates for your customer.",
         "routing": "/default-layout/pricing-templates",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Email Templates",
@@ -74,7 +128,7 @@
         },
         "tooltip": "Create and manage emails for distribution.",
         "routing": "/default-layout/email-templates",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Customer Manager",
@@ -85,40 +139,29 @@
         },
         "tooltip": "Create, manage, and assign each customer or aircraft to a Margin template.",
         "routing": "/default-layout/customers",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6 ]
     },
     {
-        "title": "Fuel Orders",
+        "title": "Fuel & Service Orders",
         "icon": {
             "class": "fa fa-tags",
             "bg": "#B3E5FC",
             "color": "rgba(0,0,0,.87)"
         },
-        "tooltip": "See your incoming fuel orders.",
+        "tooltip": "See your incoming orders.",
         "routing": "/default-layout/fuelreqs",
-        "roles": [ 1, 4, 5 ]
+        "roles": [ 1, 4, 5, 6 ]
     },
     {
-        "title": "Ramp Fees",
+        "title": "Services & Fees Admin",
         "icon": {
             "class": "fa fa-plane",
             "bg": "rgb(255, 224, 130)",
             "color": "rgba(0,0,0,.87)"
         },
         "tooltip": "Enter and manage your fees.",
-        "routing": "/default-layout/rampfees",
-        "roles": [ 1, 4 ]
-    },
-    {
-        "title": "Flight Watch",
-        "icon": {
-            "class": "fa fa-eye",
-            "bg": "#7fadd4",
-            "color": "rgba(0,0,0,.87)"
-        },
-        "tooltip": "Flight Watch",
-        "routing": "/default-layout/flight-watch",
-        "roles": [ 1, 4 ]
+        "routing": "/default-layout/services-and-fees",
+        "roles": [ 1, 4, 6 ]
     },
     {
         "title": "Analytics",
@@ -129,6 +172,6 @@
         },
         "tooltip": "Analytics features graphs and statistics to help you better target customers and understand your business.",
         "routing": "/default-layout/analytics",
-        "roles": [ 1, 4 ]
+        "roles": [ 1, 4, 6]
     }
 ]

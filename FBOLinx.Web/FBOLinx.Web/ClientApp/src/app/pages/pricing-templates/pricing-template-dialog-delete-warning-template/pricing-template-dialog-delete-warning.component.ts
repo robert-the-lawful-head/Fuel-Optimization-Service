@@ -1,10 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
+import { PricingTemplate } from '../../../models';
+export interface PricingTemplatesDialogDeleteWarningComponentData {
+    action: string;
+    data: PricingTemplate[]
+}
 
 @Component({
     selector: 'app-pricing-templates-delete-warning-template',
+    styleUrls: ['./pricing-template-dialog-delete-warning.component.scss'],
     templateUrl: './pricing-template-dialog-delete-warning.component.html',
-    styleUrls: [ './pricing-template-dialog-delete-warning.component.scss' ],
 })
 export class PricingTemplatesDialogDeleteWarningComponent implements OnInit {
     public selectedTemplate: any;
@@ -13,11 +22,9 @@ export class PricingTemplatesDialogDeleteWarningComponent implements OnInit {
         public dialogRef: MatDialogRef<PricingTemplatesDialogDeleteWarningComponent>,
         @Inject(MAT_DIALOG_DATA) public data,
         public closeConfirmationDialog: MatDialog
-    ) {
-    }
+    ) { dialogRef.disableClose = true; }
 
-    ngOnInit() {
-    }
+    ngOnInit() {}
 
     onSelect() {
         if (this.selectedTemplate) {

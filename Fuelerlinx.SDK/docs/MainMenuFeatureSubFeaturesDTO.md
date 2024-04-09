@@ -5,7 +5,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **Dashboard** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
 **Integration** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
-**Transactions** | [**TransactionsDTO**](TransactionsDTO.md) |  | [optional] 
+**Transactions** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
 **Analysis** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
 **GroundControl** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 
 **Calendar** | [**MenuFeatureDTO**](MenuFeatureDTO.md) |  | [optional] 

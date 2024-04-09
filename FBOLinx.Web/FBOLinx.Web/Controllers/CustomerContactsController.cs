@@ -10,17 +10,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerContactsController : ControllerBase
+    public class CustomerContactsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomerContactsController(FboLinxContext context)
+        public CustomerContactsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -87,8 +88,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/CustomerContacts
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerContacts([FromBody] CustomerContacts customerContacts)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerContacts([FromRoute] int userId ,[FromBody] CustomerContacts customerContacts)
         {
             if (!ModelState.IsValid)
             {
@@ -96,14 +97,15 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.CustomerContacts.Add(customerContacts);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId);
+           
 
             return CreatedAtAction("GetCustomerContacts", new { id = customerContacts.Oid }, customerContacts);
         }
 
         // DELETE: api/CustomerContacts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomerContacts([FromRoute] int id)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteCustomerContacts([FromRoute] int id , [FromRoute] int userId)
         {
             if (!ModelState.IsValid)
             {
@@ -116,39 +118,42 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
-            _context.CustomerContacts.Remove(customerContacts);
-            await _context.SaveChangesAsync();
+             _context.CustomerContacts.Remove(customerContacts);
+            await _context.SaveChangesAsync(userId);
 
             return Ok(customerContacts);
         }
 
         // GET: api/CustomerContacts/group/5/fbo/6/pricingtemplate/7
         [HttpGet("group/{groupId}/fbo/{fboId}/pricingtemplate/{pricingTemplateId}")]
-        public IActionResult GetDistributionEmailCountByTemplate([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
+        public async Task<IActionResult> GetDistributionEmailsByTemplate([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int pricingTemplateId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var emails = (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
-                             join c in _context.Customers on cg.CustomerId equals c.Oid
-                             join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
-                             join ca in (from ca2 in (from ca in _context.CustomerAircrafts where ca.GroupId == groupId group ca by new { CustomerId = ca.CustomerId } into c select new { CustomerId = c.Key.CustomerId, cnt = c.Count() }) where ca2.cnt > 0 select ca2) on cg.CustomerId equals ca.CustomerId
-                             join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
-                             join co in _context.Contacts on custc.ContactId equals co.Oid
-                             join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
-                             where (cg.Active ?? false)
-                                   && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
-                                   && (cibg.CopyAlerts ?? false) == true
-                                   && !string.IsNullOrEmpty(cibg.Email)
-                                   && cibg.GroupId == groupId
-                                   && (c.Suspended ?? false) == false
-                             select co).Count();
+            var emails = await (from cg in _context.CustomerInfoByGroup.Where((x => x.GroupId == groupId))
+                                join c in _context.Customers on cg.CustomerId equals c.Oid
+                                join cc in _context.CustomCustomerTypes.Where(x => x.Fboid == fboId) on cg.CustomerId equals cc.CustomerId
+                                join custc in _context.CustomerContacts on c.Oid equals custc.CustomerId
+                                join co in _context.Contacts on custc.ContactId equals co.Oid
+                                join cibg in _context.ContactInfoByGroup on co.Oid equals cibg.ContactId
+                                join cibf in _context.Set<ContactInfoByFbo>() on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                from cibf in leftJoinCIBF.DefaultIfEmpty()
+                                where (cg.Active ?? false)
+                                      && (cc.CustomerType == pricingTemplateId || pricingTemplateId == 0)
+                                      && ((cibf.ContactId != null && (cibf.CopyAlerts ?? false)) || (cibf.ContactId == null && (cibg.CopyAlerts ?? false)))
+                                      && !string.IsNullOrEmpty(cibg.Email)
+                                      && cibg.GroupId == groupId
+                                      && (c.Suspended ?? false) == false
+                                select cibg.Email
+                                ).ToListAsync();
 
             return Ok(emails);
         }
 
+            
         private bool CustomerContactsExists(int id)
         {
             return _context.CustomerContacts.Any(e => e.Oid == id);

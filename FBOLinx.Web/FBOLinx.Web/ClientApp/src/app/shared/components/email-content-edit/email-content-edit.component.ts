@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ImageSettingsModel } from '@syncfusion/ej2-angular-richtexteditor';
 
 // Services
 import { EmailcontentService } from '../../../services/emailcontent.service';
@@ -14,18 +15,18 @@ export interface EmailContentDialogData {
 
 @Component({
     selector: 'app-email-content-edit',
+    styleUrls: ['./email-content-edit.component.scss'],
     templateUrl: './email-content-edit.component.html',
-    styleUrls: [ './email-content-edit.component.scss' ],
 })
 export class EmailContentEditComponent {
     public emailContentTypes: any[] = [];
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         public dialogRef: MatDialogRef<EmailContentEditComponent>,
         @Inject(MAT_DIALOG_DATA) public emailContent: EmailContentDialogData,
         private emailContentService: EmailcontentService
-    ) {
-    }
+    ) {}
 
     // Public Methods
     public onSaveChangesClick(): void {

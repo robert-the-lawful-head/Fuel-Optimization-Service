@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Models.Requests;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -11,22 +9,28 @@ using FBOLinx.Web.Models.Responses;
 using System;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Core.Enums;
+using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.ServiceLayer.BusinessServices.OAuth;
+using FBOLinx.Service.Mapping.Dto;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class OAuthController : ControllerBase
+    public class OAuthController : FBOLinxControllerBase
     {
         private readonly IUserService _userService;
         private readonly FboLinxContext _context;
-        private readonly OAuthService _oAuthService;
+        private readonly Services.OAuthService _oAuthService;
+        private readonly IOAuthService _iOAuthService;
 
-        public OAuthController(IUserService userService, OAuthService oAuthService, FboLinxContext context)
+        public OAuthController(IUserService userService, Services.OAuthService oAuthService, FboLinxContext context, ILoggingService logger, IOAuthService iOAuthService) : base(logger)
         {
             _userService = userService;
             _context = context;
+            _iOAuthService = iOAuthService;
             _oAuthService = oAuthService;
         }
 
@@ -50,14 +54,14 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Incorrect partner" });
             }
 
-            AccessTokens accessToken = await _oAuthService.GenerateAccessToken(user);
+            AccessTokensDto accessToken = await _iOAuthService.GenerateAccessToken(user.Oid, 10080);
 
             return Ok(accessToken);
         }
 
         [HttpPost("authtoken")]
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        //[APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<ActionResult<AuthTokenResponse>> GenerateAuthTokenFromAccessToken([FromBody] UserAuthTokenFromAccessTokenRequest request)
         {
             if (!ModelState.IsValid)
@@ -70,7 +74,7 @@ namespace FBOLinx.Web.Controllers
 
         [HttpPost("refreshtoken")]
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.OtherSoftware)]
+        [APIKey(IntegrationPartnerTypes.OtherSoftware)]
         public async Task<ActionResult<ExchangeRefreshTokenResponse>> RefreshAccessToken([FromBody] ExchangeRefreshTokenRequest request)
         {
             if (!ModelState.IsValid)

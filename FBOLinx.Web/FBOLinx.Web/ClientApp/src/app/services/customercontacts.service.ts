@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class CustomercontactsService {
@@ -19,40 +19,40 @@ export class CustomercontactsService {
         });
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload , userId) {
+        return this.http.post(this.accessPointUrl+'/'+userId, payload, {
             headers: this.headers,
         });
     }
 
-    public remove(payload) {
-        return this.http.delete(this.accessPointUrl + '/' + payload, {
+    public remove(payload , userId) {
+        return this.http.delete(this.accessPointUrl + '/' + payload+'/'+userId , {
             headers: this.headers,
         });
     }
 
-  public update(payload) {
-    return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
-      headers: this.headers,
-    });
-  }
+    public update(payload) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+            headers: this.headers,
+        });
+    }
 
-  public getCustomerEmailCountByGroupAndFBOAndPricing(
-    groupId,
-    fboId,
-    pricingTemplateId
-  ) {
-    return this.http.get(
-      this.accessPointUrl +
-      '/group/' +
-      groupId +
-      '/fbo/' +
-      fboId +
-      '/pricingtemplate/' +
-      pricingTemplateId,
-      {
-        headers: this.headers,
-      }
-    );
-  }
+    public getCustomerEmailsByGroupAndFBOAndPricing(
+        groupId: number,
+        fboId: number,
+        pricingTemplateId: number
+    ) {
+        return this.http.get(
+            this.accessPointUrl +
+                '/group/' +
+                groupId +
+                '/fbo/' +
+                fboId +
+                '/pricingtemplate/' +
+                pricingTemplateId,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 }

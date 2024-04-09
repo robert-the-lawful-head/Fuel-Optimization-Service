@@ -1,5 +1,5 @@
 .table-container {
-    height: calc(100vh - 357px);
+    height: calc(100vh - 265px);
 }
 
 .dropdownHeight {
@@ -49,6 +49,7 @@
     }
 }
 
+
 .table-column-filter {
     position: absolute;
     right: 0;
@@ -57,11 +58,9 @@
 
 .export-import-menu {
     position: absolute;
-    right: -40px;
-    top: 60px;
+    right: -30px;
+    top: 30px;
 }
-
-
 
 .bulk-update .mat-form-field-hide-placeholder .mat-select-placeholder {
     color: #2196f3;
@@ -78,8 +77,67 @@
     display: none;
 }
 
+.fuelvendors-dropdown-filter {
+    ::ng-deep {
+        .p-multiselect {
+            width: 17rem;
+
+            .p-multiselect-panel {
+                max-width: 100%;
+            }
+        }
+
+        .p-component {
+            font-size: 13px;
+
+            &.p-checkbox {
+                display: none;
+            }
+        }
+    }
+}
 
 
+select.select-dropdown {
+    background: #ffffff !important;
+    border: 1px solid #dadada !important;
+}
 
+.tags-dropdown-filter {
+    ::ng-deep {
+        .p-multiselect {
+            width: 16rem;
 
+            .p-multiselect-panel {
+                max-width: 100%;
+            }
+        }
 
+        .p-component {
+            font-size: 13px;
+
+            &.p-checkbox {
+                display: none;
+            }
+        }
+    }
+}
+
+.addCustom {
+    text-align: center;
+    padding: 8px;
+    background-color: whitesmoke;
+    font-weight: bold;
+}
+
+.focus  .ui-dropdown, .focus  .ui-multiselect {
+    -moz-box-shadow: 0px 0px 5px #1f89ce;
+    -webkit-box-shadow: 0px 0px 5px #1f89ce;
+    box-shadow: 0px 0px 5px #1f89ce;
+}
+
+.allInPrice {
+    background-color: #C5CAE9;
+    text-align: center;
+    width: 75px;
+}

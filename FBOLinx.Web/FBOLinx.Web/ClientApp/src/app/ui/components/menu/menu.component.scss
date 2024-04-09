@@ -35,6 +35,11 @@
                 }
 
                 .item-link {
+                    &.disabled{
+                        color: #BBBFC7;
+                        background-color: #F5F5F6;
+                    }
+                    flex-direction: row-reverse;
                     align-items: center;
                     background: menu(item-bg);
                     color: menu(item-color);
@@ -47,12 +52,21 @@
                     position: relative;
                     text-decoration: none;
                     transition: background 0.2s $animation,
-                    color 0.2s $animation;
+                        color 0.2s $animation;
+                    @media only screen and (max-width: 991px) {
+                        justify-content: center;
+                    }
 
                     .text {
                         flex-grow: 2;
                         flex-shrink: 1;
                         margin: 0 ($module-rem / 2);
+                        @media only screen and (max-width: 991px) {
+                            display: none;
+                        }
+                        .premium-icon{
+                            color: #ffe082;
+                        }
                     }
 
                     .item-badge {
@@ -108,6 +122,7 @@
                     }
                 }
 
+
                 &.menu-item-group {
                     &:after {
                         display: none;
@@ -119,7 +134,8 @@
                         font-size: 0.8rem;
                         font-weight: 600;
                         line-height: ($main-lh / 0.8);
-                        padding: ($module-rem * 1.5) ($module-rem * 2) ($module-rem / 2);
+                        padding: ($module-rem * 1.5) ($module-rem * 2)
+                            ($module-rem / 2);
                         text-transform: uppercase;
                     }
                 }
@@ -211,7 +227,7 @@
                                         > .item-link {
                                             &:before {
                                                 border-top-color: menu(
-                                                        separator
+                                                    separator
                                                 );
                                             }
                                         }

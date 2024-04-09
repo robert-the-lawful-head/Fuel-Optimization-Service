@@ -1,42 +1,49 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import { interval, Subscription } from 'rxjs';
 import * as XLSX from 'xlsx';
 
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { interval, Subscription } from 'rxjs';
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'Fuel Orders',
-        link: '/default-layout/fuelreqs',
-    },
-];
+import { ActivatedRoute } from '@angular/router';
+import * as SharedEvent from '../../../constants/sharedEvents';
+import { ServicesAndFeesService } from '../../../services/servicesandfees.service';
 
 @Component({
     selector: 'app-fuelreqs-home',
+    styleUrls: ['./fuelreqs-home.component.scss'],
     templateUrl: './fuelreqs-home.component.html',
-    styleUrls: [ './fuelreqs-home.component.scss' ],
 })
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
-    public pageTitle = 'Fuel Orders';
-    public breadcrumb: any[] = BREADCRUMBS;
+    public pageTitle = 'Fuel & Service Orders';
+    public breadcrumb: any[] = [
+        {
+            link: '/default-layout',
+            title: 'Main',
+        },
+        {
+            link: '/default-layout/fuelreqs',
+            title: 'Fuel & Service Orders',
+        },
+    ];
     public fuelreqsData: any[];
     public filterStartDate: Date;
     public filterEndDate: Date;
     public timer: Subscription;
+    public isFuelOrdersShowing: boolean = true;
+    public missedOrdersData: any[];
+    public selectedTabIndex: number = 0;
+    public resetMissedOrders: boolean = false;
+    public servicesAndFees: any[] = [];
 
     constructor(
         private fuelReqService: FuelreqsService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private route: ActivatedRoute,
+        private servicesAndFeesService: ServicesAndFeesService,
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
@@ -45,6 +52,13 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterEndDate = new Date(
             moment().add(30, 'd').format('MM/DD/YYYY')
         );
+
+        this.route.queryParams.subscribe((params) => {
+            if (params.tab && params.tab) {
+                this.selectedTabIndex = parseInt(params.tab);
+            }
+        });
+
         this.startFuelReqDataServe();
     }
 
@@ -52,7 +66,16 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.stopFuelReqDataServe();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
+        var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
+        servicesAndFees.forEach((service) => {
+            service.servicesAndFees.forEach((serviceAndFee) => {
+                if (serviceAndFee.isActive)
+                    this.servicesAndFees.push(serviceAndFee);
+            });
+        });
+
+        this.servicesAndFees.sort((a, b) => a.service.localeCompare(b.service));
         this.loadFuelReqs();
     }
 
@@ -77,39 +100,26 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
         this.filterStartDate = event.filterStartDate;
         this.filterEndDate = event.filterEndDate;
         this.restartFuelReqDataServe();
+        this.fuelreqsData = null;
         this.loadFuelReqs();
     }
 
-    public export(event) {
-        this.fuelReqService
-            .getForGroupFboAndDateRange(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                event.filterStartDate,
-                event.filterEndDate
-            )
-            .subscribe((data: any) => {
-                const exportData = _.map(data, (item) => ({
-                    'Flight Dept.': item.customerName,
-                    'ITP Margin Template': item.pricingTemplateName,
-                    ETA: item.eta,
-                    ETD: item.etd,
-                    'Volume (gal.)': item.quotedVolume,
-                    PPG: item.quotedPpg,
-                    'Tail #': item.tailNumber,
-                    Phone: item.phoneNumber,
-                    Source: item.source,
-                    Email: item.email,
-                    ID: item.oid,
-                    'Fuelerlinx ID': item.sourceId,
-                }));
-                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-                const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Fuel Orders');
+    onTabClick(event) {
+        if (event.tab.textLabel == "Fuel & Service Orders") {
+            this.isFuelOrdersShowing = true;
+            this.sharedService.emitChange(SharedEvent.resetMissedOrders);
+        }
+        else {
+            this.filterStartDate = new Date(
+                moment().add(-30, 'd').format('MM/DD/YYYY')
+            );
+            this.filterEndDate = new Date(
+                moment().add(30, 'd').format('MM/DD/YYYY')
+            );
 
-                /* save to file */
-                XLSX.writeFile(wb, 'FuelOrders.xlsx');
-            });
+            this.loadFuelReqs();
+            this.isFuelOrdersShowing = false;
+        }
     }
 
     // PRIVATE METHODS

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
-using FBOLinx.Web.Models;
 
 namespace FBOLinx.Web.ViewModels
 {
@@ -19,13 +16,13 @@ namespace FBOLinx.Web.ViewModels
         public int? FuelerLinxId { get; set; }
         public bool? Network { get; set; } = false;
         public int? GroupId { get; set; }
-        public PricingTemplate.MarginTypes? MarginType { get; set; }
+        public MarginTypes? MarginType { get; set; }
         public double? FboPrice { get; set; }
         public double? CustomerMarginAmount { get; set; }
         public bool NeedsAttention { get; set; }
         public string NeedsAttentionReason { get; set; }
         public string PricingTemplateName { get; set; }
-        public CustomerInfoByGroup.CertificateTypes? CertificateType { get; set; }
+        public CertificateTypes? CertificateType { get; set; }
         public double? MinGallons { get; set; }
         public double? MaxGallons { get; set; }
         public bool? IsFuelerLinxCustomer { get; set; }
@@ -44,13 +41,24 @@ namespace FBOLinx.Web.ViewModels
 
         public bool? Active { get; set; }
         public int AircraftsVisits { get; set; }
-
         public string CertificateTypeDescription
         {
             get
             {
-                return FBOLinx.Core.Utilities.Enum.GetDescription(CertificateType ?? CustomerInfoByGroup.CertificateTypes.NotSet);
+                return Core.Utilities.Enums.EnumHelper.GetDescription(CertificateType ?? CertificateTypes.NotSet);
             }
         }
+
+        public List<string> FuelVendors { get; set; }
+        public ICollection<CustomerTag> Tags { get; set; }
+        public string PricingFormula { get; set; }
+        public List<CustomerGridContactsViewModel> Contacts { get; set; }
+        public FboFavoriteCompany FavoriteCompany { get; set; }
+    }
+    public class CustomerGridContactsViewModel
+    {
+        public string Email { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

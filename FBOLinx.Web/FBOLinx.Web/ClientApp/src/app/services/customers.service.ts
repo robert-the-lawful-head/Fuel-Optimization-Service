@@ -1,5 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { Customer } from '../models/customer';
 
 @Injectable()
 export class CustomersService {
@@ -28,8 +30,8 @@ export class CustomersService {
         });
     }
 
-    public add(payload) {
-        return this.http.post(this.accessPointUrl, payload, {
+    public add(payload: Customer) {
+        return this.http.post<Customer>(this.accessPointUrl, payload, {
             headers: this.headers,
         });
     }

@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class RampfeesService {
@@ -17,12 +17,15 @@ export class RampfeesService {
         return this.http.get(this.accessPointUrl + '/fbo/' + payload.oid, {
             headers: this.headers,
         });
-  }
+    }
 
     public getForAircraft(fboId, tailNumber) {
-      return this.http.get(this.accessPointUrl + '/fbo/' + fboId + '/tail/' + tailNumber, {
-        headers: this.headers
-      });
+        return this.http.get(
+            this.accessPointUrl + '/fbo/' + fboId + '/tail/' + tailNumber,
+            {
+                headers: this.headers,
+            }
+        );
     }
 
     public get(payload) {

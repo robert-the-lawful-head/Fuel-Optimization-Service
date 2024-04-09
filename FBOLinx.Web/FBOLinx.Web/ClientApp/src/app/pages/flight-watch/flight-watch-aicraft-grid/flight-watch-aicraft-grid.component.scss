@@ -1,0 +1,11 @@
+.filter-container {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    position: absolute;
+    right: 20px;
+}
+
+.data-container {
+    height:50%;
+}

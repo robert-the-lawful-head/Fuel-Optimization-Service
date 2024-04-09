@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class CustomcustomertypesService {
@@ -40,8 +40,8 @@ export class CustomcustomertypesService {
         });
     }
 
-    public update(payload) {
-        return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
+    public update(payload , userId) {
+        return this.http.put(this.accessPointUrl + '/' + payload.oid+'/'+userId, payload, {
             headers: this.headers,
         });
     }

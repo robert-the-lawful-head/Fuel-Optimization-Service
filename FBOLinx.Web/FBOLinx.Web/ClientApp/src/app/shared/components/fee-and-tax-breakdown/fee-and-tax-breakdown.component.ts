@@ -1,55 +1,66 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-
 export enum FeeAndTaxBreakdownDisplayModes {
     PriceTaxBreakdown = 0,
     CustomerOmitting = 1,
-    PricingPanel = 2
+    PricingPanel = 2,
 }
 
 @Component({
     selector: 'fee-and-tax-breakdown',
+    styleUrls: ['./fee-and-tax-breakdown.component.scss'],
     templateUrl: './fee-and-tax-breakdown.component.html',
-    styleUrls: [ './fee-and-tax-breakdown.component.scss' ]
 })
 export class FeeAndTaxBreakdownComponent implements OnInit {
     @Input()
-    feesAndTaxes: Array<any>;
+      feesAndTaxes: Array<any>;
     @Input()
-    marginType: number;
+      marginType: number;
     @Input()
-    customerMargin: number;
+      customerMargin: number;
     @Input()
     showLineSeparator = false;
     @Input()
-    displayMode: FeeAndTaxBreakdownDisplayModes = FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
+    displayMode: FeeAndTaxBreakdownDisplayModes =
+        FeeAndTaxBreakdownDisplayModes.PriceTaxBreakdown;
     @Input()
-    fboPrice: number;
+       fboPrice: number;
     @Input()
-    validDepartureTypes: Array<number> = [ 0, 1, 2, 3 ];
+       validDepartureTypes: Array<number> = [0, 1, 2, 3];
     @Input()
-    validFlightTypes: Array<number> = [ 0, 1, 2, 3 ];
+       validFlightTypes: Array<number> = [0, 1, 2, 3];
+    @Input()
+       discountType : number;
+    @Input()
+        isMember: boolean;
     @Output()
-    omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
+       omitCheckChanged: EventEmitter<any> = new EventEmitter<any>();
 
     public aboveTheLineTaxes: Array<any> = [];
     public belowTheLineTaxes: Array<any> = [];
     public preMarginSubTotal = 0;
     public subTotalWithMargin = 0;
     public total = 0;
+    public marginITP : number = 0;
+    public subMargin : number = 0;
 
-    constructor() {
-    }
+    constructor() { }
 
     ngOnInit(): void {
         this.performRecalculation();
+        this.calcItpMargin()
+
     }
 
     public omitChanged(fee: any): void {
         this.omitCheckChanged.emit(fee);
+
     }
 
+
     public performRecalculation(): void {
+
+
         this.prepareTaxes();
         this.calculatePrices();
     }
@@ -59,15 +70,63 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         if (!this.feesAndTaxes) {
             return;
         }
-        this.aboveTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 0);
-        this.belowTheLineTaxes = this.feesAndTaxes.filter((tax) => tax.whenToApply === 1);
+        this.aboveTheLineTaxes = this.feesAndTaxes.filter(
+            (tax) => tax.whenToApply === 0
+        );
+        this.belowTheLineTaxes = this.feesAndTaxes.filter(
+            (tax) => tax.whenToApply === 1
+        );
     }
 
     private calculatePrices(): void {
+
         this.calculatePreMarginSubTotal();
+        this.calcItpMargin();
         this.calculateSubTotalWithMargin();
         this.calculateTotal();
     }
+
+    private calcItpMargin ()
+    {
+        //Cost+ Mode
+       if(this.marginType == 0)
+       {
+        if(this.discountType == 1)
+        {
+            this.marginITP = this.fboPrice *this.customerMargin /100;
+
+        }
+
+        else
+        {
+             this.marginITP = this.customerMargin ;
+
+
+        }
+
+        this.subTotalWithMargin = this.marginITP + this.preMarginSubTotal
+       }
+
+       // Retail- Mode
+       else
+       {
+        if(this.discountType == 1)
+        {
+            this.marginITP = this.fboPrice *this.customerMargin /100;
+
+        }
+
+        else
+        {
+             this.marginITP = this.customerMargin ;
+
+
+        }
+
+             this.subTotalWithMargin =  this.preMarginSubTotal - this.marginITP
+
+       }
+   }
 
     private calculatePreMarginSubTotal(): void {
         let result = this.fboPrice;
@@ -97,10 +156,42 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
         }
 
         this.subTotalWithMargin = 0;
-        if (this.marginType === 0) {
-            this.subTotalWithMargin = this.preMarginSubTotal + this.customerMargin;
-        } else if (this.marginType === 1) {
-            this.subTotalWithMargin = this.preMarginSubTotal - this.customerMargin;
+        if(this.marginType == 0)
+        {
+         if(this.discountType == 1)
+         {
+             this.marginITP = this.fboPrice *this.customerMargin /100;
+
+         }
+
+         else
+         {
+              this.marginITP = this.customerMargin ;
+
+
+         }
+
+         this.subTotalWithMargin = this.marginITP + this.preMarginSubTotal
+        }
+
+        // Retail- Mode
+        else
+        {
+         if(this.discountType == 1)
+         {
+             this.marginITP = this.fboPrice *this.customerMargin /100;
+
+         }
+
+         else
+         {
+              this.marginITP = this.customerMargin ;
+
+
+         }
+
+              this.subTotalWithMargin =  this.preMarginSubTotal - this.marginITP
+
         }
     }
 
@@ -122,13 +213,15 @@ export class FeeAndTaxBreakdownComponent implements OnInit {
     }
 
     private isFeeValidForTotal(fee: any): boolean {
-        if (fee.isOmitted) {
+        if (fee.isOmitted || (fee.omittedFor && fee.omittedFor.length > 0)) {
             return false;
         }
         if (this.validDepartureTypes.indexOf(fee.departureType) === -1) {
             return false;
         }
-        if (this.validFlightTypes.indexOf(fee.flightTypeClassification) === -1) {
+        if (
+            this.validFlightTypes.indexOf(fee.flightTypeClassification) === -1
+        ) {
             return false;
         }
         return true;

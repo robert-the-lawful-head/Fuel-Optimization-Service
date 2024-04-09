@@ -1,0 +1,83 @@
+
+<div *ngIf="isLoading" class="loading-spinner">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!isLoading">
+  <div class="dialog-title">
+      <span><strong>&nbsp;{{ aircraftWatch?.tailNumber }}&nbsp;</strong></span>
+  </div>
+  <div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Company</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.flightDepartment | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>FAA Registered Owner</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.faaRegisteredOwner | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Flight Number</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.atcFlightNumber| NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Make/Model</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.aircraftMakeModel | NullOrEmptyToDefault }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>On Ground</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.isAircraftOnGround }}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Last Quote</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.lastQuote}}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Origin</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.origin}}&nbsp;</p>
+        </div>
+    </div>
+    <div class="row-container">
+        <div class="column-container info-labels">
+            <p>Destination</p>
+        </div>
+        <div class="column-container info-values">
+            <p>{{ aircraftWatch?.destination}}&nbsp;</p>
+        </div>
+    </div>
+      <div class="row-container actions">
+        <div class="column-container info-labels">
+            <button mat-raised-button class="customer-manager-button" color="accent" [disabled]="!hasAircraft" (click)="goToCustomerManager(aircraftWatch.customerInfoByGroupId)"> Customer Manager</button>
+        </div>
+        <div class="column-container">
+            <button mat-raised-button color="accent" [disabled]="hasAircraft" (click)="addAircraft()">Add Aircraft</button>
+        </div>
+      </div>
+  </div>
+</div>

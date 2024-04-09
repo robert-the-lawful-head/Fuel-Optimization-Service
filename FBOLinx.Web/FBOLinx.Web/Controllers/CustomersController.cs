@@ -2,31 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using Microsoft.AspNetCore.Http;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.Web.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.DB.Models.AirCrafts;
-using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
+        private IFuelerLinxAccoutSyncingService _fuelerLinxAccoutSyncingService;
 
-        public CustomersController(FboLinxContext context, AircraftService aircraftService)
+        public CustomersController(FboLinxContext context, IAircraftService aircraftService, IFuelerLinxAccoutSyncingService fuelerLinxAccoutSyncingService, ILoggingService logger) : base(logger)
         {
+            _fuelerLinxAccoutSyncingService = fuelerLinxAccoutSyncingService;
             _context = context;
             _aircraftService = aircraftService;
         }
@@ -55,6 +58,51 @@ namespace FBOLinx.Web.Controllers
             }
 
             return Ok(customers);
+        }
+
+        /// <summary>
+        /// Fetch a customer by a given fuelerlinx id
+        /// </summary>
+        /// <param name="fuelerlinxid"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [APIKey(Core.Enums.IntegrationPartnerTypes.Internal)]
+        [HttpGet("getbyfuelerlinxid/{fuelerlinxid}")]
+        public async Task<IActionResult> GetCustomerByFuelerlinxId([FromRoute] int fuelerlinxid)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customer = await _context.Customers.Where(x => x.FuelerlinxId.HasValue && Math.Abs(x.FuelerlinxId.Value) == fuelerlinxid).FirstOrDefaultAsync();
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(customer);
+        }
+
+        /// <summary>
+        /// Sync a customer from fuelerlinx by it's fuelerlinx id
+        /// </summary>
+        /// <param name="fuelerLinxCompanyId"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpPost("sync-fuelerlinx-company/{fuelerLinxCompanyId}")]
+        public async Task<IActionResult> SyncCustomerFromFuelerLinx([FromRoute] int fuelerLinxCompanyId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fuelerLinxAccoutSyncingService.SyncFuelerLinxAccount(fuelerLinxCompanyId);
+
+            return Ok();
         }
 
         // PUT: api/Customers/5
@@ -174,7 +222,7 @@ namespace FBOLinx.Web.Controllers
 
                 if (custWithAircrafts.Count > 0)
                 {
-                    var aircraftSizes = FBOLinx.Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+                    var aircraftSizes = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(AircraftSizes));
 
                     foreach (var custPlane in custWithAircrafts)
                     {
@@ -189,7 +237,7 @@ namespace FBOLinx.Web.Controllers
                             ac.Size = acSize;
                         }
 
-                        await _aircraftService.AddAirCrafts(ac);
+                        await _aircraftService.AddAirCrafts(ac.Adapt<AirCraftsDto>());
 
                         if (ac.AircraftId != 0)
                         {

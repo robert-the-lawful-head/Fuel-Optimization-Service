@@ -2,40 +2,65 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
+using FBOLinx.ServiceLayer.BusinessServices.AirportWatch;
+using FBOLinx.ServiceLayer.BusinessServices.Integrations;
+using FBOLinx.ServiceLayer.DTO.Requests.Integrations.FuelerLinx;
 using FBOLinx.ServiceLayer.DTO.UseCaseModels.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Services;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using static FBOLinx.DB.Models.AirCrafts;
 using FBOLinx.Web.Auth;
 using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.DB.Specifications.CustomerAircraftNote;
+using FBOLinx.DB.Specifications.CustomerAircrafts;
+using FBOLinx.ServiceLayer.BusinessServices.Groups;
+using FBOLinx.ServiceLayer.DTO;
+using FBOLinx.ServiceLayer.BusinessServices.Favorites;
+using System.Security.Cryptography;
+using FBOLinx.Web.DTO;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerAircraftsController : ControllerBase
+    public class CustomerAircraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _HttpContextAccessor;
-        private readonly AircraftService _aircraftService;
-        private CustomerAircraftService _CustomerAircraftService;
+        private readonly IAircraftService _aircraftService;
+        private ICustomerAircraftService _CustomerAircraftService;
+        private IFuelerLinxAircraftSyncingService _fuelerLinxAircraftSyncingService;
+        private AirportWatchService _AirportWatchService;
+        private readonly IGroupCustomersService _GroupCustomersService;
+        private ICustomerAircraftNoteService _CustomerAircraftNoteService;
+        private IFboAircraftFavoritesService _fboAircraftFavoritesService;
 
-        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor, AircraftService aircraftService, CustomerAircraftService customerAircraftService)
+
+        public CustomerAircraftsController(FboLinxContext context, IHttpContextAccessor httpContextAccessor,
+            IAircraftService aircraftService, ICustomerAircraftService customerAircraftService,
+            IFuelerLinxAircraftSyncingService fuelerLinxAircraftSyncingService, AirportWatchService airportWatchService,
+            ILoggingService logger, IGroupCustomersService groupCustomersService,
+            ICustomerAircraftNoteService customerAircraftNoteService,
+            IFboAircraftFavoritesService fboAircraftFavoritesService
+        ) : base(logger)
         {
+            _CustomerAircraftNoteService = customerAircraftNoteService;
+            _fuelerLinxAircraftSyncingService = fuelerLinxAircraftSyncingService;
             _CustomerAircraftService = customerAircraftService;
             _HttpContextAccessor = httpContextAccessor;
             _context = context;
             _aircraftService = aircraftService;
+            _AirportWatchService = airportWatchService;
+            _GroupCustomersService = groupCustomersService;
+            _fboAircraftFavoritesService = fboAircraftFavoritesService;
         }
 
         [HttpGet]
@@ -53,38 +78,15 @@ namespace FBOLinx.Web.Controllers
             }
 
             var aircrafts = await _aircraftService.GetAllAircrafts();
-            var customAircraft = await _context.CustomerAircrafts.Where(x => x.Oid == id).ToListAsync();
+            var customAircraft = await _CustomerAircraftService.GetSingleBySpec(new CustomerAircraftSpecification(id));
 
-            if (customAircraft == null || customAircraft.Count == 0)
+
+            if (customAircraft == null || customAircraft.Oid == 0)
                 return NotFound();
-            
-            var result = (from ca in customAircraft
-                                join ac in aircrafts on ca.AircraftId equals ac.AircraftId into leftJoinAircrafts
-                                           from ac in leftJoinAircrafts.DefaultIfEmpty()
-                                           where ca.Oid == id
-                                           select new
-                                           {
-                                               ca.CustomerId,
-                                               ca.AircraftId,
-                                               ca.Oid,
-                                               Size = (ca.Size.HasValue && ca.Size.Value != AirCrafts.AircraftSizes.NotSet) || ac == null
-                                                   ? ca.Size
-                                                   : (AirCrafts.AircraftSizes)(ac.Size ?? 0),
-                                               ca.AddedFrom,
-                                               ca.NetworkCode,
-                                               ca.BasedPaglocation,
-                                               ca.TailNumber,
-                                               ca.GroupId,
-                                               ac.Make,
-                                               ac.Model
-                                           }).FirstOrDefault();
 
-            if (result == null)
-            {
-                return NotFound();
-            }
+            customAircraft.Aircraft = aircrafts.FirstOrDefault(x => x.AircraftId == customAircraft.AircraftId);
 
-            return Ok(result);
+            return Ok(customAircraft);
         }
 
         [HttpGet("group/{groupId}/fbo/{fboId}/customer/{customerId}")]
@@ -95,7 +97,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId, fboId, customerId);
             
             if (result == null)
                 return Ok(result);
@@ -111,10 +113,10 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (groupId != UserService.GetClaimedGroupId(_HttpContextAccessor))
+            if (groupId != JwtManager.GetClaimedGroupId(_HttpContextAccessor))
                 return BadRequest(ModelState);
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId);
 
             return Ok(result);
         }
@@ -122,7 +124,7 @@ namespace FBOLinx.Web.Controllers
         [HttpGet("group/{groupId}/fbo/{fboId}")]
         public async Task<IActionResult> GetCustomerAircraftsByGroupAndFbo([FromRoute] int groupId, [FromRoute] int fboId)
         {
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId, fboId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId, fboId);
             
             return Ok(result);
         }
@@ -143,13 +145,13 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _CustomerAircraftService.GetCustomerAircrafts(groupId);
+            var result = await _CustomerAircraftService.GetCustomerAircraftsWithDetails(groupId);
 
             return Ok(result?.Count);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id, [FromBody] CustomerAircraftsViewModel customerAircrafts)
+        [HttpPut("{id}/{userId}")]
+        public async Task<IActionResult> PutCustomerAircrafts([FromRoute] int id, [FromRoute] int userId, [FromBody] CustomerAircraftsViewModel customerAircrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -164,16 +166,17 @@ namespace FBOLinx.Web.Controllers
 
             try
             {
-                CustomerAircrafts custAircraft = _context.CustomerAircrafts.FirstOrDefault(s => s.Oid == customerAircrafts.Oid);
-
+                CustomerAircrafts custAircraft = await _context.CustomerAircrafts.FirstOrDefaultAsync(s => s.Oid == customerAircrafts.Oid);
+                 
                 if (custAircraft != null)
                 {
+                  
                     custAircraft.TailNumber = customerAircrafts.TailNumber;
                     custAircraft.AircraftId = customerAircrafts.AircraftId;
                     custAircraft.Size = customerAircrafts.Size;
                     _context.CustomerAircrafts.Update(custAircraft);
                 }
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId.GetValueOrDefault());
 
                 return Ok(custAircraft);
             }
@@ -243,6 +246,8 @@ namespace FBOLinx.Web.Controllers
 
                 await _context.SaveChangesAsync();
 
+                _CustomerAircraftService.ClearCache(request.GroupId.GetValueOrDefault(), fboid);
+
                 return Ok(custAircraft);
             }
             catch (Exception)
@@ -258,79 +263,144 @@ namespace FBOLinx.Web.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> PostCustomerAircrafts([FromBody] CustomerAircrafts customerAircrafts)
+        [HttpPost("{userId}")]
+        public async Task<IActionResult> PostCustomerAircraft([FromRoute] int userId , [FromBody] CustomerAircrafts customerAircrafts, bool isFavorite = false, int fboId = 0)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
+          
             _context.CustomerAircrafts.Add(customerAircrafts);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
+
+            if(isFavorite && fboId  > 0)
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircrafts.Oid, FboId = fboId }, customerAircrafts.GroupId);
+
+            _CustomerAircraftService.ClearCache(customerAircrafts.GroupId, fboId);
 
             return CreatedAtAction("GetCustomerAircrafts", new { id = customerAircrafts.Oid }, customerAircrafts);
         }
 
-        [HttpPost("create-with-customer")]
-        public async Task<IActionResult> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        [HttpPost("group/{groupId}/fbo/{fboId}/customer/{customerId}/multiple")]
+        public async Task<IActionResult> PostCustomerAircraftsWithTemplates([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId, [FromBody] List<CustomerAircraftsWithTemplateRequest> request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            using var transaction = _context.Database.BeginTransaction();
 
-            try
+            var customerAircrafts = request.Select(r => new CustomerAircrafts
             {
-                var customer = new Customers
-                {
-                    Company = request.Customer
-                };
+                GroupId = groupId,
+                CustomerId = customerId,
+                AircraftId = r.AircraftId,
+                Size = r.Size,
+                TailNumber = r.TailNumber,
+            }).ToList();
 
-                _context.Customers.Add(customer);
-                _context.SaveChanges();
+            _context.CustomerAircrafts.AddRange(customerAircrafts);
+            await _context.SaveChangesAsync();
 
-                var customerViewedByFbo = new CustomersViewedByFbo
-                {
-                    Fboid = request.FboId,
-                    CustomerId = customer.Oid,
-                    ViewDate = DateTime.Now,
-                };
-                _context.CustomersViewedByFbo.Add(customerViewedByFbo);
-
-                var customerInfoByGroup = new CustomerInfoByGroup
-                {
-                    GroupId = request.GroupId,
-                    Company = request.Customer,
-                    CustomerId = customer.Oid,
-                    Active = true,
-                };
-                _context.CustomerInfoByGroup.Add(customerInfoByGroup);
-
-
-                var customerAircraft = new CustomerAircrafts
-                {
-                    GroupId = request.GroupId,
-                    AircraftId = request.AircraftId,
-                    TailNumber = request.TailNumber,
-                    Size = request.Size,
-                    CustomerId = customer.Oid,
-                };
-                _context.CustomerAircrafts.Add(customerAircraft);
-
-                _context.SaveChanges();
-
-                await transaction.CommitAsync();
-
-                return Ok(customerInfoByGroup);
-            }
-            catch (Exception ex)
+            for(int i = 0; i< customerAircrafts.Count; i++)
             {
-                await transaction.RollbackAsync();
-
-                return BadRequest(ex);
+                if (request[i].PricingTemplateId > 0)
+                {
+                    AircraftPrices newAircraftPrice = new AircraftPrices
+                    {
+                        CustomerAircraftId = customerAircrafts[i].Oid,
+                        PriceTemplateId = request[i].PricingTemplateId
+                    };
+                    _context.AircraftPrices.Add(newAircraftPrice);
+                }
             }
+
+            await _context.SaveChangesAsync();
+
+            _CustomerAircraftService.ClearCache(groupId, fboId);
+
+            return Ok();
+        }
+
+        [HttpPost("create-with-customer")]
+        public async Task<ActionResult<CustomerWithAicraftDto>> PostCustomerAircraftsWithCustomer([FromBody] CreateAircraftsWithCustomerRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var customerInfoByGroup = new CustomerInfoByGroup
+            {
+                GroupId = request.GroupId,
+                Company = request.Customer,
+                Active = true,
+            };
+
+            var customerAircraft = new CustomerAircrafts
+            {
+                GroupId = request.GroupId,
+                AircraftId = request.AircraftId,
+                TailNumber = request.TailNumber,
+                Size = request.Size,
+            };
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                using var transaction = _context.Database.BeginTransaction();
+
+                try
+                {
+                    var customer = new Customers
+                    {
+                        Company = request.Customer
+                    };
+
+                    _context.Customers.Add(customer);
+                    _context.SaveChanges();
+
+                    var customerViewedByFbo = new CustomersViewedByFbo
+                    {
+                        Fboid = request.FboId,
+                        CustomerId = customer.Oid,
+                        ViewDate = DateTime.Now,
+                    };
+                    _context.CustomersViewedByFbo.Add(customerViewedByFbo);
+
+                    customerInfoByGroup.CustomerId = customer.Oid;
+
+                    _context.CustomerInfoByGroup.Add(customerInfoByGroup);
+
+                    customerAircraft.CustomerId = customer.Oid;
+
+                    _context.CustomerAircrafts.Add(customerAircraft);
+
+                    _context.SaveChanges();
+
+                    await transaction.CommitAsync();
+
+                    _CustomerAircraftService.ClearCache(request.GroupId, request.FboId);
+                }
+                catch (Exception ex)
+                {
+                    await transaction.RollbackAsync();
+
+                    throw new Exception(ex.Message,ex);
+                }
+            });
+
+            if(request.isFavoriteAircraft){
+                await _fboAircraftFavoritesService.AddAircraftFavorite(new FboFavoriteAircraft() { CustomerAircraftsId = customerAircraft.Oid, FboId = request.FboId }, customerAircraft.GroupId);
+            }
+
+            var result = new CustomerWithAicraftDto()
+            {
+                CustomerInfoByGroup = customerInfoByGroup,
+                CustomerAircraft = customerAircraft
+            };
+            return Ok(result);
         }
 
 
@@ -395,29 +465,184 @@ namespace FBOLinx.Web.Controllers
             return Ok(customerAircrafts);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCustomerAircraft([FromRoute] int id)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteCustomerAircraft([FromRoute] int id , [FromRoute] int userId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var customerAircrafts = await _context.CustomerAircrafts.FindAsync(id);
+            var customerAircrafts = await _context.CustomerAircrafts.Include(x => x.FavoriteAircraft).Where(x => x.Oid == id).FirstOrDefaultAsync();
             if (customerAircrafts == null)
             {
                 return NotFound();
             }
+            if(customerAircrafts?.FavoriteAircraft != null)
+                await _fboAircraftFavoritesService.DeleteAircraftFavorite(customerAircrafts.FavoriteAircraft.Oid, customerAircrafts.GroupId);
 
             _context.CustomerAircrafts.Remove(customerAircrafts);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId, customerAircrafts.CustomerId, customerAircrafts.GroupId);
 
             return Ok(customerAircrafts);
         }
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpPost("re-sync-group-customer-aircrafts/{groupId}")]
+        public async Task<IActionResult> ReSyncCustomerAircrafts([FromRoute] int groupId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _GroupCustomersService.StartAircraftTransfer(groupId, true);
+
+            return Ok();
+        }
+
+        [HttpGet("notes/{customerAircraftId}")]
+        public async Task<ActionResult<List<CustomerAircraftNoteDto>>> GetCustomerAircraftNotes([FromRoute] int customerAircraftId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircraftNotes = await _context.CustomerAircraftNotes.Where(s => s.CustomerAircraftId == customerAircraftId).ToListAsync();
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
+        [HttpGet("notes/tailnumber/{tailNumber}/groupId/{groupId}/customerid/{customerId}")]
+        public async Task<ActionResult<List<CustomerAircraftNoteDto>>> GetCustomerAircraftNotesByTailNumberGroupId([FromRoute] string tailNumber, [FromRoute] int groupId, [FromRoute] int customerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircrafts = await _CustomerAircraftService.GetListbySpec(new CustomerAircraftByGroupSpecification(new List<int>() { groupId }, customerId));
+                var customerAircraft = customerAircrafts.Where(c => c.TailNumber.ToLower() == tailNumber.ToLower()).FirstOrDefault();
+
+                var customerAircraftNotes = await _context.CustomerAircraftNotes.Where(s => s.CustomerAircraftId == customerAircraft.Oid).ToListAsync();
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
+        [HttpPost("notes")]
+        public async Task<ActionResult<CustomerAircraftNoteDto>> AddCustomerAircraftNotes(
+            [FromBody] CustomerAircraftNoteDto customerAircraftNotes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var existingRecords = await _CustomerAircraftNoteService.GetListbySpec(
+                    new CustomerAircraftNoteByCustomerAircraftIdSpecification(customerAircraftNotes
+                        .CustomerAircraftId));
+                var existingRecordForSameFbo =
+                    existingRecords.FirstOrDefault(x => x.FboId == customerAircraftNotes.FboId);
+
+                if (existingRecordForSameFbo != null)
+                    customerAircraftNotes.Oid = existingRecordForSameFbo.Oid;
+
+                customerAircraftNotes.LastUpdatedUtc = DateTime.UtcNow;
+
+                if (customerAircraftNotes.Oid > 0)
+                {
+                    await _CustomerAircraftNoteService.UpdateAsync(customerAircraftNotes);
+                }
+                else
+                {
+                    await _CustomerAircraftNoteService.AddAsync(customerAircraftNotes);
+                }
+                
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
+        [HttpPut("notes/{id}")]
+        public async Task<IActionResult> UpdateCustomerAircraftNotes([FromRoute] int id,
+            [FromBody] CustomerAircraftNoteDto customerAircraftNotes)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != customerAircraftNotes.Oid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                customerAircraftNotes.LastUpdatedUtc = DateTime.UtcNow;
+                await _CustomerAircraftNoteService.UpdateAsync(customerAircraftNotes);
+                return Ok(customerAircraftNotes);
+            }
+            catch (Exception ex)
+            {
+                HandleException(ex);
+                throw ex;
+            }
+        }
+
+        [HttpDelete("notes/{id}")]
+        public async Task<IActionResult> DeleteCustomerAircraftNotes([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var customerAircraftNotes = await _CustomerAircraftNoteService.FindAsync(id);
+                if (customerAircraftNotes == null)
+                {
+                    return NotFound();
+                }
+
+                await _CustomerAircraftNoteService.DeleteAsync(customerAircraftNotes);
+
+                return Ok(customerAircraftNotes);
+            }
+            catch (System.Exception exception)
+            {
+                HandleException(exception);
+                throw exception;
+            }
+        }
+
+
         #region Integration Partner APIs
         [AllowAnonymous]
-        [APIKey(IntegrationPartners.IntegrationPartnerTypes.Internal)]
+        [APIKey(IntegrationPartnerTypes.Internal)]
         [HttpPost("fuelerlinx-aircraft")]
         public async Task<IActionResult> FuelerLinxAircraft([FromBody] FuelerLinxAircraftRequest request)
         {
@@ -442,8 +667,44 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ex);
             }
         }
-        #endregion
 
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpPost("sync-fuelerlinx-aircraft/for-company/{fuelerLinxCompanyId}/for-tailnumber/{tailNumber}")]
+        public async Task<IActionResult> SyncCustomerAndAircraftFromFuelerLinx([FromRoute] int fuelerLinxCompanyId, [FromRoute] string tailNumber)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _fuelerLinxAircraftSyncingService.SyncFuelerlinxAircraft(fuelerLinxCompanyId, tailNumber);
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [APIKey(IntegrationPartnerTypes.Internal)]
+        [HttpGet("aircraft-locations/{fuelerlinxCustomerId}")]
+        public async Task<IActionResult> GetAircraftLocations([FromRoute] int fuelerlinxCustomerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            try
+            {
+                var result = await _AirportWatchService.GetAircraftLocations(fuelerlinxCustomerId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+        #endregion
+        
         private bool CustomerAircraftsExists(int id)
         {
             return _context.CustomerAircrafts.Any(e => e.Oid == id);

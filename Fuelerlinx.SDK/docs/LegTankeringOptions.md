@@ -7,6 +7,7 @@ Name | Type | Description | Notes
 **OmitFromFuelConsideration** | **bool?** | Omits the leg from consideration of a fuel uplift.  Will skip fueling in all scenarios. | [optional] 
 **LockedFuelAmount** | [**Weight**](Weight.md) |  | [optional] 
 **MinimumRequiredRampFuel** | [**Weight**](Weight.md) |  | [optional] 
+**MaximumRampFuel** | [**Weight**](Weight.md) |  | [optional] 
 **PriceSearchPreference** | **int?** | Overrides the trip-wide price search preference.  Set to 0 - Selected option only if you want to lock it to the selected option. | [optional] 
 **MinExtraReserve** | [**Weight**](Weight.md) |  | [optional] 
 

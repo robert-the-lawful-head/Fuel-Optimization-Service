@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace FBOLinx.DB.Models
 {
     [Table("FBOAirports")]
-    public partial class Fboairports
+    public partial class Fboairports : FBOLinxBaseEntityModel<int>
     {
         [Key]
         [Column("OID")]
@@ -20,7 +20,7 @@ namespace FBOLinx.DB.Models
         public bool? DefaultTemplate { get; set; }
 
         [ForeignKey("Fboid")]
-        [InverseProperty("fboAirport")]
+        [InverseProperty("FboAirport")]
         public Fbos Fbo { get; set; }
     }
 }

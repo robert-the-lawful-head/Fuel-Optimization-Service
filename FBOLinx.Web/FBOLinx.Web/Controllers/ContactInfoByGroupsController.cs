@@ -11,17 +11,18 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactInfoByGroupsController : ControllerBase
+    public class ContactInfoByGroupsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public ContactInfoByGroupsController(FboLinxContext context)
+        public ContactInfoByGroupsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -53,8 +54,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // GET: api/ContactInfoByGroups/5
-        [HttpGet("group/{groupId}/customer/{customerId}")]
-        public async Task<IActionResult> GetCustomerContactInfoByGroup([FromRoute] int groupId, [FromRoute] int customerId)
+        [HttpGet("group/{groupId}/fbo/{fboId}/customer/{customerId}")]
+        public async Task<IActionResult> GetCustomerContactInfoByGroup([FromRoute] int groupId, [FromRoute] int fboId, [FromRoute] int customerId)
         {
             if (!ModelState.IsValid)
             {
@@ -64,6 +65,8 @@ namespace FBOLinx.Web.Controllers
             var customerContactInfoByGroupVM = await (from cc in _context.CustomerContacts
                                                 join c in _context.Contacts on cc.ContactId equals c.Oid
                                                 join cibg in _context.ContactInfoByGroup on c.Oid equals cibg.ContactId
+                                                join cibf in _context.ContactInfoByFbo on new { ContactId = c.Oid, FboId = fboId } equals new { ContactId = cibf.ContactId.GetValueOrDefault(), FboId = cibf.FboId.GetValueOrDefault() } into leftJoinCIBF
+                                                from cibf in leftJoinCIBF.DefaultIfEmpty()
                                                 where cibg.GroupId == groupId
                                                 && cc.CustomerId == customerId
                                                 select new CustomerContactsByGroupGridViewModel()
@@ -84,7 +87,7 @@ namespace FBOLinx.Web.Controllers
                                                     State = cibg.State,
                                                     Country = cibg.Country,
                                                     Primary = cibg.Primary,
-                                                    CopyAlerts = cibg.CopyAlerts
+                                                    CopyAlerts = cibf.ContactId == null ? cibg.CopyAlerts : cibf.CopyAlerts
                                                 }).ToListAsync();
 
             return Ok(customerContactInfoByGroupVM);
@@ -126,8 +129,8 @@ namespace FBOLinx.Web.Controllers
         }
 
         // POST: api/ContactInfoByGroups
-        [HttpPost]
-        public async Task<IActionResult> PostContactInfoByGroup([FromBody] ContactInfoByGroup contactInfoByGroup)
+        [HttpPost("{userId}/customer/{customerId}")]
+        public async Task<IActionResult> PostContactInfoByGroup([FromRoute] int userId, [FromRoute] int customerId, [FromBody] ContactInfoByGroup contactInfoByGroup)
         {
             if (!ModelState.IsValid)
             {
@@ -135,14 +138,59 @@ namespace FBOLinx.Web.Controllers
             }
 
             _context.ContactInfoByGroup.Add(contactInfoByGroup);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId, customerId, contactInfoByGroup.GroupId);
 
             return CreatedAtAction("GetContactInfoByGroup", new { id = contactInfoByGroup.Oid }, contactInfoByGroup);
         }
 
+        [HttpPost("group/{groupId}/customer/{customerId}/multiple")]
+        public async Task<IActionResult> PostMultipleCustomerContacts([FromRoute] int groupId, [FromRoute] int customerId, [FromBody] List<Contacts> contacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Contacts.AddRange(contacts);
+            await _context.SaveChangesAsync();
+
+            var contactInfoByGroups = contacts.Select(contact => new ContactInfoByGroup
+            {
+                FirstName = contact.FirstName,
+                LastName = contact.LastName,
+                Email = contact.Email,
+                Address= contact.Address,
+                City = contact.City,
+                State = contact.State,
+                Phone = contact.Phone,
+                Mobile = contact.Mobile,
+                Title = contact.Title,
+                CopyAlerts = contact.CopyAlerts,
+                Primary = contact.Primary,
+                Extension = contact.Extension,
+                Fax = contact.Fax,
+                Country = contact.Country,
+                GroupId = groupId,
+                ContactId = contact.Oid,
+            }).ToList();
+
+            _context.ContactInfoByGroup.AddRange(contactInfoByGroups);
+            await _context.SaveChangesAsync();
+
+            var customerContacts = contactInfoByGroups.Select(cig => new CustomerContacts
+            {
+                CustomerId = customerId,
+                ContactId = cig.ContactId,
+            });
+            _context.CustomerContacts.AddRange(customerContacts);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
         // DELETE: api/ContactInfoByGroups/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteContactInfoByGroup([FromRoute] int id)
+        [HttpDelete("{id}/{userId}")]
+        public async Task<IActionResult> DeleteContactInfoByGroup([FromRoute] int id , [FromRoute] int userId)
         {
             if (!ModelState.IsValid)
             {
@@ -155,8 +203,10 @@ namespace FBOLinx.Web.Controllers
                 return NotFound();
             }
 
+            var customerContact = await _context.CustomerContacts.Where(c => c.ContactId == contactInfoByGroup.ContactId).FirstOrDefaultAsync();
             _context.ContactInfoByGroup.Remove(contactInfoByGroup);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(userId, customerContact.CustomerId, contactInfoByGroup.GroupId);
+
 
             return Ok(contactInfoByGroup);
         }

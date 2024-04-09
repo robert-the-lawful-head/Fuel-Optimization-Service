@@ -3,12 +3,19 @@
     <div>
         <div>
             <mat-form-field>
-                <input [(ngModel)]="data.name" aria-label="Customer Type" matInput placeholder="Customer Type">
+                <input
+                    [(ngModel)]="data.name"
+                    aria-label="Customer Type"
+                    matInput
+                    placeholder="Customer Type"
+                />
             </mat-form-field>
         </div>
         <div>
-            <mat-slide-toggle [(ngModel)]="data.allowMultiplePricingTemplates" color="accent">Has multiple margins (i.e.
-                commercial and private)
+            <mat-slide-toggle
+                [(ngModel)]="data.allowMultiplePricingTemplates"
+                color="accent"
+                >Has multiple margins (i.e. commercial and private)
             </mat-slide-toggle>
         </div>
     </div>
@@ -19,7 +26,8 @@
         class="mr-1"
         color="accent"
         mat-flat-button
-    >Add Type
+    >
+        Add Type
     </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

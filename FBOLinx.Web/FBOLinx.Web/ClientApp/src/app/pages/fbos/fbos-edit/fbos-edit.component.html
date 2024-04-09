@@ -1,13 +1,10 @@
-<ni-breadcrumb *ngIf="breadcrumb" [menu]="breadcrumb"></ni-breadcrumb>
-
-<div [ngClass]="{'after-breadcrumb': breadcrumb}">
-
-    <div *ngIf="!fboInfo || !fboAirportInfo">
+<section>
+    <div *ngIf="!fboInfo || !fboAirportInfo || !availableAntennas">
         <mat-spinner></mat-spinner>
     </div>
 
     <ni-card
-        *ngIf="fboInfo && fboAirportInfo"
+        *ngIf="fboInfo && fboAirportInfo && availableAntennas"
         [headerBgColor]="'info'"
         class="mb-0"
         title="FBO: {{ fboInfo.fbo }}"
@@ -77,6 +74,27 @@
                                            placeholder="Website" />
                                 </mat-form-field>
                             </div>
+                            <div class="col-md-6">
+                                <mat-form-field>
+                                    <input [(ngModel)]="fboInfo.website"
+                                           matInput
+                                           placeholder="Website" />
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-6">
+                                &nbsp;
+                            </div>
+                            <div class="col-md-6">
+                                <mat-label>Antenna Box Name</mat-label>
+                                <mat-form-field>
+                                    <mat-select [(ngModel)]="fboInfo.antennaName"
+                                                class="dropdownHeight select-dropdown" id="antennaname" name="ddlAntennaName" place>
+                                        <mat-option *ngFor="let antenna of availableAntennas" value="{{ antenna }}">
+                                            {{ antenna }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
                         </div>
                         <div>
                             <h5>Account Information</h5>
@@ -104,13 +122,14 @@
 
                         <div class="row">
                             <div class="col-md-6">
-                                <mat-form-field style="max-width: 240px;">
+                                <mat-form-field style="max-width: 240px">
                                     <input [(ngModel)]="fboInfo.senderAddress"
                                            matInput
                                            placeholder="Sender Address"
                                            matTooltip="Your distribution emails will come from this address"
                                            matTooltipPosition="after" />
-                                </mat-form-field> @FBOLinx.com
+                                </mat-form-field>
+                                @FBOLinx.com
                             </div>
                             <div class="col-md-6">
                                 <mat-form-field>
@@ -123,34 +142,54 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row" *ngIf="canChangeActive">
                             <div class="col-3">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.active" color="accent" (change)="onActiveToggle($event)">
+                                <mat-slide-toggle [(ngModel)]="fboInfo.active"
+                                                  color="accent"
+                                                  (change)="onActiveToggle($event)">
                                     Active
                                 </mat-slide-toggle>
                             </div>
 
                             <div class="col-3">
-                                <mat-slide-toggle [(ngModel)]="fboInfo.suspended" color="warn">
+                                <mat-slide-toggle [(ngModel)]="fboInfo.suspended"
+                                                  color="warn">
                                     Suspended
                                 </mat-slide-toggle>
                             </div>
                             <div *ngIf="isConductor" class="col-6">
                                 <div class="expiration-date">
                                     <mat-form-field>
-                                        <input
-                                            [(ngModel)]="fboInfo.expirationDate"
-                                            [matDatepicker]="expirationDatePicker"
-                                            matInput
-                                            placeholder="Account Expires"
-                                        />
-                                        <mat-datepicker-toggle [for]="expirationDatePicker" matSuffix></mat-datepicker-toggle>
-                                        <mat-datepicker-toggle matSuffix (click)="fboInfo.expirationDate = null">
+                                        <input [(ngModel)]="fboInfo.expirationDate"
+                                               [matDatepicker]="
+                                                expirationDatePicker
+                                            "
+                                               matInput
+                                               placeholder="Account Expires" />
+                                        <mat-datepicker-toggle [for]="expirationDatePicker"
+                                                               matSuffix></mat-datepicker-toggle>
+                                        <mat-datepicker-toggle matSuffix
+                                                               (click)="
+                                                fboInfo.expirationDate = null
+                                            ">
                                             <mat-icon matDatepickerToggleIcon>clear</mat-icon>
                                         </mat-datepicker-toggle>
                                         <mat-datepicker #expirationDatePicker></mat-datepicker>
                                     </mat-form-field>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="canChangeActive">
+                            <div class="col-3">
+                                <mat-label>Account Type</mat-label>
+                                <mat-form-field>
+                                    <mat-select [(ngModel)]="fboInfo.accountType"
+                                                class="dropdownHeight select-dropdown" id="accounttype" name="ddlAccountType" place>
+                                        <mat-option *ngFor="let accountType of availableAccountTypes" [value]="accountType.value">
+                                            {{ accountType.type }}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
                             </div>
                         </div>
 
@@ -181,4 +220,4 @@
             </mat-tab-group>
         </div>
     </ni-card>
-</div>
+</section>

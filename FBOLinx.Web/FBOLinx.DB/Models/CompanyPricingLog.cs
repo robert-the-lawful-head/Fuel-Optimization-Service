@@ -21,6 +21,6 @@ namespace FBOLinx.DB.Models
 
         [ForeignKey("CompanyId")]
         [InverseProperty("CompanyPricingLogs")]
-        public Customers Customer { get; set; }
+        public virtual Customers Customer { get; set; }
     }
 }

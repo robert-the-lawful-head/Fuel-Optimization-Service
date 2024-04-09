@@ -10,19 +10,23 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FboairportsController : ControllerBase
+    public class FboairportsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
+        private readonly IFboService _fboService;
 
-        public FboairportsController(FboLinxContext context)
+        public FboairportsController(FboLinxContext context, IFboService fboService, ILoggingService logger) : base(logger)
         {
             _context = context;
+            _fboService = fboService;
         }
 
         // GET: api/Fboairports
@@ -139,6 +143,34 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(fboairports);
+        }
+
+        // GET: api/Fboairports/local-datetime-now/fbo/5
+        [HttpGet("local-datetime-now/fbo/{fboId}")]
+        public async Task<IActionResult> GetLocalDateTimeNowByFboId([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var localDateTime = await _fboService.GetAirportLocalDateTimeByFboId(fboId);
+
+            return Ok(localDateTime);
+        }
+
+        // GET: api/Fboairports/local-timezone/fbo/5
+        [HttpGet("local-timezone/fbo/{fboId}")]
+        public async Task<IActionResult> GetLocalTimeZoneByFboId([FromRoute] int fboId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var localTimeZone = await _fboService.GetAirportTimeZoneByFboId(fboId);
+
+            return Ok(localTimeZone);
         }
 
         private bool FboairportsExists(int id)

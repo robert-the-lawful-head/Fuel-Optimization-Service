@@ -1,0 +1,33 @@
+
+.dialog-title {
+    display: flex;
+    justify-content: center;
+}
+.info-labels{
+    text-align: end;
+    text-decoration: underline;
+    padding: 0 10px 0 0;
+}
+.info-values{
+    text-align: start;
+    padding: 0 0 0 10px;
+    word-wrap: break-word;
+}
+.row-container {
+    display: flex;
+  }
+.column-container {
+    flex: 50%;
+}
+
+button{
+    line-height: 2;
+    padding: 0 7px;
+
+}
+.mapboxgl-popup{
+    width: 330px;
+}
+.actions{
+    padding-top: 10px;
+}

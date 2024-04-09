@@ -1,25 +1,21 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
-
 import * as moment from 'moment';
 
 // Services
 import { SharedService } from '../../../layouts/shared-service';
-
-import * as SharedEvents from '../../../models/sharedEvents';
-
+import * as SharedEvents from '../../../constants/sharedEvents';
+import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
+import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
+import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
 // Components
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
-import { StatisticsTotalCustomersComponent } from '../../../shared/components/statistics-total-customers/statistics-total-customers.component';
-import { StatisticsTotalAircraftComponent } from '../../../shared/components/statistics-total-aircraft/statistics-total-aircraft.component';
-import { StatisticsOrdersByLocationComponent } from '../../../shared/components/statistics-orders-by-location/statistics-orders-by-location.component';
 
 @Component({
     selector: 'app-dashboard-fbo',
+    styleUrls: ['./dashboard-fbo.component.scss'],
     templateUrl: './dashboard-fbo.component.html',
-    styleUrls: [ './dashboard-fbo.component.scss' ],
 })
 export class DashboardFboComponent implements AfterViewInit, OnDestroy {
-    public breadcrumb: any[];
     public pageTitle = 'Dashboard';
     public fboid: any;
     public groupid: any;
@@ -38,29 +34,18 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     private statisticsOrdersByLocation: StatisticsOrdersByLocationComponent;
 
     constructor(private sharedService: SharedService) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        location.href = '/default-layout/dashboard-fbo-updated/';
+
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
-        this.pastThirtyDaysStartDate = new Date(moment().add(-30, 'days').format('MM/DD/YYYY'));
+        this.pastThirtyDaysStartDate = new Date(
+            moment().add(-30, 'days').format('MM/DD/YYYY')
+        );
         this.fboid = this.sharedService.currentUser.fboId;
         this.groupid = this.sharedService.currentUser.groupId;
         this.sharedService.titleChange(this.pageTitle);
-
-        this.breadcrumb = [ {
-            title: 'Main',
-            link: '/default-layout',
-        },
-        ];
-        if (!this.isCsr) {
-            this.breadcrumb.push({
-                title: 'Dashboard',
-                link: '/default-layout/dashboard-fbo',
-            });
-        } else {
-            this.breadcrumb.push({
-                title: 'CSR Dashboard',
-                link: '/default-layout/dashboard-csr',
-            });
-        }
     }
 
     get isCsr() {
@@ -68,13 +53,12 @@ export class DashboardFboComponent implements AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.locationChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.locationChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvents.locationChangedEvent) {
                     this.applyDateFilterChange();
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {

@@ -1,5 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
 
 @Injectable()
 export class EmailcontentService {
@@ -25,6 +25,12 @@ export class EmailcontentService {
         });
     }
 
+    public getForGroup(groupId: number) {
+        return this.http.get(this.accessPointUrl + '/group/' + groupId, {
+            headers: this.headers,
+        });
+    }
+
     public add(payload) {
         return this.http.post(this.accessPointUrl, payload, {
             headers: this.headers,
@@ -41,5 +47,47 @@ export class EmailcontentService {
         return this.http.put(this.accessPointUrl + '/' + payload.oid, payload, {
             headers: this.headers,
         });
+    }
+
+    public getFileAttachmentName(emailContentId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachmentname/' +
+            emailContentId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public uploadFileAttachment(payload) {
+        return this.http.post(
+            this.accessPointUrl + '/uploadfileattachment/',
+            payload,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public downloadFileAttachment(emailContentId) {
+        return this.http.get(
+            this.accessPointUrl + '/fileattachment/' +
+            emailContentId,
+            {
+                headers: this.headers,
+                responseType: 'text',
+            }
+        );
+    }
+
+    public deleteFileAttachment(emailContentId) {
+        return this.http.delete(
+            this.accessPointUrl + '/fileattachment/' + emailContentId,
+            {
+                headers: this.headers,
+            }
+        );
     }
 }

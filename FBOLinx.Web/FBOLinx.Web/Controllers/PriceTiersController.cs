@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.BusinessServices.FuelPricing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,18 +12,21 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class PriceTiersController : ControllerBase
+    public class PriceTiersController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
+        private IFuelPriceAdjustmentCleanUpService _fuelPriceAdjustmentCleanUpService;
 
-        public PriceTiersController(FboLinxContext context)
+        public PriceTiersController(FboLinxContext context, IFuelPriceAdjustmentCleanUpService fuelPriceAdjustmentCleanUpService, ILoggingService logger) : base(logger)
         {
+            _fuelPriceAdjustmentCleanUpService = fuelPriceAdjustmentCleanUpService;
             _context = context;
         }
 
@@ -112,6 +116,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             int indexLoopPriceTier = 0;
+            int fboId = 0;
 
             foreach (CustomerMarginsGridViewModel customerMarginsGridViewModel in customerMargins)
             {

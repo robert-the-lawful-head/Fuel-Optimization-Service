@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,18 +14,21 @@ using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using FBOLinx.Web.Services;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AirCraftsController : ControllerBase
+    public class AirCraftsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
-        private readonly AircraftService _aircraftService;
+        private readonly IAircraftService _aircraftService;
 
-        public AirCraftsController(FboLinxContext context, AircraftService aircraftService)
+       
+       
+        public AirCraftsController(FboLinxContext context, IAircraftService aircraftService, ILoggingService logger) : base(logger)
         {
             _context = context;
             _aircraftService = aircraftService;
@@ -38,9 +43,9 @@ namespace FBOLinx.Web.Controllers
         }
 
         [HttpGet("Sizes")]
-        public IEnumerable<FBOLinx.Core.Utilities.Enum.EnumDescriptionValue> GetAircraftSizes()
+        public IEnumerable<FBOLinx.Core.Utilities.Enums.EnumHelper.EnumDescriptionValue> GetAircraftSizes()
         {
-            return Core.Utilities.Enum.GetDescriptions(typeof(AirCrafts.AircraftSizes));
+            return Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(AircraftSizes));
         }
 
         // GET: api/AirCrafts/5
@@ -62,21 +67,22 @@ namespace FBOLinx.Web.Controllers
             var aircraft = await _aircraftService.GetAircrafts(customerAircraft.AircraftId);
             var result = new
             {
-                customerAircraft.Oid,
+                Oid = customerAircraft.Oid,
                 customerAircraft.AircraftId,
                 customerAircraft.TailNumber,
                 customerAircraft.GroupId,
                 customerAircraft.CustomerId,
-                aircraft.Make,
-                aircraft.Model,
+                aircraft?.Make,
+                aircraft?.Model,
                 customerAircraft.Size
             };
 
+           
            return Ok(result);
         }
 
         [HttpGet("customers-by-tail/group/{groupId}/tail/{tailNumber}")]
-        public async Task<ActionResult<CustomerInfoByGroup>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
+        public async Task<ActionResult<List<CustomerInfoByGroup>>> GetCustomersByTail([FromRoute] int groupId, [FromRoute] string tailNumber)
         {
             if (string.IsNullOrEmpty(tailNumber))
                 return Ok(new List<CustomerInfoByGroup>());
@@ -94,7 +100,7 @@ namespace FBOLinx.Web.Controllers
 
         // PUT: api/AirCrafts/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAirCrafts([FromRoute] int id, [FromBody] AirCrafts airCrafts)
+        public async Task<IActionResult> PutAirCrafts([FromRoute] int id, [FromBody] AirCraftsDto airCrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -120,7 +126,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/AirCrafts
         [HttpPost]
-        public async Task<IActionResult> PostAirCrafts([FromBody] AirCrafts airCrafts)
+        public async Task<IActionResult> PostAirCrafts([FromBody] AirCraftsDto airCrafts)
         {
             if (!ModelState.IsValid)
             {
@@ -151,5 +157,7 @@ namespace FBOLinx.Web.Controllers
 
             return Ok(airCrafts);
         }
+
+       
     }
 }

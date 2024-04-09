@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace FBOLinx.Job.Base
 {
@@ -19,15 +20,35 @@ namespace FBOLinx.Job.Base
             _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public async Task<string> PostAsync(string endpoint, object request)
+        public async Task<HttpResponseMessage> PostAsync(string endpoint, object request, string token = "")
         {
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+
+            if (token != "")
+                _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
             var json = JsonConvert.SerializeObject(request);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync(endpoint, data);
+            return await _httpClient.PostAsync(endpoint, data);
+        }
 
-            string result = response.Content.ReadAsStringAsync().Result;
+        public async Task<T> PostAsync<T>(string endpoint, object request, string token = "")
+        {
+            var responseString = PostAsync(endpoint, request, token).Result;
+            var result = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(responseString.Content.ReadAsStringAsync().Result);
             return result;
+        }
+
+        public async Task<string> GetAsync(string endpoint, string token = "")
+        {
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+
+            if (token != "")
+                _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);
+
+            var response = await _httpClient.GetAsync(endpoint);
+            return response.Content.ReadAsStringAsync().Result;
         }
     }
 }

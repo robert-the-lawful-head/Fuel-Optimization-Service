@@ -1,9 +1,9 @@
 import {
     Directive,
-    OnInit,
-    Input,
     HostBinding,
     HostListener,
+    Input,
+    OnInit,
 } from '@angular/core';
 
 @Directive({
@@ -40,6 +40,4 @@ export class ColorDirective implements OnInit {
     @HostBinding('class.custom-color') get getClass() {
         return true;
     }
-
-
 }

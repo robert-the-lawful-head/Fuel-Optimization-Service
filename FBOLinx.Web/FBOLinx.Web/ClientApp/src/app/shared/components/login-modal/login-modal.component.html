@@ -1,15 +1,30 @@
 <div class="login-modal">
-    <a [mat-dialog-close]="true" class="close" routerLink="."><i class="material-icons">clear</i></a>
+    <a [mat-dialog-close]="true" class="close" routerLink="."
+        ><i class="material-icons">clear</i></a
+    >
     <h1 class="text-center" mat-dialog-title>Sign in to FBOLinx</h1>
-    <div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px;">
+    <div class="mt-1 mb-2" mat-dialog-content style="max-width: 600px">
         <form (ngSubmit)="onSubmit()" [formGroup]="loginForm">
             <mat-form-field>
-                <input formControlName="username" matInput placeholder="Username" required>
+                <input
+                    formControlName="username"
+                    matInput
+                    placeholder="Username"
+                    required
+                />
             </mat-form-field>
 
             <mat-form-field>
-                <input formControlName="password" matInput placeholder="Password" required type="password">
-                <mat-hint *ngIf="error" class="text-danger">{{ error }}</mat-hint>
+                <input
+                    formControlName="password"
+                    matInput
+                    placeholder="Password"
+                    required
+                    type="password"
+                />
+                <mat-hint *ngIf="error" class="text-danger">{{
+                    error
+                }}</mat-hint>
             </mat-form-field>
 
             <div class="text-left mb-module">
@@ -18,15 +33,23 @@
                 </mat-checkbox>
             </div>
 
-            <button class="mt-3 login-button" color="accent" mat-flat-button type="submit">Sign In</button>
+            <button
+                class="mt-3 login-button"
+                color="accent"
+                mat-flat-button
+                type="submit"
+            >
+                Sign In
+            </button>
         </form>
     </div>
     <div mat-dialog-actions>
         <div class="text-center col-12">
             <a (click)="openRequestDemo()" routerLink=".">Request Demo</a>
             <span class="divider"></span>
-            <a (click)="openForgotPassword()" routerLink=".">Forgot your password?</a>
+            <a (click)="openForgotPassword()" routerLink="."
+                >Forgot your password?</a
+            >
         </div>
     </div>
-
 </div>

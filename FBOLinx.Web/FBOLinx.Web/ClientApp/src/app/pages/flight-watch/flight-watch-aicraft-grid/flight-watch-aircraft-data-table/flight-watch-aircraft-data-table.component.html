@@ -1,0 +1,120 @@
+<div class="table-header-container">
+    <p class="table-header">{{ getSwimDataTypeString() }}</p>
+</div>
+<div class="table-container">
+    <mat-spinner *ngIf="!data"></mat-spinner>
+    <table
+        mat-table
+        [dataSource]="dataSource"
+        multiTemplateDataRows
+        matSort
+        (matSortChange)="sortData($event)"
+        [class.hide]="!data"
+    >
+        <ng-container matColumnDef="expand-icon">
+            <th mat-header-cell *matHeaderCellDef aria-label="row actions">
+                &nbsp;
+            </th>
+            <td mat-cell *matCellDef="let element">
+                <button
+                    mat-icon-button
+                    aria-label="expand row"
+                    (click)="onRowrowClick(element);$event.stopPropagation()                    "
+                >
+                    <mat-icon *ngIf="expandedElement !== element.tailNumber"
+                        >keyboard_arrow_down</mat-icon
+                    >
+                    <mat-icon *ngIf="expandedElement === element.tailNumber"
+                        >keyboard_arrow_up</mat-icon
+                    >
+                </button>
+            </td>
+        </ng-container>
+        <ng-container
+            matColumnDef="{{ column }}"
+            *ngFor="let column of dataColumnsToDisplay"
+        >
+            <th
+                mat-header-cell
+                *matHeaderCellDef
+                mat-sort-header="{{ column }}"
+            >
+                {{ getColumnDisplayString(column) }}
+                <span *ngIf="dataSource">
+                    <app-table-column-filter
+                        [matDataSource]="dataSource"
+                        [matSort]="sort"
+                        columnId="{{ column }}"
+                        propertyName="{{ column }}"
+                    ></app-table-column-filter>
+                </span>
+            </th>
+            <td
+                mat-cell
+                *matCellDef="let element"
+            >
+                <span class="center-items">
+                    <ng-container *ngIf="isFavoriteButtonVisible(column)">
+                        <app-favorite-icon
+                        [favoriteData]="setIsFavoriteProperty(element)"
+                        [hasPadding]="false"
+                        [callbackComponent]="getCallBackComponent"
+                        [customers]="customers"
+                        (click)="$event.stopPropagation()"></app-favorite-icon>
+                    </ng-container>
+
+                    <ng-container *ngIf="hasIcon(column)"
+                        ><mat-icon [ngStyle]="{ color: getTextColor(element, column) }">{{
+                            getIcon(element)
+                        }}</mat-icon>
+                    </ng-container
+                    >
+                    {{ getColumnData(element, column) }}
+                </span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="expandedDetail">
+            <td
+                mat-cell
+                *matCellDef="let element"
+                [attr.colspan]="allColumnsToDisplay.length"
+            >
+                <div
+                    class="example-element-detail"
+                    [@detailExpand]="
+                        element.tailNumber == expandedElement ? 'expanded' : 'collapsed'
+                    "
+                >
+                    <span *ngIf="expandedDetailData">
+                        <app-aicraft-expanded-detail [data]="expandedDetailData" [isArrival]="isArrival" [icao]="icao" [fbo]="fbo">
+                        </app-aicraft-expanded-detail>
+                    </span>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr
+            mat-header-row
+            *matHeaderRowDef="allColumnsToDisplay; sticky: true"
+        ></tr>
+        <tr
+            mat-row
+            id="{{element.tailNumber}}"
+            *matRowDef="let element; columns: allColumnsToDisplay; let i = index;"
+            class="example-element-row"
+            [ngClass]="{'highlight': expandedElement === element.tailNumber}"
+            [class.example-expanded-row]="expandedElement === element.tailNumber"
+            (click)="onRowrowClick(element)"
+        ></tr>
+        <tr
+            mat-row
+            *matRowDef="let row; columns: ['expandedDetail']"
+            class="example-detail-row"
+        ></tr>
+        <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="columns.length">
+                {{ getNoDataToDisplayString() }}
+            </td>
+        </tr>
+    </table>
+</div>

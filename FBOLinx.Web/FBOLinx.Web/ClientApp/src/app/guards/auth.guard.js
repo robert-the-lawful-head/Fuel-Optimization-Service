@@ -12,10 +12,12 @@ var AuthGuard = /** @class */ (function () {
             return true;
         }
         // not logged in so redirect to login page with the return url
-        this.router.navigate(['/landing-site'], { queryParams: { returnUrl: state.url } });
+        this.router.navigate(["/landing-site"], {
+            queryParams: { returnUrl: state.url },
+        });
         return false;
     };
     return AuthGuard;
-}());
+})();
 exports.AuthGuard = AuthGuard;
 //# sourceMappingURL=auth.guard.js.map

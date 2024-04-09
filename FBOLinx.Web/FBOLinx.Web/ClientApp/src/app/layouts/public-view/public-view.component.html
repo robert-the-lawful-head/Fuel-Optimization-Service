@@ -1,0 +1,12 @@
+<div [ngClass]="layoutClasses" class="site-container">
+    <app-horizontal-navbar
+        [title]="pageTitle"
+        [isPublicView]="isPublicView"
+    ></app-horizontal-navbar>
+
+    <main class="main-content">
+        <div class="public-content-wrap">
+            <router-outlet></router-outlet>
+        </div>
+    </main>
+</div>

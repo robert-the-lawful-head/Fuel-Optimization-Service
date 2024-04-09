@@ -1,5 +1,7 @@
-import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+
+import { AircraftSize, AircraftType } from '../models';
 
 @Injectable()
 export class AircraftsService {
@@ -14,20 +16,29 @@ export class AircraftsService {
     }
 
     public getAll() {
-        return this.http.get(this.accessPointUrl, { headers: this.headers });
+        return this.http.get<AircraftType[]>(this.accessPointUrl, {
+            headers: this.headers,
+        });
     }
 
     public getAircraftSizes() {
-        return this.http.get(this.accessPointUrl + '/sizes', {
+        return this.http.get<AircraftSize[]>(this.accessPointUrl + '/sizes', {
             headers: this.headers,
         });
-  }
+    }
 
-  public getCustomersByTail(groupId, tailNumber) {
-    return this.http.get(this.accessPointUrl + '/customers-by-tail/group/' + groupId + '/tail/' + tailNumber, {
-      headers: this.headers,
-    });
-  }
+    public getCustomersByTail(groupId, tailNumber) {
+        return this.http.get(
+            this.accessPointUrl +
+                '/customers-by-tail/group/' +
+                groupId +
+                '/tail/' +
+                tailNumber,
+            {
+                headers: this.headers,
+            }
+        );
+    }
 
     public get(payload) {
         return this.http.get(this.accessPointUrl + '/' + payload.oid, {

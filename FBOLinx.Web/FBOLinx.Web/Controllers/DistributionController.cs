@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
+using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +19,7 @@ namespace FBOLinx.Web.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class DistributionController : ControllerBase
+    public class DistributionController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
         private readonly FuelerLinxContext _fuelerLinxContext;
@@ -31,7 +29,7 @@ namespace FBOLinx.Web.Controllers
         private JwtManager _jwtManager;
         private IPriceDistributionService _PriceDistributionService;
 
-        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, IPriceDistributionService priceDistributionService)
+        public DistributionController(FboLinxContext context, FuelerLinxContext fuelerLinxContext, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, JwtManager jwtManager, IPriceDistributionService priceDistributionService, ILoggingService logger) : base(logger)
         {
             _MailSettings = mailSettings;
             _FileProvider = fileProvider;
@@ -106,7 +104,7 @@ namespace FBOLinx.Web.Controllers
             }
 
             var currentPrices = await (from f in _context.Fboprices
-                where f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
+                where f.EffectiveFrom <= DateTime.UtcNow && f.EffectiveTo > DateTime.UtcNow && f.Fboid == fboId && f.Expired != true
                 select f).ToListAsync();
 
             if (currentPrices.Count == 0)
@@ -124,7 +122,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, false);
@@ -141,7 +139,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (request.FboId != UserService.GetClaimedFboId(_HttpContextAccessor) && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.GroupAdmin && UserService.GetClaimedRole(_HttpContextAccessor) != DB.Models.User.UserRoles.Conductor)
+            if (request.FboId != JwtManager.GetClaimedFboId(_HttpContextAccessor) && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.GroupAdmin && JwtManager.GetClaimedRole(_HttpContextAccessor) != UserRoles.Conductor)
                 return BadRequest(ModelState);
 
             await _PriceDistributionService.DistributePricing(request, true);

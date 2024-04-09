@@ -4,10 +4,18 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using FBOLinx.Core.Enums;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.User;
+using FBOLinx.Service.Mapping.Dto;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
+using FBOLinx.ServiceLayer.BusinessServices.User;
+using FBOLinx.ServiceLayer.EntityServices;
+using FBOLinx.Web.Auth;
 using FBOLinx.Web.Services;
+using Fuelerlinx.SDK;
+using Mapster;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,16 +25,21 @@ using NUnit.Framework;
 
 namespace FBOLinx.ServiceLayer.Test.Services.Auth
 {
-    public class UserServiceTests : BaseTestFixture<IUserService>
+    public class UserServiceTests : BaseTestFixture<Web.Services.IUserService>
     {
         [Test]
         public async Task GetUserByCredentials_ExistingUserCredentialsProvided_UserReturned()
         {
             // Arrange
-            User testUser = MockGetUser();
+            FBOLinx.DB.Models.User testUser = MockGetUser();
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
             // Act
-            User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            FBOLinx.DB.Models.User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             //Assert
             Assert.AreEqual(testUser.Oid, existingUser.Oid);
@@ -36,8 +49,13 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         public async Task GetUserByCredentials_ExistingUserCredentialsProvidedAndAuthenticationRequested_UserWithAuthTokenReturned()
         {
             User testUser = MockGetUser();
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
-            User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password, true);
+            FBOLinx.DB.Models.User existingUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password, true);
 
             Assert.Multiple(() =>
             {
@@ -50,9 +68,14 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_ExistingUsernameButIncorrectPasswordProvided_NullReturned()
         {
-            User testUser = MockGetUser();
+            FBOLinx.DB.Models.User testUser = MockGetUser();
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
-            User result = await subject.GetUserByCredentials(testUser.Username, "incorrect");
+            FBOLinx.DB.Models.User result = await subject.GetUserByCredentials(testUser.Username, "incorrect");
 
             Assert.IsNull(result);
         }
@@ -60,9 +83,14 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_IncorrectUsernameAndPasswordProvided_NullReturned()
         {
-            User testUser = MockGetUser();
+            FBOLinx.DB.Models.User testUser = MockGetUser();
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
-            User result = await subject.GetUserByCredentials("incorrect", "incorrect");
+            FBOLinx.DB.Models.User result = await subject.GetUserByCredentials("incorrect", "incorrect");
 
             Assert.IsNull(result);
         }
@@ -70,9 +98,14 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_FboNetworkUsernameAndPasswordProvided_NullReturned()
         {
-            User testUser = MockGetUser(true);
+            FBOLinx.DB.Models.User testUser = MockGetUser(true);
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
-            User result = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            FBOLinx.DB.Models.User result = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             Assert.IsNull(result);
         }
@@ -80,7 +113,12 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_InactiveUserCredentialsProvided_NullReturned()
         {
-            User testUser = MockGetUser(active: false);
+            FBOLinx.DB.Models.User testUser = MockGetUser(active: false);
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
+            Arrange(services =>
+            {
+                userServiceMock = MockUserService(services);
+            });
 
             var result = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
@@ -90,18 +128,19 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_OldLoginCredsProvidedAndCorrespondingFboRecordExists_FboLoginCreated()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
-            Mock<DbSet<User>> userDbSetMock = null;
+            Mock<DbSet<FBOLinx.DB.Models.User>> userDbSetMock = null;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 dbContextMock = new Mock<FboLinxContext>();
-                userDbSetMock = MockUserDbSet(dbContextMock, new List<User>());
+                userDbSetMock = MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>());
                 MockFbosDbSet(dbContextMock, new List<Fbos>()
                 {
-                    new Fbos() { Oid = fboRecordId, Username = testUser.Username, Password = testUser.Password, GroupId = testUser.GroupId }
+                    new Fbos() { Oid = fboRecordId, Username = testUser.Username, Password = testUser.Password, GroupId = testUser.GroupId.Value }
                 });
                 MockGroupDbSet(dbContextMock, new List<Group>()
                 {
@@ -117,15 +156,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 });
                 services.AddSingleton(dbContextMock.Object);
 
+                userServiceMock = MockUserService(services);
+
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            FBOLinx.DB.Models.User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
 
             Assert.Multiple(() =>
             {
                 userDbSetMock.Verify(x => x.AddAsync(
-                    It.Is<User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<FBOLinx.DB.Models.User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
                 dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
                 Assert.AreEqual(testUser.Username, createdUser.Username);
             });
@@ -134,15 +175,16 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task GetUserByCredentials_OldLoginCredsProvidedAndCorrespondingGroupRecordExists_GroupLoginCreated()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
-            Mock<DbSet<User>> userDbSetMock = null;
+            Mock<DbSet<FBOLinx.DB.Models.User>> userDbSetMock = null;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 dbContextMock = new Mock<FboLinxContext>();
-                userDbSetMock = MockUserDbSet(dbContextMock, new List<User>());
+                userDbSetMock = MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>());
                 MockFbosDbSet(dbContextMock, new List<Fbos>());
                 MockGroupDbSet(dbContextMock, new List<Group>()
                 {
@@ -158,16 +200,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 });
                 services.AddSingleton(dbContextMock.Object);
 
+                userServiceMock = MockUserService(services);
+
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            FBOLinx.DB.Models.User createdUser = await subject.GetUserByCredentials(testUser.Username, testUser.Password);
+            var createdUserDto = createdUser.Adapt<UserDTO>();
 
             Assert.Multiple(() =>
             {
-                userDbSetMock.Verify(x => x.AddAsync(
-                    It.Is<User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
-                dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+                userServiceMock.Verify(x => x.AddAsync(createdUserDto), Times.Once);
                 Assert.AreEqual(testUser.Username, createdUser.Username);
             });
         }
@@ -175,17 +218,18 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateFBOLoginIfNeeded_UserExistsForFbo_ExistingUserReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
-            testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
+            testUser.FboId = 154;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Primary;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
-                MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 services.AddSingleton(dbContextMock.Object);
+                MockUserService(services);
             });
 
-            User user = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = testUser.FboId });
+            FBOLinx.DB.Models.User user = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = testUser.FboId });
 
             Assert.AreEqual(testUser.Oid, user.Oid);
         }
@@ -193,17 +237,18 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateFBOLoginIfNeeded_UserDoesNotExistForFbo_NewUserCreated()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Primary;
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
-            Mock<DbSet<User>> userDbSetMock = null;
+            Mock<DbSet<FBOLinx.DB.Models.User>> userDbSetMock = null;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 dbContextMock = new Mock<FboLinxContext>();
-                userDbSetMock = MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                userDbSetMock = MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 MockFboContactDbSet(dbContextMock, new List<Fbocontacts>()
                 {
                     new Fbocontacts() { Fboid = fboRecordId, ContactId = contactId }
@@ -214,6 +259,8 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 });
 
                 services.AddSingleton(dbContextMock.Object);
+
+                userServiceMock = MockUserService(services);
             });
 
             User createdUser = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
@@ -221,7 +268,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             Assert.Multiple(() =>
             {
                 userDbSetMock.Verify(x => x.AddAsync(
-                    It.Is<User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<FBOLinx.DB.Models.User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
                 dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
                 Assert.AreEqual(testUser.Username, createdUser.Username);
             });
@@ -230,14 +277,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateFBOLoginIfNeeded_UserDoesNotExistForFboAndMissedCredentials_NullReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.FboId = 1;
-            testUser.Role = User.UserRoles.Primary;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Primary;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
-                MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 services.AddSingleton(dbContextMock.Object);
+
+                userServiceMock = MockUserService(services);
             });
 
             var result = await subject.CreateFBOLoginIfNeeded(new Fbos() { Oid = 2 });
@@ -248,17 +298,20 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateGroupLoginIfNeeded_UserExistsForGroup_ExistingUserReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Conductor;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
-                MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 services.AddSingleton(dbContextMock.Object);
+
+                userServiceMock = MockUserService(services);
             });
 
-            User user = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = testUser.GroupId.Value });
+            FBOLinx.DB.Models.User user = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = testUser.GroupId.Value });
 
             Assert.AreEqual(testUser.Oid, user.Oid);
         }
@@ -266,29 +319,32 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateGroupLoginIfNeeded_UserDoesNotExistForGroup_NewUserCreated()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Conductor;
             int fboRecordId = 1;
             int contactId = 1;
             Mock<FboLinxContext> dbContextMock = null;
             Mock<DbSet<User>> userDbSetMock = null;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 dbContextMock = new Mock<FboLinxContext>();
-                userDbSetMock = MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                userDbSetMock = MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 services.AddSingleton(dbContextMock.Object);
+
+                userServiceMock = MockUserService(services);
 
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
 
-            User createdUser = await subject.CreateGroupLoginIfNeeded(
+            FBOLinx.DB.Models.User createdUser = await subject.CreateGroupLoginIfNeeded(
                 new Group() { Oid = 2, Username = testUser.Username, Password = testUser.Password });
 
             Assert.Multiple(() =>
             {
                 userDbSetMock.Verify(x => x.AddAsync(
-                    It.Is<User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
+                    It.Is<FBOLinx.DB.Models.User>(x => x.Username == testUser.Username), It.IsAny<CancellationToken>()), Times.Once);
                 dbContextMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
                 Assert.AreEqual(testUser.Username, createdUser.Username);
             });
@@ -297,14 +353,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public async Task CreateGroupLoginIfNeeded_UserDoesNotExistForGroupAndMissedCredentials_NullReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.GroupId = 1;
-            testUser.Role = User.UserRoles.Conductor;
+            testUser.Role = FBOLinx.Core.Enums.UserRoles.Conductor;
+            Mock<BusinessServices.User.IUserService> userServiceMock = null;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
                 MockUserDbSet(dbContextMock, new List<User>() { testUser });
                 services.AddSingleton(dbContextMock.Object);
+
+                userServiceMock = MockUserService(services);
             });
 
             var result = await subject.CreateGroupLoginIfNeeded(new Group() { Oid = 2 });
@@ -315,10 +374,10 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public void GetClaimedUserId_NameIdentifierExistsInHttpContext_ClaimedUserIdReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.NameIdentifier, testUser.Oid.ToString());
             
-            int result = UserService.GetClaimedUserId(httpContextAccessor);
+            int result = JwtManager.GetClaimedUserId(httpContextAccessor);
 
             Assert.AreEqual(testUser.Oid, result);
         }
@@ -328,7 +387,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedUserId(httpContextAccessor);
+            int result = JwtManager.GetClaimedUserId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -336,10 +395,10 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public void GetClaimedFboId_SidExistsInHttpContext_ClaimedFboIdReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.Sid, testUser.FboId.ToString());
 
-            int result = UserService.GetClaimedFboId(httpContextAccessor);
+            int result = JwtManager.GetClaimedFboId(httpContextAccessor);
 
             Assert.AreEqual(testUser.FboId, result);
         }
@@ -349,7 +408,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedFboId(httpContextAccessor);
+            int result = JwtManager.GetClaimedFboId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -357,10 +416,10 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public void GetClaimedGroupId_GroupSidExistsInHttpContext_ClaimedGroupIdReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.GroupSid, testUser.GroupId.ToString());
 
-            int result = UserService.GetClaimedGroupId(httpContextAccessor);
+            int result = JwtManager.GetClaimedGroupId(httpContextAccessor);
 
             Assert.AreEqual(testUser.GroupId, result);
         }
@@ -370,7 +429,7 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            int result = UserService.GetClaimedGroupId(httpContextAccessor);
+            int result = JwtManager.GetClaimedGroupId(httpContextAccessor);
 
             Assert.AreEqual(0, result);
         }
@@ -378,10 +437,10 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         [Test]
         public void GetClaimedRole_RoleExistsInHttpContext_ClaimedRoleReturned()
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(ClaimTypes.Role, ((short)testUser.Role).ToString());
 
-            var result = UserService.GetClaimedRole(httpContextAccessor);
+            var result = JwtManager.GetClaimedRole(httpContextAccessor);
 
             Assert.AreEqual(testUser.Role, result);
         }
@@ -391,9 +450,9 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
         {
             IHttpContextAccessor httpContextAccessor = MockHttpContextAccessor(string.Empty, string.Empty);
 
-            var result = UserService.GetClaimedRole(httpContextAccessor);
+            var result = JwtManager.GetClaimedRole(httpContextAccessor);
 
-            Assert.AreEqual(User.UserRoles.NotSet, result);
+            Assert.AreEqual(FBOLinx.Core.Enums.UserRoles.NotSet, result);
         }
 
         private IHttpContextAccessor MockHttpContextAccessor(string claimType, string claimValue)
@@ -405,17 +464,18 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
             return httpContextMock.Object;
         }
 
-        private User MockGetUser(bool isFboNetwork = false, bool active = true)
+        private FBOLinx.DB.Models.User MockGetUser(bool isFboNetwork = false, bool active = true)
         {
-            User testUser = TestDataHelper.CreateTestUser();
+            FBOLinx.DB.Models.User testUser = TestDataHelper.CreateTestUser();
             testUser.Active = active;
             Arrange(services =>
             {
                 var dbContextMock = new Mock<FboLinxContext>();
-                MockUserDbSet(dbContextMock, new List<User>() { testUser });
+                MockUserDbSet(dbContextMock, new List<FBOLinx.DB.Models.User>() { testUser });
                 MockFbosDbSet(dbContextMock, new List<Fbos>());
                 MockGroupDbSet(dbContextMock, new List<Group>() { new Group() { Oid = testUser.GroupId.Value, Isfbonetwork = isFboNetwork } });
                 services.AddSingleton(dbContextMock.Object);
+               
 
                 MockEncryptionService(services, testUser.Username, testUser.Password);
             });
@@ -433,8 +493,17 @@ namespace FBOLinx.ServiceLayer.Test.Services.Auth
                 .Returns(true);
             services.AddSingleton(encryptionServiceMock.Object);
         }
-        
-        private Mock<DbSet<User>> MockUserDbSet(Mock<FboLinxContext> dbContextMock, IList<User> users)
+
+        private Mock<FBOLinx.ServiceLayer.BusinessServices.User.IUserService> MockUserService(ServiceCollection services)
+        {
+            var userServiceMock = new Mock<FBOLinx.ServiceLayer.BusinessServices.User.IUserService>();
+            userServiceMock.Setup(x => x.GetSingleBySpec(new PrimaryUserByFboIdSpecification(It.IsAny<int>())));
+            services.AddSingleton(userServiceMock.Object);
+
+            return userServiceMock;
+        }
+
+        private Mock<DbSet<FBOLinx.DB.Models.User>> MockUserDbSet(Mock<FboLinxContext> dbContextMock, IList<User> users)
         {
             Mock<DbSet<User>> userDbSet = users.AsQueryable().BuildMockDbSet();
             dbContextMock.Setup(x => x.User)

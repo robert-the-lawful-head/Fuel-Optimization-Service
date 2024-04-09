@@ -1,10 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 // Services
-import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
-import { Router } from '@angular/router';
 
 export interface CopyPricingTemplateDialogData {
     currentPricingTemplateId: number;
@@ -13,14 +16,13 @@ export interface CopyPricingTemplateDialogData {
 
 @Component({
     selector: 'copy-pricing-templates-dialog-new-template',
+    styleUrls: ['./pricing-template-dialog-copy-template.component.scss'],
     templateUrl: './pricing-template-dialog-copy-template.component.html',
-    styleUrls: [ './pricing-template-dialog-copy-template.component.scss' ],
 })
 export class PricingTemplatesDialogCopyTemplateComponent {
     constructor(
         public dialogRef: MatDialogRef<PricingTemplatesDialogCopyTemplateComponent>,
         public closeConfirmationDialog: MatDialog,
-        public pricingTemplatesService: PricingtemplatesService,
         public priceTiersService: PricetiersService,
         public router: Router,
         @Inject(MAT_DIALOG_DATA) public data: CopyPricingTemplateDialogData
@@ -30,13 +32,7 @@ export class PricingTemplatesDialogCopyTemplateComponent {
     }
 
     ConfirmCopy() {
-        this.pricingTemplatesService.copy(this.data).subscribe((result) => {
-            if (result) {
-                this.router.navigate([
-                    '/default-layout/pricing-templates/' + result,
-                ]);
-            }
-        });
+        this.dialogRef.close(this.data);
     }
 
     public onCancelClick(): void {

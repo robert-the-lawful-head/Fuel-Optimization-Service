@@ -13,6 +13,8 @@ namespace FBOLinx.Web.ViewModels
         public int Oid { get; set; }
         public double? Min { get; set; }
         public double? Max { get; set; }
+
+        public int? discountType { get; set; }
         public double? MaxEntered { get; set; }
     }
 }

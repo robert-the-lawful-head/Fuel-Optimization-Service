@@ -10,9 +10,11 @@ namespace FBOLinx.Job.Test
         public void Parse_All_Csv_File_Lines()
         {
             AirportWatchCsvParser parser = new AirportWatchCsvParser("..\\..\\..\\TestFiles\\AirportWatchCsvParser.csv");
-            var records = parser.GetRecords();
+            var records = parser.GetRecords(0);
 
             Assert.AreEqual(3, records.Count);
+
+            parser.Dispose();
         }
 
         [TestMethod]
@@ -26,6 +28,8 @@ namespace FBOLinx.Job.Test
             Assert.AreEqual(1, records.Count);
             Assert.AreEqual("1612313054", records[0].BoxTransmissionDateTimeUtc);
             Assert.AreEqual("AC44F2", records[0].AircraftHexCode);
+
+            parser.Dispose();
         }
     }
 }

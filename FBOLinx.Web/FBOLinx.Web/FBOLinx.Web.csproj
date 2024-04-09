@@ -1,22 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <ItemGroup>
+	<PackageReference Include="DBSCAN" Version="2.0.12" />
+	<PackageReference Include="EPPlus" Version="7.0.3" />
 	<PackageReference Include="Geolocation" Version="1.2.1" />
-	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.10" />
-	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.10" />
-	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.10" />
-	<PackageReference Include="Microsoft.NET.Sdk.Razor" Version="2.2.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.7" />
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.7" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.7">
+	  <PrivateAssets>all</PrivateAssets>
+	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
 	<PackageReference Include="CoreHtmlToImage" Version="1.0.6" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="3.2.7" />
-    <PackageReference Include="EPPlus.Core" Version="1.5.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	<PackageReference Include="Sendgrid" Version="9.22.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.5" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.18.2" />
+	<PackageReference Include="StackifyLib" Version="2.2.10" />
+	<PackageReference Include="Sendgrid" Version="9.28.0" />
 	<PackageReference Include="StackifyMiddleware" Version="3.0.5.2" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
   </ItemGroup>
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -26,12 +32,13 @@
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <LangVersion>8.0</LangVersion>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="IdentityServer4" Version="2.3.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.4" />
+    <PackageReference Include="IdentityServer4" Version="4.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,17 +53,44 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <None Remove="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <None Remove="ClientApp\src\app\enums\certificate-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <None Remove="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <None Remove="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <None Remove="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
+    <None Remove="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <None Remove="ClientApp\src\app\guards\auth.guard.ts" />
     <None Remove="ClientApp\src\app\guards\index.ts" />
     <None Remove="ClientApp\src\app\helpers\error.interceptor.ts" />
     <None Remove="ClientApp\src\app\helpers\index.ts" />
     <None Remove="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <None Remove="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
+    <None Remove="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
+    <None Remove="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\customer-aircraft-note.ts" />
+    <None Remove="ClientApp\src\app\models\customer-aircraft.ts" />
+    <None Remove="ClientApp\src\app\models\customer-info-by-group-note.ts" />
+    <None Remove="ClientApp\src\app\models\customer-info-by-group.ts" />
+    <None Remove="ClientApp\src\app\models\entity-response-message.ts" />
     <None Remove="ClientApp\src\app\models\enum-options.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
+    <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\fuelreq.ts" />
+    <None Remove="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
+    <None Remove="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <None Remove="ClientApp\src\app\models\order-note.ts" />
+    <None Remove="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\service-order-item.ts" />
+    <None Remove="ClientApp\src\app\models\service-order.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
+    <None Remove="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fuelreqs\fuelreqs-grid-services\fuelreqs-grid-services.component.ts" />
+    <None Remove="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
+    <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
+    <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <None Remove="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
@@ -65,17 +99,38 @@
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-airport\fbo-geofencing-dialog-new-airport.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-home\fbo-prices-pricing-update-generator.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbo-prices\price-checker-dialog\price-checker-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbos-missed-orders\fbos-missed-orders-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\flight-watch\flight-watch-map-only\flight-watch-map-only.component.ts" />
+    <None Remove="ClientApp\src\app\pages\missed-orders\missedorders-grid\missedorders-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <None Remove="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <None Remove="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
+    <None Remove="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
+    <None Remove="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
+    <None Remove="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
+    <None Remove="ClientApp\src\app\services\associations.service.ts" />
+    <None Remove="ClientApp\src\app\services\datetime.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofees.service.ts" />
     <None Remove="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
+    <None Remove="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <None Remove="ClientApp\src\app\services\index.ts" />
     <None Remove="ClientApp\src\app\services\paremeters.service.ts" />
+    <None Remove="ClientApp\src\app\services\serviceorder.service.ts" />
     <None Remove="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <None Remove="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
@@ -87,11 +142,26 @@
     <None Remove="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <None Remove="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
     <None Remove="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
+    <None Remove="Dbscan.RBush" />
+    <None Remove="ClientApp\src\types\index.d.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="ClientApp\src\app\ui\" />
     <Folder Include="ClientApp\src\assets\img\landing-page\" />
+    <Folder Include="Configurations\" />
+    <Folder Include="EntityServices\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Templates\GroupCustomerPrice\FourColumns.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\FourColumnsRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\SingleColumn.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\SingleColumnRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsApplicableFlightTypesOnly.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsApplicableFlightTypesOnlyRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsDepartureOnly.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsDepartureOnlyRow.csv" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,17 +172,45 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\src\app\enums\aircraft-sizes.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\applicable-tax-flights.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\certificate-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-applying-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\fee-calculation-types.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\enums\flight-type-classifications.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\service-order-applied-date-types.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\enums\string-filter-conditions.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\auth.guard.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\guards\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\error.interceptor.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\helpers\jwt.interceptor.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\layouts\outside-the-gate\outside-the-gate.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\airport-watch-historical-parking.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\antenna-status\antenna-status-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft-note.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-aircraft.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group-note.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\customer-info-by-group.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\entity-response-message.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\enum-options.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fuelreq.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\order-note.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\service-order-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\service-order.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fuelreqs\fuelreqs-grid-services\fuelreqs-grid-services.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fuelreqs\fuelreqs-home\fuelreqs-home.component.spec.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contact-confirm-delete-modal\contact-confirm-delete-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\contacts\contacts-edit-modal\contacts-edit-modal.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customer-aircrafts\customer-aircrafts-confirm-delete-modal\customer-aircrafts-confirm-delete-modal.component.ts" />
@@ -121,15 +219,37 @@
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-edit\email-templates-edit.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-grid\email-templates-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\email-templates\email-templates-home\email-templates-home.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-airport\fbo-geofencing-dialog-new-airport.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-geofencing\fbo-geofencing-dialog-new-cluster\fbo-geofencing-dialog-new-cluster.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-update-generator\fbo-prices-update-generator.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fbo-prices-select-default-template\fbo-prices-select-default-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\fee-and-tax-settings-dialog\fee-and-tax-settings-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbo-prices\price-checker-dialog\price-checker-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbos-missed-orders\fbos-missed-orders-grid\fbos-missed-orders-grid.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fbos-missed-quotes\fbos-missed-quotes-grid\fbos-missed-quotes-grid.component.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+    <TypeScriptCompile Include="ClientApp\src\app\pages\flight-watch\flight-watch-map-only\flight-watch-map-only.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\missed-orders\missedorders-grid\missedorders-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-copy-template\pricing-template-dialog-copy-template.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\pricing-templates\pricing-template-dialog-delete-warning-template\pricing-template-dialog-delete-warning.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\ramp-fees\ramp-fees-import-information-dialog\ramp-fees-import-information-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-new\service-orders-dialog-new.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-dialog-order-items\service-orders-dialog-order-items.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-home\service-orders-home.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-item-list\service-orders-item-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\service-orders\service-orders-list\service-orders-list.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclustercoordinates.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\airportfbogeofenceclusters.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\contactinfobyfbo.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\associations.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\datetime.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeeandtaxomitsbycustomer.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\fbofeesandtaxes.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\fbomissedquoteslog.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\paremeters.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\services\serviceorder.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\services\temporaryaddonmargin.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\copy-confirmation\copy-confirmation.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\distribution-wizard\distribution-wizard-review\distribution-wizard-review.component.ts" />
@@ -141,6 +261,25 @@
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\table-global-search\table-global-search.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\components\tail-lookup-tool\tail-lookup-tool.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\shared\pipes\safe-html-pipe.pipe.ts" />
+    <TypeScriptCompile Include="ClientApp\src\types\index.d.ts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="SQL\vdccn4\create_table_GroupImageFileData.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>create_table_GroupImageFileData.sql</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

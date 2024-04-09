@@ -3,39 +3,49 @@
     <mat-form-field>
         <mat-label>Group or FBO</mat-label>
         <mat-select [(value)]="type">
-            <mat-option value="group">
-                Group
-            </mat-option>
-            <mat-option value="fbo">
-                FBO
-            </mat-option>
+            <mat-option value="group"> Group </mat-option>
+            <mat-option value="fbo"> FBO </mat-option>
         </mat-select>
     </mat-form-field>
     <div *ngIf="type === 'group'">
         <mat-form-field>
-            <input [(ngModel)]="data.groupName" aria-label="Group Name" matInput placeholder="Group Name">
+            <input
+                [(ngModel)]="data.groupName"
+                aria-label="Group Name"
+                matInput
+                placeholder="Group Name"
+            />
         </mat-form-field>
     </div>
     <div *ngIf="type === 'fbo'">
-        <app-airport-autocomplete (valueChange)="airportValueChanged($event)"
-                                  [airportContainerModel]="data"></app-airport-autocomplete>
-        <mat-form-field *ngIf="dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0">
-            <mat-select (selectionChange)="fboSelectionChange()"
-                        [(ngModel)]="data.acukwikFbo"
-                        placeholder="FBO">
-                <mat-option *ngFor="let acukwikFbo of dataSources.acukwikFbos"
-                            [value]="acukwikFbo">{{ acukwikFbo.handlerLongName }}</mat-option>
+        <app-airport-autocomplete
+            (valueChange)="airportValueChanged($event)"
+            [airportContainerModel]="data"
+        ></app-airport-autocomplete>
+        <mat-form-field
+            *ngIf="
+                dataSources.acukwikFbos && dataSources.acukwikFbos.length > 0
+            "
+        >
+            <mat-select
+                (selectionChange)="fboSelectionChange()"
+                [(ngModel)]="data.acukwikFbo"
+                placeholder="FBO"
+            >
+                <mat-option
+                    *ngFor="let acukwikFbo of dataSources.acukwikFbos"
+                    [value]="acukwikFbo"
+                    >{{ acukwikFbo.handlerLongName }}</mat-option
+                >
             </mat-select>
         </mat-form-field>
         <mat-form-field *ngIf="data.acukwikFbo">
             <mat-label>Group</mat-label>
-            <input [(ngModel)]="data.group"
-                   [value]="data.group"
-                   matInput>
+            <input [(ngModel)]="data.group" [value]="data.group" matInput />
         </mat-form-field>
     </div>
     <div *ngIf="fboAlreadyExists" style="color: red">
-        <i>This FBO is already registered to a group in FBOLinx.</i> 
+        <i>This FBO is already registered to a group in FBOLinx.</i>
     </div>
 </div>
 <div mat-dialog-actions>
@@ -45,6 +55,8 @@
         class="mr-1"
         color="accent"
         mat-flat-button
-    >Add {{ type === 'group' ? 'Group' : 'FBO' }}</button>
+    >
+        Add {{ type === "group" ? "Group" : "FBO" }}
+    </button>
     <button (click)="onCancelClick()" mat-stroked-button>Cancel</button>
 </div>

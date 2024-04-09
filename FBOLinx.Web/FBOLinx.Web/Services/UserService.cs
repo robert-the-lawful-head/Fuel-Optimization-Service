@@ -1,46 +1,45 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using FBOLinx.Web.Models;
-using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Data;
-using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using FBOLinx.Web.Auth;
+using FBOLinx.Core.Enums;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.User;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
     public interface IUserService
     {
-        Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
-        Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord);
-        Task<User> CreateGroupLoginIfNeeded(Group groupRecord);
+        Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false);
+        Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord);
+        Task<FBOLinx.DB.Models.User> CreateGroupLoginIfNeeded(Group groupRecord);
     }
 
     public class UserService : IUserService
     {
-        private readonly AppSettings _AppSettings;
         private readonly FboLinxContext _Context;
         private IEncryptionService _EncryptionService;
+        private readonly JwtManager _jwtManager;
+        private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private IRepository<Group, FboLinxContext> _groupRepo;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService)
+        public UserService(FboLinxContext context, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IRepository<Group, FboLinxContext> groupRepo)
         {
             _EncryptionService = encryptionService;
             _Context = context;
-            _AppSettings = appSettings.Value;
+            _jwtManager = jwtManager;
+            _userService = userService;
+            _groupRepo = groupRepo;
         }
         
         public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
-            User user = await _Context.User.SingleOrDefaultAsync(x => x.Username == username);
+            FBOLinx.DB.Models.User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
             
             if (user == null)
             {
@@ -50,7 +49,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
+                var groupRecord = await _groupRepo.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
 
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())
@@ -70,15 +69,16 @@ namespace FBOLinx.Web.Services
             if (authenticate)
             {
                 SetAuthToken(user);
-                UpdateLoginCount(user);
+                await UpdateLoginCount(user);
             }
 
             return user;
         }
         
-        public async Task<User> CreateFBOLoginIfNeeded(Fbos fboRecord)
+        public async Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
-            User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == User.UserRoles.Primary)).FirstOrDefaultAsync();
+            FBOLinx.DB.Models.User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
+           
             if (user != null)
                 return user;
 
@@ -89,82 +89,59 @@ namespace FBOLinx.Web.Services
                 join c in _Context.Contacts on fc.ContactId equals c.Oid
                 where fc.Fboid == fboRecord.Oid
                 select c).OrderByDescending(x => x.Primary).FirstOrDefaultAsync();
-            user = new User()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = contactRecord?.FirstName,
                 FboId = fboRecord.Oid,
                 GroupId = fboRecord.GroupId,
                 LastName = contactRecord?.LastName,
                 Password = _EncryptionService.HashPassword(fboRecord.Password),
-                Role = User.UserRoles.Primary,
+                Role = UserRoles.Primary,
                 Username = fboRecord.Username,
                 Active = true
             };
             await _Context.User.AddAsync(user);
-            //fboRecord.Password = "";
-            //fboRecord.Username = "";
-            //_Context.Fbos.Update(fboRecord);
             await _Context.SaveChangesAsync();
 
-            //Return the newly created user that transitioned from the FBOs table
             return user;
         }
 
         public async Task<User> CreateGroupLoginIfNeeded(Group groupRecord)
         {
             User user = await _Context.User.Where(
-                (x => x.GroupId == groupRecord.Oid && (x.Role == User.UserRoles.Conductor || x.Role == User.UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+                (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+
             if (user != null)
                 return user;
 
             if (string.IsNullOrEmpty(groupRecord.Username) || string.IsNullOrEmpty(groupRecord.Password))
                 return null;
             //User doesn't exist for group - create it
-            user = new User()
+            user = new FBOLinx.DB.Models.User()
             {
                 FirstName = groupRecord.GroupName,
                 FboId = 0,
                 GroupId = groupRecord.Oid,
                 LastName = "",
                 Password = _EncryptionService.HashPassword(groupRecord.Password),
-                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? User.UserRoles.Conductor : User.UserRoles.GroupAdmin,
+                Role = (!string.IsNullOrEmpty(groupRecord.GroupName) && (groupRecord.GroupName == "FBOLinx" || groupRecord.GroupName.ToLower().Contains("fbolinx conductor"))) ? UserRoles.Conductor : UserRoles.GroupAdmin,
                 Username = groupRecord.Username,
                 Active = true
             };
 
             await _Context.User.AddAsync(user);
-            //groupRecord.Password = "";
-            //groupRecord.Username = "";
-            //_Context.Group.Update(groupRecord);
             await _Context.SaveChangesAsync();
 
-            //Return the newly created user that transitioned from the Group table
             return user;
         }
 
         #region Private Methods
         private void SetAuthToken(User user)
         {
-            // authentication successful so generate jwt token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_AppSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Oid.ToString()),
-                    new Claim(ClaimTypes.Role, ((short) user.Role).ToString()),
-                    new Claim(ClaimTypes.GroupSid, user.GroupId.ToString()),
-                    new Claim(ClaimTypes.Sid, user.FboId.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            user.Token = tokenHandler.WriteToken(token);
+            user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
-        private void UpdateLoginCount(User user)
+        private async Task UpdateLoginCount(User user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
             _Context.SaveChanges();
@@ -184,7 +161,7 @@ namespace FBOLinx.Web.Services
                 return await CreateFBOLoginIfNeeded(fboRecord);
             }
 
-            var groupRecord = await _Context.Group.Where(
+            var groupRecord = await _groupRepo.Where(
                     (x => x.Isfbonetwork == false && x.Username == username && (x.Password == password || resetPassword))).FirstOrDefaultAsync();
 
             if (groupRecord != null)
@@ -197,54 +174,7 @@ namespace FBOLinx.Web.Services
         #endregion
 
         #region Static Methods
-        public static int GetClaimedUserId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)
-                    .Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
-
-        public static User.UserRoles GetClaimedRole(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return (User.UserRoles) System.Convert.ToInt16(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Role).Value);
-            }
-            catch (System.Exception)
-            {
-                return User.UserRoles.NotSet;
-            }
-        }
-
-        public static int GetClaimedFboId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Sid).Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
-
-        public static int GetClaimedGroupId(IHttpContextAccessor httpContextAccessor)
-        {
-            try
-            {
-                return System.Convert.ToInt32(httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.GroupSid).Value);
-            }
-            catch (System.Exception)
-            {
-                return 0;
-            }
-        }
+        
         #endregion
     }
 }

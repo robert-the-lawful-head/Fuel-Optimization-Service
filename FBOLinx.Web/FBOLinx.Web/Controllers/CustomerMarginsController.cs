@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Models;
 using FBOLinx.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using FBOLinx.Web.Models.Requests;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerMarginsController : ControllerBase
+    public class CustomerMarginsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public CustomerMarginsController(FboLinxContext context)
+        public CustomerMarginsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -69,6 +65,8 @@ namespace FBOLinx.Web.Controllers
                 PriceTierId = c.PriceTierId,
                 TemplateId = c.TemplateId,
                 Amount = c.Amount,
+                discountType =   0 ,                                              
+                //c.PricingTemplate.discountType ,
                 Oid = c.Oid,
                 Min = c.PriceTier.Min,
                 Max = c.PriceTier.Max,
@@ -186,7 +184,7 @@ namespace FBOLinx.Web.Controllers
 
                 await _context.SaveChangesAsync();
             }
-            catch (System.Exception exception)
+            catch (System.Exception)
             {
                 //Do nothing - concurrency error due to fast-removal of margins that already occurred
                 //TODO: find a better way of handling this.  Looks to occur during the auto-save in the UI.  Not causing any actual issues.
@@ -219,10 +217,11 @@ namespace FBOLinx.Web.Controllers
             if (customerMarginObject != null)
             {
                 var customerMargin = _context.CustomCustomerTypes.FirstOrDefault(s => s.CustomerId == model.id && s.Fboid == model.fboid);
-
-                if(customerMargin != null)
+                
+                if (customerMargin != null)
                 {
                     customerMargin.CustomerType = customerMarginObject.Oid;
+                    _context.CustomCustomerTypes.Update(customerMargin);
                 }
                 else
                 {
@@ -231,6 +230,11 @@ namespace FBOLinx.Web.Controllers
                     newType.Fboid = model.fboid;
                     newType.CustomerId = model.id;
                     _context.CustomCustomerTypes.Add(newType);
+                    await _context.SaveChangesAsync();
+
+                    var NewCustomerTypeId = _context.CustomCustomerTypes.FirstOrDefault(c=>c.CustomerType.Equals(customerMarginObject.Oid)
+                                                                         && c.CustomerId.Equals(model.id) 
+                                                                         && c.Fboid.Equals(model.fboid)).Oid;
                 }
 
                 var groupInfo = _context.Fbos.FirstOrDefault(s => s.Oid == model.fboid).GroupId;
@@ -242,7 +246,7 @@ namespace FBOLinx.Web.Controllers
                     _context.CustomerInfoByGroup.Update(customerInfo);
                 }
 
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(model.userId, model.id, groupInfo, model.fboid);
             }
 
             
@@ -270,6 +274,7 @@ namespace FBOLinx.Web.Controllers
                     if (customerMargin != null)
                     {
                         customerMargin.CustomerType = customerMarginObject.Oid;
+                        _context.CustomCustomerTypes.Update(customerMargin);
                     }
                     else
                     {
@@ -295,5 +300,9 @@ namespace FBOLinx.Web.Controllers
 
             return Ok("");
         }
+    
+
+    
+
     }
 }

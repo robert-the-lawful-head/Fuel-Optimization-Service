@@ -1,31 +1,36 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, } from '@angular/material/dialog';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
+import { ImageSettingsModel, RichTextEditorComponent } from '@syncfusion/ej2-angular-richtexteditor';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { EmailcontentService } from '../../../services/emailcontent.service';
 // Services
 import { FbopricesService } from '../../../services/fboprices.service';
 import { PricetiersService } from '../../../services/pricetiers.service';
 import { PricingtemplatesService } from '../../../services/pricingtemplates.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { EmailcontentService } from '../../../services/emailcontent.service';
-
 import { CloseConfirmationComponent } from '../../../shared/components/close-confirmation/close-confirmation.component';
+import { EmailTemplatesDialogNewTemplateComponent } from '../../../shared/components/email-templates-dialog-new-template/email-templates-dialog-new-template.component';
+import { ProceedConfirmationComponent } from '../../../shared/components/proceed-confirmation/proceed-confirmation.component';
+import { PricingTemplateCalcService } from '../pricingTemplateCalc.service';
 
 export interface NewPricingTemplateMargin {
-    min?: number;
-    amount?: number;
-    itp?: number;
-    max?: number;
-    templatesId?: number;
-    allin?: number;
+    allin: FormControl;
+    amount: FormControl;
+    itp: FormControl;
+    max: FormControl;
+    min: FormControl;
 }
 
 @Component({
     selector: 'app-pricing-templates-dialog-new-template',
+    styleUrls: ['./pricing-templates-dialog-new-template.component.scss'],
     templateUrl: './pricing-templates-dialog-new-template.component.html',
-    styleUrls: [ './pricing-templates-dialog-new-template.component.scss' ],
 })
 export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     @ViewChild('typeEmail') rteEmail: RichTextEditorComponent;
@@ -42,14 +47,21 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
     marginTypeDataSource: Array<any> = [
         {
             text: 'Cost +',
-            value: 0
+            value: 0,
         },
         {
             text: 'Retail -',
-            value: 1
+            value: 1,
         },
     ];
+
+    discountTypeDataSource: Array<any> = [
+        { text: 'Flat per Gallon', value: 0 },
+        { text: 'Percentage', value: 1 },
+     ];
+
     emailTemplatesDataSource: Array<any>;
+    public insertImageSettings: ImageSettingsModel = { saveFormat: 'Base64' }
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -60,7 +72,10 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         private pricingTemplatesService: PricingtemplatesService,
         private fboPricesService: FbopricesService,
         private sharedService: SharedService,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        public newTemplateDialog: MatDialog,
+        private marginLessThanOneDialog: MatDialog,
+        private pricingTemplateCalcService: PricingTemplateCalcService
     ) {
         this.loadCurrentPrice();
         this.title = 'New Margin Template';
@@ -73,14 +88,16 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
                 this.dialogRef.close();
             } else {
                 const closeDialogRef = this.closeConfirmationDialog.open(
-                    CloseConfirmationComponent, {
-                        data: {
-                            customTitle: 'Discard Changes?',
-                            customText: 'You have unsaved changes. Are you sure?',
-                            ok: 'Discard',
-                            cancel: 'Cancel',
-                        },
+                    CloseConfirmationComponent,
+                    {
                         autoFocus: false,
+                        data: {
+                            cancel: 'Cancel',
+                            customText:
+                                'You have unsaved changes. Are you sure?',
+                            customTitle: 'Discard Changes?',
+                            ok: 'Discard',
+                        },
                     }
                 );
                 closeDialogRef.afterClosed().subscribe((result) => {
@@ -101,40 +118,53 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         return this.form.value.secondStep.marginType;
     }
 
+    get discountType() {
+
+        return this.form.value.secondStep.discountType;
+    }
+
+
     ngOnInit() {
         this.initForm();
         this.loadEmailContentTemplate();
     }
-
     initForm() {
         this.form = this.formBuilder.group({
             firstStep: this.formBuilder.group({
-                templateName: [ '', Validators.required ],
-                templateDefault: [ false ],
+                templateDefault: [false],
+                templateName: ['', Validators.required],
+
             }),
             secondStep: this.formBuilder.group({
-                marginType: [ 1, Validators.required ],
                 customerMargins: this.formBuilder.array([
                     this.formBuilder.group({
-                        min: [ 1 ],
-                        max: [ 99999 ],
-                        amount: [ Number(0).toFixed(4) ],
-                        itp: [ 0 ],
-                        allin: [ 0 ],
-                    }, {
-                        updateOn: 'blur'
-                    }),
+                            allin: new FormControl(0),
+                            amount: new FormControl(Number(0).toFixed(4)),
+                            itp: new FormControl(0),
+                            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                            min: new FormControl(1),
+                        },
+                        {
+                            updateOn: 'blur',
+                        }
+                    ),
                 ]),
+                marginType: [1, Validators.required],
+                discountType :[0 , Validators.required]
             }),
             thirdStep: this.formBuilder.group({
                 emailContentId: [''],
                 notes: [''],
-            })
+            }),
         });
 
         const secondStep = this.form.controls.secondStep as FormGroup;
         secondStep.valueChanges.subscribe(() => {
-            const updatedMargins = this.updateMargins(this.customerMarginsFormArray.value, this.marginType);
+            const updatedMargins = this.updateMargins(
+                this.customerMarginsFormArray.value,
+                this.marginType ,
+                this.discountType
+            );
             this.customerMarginsFormArray.setValue(updatedMargins, {
                 emitEvent: false,
             });
@@ -143,82 +173,112 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
 
     marginTypeChange() {
         const secondStep = this.form.controls.secondStep as FormGroup;
-        secondStep.setControl('customerMargins', this.formBuilder.array([
-            this.formBuilder.group({
-                min: [ 1 ],
-                max: [ 99999 ],
-                amount: [ Number(0).toFixed(4) ],
-                itp: [ 0 ],
-                allin: [ 0 ],
-            }, {
-                updateOn: 'blur'
-            }),
-        ]));
+        secondStep.setControl(
+            'customerMargins',
+            this.formBuilder.array([
+                this.formBuilder.group({
+                        allin: new FormControl(0),
+                        amount: new FormControl(Number(0).toFixed(4)),
+                        itp: new FormControl(0),
+                        max: new FormControl({value: 99999, disabled: true}, Validators.required),
+                        min: new FormControl(1),
+                    },
+                    {
+                        updateOn: 'blur'
+                    }
+                ),
+            ])
+        );
+    }
+    updateCustomerMarginVolumeValues(index: number){
+        this.pricingTemplateCalcService.adjustCustomerMarginPreviousValues(index,this.customerMarginsFormArray);
+        this.pricingTemplateCalcService.adjustCustomerMarginNextValues(index,this.customerMarginsFormArray);
     }
 
     addCustomerMargin() {
-        const customerMargin = {
-            min: 1,
-            max: 99999,
-            amount: Number(0).toFixed(4),
-            itp: 0,
-            allin: 0,
+        const customerMargin: NewPricingTemplateMargin = {
+            allin: new FormControl(0),
+            amount: new FormControl(Number(0).toFixed(4)),
+            itp: new FormControl(0),
+            max: new FormControl({value: 99999, disabled: true}, Validators.required),
+            min: new FormControl(1),
         };
         if (this.customerMarginsFormArray.length > 0) {
             const lastIndex = this.customerMarginsFormArray.length - 1;
-            customerMargin.min = Math.abs(this.customerMarginsFormArray.at(lastIndex).value.min) + 250;
+
+            customerMargin.min.setValue(
+                Math.abs(
+                    this.customerMarginsFormArray.at(lastIndex).value.min
+                ) + 250);
             this.customerMarginsFormArray.at(lastIndex).patchValue({
-                max: Math.abs(customerMargin.min) - 1,
+                max: Math.abs(customerMargin.min.value) - 1,
             });
         }
 
-        this.customerMarginsFormArray.push(this.formBuilder.group(customerMargin, { updateOn: 'blur' }));
+        this.customerMarginsFormArray.push(
+            this.formBuilder.group(customerMargin, { updateOn: 'blur' })
+        );
     }
 
     deleteCustomerMargin(index) {
-        this.customerMarginsFormArray.removeAt(index);
+        this.pricingTemplateCalcService.adjustCustomerMarginValuesOnDelete(index,this.customerMarginsFormArray);
     }
 
     addTemplateClicked() {
-        this.isSaving = true;
-
-        const templatePayload = {
-            fboId: this.data.fboId,
-            name: this.form.value.firstStep.templateName,
-            default: this.form.value.firstStep.templateDefault,
-            marginType: this.form.value.secondStep.marginType,
-            emailContentId: this.form.value.thirdStep.emailContentId,
-            notes: this.form.value.thirdStep.notes,
-        };
-
-        this.pricingTemplatesService
-            .add(templatePayload)
-            .subscribe((savedTemplate: any) => {
-                const customerMargins = [];
-                this.customerMarginsFormArray.value.forEach((customerMargin: any) => {
-                    customerMargins.push({
-                        ...customerMargin,
-                        templateId: savedTemplate.oid,
-                    });
+        var isMarginLessThanZero = false;
+        if (this.form.value.secondStep.marginType == 0) {
+            this.customerMarginsFormArray.value.every(
+                (customerMargin: any) => {
+                    if (customerMargin.amount <= 0) {
+                        isMarginLessThanZero = true;
+                        return false;
+                    }
                 });
+        }
+        else {
+            this.customerMarginsFormArray.value.every(
+                (customerMargin: any) => {
+                    if (customerMargin.amount <= 0) {
+                        isMarginLessThanZero = true;
+                        return false;
+                    }
+                });
+        }
 
-                this.priceTiersService
-                    .updateFromCustomerMarginsViewModel(
-                        customerMargins
-                    )
-                    .subscribe(() => {
-                        this.isSaving = false;
-                        this.dialogRef.close(savedTemplate);
-                    });
+        if (!isMarginLessThanZero) {
+            this.completeTemplateAdd();
+        }
+        else {
+            const dialogRef = this.marginLessThanOneDialog.open(
+                ProceedConfirmationComponent,
+                {
+                    autoFocus: false,
+                    data: {
+                        buttonText: 'Yes',
+                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
+                    },
+                }
+            );
+
+            dialogRef.afterClosed().subscribe((result) => {
+                if (!result) {
+                    return;
+                }
+                this.completeTemplateAdd();
             });
+        }
     }
 
     loadCurrentPrice() {
         this.fboPricesService
             .getFbopricesByFboIdCurrent(this.data.fboId)
             .subscribe((data: any) => {
-                this.jetACost = data.find(item => item.product === 'JetA Cost').price;
-                this.jetARetail = data.find(item => item.product === 'JetA Retail').price;
+                this.jetACost = data.find(
+                    (item) => item.product === 'JetA Cost'
+                ).price;
+                this.jetARetail = data.find(
+                    (item) => item.product === 'JetA Retail'
+                ).price;
             });
     }
 
@@ -227,29 +287,130 @@ export class PricingTemplatesDialogNewTemplateComponent implements OnInit {
         this.stepper.reset();
     }
 
-    private loadEmailContentTemplate(): void {
-        this.emailContentService.getForFbo(this.sharedService.currentUser.fboId).subscribe(
-            (response: any) => {
-                this.emailTemplatesDataSource = response;
+    public onEmailConentTemplateChanged(event): void {
+        if (this.form.value.thirdStep.emailContentId > -1)
+            return;
+
+        const dialogRef = this.newTemplateDialog.open(
+            EmailTemplatesDialogNewTemplateComponent,
+            {
+                data: {
+                    fboId: this.sharedService.currentUser.fboId,
+                },
+            }
+        );
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (!result) {
+                return;
+            }
+
+            this.emailContentService
+                .add(result)
+                .subscribe((response: any) => {
+                    this.form.get(['thirdStep', 'emailContentId']).setValue(response.oid);
+                    this.loadEmailContentTemplate();
+                });
+        });
+    }
+
+    private completeTemplateAdd() {
+        this.isSaving = true;
+
+        const templatePayload = {
+            default: this.form.value.firstStep.templateDefault,
+            emailContentId: this.form.value.thirdStep.emailContentId,
+            fboId: this.data.fboId,
+            marginType: this.form.value.secondStep.marginType,
+            discountType: this.discountType,
+            name: this.form.value.firstStep.templateName,
+            notes: this.form.value.thirdStep.notes,
+        };
+
+
+        this.pricingTemplatesService
+            .add(templatePayload)
+            .subscribe((savedTemplate: any) => {
+                const customerMargins = [];
+                this.customerMarginsFormArray.value.forEach(
+                    (customerMargin: any) => {
+                        customerMargins.push({
+                            ...customerMargin,
+                            templateId: savedTemplate.oid,
+                        });
+                    }
+                );
+
+                this.priceTiersService
+                    .updateFromCustomerMarginsViewModel(customerMargins)
+                    .subscribe(() => {
+                        this.isSaving = false;
+                        this.fboPricesService.handlePriceChangeCleanUp(this.sharedService.currentUser.fboId).subscribe(
+                            (response:
+                                any) => {
+                                this.dialogRef.close(savedTemplate);
+                            });
+
+                    });
             });
     }
 
-    private updateMargins(oldMargins, marginType) {
-        const margins = [ ...oldMargins ];
+    private loadEmailContentTemplate(): void {
+        this.emailContentService
+            .getForFbo(this.sharedService.currentUser.fboId)
+            .subscribe((response: any) => {
+                this.emailTemplatesDataSource = response;
+                this.emailTemplatesDataSource.push({
+                    oid: -1,
+                    name: '--Add New Email Template--',
+                    subject: ''
+                });
+            });
+    }
+
+    private updateMargins(oldMargins, marginType , discountType) {
+        const margins = [...oldMargins];
         for (let i = 0; i < margins?.length; i++) {
-            if (i > 0) {
-                margins[i - 1].max = Math.abs(margins[i].min - 1);
-            }
-            if (marginType !== 1) {
+            if (marginType == 0) {
                 if (margins[i].min !== null && margins[i].amount !== null) {
-                    margins[i].allin = this.jetACost + Number(margins[i].amount);
+                       if(discountType == 0)
+                       {
+                        margins[i].allin = Number(margins[i].amount);
+                       }
+                       else
+                       {
+                        margins[i].allin =
+                        this.jetACost * Number(margins[i].amount)/100;
+                       }
+
+                       margins[i].itp = this.jetACost;
+                       if (margins[i].allin !== null) {
+                           margins[i].itp = margins[i].allin ;
+                       }
+
                 }
             } else {
                 if (margins[i].amount !== null && margins[i].min !== null) {
-                    margins[i].allin = this.jetARetail - Number(margins[i].amount);
-                    margins[i].itp = this.jetARetail;
-                    if (margins[i].allin) {
-                        margins[i].itp = margins[i].allin - this.jetACost;
+
+                    if(discountType == 0)
+                    {
+                        margins[i].allin =
+                         this.jetARetail - Number(margins[i].amount);
+                    }
+                    else
+                    {
+                        margins[i].allin =
+                        this.jetARetail * (1 - (Number(margins[i].amount) /100));
+                    }
+
+
+                    if (margins[i].allin !== null) {
+
+                        margins[i].itp = margins[i].allin -  this.jetACost ;
+                    }
+                    else
+                    {
+                        margins[i].itp = this.jetARetail;
                     }
                 }
             }

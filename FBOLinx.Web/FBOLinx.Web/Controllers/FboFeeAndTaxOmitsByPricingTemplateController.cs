@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
-    public class FboFeeAndTaxOmitsByPricingTemplateController : Controller
+    public class FboFeeAndTaxOmitsByPricingTemplateController : FBOLinxControllerBase
     {
         private FboLinxContext _context;
 
-        public FboFeeAndTaxOmitsByPricingTemplateController(FboLinxContext context)
+        public FboFeeAndTaxOmitsByPricingTemplateController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }

@@ -1,15 +1,28 @@
-import { Component, Inject, ViewChild, OnInit } from '@angular/core';
-import * as XLSX from 'xlsx';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+    MAT_DIALOG_DATA,
+    MatDialog,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { GridComponent, SelectionService } from '@syncfusion/ej2-angular-grids';
-import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { EmailTemplate } from 'src/app/models/email-template';
+import { EmailcontentService } from 'src/app/services/emailcontent.service';
+import * as XLSX from 'xlsx';
+
 import { SharedService } from '../../../layouts/shared-service';
+import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
+import { GroupAnalyticsEmailPricingDialogComponent } from '../group-analytics-email-pricing-dialog/group-analytics-email-pricing-dialog.component';
+
+export type GroupAnalyticsGenerateDialogData = {
+    customers: any[];
+    emailTemplate: EmailTemplate;
+};
 
 @Component({
+    providers: [SharedService, SelectionService],
     selector: 'app-group-analytics-generate-dialog',
+    styleUrls: ['./group-analytics-generate-dialog.component.scss'],
     templateUrl: './group-analytics-generate-dialog.component.html',
-    styleUrls: [ './group-analytics-generate-dialog.component.scss' ],
-    providers: [ SharedService, SelectionService ]
 })
 export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     @ViewChild('grid') public grid: GridComponent;
@@ -18,23 +31,26 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
     dataSources: any = {};
     filter = '';
     selectedCustomers: any[];
-    loading: boolean;
+    downloading: boolean;
+    emailing: boolean;
     exportedCustomersCount: number;
-    public selectOptions: Object;
-    public editSettings: Object;
+    public selectOptions: any;
+    public editSettings: any;
     public toolbar: string[];
     public filterOptions = {
-        mode: 'Immediate', immediateModeDelay: 1000  };
-    public sortSettings: Object;
+        immediateModeDelay: 1000,
+        mode: 'Immediate',
+    };
+    public sortSettings: any;
 
     constructor(
         public dialogRef: MatDialogRef<GroupAnalyticsGenerateDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: GroupAnalyticsGenerateDialogData,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private sharedService: SharedService
-    ) {
-        
-    }
+        private sharedService: SharedService,
+        private emailDialog: MatDialog,
+        private emailContentService: EmailcontentService
+    ) {}
 
     public ngOnInit(): void {
         this.dataSources = this.data.customers;
@@ -48,78 +64,161 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
         this.dialogRef.close();
     }
 
+    onEmail() {
+        const dialogRef = this.emailDialog.open<
+            GroupAnalyticsEmailPricingDialogComponent,
+            GroupAnalyticsGenerateDialogData
+        >(GroupAnalyticsEmailPricingDialogComponent, {
+            data: {
+                customers: this.selectedCustomers,
+                emailTemplate: this.data.emailTemplate,
+            },
+            height: '600px',
+            width: '680px',
+        });
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                const emailTemplate: EmailTemplate = {
+                    emailContentHtml: result.emailTemplate.emailContentHtml,
+                    fromAddress: result.emailTemplate.fromAddress,
+                    groupId: this.sharedService.currentUser.groupId,
+                    oid: result.emailTemplate?.oid,
+                    replyTo: result.emailTemplate.replyTo,
+                    subject: result.emailTemplate.subject,
+                };
+
+                if (!emailTemplate.oid) {
+                    this.emailContentService
+                        .add(emailTemplate)
+                        .subscribe((data: EmailTemplate) => {
+                            this.data.emailTemplate = data;
+                            this.onSendEmail();
+                        });
+                } else {
+                    this.emailContentService
+                        .update(emailTemplate)
+                        .subscribe((data: EmailTemplate) => {
+                            this.data.emailTemplate = emailTemplate;
+                            this.onSendEmail();
+                        });
+                }
+            }
+        });
+    }
+
     async onGenerate() {
-        this.loading = true;
+        this.downloading = true;
         this.exportedCustomersCount = 0;
 
-        for (var selectedCustomer of this.selectedCustomers) {
-            this.customerInfoByGroupService.getGroupAnalytics(
-                this.sharedService.currentUser.groupId,
-                [selectedCustomer.customerId],
-            ).subscribe(async (data: any[]) => {
-                var exportData: any[] = [];
-                for (const customerFbos of data) {
-                    this.populateExportDataForCustomer(customerFbos.company,
-                        customerFbos.tailNumbers,
-                        customerFbos.groupCustomerFbos,
-                        exportData);
-                }
-                if (data.length > 0)
+        const promises = this.selectedCustomers.map(
+            async (selectedCustomer) => {
+                const data = (await this.customerInfoByGroupService
+                    .getGroupAnalytics(
+                        this.sharedService.currentUser.groupId,
+                        selectedCustomer.customerId
+                    )
+                    .toPromise()) as any;
+
+                if (data.length > 0) {
+                    const exportData: any[] = [];
+
+                    this.populateExportDataForCustomer(
+                        data,
+                        exportData
+                    );
+
                     await this.exportReportForCustomer(exportData, data[0].company);
-                this.loading = false;
-            });
-        }
+                }
+            }
+        );
+
+        await Promise.all(promises);
+        this.downloading = false;
+    }
+
+    async onSendEmail() {
+        this.emailing = true;
+        this.exportedCustomersCount = 0;
+
+        const promises = this.selectedCustomers.map((selectedCustomer) =>
+            this.customerInfoByGroupService
+                .getGroupAnalyticsAndEmail(
+                    this.sharedService.currentUser.groupId,
+                    selectedCustomer.customerId
+                )
+                .toPromise()
+        );
+
+        await Promise.all(promises);
+        this.emailing = false;
     }
 
     applyFilter(filter: string) {
         this.filter = filter;
 
-        this.dataSources = this.data.customers.filter(customer =>
-            customer.company.toLowerCase().includes(filter));
+        this.dataSources = this.data.customers.filter((customer) =>
+            customer.company.toLowerCase().includes(filter)
+        );
+        this.focusTextbox();
     }
 
     rowSelected() {
         this.selectedCustomers = this.grid.getSelectedRecords();
+        this.focusTextbox();
     }
 
     rowDeselected() {
         this.selectedCustomers = this.grid.getSelectedRecords();
+        this.focusTextbox();
     }
 
-    populateExportDataForCustomer(company: string, tailNumbers: string, data: any, exportData: any[]) {
-        for (const fboPrice of data) {
-            for (let i = 0; i < fboPrice.prices.length; i++) {
-                var row: any = {};
-                row = {};
-                row['FBO'] = i === 0 ? fboPrice.icao : '';
-                row['Volume Tier'] = fboPrice.prices[i].volumeTier;
-                if (fboPrice.prices[i].priceBreakdownDisplayType == 0) {
-                    row['Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 1) {
-                    row['International Price'] = fboPrice.prices[i].intPrivate?.toFixed(4);
-                    row['Domestic Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else if (fboPrice.prices[i].priceBreakdownDisplayType == 2) {
-                    row['Commercial Price'] = fboPrice.prices[i].domComm?.toFixed(4);
-                    row['Private Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
-                } else {
-                    row['Int/Comm Price'] = fboPrice.prices[i].intComm?.toFixed(4);
-                    row['Int/Private Price'] = fboPrice.prices[i].intPrivate?.toFixed(4);
-                    row['Dom/Comm Price'] = fboPrice.prices[i].domComm?.toFixed(4);
-                    row['Dom/Private Price'] = fboPrice.prices[i].domPrivate?.toFixed(4);
+    populateExportDataForCustomer(
+        data: any,
+        exportData: any[]
+    ) {
+        for (const fbo of data) {
+            for (const fboPrice of fbo.groupCustomerFbos) {
+                for (let i = 0; i < fboPrice.prices.length; i++) {
+                    const row: any = {};
+                    row.ICAO = i === 0 ? fboPrice.icao : '';
+                    row['Volume Tier'] = fboPrice.prices[i].volumeTier;
+                    row["Product"] = fboPrice.prices[i].product;
+                    if (fboPrice.prices[i].priceBreakdownDisplayType === 0) {
+                        row.Price = fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else if (fboPrice.prices[i].priceBreakdownDisplayType === 1) {
+                        row['International Price'] =
+                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        row['Domestic Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else if (fboPrice.prices[i].priceBreakdownDisplayType === 2) {
+                        row['Commercial Price'] =
+                            fboPrice.prices[i].domComm?.toFixed(4);
+                        row['Private Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    } else {
+                        row['Int/Comm Price'] =
+                            fboPrice.prices[i].intComm?.toFixed(4);
+                        row['Int/Private Price'] =
+                            fboPrice.prices[i].intPrivate?.toFixed(4);
+                        row['Dom/Comm Price'] =
+                            fboPrice.prices[i].domComm?.toFixed(4);
+                        row['Dom/Private Price'] =
+                            fboPrice.prices[i].domPrivate?.toFixed(4);
+                    }
+                    row['Tail Numbers'] = fbo.tailNumbers;
+                    exportData.push(row);
                 }
-                row['Tail Numbers'] = tailNumbers;
-                exportData.push(row);
-            }
-            if (!fboPrice.prices.length) {
-                exportData.push({
-                    FBO: fboPrice.icao,
-                    'Volume Tier': '',
-                    'Int/Comm': '',
-                    'Int/Private': '',
-                    'Dom/Comm': '',
-                    'Dom/Private': '',
-                    'Tail Numbers': ''
-                });
+                if (!fboPrice.prices.length) {
+                    exportData.push({
+                        'Dom/Comm': '',
+                        'Dom/Private': '',
+                        ICAO: fboPrice.icao,
+                        'Int/Comm': '',
+                        'Int/Private': '',
+                        'Tail Numbers': '',
+                        'Volume Tier': '',
+                    });
+                }
             }
         }
     }
@@ -138,5 +237,20 @@ export class GroupAnalyticsGenerateDialogComponent implements OnInit {
                 resolve({});
             }, 100);
         });
+    }
+
+    focusTextbox() {
+        const searchBox = document.getElementById("searchBox") as HTMLInputElement;
+
+        if (searchBox) {
+            setTimeout(() => {
+                searchBox.focus();
+            }, 1);
+        }
+    }
+
+    public onFilterInput(event: any, fieldName: string, operator: string): void {
+        this.grid.filterByColumn(fieldName, operator, event.target.value);
+        this.focusTextbox();
     }
 }

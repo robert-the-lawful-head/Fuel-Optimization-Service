@@ -5,7 +5,7 @@
     .stickyStyle {
         padding-bottom: 10px;
         padding-top: 5px;
-        background-color: #f8f8f8;
+        //background-color: #f8f8f8;
     }
 }
 
@@ -16,7 +16,6 @@
 .volume-tiers-table {
     padding-left: 20px !important;
 }
-
 
 .volume-tiers-header {
     margin-left: -0.25rem !important;
@@ -30,14 +29,9 @@
 }
 
 .card-content {
-    height: calc(100vh - 280px);
+    height: calc(100vh - 200px);
     overflow: auto;
 }
-
-.tax-fee-exclusions {
-    max-width: 700px;
-}
-
 .container-fluid {
     height: 100%;
 }

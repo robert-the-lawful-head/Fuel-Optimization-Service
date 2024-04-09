@@ -1,36 +1,47 @@
 import {
+    animate,
+    state,
+    style,
+    transition,
+    trigger,
+} from '@angular/animations';
+import {
+    AfterContentChecked,
     Component,
+    ElementRef,
+    HostListener,
     Input,
     ViewChild,
-    HostListener,
-    ElementRef,
-    AfterContentChecked,
 } from '@angular/core';
-import { trigger, state, style, transition, animate } from '@angular/animations';
-
 
 @Component({
-    selector: 'ni-card',
-    templateUrl: './ni-card.component.html',
-    styleUrls: ['./ni-card.component.scss'],
     animations: [
         trigger('openClose', [
-            state('true', style({
-                height: '*',
-                paddingBottom: '15px',
-                paddingTop: '15px',
-            })),
-            state('false', style({
-                height: '0',
-                paddingBottom: '0',
-                paddingTop: '0',
-            })),
-            transition('false <=> true', [ animate(300) ]),
+            state(
+                'true',
+                style({
+                    height: '*',
+                    paddingBottom: '15px',
+                    paddingTop: '15px',
+                })
+            ),
+            state(
+                'false',
+                style({
+                    height: '0',
+                    paddingBottom: '0',
+                    paddingTop: '0',
+                })
+            ),
+            transition('false <=> true', [animate(300)]),
         ]),
     ],
     host: {
         '[class.ni-card]': 'true',
     },
+    selector: 'ni-card',
+    styleUrls: ['./ni-card.component.scss'],
+    templateUrl: './ni-card.component.html',
 })
 export class NiCardComponent implements AfterContentChecked {
     @ViewChild('cardTitle') cardTitle: ElementRef;
@@ -76,7 +87,10 @@ export class NiCardComponent implements AfterContentChecked {
 
     private checkSubtitleVisible() {
         if (this.subtitle && this.cardTitle && this.cardSubTitle) {
-            const limit = this.cardTitle.nativeElement.offsetLeft + this.cardTitle.nativeElement.offsetWidth + 10;
+            const limit =
+                this.cardTitle.nativeElement.offsetLeft +
+                this.cardTitle.nativeElement.offsetWidth +
+                10;
             const subtitleStart = this.cardSubTitle.nativeElement.offsetLeft;
             if (subtitleStart < limit && this.subTitleVisible) {
                 this.subTitleVisible = false;

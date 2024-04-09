@@ -1,10 +1,10 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef, } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-contacts-dialog-confirm-contact-delete',
+    styleUrls: ['./contact-confirm-delete-modal.component.scss'],
     templateUrl: './contact-confirm-delete-modal.component.html',
-    styleUrls: [ './contact-confirm-delete-modal.component.scss' ],
 })
 export class ContactsDialogConfirmContactDeleteComponent {
     private contactId = 0;

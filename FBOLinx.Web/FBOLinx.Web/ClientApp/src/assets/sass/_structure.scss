@@ -1,37 +1,31 @@
-html {
-  height: 100%;
-}
-body {
-  height: 100%;
-  overflow-x: hidden;
-}
-app {
-  display: block;
-  height: 100%;
-}
-.site-container {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-
-  > * {
-    display: block;
-  }
-  > router-outlet {
-    display: none;
-  }
-  .main-content {
-    height: 100%;
-    overflow: auto;
-    -webkit-overflow-scrolling: touch;
-
-    .main-content-wrap {
-      display: table;
-      height: 100%;
-      padding: 22px;
-      table-layout: fixed;
-      width: 100%;
-      padding-right: 55px;
+html, body {
+    margin: 0;
+    padding: 0;
     }
-  }
+.site-container {
+    position: relative;
+    padding-top: $navbar-height;
+    // border: 1px solid #f00;
+    height: 100%;
+    > * {
+        display: block;
+    }
+    > router-outlet {
+        display: none;
+    }
+    .main-content {
+        display: relative;
+        -webkit-overflow-scrolling: touch;
+        height: 100%;
+
+        .main-content-wrap {
+            // border: 1px solid black;
+            display: table;
+            height: 100%;
+            padding: 22px;
+            table-layout: fixed;
+            width: 100%;
+            padding-right: 55px;
+        }
+    }
 }

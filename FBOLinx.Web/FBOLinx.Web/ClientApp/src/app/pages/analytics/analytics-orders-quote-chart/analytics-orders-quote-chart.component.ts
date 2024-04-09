@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
 import * as moment from 'moment';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+
+import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
 
 @Component({
     selector: 'app-analytics-orders-quote',
-    templateUrl: './analytics-orders-quote-chart.component.html',
     styleUrls: ['./analytics-orders-quote-chart.component.scss'],
+    templateUrl: './analytics-orders-quote-chart.component.html',
 })
 export class AnalyticsOrdersQuoteChartComponent implements OnInit {
     public filterStartDate: Date;
@@ -37,7 +38,9 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService
     ) {
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-12, 'M').format('MM/DD/YYYY')
+        );
         this.filterEndDate = new Date(moment().format('MM/DD/YYYY'));
     }
 
@@ -53,12 +56,15 @@ export class AnalyticsOrdersQuoteChartComponent implements OnInit {
                 this.filterStartDate,
                 this.filterEndDate
             )
-            .subscribe((data: any) => {
-                this.ordersQuoteData = data[0];
-                this.dollarSumData = data[1];
-            }, () => {
-            }, () => {
-                this.ngxLoader.stopLoader(this.chartName);
-            });
+            .subscribe(
+                (data: any) => {
+                    this.ordersQuoteData = data[0];
+                    this.dollarSumData = data[1];
+                },
+                () => {},
+                () => {
+                    this.ngxLoader.stopLoader(this.chartName);
+                }
+            );
     }
 }

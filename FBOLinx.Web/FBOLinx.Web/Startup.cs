@@ -1,26 +1,11 @@
-using System.Text;
-using FBOLinx.DB.Context;
-using FBOLinx.ServiceLayer.BusinessServices;
-using FBOLinx.ServiceLayer.BusinessServices.Aircraft;
-using FBOLinx.ServiceLayer.BusinessServices.Auth;
-using FBOLinx.ServiceLayer.BusinessServices.Mail;
-using FBOLinx.Web.Auth;
-using FBOLinx.Web.Configurations;
-using FBOLinx.Web.Data;
-using FBOLinx.Web.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FBOLinx.ServiceLayer.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Hosting;
-using System.IO;
+using FBOLinx.Web.Extensions;
+using Mapster;
 
 namespace FBOLinx.Web
 {
@@ -51,6 +36,8 @@ namespace FBOLinx.Web
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+            app.UseSwaggerDocumentation();
+            app.UseExceptionHandlerMiddleware();
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -95,6 +82,21 @@ namespace FBOLinx.Web
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                 }
             });
+
+            ConfigureStackifyLogging(Configuration["StackifySettings:StackifyApiKey"], env.EnvironmentName);
+            ConfigureMapsterDefaults();
+        }
+
+        private void ConfigureStackifyLogging(string stackifyApiKey, string environmentName)
+        {
+            StackifyLib.Config.ApiKey = stackifyApiKey;
+            StackifyLib.Config.Environment = environmentName;
+            StackifyLib.Config.AppName = LoggingService.AppName;
+        }
+
+        private void ConfigureMapsterDefaults()
+        {
+            TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
         }
     }
 }

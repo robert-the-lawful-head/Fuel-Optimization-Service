@@ -1,25 +1,37 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { NgxUiLoaderService } from 'ngx-ui-loader';
+import { Router } from '@angular/router';
+import {
+    AfterViewInit,
+    Component,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
 import * as moment from 'moment';
-import * as XLSX from 'xlsx';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
+import {
+    ColumnType,
+    TableSettingsComponent,
+} from 'src/app/shared/components/table-settings/table-settings.component';
 
+import { SharedService } from '../../../layouts/shared-service';
+import * as SharedEvent from '../../../constants/sharedEvents';
+import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { SharedService } from '../../../layouts/shared-service';
-import { FbosService } from '../../../services/fbos.service';
-import * as SharedEvent from '../../../models/sharedEvents';
-import { MatSort, MatSortHeader } from '@angular/material/sort';
-import { MatDialog } from '@angular/material/dialog';
-import { CsvExportModalComponent, ICsvExportModalData } from 'src/app/shared/components/csv-export-modal/csv-export-modal.component';
-import { ColumnType, TableSettingsComponent } from 'src/app/shared/components/table-settings/table-settings.component';
+import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
-    templateUrl: './analytics-companies-quotes-deal-table.component.html',
     styleUrls: ['./analytics-companies-quotes-deal-table.component.scss'],
+    templateUrl: './analytics-companies-quotes-deal-table.component.html',
 })
-export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AnalyticsCompaniesQuotesDealTableComponent extends GridBase
+    implements OnInit, AfterViewInit, OnDestroy
+{
+    @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
     @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     filterStartDate: Date;
@@ -28,11 +40,26 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     fbo: string;
     icaoChangedSubscription: any;
     chartName = 'companies-quotes-deal-table';
-    displayedColumns: string[] = ['company', 'directOrders', 'companyQuotesTotal', 'conversionRate', 'totalOrders', 'airportOrders', 'lastPullDate'];
-    dataSource: MatTableDataSource<any[]>;
-
+    displayedColumns: string[] = [
+        'company',
+        'directOrders',
+        'companyQuotesTotal',
+        'conversionRate',
+        'conversionRateTotal',
+        'totalOrders',
+        'airportOrders',
+        'customerBusiness',
+        'lastPullDate',
+        'airportVisits',
+        'visitsToFbo',
+        'percentVisits',
+    ];
     tableLocalStorageKey: string;
     columns: ColumnType[] = [];
+
+    dataLength = 0;
+
+    csvFileOptions: csvFileOptions = { fileName: 'Customer Statistics.csv', sheetName: 'Customer Statistics' };
 
     constructor(
         private fuelreqsService: FuelreqsService,
@@ -40,27 +67,37 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
         private sharedService: SharedService,
         private ngxLoader: NgxUiLoaderService,
         private exportDialog: MatDialog,
-        private tableSettingsDialog: MatDialog,
+        private router: Router,
+        private tableSettingsDialog: MatDialog
     ) {
+        super();
         this.icao = this.sharedService.currentUser.icao;
-        this.filterStartDate = new Date(moment().add(-12, 'M').format('MM/DD/YYYY'));
-        this.filterEndDate = new Date(moment().add(7, 'd').format('MM/DD/YYYY'));
+        this.filterStartDate = new Date(
+            moment().add(-30, 'd').format('MM/DD/YYYY')
+        );
+        this.filterEndDate = new Date(
+            moment().add(7, 'd').format('MM/DD/YYYY')
+        );
         this.initColumns();
     }
 
     ngOnInit() {
-        this.fbosService.get({oid: this.sharedService.currentUser.fboId}).subscribe(
-            (data: any) => {
+        this.fbosService
+            .get({ oid: this.sharedService.currentUser.fboId })
+            .subscribe((data: any) => {
                 this.fbo = data.fbo;
                 this.initColumns();
-            }
-        );
+            });
 
         this.sort.sortChange.subscribe(() => {
-            this.columns = this.columns.map(column =>
+            this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
                     ? { ...column, sort: this.sort.direction }
-                    : { id: column.id, name: column.name, hidden: column.hidden }
+                    : {
+                          hidden: column.hidden,
+                          id: column.id,
+                          name: column.name,
+                      }
             );
 
             this.saveSettings();
@@ -70,13 +107,12 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     }
 
     ngAfterViewInit() {
-        this.icaoChangedSubscription = this.sharedService.changeEmitted$.subscribe(
-            (message) => {
+        this.icaoChangedSubscription =
+            this.sharedService.changeEmitted$.subscribe((message) => {
                 if (message === SharedEvent.icaoChangedEvent) {
                     this.icao = this.sharedService.currentUser.icao;
                 }
-            }
-        );
+            });
     }
 
     ngOnDestroy() {
@@ -86,71 +122,107 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     }
 
     get visibleColumns() {
-        return this.columns.filter(column => !column.hidden).map(column => column.id) || [];
+        return (
+            this.columns
+                .filter((column) => !column.hidden)
+                .map((column) => column.id) || []
+        );
     }
 
     initColumns() {
+        var initialColumns = this.columns = [
+            {
+                id: 'company',
+                name: 'Company',
+            },
+            {
+                id: 'directOrders',
+                name: 'Direct Orders',
+            },
+            {
+                id: 'companyQuotesTotal',
+                name: 'Number of Quotes',
+            },
+            {
+                id: 'conversionRate',
+                name: 'Conversion Rate',
+            },
+            {
+                id: 'conversionRateTotal',
+                name: 'Conversion Rate (Total)',
+            },
+            {
+                id: 'totalOrders',
+                name: `Total Orders at ${this.fbo}`,
+            },
+            {
+                id: 'airportOrders',
+                name: `Total Orders at ${this.sharedService.currentUser.icao}`,
+            },
+            {
+                id: 'customerBusiness',
+                name: '% of Customer\'s Business',
+            },
+            {
+                id: 'lastPullDate',
+                name: `${this.sharedService.currentUser.icao} Last Quoted`,
+                sort: 'desc',
+            },
+            {
+                id: 'airportVisits',
+                name: `Arrivals`,
+            },
+            {
+                id: 'visitsToFbo',
+                name: `Visits to ${this.fbo}`,
+            },
+            {
+                id: 'percentVisits',
+                name: `% of visits to ${this.fbo}`,
+            },
+        ];
+
         this.tableLocalStorageKey = `analytics-companies-quotes-deal-${this.sharedService.currentUser.fboId}`;
-        if (localStorage.getItem(this.tableLocalStorageKey)) {
-            this.columns = JSON.parse(localStorage.getItem(this.tableLocalStorageKey));
-        } else {
-            this.columns = [
-                {
-                    id: 'company',
-                    name: 'Company',
-                },
-                {
-                    id: 'directOrders',
-                    name: 'Direct Orders',
-                },
-                {
-                    id: 'companyQuotesTotal',
-                    name: 'Number of Quotes',
-                },
-                {
-                    id: 'conversionRate',
-                    name: 'Conversion Rate',
-                },
-                {
-                    id: 'totalOrders',
-                    name: `Total Orders at ${this.fbo}`,
-                },
-                {
-                    id: 'airportOrders',
-                    name: `Total Orders at ${this.sharedService.currentUser.icao}`,
-                },
-                {
-                    id: 'lastPullDate',
-                    name: `${this.sharedService.currentUser.icao} Last Quoted`,
-                    sort: 'desc',
-                },
-            ];
-        }
+        this.columns = this.getClientSavedColumns(this.tableLocalStorageKey, initialColumns);
     }
 
     fetchData(startDate: Date, endDate: Date) {
-        return this.fuelreqsService
-            .getCompaniesQuotingDealStatistics(
-                this.sharedService.currentUser.groupId,
-                this.sharedService.currentUser.fboId,
-                startDate,
-                endDate,
-            );
+        return this.fuelreqsService.getCompaniesQuotingDealStatistics(
+            this.sharedService.currentUser.groupId,
+            this.sharedService.currentUser.fboId,
+            startDate,
+            endDate
+        );
     }
 
     refreshSort() {
-        const sortedColumn = this.columns.find(column => !column.hidden && column.sort);
-        this.sort.sort({ id: null, start: sortedColumn?.sort || 'asc', disableClear: false });
-        this.sort.sort({ id: sortedColumn?.id, start: sortedColumn?.sort || 'asc', disableClear: false });
-        (this.sort.sortables.get(sortedColumn?.id) as MatSortHeader)?._setAnimationTransitionState({ toState: 'active' });
+        const sortedColumn = this.columns.find(
+            (column) => !column.hidden && column.sort
+        );
+        this.sort.sort({
+            disableClear: false,
+            id: null,
+            start: sortedColumn?.sort || 'asc',
+        });
+        this.sort.sort({
+            disableClear: false,
+            id: sortedColumn?.id,
+            start: sortedColumn?.sort || 'asc',
+        });
+        (
+            this.sort.sortables.get(sortedColumn?.id) as MatSortHeader
+        )?._setAnimationTransitionState({ toState: 'active' });
     }
 
     refreshData() {
+        let endDate = this.getEndOfDayTime(this.filterEndDate, true);
+        let startDate = this.getStartOfDayTime(this.filterStartDate, true);
+
         this.ngxLoader.startLoader(this.chartName);
-        this.fetchData(this.filterStartDate, this.filterEndDate)
-            .subscribe((data: any) => {
-                this.dataSource = new MatTableDataSource(data);
-                this.dataSource.sortingDataAccessor = (item, property) => {
+        this.fetchData(startDate, endDate).subscribe(
+            (data: any) => {
+                this.dataSource.data = data;
+                 this.dataSource.sortingDataAccessor = (item, property) => {
                     switch (property) {
                         case 'lastPullDate':
                             if (item[property] === 'N/A') {
@@ -165,13 +237,18 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
                             return item[property];
                     }
                 };
+
                 this.dataSource.sort = this.sort;
+                this.paginator.pageIndex = 0;
+                this.dataSource.paginator = this.paginator;
 
                 this.refreshSort();
-            }, () => {
-            }, () => {
+            },
+            () => {},
+            () => {
                 this.ngxLoader.stopLoader(this.chartName);
-            });
+            }
+        );
     }
 
     applyFilter(event: Event) {
@@ -179,15 +256,26 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
         this.dataSource.filter = filterValue.trim().toLowerCase();
     }
 
-    onExport() {
-        const dialogRef = this.exportDialog.open<CsvExportModalComponent, ICsvExportModalData, ICsvExportModalData>(
-            CsvExportModalComponent,
+    CustomerAnalitycs(element: any )
+    {
+     this.router.navigate(['/default-layout/customers' , element.oid ], {state : {tab : 3}  });
+    }
+
+    exportCsv() {
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if(id == "company")
+                return item[id];
+            else
+                return null;
+        }
+        this.exportCsvFile(this.columns,this.csvFileOptions.fileName,this.csvFileOptions.sheetName,computePropertyFnc);
+    }
+
+    openSettings() {
+        const dialogRef = this.tableSettingsDialog.open(
+            TableSettingsComponent,
             {
-                data: {
-                    title: 'Export Customer Statistics',
-                    filterStartDate: this.filterStartDate,
-                    filterEndDate: this.filterEndDate,
-                },
+                data: this.columns,
             }
         );
         dialogRef.afterClosed().subscribe((result) => {
@@ -195,44 +283,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
                 return;
             }
 
-            this.exportCsv(result.filterStartDate, result.filterEndDate);
-        });
-    }
-
-    exportCsv(startDate: Date, endDate: Date) {
-        this.fetchData(startDate, endDate)
-            .subscribe((data: any) => {
-                const exportData = data.map((item) => {
-                    const row = {
-                        Company: item.company,
-                        'Direct Orders': item.directOrders,
-                        'Number of Quotes': item.companyQuotesTotal,
-                        'Conversion Rate': item.conversionRate + '%',
-                    };
-                    row[`Total Orders at ${this.fbo}`] = item.totalOrders;
-                    row[`Total Orders at ${this.icao}`] = item.airportOrders;
-                    row[`${this.icao} Last Quoted`] = item.lastPullDate;
-                    return row;
-                });
-                const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(exportData); // converts a DOM TABLE element to a worksheet
-                const wb: XLSX.WorkBook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, 'Customer Statistics');
-
-                /* save to file */
-                XLSX.writeFile(wb, 'Customer Statistics.xlsx');
-            });
-    }
-
-    openSettings() {
-        const dialogRef = this.tableSettingsDialog.open(TableSettingsComponent, {
-            data: this.columns
-        });
-        dialogRef.afterClosed().subscribe((result) => {
-            if (!result) {
-                return;
-            }
-
-            this.columns = [ ...result ];
+            this.columns = [...result];
 
             this.refreshSort();
             this.saveSettings();
@@ -240,6 +291,9 @@ export class AnalyticsCompaniesQuotesDealTableComponent implements OnInit, After
     }
 
     saveSettings() {
-        localStorage.setItem(this.tableLocalStorageKey, JSON.stringify(this.columns));
+        localStorage.setItem(
+            this.tableLocalStorageKey,
+            JSON.stringify(this.columns)
+        );
     }
 }

@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
     <ItemGroup>
@@ -9,6 +9,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <PackageReference Include="Geolocation" Version="1.2.1" />
+      <PackageReference Include="Mapster" Version="7.3.0" />
+      <PackageReference Include="Mapster.Core" Version="1.2.0" />
+      <PackageReference Include="StackifyLib" Version="2.2.10" />
       <PackageReference Include="System.Linq" Version="4.3.0" />
       <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     </ItemGroup>
@@ -17,6 +21,48 @@
       <ProjectReference Include="..\..\Fuelerlinx.SDK\Fuelerlinx.SDK.csproj" />
       <ProjectReference Include="..\FBOLinx.Core\FBOLinx.Core.csproj" />
       <ProjectReference Include="..\FBOLinx.DB\FBOLinx.DB.csproj" />
+      <ProjectReference Include="..\FBOLinx.TableStorage\FBOLinx.TableStorage.csproj" />
     </ItemGroup>
+
+	<ItemGroup>
+		<Generated Include="**\*.g.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="DTO\ContactsDTO.cs" />
+	  <Compile Remove="DTO\CustomerDTO.cs" />
+	  <Compile Remove="DTO\CustomerInfoByGroupDTO.cs" />
+	  <Compile Remove="DTO\FbopricesDto.g.cs" />
+	  <Compile Remove="DTO\FbosalesTaxDto.g.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Generated Remove="DTO\AirportWatchHistoricalParkingDto.g.cs" />
+	  <Generated Remove="Dto\AuditDto.g.cs" />
+	  <Generated Remove="DTO\CustomerAircraftNoteDto.g.cs" />
+	  <Generated Remove="DTO\FaaAircraftMakeModelReferenceDto.g.cs" />
+	  <Generated Remove="DTO\CustomerInfoByGroupNoteDto.g.cs" />
+	  <Generated Remove="Dto\FbolinxPricingTemplateFileAttachmentDto.g.cs" />
+	  <Generated Remove="DTO\IntegrationUpdatePricingLogDto.g.cs" />
+	  <Generated Remove="DTO\OrderDetailsDto.g.cs" />
+	  <Generated Remove="DTO\OrderNoteDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderDto.g.cs" />
+	  <Generated Remove="DTO\ServiceOrderItemDto.g.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="BusinessServices\AcukwikFboHandlerDetail\" />
+	</ItemGroup>
+	<Target Name="CleanGenerated">
+		<Delete Files="@(Generated)" />
+	</Target>
+	
+	<Target Name="Mapster">
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet build" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Dto -o Dto" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster extension -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.Service.Mapping.Extensions -o Mapping/Extensions" />
+		<Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a &quot;$(TargetDir)$(ProjectName).dll&quot; -n FBOLinx.ServiceL.Mapping.Mappers -o Mapping/Mappers" />
+	</Target>
 
 </Project>

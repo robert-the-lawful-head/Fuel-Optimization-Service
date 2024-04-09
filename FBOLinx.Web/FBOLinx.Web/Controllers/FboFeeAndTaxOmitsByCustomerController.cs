@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.ServiceLayer.Logging;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 namespace FBOLinx.Web.Controllers
 {
     [Route("api/[controller]")]
-    public class FboFeeAndTaxOmitsByCustomerController : Controller
+    public class FboFeeAndTaxOmitsByCustomerController : FBOLinxControllerBase
     {
         private FboLinxContext _context;
 
-        public FboFeeAndTaxOmitsByCustomerController(FboLinxContext context)
+        public FboFeeAndTaxOmitsByCustomerController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -39,8 +40,11 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest();
             }
 
-            _context.FboFeeAndTaxOmitsByCustomer.Add(fboFeeAndTaxOmitsByCustomer);
-            await _context.SaveChangesAsync();
+            if (fboFeeAndTaxOmitsByCustomer.Oid == 0)
+            {
+                _context.FboFeeAndTaxOmitsByCustomer.Add(fboFeeAndTaxOmitsByCustomer);
+                await _context.SaveChangesAsync();
+            }
 
             return CreatedAtAction("GetFboFeeAndTaxOmitsByCustomer", new { id = fboFeeAndTaxOmitsByCustomer.Oid }, fboFeeAndTaxOmitsByCustomer);
         }

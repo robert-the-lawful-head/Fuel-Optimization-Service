@@ -1,33 +1,21 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
+import { SharedService } from '../../../layouts/shared-service';
+import { FboairportsService } from '../../../services/fboairports.service';
 // Services
 import { FbosService } from '../../../services/fbos.service';
-import { FboairportsService } from '../../../services/fboairports.service';
-import { SharedService } from '../../../layouts/shared-service';
-
-const BREADCRUMBS: any[] = [
-    {
-        title: 'Main',
-        link: '/default-layout',
-    },
-    {
-        title: 'FBOs',
-        link: '',
-    },
-];
 
 @Component({
     selector: 'app-fbos-home',
+    styleUrls: ['./fbos-home.component.scss'],
     templateUrl: './fbos-home.component.html',
-    styleUrls: [ './fbos-home.component.scss' ],
 })
 export class FbosHomeComponent implements OnInit {
     @Input() groupInfo: any;
     @Input() embed: boolean;
 
     // Public Members
-    public breadcrumb: any[];
     public fbosData: Array<any>;
     public currentFbo: any;
     public currentFboAirport: any;
@@ -44,15 +32,11 @@ export class FbosHomeComponent implements OnInit {
 
     ngOnInit() {
         this.loadAllFbosForGroup();
-
-        if (!this.embed) {
-            this.breadcrumb = BREADCRUMBS;
-        }
     }
 
     public editFboClicked(record) {
         if (!this.groupInfo) {
-            this.router.navigate([ '/default-layout/fbos/' + record.oid ]);
+            this.router.navigate(['/default-layout/fbos/' + record.oid]);
         } else {
             this.fboService
                 .get(record)
@@ -79,11 +63,15 @@ export class FbosHomeComponent implements OnInit {
         if (!this.groupInfo) {
             this.fboService
                 .getForGroup(this.sharedService.currentUser.groupId)
-                .subscribe((data: any) => (this.fbosData = data));
+                .subscribe((data: any) => {
+                    this.fbosData = data;
+                });
         } else {
             this.fboService
                 .getForGroup(this.groupInfo.oid)
-                .subscribe((data: any) => (this.fbosData = data));
+                .subscribe((data: any) => {
+                    this.fbosData = data;
+                });
         }
     }
 }

@@ -10,17 +10,18 @@ using Microsoft.EntityFrameworkCore;
 using FBOLinx.Web.Data;
 using FBOLinx.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using FBOLinx.ServiceLayer.Logging;
 
 namespace FBOLinx.Web.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ContactsController : ControllerBase
+    public class ContactsController : FBOLinxControllerBase
     {
         private readonly FboLinxContext _context;
 
-        public ContactsController(FboLinxContext context)
+        public ContactsController(FboLinxContext context, ILoggingService logger) : base(logger)
         {
             _context = context;
         }
@@ -76,7 +77,7 @@ namespace FBOLinx.Web.Controllers
 
         // POST: api/Contacts
         [HttpPost]
-        public async Task<IActionResult> PostContacts([FromBody] Contacts contacts)
+        public async Task<IActionResult> PostContact([FromBody] Contacts contacts)
         {
             if (!ModelState.IsValid)
             {
@@ -87,6 +88,20 @@ namespace FBOLinx.Web.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetContacts", new { id = contacts.Oid }, contacts);
+        }
+
+        [HttpPost("multiple")]
+        public async Task<IActionResult> PostContacts([FromBody] List<Contacts> contacts)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Contacts.AddRange(contacts);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetContacts", contacts);
         }
 
         // DELETE: api/Contacts/5

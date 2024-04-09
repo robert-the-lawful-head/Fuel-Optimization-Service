@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
@@ -31,17 +31,24 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-
+import { RouterModule } from '@angular/router';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import {
+    NgxMatDatetimePickerModule,
+    NgxMatNativeDateModule,
+    NgxMatTimepickerModule
+} from '@angular-material-components/datetime-picker';
 
 import { NiComponentsModule } from '../ni-components/ni-components.module';
-
-import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizontal-navbar.component';
-import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
 import { AdditionNavbarComponent } from './components/addition-navbar/addition-navbar.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { HorizontalNavbarComponent } from './components/horizontal-navbar/horizontal-navbar.component';
 import { LogoComponent } from './components/logo/logo.component';
 import { MenuComponent } from './components/menu/menu.component';
-import { FooterComponent } from './components/footer/footer.component';
+import { VerticalNavbarComponent } from './components/vertical-navbar/vertical-navbar.component';
+import { AppPipesModule } from "../app-pipes.module";
+import { DemoRequestStaticDialogComponent } from '../pages/demo-request-static-dialog/demo-request-static-dialog.component';
+import { IncomingFavoriteAircraftInfoComponent } from './components/incoming-favorite-aircraft-info/incoming-favorite-aircraft-info.component';
 
 @NgModule({
     declarations: [
@@ -51,6 +58,8 @@ import { FooterComponent } from './components/footer/footer.component';
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     exports: [
         HorizontalNavbarComponent,
@@ -59,6 +68,8 @@ import { FooterComponent } from './components/footer/footer.component';
         LogoComponent,
         MenuComponent,
         FooterComponent,
+        DemoRequestStaticDialogComponent,
+        IncomingFavoriteAircraftInfoComponent
     ],
     imports: [
         HttpClientModule,
@@ -66,6 +77,7 @@ import { FooterComponent } from './components/footer/footer.component';
         RouterModule,
         NiComponentsModule,
         MatAutocompleteModule,
+        MatBadgeModule,
         MatButtonModule,
         MatButtonToggleModule,
         MatCardModule,
@@ -96,7 +108,10 @@ import { FooterComponent } from './components/footer/footer.component';
         MatToolbarModule,
         MatTooltipModule,
         NgbPopoverModule,
-    ],
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule,
+        AppPipesModule
+    ]
 })
-export class UIModule {
-}
+export class UIModule {}

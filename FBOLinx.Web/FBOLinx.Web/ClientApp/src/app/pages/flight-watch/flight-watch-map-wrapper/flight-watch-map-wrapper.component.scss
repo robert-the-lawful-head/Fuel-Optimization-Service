@@ -1,0 +1,17 @@
+
+.layout-setting-button{
+    position: absolute;
+    top: calc(30%);
+}
+.map-controls-container{
+    position: absolute;
+    top: calc(30%);
+    z-index: 1000;
+}
+.map-filters-container{
+    position: absolute;
+    top: 15px;
+    left: 40px;
+    z-index: 100;
+}
+

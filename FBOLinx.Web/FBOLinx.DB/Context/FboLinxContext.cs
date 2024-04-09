@@ -1,6 +1,12 @@
-﻿using FBOLinx.DB.Models;
-using FBOLinx.Web;
+﻿using FBOLinx.Core.BaseModels.Entities;
+using FBOLinx.Core.Enums;
+using FBOLinx.DB.Models;
+using FBOLinx.DB.Models.ServicesAndFees;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FBOLinx.DB.Context
 {
@@ -15,7 +21,76 @@ namespace FBOLinx.DB.Context
         {
         }
 
+      
+
+        public virtual async Task<int> SaveChangesAsync(int userId = 0, int customerId = 0, int groupId = 0, int fboId = 0)
+        {
+            OnBeforeSaveChanges(userId, customerId, groupId, fboId);
+            var result = await base.SaveChangesAsync();
+            return result;
+        }
+
+        //for Add the new / old Data and Serilize it 
+        private void OnBeforeSaveChanges(int userId, int customerId, int groupId, int fboId)
+        {
+            if (userId != 0)
+            {
+                ChangeTracker.DetectChanges();
+                var auditEntries = new List<AuditEntry>();
+                foreach (var entry in ChangeTracker.Entries())
+                {
+                    if (entry.Entity is Audit || entry.State == EntityState.Detached || entry.State == EntityState.Unchanged)
+                        continue;
+                    var auditEntry = new AuditEntry(entry);
+
+                    auditEntry.CustomerId = customerId;
+                    auditEntry.FboId = fboId;
+                    auditEntry.GroupId = groupId;
+                    auditEntry.TableName = entry.Entity.GetType().Name;
+                    auditEntry.UserId = userId;
+                    auditEntries.Add(auditEntry);
+                    foreach (var property in entry.Properties)
+                    {
+                        string propertyName = property.Metadata.Name;
+                        if (property.Metadata.IsPrimaryKey())
+                        {
+                            auditEntry.KeyValue[propertyName] = property.CurrentValue;
+                            continue;
+                        }
+                        switch (entry.State)
+                        {
+                            case EntityState.Added:
+                                auditEntry.AuditType = AuditType.Create;
+                                auditEntry.NewValues[propertyName] = property.CurrentValue;
+                                break;
+                            case EntityState.Deleted:
+                                auditEntry.AuditType = AuditType.Delete;
+                                auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                break;
+                            case EntityState.Modified:
+                                if (property.IsModified && property.CurrentValue != null && property.OriginalValue != null && property.OriginalValue.ToString() != property.CurrentValue.ToString())
+                                {
+                                    auditEntry.ChangedColumns.Add(propertyName);
+                                    auditEntry.AuditType = AuditType.Update;
+
+                                    auditEntry.OldValues[propertyName] = property.OriginalValue;
+                                    auditEntry.NewValues[propertyName] = property.CurrentValue;
+                                }
+                                break;
+                        }
+                    }
+                }
+                foreach (var auditEntry in auditEntries)
+                {
+                    AuditsLogs.Add(auditEntry.ToAudit());
+                }
+            }
+        }
+
         public virtual DbSet<AccessTokens> AccessTokens { get; set; }
+        public virtual DbSet<Associations> Associations { get; set; }
+        public DbSet<Audit> AuditsLogs { get; set; }
+
         //public virtual DbSet<AirCrafts> Aircrafts { get; set; }
         public virtual DbSet<Contacts> Contacts { get; set; }
         public virtual DbSet<CompanyPricingLog> CompanyPricingLog { get; set; }
@@ -32,6 +107,7 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<PriceTiers> PriceTiers { get; set; }
         public virtual DbSet<PricingTemplate> PricingTemplate { get; set; }
         public virtual DbSet<CompaniesByGroup> CompaniesByGroup { get; set; }
+        public virtual DbSet<ContactInfoByFbo> ContactInfoByFbo { get; set; }
         public virtual DbSet<ContactInfoByGroup> ContactInfoByGroup { get; set; }
         public virtual DbSet<CustomerContacts> CustomerContacts { get; set; }
         public virtual DbSet<AircraftPrices> AircraftPrices { get; set; }
@@ -76,8 +152,28 @@ namespace FBOLinx.DB.Context
         public virtual DbSet<AirportWatchAircraftTailNumber> AirportWatchAircraftTailNumber { get; set; }
         public virtual DbSet<AirportWatchLiveData> AirportWatchLiveData { get; set; }
         public virtual DbSet<AirportWatchChangeTracker> AirportWatchChangeTracker { get; set; }
-
-
+        public virtual DbSet<CustomerTag> CustomerTag { get; set; }
+        public virtual DbSet<MissedQuoteLog> MissedQuoteLog { get; set; }
+        public virtual DbSet<AirportFboGeofenceClusters> AirportFboGeofenceClusters { get; set; }
+        public virtual DbSet<AirportFboGeofenceClusterCoordinates> AirportFboGeoFenceClusterCoordinates { get; set; }
+        public virtual DbSet<AirportWatchDistinctBoxes> AirportWatchDistinctBoxes { get; set; }
+        public virtual DbSet<IntegrationStatus> IntegrationStatus { get; set; }
+        public virtual DbSet<UserAcceptedPolicyAndAgreements> UserAcceptedPolicyAndAgreements { get; set; }
+        public virtual DbSet<PolicyAndAgreementDocuments> PolicyAndAgreementDocuments { get; set; }
+        public virtual DbSet<PolicyAndAgreementGroupExemptions> PolicyAndAgreementGroupExemptions { get; set; }
+        public virtual DbSet<AirportWatchHistoricalParking> AirportWatchHistoricalParking { get; set; }
+        public virtual DbSet<ServiceOrder> ServiceOrders { get; set; }
+        public virtual DbSet<ServiceOrderItem> ServiceOrderItems { get; set; }
+        public virtual DbSet<OrderDetails> OrderDetails { get; set; }
+        public virtual DbSet<FboCustomServicesAndFees> FboCustomServicesAndFees { get; set; }
+        public virtual DbSet<FboCustomServiceType> FboCustomServiceType { get; set; }
+        public virtual DbSet<CustomerAircraftNote> CustomerAircraftNotes { get; set; }
+        public virtual DbSet<CustomerInfoByGroupNote> CustomerInfoByGroupNotes { get; set; }
+        public virtual DbSet<FuelReqConfirmation> FuelReqConfirmation { get; set; }
+        public virtual DbSet<AcukwikServicesOfferedDefaults> AcukwikServicesOfferedDefaults { get; set; }
+        public virtual DbSet<FboFavoriteAircraft> FboFavoriteAircraft { get; set; }
+        public virtual DbSet<FboFavoriteCompany> FboFavoriteCompanies { get; set; }
+        public virtual DbSet<OrderNote> OrderNotes { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -140,10 +236,10 @@ namespace FBOLinx.DB.Context
                 entity.HasIndex(e => e.TailNumber)
                     .HasName("INX_CustomerAircrafts_TailNumber");
 
-                entity.HasIndex(e => new { e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.GroupId })
+                entity.HasIndex(e => new { Oid = e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.GroupId })
                     .HasName("INX_CA_ID");
 
-                entity.HasIndex(e => new { e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.AddedFrom, e.GroupId })
+                entity.HasIndex(e => new { Oid = e.Oid, e.CustomerId, e.AircraftId, e.TailNumber, e.Size, e.BasedPaglocation, e.NetworkCode, e.AddedFrom, e.GroupId })
                     .HasName("INX_GroupID");
 
                 entity.Property(e => e.BasedPaglocation).IsUnicode(false);
@@ -925,6 +1021,80 @@ namespace FBOLinx.DB.Context
 
                 entity.Property(e => e.DateTimeAppliedUtc).HasColumnName("DateTimeAppliedUTC");
             });
+
+            modelBuilder.Entity<CustomerTag>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("OID");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+                entity.Property(e => e.GroupId).HasColumnName("GroupID");
+
+                entity.Property(e => e.Name).IsUnicode(false);
+
+                entity.HasOne(c => c.CustomerInfoByGroup)
+                    .WithMany(p => p.CustomerTags)
+                    .HasForeignKey(c => new { c.GroupId, c.CustomerId })
+                    .HasPrincipalKey(p => new { p.GroupId, p.CustomerId });
+            });
+
+            modelBuilder.Entity<ContactInfoByFbo>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.Oid).HasColumnName("Oid");
+                entity.Property(e => e.ContactId).HasColumnName("ContactId");
+                entity.Property(e => e.FboId).HasColumnName("FboId");
+                entity.Property(e => e.CopyAlerts).HasColumnName("CopyAlerts");
+            });
+             modelBuilder.Entity<Associations>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+                entity.Property(e => e.AssociationName).IsUnicode(false);
+                entity.Property(e => e.Oid).HasColumnName("OID");
+                entity.Property(e => e.AssociationName).HasColumnName("Association");
+            });
+            modelBuilder.Entity<IntegrationUpdatePricingLog>(entity =>
+            {
+                entity.Property(e => e.Request).IsUnicode(false);
+
+                entity.Property(e => e.Response).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<MissedQuoteLog>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
+
+            modelBuilder.Entity<AirportWatchDistinctBoxes>(entity =>
+            {
+                entity.Property(e => e.Oid).ValueGeneratedOnAdd();
+                entity.Property(e => e.Latitude).IsUnicode(false);
+
+                entity.Property(e => e.Longitude).IsUnicode(false);
+            });
+
+            modelBuilder.Entity<DatabaseStringSplitResult>(entity =>
+            {
+                entity.HasNoKey();
+            });
+
+            modelBuilder.Entity<FboCustomServiceType>()
+            .HasMany(p => p.FboCustomServicesAndFees)
+            .WithOne(c => c.ServiceType)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AcukwikServicesOfferedDefaults> (entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
+            modelBuilder.Entity<OrderNote>(entity =>
+            {
+                entity.HasKey(e => e.Oid);
+            });
         }
+
+        [DbFunction("fn_Split")]
+        public IQueryable<DatabaseStringSplitResult> SplitStringToTable(string inputString, string delimiter)
+            => throw new NotSupportedException();
     }
 }

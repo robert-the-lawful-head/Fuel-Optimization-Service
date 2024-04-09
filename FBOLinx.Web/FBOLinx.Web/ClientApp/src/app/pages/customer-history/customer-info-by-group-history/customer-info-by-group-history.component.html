@@ -1,0 +1,244 @@
+<!--for Edit-->
+<div *ngIf="newCustomerInfoByGroup != null && oldCustomerInfoByGroup != null">
+   <table class="table table-hover table-respoisve table-bordered">
+       <thead>
+          <tr>
+              <th>Name</th>
+              <th>Old Data</th>
+              <th>New Data</th>
+          </tr>
+        </thead>
+          <tbody>
+            <tr *ngIf="newCustomerInfoByGroup.active != oldCustomerInfoByGroup.active">
+                <th>Active</th>
+                <td>
+                    <span *ngIf="oldCustomerInfoByGroup.active == true">Activated</span>
+                    <span  *ngIf="oldCustomerInfoByGroup.active == false">Deactivated</span>
+                </td>
+                <td>
+                  <span *ngIf="newCustomerInfoByGroup.active == true">Activated</span>
+                  <span  *ngIf="newCustomerInfoByGroup.active == false">Deactivated</span>
+              </td>
+              </tr>
+
+              <!--Address-->
+               <tr *ngIf="oldCustomerInfoByGroup.address != newCustomerInfoByGroup.address">
+                  <th>Address</th>
+                  <td>{{oldCustomerInfoByGroup.address}}</td>
+                  <td>{{newCustomerInfoByGroup.address}}</td>
+                </tr>
+
+              <!--certificateType-->
+              <tr *ngIf="oldCustomerInfoByGroup.certificateType != newCustomerInfoByGroup.certificateType">
+                  <th>certificateType</th>
+                  <td>{{oldCustomerInfoByGroup.certificateType}}</td>
+                  <td>{{newCustomerInfoByGroup.certificateType}}</td>
+              </tr>
+
+
+                <!--city-->
+                <tr *ngIf="oldCustomerInfoByGroup.city != newCustomerInfoByGroup.city">
+                  <th>city</th>
+                  <td>{{oldCustomerInfoByGroup.city}}</td>
+                  <td>{{newCustomerInfoByGroup.city}}</td>
+              </tr>
+
+                <!--company-->
+                <tr *ngIf="oldCustomerInfoByGroup.company != newCustomerInfoByGroup.company">
+                  <th>company</th>
+                  <td>{{oldCustomerInfoByGroup.company}}</td>
+                  <td>{{newCustomerInfoByGroup.company}}</td>
+              </tr>
+
+
+                  <!--country-->
+                  <tr *ngIf="oldCustomerInfoByGroup.country != newCustomerInfoByGroup.country">
+                      <th>country</th>
+                      <td>{{oldCustomerInfoByGroup.country}}</td>
+                      <td>{{newCustomerInfoByGroup.country}}</td>
+                  </tr>
+
+              <!--customer-->
+              <tr *ngIf="oldCustomerInfoByGroup.customer != newCustomerInfoByGroup.customer">
+                  <th>customer</th>
+                  <td>{{oldCustomerInfoByGroup.customer}}</td>
+                  <td>{{newCustomerInfoByGroup.customer}}</td>
+              </tr>
+
+            <!--customerCompanyType-->
+            <tr *ngIf="oldCustomerInfoByGroup.customerCompanyType != newCustomerInfoByGroup.customerCompanyType">
+              <th>customerCompanyType</th>
+              <td>{{oldCustomerInfoByGroup.customerCompanyType}}</td>
+              <td>{{newCustomerInfoByGroup.customerCompanyType}}</td>
+            </tr>
+
+           <!--distribute-->
+           <tr *ngIf="oldCustomerInfoByGroup.distribute != newCustomerInfoByGroup.distribute">
+              <th>distribute</th>
+              <td>{{oldCustomerInfoByGroup.distribute}}</td>
+              <td>{{newCustomerInfoByGroup.distribute}}</td>
+            </tr>
+
+            <!--emailSubscription-->
+           <tr *ngIf="oldCustomerInfoByGroup.emailSubscription != newCustomerInfoByGroup.emailSubscription">
+              <th>emailSubscription</th>
+              <td>{{oldCustomerInfoByGroup.emailSubscription}}</td>
+              <td>{{newCustomerInfoByGroup.emailSubscription}}</td>
+            </tr>
+
+            <!--joined-->
+            <tr *ngIf="oldCustomerInfoByGroup.joined != newCustomerInfoByGroup.joined">
+              <th>joined</th>
+              <td>{{oldCustomerInfoByGroup.joined}}</td>
+              <td>{{newCustomerInfoByGroup.joined}}</td>
+            </tr>
+
+          <!--mainPhone-->
+          <tr *ngIf="oldCustomerInfoByGroup.mainPhone != newCustomerInfoByGroup.mainPhone">
+              <th>mainPhone</th>
+              <td>{{oldCustomerInfoByGroup.mainPhone}}</td>
+              <td>{{newCustomerInfoByGroup.mainPhone}}</td>
+            </tr>
+
+          <!--network-->
+          <tr *ngIf="oldCustomerInfoByGroup.network != newCustomerInfoByGroup .network">
+              <th>network</th>
+              <td>{{oldCustomerInfoByGroup.network}}</td>
+              <td>{{newCustomerInfoByGroup.network}}</td>
+            </tr>
+
+          <!--username-->
+          <tr *ngIf="newCustomerInfoByGroup.username != oldCustomerInfoByGroup.username">
+              <th>username</th>
+              <td>{{oldCustomerInfoByGroup.username}}</td>
+              <td>{{newCustomerInfoByGroup.username}}</td>
+            </tr>
+
+
+          <!--state-->
+          <tr *ngIf="oldCustomerInfoByGroup.state != newCustomerInfoByGroup.state">
+              <th>state</th>
+              <td>{{oldCustomerInfoByGroup.state}}</td>
+              <td>{{newCustomerInfoByGroup.state}}</td>
+            </tr>
+
+         </tbody>
+
+   </table>
+</div>
+
+<!--for Add-->
+<div *ngIf="newCustomerInfoByGroup != null && oldCustomerInfoByGroup == null">
+    <table class="table table-hover table-respoisve table-bordered">
+        <thead>
+           <tr>
+               <th>Name</th>
+               <th>New Data</th>
+           </tr>
+         </thead>
+           <tbody>
+             <tr>
+                 <th>Active</th>
+                 <td>
+                   <span *ngIf="newCustomerInfoByGroup.active == true">Activated</span>
+                   <span  *ngIf="newCustomerInfoByGroup.active == false">Deactivated</span>
+               </td>
+               </tr>
+
+               <!--Address-->
+              <tr>
+                   <th>Address</th>
+
+                   <td>{{newCustomerInfoByGroup.address}}</td>
+                 </tr>
+
+               <!--certificateType-->
+               <tr>
+                   <th>certificateType</th>
+
+                   <td>{{newCustomerInfoByGroup.certificateType}}</td>
+               </tr>
+
+
+                 <!--city-->
+                 <tr>
+                   <th>city</th>
+
+                   <td>{{newCustomerInfoByGroup.city}}</td>
+               </tr>
+
+                 <!--company-->
+                 <tr>
+                   <th>company</th>
+
+                   <td>{{newCustomerInfoByGroup.company}}</td>
+               </tr>
+
+
+                   <!--country-->
+                   <tr>
+                       <th>country</th>
+
+                       <td>{{newCustomerInfoByGroup.country}}</td>
+                   </tr>
+
+               <!--customer-->
+               <tr>
+                   <th>customer</th>
+
+                   <td>{{newCustomerInfoByGroup.customer}}</td>
+               </tr>
+
+             <!--customerCompanyType-->
+             <tr>
+                <th>customerCompanyType</th>
+               <td>{{newCustomerInfoByGroup.customerCompanyType}}</td>
+             </tr>
+
+            <!--distribute-->
+            <tr>
+            <th>distribute</th>
+               <td>{{newCustomerInfoByGroup.distribute}}</td>
+             </tr>
+
+             <!--emailSubscription-->
+             <tr>
+               <th>emailSubscription</th>
+               <td>{{newCustomerInfoByGroup.emailSubscription}}</td>
+             </tr>
+
+             <!--joined-->
+             <tr>
+             <th>joined</th>
+               <td>{{newCustomerInfoByGroup.joined}}</td>
+             </tr>
+
+           <!--mainPhone-->
+           <tr>
+           <th>mainPhone</th>
+               <td>{{newCustomerInfoByGroup.mainPhone}}</td>
+             </tr>
+
+           <!--network-->
+           <tr>
+           <th>network</th>
+               <td>{{newCustomerInfoByGroup.network}}</td>
+             </tr>
+
+           <!--username-->
+           <tr>
+           <th>username</th>
+               <td>{{newCustomerInfoByGroup.username}}</td>
+             </tr>
+
+
+           <!--state-->
+           <tr>
+           <th>state</th>
+               <td>{{newCustomerInfoByGroup.state}}</td>
+             </tr>
+
+          </tbody>
+
+    </table>
+ </div>

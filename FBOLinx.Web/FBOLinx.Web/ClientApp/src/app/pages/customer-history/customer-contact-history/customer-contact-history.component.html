@@ -1,0 +1,202 @@
+<!--for Add New Contact to Custoemr-->
+<div *ngIf="newContact != null && oldContact == null">
+    <table class="table table-hover table-respoisve table-bordered">
+        <thead>
+           <tr>
+               <th>Name</th>
+               <th>New Data</th>
+           </tr>
+         </thead>
+           <tbody>
+                 <!--Email-->
+                <tr>
+                 <th>Email</th>
+                    <td>{{newContact.email}}</td>
+                </tr>
+
+                 <!--firstName-->
+                 <tr>
+                 <th>First Name</th>
+                    <th>{{newContact.firstName}}</th>
+                </tr>
+
+                 <!--LastName-->
+                 <tr>
+                 <th>Last Name</th>
+                    <th>{{newContact.lastName}}</th>
+                </tr>
+
+
+                   <!--Phone-->
+                   <tr>
+                   <th>Phone</th>
+                    <th>{{newContact.phone}}</th>
+                </tr>
+
+
+                   <!--Mobile-->
+                   <tr>
+                   <th>Mobile</th>
+                    <th>{{newContact.mobile}}</th>
+                </tr>
+
+                  <!--Address-->
+                  <tr>
+                  <th>Address</th>
+                    <th>{{newContact.address}}</th>
+                </tr>
+
+                  <!--City-->
+                  <tr>
+                  <th>City</th>
+                    <th>{{newContact.city}}</th>
+                </tr>
+
+                  <!--State-->
+                  <tr>
+                  <th>State</th>
+                    <th>{{newContact.state}}</th>
+                </tr>
+
+
+                   <!--Country-->
+                   <tr>
+                   <th>Country</th>
+                    <th>{{newContact.country}}</th>
+                </tr>
+
+                  <!--Fax-->
+                  <tr>
+                  <th>Fax</th>
+                    <th>{{newContact.fax}}</th>
+                </tr>
+
+                   <!--Title-->
+                   <tr>
+                   <th>Title</th>
+                    <th>{{newContact.title}}</th>
+                </tr>
+
+
+                    <!--Extension-->
+                    <tr>
+                    <th>Extension</th>
+                        <th>{{newContact.extension}}</th>
+                    </tr>
+
+              <!--Primary-->
+              <tr>
+              <th>Is Primary?</th>
+                <th>
+                    <span *ngIf="newContact.primary == true"> Primary</span>
+                    <span *ngIf="newContact.primary != true"> Not Primary</span>
+                </th>
+
+            </tr>
+
+           </tbody>
+    </table>
+</div>
+
+
+
+
+<!--for Delete Exist Contact of Customer-->
+<div *ngIf="newContact == null && oldContact != null">
+    <table class="table table-hover table-respoisve table-bordered">
+        <thead>
+           <tr>
+               <th>Name</th>
+               <th>Old Data</th>
+           </tr>
+         </thead>
+           <tbody>
+                 <!--Email-->
+                <tr>
+                 <th>Email</th>
+                    <td>{{oldContact.email}}</td>
+                </tr>
+
+                 <!--firstName-->
+                 <tr>
+                 <th>First Name</th>
+                    <th>{{oldContact.firstName}}</th>
+                </tr>
+
+                 <!--LastName-->
+                 <tr>
+                 <th>Last Name</th>
+                    <th>{{oldContact.lastName}}</th>
+                </tr>
+
+
+                   <!--Phone-->
+                   <tr>
+                   <th>Phone</th>
+                    <th>{{oldContact.phone}}</th>
+                </tr>
+
+
+                   <!--Mobile-->
+                   <tr>
+                   <th>Mobile</th>
+                    <th>{{oldContact.mobile}}</th>
+                </tr>
+
+                  <!--Address-->
+                  <tr>
+                  <th>Address</th>
+                    <th>{{oldContact.address}}</th>
+                </tr>
+
+                  <!--City-->
+                  <tr>
+                  <th>City</th>
+                    <th>{{oldContact.city}}</th>
+                </tr>
+
+                  <!--State-->
+                  <tr>
+                  <th>State</th>
+                    <th>{{oldContact.state}}</th>
+                </tr>
+
+
+                   <!--Country-->
+                   <tr>
+                   <th>Country</th>
+                    <th>{{oldContact.country}}</th>
+                </tr>
+
+                  <!--Fax-->
+                  <tr>
+                  <th>Fax</th>
+                    <th>{{oldContact.fax}}</th>
+                </tr>
+
+                   <!--Title-->
+                   <tr>
+                   <th>Title</th>
+                    <th>{{oldContact.title}}</th>
+                </tr>
+
+
+                    <!--Extension-->
+                    <tr>
+                    <th>Extension</th>
+                        <th>{{oldContact.extension}}</th>
+                    </tr>
+
+              <!--Primary-->
+              <tr>
+              <th>Is Primary?</th>
+                <th>
+                    <span *ngIf="oldContact.primary == true"> Primary</span>
+                    <span *ngIf="oldContact.primary != true"> Not Primary</span>
+                </th>
+
+            </tr>
+
+           </tbody>
+    </table>
+</div>

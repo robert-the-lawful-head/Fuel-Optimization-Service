@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using FBOLinx.Core.Enums;
 using FBOLinx.DB.Models;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.ServiceLayer.DTO;
 using FBOLinx.Web.Models.Requests;
 
 namespace FBOLinx.ServiceLayer.Test
@@ -17,28 +17,45 @@ namespace FBOLinx.ServiceLayer.Test
             user.GroupId = 1;
             user.FboId = 1;
             user.Active = true;
-            user.Role = User.UserRoles.Member;
+            user.Role = UserRoles.Member;
 
             return user;
+        }
+
+        public static DistributePricingRequest CreateDistributePreviewPricingRequest()
+        {
+            DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
+            distributePricingRequest.GroupId = 1;
+            distributePricingRequest.FboId = 1557;
+            distributePricingRequest.PricingTemplate = new PricingTemplate();
+            distributePricingRequest.PricingTemplate.EmailContentId = 1;
+            distributePricingRequest.PricingTemplate.Notes = string.Empty;
+            distributePricingRequest.PricingTemplate.MarginType = MarginTypes.CostPlus;
+            distributePricingRequest.Customer = new CustomerInfoByGroupDto()
+            {
+                Oid = 1,
+                CustomerId = 1
+            };
+            distributePricingRequest.Customer.CustomerId = 1;
+
+            return distributePricingRequest;
         }
 
         public static DistributePricingRequest CreateDistributePricingRequest()
         {
             DistributePricingRequest distributePricingRequest = new DistributePricingRequest();
-            distributePricingRequest.GroupId = 1;
-            distributePricingRequest.PricingTemplate = new PricingTemplate();
-            distributePricingRequest.PricingTemplate.Notes = string.Empty;
-            distributePricingRequest.PricingTemplate.MarginType = PricingTemplate.MarginTypes.CostPlus;
-            distributePricingRequest.Customer = CreateCustomerInfoByGroup();
-            distributePricingRequest.Customer.CustomerId = 1;
+            distributePricingRequest = CreateDistributePreviewPricingRequest();
+            distributePricingRequest.PricingTemplate.Oid = 1;
 
             return distributePricingRequest;
         }
 
         public static CustomerInfoByGroup CreateCustomerInfoByGroup()
         {
-            CustomerInfoByGroup customerInfoByGroup = new CustomerInfoByGroup();
-            customerInfoByGroup.Oid = 1;
+            var customerInfoByGroup = new CustomerInfoByGroup();
+            customerInfoByGroup.CustomerId = int.MaxValue;
+            customerInfoByGroup.GroupId = int.MaxValue;
+            customerInfoByGroup.Username = "TestUser";
 
             return customerInfoByGroup;
         }
