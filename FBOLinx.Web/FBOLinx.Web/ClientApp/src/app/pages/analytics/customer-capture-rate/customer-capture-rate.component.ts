@@ -132,6 +132,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
                     this.dataSource.sort = this.sort;
                     this.paginator.pageIndex = 0;
                     this.dataSource.paginator = this.paginator;
+                    this.applyDefaultOrderingForCsvExport();
                 },
                 () => {},
                 () => {
@@ -145,13 +146,32 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
         return properties.reduce((obj, prop) => obj && obj[prop], item);
     }
     exportCsv() {
+        this.applyDefaultOrderingForCsvExport();
+        let computePropertyFnc = (item: any[], id: string): any => {
+            if (id == 'percentCustomerBusiness') {
+                let value = item[id] == null ? '' : item[id] + '%';
+
+                if(item[id] == null) return { v: value };
+
+            } else {
+                return { v: item[id] };
+            }
+        };
+
+        this.exportCsvFile(
+            this.columns,
+            this.csvFileOptions.fileName,
+            this.csvFileOptions.sheetName,
+            computePropertyFnc
+        );
+    }
+    applyDefaultOrderingForCsvExport() {
         const data = this.dataSource.data.slice();
 
         if (!this.sort.active || this.sort.direction === '') {
             this.dataSource.data = data;
         }
 
-        // Custom sorting logic for three columns
         this.dataSource.data = data.sort((a, b) => {
             const firstLevel = 'percentCustomerBusiness';
             const valueA = this.getPropertyValue(a, firstLevel);
@@ -198,25 +218,7 @@ export class CustomerCaptureRateComponent extends GridBase implements OnInit {
             // If values at the third level are equal, return 0
             return 0;
         });
-        let computePropertyFnc = (item: any[], id: string): any => {
-            if (id == 'percentCustomerBusiness') {
-                let value = item[id] == null ? '' : item[id] + '%';
-
-                if(item[id] == null) return { v: value };
-
-            } else {
-                return { v: item[id] };
-            }
-        };
-
-        this.exportCsvFile(
-            this.columns,
-            this.csvFileOptions.fileName,
-            this.csvFileOptions.sheetName,
-            computePropertyFnc
-        );
     }
-
     applyPresetDateFilter(filter: SelectedDateFilter) {
         this.filterEndDate = filter.limitDate;
         this.filterStartDate = filter.offsetDate;
