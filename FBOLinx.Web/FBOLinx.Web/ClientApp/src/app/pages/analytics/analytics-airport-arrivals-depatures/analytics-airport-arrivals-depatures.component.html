@@ -87,13 +87,14 @@
             </ng-container>
 
             <ng-container matColumnDef="originated">
-                <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                    <span>Origin ICAO</span>
+                <th *matHeaderCellDef mat-header-cell>
                     <span *ngIf="dataSource">
                         <app-table-column-filter [matDataSource]="dataSource"
                                                  [matSort]="sort"
                                                  columnId="originated"
-                                                 propertyName="originated"></app-table-column-filter>
+                                                 propertyName="originated">
+                            <span>Origin ICAO</span>
+                        </app-table-column-filter>
                     </span>
                 </th>
                 <td *matCellDef="let info" mat-cell>
