@@ -16,7 +16,7 @@ namespace FBOLinx.DB.Specifications.User
         {
             AddInclude(x => x.ServiceOrderItems);
             AddInclude(x => x.CustomerInfoByGroup);
-            AddInclude(x => x.CustomerAircraft);
+            //AddInclude(x => x.CustomerAircraft);
         }
     }
 }
