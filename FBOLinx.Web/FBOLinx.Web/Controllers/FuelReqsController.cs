@@ -337,6 +337,9 @@ namespace FBOLinx.Web.Controllers
             else
                 fbo = await _fboService.GetSingleBySpec(new FboByIdSpecification(fboId));
 
+            if (fbo == null)
+                return BadRequest("Invalid FBO");
+
             var orderDetails = new OrderDetailsDto();
             orderDetails.ConfirmationEmail = request.Email;
             orderDetails.FuelVendor = request.FuelVendor;
@@ -541,7 +544,13 @@ namespace FBOLinx.Web.Controllers
                 await _orderDetailsService.AddAsync(orderDetails);
 
                 // Add default "Fuel" service
-                var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
+                var customerInfoByGroupId = 0;
+
+                if (customerAircraft != null)
+                {
+                    var customerInfoByGroup = await _customerInfoByGroupService.GetSingleBySpec(new CustomerInfoByGroupCustomerIdGroupIdSpecification(customerAircraft.CustomerId, fbo.GroupId));
+                    customerInfoByGroupId = customerInfoByGroup.Oid;
+                }
 
                 var fuelReqGallons = request.FuelEstWeight;
                 var fuelReqPrice = request.FuelEstCost;
@@ -553,7 +562,7 @@ namespace FBOLinx.Web.Controllers
                     FuelerLinxTransactionId = request.SourceId,
                     AssociatedFuelOrderId = 0,
                     ServiceOn = request.FuelOn == "Arrival" ? Core.Enums.ServiceOrderAppliedDateTypes.Arrival : Core.Enums.ServiceOrderAppliedDateTypes.Departure,
-                    CustomerInfoByGroupId = customerInfoByGroup.Oid,
+                    CustomerInfoByGroupId = customerInfoByGroupId,
                     GroupId = fbo.GroupId
                 };
 

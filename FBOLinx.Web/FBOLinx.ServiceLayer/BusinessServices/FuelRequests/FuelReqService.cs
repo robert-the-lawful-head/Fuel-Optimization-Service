@@ -833,6 +833,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
             List<OrderDetailsDto> orderDetailsList = await _orderDetailsService.GetListbySpec(new OrderDetailsByFuelerLinxTransactionIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault()));
             var orderDetails = orderDetailsList.Where(o => o.FboHandlerId == fuelerlinxTransaction.FboHandlerId).FirstOrDefault();
             var fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(fuelerlinxTransaction.FboHandlerId));
+            if (fbo == null)
+                return;
+
             var fuelReq = await GetSingleBySpec(new FuelReqBySourceIdFboIdSpecification(fuelerlinxTransaction.SourceId.GetValueOrDefault(), fbo.Oid));
             //var customer = await _customerService.GetSingleBySpec(new CustomerByFuelerLinxIdSpecification(fuelerlinxTransaction.CompanyId.GetValueOrDefault()));
             //var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
@@ -849,8 +852,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelRequests
                     await UpdateAsync(fuelReq);
                 }
 
-                orderDetails.IsCancelled = true;
-                await _orderDetailsService.UpdateAsync(orderDetails);
+                if (orderDetails != null)
+                {
+                    orderDetails.IsCancelled = true;
+                    await _orderDetailsService.UpdateAsync(orderDetails);
+                }
 
                 sendEmail = true;
                 requestStatus = "cancelled";

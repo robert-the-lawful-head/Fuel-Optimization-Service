@@ -15,7 +15,7 @@ namespace FBOLinx.DB.Specifications.User
             && (!endDateTimUtce.HasValue || x.ServiceDateTimeUtc <= endDateTimUtce))
         {
             AddInclude(x => x.ServiceOrderItems);
-            AddInclude(x => x.CustomerInfoByGroup);
+            //AddInclude(x => x.CustomerInfoByGroup);
             //AddInclude(x => x.CustomerAircraft);
         }
     }
