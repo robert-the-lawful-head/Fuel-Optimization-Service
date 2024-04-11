@@ -352,7 +352,7 @@ namespace FBOLinx.Web.Controllers
 
             var customer = await _customerService.GetCustomerByFuelerLinxId(request.CompanyId.GetValueOrDefault());
             var customerAircrafts = await _customerAircraftService.GetAircraftsList(fbo.GroupId, fbo.Oid);
-            var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber == request.TailNumber).FirstOrDefault();
+            var customerAircraft = customerAircrafts.Where(c => c.CustomerId == customer.Oid && c.TailNumber.Replace("-", "") == request.TailNumber.Replace("-","")).FirstOrDefault();
 
             if (customerAircraft != null && orderDetails.CustomerAircraftId != customerAircraft.Oid)
                 orderDetails.CustomerAircraftId = customerAircraft.Oid;
