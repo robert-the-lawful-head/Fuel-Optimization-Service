@@ -203,6 +203,8 @@ export class GroupAnalyticsIntraNetworkVisitsReportComponent extends GridBase im
                 this.dynamicColumns.push(columnForAirport);
                 this.dynamicColumns.push(columnForFbo);
             }
+            this.dynamicColumns = this.dynamicColumns.filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i)
+
             this.refreshData(true);
         });
     }
