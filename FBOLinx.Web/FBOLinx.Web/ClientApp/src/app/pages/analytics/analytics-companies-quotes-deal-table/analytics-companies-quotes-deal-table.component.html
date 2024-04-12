@@ -4,6 +4,7 @@
             [icao]="icao"
             [dataSource]="dataSource"
             [selectedDateFilter]="selectedDateFilter"
+            [hiddenFilters]="hiddenFilters"
             (onChangeIcaoFilter)="changeIcaoFilter($event)"
             (onDateChange)="applyPresetDateFilter($event)"
         ></app-report-filters>

@@ -9,7 +9,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortHeader } from '@angular/material/sort';
-import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import {
     ColumnType,
@@ -22,11 +21,10 @@ import { FbosService } from '../../../services/fbos.service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 import { csvFileOptions, GridBase } from 'src/app/services/tables/GridBase';
-import { AcukwikairportsService } from 'src/app/services/acukwikairports.service';
 import {
-    PresetDateFilterEnum,
     SelectedDateFilter,
 } from 'src/app/shared/components/preset-date-filter/preset-date-filter.component';
+import { ReportFilterItems } from '../analytics-report-popup/report-filters/report-filters.component';
 
 @Component({
     selector: 'app-analytics-companies-quotes-deal',
@@ -55,6 +53,7 @@ export class AnalyticsCompaniesQuotesDealTableComponent
     };
 
     selectedDateFilter: SelectedDateFilter;
+    hiddenFilters: ReportFilterItems[] = [ReportFilterItems.icaoDropDown]
 
     constructor(
         private fuelreqsService: FuelreqsService,
