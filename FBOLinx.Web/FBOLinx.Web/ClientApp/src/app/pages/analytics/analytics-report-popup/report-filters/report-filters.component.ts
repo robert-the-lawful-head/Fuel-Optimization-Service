@@ -67,12 +67,8 @@ export class ReportFiltersComponent implements OnInit {
         this.onDateChange.emit(filter);
     }
     applyCustomDateFilter() {
-        let filter: SelectedDateFilter = {
-            selectedFilter: null,
-            offsetDate: this.filterStartDate,
-            limitDate: this.filterEndDate,
-        };
-        this.onDateChange.emit(filter);
+        this.selectedDateFilter.selectedFilter = null;
+        this.onDateChange.emit(this.selectedDateFilter);
     }
     isFilterHidden(filter: ReportFilterItems) {
         return this.hiddenFilters?.includes(filter);
