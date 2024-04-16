@@ -101,7 +101,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             }
             await BulkUpdate(oldPrices);
 
-            var fboprices = await GetListbySpec(new CurrentFboPricesByFboIdSpecification(fboId));
+            var fboprices = await GetListbySpec(new NonExpiredPricesByFboIdSpecification(fboId));
 
             //var fboprices = await (
             //                from f in _context.Fboprices
