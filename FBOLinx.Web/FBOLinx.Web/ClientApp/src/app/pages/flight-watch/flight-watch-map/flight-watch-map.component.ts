@@ -146,27 +146,6 @@ export class FlightWatchMapComponent
         this.loadMap();
     }
 
- playBeep(): void {
-  // Create an oscillator node (sound generator)
-  const oscillator = this.audioContext.createOscillator();
-
-  // Connect the oscillator to the audio context's destination (speakers)
-  oscillator.connect(this.audioContext.destination);
-
-  // Set the oscillator properties (frequency and type of sound)
-  oscillator.type = 'sine'; // Set the type of sound (sine wave)
-  oscillator.frequency.setValueAtTime(1000, this.audioContext.currentTime); // Set the frequency (1000 Hz)
-
-  // Start the oscillator to play the sound
-  oscillator.start();
-
-  // Stop the oscillator after a short duration (e.g., 0.5 seconds)
-  setTimeout(() => {
-    oscillator.stop();
-  }, 100); // Stop after 0.5 seconds (adjust duration as needed)
-}
-
-
     ngAfterViewInit() {
         this.aircraftPopupContainer.getCustomersList(
             this.sharedService.currentUser.groupId,
@@ -449,7 +428,6 @@ export class FlightWatchMapComponent
                     let isBackwards = !this.IsBackwardsBearing(previousiveBearing,liveBearing);
 
                     if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
-                        //this.playBeep();
                         this.data[pointSource.properties.id].liveBearing = liveBearing;
                         this.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
                         this.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
