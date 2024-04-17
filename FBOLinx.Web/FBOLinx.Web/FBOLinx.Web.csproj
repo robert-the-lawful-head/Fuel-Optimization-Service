@@ -78,13 +78,16 @@
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
     <None Remove="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <None Remove="ClientApp\src\app\models\fuelreq.ts" />
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <None Remove="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <None Remove="ClientApp\src\app\models\order-note.ts" />
     <None Remove="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <None Remove="ClientApp\src\app\models\service-order-item.ts" />
     <None Remove="ClientApp\src\app\models\service-order.ts" />
     <None Remove="ClientApp\src\app\models\user.ts" />
     <None Remove="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
+    <None Remove="ClientApp\src\app\pages\fuelreqs\fuelreqs-grid-services\fuelreqs-grid-services.component.ts" />
     <None Remove="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
     <None Remove="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />
@@ -151,6 +154,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Templates\GroupCustomerPrice\FourColumns.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\FourColumnsRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\SingleColumn.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\SingleColumnRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsApplicableFlightTypesOnly.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsApplicableFlightTypesOnlyRow.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsDepartureOnly.csv" />
+    <None Include="wwwroot\Templates\GroupCustomerPrice\TwoColumnsDepartureOnlyRow.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Fuelerlinx.SDK\Fuelerlinx.SDK.csproj" />
     <ProjectReference Include="..\FBOLinx.Core\FBOLinx.Core.csproj" />
     <ProjectReference Include="..\FBOLinx.DB\FBOLinx.DB.csproj" />
@@ -183,13 +197,17 @@
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster-coordinates.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-cluster.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\fbo-geofencing\airport-fbo-geo-fence-grid-viewmodel.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\fuelreq.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-by-airport-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\intra-network-visits-report-item.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\models\order-note.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\pricing\pricing-update-grid-viewmodel.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\service-order-item.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\service-order.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\customers\customers-edit-dialog\customers-edit-dialog.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fuelreqs\fuelreqs-grid-services\fuelreqs-grid-services.component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\app\pages\fuelreqs\fuelreqs-home\fuelreqs-home.component.spec.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\group-analytics\group-analytics-intra-network-visits-report\group-analytics-intra-network-visits-report.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-grid\antenna-status-grid.component.ts" />
     <TypeScriptCompile Include="ClientApp\src\app\pages\antenna-status\antenna-status-home\antenna-status-home.component.ts" />

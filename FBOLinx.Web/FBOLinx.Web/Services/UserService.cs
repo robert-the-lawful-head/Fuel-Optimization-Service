@@ -1,14 +1,15 @@
 ﻿using System.Linq;
-using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Web.Auth;
 using FBOLinx.Core.Enums;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.User;
+using FBOLinx.ServiceLayer.EntityServices;
 
 namespace FBOLinx.Web.Services
 {
@@ -21,20 +22,22 @@ namespace FBOLinx.Web.Services
 
     public class UserService : IUserService
     {
-        private readonly AppSettings _AppSettings;
         private readonly FboLinxContext _Context;
         private IEncryptionService _EncryptionService;
         private readonly JwtManager _jwtManager;
+        private readonly FBOLinx.ServiceLayer.BusinessServices.User.IUserService _userService;
+        private IRepository<Group, FboLinxContext> _groupRepo;
 
-        public UserService(FboLinxContext context, IOptions<AppSettings> appSettings, IEncryptionService encryptionService, JwtManager jwtManager)
+        public UserService(FboLinxContext context, IEncryptionService encryptionService, JwtManager jwtManager, FBOLinx.ServiceLayer.BusinessServices.User.IUserService userService, IRepository<Group, FboLinxContext> groupRepo)
         {
             _EncryptionService = encryptionService;
             _Context = context;
-            _AppSettings = appSettings.Value;
             _jwtManager = jwtManager;
+            _userService = userService;
+            _groupRepo = groupRepo;
         }
         
-        public async Task<FBOLinx.DB.Models.User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
+        public async Task<User> GetUserByCredentials(string username, string password, bool authenticate = false, bool resetPassword = false)
         {
             FBOLinx.DB.Models.User user = await _Context.User.FirstOrDefaultAsync(x => x.Username == username);
             
@@ -46,7 +49,7 @@ namespace FBOLinx.Web.Services
             }
             else
             {
-                var groupRecord = await _Context.Group.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
+                var groupRecord = await _groupRepo.FirstOrDefaultAsync(x => x.Oid == user.GroupId);
 
                 //return null if Paragon
                 if (groupRecord.Isfbonetwork.GetValueOrDefault())
@@ -66,7 +69,7 @@ namespace FBOLinx.Web.Services
             if (authenticate)
             {
                 SetAuthToken(user);
-                UpdateLoginCount(user);
+                await UpdateLoginCount(user);
             }
 
             return user;
@@ -75,6 +78,7 @@ namespace FBOLinx.Web.Services
         public async Task<FBOLinx.DB.Models.User> CreateFBOLoginIfNeeded(Fbos fboRecord)
         {
             FBOLinx.DB.Models.User user = await _Context.User.Where((x => x.FboId == fboRecord.Oid && x.Role == UserRoles.Primary)).FirstOrDefaultAsync();
+           
             if (user != null)
                 return user;
 
@@ -97,12 +101,8 @@ namespace FBOLinx.Web.Services
                 Active = true
             };
             await _Context.User.AddAsync(user);
-            //fboRecord.Password = "";
-            //fboRecord.Username = "";
-            //_Context.Fbos.Update(fboRecord);
             await _Context.SaveChangesAsync();
 
-            //Return the newly created user that transitioned from the FBOs table
             return user;
         }
 
@@ -110,6 +110,7 @@ namespace FBOLinx.Web.Services
         {
             User user = await _Context.User.Where(
                 (x => x.GroupId == groupRecord.Oid && (x.Role == UserRoles.Conductor || x.Role == UserRoles.GroupAdmin))).FirstOrDefaultAsync();
+
             if (user != null)
                 return user;
 
@@ -129,12 +130,8 @@ namespace FBOLinx.Web.Services
             };
 
             await _Context.User.AddAsync(user);
-            //groupRecord.Password = "";
-            //groupRecord.Username = "";
-            //_Context.Group.Update(groupRecord);
             await _Context.SaveChangesAsync();
 
-            //Return the newly created user that transitioned from the Group table
             return user;
         }
 
@@ -144,7 +141,7 @@ namespace FBOLinx.Web.Services
             user.Token = _jwtManager.GenerateToken(user.Oid, user.FboId, user.Role, user.GroupId);
         }
 
-        private void UpdateLoginCount(User user)
+        private async Task UpdateLoginCount(User user)
         {
             user.LoginCount = user.LoginCount.GetValueOrDefault() + 1;
             _Context.SaveChanges();
@@ -164,7 +161,7 @@ namespace FBOLinx.Web.Services
                 return await CreateFBOLoginIfNeeded(fboRecord);
             }
 
-            var groupRecord = await _Context.Group.Where(
+            var groupRecord = await _groupRepo.Where(
                     (x => x.Isfbonetwork == false && x.Username == username && (x.Password == password || resetPassword))).FirstOrDefaultAsync();
 
             if (groupRecord != null)

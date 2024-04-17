@@ -9,6 +9,7 @@ import { ForgotPasswordDialogComponent } from '../../shared/components/forgot-pa
 import { LoginModalComponent } from '../../shared/components/login-modal/login-modal.component';
 // Services
 import { SharedService } from '../shared-service';
+import { urls } from 'src/app/constants/externalUrlsConstants';
 
 export interface ContactUsMessage {
     name: string;
@@ -104,7 +105,7 @@ export class LandingSiteLayoutComponent {
     }
 
     openRequestDemo() {
-        window.open('https://outlook.office365.com/owa/calendar/FBOLinxSales@fuelerlinx.com/bookings/', '_blank').focus();
+        window.open(urls.demoRequestUrl, '_blank').focus();
         //const data = {
         //    succeed: false,
         //};

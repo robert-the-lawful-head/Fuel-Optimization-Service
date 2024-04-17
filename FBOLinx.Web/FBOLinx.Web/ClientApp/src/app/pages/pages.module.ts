@@ -221,15 +221,20 @@ import { FlightWatchFiltersComponent } from './flight-watch/flight-watch-filters
 import { LobbyViewComponent } from './lobby-view/lobby-view.component';
 import { AboutFbolinxComponent } from './about-fbolinx/about-fbolinx.component';
 import { AgreementsAndDocumentsModalComponent } from '../shared/components/Agreements-and-documents-modal/Agreements-and-documents-modal.component';
-import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersListComponent } from './service-orders/service-orders-list/service-orders-list.component';
+import { GroupAnalyticsIntraNetworkVisitsReportComponent } from './group-analytics/group-analytics-intra-network-visits-report/group-analytics-intra-network-visits-report.component';
 import { ServiceOrdersHomeComponent } from './service-orders/service-orders-home/service-orders-home.component';
 import { ServiceOrdersItemListComponent } from './service-orders/service-orders-item-list/service-orders-item-list.component';
 import { ServiceOrdersDialogNewComponent } from './service-orders/service-orders-dialog-new/service-orders-dialog-new.component';
 import { ServiceOrdersDialogOrderItemsComponent } from './service-orders/service-orders-dialog-order-items/service-orders-dialog-order-items.component';
 import { FeeAndTaxBreakdownDialogWrapperComponent } from '../shared/components/price-breakdown/fee-and-tax-breakdown-dialog-wrapper/fee-and-tax-breakdown-dialog-wrapper.component';
+import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.component';
+import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
 import { FavoriteIconComponent } from '../shared/components/favorite-icon/favorite-icon.component';
 import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/aicraft-expanded-detail/aicraft-expanded-detail.component';
+import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
+import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
+import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
 
 @NgModule({
     declarations: [
@@ -351,7 +356,7 @@ import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicr
         CsvExportModalComponent,
         AutocompleteSearchComponent,
         CustomerTagDialogComponent,
-       CustomerInfoByGroupHistoryComponent,
+        CustomerInfoByGroupHistoryComponent,
         AssociationsDialogNewAssociationComponent,
         CustomerContactHistoryComponent,
         CustomerAircraftHistoryComponent,
@@ -386,7 +391,13 @@ import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicr
         ServiceOrdersDialogNewComponent,
         ServiceOrdersDialogOrderItemsComponent,
         FeeAndTaxBreakdownDialogWrapperComponent,
-        FavoriteIconComponent
+        ServicesAndFeesComponent,
+        FavoriteIconComponent,
+        ServicesAndFeesHomeComponent,
+        RampFeesCategoryComponent,
+        ItemInputComponent,
+        FuelreqsGridServicesComponent,
+        FuelreqsNotesComponent
     ],
     exports: [ClickStopPropagationDirective, FboPricesPanelComponent],
     imports: [

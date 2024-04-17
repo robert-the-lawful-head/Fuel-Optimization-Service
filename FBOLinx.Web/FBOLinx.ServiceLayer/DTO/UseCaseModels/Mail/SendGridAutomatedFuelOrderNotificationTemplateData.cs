@@ -9,17 +9,14 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
 {
     public class SendGridAutomatedFuelOrderNotificationTemplateData
     {
-        [JsonProperty("aircraftTailNumber")]
-        public string aircraftTailNumber { get; set; }
-
         [JsonProperty("fboName")]
         public string fboName { get; set; }
 
         [JsonProperty("flightDepartment")]
         public string flightDepartment { get; set; }
 
-        [JsonProperty("aircraftMakeModel")]
-        public string aircraftMakeModel { get; set; }
+        [JsonProperty("tailNumber")]
+        public string tailNumber { get; set; }
 
         [JsonProperty("airportICAO")]
         public string airportICAO { get; set; }
@@ -30,17 +27,20 @@ namespace FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail
         [JsonProperty("departureDate")]
         public string departureDate { get; set; }
 
-        [JsonProperty("fuelVolume")]
-        public string fuelVolume { get; set; }
+        [JsonProperty("services")]
+        public List<ServicesForSendGrid> services { get; set; }
 
-        [JsonProperty("fuelVendor")]
-        public string fuelVendor { get; set; }
+        [JsonProperty("flightDepartmentInfo")]
+        public List<FlightDepartmentInfoForSendGrid> flightDepartmentInfo { get; set; }
+    }
 
-        [JsonProperty("customOrderNotes")]
-        public string customOrderNotes { get; set; }
-        [JsonProperty("buttonUrl")]
-        public string buttonUrl { get; set; }
-        [JsonProperty("paymentMethod")]
-        public string paymentMethod { get; set; }
+    public partial class ServicesForSendGrid
+    {
+        public string service { get; set; }
+    }
+
+    public partial class FlightDepartmentInfoForSendGrid
+    {
+        public string info { get; set; }
     }
 }

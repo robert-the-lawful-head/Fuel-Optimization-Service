@@ -8,6 +8,7 @@
 @import "./popover";
 @import "./components/material-components";
 @import "./components/bootstrap";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
 
 .actions-menu {
     position: absolute;
@@ -931,7 +932,7 @@ div.fees-taxes-button {
     position: absolute;
     right: 20px;
     top: 19px;
-    z-index: 10000;
+    z-index: 9000;
 }
 
 div.price-checker-button-bottom {

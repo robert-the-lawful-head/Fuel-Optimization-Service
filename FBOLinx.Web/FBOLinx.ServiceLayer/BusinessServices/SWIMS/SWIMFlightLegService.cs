@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FBOLinx.Core.BaseModels.Queries;
 using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
+using FBOLinx.DB.Specifications.SWIM;
 using FBOLinx.ServiceLayer.BusinessServices.Common;
 using FBOLinx.ServiceLayer.DTO.SWIM;
 using FBOLinx.ServiceLayer.EntityServices;
@@ -21,11 +22,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             List<string> arrivalAirportIcaos = null,
             List<string> aircraftIdentifications = null,
             bool? isPlaceHolder = null);
-        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30);
+        Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30);
 
         Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(List<string> airportIdentifiers,
             int pastMinutesForDepartureOrArrival = 30);
-        Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int estimateTimeMinutesThreshold, int lastUpdated);
+        Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdated);
     }
 
     public class SWIMFlightLegService : BaseDTOService<SWIMFlightLegDTO, DB.Models.SWIMFlightLeg, DegaContext>, ISWIMFlightLegService
@@ -55,14 +56,15 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
             return result == null ? null : result.Adapt<List<SWIMFlightLegDTO>>();
         }
 
-        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int maxRecords, int pastMinutesForDepartureOrArrival = 30)
+        public async Task<List<SWIMFlightLegDTO>> GetRecentSWIMFlightLegs(int pastMinutesForDepartureOrArrival = 30)
         {
-            var queryOptions = new QueryableOptions<SWIMFlightLeg>();
-            queryOptions.MaxRecords = maxRecords;
-            queryOptions.OrderByDescendingExpression = (x => x.Oid);
+            //Use the maximum OID to get the last 30 minutes of data 
+            var minimumLastUpdatedDateTime = DateTime.UtcNow.AddMinutes(-30);
+            var currentMaxOID = await _SwimFlightLegEntityService.GetMaximumOID();
+            var result = await _SwimFlightLegEntityService.GetListBySpec(
+                new SWIMFlightLegByLastUpdatedSpecification(minimumLastUpdatedDateTime, currentMaxOID - 300000));
 
-            var result = await _repository.GetAsync(queryOptions);
-
+            //Filter from the last updated record to find arrivals or departures that are within 30 minutes
             var minimumDateTime = DateTime.UtcNow.AddMinutes(-pastMinutesForDepartureOrArrival);
             result = result.Where(x => !string.IsNullOrEmpty(x.AircraftIdentification) && ((x.ATD > minimumDateTime) || (x.ETA.HasValue && x.ETA.Value > minimumDateTime)))
                 .ToList();
@@ -87,6 +89,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.SWIMS
                 .Select(grouped => grouped.First())
                 .ToList();
         }
-        public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int estimateTimeMinutesThreshold, int lastUpdateThreshold) => (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(icao, estimateTimeMinutesThreshold, lastUpdateThreshold)).Adapt<List<SWIMFlightLegDTO>>();
+        public async Task<List<SWIMFlightLegDTO>> GetSwimFlightLegsForFlightWatchMap(string icao, int etaTimeMinutesThreshold, int atdTimeMinutesThreshold, int lastUpdateThreshold) => (await _SwimFlightLegEntityService.GetSWIMFlightLegsForFlightWatchMap(icao, etaTimeMinutesThreshold, atdTimeMinutesThreshold, lastUpdateThreshold)).Adapt<List<SWIMFlightLegDTO>>();
     }
 }

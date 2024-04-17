@@ -24,9 +24,19 @@ export class ServiceOrderService {
             return this.http.get(this.accessPointUrl + '/list/fbo/' + fboId);
     }
 
+    //Call the GetServiceOrderByFuelerLinxTransactionId method in the ServiceOrderController
+    public getServiceOrderByFuelerLinxTransactionIdFboId(fuelerLinxTransactionId: number, fboId: number) {
+        return this.http.get(this.accessPointUrl + '/fuelerlinxtransactionid/' + fuelerLinxTransactionId + '/fboid/' + fboId);
+    }
+
     //Call the GetServiceOrder method in the ServiceOrderController
     public getServiceOrderById(serviceOrderId: number) {
         return this.http.get(this.accessPointUrl + '/id/' + serviceOrderId);
+    }
+
+    //Call the GetServiceOrderByAssociatedFuelOrderId method in the ServiceOrderController
+    public getServiceOrderByAssociatedFuelOrderId(associatedFuelOrderId: number) {
+        return this.http.get(this.accessPointUrl + '/associatedfuelorderid/' + associatedFuelOrderId);
     }
 
     //Call the PostServiceOrder method in the ServiceOrderController

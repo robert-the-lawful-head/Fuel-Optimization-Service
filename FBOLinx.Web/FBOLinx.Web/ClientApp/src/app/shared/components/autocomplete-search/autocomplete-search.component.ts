@@ -39,6 +39,7 @@ export class AutocompleteSearchComponent
     @Input() disabled = false;
     @Input() required = false;
     @Input() filter: string = '';
+    @Input() panelWidth: string | number;
     @Output() selectionChanged = new EventEmitter();
     @Output() filterChanged = new EventEmitter();
 

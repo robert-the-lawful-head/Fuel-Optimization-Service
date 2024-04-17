@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,11 +12,12 @@ using FBOLinx.DB.Context;
 using FBOLinx.DB.Models;
 using FBOLinx.ServiceLayer.BusinessServices.Auth;
 using System.Web;
-using FBOLinx.ServiceLayer.DTO.UseCaseModels.Configurations;
 using FBOLinx.Core.Enums;
 using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.PricingTemplate;
 using FBOLinx.ServiceLayer.Logging;
+using FBOLinx.Service.Mapping.Dto;
+using FBOLinx.DB.Specifications.User;
 
 namespace FBOLinx.Web.Controllers
 {
@@ -27,37 +26,32 @@ namespace FBOLinx.Web.Controllers
     [Route("api/[controller]")]
     public class UsersController : FBOLinxControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly Services.IUserService _userService;
         private readonly FboLinxContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IFileProvider _fileProvider;
-        private readonly MailSettings _MailSettings;
         private readonly IFboService _fboService;
-        private IServiceProvider _Services;
         private IEncryptionService _encryptionService;
         private ResetPasswordService _ResetPasswordService;
         private IPricingTemplateService _pricingTemplateService;
-
-        public UsersController(IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFileProvider fileProvider, IOptions<MailSettings> mailSettings, IServiceProvider services, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger) : base(logger)
+        private readonly ServiceLayer.BusinessServices.User.IUserService _userBusinessService;
+        public UsersController(Services.IUserService userService, FboLinxContext context, IHttpContextAccessor httpContextAccessor, IFboService fboService, IEncryptionService encryptionService, ResetPasswordService resetPasswordService, IPricingTemplateService pricingTemplateService, ILoggingService logger, ServiceLayer.BusinessServices.User.IUserService userBusinessService) : base(logger)
         {
             _ResetPasswordService = resetPasswordService;
             _encryptionService = encryptionService;
             _userService = userService;
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            _MailSettings = mailSettings.Value;
-            _fileProvider = fileProvider;
-            _Services = services;
             _fboService = fboService;
             _pricingTemplateService = pricingTemplateService;
+            _userBusinessService = userBusinessService;
         }
 
         [HttpGet("prepare-token-auth")]
         public async Task<IActionResult> PrepareTokenAuthentication()
         {
-            var user = await _context.User.FindAsync(JwtManager.GetClaimedUserId(_httpContextAccessor));
-
-            await HandlePreLoginEvents(user);
+            var user = await _userBusinessService.GetSingleBySpec(new UserByOidSpecification(JwtManager.GetClaimedUserId(_httpContextAccessor)));
+            var fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
+            user.Fbo.Cast(fbo); 
 
             return Ok(user);
         }
@@ -72,7 +66,7 @@ namespace FBOLinx.Web.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> AuthenticateAsync([FromBody] User userParam)
+        public async Task<IActionResult> AuthenticateAsync([FromBody] UserDTO userParam)
         {
             if (string.IsNullOrEmpty(userParam.Username) || string.IsNullOrEmpty(userParam.Password))
                 return BadRequest(new { message = "Username or password is invalid/empty" });
@@ -84,7 +78,7 @@ namespace FBOLinx.Web.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
             }
 
-            await HandlePreLoginEvents(user);
+            user.Fbo = await HandlePreLoginEvents(user.FboId, user.GroupId.GetValueOrDefault());
 
             return Ok(user);
         }
@@ -413,20 +407,22 @@ namespace FBOLinx.Web.Controllers
             return _context.Group.Any(e => e.Oid == id);
         }
 
-        private async Task HandlePreLoginEvents(User user)
+        private async Task<Fbos> HandlePreLoginEvents(int fboId, int groupId)
         {
-            var fbo = await _context.Fbos.FirstOrDefaultAsync(f => f.GroupId == user.GroupId && f.Oid == user.FboId);
+            var fbo = await _fboService.GetFboModel(fboId);
 
             if (fbo != null)
             {
-                fbo.FboAirport = await _context.Fboairports.FirstOrDefaultAsync(fa => fa.Fboid == fbo.Oid);
-                fbo.LastLogin = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
+                if (fbo.GroupId == groupId)
+                {
+                    fbo.LastLogin = DateTime.UtcNow;
+                    await _fboService.UpdateModel(fbo);
+                }
             }
 
             try
             {
-                var group = await _context.Group.FindAsync(user.GroupId);
+                var group = await _context.Group.FindAsync(groupId);
 
                 if (group.IsLegacyAccount == true)
                 {
@@ -435,12 +431,14 @@ namespace FBOLinx.Web.Controllers
                     group.IsLegacyAccount = false;
                     await _context.SaveChangesAsync();
                 }
+
+                return fbo;
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                throw ex;
+                return fbo;
             }
         }
-        
+
     }
 }

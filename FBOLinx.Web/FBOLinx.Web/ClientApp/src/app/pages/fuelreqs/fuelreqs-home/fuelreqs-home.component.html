@@ -1,14 +1,15 @@
 <section>
     <mat-tab-group (selectedTabChange)="onTabClick($event)" [selectedIndex]="selectedTabIndex">
-        <mat-tab label="Fuel Orders">
+        <mat-tab label="Fuel & Service Orders">
             <div *ngIf="isFuelOrdersShowing">
                 <div *ngIf="fuelreqsData">
                     <app-fuelreqs-grid (dateFilterChanged)="dateFilterChanged($event)"
                                        [filterEndDate]="filterEndDate"
                                        [filterStartDate]="filterStartDate"
-                                       [fuelreqsData]="fuelreqsData"></app-fuelreqs-grid>
+                                       [fuelreqsData]="fuelreqsData"
+                                       [servicesAndFees]="servicesAndFees"></app-fuelreqs-grid>
                 </div>
-                <div *ngIf="!fuelreqsData">
+                <div *ngIf="!fuelreqsData || !servicesAndFees">
                     <mat-spinner></mat-spinner>
                 </div>
             </div>

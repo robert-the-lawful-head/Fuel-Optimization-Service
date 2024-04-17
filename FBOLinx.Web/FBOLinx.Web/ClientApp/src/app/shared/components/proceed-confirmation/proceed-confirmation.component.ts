@@ -3,9 +3,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface ProceedConfirmationData {
     description: string;
-    itemsList: string[];
+    tableItemsList: string[];
     buttonText: string;
     title: string;
+    additionalInfo: string;
+    listItemsList: string[];
 }
 
 @Component({

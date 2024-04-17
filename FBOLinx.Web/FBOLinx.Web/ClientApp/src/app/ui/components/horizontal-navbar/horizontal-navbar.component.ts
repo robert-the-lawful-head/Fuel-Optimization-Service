@@ -14,11 +14,11 @@ import { Subscription, timer } from 'rxjs';
 import * as _ from 'lodash';
 import { environment } from 'src/environments/environment';
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from '../../../constants/sharedEvents';
 import {
     customerUpdatedEvent,
     fboChangedEvent,
-} from '../../../models/sharedEvents';
+} from '../../../constants/sharedEvents';
 import { AuthenticationService } from '../../../services/authentication.service';
 import { CustomerinfobygroupService } from '../../../services/customerinfobygroup.service';
 import { FboairportsService } from '../../../services/fboairports.service';
@@ -32,8 +32,8 @@ import { AccountProfileComponent } from '../../../shared/components/account-prof
 import { WindowRef } from '../../../shared/components/zoho-chat/WindowRef';
 
 import * as moment from 'moment';
-import { UserRole } from 'src/app/enums/user-role';
-import { localStorageAccessConstant } from 'src/app/models/LocalStorageAccessConstant';
+import { AccountType, UserRole } from 'src/app/enums/user-role';
+import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 import { ApiResponseWraper } from 'src/app/models/apiResponseWraper';
 import { FlightWatchService } from 'src/app/services/flightwatch.service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
@@ -138,7 +138,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
     get notificationVisible() {
         return (
             this.sharedService.currentUser.fboId > 0 &&
-            this.sharedService.currentUser.role !== 5
+            this.sharedService.currentUser.role !== 5 &&
+            this.sharedService.currentUser.accountType == AccountType.Premium
         );
     }
 
@@ -181,6 +182,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.loadAirportWatchData();
                 }else if(message == SharedEvents.icaoChangedEvent){
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                    this.loadAirportWatchData();
                 }
             }
         );
@@ -457,7 +459,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             .subscribe(
                 (data: any) => {
                     this.fboAirport = _.assign({}, data);
-                    this.sharedService.setLocationStorageValues(this.fboAirport.icao);
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,this.fboAirport.icao);
                     this.sharedService.emitChange(
                         SharedEvents.icaoChangedEvent
                     );
@@ -472,6 +474,8 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             })
             .subscribe(
                 (data: any) => {
+                    this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType, data.accountType);
+                    this.sharedService.emitChange(SharedEvents.accountTypeChangedEvent);
                     this.fbo = _.assign({}, data);
                     localStorage.setItem(localStorageAccessConstant.fbo, this.fbo.fbo);
 
@@ -497,7 +501,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
         this.loadFboInfo();
         localStorage.setItem(localStorageAccessConstant.fboId,this.sharedService.currentUser.fboId.toString());
 
-        this.sharedService.setLocationStorageValues(location.icao);
+        this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,location.icao);
 
         this.fbosService.manageFbo(this.sharedService.currentUser.fboId).subscribe(() => {
             if (this.isOnDashboard())
@@ -575,6 +579,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             });
     }
     public isLobbyViewVisible():boolean {
+        if(this.currentUser.accountType === AccountType.Freemium) return false;
         return this.currentUser &&
         (this.currentUser.role ===  UserRole.Primary ||
             this.currentUser.role ===  UserRole.CSR ||

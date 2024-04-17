@@ -42,6 +42,7 @@ export class NiBadgeComponent implements OnInit {
             'success-badge': this.color === 'success',
             'top-left': this.position === 'top-left',
             'warning-badge': this.color === 'warning',
+            'active-badge': this.color === 'active',
         };
     }
     getStyles() {

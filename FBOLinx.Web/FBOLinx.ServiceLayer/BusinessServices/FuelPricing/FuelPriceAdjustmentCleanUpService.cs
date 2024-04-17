@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using FBOLinx.ServiceLayer.BusinessServices.Airport;
+using FBOLinx.ServiceLayer.BusinessServices.Fbo;
 using FBOLinx.ServiceLayer.BusinessServices.Integrations;
 
 namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
@@ -16,11 +17,11 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
     {
         private FuelerLinxApiService _fuelerLinxApiService;
         private int _fboId;
-        private IAirportService _AirportService;
+        private IFboAirportsService _FboAirportService;
 
-        public FuelPriceAdjustmentCleanUpService(FuelerLinxApiService fuelerLinxApiService, IAirportService airportService)
+        public FuelPriceAdjustmentCleanUpService(FuelerLinxApiService fuelerLinxApiService, IFboAirportsService fboAirportsService)
         {
-            _AirportService = airportService;
+            _FboAirportService = fboAirportsService;
             _fuelerLinxApiService = fuelerLinxApiService;
         }
 
@@ -32,7 +33,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
 
         private async Task CleanUpFuelerLinx()
         {
-            var fboAirport = await _AirportService.GetAirportForFboId(_fboId);
+            var fboAirport = await _FboAirportService.GetFboAirportsByFboId(_fboId);
             await _fuelerLinxApiService.ClearQuoteCacheForFbo(fboAirport?.Icao);
         }
     }

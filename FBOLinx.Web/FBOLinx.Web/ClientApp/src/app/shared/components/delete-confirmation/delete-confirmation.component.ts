@@ -5,6 +5,7 @@ export interface DeleteConfirmationData {
     item: any;
     description?: string;
     fullDescription?: string;
+    includeThis: boolean;
 }
 
 @Component({

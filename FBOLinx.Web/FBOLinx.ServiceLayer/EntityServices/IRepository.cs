@@ -13,9 +13,9 @@ namespace FBOLinx.ServiceLayer.EntityServices
 {
     public interface IRepository<TEntity, TContext> where TEntity : class
     {
+        IQueryable<TEntity> Get();
         Task<List<TEntity>> GetAsync(QueryableOptions<TEntity> queryableOptions);
         Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
-        Task<TEntity> GetAsync(int id);
         Task<TEntity> AddAsync(TEntity entity);
         Task<List<TEntity>> AddRangeAsync(List<TEntity> entity);
         Task UpdateAsync(TEntity entity);

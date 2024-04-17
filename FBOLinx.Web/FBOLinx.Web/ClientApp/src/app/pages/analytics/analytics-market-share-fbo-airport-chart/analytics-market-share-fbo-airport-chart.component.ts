@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 import { SharedService } from '../../../layouts/shared-service';
-import * as SharedEvent from '../../../models/sharedEvents';
+import * as SharedEvent from '../../../constants/sharedEvents';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
 

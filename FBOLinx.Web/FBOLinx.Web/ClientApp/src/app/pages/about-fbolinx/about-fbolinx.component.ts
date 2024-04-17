@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { urls } from 'src/app/constants/externalUrlsConstants';
+
 
 @Component({
   selector: 'app-about-fbolinx',
@@ -12,6 +14,6 @@ export class AboutFbolinxComponent implements OnInit {
   ngOnInit() {
   }
   openRequestDemo() {
-    window.open('https://outlook.office365.com/owa/calendar/FBOLinxSales@fuelerlinx.com/bookings/', '_blank').focus();
+    window.open(urls.demoRequestUrl, '_blank').focus();
   }
 }

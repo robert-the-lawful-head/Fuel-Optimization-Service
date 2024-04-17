@@ -171,30 +171,30 @@
                                 <div class="col-12 text-right">
                                     <div *ngIf="!pricing.isEdit">
                                         <div>
-                                            <button (click)="editRowClicked(pricing)" mat-stroked-button [disabled]="pricing.status == 'Automated'">
+                                            <ni-button  (click)="editRowClicked(pricing)" [disabled]="pricing.status == 'Automated'" [view]="'grey'" ni-button>
                                                 {{pricing.status == "Automated" ? pricing.submitStatus : "Edit" }}
-                                            </button>
+                                            </ni-button>
                                         </div>
 
                                     </div>
                                     <div *ngIf="pricing.isEdit">
                                         <div>
-                                            <button (click)="submitPricing(pricing)"
+                                            <ni-button  (click)="submitPricing(pricing)"
                                                     class="mr-1"
-                                                    color="green"
+                                                    [view]="'success'"
                                                     [disabled]="(!pricing.pricePap && !pricing.priceCost) || (pricing.pricePap && pricing.priceCost > pricing.pricePap)"
-                                                    mat-stroked-button>
+                                                    ni-button>
                                                 {{pricing.submitStatus}}
-                                            </button>
+                                            </ni-button>
                                         </div>
                                     </div>
                                     <!--Clear-->
                                     <div *ngIf="!pricing.isEdit && pricing.oidPap > 0">
                                         <div>
-                                            <button (click)="clearClicked(pricing)"
-                                                    class="clear-btn" color="warn" mat-flat-button>
+                                            <ni-button (click)="clearClicked(pricing)"
+                                                    class="clear-btn" [view]="'error'" ni-button>
                                                 Clear
-                                            </button>
+                                            </ni-button>
                                         </div>
                                     </div>
                                 </div>

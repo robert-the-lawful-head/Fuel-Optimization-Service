@@ -231,6 +231,12 @@
                             <mat-slide-toggle color="accent" (click)="onOrderNotificationsChange()" formControlName="orderNotifications"></mat-slide-toggle>
                         </div>
                     </div>
+                    <div class="row border-top row-padding">
+                        <div class="col">Direct Orders Notifications</div>
+                        <div class="col text-center">
+                            <mat-slide-toggle color="accent" (click)="onDirectOrderNotificationsChange()" formControlName="directOrderNotifications"></mat-slide-toggle>
+                        </div>
+                    </div>
                 </form>
                 <div *ngIf="logoUrl">
                     <img src="{{ 'data:' + logoUrl }}" />

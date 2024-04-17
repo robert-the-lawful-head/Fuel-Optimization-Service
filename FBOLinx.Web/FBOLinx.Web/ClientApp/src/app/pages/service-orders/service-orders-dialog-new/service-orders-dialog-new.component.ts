@@ -8,6 +8,7 @@ import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup
 import { CustomeraircraftsService } from 'src/app/services/customeraircrafts.service';
 import { AcukwikairportsService } from '../../../services/acukwikairports.service';
 import { AircraftsService } from '../../../services/aircrafts.service';
+import { FuelreqsService } from 'src/app/services/fuelreqs.service';
 
 import { ServiceOrder } from 'src/app/models/service-order';
 import { CustomerInfoByGroup } from 'src/app/models/customer-info-by-group';
@@ -17,6 +18,7 @@ import { ServiceOrderAppliedDateTypes } from '../../../enums/service-order-appli
 import { AircraftType } from 'src/app/models/aircraft';
 import {EnumOptions} from '../../../models/enum-options';
 import { share } from 'rxjs/operators';
+import { FuelReq } from '../../../models/fuelreq';
 
 @Component({
     selector: 'app-service-orders-dialog-new',
@@ -43,7 +45,8 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
         private serviceOrderService: ServiceOrderService,
         private sharedService: SharedService,
         private acukwikAirportsService: AcukwikairportsService,
-        private aircraftsService: AircraftsService) {
+        private aircraftsService: AircraftsService,
+        private fuelreqsService: FuelreqsService) {
                     
     }
 
@@ -142,13 +145,79 @@ export class ServiceOrdersDialogNewComponent implements OnInit {
 
     public onSaveChanges(): void {
         this.NgxUiLoader.startLoader(this.dialogLoader);
-        this.serviceOrderService.createServiceOrder(this.data).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
-            this.NgxUiLoader.stopLoader(this.dialogLoader);
-            if (!response.success)
-                alert('Error creating service order: ' + response.message);
-            else
-                this.dialogRef.close(response.result);
+        var data = this.data;
+
+        var newFuelOrder: FuelReq = {
+            oid: 0,
+            fboId: this.sharedService.currentUser.fboId,
+            customerId: 0,
+            customerInfoByGroupId: 0,
+            arrivalDateTimeLocal: data.arrivalDateTimeLocal,
+            departureDateTimeLocal: data.departureDateTimeLocal,
+            eta: data.arrivalDateTimeLocal,
+            etd: data.departureDateTimeLocal,
+            dateCreated: null,
+            icao: '',
+            customerAircraftId: data.customerAircraftId,
+            timeStandard: 'Z',
+            cancelled: false,
+            quotedVolume: 0,
+            quotedPpg: 0,
+            notes: '',
+            actualVolume: 0,
+            actualPpg: 0,
+            source: 'FBO Custom',
+            sourceId: 0,
+            dispatchNotes: '',
+            archived: false,
+            email: '',
+            phoneNumber: '',
+            fuelOn: data.serviceOn.toString(),
+            customerName: '',
+            customerNotes: '',
+            paymentMethod: '',
+            timeZone: '',
+            isConfirmed: false,
+            tailNumber: '',
+            fboName: '',
+            pricingTemplateName: '',
+            serviceOrder: null,
+            customer: null,
+            customerAircraft: null,
+            showConfirmationButton: false
+        };
+
+        this.fuelreqsService.add(newFuelOrder).subscribe((response: any) => {
+            if (response != null) {
+                newFuelOrder.oid = response.oid;
+                newFuelOrder.customerName = response.customerName;
+                newFuelOrder.tailNumber = response.tailNumber;
+                newFuelOrder.customerId = response.customerId;
+
+                if (data.serviceOrderItems.length > 0) {
+                    data.associatedFuelOrderId = response.oid;
+
+                    this.serviceOrderService.createServiceOrder(data).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
+                        if (!response.success)
+                            alert('Error creating service order: ' + response.message);
+                        else {
+                            data.serviceOrderItems = response.result.serviceOrderItems;
+                            this.dialogRef.close(newFuelOrder);
+                        }
+                    });
+                }
+                else {
+                    this.dialogRef.close(newFuelOrder);
+                }
+            }
         });
+        //this.serviceOrderService.createServiceOrder(this.data).subscribe((response: EntityResponseMessage<ServiceOrder>) => {
+        //    this.NgxUiLoader.stopLoader(this.dialogLoader);
+        //    if (!response.success)
+        //        alert('Error creating service order: ' + response.message);
+        //    else
+        //        this.dialogRef.close(response.result);
+        //});
     }
 
     public displayCustomerName(customer: CustomerInfoByGroup) {

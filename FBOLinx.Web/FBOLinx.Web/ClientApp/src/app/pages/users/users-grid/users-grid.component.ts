@@ -66,7 +66,7 @@ export class UsersGridComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'user', item: record },
+                data: { description: 'user', item: record, includeThis: true },
             }
         );
 

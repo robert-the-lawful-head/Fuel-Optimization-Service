@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Services
 import { RampfeesService } from '../../../services/rampfees.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { SnackBarService } from 'src/app/services/utils/snackBar.service';
+import { rampfeeCategoryType } from 'src/app/enums/ramp-fee.enum';
 
 @Component({
     selector: 'app-ramp-fees-category',
@@ -30,7 +31,7 @@ export class RampFeesCategoryComponent implements OnInit {
     constructor(
         private rampFeesService: RampfeesService,
         private deleteRampFeeDialog: MatDialog,
-        private snackBar: MatSnackBar
+        private snackBarService: SnackBarService
     ) {}
 
     ngOnInit() {
@@ -41,12 +42,19 @@ export class RampFeesCategoryComponent implements OnInit {
         this.rampFeesForCategory = [];
         this.rampFees.forEach((fee) => {
             if (this.categoryTypes.indexOf(fee.categoryType) > -1) {
+                fee.isWaivedNegative = false;
+                fee.isCategoryValueNegative = false;
+                fee.isFeeNegative = false;
+                fee.isCategoryMinValueGrater = false;
+                fee.requiresUpdate = false;
+
                 if (
                     this.supportedValues.length === 0 ||
                     this.supportedValues.indexOf(fee.categoryMinValue) > -1
                 ) {
                     this.rampFeesForCategory.push(fee);
                 }
+
                 this.tmpArray.push(fee);
             }
         });
@@ -66,7 +74,25 @@ export class RampFeesCategoryComponent implements OnInit {
     }
 
     public rampFeeRequiresUpdate(fee) {
+        fee.isWaivedNegative = false;
+        fee.isCategoryValueNegative = false;
+        fee.isFeeNegative = false;
+        fee.isCategoryMinValueGrater = false;
         fee.requiresUpdate = true;
+
+        if (fee.waived < 0)
+            fee.isWaivedNegative = true;
+
+        if (fee.price < 0)
+            fee.isFeeNegative = true;
+
+        if (fee.categoryMinValue >= fee.categoryMaxValue)
+            fee.isCategoryMinValueGrater = true;
+
+        if (fee.categoryMinValue < 0 || fee.categoryMaxValue < 0)
+            fee.isCategoryValueNegative = true;
+
+        fee.requiresUpdate = !fee.isWaivedNegative && !fee.isCategoryValueNegative && !fee.isFeeNegative && !fee.isCategoryMinValueGrater;
         this.rampFeeFieldChanged.emit();
     }
 
@@ -75,7 +101,7 @@ export class RampFeesCategoryComponent implements OnInit {
             DeleteConfirmationComponent,
             {
                 autoFocus: false,
-                data: { description: 'ramp fee', item: fee },
+                data: { description: 'ramp fee', item: fee, includeThis: true },
             }
         );
 
@@ -85,15 +111,29 @@ export class RampFeesCategoryComponent implements OnInit {
             }
             this.rampFeesService.remove(result.item).subscribe(() => {
                 this.rampFeeDeleted.emit();
-                this.snackBar.open(
-                    `${result.item.aircraftMake} ${result.item.aircraftModel} is deleted`,
-                    '',
-                    {
-                        duration: 2000,
-                        panelClass: ['blue-snackbar'],
-                    }
-                );
+                this.snackBarService.showSuccessSnackBar(`Custom ramp fee deleted`);
             });
         });
+    }
+    getLabel(fee: any): string{
+
+        if(this.categoryTypes.includes(1))
+            return fee.sizeDescription;
+
+        if(fee.categoryType == rampfeeCategoryType.aicraft)
+            return ` ${fee.aircraftMake} ${fee.aircraftModel}`;
+
+        let label = fee.categoryDescription;
+
+        if(fee.categoryType == rampfeeCategoryType.weightRange)
+            label += ` ${fee.categoryMinValue} - ${fee.categoryMaxValue}`;
+
+        if(fee.categoryType == rampfeeCategoryType.wingspan)
+            label += ` ${fee.categoryMinValue} - ${fee.categoryMaxValue}`;
+
+        if(fee.categoryType == rampfeeCategoryType.tailnumber)
+            label += ` ${fee.categoryStringValue}`;
+
+        return label;
     }
 }

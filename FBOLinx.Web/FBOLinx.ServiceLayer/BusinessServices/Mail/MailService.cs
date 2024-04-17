@@ -53,9 +53,24 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                 AddMissedQuoteEmailData(msg, ref sendGridMessage);
             }
 
-            if(msg.SendGridAutomatedFuelOrderNotificationTemplateData!=null)
+            if (msg.SendGridAutomatedFuelOrderNotificationTemplateData != null)
             {
-                AddAutomatedFuelOrderNotification(msg, ref sendGridMessage);
+                AddAutomatedFuelOrderNotificationEmailData(msg, ref sendGridMessage);
+            }
+
+            if (msg.SendGridOrderConfirmationTemplateData != null)
+            {
+                AddOrderConfirmationEmailData(msg, ref sendGridMessage);
+            }
+
+            if (msg.SendGridFuelRequestUpdateOrCancellationTemplateData != null)
+            {
+                AddFuelRequestUpdateOrCancellationEmailData(msg, ref sendGridMessage);
+            }
+
+            if (msg.SendGridFuelOrderCancellationTemplateData != null)
+            {
+                AddAutomatedFuelOrderCancellationEmailData(msg, ref sendGridMessage);
             }
 
             var apiKey = _MailSettings.SendGridAPIKey;
@@ -190,10 +205,28 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
             sendGridMessageWithTemplate.TemplateId = "d-d367c9ed538e4a52aaf34ac042aaa3fd";
         }
 
-        private void AddAutomatedFuelOrderNotification(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        private void AddAutomatedFuelOrderNotificationEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
         {
             sendGridMessageWithTemplate.SetTemplateData(message.SendGridAutomatedFuelOrderNotificationTemplateData);
             sendGridMessageWithTemplate.TemplateId = "d-fe64b29e49e848cd9fe61e5c99ad9927";
+        }
+
+        private void AddOrderConfirmationEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridOrderConfirmationTemplateData);
+            sendGridMessageWithTemplate.TemplateId = "d-3e1c01b4dc5241b7a4ed0eb4300e855d";
+        }
+
+        private void AddFuelRequestUpdateOrCancellationEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridFuelRequestUpdateOrCancellationTemplateData);
+            sendGridMessageWithTemplate.TemplateId = "d-54bd984d93c0496cbcb30f7f01c9d908";
+        }
+
+        private void AddAutomatedFuelOrderCancellationEmailData(FBOLinx.ServiceLayer.DTO.UseCaseModels.Mail.FBOLinxMailMessage message, ref SendGridMessage sendGridMessageWithTemplate)
+        {
+            sendGridMessageWithTemplate.SetTemplateData(message.SendGridFuelOrderCancellationTemplateData);
+            sendGridMessageWithTemplate.TemplateId = "d-7114a5b832dc45ca81022bd56c0232c9";
         }
 
         private SmtpClient GenerateSMTP()

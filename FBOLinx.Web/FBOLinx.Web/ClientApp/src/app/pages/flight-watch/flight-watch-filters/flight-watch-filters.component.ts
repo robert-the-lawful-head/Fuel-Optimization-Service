@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-flight-watch-filters',
@@ -13,6 +12,7 @@ export class FlightWatchFiltersComponent implements OnInit {
     @Input() icao: string;
     @Input() icaoList: string[];
     @Input() isSearchAirportHidden: boolean = false;
+    @Input() isSearchAicraftHidden: boolean = false;
 
     @Output() icaoChanged = new EventEmitter<string>();
     @Output() updateDrawerButtonPosition = new EventEmitter<any>();

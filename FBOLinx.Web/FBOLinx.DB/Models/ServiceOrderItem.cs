@@ -29,6 +29,11 @@ namespace FBOLinx.DB.Models
         public int? CompletedByUserId { get; set; }
         [StringLength(255)]
         public string CompletedByName { get; set; }
+        [Column("AddedByUserID")]
+        public int? AddedByUserId { get; set; }
+        [StringLength(255)]
+        public string? AddedByName { get; set; }
+        public string? ServiceNote { get; set; }
 
         #region Relationships
         [ForeignKey(nameof(ServiceOrderId))]

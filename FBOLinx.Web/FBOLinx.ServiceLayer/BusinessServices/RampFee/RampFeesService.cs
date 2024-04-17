@@ -87,16 +87,8 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
 
             List<RampFeesGridViewModel> result = (
                 from s in sizes
-                join r in rampFees on new
-                {
-                    size = (int?)((short?)((AircraftSizes)s.Value)),
-                    fboId = (int?)fboId
-                }
-                    equals new
-                    {
-                        size = r.CategoryMinValue,
-                        fboId = r.Fboid
-                    }
+                join r in rampFees
+                on ((short?)(AircraftSizes)s.Value) equals r.CategoryMinValue
                     into leftJoinRampFees
                 from r in leftJoinRampFees.DefaultIfEmpty()
                 select new RampFeesGridViewModel()
@@ -115,9 +107,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.RampFee
                                  select a).OrderBy((x => x.Make)).ThenBy((x => x.Model)).ToList(),
                     LastUpdated = r?.LastUpdated
 
-                }).ToList();
+                }).Where(r => r.CategoryType != RampFeeCategories.Wingspan && r.CategoryType  != RampFeeCategories.WeightRange).ToList();
 
-            // Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
+            //Pull additional "custom" ramp fees(weight, tail, wingspan, etc.)
             List<RampFeesGridViewModel> customRampFees = (from r in rampFees
                                                           join a in allAircraft on r.CategoryMinValue equals (a.AircraftId) into leftJoinAircrafts
                                                           from a in leftJoinAircrafts.DefaultIfEmpty()
