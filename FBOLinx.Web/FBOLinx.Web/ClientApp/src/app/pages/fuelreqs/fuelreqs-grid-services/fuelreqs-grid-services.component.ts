@@ -239,7 +239,7 @@ export class FuelreqsGridServicesComponent implements OnInit {
         var service = this.servicesAndFees.find(s => s.service === serviceAndFees.serviceName);
         if (service != null && service != undefined) {
             if (!service.isCustom)
-                return `Source: Acukwik`;
+                return `Source: FuelerLinx Database`;
             else
                 return `Source: ` + service.createdByUser;
         }
