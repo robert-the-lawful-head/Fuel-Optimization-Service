@@ -14,4 +14,4 @@ export const serviceOrdersChangedEvent = 'service-orders-changed';
 export const flightWatchDataEvent = 'flightWatchDataEvent';
 export const flyToOnMapEvent = 'flyToOnMap';
 export const accountTypeChangedEvent = 'account-type-changed';
-
+export const fetchFlighWatchDataEvent = 'fetch-flighWatch-data';

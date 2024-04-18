@@ -38,6 +38,7 @@ import { Subscription } from 'rxjs';
 import { AirportWatchService } from 'src/app/services/airportwatch.service';
 import { FlightLegStatus } from 'src/app/enums/flight-watch.enum';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -140,9 +141,11 @@ export class FlightWatchMapComponent
         this.icao = (this.icao == null) ?
             this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao)
             :  this.icao;
+        this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
     }
     ngOnInit(): void {
         if(this.center == null) return;
+        this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
         this.loadMap();
     }
 
@@ -198,6 +201,7 @@ export class FlightWatchMapComponent
             await this.loadMapIcons();
             await this.loadMapDataAsync();
             this.isMapDataLoading = false;
+            this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
         })
         .onSourcedata(async () => {
             let flightslayer = this.map.getLayer(this.mapMarkers.flights.layerId);
@@ -398,7 +402,6 @@ export class FlightWatchMapComponent
             let elapsedTime = Date.now() - this.startTime;
             let progress = elapsedTime / environment.flightWatch.apiCallInterval;
             let popUpCoordinates: number[] = null;
-
             if (progress < 1) {
                 data.features.forEach((pointSource) => {
                     var coordinates = pointSource.properties['origin-coordinates'];
@@ -470,6 +473,9 @@ export class FlightWatchMapComponent
 
                 const animationFrameId = requestAnimationFrame(() => animate());
                 this.animationFrameIds.push(animationFrameId);
+            }else{
+                    this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
+                    this.cancelExistingAnimationFames();
             }
         };
         const frameid = requestAnimationFrame(() => animate());

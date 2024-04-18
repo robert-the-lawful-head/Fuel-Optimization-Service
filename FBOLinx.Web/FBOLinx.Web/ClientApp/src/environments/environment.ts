@@ -8,7 +8,7 @@ export const environment = {
         accessToken: 'pk.eyJ1IjoiZnVlbGVybGlueCIsImEiOiJja3NzODNqcG4wdHVrMm9rdHU3OGRpb2dmIn0.LvSvlGG0ej3PEDJOBpOoMQ'
     },
     flightWatch: {
-        apiCallInterval: 8000,
+        apiCallInterval: 5000,
     }
 };
 
