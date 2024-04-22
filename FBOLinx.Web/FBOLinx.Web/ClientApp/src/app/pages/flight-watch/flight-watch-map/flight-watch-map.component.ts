@@ -504,10 +504,10 @@ export class FlightWatchMapComponent
             }
     }
     private cancelExistingAnimationFames(): void {
-        for(let prop in this.backwardLogs) {
-            this.airportWatchService.logBackwards(this.backwardLogs[prop]).subscribe((response: any) => {
-            });
-        }
+        // for(let prop in this.backwardLogs) {
+        //     this.airportWatchService.logBackwards(this.backwardLogs[prop]).subscribe((response: any) => {
+        //     });
+        // }
         this.backwardLogs = {};
         for (const id of this.animationFrameIds) {
             cancelAnimationFrame(id);
