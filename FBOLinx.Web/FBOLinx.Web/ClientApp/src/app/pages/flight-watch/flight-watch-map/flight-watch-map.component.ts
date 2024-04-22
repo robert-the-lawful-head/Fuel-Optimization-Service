@@ -211,7 +211,18 @@ export class FlightWatchMapComponent
                 this.map.moveLayer(this.mapMarkers.fbos.layerId,this.mapMarkers.airports.layerId);
                 this.map.moveLayer(this.mapMarkers.flights.layerId);
             }
+        })
+        .onZoomEnd(async () => {
+            this.updateAicraftsOnMapInteraction();
+        })
+        .onDragend(async () => {
+            this.updateAicraftsOnMapInteraction();
         });
+    }
+    private updateAicraftsOnMapInteraction(): void {
+        this.setMapMarkersData(keys(this.data));
+        this.checkForPopupOpen();
+        this.updateFlightOnMap(this.mapMarkers.flights);
     }
     async loadMapDataAsync(): Promise<unknown> {
         var promisesArray = []
@@ -521,6 +532,10 @@ export class FlightWatchMapComponent
         this.openedPopUps[selectedFlightId].popupInstance.setLngLat(LngLat);
     }
     setMapMarkersData(flights: string[]): void{
+        flights =  flights.filter((key) => {
+            if(this.previousFlightData[key] == null) return false;
+            return this.map.getBounds().contains([this.previousFlightData[key].longitude, this.previousFlightData[key].latitude]) || this.map.getBounds().contains([this.data[key].longitude, this.data[key].latitude])  }) || [];
+
         let activeFuelRelease = flights.filter((key) => { return this.data[key].isActiveFuelRelease }) || [];
 
         let fuelerLinxClient = flights.filter((key) => { return this.data[key].isFuelerLinxClient && !this.data[key].isActiveFuelRelease}) || [];

@@ -24,7 +24,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
         }`;
         return icon;
     }
-    public getFlightFeatureJsonData(data: FlightWatchModelResponse): any {
+    public getFlightFeatureJsonData(data: FlightWatchModelResponse): GeoJSON.Feature<GeoJSON.Geometry,GeoJSON.GeoJsonProperties>  {
         let icon = this.getAricraftIcon(false,data);
 
         return {
@@ -81,7 +81,8 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
             type: 'symbol',
         }
     }
-    public getAirportFeatureJsonData(data: any, currentIcao: string): any {
+
+    public getAirportFeatureJsonData(data: any, currentIcao: string): GeoJSON.Feature<GeoJSON.Geometry,GeoJSON.GeoJsonProperties> {
         return {
             geometry: {
                 coordinates: [data.longitudeInDegrees, data.latitudeInDegrees],
