@@ -190,7 +190,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.loadAirportWatchData();
                 }
                 if(message == SharedEvents.fetchFlighWatchDataEvent){
-                    console.log("🚀 ~ HorizontalNavbarComponent: fetchFlighWatchDataEvent:", SharedEvents.fetchFlighWatchDataEvent)
                     this.loadAirportWatchData();
                 }
             }
@@ -202,7 +201,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
         this.mapLoadSubscription = timer(0,  environment.flightWatch.apiCallInterval).subscribe(() =>{
             if(this.isMapVisible) return;
-            console.log("🚀 ~ HorizontalNavbarComponent ~ flight wathc recurrent calll triggered")
             if(this.selectedICAO)
                 this.loadAirportWatchData();
         });
