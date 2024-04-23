@@ -479,7 +479,6 @@ export class FlightWatchMapComponent
                 }
 
                 requestAnimationFrame(animate);
-
             }else{
                 this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
                 this.cancelExistingAnimationFames();
