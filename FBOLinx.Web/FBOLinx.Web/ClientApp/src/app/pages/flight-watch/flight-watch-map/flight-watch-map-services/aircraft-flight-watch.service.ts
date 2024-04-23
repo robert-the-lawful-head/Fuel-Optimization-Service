@@ -24,7 +24,7 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
         }`;
         return icon;
     }
-    public getFlightFeatureJsonData(data: FlightWatchModelResponse): GeoJSON.Feature<GeoJSON.Geometry,GeoJSON.GeoJsonProperties>  {
+    public getFlightFeatureJsonData(data: FlightWatchModelResponse): GeoJSON.Feature<GeoJSON.Point,GeoJSON.GeoJsonProperties>  {
         let icon = this.getAricraftIcon(false,data);
 
         return {
@@ -38,9 +38,10 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 id: data.tailNumber,
                 'default-icon-image': icon,
                 'bearing': data.trackingDegree,
-                'size': 0.5,
-                'status': data.status,
+                'size': 0.5
+                // 'status': data.status,
             },
+            id: data.tailNumber,
             type: 'Feature'
         };
     }
