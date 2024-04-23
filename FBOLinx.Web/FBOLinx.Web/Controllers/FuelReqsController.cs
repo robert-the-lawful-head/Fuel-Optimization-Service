@@ -347,6 +347,8 @@ namespace FBOLinx.Web.Controllers
                     return Ok("FBO not found");
                 else if (email == "No email found")
                     return Ok("FBO email is not in the system. Order has not been saved.");
+
+                fbo = await _fboService.GetSingleBySpec(new FboByAcukwikHandlerIdSpecification(request.FboHandlerId));
             }
 
             var orderDetails = new OrderDetailsDto();
