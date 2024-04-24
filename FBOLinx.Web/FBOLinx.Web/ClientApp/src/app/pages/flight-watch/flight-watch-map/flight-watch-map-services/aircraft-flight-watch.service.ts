@@ -38,8 +38,8 @@ constructor(private flightWatchMapService : FlightWatchMapService) { }
                 id: data.tailNumber,
                 'default-icon-image': icon,
                 'bearing': data.trackingDegree,
-                'size': 0.5
-                // 'status': data.status,
+                'size': 0.5,
+                'status': data.status,
             },
             id: data.tailNumber,
             type: 'Feature'
