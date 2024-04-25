@@ -55,7 +55,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
     selectedICAO: string;
 
     style: any = {};
-    chartName = 'flight-watch';
     currentFilters: SwimFilter = {
         filterText: '',
         dataType: null,
@@ -67,9 +66,8 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         private flightWatchMapService: FlightWatchMapService,
         private sharedService: SharedService,
         public dialog: MatDialog,
-        private cdref: ChangeDetectorRef,
-        private ngxLoader: NgxUiLoaderService
-    ) {
+        private cdref: ChangeDetectorRef
+        ) {
         this.sharedService.titleChange(this.pageTitle);
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(
             localStorageAccessConstant.icao
@@ -83,7 +81,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
         if(this.center == null)
             this.center = await this.flightWatchMapService.getMapCenter(this.selectedICAO);
 
-        this.ngxLoader.startLoader(this.chartName);
         this.sharedService.valueChanged$.subscribe((value: {event: string, data: any}) => {
             if(value.event === SharedEvents.flightWatchDataEvent){
                 if(value.data){
@@ -94,7 +91,6 @@ export class FlightWatchComponent implements OnInit, OnDestroy {
                     this.isStable = false;
                 }
                 this.applyFiltersToData();
-                this.ngxLoader.stopLoader(this.chartName);
             }
             if (value.event == SharedEvents.flyToOnMapEvent) {
                 this.center = this.flightWatchMapService.getMapCenterByCoordinates(value.data.latitude,value.data.longitude);
