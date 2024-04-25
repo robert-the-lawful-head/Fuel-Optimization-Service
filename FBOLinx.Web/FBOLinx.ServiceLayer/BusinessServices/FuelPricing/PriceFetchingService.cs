@@ -196,6 +196,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                     pricingTemplateIds = templates.Select(x => x.Oid).ToList();
                 }
                 var fboPrices = await _FboPricesEntityService.GetListBySpec(new CurrentFboPricesByFboIdSpecification(fboId));
+                fboPrices = await RemovePricesNoLongerEffective(fboPrices);
                 var pricingTemplates = await _context.PricingTemplate.Where(x => x.Fboid == fboId && pricingTemplateIds.Contains(x.Oid))
                     .Include(x => x.CustomerMargins)
                     .AsNoTracking()
@@ -564,6 +565,40 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 .ToListAsync();
 
             await _fboPricesRepo.BulkUpdate(oldPrices);
+        }
+
+        private async Task<List<Fboprices>> RemovePricesNoLongerEffective(List<Fboprices> fboprices)
+        {
+            var oldJetAPriceExists = fboprices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).OrderBy(f => f.Oid).ToList();
+            if (oldJetAPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldJetAPriceExists[i].Expired = true;
+                    await _fboPricesRepo.UpdateAsync(oldJetAPriceExists[i]);
+                    //_context.Fboprices.Update(oldJetAPriceExists[i]);
+                    //await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldJetAPriceExists[i]);
+                }
+            }
+
+            var oldSafPriceExists = fboprices.Where(f => f.Product.Contains("SAF") && f.EffectiveFrom <= DateTime.UtcNow).OrderBy(f => f.Oid).ToList();
+            if (oldSafPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldSafPriceExists[i].Expired = true;
+                    await _fboPricesRepo.UpdateAsync(oldSafPriceExists[i]);
+                    //_context.Fboprices.Update(oldSafPriceExists[i]);
+                    //await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldSafPriceExists[i]);
+                }
+            }
+            return fboprices;
         }
         #endregion
     }

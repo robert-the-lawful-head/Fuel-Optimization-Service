@@ -92,8 +92,6 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             var products = FBOLinx.Core.Utilities.Enums.EnumHelper.GetDescriptions(typeof(FuelProductPriceTypes));
             var universalTime = DateTime.Today.ToUniversalTime();
 
-
-
             var oldPrices = await GetListbySpec(new OldPricesByFboIdSpecification(fboId));
             foreach (var p in oldPrices)
             {
@@ -110,35 +108,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             //                orderby f.Oid
             //                select f).ToListAsync();
 
-            var oldJetAPriceExists = fboprices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
-            if (oldJetAPriceExists.Count() > 2)
-            {
-                // Set old prices to expire, remove from collection
-                for (int i = 0; i <= 1; i++)
-                {
-                    oldJetAPriceExists[i].Expired = true;
-                    await UpdateAsync(oldJetAPriceExists[i]);
-                    //_context.Fboprices.Update(oldJetAPriceExists[i]);
-                    //await _context.SaveChangesAsync();
-
-                    fboprices.Remove(oldJetAPriceExists[i]);
-                }
-            }
-
-            var oldSafPriceExists = fboprices.Where(f => f.Product.Contains("SAF") && f.EffectiveFrom <= DateTime.UtcNow).ToList();
-            if (oldSafPriceExists.Count() > 2)
-            {
-                // Set old prices to expire, remove from collection
-                for (int i = 0; i <= 1; i++)
-                {
-                    oldSafPriceExists[i].Expired = true;
-                    await UpdateAsync(oldSafPriceExists[i]);
-                    //_context.Fboprices.Update(oldSafPriceExists[i]);
-                    //await _context.SaveChangesAsync();
-
-                    fboprices.Remove(oldSafPriceExists[i]);
-                }
-            }
+            fboprices = await RemovePricesNoLongerEffective(fboprices);
 
             fboprices = fboprices.Where(f => f.Price != null).ToList();
 
@@ -192,6 +162,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
                 return noPrices;
             }
         }
+
         public async Task<PriceLookupResponse> GetFuelPricesForCustomer(PriceLookupRequest request)
         {
             PriceLookupResponse validPricing = new PriceLookupResponse();
@@ -781,6 +752,40 @@ namespace FBOLinx.ServiceLayer.BusinessServices.FuelPricing
             }
 
             return "";
+        }
+
+        private async Task<List<FboPricesDTO>> RemovePricesNoLongerEffective(List<FboPricesDTO> fboprices)
+        {
+            var oldJetAPriceExists = fboprices.Where(f => f.Product.Contains("JetA") && f.EffectiveFrom <= DateTime.UtcNow).OrderBy(f => f.Oid).ToList();
+            if (oldJetAPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldJetAPriceExists[i].Expired = true;
+                    await UpdateAsync(oldJetAPriceExists[i]);
+                    //_context.Fboprices.Update(oldJetAPriceExists[i]);
+                    //await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldJetAPriceExists[i]);
+                }
+            }
+
+            var oldSafPriceExists = fboprices.Where(f => f.Product.Contains("SAF") && f.EffectiveFrom <= DateTime.UtcNow).OrderBy(f => f.Oid).ToList();
+            if (oldSafPriceExists.Count() > 2)
+            {
+                // Set old prices to expire, remove from collection
+                for (int i = 0; i <= 1; i++)
+                {
+                    oldSafPriceExists[i].Expired = true;
+                    await UpdateAsync(oldSafPriceExists[i]);
+                    //_context.Fboprices.Update(oldSafPriceExists[i]);
+                    //await _context.SaveChangesAsync();
+
+                    fboprices.Remove(oldSafPriceExists[i]);
+                }
+            }
+            return fboprices;
         }
     }
 }
