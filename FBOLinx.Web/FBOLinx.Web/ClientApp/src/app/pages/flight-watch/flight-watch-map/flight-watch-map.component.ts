@@ -398,7 +398,6 @@ export class FlightWatchMapComponent
 
         this.cancelExistingAnimationFames();
         this.animateAircrafts();
-        this.applyMouseFunctions(marker.layerId);
     }
     private animateAircrafts(): void {
         const animate = () => {
