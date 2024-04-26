@@ -497,6 +497,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
                 this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                     fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
                 });
+                this.ref.detectChanges();
             });
         }
         else {
@@ -520,6 +521,7 @@ export class FuelreqsGridComponent extends GridBase implements OnInit, OnChanges
             this.fuelreqsService.updateArchived(fuelReq).subscribe(response => {
                 fuelReq.serviceOrder.serviceOrderItems = serviceOrderItems;
             });
+            this.ref.detectChanges();
         }
     }
 
