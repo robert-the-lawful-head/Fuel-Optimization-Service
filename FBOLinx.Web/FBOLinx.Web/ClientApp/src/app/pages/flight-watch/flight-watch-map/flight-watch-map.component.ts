@@ -399,83 +399,84 @@ export class FlightWatchMapComponent
         this.cancelExistingAnimationFames();
         this.animateAircrafts();
     }
-    private animateAircrafts(): void {
-        const animate = () => {
-            let elapsedTime = Date.now() - this.startTime;
-            let progress = elapsedTime / environment.flightWatch.apiCallInterval;
-            let popUpCoordinates: number[] = null;
-            if (progress < 1) {
-                this.aicraftDataFeatures.forEach((pointSource) => {
-                    var coordinates = pointSource.properties['origin-coordinates'];
-                    var targetCoordinates = pointSource.properties['destination-coordinates'];
+    readonly animate = (self: any) => {
+        let elapsedTime = Date.now() - this.startTime;
+        let progress = elapsedTime / environment.flightWatch.apiCallInterval;
+        let popUpCoordinates: number[] = null;
+        if (progress < 1) {
+            this.aicraftDataFeatures.forEach((pointSource) => {
+                var coordinates = pointSource.properties['origin-coordinates'];
+                var targetCoordinates = pointSource.properties['destination-coordinates'];
 
-                    if(coordinates[0] == targetCoordinates[0] && coordinates[1] == targetCoordinates[1]) return;
+                if(coordinates[0] == targetCoordinates[0] && coordinates[1] == targetCoordinates[1]) return;
 
-                    let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
-                    let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
-                    let currentCoordinates = [lng, lat];
+                let lng = coordinates[0] + (targetCoordinates[0] - coordinates[0]) * progress;
+                let lat = coordinates[1] + (targetCoordinates[1] - coordinates[1]) * progress;
+                let currentCoordinates = [lng, lat];
 
-                    let liveBearing = turf.bearingToAzimuth(turf.bearing(
-                        turf.point(currentCoordinates),
-                        turf.point(targetCoordinates)
+                let liveBearing = turf.bearingToAzimuth(turf.bearing(
+                    turf.point(currentCoordinates),
+                    turf.point(targetCoordinates)
+                    ));
+
+                var previousCoordinates = [self.previousFlightData[pointSource.properties.id].previousLongitude, self.previousFlightData[pointSource.properties.id].previousLatitude];
+                var previoustargetCoordinates = [self.previousFlightData[pointSource.properties.id].longitude, self.previousFlightData[pointSource.properties.id].latitude]
+
+                let previousiveBearing = turf.bearingToAzimuth(turf.bearing(
+                        turf.point(previousCoordinates),
+                        turf.point(previoustargetCoordinates)
                         ));
 
-                    var previousCoordinates = [this.previousFlightData[pointSource.properties.id].previousLongitude, this.previousFlightData[pointSource.properties.id].previousLatitude];
-                    var previoustargetCoordinates = [this.previousFlightData[pointSource.properties.id].longitude, this.previousFlightData[pointSource.properties.id].latitude]
+                pointSource = self.updateIconImage(pointSource,popUpCoordinates,currentCoordinates);
 
-                    let previousiveBearing = turf.bearingToAzimuth(turf.bearing(
-                            turf.point(previousCoordinates),
-                            turf.point(previoustargetCoordinates)
-                            ));
+                if(liveBearing == 0)return;
 
-                    pointSource = this.updateIconImage(pointSource,popUpCoordinates,currentCoordinates);
+                let isBackwards = self.IsBackwardsBearing(previousiveBearing,liveBearing);
 
-                    if(liveBearing == 0)return;
+                if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
+                    self.data[pointSource.properties.id].liveBearing = liveBearing;
+                    self.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
+                    self.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
+                    self.data[pointSource.properties.id].backEndBearing = pointSource.properties.bearing;
+                    self.data[pointSource.properties.id].liveCaulculatedBearing = liveBearing;
+                    self.data[pointSource.properties.id].previousCorrectModel = self.previousFlightData[pointSource.properties.id];
 
-                    let isBackwards = !this.IsBackwardsBearing(previousiveBearing,liveBearing);
+                    self.data[pointSource.properties.id].previousCorrectModel.currentCoordinates = previousCoordinates;
+                    self.data[pointSource.properties.id].previousCorrectModel.targetCoordinates = previoustargetCoordinates;
+                    self.data[pointSource.properties.id].previousCorrectModel.liveBearing = previousiveBearing;
 
-                    if(isBackwards && [FlightLegStatus.EnRoute].includes(pointSource.properties.status)){
-                        this.data[pointSource.properties.id].liveBearing = liveBearing;
-                        this.data[pointSource.properties.id].currentCoordinates = currentCoordinates;
-                        this.data[pointSource.properties.id].targetCoordinates = targetCoordinates;
-                        this.data[pointSource.properties.id].backEndBearing = pointSource.properties.bearing;
-                        this.data[pointSource.properties.id].liveCaulculatedBearing = liveBearing;
-                        this.data[pointSource.properties.id].previousCorrectModel = this.previousFlightData[pointSource.properties.id];
-
-                        this.data[pointSource.properties.id].previousCorrectModel.currentCoordinates = previousCoordinates;
-                        this.data[pointSource.properties.id].previousCorrectModel.targetCoordinates = previoustargetCoordinates;
-                        this.data[pointSource.properties.id].previousCorrectModel.liveBearing = previousiveBearing;
-
-                        this.backwardLogs[pointSource.properties.id] = this.data[pointSource.properties.id];
-                        return;
-                    }
-
-                    pointSource.geometry.coordinates = currentCoordinates;
-
-                    pointSource.properties.bearing = liveBearing;
-
-                });
-
-                this.aicraftDataSource.setData(
-                    {
-                        type: 'FeatureCollection',
-                        features: this.aicraftDataFeatures,
-                    }
-                );
-
-                for(let prop in this.popupUpdatesTracking) {
-                    this.refreshPopUp(this.popupUpdatesTracking[prop],prop);
+                    self.backwardLogs[pointSource.properties.id] = self.data[pointSource.properties.id];
+                    return;
                 }
 
-                requestAnimationFrame(animate);
-            }else{
-                this.aicraftDataFeatures = null;
-                this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
-                this.cancelExistingAnimationFames();
+                pointSource.geometry.coordinates = currentCoordinates;
+
+                pointSource.properties.bearing = liveBearing;
+
+            });
+
+            self.aicraftDataSource.setData(
+                {
+                    type: 'FeatureCollection',
+                    features: this.aicraftDataFeatures,
+                }
+            );
+
+            for(let prop in this.popupUpdatesTracking) {
+                self.refreshPopUp(this.popupUpdatesTracking[prop],prop);
             }
-        };
-        const frameid = requestAnimationFrame(animate);
-        this.animationFrameIds = [frameid];
+
+            let callbackFrameId = requestAnimationFrame(() => self.animate(self));
+            self.animationFrameIds.push(callbackFrameId);
+        }else{
+            self.aicraftDataFeatures = null;
+            self.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
+            self.cancelExistingAnimationFames();
+        }
+    }
+    private animateAircrafts(): void {
+        let frameid = requestAnimationFrame(() => this.animate(this));
+        this.animationFrameIds.push(frameid);
     }
     private updateIconImage(pointSource: any, popUpCoordinates: number[], currentCoordinates: number[]): any {
         //need to update the icon image change on animation
