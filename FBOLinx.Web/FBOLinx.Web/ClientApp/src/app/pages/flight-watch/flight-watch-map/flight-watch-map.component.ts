@@ -428,6 +428,8 @@ export class FlightWatchMapComponent
                             turf.point(previoustargetCoordinates)
                             ));
 
+                    pointSource = this.updateIconImage(pointSource,popUpCoordinates,currentCoordinates);
+
                     if(liveBearing == 0)return;
 
                     let isBackwards = !this.IsBackwardsBearing(previousiveBearing,liveBearing);
@@ -448,21 +450,9 @@ export class FlightWatchMapComponent
                         return;
                     }
 
-                    //need to update the icon image change on animation
-                    //working with some lag, need to seach for better solution
-                    if(this.selectedAircraft?.includes(pointSource.properties.id)){
-                        popUpCoordinates = currentCoordinates;
-                        const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
-                        pointSource.properties['default-icon-image'] = reverseIcon;
-                        this.popupUpdatesTracking[pointSource.properties.id] = popUpCoordinates;
-                    }else{
-                        const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
-                        pointSource.properties['default-icon-image'] = defaultIcon;
-                    }
-
                     pointSource.geometry.coordinates = currentCoordinates;
 
-                    pointSource.properties.bearing = liveBearing == 0 ? pointSource.properties.bearing : liveBearing;
+                    pointSource.properties.bearing = liveBearing;
 
                 });
 
@@ -479,12 +469,27 @@ export class FlightWatchMapComponent
 
                 requestAnimationFrame(animate);
             }else{
+                this.aicraftDataFeatures = null;
                 this.sharedService.emitChange(SharedEvents.fetchFlighWatchDataEvent);
                 this.cancelExistingAnimationFames();
             }
         };
         const frameid = requestAnimationFrame(animate);
         this.animationFrameIds = [frameid];
+    }
+    private updateIconImage(pointSource: any, popUpCoordinates: number[], currentCoordinates: number[]): any {
+        //need to update the icon image change on animation
+        //working with some lag, need to seach for better solution
+        if(this.selectedAircraft?.includes(pointSource.properties.id)){
+            popUpCoordinates = currentCoordinates;
+            const reverseIcon = this.aircraftFlightWatchService.getAricraftIcon(true,this.data[pointSource.properties.id]);
+            pointSource.properties['default-icon-image'] = reverseIcon;
+            this.popupUpdatesTracking[pointSource.properties.id] = popUpCoordinates;
+        }else{
+            const defaultIcon = this.aircraftFlightWatchService.getAricraftIcon(false,this.data[pointSource.properties.id]);
+            pointSource.properties['default-icon-image'] = defaultIcon;
+        }
+        return pointSource;
     }
     private IsBackwardsBearing(bearing: number,liveBearing: number): boolean {
         let start = turf.bearingToAzimuth( bearing+160);
