@@ -480,36 +480,8 @@ export class PricingTemplatesEditComponent implements OnInit, OnDestroy {
     }
 
     cancelPricingTemplateEdit() {
-        var isMarginLessThanZero = false;
-
-        isMarginLessThanZero = this.checkMarginLessThanZero();
-
-        if (!isMarginLessThanZero) {
             this.router
                 .navigate(['/default-layout/pricing-templates/'])
-                .then(() => { });
-        }
-        else {
-            const dialogRef = this.marginLessThanOneDialog.open(
-                ProceedConfirmationComponent,
-                {
-                    autoFocus: false,
-                    data: {
-                        buttonText: 'Yes',
-                        title: 'This ITP template contains a margin that is less than or equal to zero.  Please confirm you want to proceed'
-                    },
-                }
-            );
-
-            dialogRef.afterClosed().subscribe((result) => {
-                if (!result) {
-                    return;
-                }
-                this.router
-                    .navigate(['/default-layout/pricing-templates/'])
-                    .then(() => { });
-            });
-        }
     }
 
     deleteCustomerMargin(index: number) {
