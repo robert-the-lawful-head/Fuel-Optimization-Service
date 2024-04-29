@@ -8,6 +8,7 @@ import * as SharedEvents from '../../../constants/sharedEvents';
 import { EmailcontentService } from '../../../services/emailcontent.service';
 // Components
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-email-templates-home',
@@ -22,11 +23,13 @@ export class EmailTemplatesHomeComponent
     public emailTemplates: any[];
     public locationChangedSubscription: any;
 
+    public chartName = 'EmailTemplates';
     public constructor(
         private router: Router,
         private emailContentService: EmailcontentService,
         private sharedService: SharedService,
-        private deleteEmailContentDialog: MatDialog
+        private deleteEmailContentDialog: MatDialog,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
     }
@@ -101,11 +104,15 @@ export class EmailTemplatesHomeComponent
 
     // Private Methods
     private loadEmailTemplatesData() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.emailTemplates = null;
         this.emailContentService
             .getForFbo(this.sharedService.currentUser.fboId)
             .subscribe((data: any[]) => {
                 this.emailTemplates = data;
+                this.ngxLoader.stopLoader(this.chartName);
+
             });
     }
 }
