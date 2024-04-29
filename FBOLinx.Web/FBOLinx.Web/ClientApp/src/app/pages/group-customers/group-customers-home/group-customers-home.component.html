@@ -5,8 +5,12 @@
                 [customersData]="customersData"
             ></app-group-customers-grid>
         </div>
-        <div *ngIf="!customersData">
-            <mat-spinner></mat-spinner>
-        </div>
+        <ngx-ui-loader
+            [loaderId]="chartName"
+            bgsColor="rgb(100, 181, 246)"
+            bgsPosition="center-center"
+            bgsType="ball-spin"
+            overlayColor="rgba(0, 0, 0, 0.1)"
+        ></ngx-ui-loader>
     </div>
 </section>
