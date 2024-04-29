@@ -104,9 +104,8 @@
                                         <th>
                                             <div class="">Max. (gal)</div>
                                         </th>
-                                        <th *ngIf=" pricingTemplateForm.value
-                                        .marginType == 1">
-                                            <div class="">Discount</div>
+                                        <th>
+                                            <div class="">Margin</div>
                                         </th>
                                         <th>
                                             <div>
@@ -161,8 +160,7 @@
                                                 </mat-form-field>
                                             </div>
                                         </td>
-                                        <td *ngIf=" pricingTemplateForm.value
-                                        .marginType == 1"
+                                        <td
                                             [formGroupName]="i">
                                             <div class="volume-tiers-width">
                                                 <mat-form-field style="width:100px">
