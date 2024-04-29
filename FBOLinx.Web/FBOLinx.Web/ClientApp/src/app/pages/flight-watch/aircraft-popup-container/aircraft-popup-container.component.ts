@@ -7,6 +7,7 @@ import { Aircraftwatch } from 'src/app/models/flight-watch';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { AircraftAssignModalComponent, NewCustomerAircraftDialogData } from 'src/app/shared/components/aircraft-assign-modal/aircraft-assign-modal.component';
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
+import { SharedService } from 'src/app/layouts/shared-service';
 
 @Component({
   selector: 'app-aircraft-popup-container',
@@ -43,7 +44,8 @@ export class AircraftPopupContainerComponent {
     private newCustomerAircraftDialog: MatDialog,
     private customerInfoByGroupService: CustomerinfobygroupService,
     private router: Router,
-    private flightWatchMapSharedService: FlightWatchMapSharedService
+    private flightWatchMapSharedService: FlightWatchMapSharedService,
+    private sharedService: SharedService
   ) { }
   ngOnChanges(changes) {
     if(changes.flightData?.currentValue) this.aircraftWatch = changes.flightData.currentValue;
@@ -55,6 +57,11 @@ export class AircraftPopupContainerComponent {
     if(this.fboId && this.groupId)
     this.getCustomersList(this.groupId,this.fboId);
   }
+
+  get isCustomerManagerButtonDisabled(){
+    return !this.hasAircraft || this.sharedService.isCsr;
+  }
+
   addAircraft() {
     const dialogRef = this.newCustomerAircraftDialog.open<
         AircraftAssignModalComponent,

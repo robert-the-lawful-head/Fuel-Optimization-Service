@@ -5,6 +5,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { User } from '../models/User';
 import { AuthenticationService } from '../services/authentication.service';
 import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
+import { UserRole } from '../enums/user-role';
 
 export interface ActiveUser {
     fboId: number;
@@ -130,7 +131,9 @@ export class SharedService {
         }
         return this._currentUser;
     }
-
+    get isCsr() {
+        return this.currentUser.role === UserRole.CSR;
+    }
     set currentUser(user: User) {
         this._currentUser = user;
     }
