@@ -13,6 +13,7 @@ import {
     GroupAnalyticsGenerateDialogComponent,
     GroupAnalyticsGenerateDialogData,
 } from '../group-analytics-generate-dialog/group-analytics-generate-dialog.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-group-analytics-home',
@@ -27,6 +28,7 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     emailTemplate: EmailTemplate = null;
 
     logoUrl = '';
+    chartName = 'Group Analytics';
 
     constructor(
         private reportDialog: MatDialog,
@@ -35,7 +37,8 @@ export class GroupAnalyticsHomeComponent implements OnInit {
         private fbosService: FbosService,
         private groupsService: GroupsService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private emailContentService: EmailcontentService
+        private emailContentService: EmailcontentService,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit() {
@@ -111,12 +114,15 @@ export class GroupAnalyticsHomeComponent implements OnInit {
     }
 
     private loadCustomers() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.customerInfoByGroupService
             .getCustomersWithContactsByGroup(
                 this.sharedService.currentUser.groupId
             )
             .subscribe((customers: any[]) => {
                 this.customers = customers;
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 
