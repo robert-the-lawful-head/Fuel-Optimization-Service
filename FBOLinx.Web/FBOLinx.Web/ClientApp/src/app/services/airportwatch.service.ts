@@ -52,13 +52,16 @@ export class AirportWatchService {
 
     public getArrivalsDeparturesSwim(
         fboId: number,
-        body: AirportWatchHistoricalDataRequest
+        body: AirportWatchHistoricalDataRequest,
+         icao?: string
     ) {
+        let query = icao ? `?icao=${icao}` : '';
+
         return this.http.post<FlightWatchHistorical[]>(
             this.accessPointUrl +
             '/fbo/' +
             fboId +
-            '/arrivals-depatures-swim',
+            '/arrivals-depatures-swim' + query,
             body,
             { headers: this.headers }
         );
