@@ -496,7 +496,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             AircraftType = s.Make + " " + s.Model,
                             Status = a == null || a.Oid == 0 ? "Departure" : "Arrival",
                             Originated = a != null ? s.DepartureICAO : "",
-                            Company = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Company).FirstOrDefault() : "",
+                            Company = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Company).FirstOrDefault() : s.FAARegisteredOwner,
                             CompanyId = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Customer.Oid).FirstOrDefault() : 0,
                             CustomerInfoByGroupID = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
                         }).ToList();
