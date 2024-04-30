@@ -137,15 +137,15 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     get notificationVisible() {
         return (
-            this.sharedService.currentUser.fboId > 0 &&
-            this.sharedService.currentUser.role !== 5 &&
-            this.sharedService.currentUser.accountType == AccountType.Premium
+            this.sharedService.currentUser?.fboId > 0 &&
+            this.sharedService.currentUser?.role !== 5 &&
+            this.sharedService.currentUser?.accountType == AccountType.Premium
         );
     }
 
     get favoriteNotificationVisible() {
         return (
-            this.sharedService.currentUser.fboId > 0 &&
+            this.sharedService.currentUser?.fboId > 0 &&
             !this.isLobbyViewPage &&
             this.router.url != '/public-layout/lobby-view'
         );
@@ -182,6 +182,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.loadAirportWatchData();
                 }else if(message == SharedEvents.icaoChangedEvent){
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+                    this.loadAirportWatchData();
+                }
+                if(message == SharedEvents.flightWatchDataEvent){
                     this.loadAirportWatchData();
                 }
             }
