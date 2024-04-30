@@ -83,7 +83,7 @@ namespace FBOLinx.Web.Controllers
         [HttpPost("fbo/{fboId}/arrivals-depatures-swim")]
         public async Task<IActionResult> GetArrivalsDeparturesSwim([FromRoute] int groupId, [FromRoute] int fboId, [FromBody] AirportWatchHistoricalDataRequest request, [FromQuery] string icao = null)
         {
-            var data2 = await _airportWatchService.GetArrivalsDeparturesSwim(fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault());
+            var data2 = await _airportWatchService.GetArrivalsDeparturesSwim(fboId, request.StartDateTime.GetValueOrDefault(), request.EndDateTime.GetValueOrDefault(), icao);
             return Ok(data2);
         }
 

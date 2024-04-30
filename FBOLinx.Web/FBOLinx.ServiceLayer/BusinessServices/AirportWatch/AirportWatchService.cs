@@ -467,10 +467,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             
             return result;
         }
-        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate)
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate, string icao)
         {
             var fbo = await _FboService.GetFbo(fboId);
-            var icao = fbo.FboAirport.Icao;
 
             var swimFlightLegsArrivals = await _SwimFlightLegService.GetListbySpec(new SWIMFlightLegByArrivalAirportDatesSpecification(icao, minDate, maxDate));
             var swimFlightLegsDepartures = await _SwimFlightLegService.GetListbySpec(new SWIMFLightLegByDepartureAirportDatesSpecification(icao, minDate, maxDate));
