@@ -482,7 +482,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             response = (from s in swimFlightLegs
                         join ca in customerAircrafts on s.AircraftIdentification equals ca.TailNumber
                         into leftJoinCustomerAircrafts
-                        from ca in leftJoinCustomerAircrafts.Where(l => l.CustomerId > 0).DefaultIfEmpty()
+                        from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                         join a in swimFlightLegsArrivals on s.Oid equals a.Oid
                         into leftJoinArrivals
                         from a in leftJoinArrivals.DefaultIfEmpty()
