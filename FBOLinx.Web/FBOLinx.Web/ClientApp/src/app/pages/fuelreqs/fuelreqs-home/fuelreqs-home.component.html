@@ -1,22 +1,16 @@
-<section>
-    <mat-tab-group (selectedTabChange)="onTabClick($event)" [selectedIndex]="selectedTabIndex">
-        <mat-tab label="Fuel & Service Orders">
-            <div *ngIf="isFuelOrdersShowing">
-                <div *ngIf="fuelreqsData">
-                    <app-fuelreqs-grid (dateFilterChanged)="dateFilterChanged($event)"
-                                       [filterEndDate]="filterEndDate"
-                                       [filterStartDate]="filterStartDate"
-                                       [fuelreqsData]="fuelreqsData"
-                                       [servicesAndFees]="servicesAndFees"></app-fuelreqs-grid>
-                </div>
-                <div *ngIf="!fuelreqsData || !servicesAndFees">
-                    <mat-spinner></mat-spinner>
-                </div>
-            </div>
-        </mat-tab>
-
-        <mat-tab label="Missed Orders">
-            <app-missedorders-grid></app-missedorders-grid>
-        </mat-tab>
-    </mat-tab-group>
-</section>
+<ni-card>
+    <div *ngIf="isFuelOrdersShowing">
+        <div *ngIf="fuelreqsData">
+            <app-fuelreqs-grid
+                (dateFilterChanged)="dateFilterChanged($event)"
+                [filterEndDate]="filterEndDate"
+                [filterStartDate]="filterStartDate"
+                [fuelreqsData]="fuelreqsData"
+                 [servicesAndFees]="servicesAndFees"
+            ></app-fuelreqs-grid>
+        </div>
+        <div *ngIf="!fuelreqsData">
+            <mat-spinner></mat-spinner>
+        </div>
+    </div>
+</ni-card>

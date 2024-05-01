@@ -1,0 +1,21 @@
+@import "../../../../assets/sass/variable";
+
+:host {
+    .report-item{
+        padding: 25px 0 5px 25px;
+        .report-title{
+            cursor: pointer;
+            p{
+                font-size: 18px;
+                font-weight: 900;
+                color: #2497F3;
+            }
+        }
+        .report-description{
+            p{
+                font-size: 14px;
+                font-weight: 400;
+            }
+        }
+    }
+}

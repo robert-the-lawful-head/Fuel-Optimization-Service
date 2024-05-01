@@ -14,6 +14,8 @@ import { StatisticsTotalCustomersComponent } from '../../../shared/components/st
 import { StatisticsTotalOrdersComponent } from '../../../shared/components/statistics-total-orders/statistics-total-orders.component';
 import { FlightWatchMapService } from '../../flight-watch/flight-watch-map/flight-watch-map-services/flight-watch-map.service';
 import {localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
+import { GroupsService } from 'src/app/services/groups.service';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 
 @Component({
     selector: 'app-dashboard-fbo-updated',
@@ -40,14 +42,18 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
 
     //flghtWatch
     center: LngLatLike;
-    flightWatchData: FlightWatchModelResponse[];
-    isMapLoading: boolean = true;
+    flightWatchData: FlightWatchModelResponse[] = null;
     isStable: boolean = true;
     selectedICAO: string = "";
+    isSingleSourceFbo: boolean = false;
+
+    groupsFbosData: any = null;
 
     constructor(private sharedService: SharedService,
         private router: Router,
         private flightWatchMapService: FlightWatchMapService,
+        private manageFboGroupsService: ManageFboGroupsService,
+        private groupsService: GroupsService,
         ) {
         this.filterStartDate = new Date(
             moment().add(-12, 'M').format('MM/DD/YYYY')
@@ -61,6 +67,13 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
         this.sharedService.titleChange(this.pageTitle);
 
         this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
+
+        this.isSingleSourceFbo = JSON.parse(
+            this.sharedService
+                .getCurrentUserPropertyValue(
+                    localStorageAccessConstant.isSingleSourceFbo
+                )
+        );
     }
 
     get isCsr() {
@@ -82,7 +95,6 @@ export class DashboardFboUpdatedComponent implements AfterViewInit, OnDestroy {
                     this.flightWatchData = null;
                     this.isStable = false;
                 }
-                this.isMapLoading = false;
             }
         });
     }

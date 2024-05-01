@@ -1,0 +1,49 @@
+:host {
+    .report-popup-container {
+        display: flex;
+        z-index: 9999;
+        position: fixed;
+        height: 100%;
+        padding: 0 50px 0 0;
+        width: calc(100vw - 270px);
+        width: -moz-available;          /* WebKit-based browsers will ignore this. */
+        width: -webkit-fill-available;  /* Mozilla-based browsers will ignore this. */
+        width: fill-available;
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distribute space evenly between rows */
+            background-color: white;
+            border: 1px solid #252d47;
+            height: calc(100vh - 140px);
+            width: 100%;
+            .element {
+                flex-grow: 1;
+            }
+            .middle-element {
+                flex-grow: 999;
+                overflow: hidden;
+                padding: 5px 25px 0 5px;
+                div {
+                    height: 100%;
+                }
+            }
+            .mat-toolbar,
+            .mat-toolbar-multiple-rows {
+                min-height: 40px; /* Set the minimum height of the toolbar */
+                height: 40px;
+            }
+            /* Add space between title and button */
+            .spacer {
+                flex: 1;
+            }
+            .close-icon {
+                cursor: pointer;
+            }
+            .action-buttons {
+                padding: 15px 0 15px 0;
+            }
+        }
+    }
+}

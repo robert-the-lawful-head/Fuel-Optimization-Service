@@ -232,6 +232,11 @@ import { ServicesAndFeesComponent } from './services-and-fees/services-and-fees.
 import { ServicesAndFeesHomeComponent } from './services-and-fees-home/services-and-fees-home.component';
 import { FavoriteIconComponent } from '../shared/components/favorite-icon/favorite-icon.component';
 import { AicraftExpandedDetailComponent } from './flight-watch/flight-watch-aicraft-grid/flight-watch-aircraft-data-table/aicraft-expanded-detail/aicraft-expanded-detail.component';
+import { AnalyticsActivityReportsComponent } from './analytics/analytics-activity-reports/analytics-activity-reports.component';
+import { AnalyticsReportPopupComponent } from './analytics/analytics-report-popup/analytics-report-popup.component';
+import { PresetDateFilterComponent } from '../shared/components/preset-date-filter/preset-date-filter.component';
+import { ReportFiltersComponent } from './analytics/analytics-report-popup/report-filters/report-filters.component';
+import { CustomerCaptureRateComponent } from './analytics/customer-capture-rate/customer-capture-rate.component';
 import { ItemInputComponent } from './services-and-fees/item-input/item-input.component';
 import { FuelreqsGridServicesComponent } from './fuelreqs/fuelreqs-grid-services/fuelreqs-grid-services.component';
 import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes.component';
@@ -391,6 +396,12 @@ import { FuelreqsNotesComponent } from './fuelreqs/fuelreqs-notes/fuelreqs-notes
         ServiceOrdersDialogNewComponent,
         ServiceOrdersDialogOrderItemsComponent,
         FeeAndTaxBreakdownDialogWrapperComponent,
+        FavoriteIconComponent,
+        AnalyticsActivityReportsComponent,
+        AnalyticsReportPopupComponent,
+        PresetDateFilterComponent,
+        ReportFiltersComponent,
+        CustomerCaptureRateComponent,
         ServicesAndFeesComponent,
         FavoriteIconComponent,
         ServicesAndFeesHomeComponent,

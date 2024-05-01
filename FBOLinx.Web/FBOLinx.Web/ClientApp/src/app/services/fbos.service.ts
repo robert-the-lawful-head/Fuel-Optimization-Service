@@ -1,5 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { FbosGridViewModel } from '../models/FbosGridViewModel';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class FbosService {
@@ -19,12 +21,18 @@ export class FbosService {
         });
     }
 
-    public getAllFbos() {
-        return this.http.get(this.accessPointUrl, { headers: this.headers });
+    public getAllFbos(): Observable<FbosGridViewModel[]> {
+        return this.http.get<FbosGridViewModel[]>(this.accessPointUrl, { headers: this.headers });
     }
 
     public get(payload) {
         return this.http.get(this.accessPointUrl + '/' + payload.oid, {
+            headers: this.headers,
+        });
+    }
+
+    public getFbosByIcao(icao) {
+        return this.http.get<FbosGridViewModel[]>(`${this.accessPointUrl}/icao/${icao}`, {
             headers: this.headers,
         });
     }

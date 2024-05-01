@@ -13,6 +13,12 @@ export class GroupsService {
         this.accessPointUrl = baseUrl + 'api/groups';
     }
 
+    isGroupFboSingleSource(icao: string) {
+        return this.http.get<boolean>(`${this.accessPointUrl}/icao/${icao}/is-single-source`, {
+            headers: this.headers,
+        });
+    }
+
     getAllGroups() {
         return this.http.get(this.accessPointUrl, {
             headers: this.headers,

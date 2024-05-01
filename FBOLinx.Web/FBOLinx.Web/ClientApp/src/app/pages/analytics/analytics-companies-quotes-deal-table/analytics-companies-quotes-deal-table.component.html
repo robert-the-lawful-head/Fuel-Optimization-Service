@@ -1,263 +1,342 @@
-<ni-card [headerBgColor]="'gray'" title="Customer Statistics">
-    <div class="chart-container">
-        <div class="flex position-relative">
-            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-                <mat-form-field>
-                    <input (dateChange)="refreshData()"
-                           (focus)="dashboardSettingsStartDateFilter.open()"
-                           [(ngModel)]="filterStartDate"
-                           [matDatepicker]="dashboardSettingsStartDateFilter"
-                           [max]="filterEndDate"
-                           matInput
-                           placeholder="Start Date" />
-                    <mat-datepicker-toggle [for]="dashboardSettingsStartDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsStartDateFilter
-                                    disabled="false"></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="d-inline-block mr-2 ml-2" style="width: 130px">
-                <mat-form-field>
-                    <input (dateChange)="refreshData()"
-                           (focus)="dashboardSettingsEndDateFilter.open()"
-                           [(ngModel)]="filterEndDate"
-                           [matDatepicker]="dashboardSettingsEndDateFilter"
-                           [min]="filterStartDate"
-                           matInput
-                           placeholder="End Date" />
-                    <mat-datepicker-toggle [for]="dashboardSettingsEndDateFilter"
-                                           matSuffix></mat-datepicker-toggle>
-                    <mat-datepicker #dashboardSettingsEndDateFilter
-                                    disabled="false"></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="d-inline-block mr-2 ml-2" *ngIf="dataSource">
-                <app-table-global-search [matDataSource]="dataSource"
-                    placeholder="Search by Company"></app-table-global-search>
-            </div>
-            <div class="actions">
-                <button [matMenuTriggerFor]="gridActions" mat-icon-button>
-                    <mat-icon aria-hidden="true"
-                              class="mat-icon material-icons"
-                              role="img">more_vert</mat-icon>
-                </button>
-                <mat-menu #gridActions="matMenu"
-                          class="switch-nested-menu-left-arrows"
-                          xPosition="before">
-                    <button (click)="exportCsv()" mat-menu-item>Export</button>
-                    <button (click)="openSettings()" mat-menu-item>
-                        Settings
-                    </button>
-                </mat-menu>
-            </div>
-        </div>
-
-        <div class="table-container mat-elevation-z8" (scroll)="onTableScroll($event)">
-            <table [dataSource]="dataSource" mat-table matSort>
-
-                <ng-container matColumnDef="company">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Company</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="company"
-                                                     propertyName="company"
-                                                     [columnFormat]="0"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.company}}   </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="directOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Direct Orders</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="directOrders"
-                                                     propertyName="directOrders"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)">  {{info.directOrders}} </td>
-                </ng-container>
-
-                <ng-container matColumnDef="companyQuotesTotal">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Number of Quotes</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="companyQuotesTotal"
-                                                     propertyName="companyQuotesTotal"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.companyQuotesTotal}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="conversionRate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Conversion Rate (Directs)</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="conversionRate"
-                                                     propertyName="conversionRate"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.conversionRate}}%</td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="conversionRateTotal">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Conversion Rate (Total)</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="conversionRateTotal"
-                                                     propertyName="conversionRateTotal"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info)"> {{info.conversionRateTotal}}%</td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="totalOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <div class="container">
-                            <div>Total Orders at</div>
-                            <div>{{ fbo }}</div>
-                        </div>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="totalOrders"
-                                                     propertyName="totalOrders"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.totalOrders}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="airportOrders">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Total Orders at {{ icao }}</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="airportOrders"
-                                                     propertyName="airportOrders"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.airportOrders}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="customerBusiness">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>% of Customer's Business</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="customerBusiness"
-                                                     propertyName="customerBusiness"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.customerBusiness}}% </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="lastPullDate">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>{{ icao }} Last Quoted</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="lastPullDate"
-                                                     propertyName="lastPullDate"
-                                                     [columnFormat]="4"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.lastPullDate}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="airportVisits">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <span>Arrivals</span>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="airportVisits"
-                                                     propertyName="airportVisits"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.airportVisits}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="visitsToFbo">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <div>
-                            <div>Visits to</div>
-                            <div>{{ fbo }}</div>
-                        </div>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="visitsToFbo"
-                                                     propertyName="visitsToFbo"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.visitsToFbo}} </td>
-
-                </ng-container>
-
-                <ng-container matColumnDef="percentVisits">
-                    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-                        <div>
-                            <div>% of visits to</div>
-                            <div>{{ fbo }}</div>
-                        </div>
-                        <span *ngIf="dataSource">
-                            <app-table-column-filter [matDataSource]="dataSource"
-                                                     [matSort]="sort"
-                                                     columnId="percentVisits"
-                                                     propertyName="percentVisits"
-                                                     [columnFormat]="1"></app-table-column-filter>
-                        </span>
-                    </th>
-                    <td *matCellDef="let info" mat-cell (click)="CustomerAnalitycs(info.company)"> {{info.percentVisits / 100 | percent}} </td>
-
-                </ng-container>
-
-                <tr *matHeaderRowDef="visibleColumns; sticky: true"
-                    mat-header-row></tr>
-                <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
-            </table>
+<div class="chart-container">
+    <div class="flex position-relative">
+        <app-report-filters
+            [icao]="icao"
+            [dataSource]="dataSource"
+            [selectedDateFilter]="selectedDateFilter"
+            [hiddenFilters]="hiddenFilters"
+            (onChangeIcaoFilter)="changeIcaoFilter($event)"
+            (onDateChange)="applyPresetDateFilter($event)"
+        ></app-report-filters>
+        <div class="actions">
+            <button [matMenuTriggerFor]="gridActions" mat-icon-button>
+                <mat-icon
+                    aria-hidden="true"
+                    class="mat-icon material-icons"
+                    role="img"
+                    >settings</mat-icon
+                >
+            </button>
+            <mat-menu
+                #gridActions="matMenu"
+                class="switch-nested-menu-left-arrows"
+                xPosition="before"
+            >
+                <button (click)="openSettings()" mat-menu-item>Settings</button>
+            </mat-menu>
         </div>
     </div>
-    <ngx-ui-loader [loaderId]="chartName"
-                   bgsColor="rgb(100, 181, 246)"
-                   bgsPosition="center-center"
-                   bgsType="ball-spin"
-                   overlayColor="rgba(0, 0, 0, 0.1)"></ngx-ui-loader>
-    <div class="invisible">
-        <mat-paginator (page)="(0); onPageChanged($event)"
+
+    <div
+        class="table-container mat-elevation-z3"
+        (scroll)="onTableScroll($event)"
+    >
+        <table [dataSource]="dataSource" mat-table matSort>
+            <ng-container matColumnDef="company">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="company"
+                            propertyName="company"
+                            [columnFormat]="0"
+                        >
+                            <span>Company</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info)"
+                >
+                    {{ info.company }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="directOrders">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="directOrders"
+                            propertyName="directOrders"
+                            [columnFormat]="1"
+                        >
+                            <span>Direct Orders</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info)"
+                >
+                    {{ info.directOrders }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="companyQuotesTotal">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="companyQuotesTotal"
+                            propertyName="companyQuotesTotal"
+                            [columnFormat]="1"
+                        >
+                            <span>Number of Quotes</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info)"
+                >
+                    {{ info.companyQuotesTotal }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="conversionRate">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="conversionRate"
+                            propertyName="conversionRate"
+                            [columnFormat]="1"
+                        >
+                            <span>Conversion Rate (Directs)</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info)"
+                >
+                    {{ info.conversionRate }}%
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="conversionRateTotal">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="conversionRateTotal"
+                            propertyName="conversionRateTotal"
+                            [columnFormat]="1"
+                        >
+                            <span>Conversion Rate (Total)</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info)"
+                >
+                    {{ info.conversionRateTotal }}%
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="totalOrders">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="totalOrders"
+                            propertyName="totalOrders"
+                            [columnFormat]="1"
+                        >
+                            <div class="container">
+                                <div>Total Orders at</div>
+                                <div>{{ fbo }}</div>
+                            </div>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.totalOrders }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="airportOrders">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="airportOrders"
+                            propertyName="airportOrders"
+                            [columnFormat]="1"
+                        >
+                            <span>Total Orders at {{ icao }}</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.airportOrders }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="customerBusiness">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="customerBusiness"
+                            propertyName="customerBusiness"
+                            [columnFormat]="1"
+                        >
+                            <span>% of Customer's Business</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.customerBusiness }}%
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lastPullDate">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="lastPullDate"
+                            propertyName="lastPullDate"
+                            [columnFormat]="4"
+                        >
+                            <span>{{ icao }} Last Quoted</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.lastPullDate }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="airportVisits">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="airportVisits"
+                            propertyName="airportVisits"
+                            [columnFormat]="1"
+                        >
+                            <span>Arrivals</span>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.airportVisits }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="visitsToFbo">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="visitsToFbo"
+                            propertyName="visitsToFbo"
+                            [columnFormat]="1"
+                        >
+                            <div>
+                                <div>Visits to</div>
+                                <div>{{ fbo }}</div>
+                            </div>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.visitsToFbo }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="percentVisits">
+                <th *matHeaderCellDef mat-header-cell>
+                    <span *ngIf="dataSource">
+                        <app-table-column-filter
+                            [matDataSource]="dataSource"
+                            [matSort]="sort"
+                            columnId="percentVisits"
+                            propertyName="percentVisits"
+                            [columnFormat]="1"
+                        >
+                            <div>
+                                <div>% of visits to</div>
+                                <div>{{ fbo }}</div>
+                            </div>
+                        </app-table-column-filter>
+                    </span>
+                </th>
+                <td
+                    *matCellDef="let info"
+                    mat-cell
+                    (click)="CustomerAnalitycs(info.company)"
+                >
+                    {{ info.percentVisits / 100 | percent }}
+                </td>
+            </ng-container>
+
+            <tr
+                *matHeaderRowDef="visibleColumns; sticky: true"
+                mat-header-row
+            ></tr>
+            <tr *matRowDef="let row; columns: visibleColumns" mat-row></tr>
+        </table>
+    </div>
+</div>
+<ngx-ui-loader
+    [loaderId]="chartName"
+    bgsColor="rgb(100, 181, 246)"
+    bgsPosition="center-center"
+    bgsType="ball-spin"
+    overlayColor="rgba(0, 0, 0, 0.1)"
+></ngx-ui-loader>
+<div class="invisible">
+    <mat-paginator
+        (page)="(0); onPageChanged($event)"
         [length]="dataLength"
         [pageSizeOptions]="[10, 25, 50, 100]"
-        [pageSize]="pageSize"></mat-paginator>
-    </div>
-</ni-card>
+        [pageSize]="pageSize"
+    ></mat-paginator>
+</div>

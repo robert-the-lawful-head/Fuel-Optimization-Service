@@ -27,7 +27,7 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int? groupId,
             List<string> airportIcaos, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
         Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
-            int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null);
+            int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null, string icao = null);
         Task<AirportWatchHistoricalData> GetLastParkingOcurrence(string AirportICAO, string AtcFlightNumber, string AircraftHexCode);
     }
 
@@ -63,10 +63,14 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
         }
 
         public async Task<List<FboHistoricalDataModel>> GetHistoricalDataWithCustomerAndAircraftInfo(int groupId,
-            int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null)
+            int? fboId, DateTime startDateTimeUtc, DateTime endDateTimeUtc, List<string> tailNumbers = null,  string icao = null)
         {
             List<string> airportIcaos = null;
-            if (fboId.HasValue)
+            if (!string.IsNullOrEmpty(icao))
+            {
+                airportIcaos = new List<string> { icao };
+            }
+            else if (fboId.HasValue)
             {
                 var fbo = await _FboEntityService.GetSingleBySpec(new FboByIdSpecification(fboId.GetValueOrDefault()));
                 airportIcaos = new List<string>() { fbo?.FboAirport?.Icao };

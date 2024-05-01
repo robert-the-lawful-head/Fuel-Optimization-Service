@@ -33,8 +33,7 @@
                          theme="small"
                          title="Flight Watch - Live Flight Tracking">
                     <div class="map-container" (click)="gotoFlightWatch()">
-                        <mat-spinner *ngIf="isMapLoading"></mat-spinner>
-                            <app-flight-watch-map-wrapper *ngIf="!isMapLoading"
+                            <app-flight-watch-map-wrapper *ngIf="flightWatchData"
                                 (markerClicked)="null"
                                 (airportClick)="null"
                                 (setIcaoList)="null"
@@ -47,7 +46,7 @@
                     </div>
                 </ni-card>
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12" *ngIf="!isSingleSourceFbo">
                 <ni-card [collapsible]="false"
                          [opened]="true"
                          bgColor="dead"

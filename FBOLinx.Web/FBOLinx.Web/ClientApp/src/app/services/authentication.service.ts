@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { User } from '../models/user';
+import { localStorageAccessConstant } from '../constants/LocalStorageAccessConstant';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
@@ -110,12 +111,17 @@ export class AuthenticationService {
 
     logout() {
         // remove user from local storage to log user out
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('impersonatedrole');
-        localStorage.removeItem('fboId');
-        localStorage.removeItem('managerGroupId');
-        localStorage.removeItem('groupId');
-        localStorage.removeItem('conductorFbo');
+        localStorage.removeItem(localStorageAccessConstant.currentUser);
+        localStorage.removeItem(localStorageAccessConstant.impersonatedrole);
+        localStorage.removeItem(localStorageAccessConstant.fboId);
+        localStorage.removeItem(localStorageAccessConstant.managerGroupId);
+        localStorage.removeItem(localStorageAccessConstant.groupId);
+        localStorage.removeItem(localStorageAccessConstant.conductorFbo);
+        localStorage.removeItem(localStorageAccessConstant.icao);
+        localStorage.removeItem(localStorageAccessConstant.accountType);
+        localStorage.removeItem(localStorageAccessConstant.isNetworkFbo);
+        localStorage.removeItem(localStorageAccessConstant.isSingleSourceFbo);
+
         this.currentUserSubject.next(null);
     }
 }

@@ -619,6 +619,8 @@ namespace FBOLinx.ServiceLayer.EntityServices
 
             var aircraftPricingTemplates = await GetCustomerAircraftTemplates(fboId, groupId);
 
+            var defaultPricingTemplate = await _context.PricingTemplate.Where(p => p.Fboid == fboId && p.Default == true).FirstOrDefaultAsync();
+
             var result = await GetCustomerAircrafts(groupId);
 
             result.ForEach(x =>
@@ -634,8 +636,16 @@ namespace FBOLinx.ServiceLayer.EntityServices
                     else
                     {
                         var pricingTemplate = pricingTemplates.FirstOrDefault(pt => pt.CustomerId == x.CustomerId);
-                        x.PricingTemplateId = pricingTemplate?.Oid;
-                        x.PricingTemplateName = pricingTemplate?.Name;
+                        if (pricingTemplate != null)
+                        {
+                            x.PricingTemplateId = pricingTemplate?.Oid;
+                            x.PricingTemplateName = pricingTemplate?.Name;
+                        }
+                        else
+                        {
+                            x.PricingTemplateId = defaultPricingTemplate?.Oid;
+                            x.PricingTemplateName = defaultPricingTemplate?.Name;
+                        }
                         x.IsCompanyPricing = true;
                     }
                 }

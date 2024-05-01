@@ -111,9 +111,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.Mail
                     if (service.StartsWith("Fuel") && orderDetails.QuotedVolume > 0)
                     {
                         var vendor = "";
-                        if (orderDetails.FuelVendor == "Directs: Custom")
+                        if (orderDetails.FuelVendor == "Directs: Custom" || orderDetails.FuelVendor == "Manual Price")
                             vendor = "Flight Dept.";
-                        else if (orderDetails.FuelVendor.ToLower() == "fbolinx")
+                        else if (orderDetails.FuelVendor.ToLower().Contains("fbolinx"))
                             vendor = fbo.Fbo + " (FBOLinx Direct)";
                         else
                             vendor = orderDetails.FuelVendor;

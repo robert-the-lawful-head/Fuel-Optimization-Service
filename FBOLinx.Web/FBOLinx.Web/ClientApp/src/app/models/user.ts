@@ -14,5 +14,7 @@ export class User {
     icao?: string;
     managerGroupId: number;
     conductorFbo?: boolean;
+    isSingleSourceFbo: boolean;
+    isNetworkFbo: boolean;
     accountType?: AccountType;
 }

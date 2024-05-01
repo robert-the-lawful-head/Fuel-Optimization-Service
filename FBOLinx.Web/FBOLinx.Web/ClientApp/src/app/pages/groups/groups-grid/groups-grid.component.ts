@@ -23,7 +23,6 @@ import {
     SortEventArgs,
 } from '@syncfusion/ej2-angular-grids';
 import { first, last } from 'lodash';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { SharedService } from '../../../layouts/shared-service';
 import { accountTypeChangedEvent, fboChangedEvent } from '../../../constants/sharedEvents';
@@ -43,6 +42,7 @@ import { FbosDialogNewFboComponent } from '../../fbos/fbos-dialog-new-fbo/fbos-d
 import { GroupsDialogNewGroupComponent } from '../groups-dialog-new-group/groups-dialog-new-group.component';
 import { GroupsMergeDialogComponent } from '../groups-merge-dialog/groups-merge-dialog.component';
 import { AssociationsDialogNewAssociationComponent } from '../../associations/associations-dialog-new-association/associations-dialog-new-association.component';
+import { ManageFboGroupsService } from 'src/app/services/managefbo.service';
 import { localStorageAccessConstant } from 'src/app/constants/LocalStorageAccessConstant';
 
 const initialColumns: ColumnType[] = [
@@ -155,7 +155,8 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         private mergeGroupsDialog: MatDialog,
         private tableSettingsDialog: MatDialog,
         private snackBar: MatSnackBar,
-        private addAssociationDialog: MatDialog
+        private addAssociationDialog: MatDialog,
+        private manageFboGroupsService: ManageFboGroupsService
     ) {}
 
     ngOnInit() {
@@ -484,7 +485,7 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 }
             );
 
-            dialogRef.afterClosed().subscribe((result) => {
+            dialogRef.afterClosed().subscribe(async (result) => {
                 if (!result) {
                     return;
                 }
@@ -493,8 +494,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                     this.tableLocalStorageFilterKey,
                     this.searchValue
                 );
-
-                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.managerGroupId, this.sharedService.currentUser.groupId.toString());
 
@@ -509,6 +508,12 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.icao,fbo.icao);
 
                 this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.accountType,fbo.accountType);
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isNetworkFbo,this.manageFboGroupsService.isNetworkFbo(this.groupsFbosData,fbo.groupId).toString());
+
+                var isSingleSourceFbo = await this.groupsService.isGroupFboSingleSource(fbo.icao).toPromise();
+
+                this.sharedService.setCurrentUserPropertyValue(localStorageAccessConstant.isSingleSourceFbo,isSingleSourceFbo.toString());
 
                 this.sharedService.emitChange(fboChangedEvent);
                 this.sharedService.emitChange(accountTypeChangedEvent);
@@ -664,12 +669,6 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
         this.childGrid.dataSource = this.fboDataSource;
     }
 
-    groupFbos(groupId: number) {
-        return this.groupsFbosData.fbos.filter(
-            (fbo) => fbo.groupId === groupId
-        );
-    }
-
     editGroup(group: any) {
         this.editGroupClicked.emit({
             group,
@@ -740,6 +739,9 @@ export class GroupsGridComponent implements OnInit, AfterViewInit {
     }
     isValidPricing(data: any) {
         return data.expiredFboPricingCount === 0 && data.activeFboCount > 0;
+    }
+    getGroupFbos(groupId: number) {
+        return this.manageFboGroupsService.getGroupFbos(this.groupsFbosData,groupId);
     }
     private saveSettings() {
         localStorage.setItem(

@@ -7,9 +7,7 @@
                 matInput
                 [formControl]="myControl"
                 [matAutocomplete]="auto"
-                (input)="filter()"
-                (focus)="loadAllAirports()"
-                (blur)="validateTypedValue()">
+                (input)="filter()">
         <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
             <mat-option *ngFor="let option of filteredOptions" [value]="option">
             {{option}}

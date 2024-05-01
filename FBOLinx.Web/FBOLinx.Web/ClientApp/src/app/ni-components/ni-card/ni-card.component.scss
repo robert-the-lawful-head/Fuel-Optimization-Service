@@ -115,7 +115,10 @@
                 padding: 0.3rem 1rem !important;
             }
         }
-
+        &.main-bg-card {
+            background: $main-bg;
+            border-color: $main-bg;
+        }
         &.success-card {
             background: $success-color;
             border-color: $success-color;
@@ -198,7 +201,6 @@
         &.danger-color-card {
             color: $accent-color;
         }
-
         &.outline-card {
             background: white !important;
             box-shadow: none !important;

@@ -45,7 +45,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
 
     @ViewChild(MatSort) sort: MatSort;
 
-    dataSource: MatTableDataSource<Swim>;
+    dataSource: MatTableDataSource<Swim> = new MatTableDataSource<Swim>();
     expandedDetailData: FlightWatchModelResponse | Swim | null;
 
     allColumnsToDisplay: string[];
@@ -71,6 +71,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
                     this.flightWatchMapSharedService.aicraftDetails$.subscribe( (data: FlightWatchModelResponse) => {
                     this.expandedDetailData = data;
                     });
+                    this.dataSource.sort = this.sort;
                 }
 
     ngOnInit() {
@@ -79,14 +80,7 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
         this.icao = this.sharedService.currentUser.icao;
     }
     ngAfterViewInit() {
-        if(this.isArrival){
-            this.dataSource = new MatTableDataSource(this.data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); }));
-        }else{
-            this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(this.data));
-        }
-        this.dataSource.sort = this.sort;
-
-
+        this.intializeDataSource(this.data);
         this.sort?.sortChange.subscribe(() => {
             this.columns = this.columns.map((column) =>
                 column.id === this.sort.active
@@ -105,23 +99,25 @@ export class FlightWatchAircraftDataTableComponent implements OnInit {
             this.allColumnsToDisplay = this.getVisibleColumns();
             this.dataColumnsToDisplay = this.getVisibleDataColumns();
         }
-        if (changes.data && this.dataSource){
+        if (changes.data){
             if(this.hasChangeDefaultSort){
                 this.dataSource.data =  changes.data.currentValue;
                 return;
             }
 
-            if(this.isArrival){
-                this.dataSource.sort.sort(<MatSortable>({id: swimTableColumns.etaLocal, start: 'asc'}));
-            }else{
-                this.dataSource.data = this.setManualSortOnDepartures(changes.data.currentValue);
-            }
+            this.intializeDataSource(changes.data.currentValue);
         }
         if(changes.selectedAircraft?.currentValue?.tailNumber){
             this.expandedElement = changes.selectedAircraft.currentValue.tailNumber;
         }
     }
-
+    intializeDataSource(data: Swim[]){
+        if(this.isArrival){
+            this.dataSource = new MatTableDataSource(data?.sort((a, b) => { return this.compare(b.etaLocal, a.etaLocal, false); }));
+        }else{
+            this.dataSource =  new MatTableDataSource(this.setManualSortOnDepartures(data));
+        }
+    }
     updateColumns(columns: ColumnType[]): void{
         this.columns = columns;
         this.allColumnsToDisplay = this.getVisibleColumns();

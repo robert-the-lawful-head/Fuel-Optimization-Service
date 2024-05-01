@@ -126,7 +126,7 @@ namespace FBOLinx.Web.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var fbos = await GetAllFbos().Include(f => f.Users).Include("fboAirport").ToListAsync();
+            var fbos = await GetAllFbos().Include(f => f.Users).Include( x => x.FboAirport).ToListAsync();
             if (fbos == null)
             {
                 return NotFound();
@@ -140,11 +140,35 @@ namespace FBOLinx.Web.Controllers
                 Icao = f.FboAirport?.Icao,
                 Oid = f.Oid,
                 GroupId = f.GroupId,
-                Users = f.Users
+                Users = f.Users,
+                AcukwikFboHandlerId = f.AcukwikFBOHandlerId
             }).ToList();
             return Ok(fbosVM);
         }
+        // GET: api/Fbos/icao/kvny
+        [HttpGet("icao/{icao}")]
+        public async Task<IActionResult> getFbosByIcao([FromRoute] string icao)
+        {
+            var fbos = await GetAllFbos().Include(x => x.FboAirport).Where(x => x.FboAirport.Icao == icao).ToListAsync();
 
+            if (fbos == null)
+            {
+                return NotFound();
+            }
+
+            var fbosVM = fbos.Select(f => new FbosGridViewModel
+            {
+                Active = f.Active,
+                Fbo = f.Fbo,
+                Icao = f.FboAirport?.Icao,
+                Oid = f.Oid,
+                GroupId = f.GroupId,
+                Users = f.Users,
+                AcukwikFboHandlerId = f.AcukwikFBOHandlerId
+            }).ToList();
+
+            return Ok(fbosVM);
+        }
         // GET: api/Fbos/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFbo([FromRoute] int id)
