@@ -214,13 +214,14 @@ export class AnalyticsAirportArrivalsDepaturesComponent
         );
     }
 
-    fetchSwimData(startDate: Date, endDate: Date) {
+    fetchSwimData(startDate: Date, endDate: Date, icao: string) {
         return this.airportWatchService.getArrivalsDeparturesSwim(
             this.sharedService.currentUser.fboId,
             {
                 endDateTime: endDate,
                 startDateTime: startDate,
-            }
+            },
+            this.icao
         );
     }
 
@@ -252,7 +253,7 @@ export class AnalyticsAirportArrivalsDepaturesComponent
             );
         }
         else {
-            this.fetchSwimData(startDate, endDate).subscribe(
+            this.fetchSwimData(startDate, endDate, this.icao).subscribe(
                 (data: FlightWatchHistorical[]) => {
                     this.data = data;
                     this.refreshDataSource();

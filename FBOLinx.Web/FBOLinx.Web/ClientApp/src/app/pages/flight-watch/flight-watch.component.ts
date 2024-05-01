@@ -14,7 +14,6 @@ import { LngLatLike } from 'mapbox-gl';
 import { AcukwikAirport } from 'src/app/models/AcukwikAirport';
 import { SwimFilter } from 'src/app/models/filter';
 import { SharedService } from 'src/app/layouts/shared-service';
-import * as SharedEvents from 'src/app/models/sharedEvents';
 import {
     FlightWatchModelResponse,
 } from '../../models/flight-watch';
@@ -25,7 +24,7 @@ import { isCommercialAircraft } from 'src/utils/aircraft';
 import { FlightWatchAicraftGridComponent } from './flight-watch-aicraft-grid/flight-watch-aicraft-grid.component';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { MatTableDataSource } from '@angular/material/table';
-
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 @Component({
     selector: 'app-flight-watch',
     styleUrls: ['./flight-watch.component.scss'],
