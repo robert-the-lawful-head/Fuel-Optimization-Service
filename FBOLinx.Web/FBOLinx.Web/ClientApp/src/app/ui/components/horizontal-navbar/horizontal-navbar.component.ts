@@ -183,9 +183,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
                     this.loadAirportWatchData();
                 }
-                if(message === SharedEvents.flightWatchDataEvent){
-                    this.loadAirportWatchData();
-                }
+                // if(message === SharedEvents.flightWatchDataEvent){
+                //     this.loadAirportWatchData();
+                // }
             }
         );
 
