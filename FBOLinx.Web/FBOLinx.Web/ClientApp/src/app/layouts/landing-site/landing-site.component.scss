@@ -350,6 +350,7 @@ div.citation-background {
 }
 
 .integration-partners {
+    overflow-x: auto;
     ::ng-deep {
         .mat-button-toggle-group-appearance-standard {
             border-radius: 25px;

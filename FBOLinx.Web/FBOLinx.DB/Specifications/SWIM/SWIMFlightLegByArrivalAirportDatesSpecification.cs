@@ -11,8 +11,8 @@ namespace FBOLinx.DB.Specifications.SWIM
 {
     public class SWIMFlightLegByArrivalAirportDatesSpecification : Specification<DB.Models.SWIMFlightLeg>
     {
-        public SWIMFlightLegByArrivalAirportDatesSpecification(string airportIcao, DateTime minArrivalDateUTC, DateTime maxArrivalDateUTC) : base(x => ((x.ETA.HasValue && x.ETA.Value >= minArrivalDateUTC) && (x.ETA.HasValue && x.ETA.Value <= maxArrivalDateUTC))
-        && ((!string.IsNullOrEmpty(x.ArrivalICAO) && x.ArrivalICAO == airportIcao)))
+        public SWIMFlightLegByArrivalAirportDatesSpecification(string airportIcao, DateTime minArrivalDateUTC, DateTime maxArrivalDateUTC) : base(x => x.IsPlaceholder == false && ((x.ETA >= minArrivalDateUTC) && (x.ETA <= maxArrivalDateUTC))
+        && (x.ArrivalICAO != null && x.ArrivalICAO == airportIcao))
         {
         }
     }
