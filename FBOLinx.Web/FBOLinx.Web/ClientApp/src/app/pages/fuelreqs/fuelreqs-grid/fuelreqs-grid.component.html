@@ -145,7 +145,7 @@
                     <ng-container matColumnDef="archivedCheckbox">
                         <th *matHeaderCellDef mat-header-cell mat-sort-header>&nbsp;</th>
                         <td *matCellDef="let fuelreq" mat-cell>
-                            <mat-checkbox [(ngModel)]="fuelreq.archived" (change)=" updateArchivedFlag($event, fuelreq)" clickStopPropagation>
+                            <mat-checkbox [(ngModel)]="fuelreq.archived" (change)="updateArchivedFlag($event, fuelreq)" clickStopPropagation>
                             </mat-checkbox>
                         </td>
                     </ng-container>
