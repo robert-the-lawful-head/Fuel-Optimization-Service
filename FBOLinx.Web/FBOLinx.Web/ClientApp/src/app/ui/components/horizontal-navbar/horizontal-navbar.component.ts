@@ -167,7 +167,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             (message) => {
                 if (!this.canUserSeePricing()) {
                     this.fuelOrders.length = 0;
-                    return;
                 }
                 if (message === fboChangedEvent) {
                     this.loadLocations();
@@ -184,7 +183,7 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
                     this.selectedICAO = this.sharedService.getCurrentUserPropertyValue(localStorageAccessConstant.icao);
                     this.loadAirportWatchData();
                 }
-                if(message == SharedEvents.flightWatchDataEvent){
+                if(message === SharedEvents.flightWatchDataEvent){
                     this.loadAirportWatchData();
                 }
             }
