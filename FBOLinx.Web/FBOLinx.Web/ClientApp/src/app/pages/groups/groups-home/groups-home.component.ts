@@ -14,6 +14,7 @@ import { State } from '../../../store/reducers';
 import { GroupGridState } from '../../../store/reducers/group';
 import { getGroupGridState } from '../../../store/selectors';
 import { GroupFboViewModel } from 'src/app/models/groups';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-groups-home',
@@ -26,12 +27,14 @@ export class GroupsHomeComponent implements OnInit {
     groupGridState: GroupGridState;
     isDeletingGroup: boolean = false;
     subscription: any;
+    chartName = 'Groups';
 
     constructor(
         private router: Router,
         private groupsService: GroupsService,
         private sharedService: SharedService,
-        private store: Store<State>
+        private store: Store<State>,
+        private ngxLoader: NgxUiLoaderService
     ) {}
 
     ngOnInit(): void {
@@ -101,8 +104,13 @@ export class GroupsHomeComponent implements OnInit {
     }
 
     private loadGroupsFbos() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.groupsService
             .groupsAndFbos()
-            .subscribe((data: GroupFboViewModel) => (this.groupsFbosData = data));
+            .subscribe((data: GroupFboViewModel) => {
+                this.groupsFbosData = data;
+                this.ngxLoader.stopLoader(this.chartName);
+            });
     }
 }

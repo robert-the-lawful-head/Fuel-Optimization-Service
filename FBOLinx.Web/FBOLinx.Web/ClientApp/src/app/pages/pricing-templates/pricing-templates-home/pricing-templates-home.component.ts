@@ -13,6 +13,7 @@ import { FbopricesService } from "../../../services/fboprices.service";
 import { DeleteConfirmationComponent } from '../../../shared/components/delete-confirmation/delete-confirmation.component';
 import { pricingTemplateGridSet } from '../../../store/actions';
 import { State } from '../../../store/reducers';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-pricing-templates-home',
@@ -25,13 +26,15 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     public pricingTemplatesData: Array<any>;
     public locationChangedSubscription: any;
 
+    public chartName = 'PricingTemplates';
     constructor(
         private router: Router,
         private store: Store<State>,
         private pricingTemplatesService: PricingtemplatesService,
         private sharedService: SharedService,
         private fboPricesService: FbopricesService,
-        public deleteFBODialog: MatDialog
+        public deleteFBODialog: MatDialog,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.loadPricingTemplateData();
@@ -53,13 +56,18 @@ export class PricingTemplatesHomeComponent implements AfterViewInit, OnDestroy {
     }
 
     public loadPricingTemplateData() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.pricingTemplatesData = null;
         this.pricingTemplatesService
             .getByFbo(
                 this.sharedService.currentUser.fboId,
                 this.sharedService.currentUser.groupId
             )
-            .subscribe((data: any) => (this.pricingTemplatesData = data));
+            .subscribe((data: any) => {
+                this.pricingTemplatesData = data;
+                this.ngxLoader.stopLoader(this.chartName);
+            });
     }
 
     public editPricingTemplateClicked($event) {

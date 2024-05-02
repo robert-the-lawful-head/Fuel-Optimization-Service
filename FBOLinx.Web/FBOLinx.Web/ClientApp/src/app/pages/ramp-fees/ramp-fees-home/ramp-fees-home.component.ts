@@ -17,6 +17,7 @@ import { RampfeesService } from '../../../services/rampfees.service';
 import { RampFeesCategoryComponent } from '../ramp-fees-category/ramp-fees-category.component';
 // Components
 import { RampFeesDialogNewFeeComponent } from '../ramp-fees-dialog-new-fee/ramp-fees-dialog-new-fee.component';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-ramp-fees-home',
@@ -28,21 +29,14 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     public customRampFeeCat: RampFeesCategoryComponent;
 
     public pageTitle = 'Ramp Fees';
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/ramp-fees',
-            title: 'Ramp Fees',
-        },
-    ];
+
     public rampFees: any[];
     public requiresUpdate = false;
     public expirationDate: any;
     public locationChangedSubscription: any;
     public aircraftTypes: any[];
+
+    public chartName = 'rampfees';
 
     /*LICENSE_KEY = '9eef62bd-4c20-452c-98fd-aa781f5ac111';*/
 
@@ -56,7 +50,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private aircraftsService: AircraftsService,
         public newRampFeeDialog: MatDialog,
         public importFeesInfoDialog: MatDialog,
-        private messageService: Parametri
+        private messageService: Parametri,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.aircraftsService
@@ -85,6 +80,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public initRampfees() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.rampFeesService
             .getForFbo({ oid: this.sharedService.currentUser.fboId })
             .subscribe((data: any) => {
@@ -100,6 +97,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     .subscribe(
                         (mymessage: any) => (this.expirationDate = mymessage)
                     );
+                this.ngxLoader.stopLoader(this.chartName);
             });
 
         //FlatfileImporter.setVersion(2);
@@ -300,6 +298,8 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadRampFees() {
+        this.ngxLoader.startLoader(this.chartName);
+
         this.rampFees = undefined;
         this.rampFeesService
             .getForFbo({ oid: this.sharedService.currentUser.fboId })
@@ -308,6 +308,7 @@ export class RampFeesHomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.customRampFeeCat) {
                     this.customRampFeeCat.refreshData();
                 }
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 }
