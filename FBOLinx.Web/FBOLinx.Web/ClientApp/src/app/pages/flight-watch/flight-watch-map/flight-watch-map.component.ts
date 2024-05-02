@@ -157,9 +157,17 @@ export class FlightWatchMapComponent
         this.mapRemove();
     }
     ngOnChanges(changes: SimpleChanges): void {
-        if(this.center && !this.map && this.isMapDataLoading)
+        if(this.center && !this.map && !this.isMapDataLoading){
             this.loadMap();
+            return;
+        }
+
         if(!this.map) return;
+
+        if(changes.center){
+            this.flyTo(this.center);
+            this.updateAicraftsOnMapBounds(changes.data.currentValue);
+        }
 
         if (changes.data && this.styleLoaded) {
             this.startTime = Date.now();
@@ -178,11 +186,6 @@ export class FlightWatchMapComponent
             this.updateAicraftsOnMapBounds(changes.data.currentValue);
         }
 
-        if(changes.center){
-            this.flyTo(this.center);
-            this.updateAicraftsOnMapBounds(changes.data.currentValue);
-        }
-
         if(changes.selectedPopUp)
             this.setPopUpContainerData(changes.selectedPopUp.currentValue);
     }
@@ -193,6 +196,7 @@ export class FlightWatchMapComponent
             this.styleLoaded = true;
         })
         .onLoad(async () => {
+            console.log("start redering map data");
             this.isMapDataLoading = true;
             this.resizeMap();
             await this.loadMapIcons();
@@ -392,8 +396,6 @@ export class FlightWatchMapComponent
         this.applyMouseFunctions(marker.layerId);
     }
     updateFlightOnMap(marker: MapMarkerInfo) {
-        if (!this.map || this.isMapDataLoading) return;
-
         this.aicraftDataFeatures = this.getFlightSourcerFeatureMarkers(marker.data);
 
         this.cancelExistingAnimationFames();

@@ -94,7 +94,7 @@ export class DefaultLayoutComponent implements OnInit {
     }
 
     get isCsr() {
-        return this.sharedService.currentUser.role === 5;
+        return this.sharedService.isCsr;
     }
     get isConductor() {
         return this.sharedService.currentUser.role === 3;

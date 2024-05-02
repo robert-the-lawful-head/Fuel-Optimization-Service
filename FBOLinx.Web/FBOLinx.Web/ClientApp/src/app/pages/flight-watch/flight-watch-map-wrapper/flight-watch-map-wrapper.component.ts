@@ -16,7 +16,7 @@ import { FlightWatchMapComponent } from '../flight-watch-map/flight-watch-map.co
 import { FlightWatchMapSharedService } from '../services/flight-watch-map-shared.service';
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { SharedService } from 'src/app/layouts/shared-service';
-import * as SharedEvents from 'src/app/models/sharedEvents';
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 
 type LayerType = 'airway' | 'streetview' | 'icao' | 'taxiway';
 
@@ -64,11 +64,12 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
             this.updateAircraftCompanyAssignData(data);
         });
-        this.ngxLoader.startLoader(this.chartName);
         this.sharedService.valueChange(SharedEvents.locationChangedEvent);
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.ngxLoader.startLoader(this.chartName);
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.data && changes.data.currentValue != null) {

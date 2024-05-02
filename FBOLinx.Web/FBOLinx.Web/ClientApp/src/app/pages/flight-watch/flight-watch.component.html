@@ -1,7 +1,7 @@
 <section class="flight-watch-tabs">
     <mat-drawer-container autosize>
         <mat-drawer-content>
-            <div *ngIf="flightWatchData">
+            <div>
                 <div class="drawer-button" (click)="toggleSettingsDrawer()">
                     <button class="mat-dark-blue" mat-flat-button>
                         <mat-icon *ngIf="!isDrawerOpen()"
@@ -47,7 +47,7 @@
             class="drawer-container"
             opened
         >
-            <ng-container *ngIf="flightWatchData">
+            <ng-container>
                 <app-flight-watch-aicraft-grid
                     #flightwatchAircraftGrid
                     [data]="flightWatchData"
@@ -67,10 +67,3 @@
         </mat-drawer>
     </mat-drawer-container>
 </section>
-<ngx-ui-loader
-[loaderId]="chartName"
-bgsColor="rgb(100, 181, 246)"
-bgsPosition="center-center"
-bgsType="ball-spin"
-overlayColor="rgba(0, 0, 0, 0.1)"
-></ngx-ui-loader>

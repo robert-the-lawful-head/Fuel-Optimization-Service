@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import { interval, Subscription } from 'rxjs';
@@ -6,8 +6,8 @@ import { interval, Subscription } from 'rxjs';
 import { SharedService } from '../../../layouts/shared-service';
 // Services
 import { FuelreqsService } from '../../../services/fuelreqs.service';
-import { ActivatedRoute } from '@angular/router';
 import { ServicesAndFeesService } from '../../../services/servicesandfees.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     selector: 'app-fuelreqs-home',
@@ -17,16 +17,8 @@ import { ServicesAndFeesService } from '../../../services/servicesandfees.servic
 export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     // Public Members
     public pageTitle = 'Fuel & Service Orders';
-    public breadcrumb: any[] = [
-        {
-            link: '/default-layout',
-            title: 'Main',
-        },
-        {
-            link: '/default-layout/fuelreqs',
-            title: 'Fuel & Service Orders',
-        },
-    ];
+    public chartName = "fuelreqs";
+
     public fuelreqsData: any[];
     public filterStartDate: Date;
     public filterEndDate: Date;
@@ -39,8 +31,8 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     constructor(
         private fuelReqService: FuelreqsService,
         private sharedService: SharedService,
-        private route: ActivatedRoute,
         private servicesAndFeesService: ServicesAndFeesService,
+        private ngxLoader: NgxUiLoaderService
     ) {
         this.sharedService.titleChange(this.pageTitle);
         this.filterStartDate = new Date(
@@ -58,13 +50,16 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
     }
 
     async ngOnInit() {
-        var servicesAndFees = await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId).toPromise();
-        servicesAndFees.forEach((service) => {
-            service.servicesAndFees.forEach((serviceAndFee) => {
-                if (serviceAndFee.isActive)
-                    this.servicesAndFees.push(serviceAndFee);
+        await this.servicesAndFeesService.getFboServicesAndFees(this.sharedService.currentUser.fboId)
+        .subscribe((data: any) => {
+            data.forEach((service) => {
+                service.servicesAndFees.forEach((serviceAndFee) => {
+                    if (serviceAndFee.isActive)
+                        this.servicesAndFees.push(serviceAndFee);
+                });
             });
         });
+
 
         this.servicesAndFees.sort((a, b) => a.service.localeCompare(b.service));
         this.loadFuelReqs();
@@ -97,7 +92,8 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
 
     // PRIVATE METHODS
     private loadFuelReqs() {
-        this.fuelReqService
+        this.ngxLoader.startLoader(this.chartName);
+         this.fuelReqService
             .getForGroupFboAndDateRange(
                 this.sharedService.currentUser.groupId,
                 this.sharedService.currentUser.fboId,
@@ -106,6 +102,7 @@ export class FuelreqsHomeComponent implements OnDestroy, OnInit {
             )
             .subscribe((data: any) => {
                 this.fuelreqsData = data;
+                this.ngxLoader.stopLoader(this.chartName);
             });
     }
 }

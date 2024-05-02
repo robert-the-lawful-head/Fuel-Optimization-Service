@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SharedService } from 'src/app/layouts/shared-service';
 import { FlightWatchModelResponse } from 'src/app/models/flight-watch';
-import * as SharedEvents from 'src/app/models/sharedEvents';
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 import { filter } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 

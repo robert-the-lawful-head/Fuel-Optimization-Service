@@ -143,9 +143,9 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
 
     get notificationVisible() {
         return (
-            this.sharedService.currentUser.fboId > 0 &&
-            this.sharedService.currentUser.role !== 5 &&
-            this.sharedService.currentUser.accountType == AccountType.Premium
+            this.sharedService.currentUser?.fboId > 0 &&
+            this.sharedService.currentUser?.role !== 5 &&
+            this.sharedService.currentUser?.accountType == AccountType.Premium
         );
     }
 
@@ -172,7 +172,6 @@ export class HorizontalNavbarComponent implements OnInit, OnDestroy {
             (message) => {
                 if (!this.canUserSeePricing()) {
                     this.fuelOrders.length = 0;
-                    return;
                 }
                 if (message === fboChangedEvent) {
                     this.loadLocations();

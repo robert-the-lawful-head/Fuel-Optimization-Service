@@ -467,10 +467,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
             
             return result;
         }
-        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate)
+        public async Task<List<AirportWatchHistoricalDataResponse>> GetArrivalsDeparturesSwim(int fboId, DateTime minDate, DateTime maxDate, string icao)
         {
             var fbo = await _FboService.GetFbo(fboId);
-            var icao = fbo.FboAirport.Icao;
 
             var swimFlightLegsArrivals = await _SwimFlightLegService.GetListbySpec(new SWIMFlightLegByArrivalAirportDatesSpecification(icao, minDate, maxDate));
             var swimFlightLegsDepartures = await _SwimFlightLegService.GetListbySpec(new SWIMFLightLegByDepartureAirportDatesSpecification(icao, minDate, maxDate));
@@ -481,9 +480,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
 
             var response = new List<AirportWatchHistoricalDataResponse>();
             response = (from s in swimFlightLegs
-                        join ca in customerAircrafts on s.AircraftIdentification equals ca.TailNumber
+                        join ca in customerAircrafts on new { TailNumber = s.AircraftIdentification, GroupId = fbo.GroupId } equals new { ca.TailNumber, ca.GroupId }
                         into leftJoinCustomerAircrafts
-                        from ca in leftJoinCustomerAircrafts.Where(l => l.CustomerId > 0).DefaultIfEmpty()
+                        from ca in leftJoinCustomerAircrafts.DefaultIfEmpty()
                         join a in swimFlightLegsArrivals on s.Oid equals a.Oid
                         into leftJoinArrivals
                         from a in leftJoinArrivals.DefaultIfEmpty()
@@ -497,9 +496,9 @@ namespace FBOLinx.ServiceLayer.BusinessServices.AirportWatch
                             AircraftType = s.Make + " " + s.Model,
                             Status = a == null || a.Oid == 0 ? "Departure" : "Arrival",
                             Originated = a != null ? s.DepartureICAO : "",
-                            Company = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Company).FirstOrDefault() : "",
-                            CompanyId = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Customer.Oid).FirstOrDefault() : 0,
-                            CustomerInfoByGroupID = ca != null ? customerInfoByGroup.Where(c => c.Customer.Oid == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
+                            Company = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Company.ToUpper()).FirstOrDefault() : s.FAARegisteredOwner,
+                            CompanyId = ca != null && ca.CustomerId > 0 ? ca.CustomerId : 0,
+                            CustomerInfoByGroupID = ca != null && ca.CustomerId > 0 ? customerInfoByGroup.Where(c => c.CustomerId == ca.CustomerId).Select(c => c.Oid).FirstOrDefault() : 0
                         }).ToList();
 
             return response.Where(r => r.Company != "" && r.TailNumber != "").ToList();

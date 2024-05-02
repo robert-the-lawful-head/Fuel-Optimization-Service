@@ -25,7 +25,7 @@ import { PricingtemplatesService } from '../../../services/pricingtemplates.serv
 import { DistributionWizardReviewComponent } from '../../../shared/components/distribution-wizard/distribution-wizard-review/distribution-wizard-review.component';
 import { NotificationComponent } from '../../../shared/components/notification/notification.component';
 import { AccountType } from 'src/app/enums/user-role';
-import * as SharedEvents from '../../../models/sharedEvents';
+import * as SharedEvents from 'src/app/constants/sharedEvents';
 
 @Component({
     host: {

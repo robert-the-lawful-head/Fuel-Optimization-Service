@@ -1,4 +1,4 @@
-<app-flight-watch-map
+<app-flight-watch-map *ngIf="flightWatchDictionary"
     #map
     (setIcaoList)="setIcaoList.emit($event)"
     (markerClicked)="this.aicraftClick.emit($event)"
