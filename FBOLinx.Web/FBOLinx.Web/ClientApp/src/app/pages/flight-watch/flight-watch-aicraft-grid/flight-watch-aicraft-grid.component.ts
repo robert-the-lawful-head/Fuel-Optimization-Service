@@ -11,6 +11,7 @@ import { AIRCRAFT_IMAGES } from '../flight-watch-map/aircraft-images';
 import { FlightWatchAircraftDataTableComponent } from './flight-watch-aircraft-data-table/flight-watch-aircraft-data-table.component';
 import { CustomerinfobygroupService } from 'src/app/services/customerinfobygroup.service';
 import { FlightWatchMapService } from '../flight-watch-map/flight-watch-map-services/flight-watch-map.service';
+import { NgxUiLoaderService } from 'ngx-ui-loader';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,14 +51,18 @@ export class FlightWatchAicraftGridComponent extends GridBase {
 
     customers: any[] = [];
 
+    chartName = 'flight-watch-aircraft-grid';
+
     constructor(private tableSettingsDialog: MatDialog,
         private sharedService: SharedService,
         private customerInfoByGroupService: CustomerinfobygroupService,
-        private flightWatchMapService: FlightWatchMapService
+        private flightWatchMapService: FlightWatchMapService,
+        private ngxLoader: NgxUiLoaderService
     ) {
         super();
     }
     ngOnInit(): void {
+        this.ngxLoader.startLoader(this.chartName);
         this.initColumns();
         this.getCustomersList(this.sharedService.currentUser.groupId,this.sharedService.currentUser.fboId);
     }
@@ -65,6 +70,9 @@ export class FlightWatchAicraftGridComponent extends GridBase {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.data && changes.data.currentValue) {
             this.setData(changes.data.currentValue);
+            if(!changes.data.previousValue){
+                this.ngxLoader.stopLoader(this.chartName);
+            }
         }
     }
     openPopUpAndCloseExpandedRows(tailNumber: string): void {

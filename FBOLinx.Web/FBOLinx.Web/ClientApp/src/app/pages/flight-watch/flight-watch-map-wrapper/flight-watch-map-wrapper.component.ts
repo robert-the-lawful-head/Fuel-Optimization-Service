@@ -64,11 +64,12 @@ export class FlightWatchMapWrapperComponent implements OnInit {
         flightWatchMapSharedService.aicraftCompanyAssign$.subscribe( (data: Aircraftwatch) => {
             this.updateAircraftCompanyAssignData(data);
         });
-        this.ngxLoader.startLoader(this.chartName);
         this.sharedService.valueChange(SharedEvents.locationChangedEvent);
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.ngxLoader.startLoader(this.chartName);
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.data && changes.data.currentValue != null) {
